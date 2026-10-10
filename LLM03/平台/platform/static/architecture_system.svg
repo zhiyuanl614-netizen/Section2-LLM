@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 820" role="img" aria-labelledby="title desc">
+  <title id="title">Section2-LLM 项目整体架构图</title>
+  <desc id="desc">展示本机网页、loopback 服务、正式只读数据与隔离上传运行区，并标明显式授权的单次问答 API 边界。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7187a0"/></marker>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#3977c5"/></marker>
+  </defs>
+  <rect x="0" y="0" width="1280" height="820" rx="22" fill="#f5f8fb"/>
+  <text x="54" y="54" fill="#172b45" font-size="28" font-weight="700" font-family="sans-serif">Section2-LLM · 项目整体架构</text>
+  <text x="54" y="82" fill="#74849a" font-size="14" font-family="sans-serif">默认本地优先；正式 release 只读；新上传仅进入隔离 run。流程状态按当前真实接线标注。</text>
+
+  <rect x="54" y="136" width="226" height="132" rx="16" fill="#ffffff" stroke="#b9cde1" stroke-width="2"/>
+  <text x="76" y="171" fill="#3977c5" font-size="12" font-weight="700" font-family="sans-serif">用户界面 · 同源网页</text>
+  <text x="76" y="205" fill="#172b45" font-size="19" font-weight="700" font-family="sans-serif">Evidence Atlas</text>
+  <text x="76" y="231" fill="#60758b" font-size="13" font-family="sans-serif">检索 · 图谱 · 工作流 · 图表</text>
+  <text x="76" y="251" fill="#60758b" font-size="12" font-family="sans-serif">API Key 仅当前会话内存</text>
+
+  <rect x="352" y="118" width="386" height="174" rx="18" fill="#eaf2fd" stroke="#5d8ec5" stroke-width="2.2"/>
+  <text x="378" y="153" fill="#315f91" font-size="12" font-weight="700" font-family="sans-serif">本机应用服务 · 127.0.0.1:8765</text>
+  <text x="378" y="188" fill="#172b45" font-size="20" font-weight="700" font-family="sans-serif">Python 标准库 HTTP API</text>
+  <text x="378" y="216" fill="#4c647e" font-size="13" font-family="sans-serif">Loopback-only 上传 / 阶段运行 / 模型目录</text>
+  <text x="378" y="241" fill="#4c647e" font-size="13" font-family="sans-serif">来源校验 · 哈希清单 · 本地日志</text>
+  <text x="378" y="267" fill="#a06522" font-size="12" font-weight="700" font-family="sans-serif">共享预览 / 0.0.0.0：上传与外部 API 关闭</text>
+
+  <path d="M280 201 C308 201 320 201 348 201" fill="none" stroke="#7187a0" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="286" y="185" fill="#74849a" font-size="11" font-family="sans-serif">同源 HTTP</text>
+
+  <rect x="810" y="122" width="414" height="218" rx="18" fill="#ffffff" stroke="#94c6ad" stroke-width="2"/>
+  <text x="838" y="158" fill="#328268" font-size="12" font-weight="700" font-family="sans-serif">数据平面 A · 正式先导 release（只读）</text>
+  <rect x="838" y="182" width="164" height="64" rx="11" fill="#edf7f2" stroke="#c9e2d5"/>
+  <text x="856" y="208" fill="#255642" font-size="14" font-weight="700" font-family="sans-serif">5 篇正式样本 PDF</text>
+  <text x="856" y="230" fill="#607c70" font-size="11" font-family="sans-serif">SHA-256 来源校验</text>
+  <rect x="1020" y="182" width="176" height="64" rx="11" fill="#edf7f2" stroke="#c9e2d5"/>
+  <text x="1038" y="208" fill="#255642" font-size="14" font-weight="700" font-family="sans-serif">239 evidence blocks</text>
+  <text x="1038" y="230" fill="#607c70" font-size="11" font-family="sans-serif">D03 不进入活动结论</text>
+  <rect x="838" y="262" width="358" height="50" rx="11" fill="#f7fafc" stroke="#d9e3ec"/>
+  <text x="856" y="284" fill="#344d67" font-size="13" font-weight="700" font-family="sans-serif">BM25 检索 · provenance graph · PDF 阅读</text>
+  <text x="856" y="302" fill="#7b8b9d" font-size="11" font-family="sans-serif">不写回 release；候选方向不自动升级为结论</text>
+  <path d="M738 174 C770 174 776 174 806 174" fill="none" stroke="#7187a0" stroke-width="2.2" marker-end="url(#arrow)"/>
+
+  <rect x="352" y="370" width="386" height="218" rx="18" fill="#fffaf1" stroke="#d9b36e" stroke-width="2"/>
+  <text x="378" y="406" fill="#a36d24" font-size="12" font-weight="700" font-family="sans-serif">数据平面 B · 新建隔离工作区</text>
+  <rect x="378" y="432" width="144" height="62" rx="11" fill="#ffffff" stroke="#ead6ae"/>
+  <text x="396" y="456" fill="#725323" font-size="14" font-weight="700" font-family="sans-serif">本机上传 PDF</text>
+  <text x="396" y="478" fill="#8e784f" font-size="11" font-family="sans-serif">独立 run / 哈希登记</text>
+  <rect x="540" y="432" width="170" height="62" rx="11" fill="#ffffff" stroke="#ead6ae"/>
+  <text x="558" y="456" fill="#725323" font-size="14" font-weight="700" font-family="sans-serif">Step 02 清洗分块</text>
+  <text x="558" y="478" fill="#8e784f" font-size="11" font-family="sans-serif">本机脚本 · 不联网</text>
+  <rect x="378" y="510" width="332" height="52" rx="11" fill="#fff4df" stroke="#e8c98e"/>
+  <text x="396" y="533" fill="#7e5b25" font-size="13" font-weight="700" font-family="sans-serif">Step 03：BM25-only（部分就绪）</text>
+  <text x="396" y="551" fill="#987747" font-size="11" font-family="sans-serif">Dense / 新 run 图谱 / Step 04–07 尚未接入</text>
+  <path d="M544 292 L544 366" fill="none" stroke="#d19b42" stroke-width="2.2" stroke-dasharray="7 6" marker-end="url(#arrow)"/>
+
+  <rect x="810" y="390" width="414" height="198" rx="18" fill="#f6f3fb" stroke="#ab9bd0" stroke-width="2"/>
+  <text x="838" y="426" fill="#6d5ba4" font-size="12" font-weight="700" font-family="sans-serif">可选数据平面 C · 外部 API</text>
+  <rect x="838" y="451" width="358" height="62" rx="11" fill="#ffffff" stroke="#d8d0eb"/>
+  <text x="856" y="475" fill="#44376d" font-size="14" font-weight="700" font-family="sans-serif">单次问答：明确勾选后才发送</text>
+  <text x="856" y="497" fill="#736890" font-size="11" font-family="sans-serif">问题 + 最多 5 条安全证据块（每条 ≤3500 字）</text>
+  <text x="838" y="541" fill="#6d5ba4" font-size="12" font-family="sans-serif">CSTCloud Uni-API / OpenAI-compatible · HTTPS</text>
+  <text x="838" y="566" fill="#a04f45" font-size="12" font-weight="700" font-family="sans-serif">不发送 PDF；批量 evidence 外发未获默认授权</text>
+  <path d="M738 470 C770 470 777 470 806 470" fill="none" stroke="#8b78b7" stroke-width="2.2" marker-end="url(#arrow)"/>
+
+  <rect x="54" y="656" width="1170" height="105" rx="16" fill="#ffffff" stroke="#dce5ed" stroke-width="1.5"/>
+  <text x="78" y="691" fill="#172b45" font-size="13" font-weight="700" font-family="sans-serif">安全与版本边界</text>
+  <text x="78" y="721" fill="#5d7085" font-size="13" font-family="sans-serif">上传 run 与正式 5 篇样本隔离　·　API Key 不落盘、不进日志　·　公式风险 metadata 保留但不做公式解析　·　模型输出不等于人工核验</text>
+  <text x="78" y="745" fill="#8896a5" font-size="11" font-family="sans-serif">仅 loopback 提供写入型工作流；共享预览用于界面查看，不可上传、配置密钥或调用远程服务。</text>
+</svg>

@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Section2-LLM · 本地证据平台</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#overview" aria-label="返回概览">
+        <span class="brand-mark"><span></span><span></span><span></span></span>
+        <span class="brand-copy"><strong>Evidence Atlas</strong><small>Section2-LLM</small></span>
+      </a>
+      <div class="workspace-tag"><span class="pulse-dot"></span><span>本机研究工作区</span></div>
+      <nav class="main-nav" aria-label="主导航">
+        <button class="nav-item active" data-view="search"><span class="nav-icon">⌕</span><span>证据检索</span><span class="nav-arrow">↗</span></button>
+        <button class="nav-item" data-view="graph"><span class="nav-icon">⌘</span><span>证据图谱</span></button>
+        <button class="nav-item" data-view="workflow"><span class="nav-icon">⟳</span><span>阶段工作流</span></button>
+        <button class="nav-item" data-view="architecture"><span class="nav-icon">▦</span><span>项目架构</span></button>
+        <button class="nav-item" data-view="figures"><span class="nav-icon">▧</span><span>图表图库</span></button>
+        <button class="nav-item" data-view="library"><span class="nav-icon">▤</span><span>文献库</span></button>
+        <button class="nav-item" data-view="about"><span class="nav-icon">ⓘ</span><span>范围与状态</span></button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="side-scope"><div class="mini-label">正式先导语料</div><div class="scope-number"><strong id="sideDocCount">—</strong><span>篇论文</span></div><div class="scope-line"><span id="sideChunkCount">—</span> 个可追溯证据块</div></div>
+        <div class="sidebar-foot"><span class="lock-icon">⌑</span><span>正式 release 只读 · 上传仅隔离 run</span></div>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <div class="breadcrumb"><span>研究平台</span><span class="crumb-slash">/</span><strong id="currentSection">证据检索</strong></div>
+        <div class="top-actions">
+          <span class="status-pill"><i></i><span>LOCAL APP</span></span>
+          <button class="settings-button" id="modelSettingsButton" type="button">模型 / API Key</button>
+          <button class="icon-button" id="helpButton" title="查看平台边界" aria-label="查看平台边界">?</button>
+          <div class="avatar">S2</div>
+        </div>
+      </header>
+
+      <section class="view active" id="view-search">
+        <div class="page-heading heading-row">
+          <div><div class="eyebrow"><span class="eyebrow-line"></span> WATER–POWER RESEARCH / PILOT CORPUS</div><h1>从证据开始，<em>而非从结论开始。</em></h1><p>在 5 篇正式先导论文中检索原文片段、查看来源路径，并追踪它们与既有研究方向的关联。</p></div>
+          <div class="pilot-seal"><span class="seal-mark">5</span><span><b>正式先导样本</b><small>新增 PDF 进入隔离 run</small></span></div>
+        </div>
+
+        <div class="stat-grid">
+          <article class="stat-card"><div class="stat-top"><span class="stat-icon blue">▤</span><span class="stat-kicker">CORPUS</span></div><strong id="statDocs">—</strong><span class="stat-label">篇来源文献</span><div class="stat-foot">PDF 原件哈希已登记</div></article>
+          <article class="stat-card"><div class="stat-top"><span class="stat-icon mint">⌗</span><span class="stat-kicker">EVIDENCE</span></div><strong id="statBlocks">—</strong><span class="stat-label">个可追溯证据块</span><div class="stat-foot">段落 · 页码 · evidence ID</div></article>
+          <article class="stat-card"><div class="stat-top"><span class="stat-icon amber">◇</span><span class="stat-kicker">DIRECTIONS</span></div><strong>03</strong><span class="stat-label">项既有候选方向</span><div class="stat-foot">来自论文 Introduction</div></article>
+          <article class="stat-card"><div class="stat-top"><span class="stat-icon violet">⌘</span><span class="stat-kicker">TRACE GRAPH</span></div><strong id="statEdges">—</strong><span class="stat-label">条来源/引用关系</span><div class="stat-foot">追溯关系，不代表支持结论</div></article>
+        </div>
+
+        <div class="search-layout">
+          <section class="search-panel panel">
+            <div class="panel-head search-panel-head"><div><div class="panel-eyebrow">LOCAL EVIDENCE SEARCH</div><h2>你想核查什么？</h2></div><span class="offline-chip" id="networkModeChip"><span></span> 默认离线</span></div>
+            <form id="searchForm" class="search-form">
+              <label class="sr-only" for="queryInput">研究问题</label>
+              <div class="query-wrap"><span class="query-symbol">⌕</span><input id="queryInput" maxlength="1200" autocomplete="off" placeholder="例如：哪些文献描述了厂内冷却水过程？"><button class="submit-search" type="submit">检索 <span>→</span></button></div>
+              <div class="filter-row">
+                <label class="filter-label">方向<select id="directionFilter"><option value="all">全部方向</option><option value="3-1">3-1 · 厂内冷却水建模</option><option value="4-1">4-1 · 快感知与慢动态</option><option value="5-1">5-1 · 人口与脆弱性影响</option></select></label>
+                <label class="filter-label">文献<select id="docFilter"><option value="all">全部文献</option></select></label>
+                <label class="filter-label">检索通道<select id="modeFilter"><option value="hybrid">BM25 + 图谱链接</option><option value="bm25">BM25 关键词</option></select></label>
+              </div>
+              <div class="query-examples"><span>试试</span><button type="button" class="query-chip" data-query="厂内冷却水过程建模">厂内冷却水</button><button type="button" class="query-chip" data-query="fast sensing early warning slow hydraulic dynamics">快感知与预警</button><button type="button" class="query-chip" data-query="社会脆弱性和人口影响">社会脆弱性</button></div>
+              <label class="generation-toggle" title="只调用明确配置的本机 loopback 模型，无云端回退"><input id="generateToggle" type="checkbox" disabled><span>使用已配置的本地模型生成回答</span><small id="generateToggleNote">默认关闭 · 当前未配置</small></label>
+              <div class="api-action-row">
+                <label class="generation-toggle remote-generation-toggle" title="单次问答只发送问题和最多5条无公式风险证据块"><input id="remoteGenerateToggle" type="checkbox" disabled><span>本次问答使用外部 API</span><small id="remoteGenerateNote">仅本机配置可用</small></label>
+                <button class="secondary-button" id="openApiSettings" type="button">设置模型与 API Key</button>
+              </div>
+              <div class="api-scope-inline"><span id="apiAvailability">本机 loopback 可配置 · 默认不发送</span><span>单次问答上限 5 条安全 evidence blocks；不发送 PDF</span></div>
+            </form>
+            <div class="search-divider"></div>
+            <div class="result-header"><div><h3>检索证据</h3><span id="resultMeta">输入问题后开始检索</span></div><div class="result-sort">按融合排名 <span>⌄</span></div></div>
+            <div id="noticeStack" class="notice-stack"></div>
+            <div id="resultsList" class="results-list"><div class="empty-state"><div class="empty-glyph">⌕</div><strong>从一个可核查的问题开始</strong><p>检索会返回原文证据块及其来源，不会自动把命中解释成研究结论。</p></div></div>
+          </section>
+
+          <aside class="right-rail">
+            <section class="answer-card panel" id="answerPanel">
+              <div class="answer-head"><div class="answer-icon">✳</div><div><div class="panel-eyebrow">EVIDENCE BRIEF</div><h2>证据摘要</h2></div><span class="brief-mode">摘录模式</span></div>
+              <div class="answer-body" id="answerBody"><p class="muted-copy">这里会整理本次检索返回的证据编号与来源。默认不调用生成模型。</p></div>
+              <div class="answer-footer"><div class="safe-dot"></div><span>仅证据包 · 非自动结论</span><button id="copyBrief" type="button" disabled>复制</button></div>
+            </section>
+            <section class="scope-card">
+              <div class="scope-card-top"><span class="scope-icon">!</span><div><strong>研究边界提示</strong><small>PLEASE READ BEFORE INTERPRETING</small></div></div>
+              <ul><li>正式研究仍为 5 篇先导样本；上传文献不会自动扩样。</li><li>PDF-03 / D02 边界未裁定；候选标签不代表批准。</li><li>公式转录、推导与类型分析不进入新版结论或指标。</li></ul>
+              <button class="text-link" data-open-view="about">查看数据与边界 <span>→</span></button>
+            </section>
+            <section class="local-card"><div class="local-card-head"><span class="local-ring">⌂</span><div><strong>本地运行状态</strong><small>LOCAL-FIRST WORKSPACE</small></div></div><div class="local-row"><span>生成模型</span><b id="chatStatus">未配置</b></div><div class="local-row"><span>自动云端回退</span><b class="green-text">已禁用</b></div><div class="local-row"><span>新 PDF 处理</span><b id="uploadStatus">本机隔离 run</b></div></section>
+          </aside>
+        </div>
+        <footer class="page-footer"><span>SECTION2-LLM · LOCAL EVIDENCE WORKSPACE</span><span>BUILD <b id="releaseShort">—</b></span></footer>
+      </section>
+
+      <section class="view" id="view-graph">
+        <div class="page-heading heading-row"><div><div class="eyebrow"><span class="eyebrow-line"></span> KNOWLEDGE GRAPH / PROVENANCE VIEW</div><h1>把每条关联，<em>追到来源。</em></h1><p>图中关系表示“编码、引用或来源归属”；不自动判定证据支持或反驳方向。</p></div><div class="graph-status"><span class="graph-dot"></span><span>PROVISIONAL TRACE GRAPH</span></div></div>
+        <div class="graph-controls panel"><div class="graph-control-left"><label for="graphDirection">查看范围</label><select id="graphDirection"><option value="all">全部既有候选方向</option><option value="3-1">3-1 · 厂内冷却水建模</option><option value="4-1">4-1 · 快感知与慢动态</option><option value="5-1">5-1 · 人口与脆弱性影响</option></select></div><div class="graph-legend"><span><i class="legend-dot dir"></i>既有方向</span><span><i class="legend-dot evidence"></i>证据块</span><span><i class="legend-dot doc"></i>来源文献</span></div><button id="fitGraph" class="secondary-button">重置视图 <span>↗</span></button></div>
+        <div class="graph-layout">
+          <section class="graph-canvas panel"><div class="graph-canvas-head"><div><strong>正式先导语料证据溯源网络</strong><span>点击节点查看出处与记录来源</span></div><span id="graphCount" class="graph-count">—</span></div><div id="graphScroll" class="graph-scroll"><svg id="evidenceGraph" role="img" aria-label="候选研究方向、证据块和来源文献的溯源图"></svg></div></section>
+          <aside class="graph-detail panel" id="graphDetail"><div class="detail-placeholder"><div class="detail-orbit">⌘</div><strong>选择一个节点</strong><p>查看证据原文、页码、引用记录和来源文件。</p></div></aside>
+        </div>
+        <div class="graph-caption"><span class="caption-mark">i</span><p>方向节点与其维度来自既有研究框架；证据节点来自静态先导综合/记录的 evidence ID。图边是追溯元数据，不表示已裁定的支持关系。新上传 run 当前不写入此正式先导图。</p></div>
+        <footer class="page-footer"><span>GRAPH EDGES ARE PROVENANCE LINKS, NOT CAUSAL CLAIMS</span><span>9 ACTIVE DIMENSIONS · D03 EXCLUDED</span></footer>
+      </section>
+
+      <section class="view" id="view-workflow">
+        <div class="page-heading heading-row"><div><div class="eyebrow"><span class="eyebrow-line"></span> ISOLATED RUNS / STEP-BY-STEP</div><h1>每个阶段，<em>先看范围再运行。</em></h1><p>新上传文件保存在本机隔离 run；不会并入正式 5 篇样本。每一步独立确认、记录输入指纹，并在结果画布查看产物。</p></div><div class="workflow-mode-badge"><span class="workflow-dot"></span><span id="workflowAvailability">本机 loopback 工作流</span></div></div>
+        <div class="workflow-boundary panel"><div class="workflow-boundary-icon">⌑</div><div><strong>数据边界</strong><p>上传与 Step 02/03 在本机处理。当前网页只接入真实 Step 1/2 版本化脚本和 Step 3 BM25-only；第 04–07 阶段尚未接入，不会伪装为已完成。批量云端 evidence 发送未获默认授权；现有模型设置仅用于单次问答。</p></div></div>
+        <section class="panel run-picker-panel">
+          <div class="run-picker-top"><div><div class="panel-eyebrow">ISOLATED WORKSPACE</div><h2>选择或创建一次运行</h2></div><div class="run-actions"><button class="secondary-button" id="refreshRuns" type="button">刷新</button><button class="primary-button" id="createRun" type="button">＋ 新建隔离 run</button></div></div>
+          <div class="run-picker-fields"><label>当前 run<select id="runSelect"><option value="">请选择或新建 run</option></select></label><div class="run-meta" id="currentRunMeta">尚无选中的运行。</div></div>
+          <div class="upload-row"><label class="upload-picker" for="pdfFiles"><span>选择 PDF</span><input id="pdfFiles" type="file" accept=".pdf,application/pdf" multiple></label><button class="secondary-button" id="uploadPdfs" type="button" disabled>上传到当前 run</button><span class="upload-limit">最多 10 篇；单篇 ≤50 MB；单 run 合计 ≤120 MB</span></div>
+          <div id="uploadFileList" class="upload-file-list"><span>未选择文件</span></div>
+          <div id="uploadedList" class="uploaded-list"></div>
+        </section>
+
+        <div class="workflow-stage-grid">
+          <article class="stage-card" data-stage-card="01_pdf_registration"><div class="stage-card-top"><span class="stage-number">01</span><span class="stage-state" id="stageState01">等待</span></div><h3>上传与来源登记</h3><p>登记文件名、大小与 SHA-256；文件仅进入此 run 的 uploads/ 子目录。</p><button type="button" class="stage-open-button" data-stage-open="01_pdf_registration">查看登记结果 →</button></article>
+          <article class="stage-card" data-stage-card="02_pdf_clean_chunk"><div class="stage-card-top"><span class="stage-number">02</span><span class="stage-state" id="stageState02">等待</span></div><h3>PDF 清洗与分块</h3><p>本机调用 Step 1 切片器与 Step 2 chunker；公式风险 metadata 保留，不做公式解析。</p><button type="button" class="primary-button stage-run-button" id="runStage02" disabled>确认并运行 Step 02</button></article>
+          <article class="stage-card" data-stage-card="03_bm25_index"><div class="stage-card-top"><span class="stage-number">03</span><span class="stage-state" id="stageState03">未就绪</span></div><h3>本地 BM25 索引</h3><p>从本 run evidence blocks 生成 BM25-only 索引。Dense 与新 run 图谱索引未接入。</p><button type="button" class="primary-button stage-run-button" id="runStage03" disabled>确认并运行 Step 03</button></article>
+          <article class="stage-card stage-card-muted" data-stage-card="04_llm_extract_critic"><div class="stage-card-top"><span class="stage-number">04</span><span class="stage-state">未接入</span></div><h3>LLM 抽取与 Critic</h3><p>新 run 的 v1.2 A/B 批量 runner 尚未迁移到网页。配置单次问答模型不会启动本阶段。</p><button type="button" class="stage-run-button" disabled>未就绪 · 不发送语料</button></article>
+          <article class="stage-card stage-card-muted" data-stage-card="05_human_review_metrics"><div class="stage-card-top"><span class="stage-number">05</span><span class="stage-state">未就绪</span></div><h3>人工核验与指标</h3><p>需真实 Step 04 ledger 和人工审查；不使用 mock/dry-run 填充结果。</p><button type="button" class="stage-run-button" disabled>等待真实 ledger</button></article>
+          <article class="stage-card stage-card-muted" data-stage-card="06_synthesis_frdi"><div class="stage-card-top"><span class="stage-number">06</span><span class="stage-state">未就绪</span></div><h3>跨文献综合与 FRDI</h3><p>只挑战引言中已有的三项方向；PDF-03/D02 未裁定边界保持未裁定。</p><button type="button" class="stage-run-button" disabled>等待 Step 05 审核</button></article>
+          <article class="stage-card stage-card-muted" data-stage-card="07_run_figures_tables"><div class="stage-card-top"><span class="stage-number">07</span><span class="stage-state">未就绪</span></div><h3>图表与章节输出</h3><p>当前图2-1至图2-4图库含历史版本与 v1.2 static-pilot；不代表新 run 产物。</p><button type="button" class="stage-run-button" data-open-view="figures">查看带版本标注的图库 →</button></article>
+        </div>
+
+        <section class="panel workflow-canvas-panel">
+          <div class="workflow-canvas-head"><div><div class="panel-eyebrow">RUN RESULT CANVAS</div><h2 id="workflowCanvasTitle">阶段结果画布</h2><p id="workflowCanvasMeta">选择一个阶段，查看输入范围、状态和产物。</p></div><span class="canvas-stamp" id="workflowCanvasStamp">尚未运行</span></div>
+          <div class="workflow-canvas-layout"><aside class="artifact-list" id="workflowArtifactList"><div class="artifact-empty">当前 run 尚无可查看产物。</div></aside><div class="artifact-preview" id="workflowCanvasContent"><div class="canvas-placeholder"><span>▧</span><strong>结果将在这里展示</strong><p>产物预览会校验 SHA-256；大文件可下载查看。</p></div></div></div>
+          <div class="workflow-search-row" id="workflowSearchRow" hidden><form id="workflowSearchForm"><label for="workflowQuery">在当前隔离 run 做 BM25 检索</label><div><input id="workflowQuery" maxlength="1200" placeholder="输入检索词（不调用模型）"><button class="secondary-button" type="submit">本地检索</button></div></form><div id="workflowSearchResults" class="workflow-search-results"></div></div>
+        </section>
+        <footer class="page-footer"><span>ISOLATED RUNS · OFFICIAL RELEASE REMAINS READ-ONLY</span><span>STAGES 04–07 ARE HONESTLY MARKED NOT READY</span></footer>
+      </section>
+
+      <section class="view" id="view-architecture">
+        <div class="page-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span> PROJECT ARCHITECTURE / METHOD</div><h1>项目结构与方法流程，<em>一图看清。</em></h1><p>图示区分正式只读数据面、隔离上传 run、单次问答外部 API 与尚未接入的批量流程。</p></div></div>
+        <section class="panel diagram-card"><div class="diagram-card-head"><div><div class="panel-eyebrow">SYSTEM ARCHITECTURE</div><h2>项目整体架构图</h2></div><span class="diagram-status">按当前代码接线</span></div><img src="/assets/architecture_system.svg" alt="Section2-LLM 项目整体架构：本机界面、正式只读 release、隔离 run 和显式授权 API" loading="lazy"></section>
+        <section class="panel diagram-card"><div class="diagram-card-head"><div><div class="panel-eyebrow">METHOD WORKFLOW</div><h2>研究方法与逐阶段流程架构图</h2></div><span class="diagram-status warning">未就绪阶段已标注</span></div><img src="/assets/architecture_method.svg" alt="PDF 上传、清洗分块、BM25、LLM 抽取、人工核验、综合和图表输出的方法流程" loading="lazy"></section>
+        <footer class="page-footer"><span>DIAGRAM STATUS FOLLOWS IMPLEMENTED RUNNERS</span><span>NO MOCK RESULTS</span></footer>
+      </section>
+
+      <section class="view" id="view-figures">
+        <div class="page-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span> FIGURE LIBRARY / VERSIONED SOURCES</div><h1>图 2-1 至 2-4，<em>保留版本出处。</em></h1><p>现存图表按版本分开展示。旧图不冒充 v1.2 当前结论；v1.2 static-pilot 图也不是新 run 输出。</p></div></div>
+        <div class="figure-library-note"><strong>版本说明</strong><span>v1.2 text-scope 当前仅有图2-1、图2-3 static-pilot r2；图2-2、图2-4 的 v1.2 对应图尚未生成。历史图保留用于来源追溯，其中旧图2-1/2-2包含已排除的 D03 方程标签，仅作档案查看。</span></div>
+        <div class="figure-grid" id="figureGrid"><div class="empty-state"><div class="empty-glyph">···</div><strong>正在加载图表目录</strong><p>版本来源由平台固定目录读取。</p></div></div>
+        <footer class="page-footer"><span>HISTORICAL FIGURES ARE NOT CURRENT v1.2 OUTPUTS</span><span>FIGURES 2-1 · 2-2 · 2-3 · 2-4</span></footer>
+      </section>
+
+      <section class="view" id="view-library">
+        <div class="page-heading heading-row"><div><div class="eyebrow"><span class="eyebrow-line"></span> SOURCE LIBRARY / HASH-VERIFIED</div><h1>文献库，<em>一篇一条来源链。</em></h1><p>正式 PDF 原件打包在本地 release 中；文献身份使用固定 doc_id，来源指纹只用于完整性检查。</p></div><div class="library-filter"><span>正式批次</span><b>B001 · 5 PDFs</b></div></div>
+        <div class="library-toolbar"><div><strong>正式先导文献</strong><span id="libraryCount">—</span></div><div class="library-note"><i></i> SHA-256 已核对</div></div>
+        <div id="documentGrid" class="document-grid"></div>
+        <footer class="page-footer"><span>READ-ONLY FORMAL SOURCE PACK</span><span>NEW UPLOADS STAY IN ISOLATED RUNS</span></footer>
+      </section>
+
+      <section class="view" id="view-about">
+        <div class="page-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span> RELEASE NOTES / SCOPE & LIMITS</div><h1>可复现，<em>也要可质疑。</em></h1><p>本平台把运行状态、来源版本与尚未裁定事项放在界面内，而不是藏在脚注里。</p></div></div>
+        <div class="about-grid">
+          <section class="panel about-main"><div class="panel-eyebrow">CURRENT RELEASE</div><h2 id="aboutRelease">—</h2><div class="release-stamp"><span class="stamp-icon">✓</span><div><strong>正式只读预览包已通过文件指纹核验</strong><small>不代表知识事实或研究发现已经审核通过</small></div></div><div class="about-table" id="releaseFacts"></div></section>
+          <section class="panel about-boundaries"><div class="panel-eyebrow">SCOPE CONTRACT</div><h2>解释边界</h2><div class="boundary-item"><span>01</span><div><strong>方向来源</strong><p>三项候选方向由论文 Introduction 中的领域文献对比提出。本平台只检索和组织其相关证据，不执行在线方向发现。</p></div></div><div class="boundary-item"><span>02</span><div><strong>正式样本范围</strong><p>正式研究仍是 5 篇 PDF。网页上传建立隔离 run，不等于扩充正式样本；标签缺失不证明领域不存在。</p></div></div><div class="boundary-item warning"><span>03</span><div><strong>PDF-03 / D02 未裁定</strong><p>任何候选标签都不是用户批准或领域专家裁定。平台不会把它升级为定论。</p></div></div><div class="boundary-item"><span>04</span><div><strong>公式范围</strong><p>不做公式转录、推导、变量/符号解释或方程类型分析。原 PDF、evidence blocks 与公式风险 metadata 保留；风险标记不是公式已核验。</p></div></div><div class="boundary-item"><span>05</span><div><strong>云端数据范围</strong><p>现有单次 QA 外发限本次问题与最多5条安全证据块；新 run 批量外发未获默认授权，且网页批量 runner 尚未接入。</p></div></div><div class="boundary-item"><span>06</span><div><strong>阶段状态</strong><p>新 run 当前可执行 Step 02 与 BM25-only Step 03；Step 04–07 未就绪，不以 dry-run/mock 替代真实模型或人工审核。</p></div></div></section>
+        </div>
+        <section class="panel architecture-panel"><div class="arch-heading"><div><div class="panel-eyebrow">LOCAL-FIRST ARCHITECTURE</div><h2>本地数据流</h2></div><span>NO CDN · NO AUTOMATIC CLOUD FALLBACK</span></div><div class="architecture-flow"><div><small>01</small><b>隔离 run<br>PDF登记</b></div><span>→</span><div><small>02</small><b>本机切片<br>证据分块</b></div><span>→</span><div><small>03</small><b>BM25-only<br>索引</b></div><span>→</span><div><small>04–07</small><b>待集成<br>未运行</b></div></div><p class="architecture-note">当前正式 release 仍只读且仅有 5 篇；新上传文件和新产物置于独立 run 目录。Dense 本地查询编码器依赖预备好的本地模型缓存，不会自动下载。</p></section>
+        <footer class="page-footer"><span>PLATFORM LIMITS ARE PART OF THE RELEASE</span><span>SECTION2-LLM</span></footer>
+      </section>
+    </main>
+  </div>
+
+  <dialog class="settings-dialog" id="apiSettingsDialog" aria-labelledby="apiSettingsTitle">
+    <div class="settings-dialog-head"><div><div class="panel-eyebrow">OPTIONAL PROVIDER SETTINGS</div><h2 id="apiSettingsTitle">模型与 API Key</h2></div><button class="icon-button" id="closeApiSettings" type="button" aria-label="关闭">×</button></div>
+    <div class="settings-dialog-body">
+      <div class="api-privacy-note"><strong id="apiAvailabilityTitle">默认不发送研究内容</strong><p>单次问答只有在界面勾选后才会调用所选服务；最多发送当前问题和 5 条非公式风险证据块（每条最多 3500 字符），不发送 PDF。API Key 仅随当前请求使用，不写入文件、浏览器存储或日志。模型目录查询只发送服务商配置与 Key，不发送论文文本。</p></div>
+      <div class="api-fields">
+        <label>接口类型<select id="apiProvider" disabled><option value="cstcloud">CSTCloud Uni-API（优先）</option><option value="openai_compatible">通用 OpenAI-compatible</option></select></label>
+        <label>Base URL<input id="apiBaseUrl" type="url" maxlength="512" autocomplete="off" placeholder="https://uni-api.cstcloud.cn/v1" disabled></label>
+        <label>模型 ID<input id="apiModel" list="apiModelList" maxlength="160" autocomplete="off" placeholder="获取目录或手动填写模型 ID" disabled><datalist id="apiModelList"></datalist></label>
+        <label>API Key<input id="apiKey" type="password" maxlength="4096" autocomplete="off" spellcheck="false" placeholder="仅本次会话使用" disabled></label>
+      </div>
+      <div class="model-catalog-row"><button class="secondary-button" id="loadModelsButton" type="button" disabled>获取可用模型目录</button><span id="modelCatalogStatus">需要在本机 loopback 启动。</span></div>
+      <div class="api-endpoint-note"><b>CSTCloud 预设：</b>固定使用 <code>https://uni-api.cstcloud.cn/v1</code>；实际可用模型以用户账号的实时目录为准。通用 OpenAI-compatible 地址只允许公网 HTTPS `/v1` 服务。</div>
+    </div>
+    <div class="settings-dialog-footer"><span>共享预览禁用凭据输入；不会自动联网或自动回退。</span><button class="primary-button" id="closeApiSettingsFooter" type="button">完成</button></div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="/assets/graph.js" defer></script>
+  <script src="/assets/app.js" defer></script>
+</body>
+</html>
