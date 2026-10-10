@@ -1,0 +1,174 @@
+{
+  "schema_version": "v1.1",
+  "frozen_date": "2026-10-06",
+  "scope_note": "Route A exploratory pilot, 5-paper corpus. Not a 30-paper confirmatory schema instance; relock version if corpus scale changes.",
+  "fallback_states": [
+    "Not_Stated_In_Text",
+    "Explicitly_Not_Considered",
+    "Insufficient_Evidence",
+    "Evidence_Unavailable"
+  ],
+  "own_method_vs_cited_values": [
+    "Paper_Own_Method",
+    "Cited_Other_Work",
+    "Mixed"
+  ],
+  "common_record_fields": {
+    "doc_id": "string, required",
+    "dimension_id": "enum D01..D10, required",
+    "schema_version": "string, required",
+    "primary_label": "string, required (controlled label or fallback state)",
+    "secondary_labels": "array[string], optional (multi-select dimensions only: D03, D08, D10)",
+    "own_method_vs_cited": "enum, required",
+    "mechanism_judgment": "string, required, 1-3 sentences, evidence-grounded",
+    "uncertainty_note": "string, optional",
+    "evidence_ids": "array[string], required unless primary_label in [Not_Stated_In_Text, Evidence_Unavailable]",
+    "verbatim_quote": "string, required unless primary_label == Not_Stated_In_Text",
+    "section_id": "string, required when evidence_ids non-empty",
+    "page_numbers": "array[int], required when evidence_ids non-empty",
+    "equation_detail": "object{equation_number,variables,physical_meaning,page}, optional",
+    "confidence": "float 0.0-1.0, required",
+    "agent_a_model_call_id": "string, required (FK into model_call_manifest)",
+    "agent_b_review": "object, filled in Step 4 by Agent B (see agent_prompts_and_manifest_v1.md)"
+  },
+  "dimensions": {
+    "D01": {
+      "name": "水-电耦合方向",
+      "rq": "RQ1",
+      "select": "single",
+      "labels": [
+        "Water_to_Power",
+        "Power_to_Water",
+        "Bidirectional_Coupled",
+        "Parallel_No_Explicit_Coupling_Equation"
+      ]
+    },
+    "D02": {
+      "name": "厂内冷却水建模",
+      "rq": "RQ1",
+      "select": "single",
+      "labels": [
+        "Explicit_InPlant_Cooling_Model",
+        "Generic_Water_Network_Only",
+        "Both_Present",
+        "Mentioned_Only_Not_Modeled"
+      ]
+    },
+    "D03": {
+      "name": "核心耦合方程类型",
+      "rq": "RQ1",
+      "select": "multi",
+      "labels": [
+        "Hydraulic_Pressure_Flow_Equation",
+        "Energy_Power_Balance_Equation",
+        "Thermal_Hydraulic_Equation",
+        "Economic_Cost_Coupling_Equation",
+        "Statistical_Empirical_Correlation",
+        "Topological_Dependency_Equation",
+        "No_Explicit_Equation_Qualitative_Only"
+      ],
+      "requires_equation_detail_unless": [
+        "No_Explicit_Equation_Qualitative_Only"
+      ]
+    },
+    "D04": {
+      "name": "信息层快感知机制",
+      "rq": "RQ2",
+      "select": "single",
+      "labels": [
+        "Explicit_Fast_Sensing_Mechanism",
+        "Implicit_RealTime_Assumption",
+        "Not_Addressed"
+      ]
+    },
+    "D05": {
+      "name": "水-热-水力慢演化表征",
+      "rq": "RQ2",
+      "select": "single",
+      "labels": [
+        "Explicit_MultiTimescale_Model",
+        "Single_Timescale_Only",
+        "Qualitative_Mention_No_Formal_Model",
+        "Not_Addressed"
+      ]
+    },
+    "D06": {
+      "name": "早期预警/主动控制机制",
+      "rq": "RQ2",
+      "select": "single",
+      "labels": [
+        "Proactive_Anticipatory_Control",
+        "Reactive_Control_Only",
+        "Early_Warning_Alert_Mechanism",
+        "Not_Addressed"
+      ],
+      "aux_fields": {
+        "justification_explicit": "boolean"
+      }
+    },
+    "D07": {
+      "name": "级联故障后果扩展范围",
+      "rq": "RQ3",
+      "select": "single",
+      "labels": [
+        "Physical_Network_Service_Loss_Only",
+        "Economic_Cost_Impact",
+        "Critical_Facility_Impact",
+        "Population_Impact",
+        "Social_Vulnerability_Impact"
+      ]
+    },
+    "D08": {
+      "name": "人类/社会影响终点细节",
+      "rq": "RQ3",
+      "select": "multi",
+      "labels": [
+        "Population_Count_Affected",
+        "Critical_Facility_Service_Disruption",
+        "Social_Vulnerability_Index_Used",
+        "Named_Case_Region_Impact",
+        "None_Reported"
+      ]
+    },
+    "D09": {
+      "name": "案例/验证场景类型",
+      "rq": "RQ3",
+      "select": "single",
+      "labels": [
+        "Synthetic_Test_System_Only",
+        "Real_World_Named_Region",
+        "Hybrid_Synthetic_Calibrated_To_Real_Data",
+        "Not_Applicable_Theoretical_Only"
+      ]
+    },
+    "D10": {
+      "name": "作者承认的局限与未来方向",
+      "rq": "RQ4",
+      "select": "multi",
+      "labels": [
+        "Scalability_Limitation",
+        "Data_Availability_Limitation",
+        "Model_Simplification_Limitation",
+        "Validation_Generalizability_Limitation",
+        "Missing_Factor_Limitation",
+        "Future_Work_Direction",
+        "Not_Stated_In_Text"
+      ],
+      "aux_fields": {
+        "maps_to_chapter": "enum[3,4,5,null], non-binding, excluded from agreement metrics"
+      }
+    }
+  },
+  "version_history": [
+    {
+      "version": "v1.0",
+      "date": "2026-10-06",
+      "note": "Initial frozen version. Used to produce all 50 verified records (B001-PDF-01..05) under this version; immutable snapshot preserved at schema_v1.0_frozen_snapshot.json. Traceable per-call via model_call_manifest.jsonl schema_version field (all 18 entries = v1.0)."
+    },
+    {
+      "version": "v1.1",
+      "date": "2026-10-06",
+      "note": "Same-day revision after Step 5/6 findings (see error_analysis_v1.md §2.1/§2.2 and synthesis_v1.md cluster B discussion). Two changes: (1) Added D03 label 'Topological_Dependency_Equation' to cover explicit graph-topological binary dependency equations (e.g. B001-PDF-03 Eqs.1-5) that no v1.0 D03 label described. (2) Added prose-only 'keyword trap' negative-example guidance to the D05 and D06 codebook sections (schema_v2_D01-D10_codebook.md); no controlled label values changed for D05/D06. Existing v1.0 verified records are NOT retroactively modified; see codebook changelog for full defect description and non-retroactivity policy."
+    }
+  ]
+}

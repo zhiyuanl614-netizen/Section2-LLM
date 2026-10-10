@@ -1,0 +1,28 @@
+{
+  "schema_name": "model_call_manifest",
+  "schema_version": "v1.0",
+  "frozen_date": "2026-10-06",
+  "execution_mode_note": "All Agent A/B calls under this schema are executed directly in-session by Arena.ai Agent Mode (user decision agent_real_llm). No external paid LLM API is called. Fields that assume an external API (provider/model_name/model_version/temperature/seed) are filled with honest placeholder values documented in agent_prompts_and_manifest_v1_LOCKED.md section 1, not fabricated specifics.",
+  "fields": {
+    "call_id": {"type": "string", "required": true, "format": "MC-{doc_id}-{agent}-{pass}-{seq}"},
+    "agent_name": {"type": "string", "enum": ["AgentA", "AgentB"], "required": true},
+    "execution_channel": {"type": "string", "const": "arena_agent_mode_in_session", "required": true},
+    "provider": {"type": "string", "const": "Arena.ai", "required": true},
+    "model_name": {"type": "string", "const": "arena-agent-mode-session-model", "required": true},
+    "model_version": {"type": "string", "const": "not_exposed_by_execution_channel", "required": true},
+    "endpoint": {"type": "string", "const": "N/A_in_session_reasoning_no_external_api_call", "required": true},
+    "prompt_version": {"type": "string", "enum": ["AgentA_prompt_v1.0", "AgentB_prompt_v1.0"], "required": true},
+    "schema_version": {"type": "string", "required": true},
+    "input_hash": {"type": "string", "required": true, "note": "sha256 of concatenated input evidence text_sha256 list + prompt_version + schema_version"},
+    "output_hash": {"type": "string", "required": true, "note": "sha256 of the structured output JSON text"},
+    "temperature": {"type": "string", "const": "not_exposed_by_execution_channel", "required": true},
+    "seed": {"type": "string", "const": "not_available", "required": true},
+    "input_evidence_ids": {"type": "array", "items": "string", "required": true},
+    "input_token_estimate": {"type": "integer", "required": true, "note": "tiktoken cl100k_base estimate, not a real billed token count"},
+    "output_token_estimate": {"type": "integer", "required": true},
+    "retry_count": {"type": "integer", "required": true, "default": 0},
+    "timestamp": {"type": "string", "format": "ISO8601", "required": true},
+    "failure_reason": {"type": ["string", "null"], "required": true},
+    "human_or_agent_reviewed": {"type": "string", "enum": ["agent_only", "agent_assisted_human_pending", "human_reviewed"], "required": true}
+  }
+}

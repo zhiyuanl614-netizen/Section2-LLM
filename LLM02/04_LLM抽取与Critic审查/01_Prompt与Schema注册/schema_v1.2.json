@@ -1,0 +1,230 @@
+{
+  "schema_version": "v1.2",
+  "frozen_date": "2026-10-06",
+  "scope_note": "Route A exploratory pilot, 5-paper corpus. This schema revision aligns evidence operationalization with the user-confirmed formula scope; it does not change the overall research objective, the RQ hierarchy, or the three candidate gap/frontier directions. D01/D02 use clear natural-language evidence. D03 equation-type coding is out of scope; this does not remove the broader RQ1 or claim equations are absent. Preserve original PDFs, Step 1 text, evidence blocks, and risk metadata.",
+  "fallback_states": [
+    "Not_Stated_In_Text",
+    "Explicitly_Not_Considered",
+    "Insufficient_Evidence",
+    "Evidence_Unavailable",
+    "Out_Of_Scope_Formula_Only"
+  ],
+  "own_method_vs_cited_values": [
+    "Paper_Own_Method",
+    "Cited_Other_Work",
+    "Mixed"
+  ],
+  "common_record_fields": {
+    "doc_id": "string, required",
+    "dimension_id": "enum D01..D10, required",
+    "schema_version": "string, required",
+    "primary_label": "string, required (controlled label or fallback state)",
+    "secondary_labels": "array[string], optional (multi-select dimensions only: D08, D10 in v1.2; D03 is a scope-status record, not a multi-select analytic dimension)",
+    "own_method_vs_cited": "enum, required",
+    "mechanism_judgment": "string, required, 1-3 sentences, evidence-grounded",
+    "uncertainty_note": "string, optional",
+    "evidence_ids": "array[string], required unless primary_label in [Not_Stated_In_Text, Evidence_Unavailable, Out_Of_Scope_Formula_Only, Not_Analyzed_Out_Of_Scope]",
+    "verbatim_quote": "string, required for text-supported labels; may be empty for [Not_Stated_In_Text, Evidence_Unavailable, Out_Of_Scope_Formula_Only, Not_Analyzed_Out_Of_Scope]",
+    "section_id": "string, required when evidence_ids non-empty",
+    "page_numbers": "array[int], required when evidence_ids non-empty",
+    "equation_detail": "null/not used in schema v1.2; formula transcription, equation numbers, variables, structure, and derivation are outside scope",
+    "confidence": "float 0.0-1.0, required",
+    "agent_a_model_call_id": "string, required for analyzed D01/D02 and inherited D04-D10 records; null for the D03 Not_Analyzed_Out_Of_Scope status record (no extraction call is made)",
+    "agent_b_review": "object, filled in for analyzed records by the documented review workflow; null for D03 Not_Analyzed_Out_Of_Scope status record"
+  },
+  "dimensions": {
+    "D01": {
+      "name": "水-电耦合方向（文本证据版）",
+      "rq": "RQ1",
+      "select": "single",
+      "labels": [
+        "Water_to_Power",
+        "Power_to_Water",
+        "Bidirectional_Coupled",
+        "Parallel_No_Explicit_Textual_Coupling_Statement"
+      ],
+      "text_evidence_only": true,
+      "interpretation_note": "Parallel_No_Explicit_Textual_Coupling_Statement means no explicit natural-language coupling direction was located in relevant text; it does not imply absence of equations or mathematical coupling."
+    },
+    "D02": {
+      "name": "厂内冷却水建模（文本证据版）",
+      "rq": "RQ1",
+      "select": "single",
+      "labels": [
+        "Explicit_InPlant_Cooling_Model_Described",
+        "Generic_Water_Network_Only",
+        "Both_Present",
+        "Mentioned_Only_Not_Modeled"
+      ],
+      "text_evidence_only": true,
+      "interpretation_note": "Model inclusion must be supported by clear natural-language description. A background/example/limitation mention alone is not an in-plant cooling model. A generic water-supply dependency link to a power plant may be modeled without a cooling-specific process; in that case record both facts, and do not interpret a D02 non-cooling-specific label as absence of all water-to-power dependence. PDF-03 remains a boundary case requiring domain adjudication before freezing.",
+      "boundary_rule": "If a generic multilayer dependency model states that a power plant receives water from a water facility and gives cooling only as an example, but does not describe cooling-specific demand, process, state, constraint, control target, or performance measure, classify D02 by the cooling-specific threshold (provisionally Mentioned_Only_Not_Modeled) and explicitly note that the generic water-to-power dependency is modeled. Do not generalize the D02 label to absence of all interdependence."
+    },
+    "D03": {
+      "name": "核心耦合方程类型（当前范围外状态记录）",
+      "rq": null,
+      "select": "status_only",
+      "labels": [
+        "Not_Analyzed_Out_Of_Scope"
+      ],
+      "scope_status": "out_of_scope",
+      "include_in_research_findings": false,
+      "include_in_label_distribution_or_accuracy_metrics": false,
+      "interpretation_note": "This status excludes equation-type coding only. It does not delete RQ1, candidate gap 3-1, or imply that papers lack equations; textual evidence about cooling-water/model descriptions remains available under D02."
+    },
+    "D04": {
+      "name": "信息层快感知机制",
+      "rq": "RQ2",
+      "select": "single",
+      "labels": [
+        "Explicit_Fast_Sensing_Mechanism",
+        "Implicit_RealTime_Assumption",
+        "Not_Addressed"
+      ]
+    },
+    "D05": {
+      "name": "水-热-水力慢演化表征",
+      "rq": "RQ2",
+      "select": "single",
+      "labels": [
+        "Explicit_MultiTimescale_Model",
+        "Single_Timescale_Only",
+        "Qualitative_Mention_No_Formal_Model",
+        "Not_Addressed"
+      ]
+    },
+    "D06": {
+      "name": "早期预警/主动控制机制",
+      "rq": "RQ2",
+      "select": "single",
+      "labels": [
+        "Proactive_Anticipatory_Control",
+        "Reactive_Control_Only",
+        "Early_Warning_Alert_Mechanism",
+        "Not_Addressed"
+      ],
+      "aux_fields": {
+        "justification_explicit": "boolean"
+      }
+    },
+    "D07": {
+      "name": "级联故障后果扩展范围",
+      "rq": "RQ3",
+      "select": "single",
+      "labels": [
+        "Physical_Network_Service_Loss_Only",
+        "Economic_Cost_Impact",
+        "Critical_Facility_Impact",
+        "Population_Impact",
+        "Social_Vulnerability_Impact"
+      ]
+    },
+    "D08": {
+      "name": "人类/社会影响终点细节",
+      "rq": "RQ3",
+      "select": "multi",
+      "labels": [
+        "Population_Count_Affected",
+        "Critical_Facility_Service_Disruption",
+        "Social_Vulnerability_Index_Used",
+        "Named_Case_Region_Impact",
+        "None_Reported"
+      ]
+    },
+    "D09": {
+      "name": "案例/验证场景类型",
+      "rq": "RQ3",
+      "select": "single",
+      "labels": [
+        "Synthetic_Test_System_Only",
+        "Real_World_Named_Region",
+        "Hybrid_Synthetic_Calibrated_To_Real_Data",
+        "Not_Applicable_Theoretical_Only"
+      ]
+    },
+    "D10": {
+      "name": "作者承认的局限与未来方向",
+      "rq": "RQ4",
+      "select": "multi",
+      "labels": [
+        "Scalability_Limitation",
+        "Data_Availability_Limitation",
+        "Model_Simplification_Limitation",
+        "Validation_Generalizability_Limitation",
+        "Missing_Factor_Limitation",
+        "Future_Work_Direction",
+        "Not_Stated_In_Text"
+      ],
+      "aux_fields": {
+        "maps_to_chapter": "enum[3,4,5,null], non-binding, excluded from agreement metrics"
+      }
+    }
+  },
+  "version_history": [
+    {
+      "version": "v1.0",
+      "date": "2026-10-06",
+      "note": "Initial frozen version. Used to produce all 50 verified records (B001-PDF-01..05) under this version; immutable snapshot preserved at schema_v1.0_frozen_snapshot.json. Traceable per-call via model_call_manifest.jsonl schema_version field (all 18 entries = v1.0)."
+    },
+    {
+      "version": "v1.1",
+      "date": "2026-10-06",
+      "note": "Same-day revision after Step 5/6 findings (see error_analysis_v1.md §2.1/§2.2 and synthesis_v1.md cluster B discussion). Two changes: (1) Added D03 label 'Topological_Dependency_Equation' to cover explicit graph-topological binary dependency equations (e.g. B001-PDF-03 Eqs.1-5) that no v1.0 D03 label described. (2) Added prose-only 'keyword trap' negative-example guidance to the D05 and D06 codebook sections (schema_v2_D01-D10_codebook.md); no controlled label values changed for D05/D06. Existing v1.0 verified records are NOT retroactively modified; see codebook changelog for full defect description and non-retroactivity policy."
+    },
+    {
+      "version": "v1.2",
+      "date": "2026-10-08",
+      "note": "Scope-operationalization revision after user confirmed equation transcription/derivation is outside scope. The overall research objective, original RQ hierarchy, and three candidate gap/frontier directions are preserved. D01/D02 are operationalized from clear natural-language evidence; D03 equation-type coding is not performed and is excluded from findings/metrics, without deleting RQ1 or the broader model/coupling research goal. See schema_v1.2_RQ1_text_scope_revision.md and the 2026-10-08 goal-alignment correction. A source-based same-session review of original PDFs added a D02 boundary rule distinguishing generic power-plant water dependency from cooling-specific process modeling; PDF-03 remains a provisional boundary case, not independently adjudicated. See D02_v1.2_original_pdf_targeted_review_same_session_2026-10-08.md."
+    }
+  ],
+  "revision_date": "2026-10-08",
+  "revision_status": "working_version_scope_aligned; freeze after text-only D01/D02 pilot validation",
+  "formula_policy": {
+    "transcription_or_derivation_in_scope": false,
+    "preserve_original_pdf_step1_and_evidence_blocks": true,
+    "preserve_formula_layout_risk_metadata": true,
+    "narrative_in_formula_risk_block_usable": true,
+    "allowed_only_if_narrative_stands_alone": true,
+    "formula_only_support_status": "Out_Of_Scope_Formula_Only",
+    "equation_detail_field": "must be null for v1.2 outputs; do not infer equation number, variables, math structure, or direction"
+  },
+  "active_analysis_dimensions": [
+    "D01",
+    "D02",
+    "D04",
+    "D05",
+    "D06",
+    "D07",
+    "D08",
+    "D09",
+    "D10"
+  ],
+  "research_questions": {
+    "RQ1": "现有水—电耦合研究如何表征水—电耦合方向、厂内冷却水和核心耦合方程？ (The equation-type/math-structure subdimension is not operationally coded in v1.2; the broader RQ1 and candidate gap 3-1 remain in the research program.)",
+    "RQ2": "现有研究是否利用信息层快感知与水—热—水力慢演化之间的时间尺度差进行早期预警/主动控制？ (Unchanged; linked to candidate gap 4-1.)",
+    "RQ3": "级联故障后果是否从物理网络服务损失延伸到人口、关键民生设施和社会脆弱性？ (Unchanged; linked to candidate gap 5-1.)",
+    "RQ4": "作者明确承认的局限和未来方向是否支持三项候选研究空白？ (Unchanged.)"
+  },
+  "dimension_disposition_labels": {
+    "Not_Analyzed_Out_Of_Scope": "Dimension excluded from analysis by design; not a substantive finding.",
+    "Out_Of_Scope_Formula_Only": "A D01/D02 judgment would depend on equation/math inspection rather than clear text; do not infer, and do not call it absent or unavailable."
+  },
+  "research_program": {
+    "overall_objective": "Learn from literature in the field to propose three candidate research gaps/frontier directions, formulate research questions/hypotheses from them, and use evidence-grounded LLM analysis to test whether the pilot corpus supports, contradicts, or leaves them unresolved.",
+    "candidate_gap_hypotheses_preserved": [
+      {
+        "id": "3-1",
+        "summary": "More detailed in-plant cooling-water process representation jointly considered with power-system operation."
+      },
+      {
+        "id": "4-1",
+        "summary": "Fast cyber/information-layer sensing and its use with slower water/thermal/hydraulic dynamics for early warning or closed-loop control."
+      },
+      {
+        "id": "5-1",
+        "summary": "Extending physical-network service-loss analysis toward critical-facility, population, and social-vulnerability outcomes."
+      }
+    ],
+    "pilot_corpus_note": "The current five PDFs are a pilot sample. Missing or zero D01-D10 labels are normal sample observations; they do not by themselves eliminate a research question or establish a field-wide absence."
+  }
+}

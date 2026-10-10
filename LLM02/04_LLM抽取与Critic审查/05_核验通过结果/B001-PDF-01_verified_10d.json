@@ -1,0 +1,281 @@
+[
+  {
+    "dimension_id": "D01",
+    "primary_label": "Bidirectional_Coupled",
+    "secondary_labels": [],
+    "own_method_vs_cited": "Paper_Own_Method",
+    "mechanism_judgment": "The paper's own two-stage dispatch treats WSS loads (desalination, pumping) as controllable resources driven by MG/EG price and fluctuation signals (Power->Water), while WSS hydraulic stability/split-system constraints bound MG dispatch and the WSS actively supports the external grid (Water->Power), i.e. explicit bidirectional coupling.",
+    "uncertainty_note": null,
+    "evidence_ids": [
+      "B001-PDF-01-ZA-ABSTRACT-C001",
+      "B001-PDF-01-ZB-S06-2-2-C001"
+    ],
+    "verbatim_quote": "the day-head decisions fully consider the real-time power fluctuation, and the real-time stage corrects renewable generation deviation and supports external grid",
+    "equation_detail": null,
+    "confidence": 0.85,
+    "section_id": [
+      "ABSTRACT",
+      "2.2"
+    ],
+    "page_numbers": [
+      1,
+      4
+    ],
+    "doc_id": "B001-PDF-01",
+    "schema_version": "v1.0",
+    "agent_a_model_call_id": "MC-B001-PDF-01-AgentA-pass1-001",
+    "agent_b_review": {
+      "pass2_decision": "accept",
+      "pass2_comment": "Entailment/direction checks pass: abstract and S06-2-2-C001 jointly support both directions (price-driven load control = Power->Water; WSS load shifting supports EG = Water->Power). Evidence check: quotes match verbatim source. [Shared-execution-channel caveat per prompt file section 0 applies.]"
+    },
+    "verification_status": "accepted_pass1"
+  },
+  {
+    "dimension_id": "D02",
+    "primary_label": "Generic_Water_Network_Only",
+    "secondary_labels": [],
+    "own_method_vs_cited": "Paper_Own_Method",
+    "mechanism_judgment": "The water supply model covers desalination (DD), reservoirs, water pumps (WP), water tanks and distribution pipes for island community usage; no power-plant cooling water/condenser thermal process is modeled.",
+    "uncertainty_note": null,
+    "evidence_ids": [
+      "B001-PDF-01-ZB-S05-2-1-C001"
+    ],
+    "verbatim_quote": "The WSS consists of a DD, reservoirs, WPs, WTs, water pipes, and water usage loads.",
+    "equation_detail": null,
+    "confidence": 0.9,
+    "section_id": "2.1",
+    "page_numbers": [
+      3
+    ],
+    "doc_id": "B001-PDF-01",
+    "schema_version": "v1.0",
+    "agent_a_model_call_id": "MC-B001-PDF-01-AgentA-pass1-001",
+    "agent_b_review": {
+      "pass2_decision": "accept",
+      "pass2_comment": "Entailment passes; no cooling-specific language present anywhere in Zone B, correctly excludes Explicit_InPlant_Cooling_Model."
+    },
+    "verification_status": "accepted_pass1"
+  },
+  {
+    "dimension_id": "D03",
+    "primary_label": "Hydraulic_Pressure_Flow_Equation",
+    "secondary_labels": [
+      "Energy_Power_Balance_Equation",
+      "Economic_Cost_Coupling_Equation"
+    ],
+    "own_method_vs_cited": "Paper_Own_Method",
+    "mechanism_judgment": "Eqs (1)-(8) define nodal correlation matrices and pressure/flow balance for the split WSS; Eq (34) balances DD/WP/PV/Wind/Load power; the MILP objective (40) jointly minimizes cost across water and power variables.",
+    "uncertainty_note": null,
+    "evidence_ids": [
+      "B001-PDF-01-ZB-S05-2-1-C001",
+      "B001-PDF-01-ZB-S05-2-1-C002",
+      "B001-PDF-01-ZB-S06-2-2-C003",
+      "B001-PDF-01-ZB-S07-2-3-C001"
+    ],
+    "verbatim_quote": "(1) expresses the nodal correlation relationship before and after the large system splitting, (2) denotes the pipe flow balance constraint",
+    "equation_detail": {
+      "equation_number": "(1)-(8)",
+      "variables": "Z,I,A nodal correlation matrices; Q flow; H pressure head",
+      "physical_meaning": "nodal hydraulic coupling before/after WSS splitting",
+      "page": 3
+    },
+    "confidence": 0.8,
+    "section_id": [
+      "2.1",
+      "2.2",
+      "2.3"
+    ],
+    "page_numbers": [
+      3,
+      5
+    ],
+    "doc_id": "B001-PDF-01",
+    "schema_version": "v1.0",
+    "agent_a_model_call_id": "MC-B001-PDF-01-AgentA-pass1-001",
+    "agent_b_review": {
+      "pass2_decision": "accept",
+      "pass2_comment": "Equation check passes: eq numbers and variable descriptions match the cited evidence blocks' verbatim equation text."
+    },
+    "verification_status": "accepted_pass1"
+  },
+  {
+    "dimension_id": "D04",
+    "primary_label": "Not_Addressed",
+    "secondary_labels": [],
+    "own_method_vs_cited": "Paper_Own_Method",
+    "mechanism_judgment": "No sensing/communication/monitoring architecture is described anywhere in the paper.",
+    "uncertainty_note": null,
+    "evidence_ids": [],
+    "verbatim_quote": null,
+    "equation_detail": null,
+    "confidence": 0.9,
+    "section_id": null,
+    "page_numbers": [],
+    "doc_id": "B001-PDF-01",
+    "schema_version": "v1.0",
+    "agent_a_model_call_id": "MC-B001-PDF-01-AgentA-pass1-001",
+    "agent_b_review": {
+      "pass2_decision": "accept",
+      "pass2_comment": "Independent re-read of all 28 blocks confirms no sensing/communication content."
+    },
+    "verification_status": "accepted_pass1"
+  },
+  {
+    "dimension_id": "D05",
+    "primary_label": "Explicit_MultiTimescale_Model",
+    "secondary_labels": [],
+    "own_method_vs_cited": "Paper_Own_Method",
+    "mechanism_judgment": "The method explicitly separates a day-ahead stage (hourly) from a real-time stage (minute-level, via Latin hypercube sampling), i.e. a formal two-timescale structure.",
+    "uncertainty_note": null,
+    "evidence_ids": [
+      "B001-PDF-01-ZB-S06-2-2-C001",
+      "B001-PDF-01-ZB-S06-2-2-C002"
+    ],
+    "verbatim_quote": "we can use Latin hypercube sampling method to simulate the real-time power on the minute-time scale",
+    "equation_detail": null,
+    "confidence": 0.95,
+    "section_id": "2.2",
+    "page_numbers": [
+      4,
+      5
+    ],
+    "doc_id": "B001-PDF-01",
+    "schema_version": "v1.0",
+    "agent_a_model_call_id": "MC-B001-PDF-01-AgentA-pass1-001",
+    "agent_b_review": {
+      "pass2_decision": "accept",
+      "pass2_comment": "Temporal check passes: day-ahead (hourly) vs real-time (minute, Latin hypercube) is an explicit, well-evidenced two-timescale structure."
+    },
+    "verification_status": "accepted_pass1"
+  },
+  {
+    "dimension_id": "D06",
+    "primary_label": "Proactive_Anticipatory_Control",
+    "secondary_labels": [],
+    "own_method_vs_cited": "Paper_Own_Method",
+    "mechanism_judgment": "The day-ahead stage explicitly hardens the schedule against simulated real-time fluctuation scenarios ahead of time (Latin hypercube sampling of anticipated fluctuation), which is an anticipatory design choice motivated by the stated shortcoming of classic day-ahead models.",
+    "uncertainty_note": "The real-time stage's MPC-based correction could also be read as reactive (responds to realized deviations); primary label reflects the day-ahead stage's explicit anticipatory design, which is the paper's main proactive contribution.",
+    "evidence_ids": [
+      "B001-PDF-01-ZB-S06-2-2-C001",
+      "B001-PDF-01-ZB-S06-2-2-C002"
+    ],
+    "verbatim_quote": "a novel day-head model considering the real-time power fluctuation is proposed",
+    "equation_detail": null,
+    "confidence": 0.75,
+    "justification_explicit": true,
+    "section_id": "2.2",
+    "page_numbers": [
+      4,
+      5
+    ],
+    "doc_id": "B001-PDF-01",
+    "schema_version": "v1.0",
+    "agent_a_model_call_id": "MC-B001-PDF-01-AgentA-pass1-001",
+    "agent_b_review": {
+      "pass2_decision": "accept",
+      "pass2_comment": "Accept with the uncertainty already flagged by Agent A; day-ahead stage is genuinely anticipatory per its own stated design rationale (justification_explicit=true is well supported). No contradiction found in Zone B/C text."
+    },
+    "verification_status": "accepted_pass1"
+  },
+  {
+    "dimension_id": "D07",
+    "primary_label": "Not_Stated_In_Text",
+    "secondary_labels": [],
+    "own_method_vs_cited": "Paper_Own_Method",
+    "mechanism_judgment": "The paper is a steady-state optimal scheduling study with no disturbance/failure scenario or cascading-impact analysis in its own method.",
+    "uncertainty_note": null,
+    "evidence_ids": [],
+    "verbatim_quote": null,
+    "equation_detail": null,
+    "confidence": 0.85,
+    "section_id": null,
+    "page_numbers": [],
+    "doc_id": "B001-PDF-01",
+    "schema_version": "v1.0",
+    "agent_a_model_call_id": "MC-B001-PDF-01-AgentA-pass1-001",
+    "agent_b_review": {
+      "pass2_decision": "accept",
+      "pass2_comment": "Endpoint check passes: confirmed no disturbance/cascading scenario anywhere in the document; Not_Stated_In_Text is the correct fallback (not Explicitly_Not_Considered, since the paper never explicitly disclaims modeling cascading failure -- it simply never addresses it)."
+    },
+    "verification_status": "accepted_pass1"
+  },
+  {
+    "dimension_id": "D08",
+    "primary_label": "None_Reported",
+    "secondary_labels": [],
+    "own_method_vs_cited": "Paper_Own_Method",
+    "mechanism_judgment": "No population, critical-facility, or social-vulnerability impact metric appears anywhere in the case study.",
+    "uncertainty_note": null,
+    "evidence_ids": [],
+    "verbatim_quote": null,
+    "equation_detail": null,
+    "confidence": 0.85,
+    "section_id": null,
+    "page_numbers": [],
+    "doc_id": "B001-PDF-01",
+    "schema_version": "v1.0",
+    "agent_a_model_call_id": "MC-B001-PDF-01-AgentA-pass1-001",
+    "agent_b_review": {
+      "pass2_decision": "accept",
+      "pass2_comment": "Confirmed no human/social impact content anywhere in the document."
+    },
+    "verification_status": "accepted_pass1"
+  },
+  {
+    "dimension_id": "D09",
+    "primary_label": "Synthetic_Test_System_Only",
+    "secondary_labels": [],
+    "own_method_vs_cited": "Paper_Own_Method",
+    "mechanism_judgment": "The case study uses 'the typical WSS [10]' with no named real city/utility; simulations coded in MATLAB/Gurobi on a generic grid-connected MG test setup.",
+    "uncertainty_note": null,
+    "evidence_ids": [
+      "B001-PDF-01-ZD-S09-3-1-C001"
+    ],
+    "verbatim_quote": "A grid-connected MG integrating a WSS is used to verify the effectiveness of the proposed strategy.",
+    "equation_detail": null,
+    "confidence": 0.8,
+    "section_id": "3.1",
+    "page_numbers": [
+      6
+    ],
+    "doc_id": "B001-PDF-01",
+    "schema_version": "v1.0",
+    "agent_a_model_call_id": "MC-B001-PDF-01-AgentA-pass1-001",
+    "agent_b_review": {
+      "pass2_decision": "accept",
+      "pass2_comment": "Evidence check passes; 'typical WSS [10]' with MATLAB/Gurobi simulation and no named city correctly supports Synthetic_Test_System_Only."
+    },
+    "verification_status": "accepted_pass1"
+  },
+  {
+    "dimension_id": "D10",
+    "primary_label": "Validation_Generalizability_Limitation",
+    "secondary_labels": [
+      "Missing_Factor_Limitation",
+      "Future_Work_Direction"
+    ],
+    "own_method_vs_cited": "Paper_Own_Method",
+    "mechanism_judgment": "Revised per Agent B: authors acknowledge neglected theoretical-to-practical details (validation/generalizability gap) AND explicitly flag extreme-weather resilience as a currently-unmodeled factor slated for future work.",
+    "uncertainty_note": null,
+    "evidence_ids": [
+      "B001-PDF-01-ZD-S14-4-C001"
+    ],
+    "verbatim_quote": "some technical details neglected in the theoretical discussion of this paper may be of great importance in practical application. Therefore, we will conduct a real case study in the future. Additionally, the extreme weather significantly affects the reliability of the power supply. The resilience of power gird integrating water supply systems will also our future work.",
+    "equation_detail": null,
+    "confidence": 0.85,
+    "section_id": "4",
+    "page_numbers": [
+      9
+    ],
+    "doc_id": "B001-PDF-01",
+    "schema_version": "v1.0",
+    "agent_a_model_call_id": "MC-B001-PDF-01-AgentA-pass3-001",
+    "agent_b_review": {
+      "pass2_decision": "revise",
+      "pass2_comment": "Entailment check: the quote also explicitly flags extreme-weather resilience as NOT currently modeled ('will also our future work'), which is a named omitted factor, not only a generic future-work pointer. Secondary labels should include Missing_Factor_Limitation in addition to Future_Work_Direction; Agent A's pass-1 secondary_labels list was incomplete.",
+      "pass4_decision": "accept",
+      "pass4_comment": "Revision correctly adds Missing_Factor_Limitation; now fully supported by the verbatim quote. Final."
+    },
+    "verification_status": "accepted_after_revision"
+  }
+]
