@@ -1,0 +1,912 @@
+
+===== PAGE 1 =====
+Demand side management of an urban water supply using wholesale
+electricity price
+R. Kernan ⇑, X. Liu, S. McLoone, B. Fox
+School of Electronics, Electrical Engineering and Computer Science, Queen’s University Belfast, United Kingdom
+h i g h l i g h t s
+ The proposed method provides a realistic method of cost minimisation in a water supply system.
+ Optimisation was carried out on the basis of wholesale electricity cost.
+ This method encourages wind power utilisation without explicit operator intervention.
+ The method was demonstrated on a benchmark simulation system as well as a real water supply network.
+ Water utility costs decreased signiﬁcantly while wind power utilisation increased.
+a r t i c l e
+i n f o
+Article history:
+Received 20 October 2016
+Received in revised form 12 December 2016
+Accepted 15 December 2016
+Available online 23 December 2016
+Keywords:
+Demand side management
+Real time pricing
+Genetic algorithms
+Wind energy
+Renewable energy
+Optimisation
+Water pumping
+a b s t r a c t
+Municipal water supply consumes large quantities of electrical energy to move water from catchment
+areas to service reservoirs near centres of population. Pumping does not necessarily occur round the
+clock, but rather when necessary to uphold constraints relating to reservoir levels and system pressure.
+There is a degree of ﬂexibility in the timing of pumping that makes it an excellent candidate for Demand
+Side Management, meaning that it can provide opportunities for improving power system operation and
+reducing electricity costs for the water utility. The extent of this ﬂexibility depends on a number of fac-
+tors. This study examines the optimisation of two water supply systems - the ‘Van Zyl’ benchmark system
+and a representation of the supply for the city of Belfast, Northern Ireland. The potential to employ intel-
+ligent operation of pumps to help bolster uptake of variable wind generation is assessed, as is quantiﬁ-
+cation of the potential savings for a water utility. The results show signiﬁcant potential savings for the
+water utility as well as a substantial increase in the utilisation of wind power.
+ 2016 Elsevier Ltd. All rights reserved.
+1. Introduction
+The drive to phase out fossil-ﬁred generation has increased
+investment in renewable generation. In Northwest Europe, wind
+is an abundant renewable resource [1], and, as such, signiﬁcant
+efforts have been made to increase the penetration of wind gener-
+ation in power systems.
+Ireland, although composed of two political jurisdictions (the
+Republic of Ireland and Northern Ireland), has one synchronised
+power system and Single Electricity Market (SEM). The Irish power
+system supports a relatively small population of 6.5 million people
+and has 750 MW of HVDC interconnection with Britain [2]. A target
+of 40% of all electricity is to come from renewable sources by 2020,
+predominantly from wind power [3]. This target causes some
+issues for the Irish system, some of which are unique due to its rel-
+ative isolation and limited available interconnection.
+Modern wind turbines, unlike traditional synchronous genera-
+tors, do not provide inertia to the power system as their rotating
+masses are connected to the grid through power electronics. Signif-
+icant power system inertia mitigates frequency transients during
+system faults and large disturbances [4], and hence it is necessary
+to maintain a minimum level of system inertia. Unlike other coun-
+tries with high penetrations of wind power (such as Denmark), Ire-
+land has only limited HVDC interconnection, which provides no
+inertial
+support.
+Because
+of
+this
+constraint,
+System
+Non-
+Synchronous Penetration (SNSP) is currently limited to 55% on
+the Irish power system [5], with any renewable generation above
+this level wasted. Due to its variable nature, wind power is non-
+dispatchable apart from curtailment by a system operator.
+In order to meet the high targets for wind power integration, it
+is estimated that the SNSP limit would have to be raised to 70% to
+http://dx.doi.org/10.1016/j.apenergy.2016.12.082
+0306-2619/ 2016 Elsevier Ltd. All rights reserved.
+⇑Corresponding author.
+E-mail address: rkernan01@qub.ac.uk (R. Kernan).
+Applied Energy 189 (2017) 395–402
+Contents lists available at ScienceDirect
+Applied Energy
+journal homepage: www.elsevier.com/locate/apenergy
+
+===== PAGE 2 =====
+avoid excessive curtailment [2]. This will be a signiﬁcant challenge,
+especially for conventional generators [5], but presupposes that
+generation must be varied to meet a varying demand beyond the
+operator’s inﬂuence. Under this regime, the system operator would
+have more problems when controlling a power system with high
+penetrations of wind power than one without. Dispatchable gener-
+ation would see much greater variation in output in order to
+address wind variability, which is undesirable as it prevents gener-
+ators operating at their most efﬁcient settings.
+Demand Side Management (DSM) provides a means of mitigat-
+ing the regulation duty of conventional generation. DSM has tradi-
+tionally been seen as a method whereby a system operator or
+utility would exert direct control over load [6]. The main contribu-
+tion of this work is in investigating whether market-driven DSM
+can provide improvements in wind power utilisation to the power
+system without explicit system operator intervention, but rather
+by the load responding to changes in system price. This is the ﬁrst
+study to optimise a water network on the basis of Real-Time Pric-
+ing (RTP) and quantify both the energy cost savings and wind
+power utilisation.
+2. Scope for optimising water supply
+2.1. Demand side management
+With DSM, supply of managed load is encouraged when net
+demand (consumer demand less renewable generation) is low.
+The incentive is the lower cost of electricity at such times. Con-
+versely, the supply of managed load is discouraged when net
+demand, and electricity price, are high. The boost to net demand
+when renewable generation is plentiful eases the SNSP constraint.
+DSM is regarded as an important part of the future operation of
+power networks and as such has been the focus of a number of
+studies. Where DSM has been carried out based on energy cost, it
+has primarily been on the basis of Time of Use (ToU) pricing
+[7–9]. These are multi-rate tariffs which change several times a
+day. Although promoting energy use during off-peak times, ToU
+tariffs do not track the actual market price of electricity and thus
+do not provide an incentive for consumers to respond to speciﬁc
+events, such as generator outages or high-wind scenarios. ToU tar-
+iffs reﬂect only the general trends of electricity cost and usually
+have no more than four changes per day. Increased penetrations
+of variable generation such as wind generation mean that price
+peaks do not always occur at the same time of day, as high pene-
+trations of low marginal cost generation during peak times reduce
+the need for low merit generation, thus reducing market prices.
+ToU tariffs do not reﬂect these day-to-day variations. An RTP tariff,
+based on the wholesale cost of electricity, offers a realistic means
+of tracking the variation in system price.
+RTP-based DSM has been implemented in [10–13] with signiﬁ-
+cant savings in energy cost. Finn et al. in [12] optimised residential
+load on the basis of RTP and saw increases in wind power utilisa-
+tion of up to 23.3%, while in [13], RTP-based optimisation of indus-
+trial loads saw wind power utilisation increase by 5.8% while also
+reducing energy cost.
+A common theme is the aggregation of ﬂexible residential loads
+through the use of smart meters and a central controller in order to
+minimise decision making and maximise savings [14,7,8]. Such
+schemes have the disadvantage of involving a large number of
+stakeholders (residential consumers) who must voluntarily submit
+to having their energy consumption controlled externally. How-
+ever, the potential has been shown for signiﬁcant savings in energy
+costs for consumers. Vanthournout et al. in [15] found that it was
+difﬁcult to maintain involvement of residential consumers in RTP
+schemes due to response fatigue - automation was required in
+order to make it viable.
+DSM has also been demonstrated as being viable for provision
+of balancing reserve for wind generation [8].
+Industrial loads frequently have a higher degree of operational
+ﬂexibility than residential loads [11,13]. Industrial consumers rep-
+resent 42% of global electrical consumption. Industrial units are
+large compared to residential or commercial loads and are cen-
+trally controlled and owned, reducing the complexity of co-
+ordination and thus making them very attractive for DSM [16]. In
+[11], DSM of aggregated residential load was compared with that
+of representative commercial demand and a number of typical
+industrial processes. A 10% saving in energy costs was seen with
+the industrial DSM, compared to 5.8% for commercial and 5% for
+residential. Similarly high savings were also seen in [10].
+2.2. Public water supply
+Public water supply is an excellent candidate for the application
+of DSM due its signiﬁcant potential for a large number of operating
+modes. Water networks are centrally owned and controlled and
+would require minimal modiﬁcation to allow optimised operation.
+Water pumping can be classed broadly as an interruptible load.
+In [16], a steel mill was optimised on the basis of several smart
+pricing scenarios. Under each pricing model, optimal scheduling
+resulted in higher proﬁt, although higher proﬁts were seen with
+ToU pricing compared to RTP - the steel mill which was modelled
+operated on a batch cycle, meaning that once a batch started it
+could not be interrupted - making it less suitable for taking advan-
+tage of the higher level of variability of RTP compared to ToU pric-
+ing. Water pumping can be interrupted, provided reservoir level
+constraints are maintained and wear from pump switching is con-
+sidered. The basic layout of a water supply system can be seen in
+Fig. 1. Large, centrally controlled pumps are used to move water
+from catchment areas to service reservoirs (SRs) near centres of
+population, from which water ﬂows to consumers. The hydrostatic
+head of these SRs is used to maintain system pressure and, as long
+as SR water levels are maintained between minimum and
+Nomenclature
+i
+time period (i = 1, 2, . . . , 24, 60 min/period)
+m
+Mourne supply
+n
+Lough Neagh supply
+d
+inside pipe diameter (m)
+hf
+head loss (m)
+C
+Hazen-Williams pipe roughness coefﬁcient
+L
+pipe length (m)
+Q
+volumetric ﬂow rate (m3/s)
+Ei
+electricity cost, ith period (£)
+Wi
+wind generation as % of total in ith period
+Fp;i
+pump p ﬂow rate, ith period (l/s)
+Mi
+energy cost per unit, ith period (£/kW h)
+Dp;i
+ﬂow from service reservoir p; ith period (l/s)
+Pp;i
+pump p energy consumption, ith period (kW h)
+Rp;i
+service reservoir p water volume, ith period (l)
+Rp;max
+maximum water volume, service reservoir p (l)
+Rp;min
+minimum water volume, service reservoir p (l)
+396
+R. Kernan et al. / Applied Energy 189 (2017) 395–402
+
+===== PAGE 3 =====
+maximum levels, there is a high degree of ﬂexibility over the tim-
+ing of pumping. The electricity demand of Northern Ireland Water
+(NIW) accounts for approximately 3% of all electrical demand in
+Northern Ireland, a ﬁgure representative of water supply systems
+worldwide.
+NIW oversees 26,700 km of water mains, supplying 563 million
+litres of water per day to 1.8 million people. A total of 23 impound-
+ing reservoirs supply more than 370 supply reservoirs [17].
+Many of NIW’s facilities are run on ToU tariffs. NIW have carried
+out basic optimisation at some of their pumping stations in the
+past, trying to carry out as much pumping as possible during
+low-price periods.
+In the SEM, System Marginal Price (SMP) changes every 30 min
+and reﬂects the operating cost of the single most expensive gener-
+ator required to fulﬁll demand [18]. The higher the penetration of
+wind generation on the power system, the lower the requirement
+for expensive generation. Since wind is considered to have no mar-
+ginal cost, higher wind penetrations should result in a lower sys-
+tem cost. Fig. 2 shows the ﬁnal SMP plotted against wind
+generation for one month in 2015. It is clear from this graph that
+there is some degree of correlation between wind and SMP: this
+can be explained by the current conservative operation of the
+power system. When wind penetrations are high, marginal gener-
+ation is not decommitted but rather dispatched down. This policy,
+though resulting in generators running at low efﬁciencies, gives
+the system operator a margin for error with regard to wind fore-
+casting uncertainty. At very high wind penetrations such a policy
+would not be justiﬁable.
+SMP-based optimisation of load would nonetheless help to ﬂat-
+ten the demand curve, as it would promote operation during low
+demand and low price scenarios while discouraging consumption
+during peak periods.
+There are several different ‘versions’ of SMP. The actual price
+paid to generators (termed as Ex Post 2 or EP2) is not published
+by the SEM Operator (SEM-O) until four days after the day in ques-
+tion (D+4). A full day forecast (Ex-ante 1, EA1) is made available at
+11:00 one day before actual trading. This is updated at 16:00 with
+the Ex-Ante 2 or EA2 forecast, and again at 9:30 on the day itself
+with the Within Day 1 (WD1) forecast [19]. It is on the basis of
+these forecasts that pumping optimisation is proposed in this
+work. Optimising demand on the basis of the forecast wholesale
+price of electricity could provide a means to increase the uptake
+of wind generation by encouraging demand when wind generation
+is high as well as minimising the price paid by the consumer.
+In [12], Finn et al. carried out a 6-month study on a domestic
+dishwasher, optimising operation based on EA1 and EP2 SMP.
+EP2 optimisation saw energy cost decrease by more than 20%
+and wind power utilisation increase by 23.5%, while EA1 optimisa-
+tion saw a 17.5% reduction in cost and wind power utilisation
+increase by 16.9%. The inherent uncertainty of price forecasting
+means that it would be almost impossible to make the savings seen
+in the EP2 scenario. This study found that scheduling load on the
+basis of the EA1 forecast was a viable way to reduce energy costs
+and improve wind power utilisation.
+In [20], Paudyal et al. applied an industrial load management
+model to a simpliﬁed representation of a water pumping facility,
+based on one day of data relating to an RTP tariff in Ontario,
+Canada. A 38.1% decrease in energy costs compared to non-
+optimised operation was observed. This simulation, although short
+in duration and disregarding hydraulic constraints, is notable in
+that it considers the impact of water pumping optimisation on
+the power system, citing its implementation as a means by which
+system operators could reduce peak demand.
+DSM of water networks is cost effective and technically feasible,
+and price based optimisation of water networks has been carried
+out in the past [20–28].
+3. Optimisation
+Various methods have been proposed for pumping optimisa-
+tion, including linear programming [21], non-linear programming
+[22] and dynamic programming [23]. Heuristic methods, particu-
+larly Genetic Algorithms (GAs), have been used successfully in a
+number of studies, as they avoid the combinatorial explosion
+inherent in other methods [25–28].
+GAs are meta-heuristic algorithms which simulate evolution
+and natural selection to select solutions in a given generation
+based on a measure of ﬁtness (the ﬁtness function). The algorithm
+initialises by randomly creating a population of potential solutions.
+The ﬁttest solutions in each generation are bred with each other
+(crossover) to create the next generation. An individual solution’s
+chance of survival is proportional to its ﬁtness. Random mutation
+is employed in order to diversify the population and reduce the
+likelihood of convergence to a non-global optimum [29]. Mutation
+and crossover are controlled by predeﬁned probabilities. There are
+a number of different ways of deﬁning how many individuals sur-
+vive from one generation to the next - elitism was used here to
+ensure that the ﬁttest individual in a given generation was carried
+forward to the next.
+Fig. 1. Layout of a water supply network.
+Fig. 2. SMP and wind generation, June 2015.
+R. Kernan et al. / Applied Energy 189 (2017) 395–402
+397
+
+===== PAGE 4 =====
+4. Water network modelling and speciﬁcation
+In this work, the pumping schedules of two water supply sys-
+tems were optimised - the ‘Van Zyl’ benchmark network, ﬁrst pro-
+posed in [25], and the high-level supply of the city of Belfast,
+Northern Ireland. Optimisation was carried out using the ‘pye-
+volve’ toolkit in Python, integrated with the EPANET water net-
+work modelling software [24]. Potential solutions were generated
+by a GA, which were then evaluated for violation of hydraulic con-
+straints in EPANET before being passed back to the GA to evaluate
+reservoir level and maximum daily ﬂow constraints. Feasible solu-
+tions were scored on the basis of the optimisation objective (ﬁtness
+function), depending on the scenario.
+4.1. ‘Van Zyl’ benchmark system
+The ‘Van Zyl’ test system was ﬁrst used by Van Zyl et al. in [25]
+and has been frequently used as a benchmark system for testing
+optimisation algorithms and investigating new operating proce-
+dures. It consists of a reservoir supplying two tanks (at different
+altitudes) via two primary pumps and one boost pump (see
+Fig. 3, full system speciﬁcation in [25]). Demand is taken from
+one node situated between both tanks. There are a large number
+of potential operating modes for this system, making it an excel-
+lent candidate for optimisation and testing of algorithms. Pump
+power varies slightly depending on the system pressure, but the
+primary pumps have an operating power of up to 200 kW while
+the boost pump consumes up to 50 kW.
+4.2. Belfast system
+The largest component of NIW’s supply network is that of the
+city of Belfast. A model of the Belfast water supply system was
+developed using data made available by NIW. Belfast is a
+medium-sized city of approximately 500 k inhabitants, who each
+consume 360 l/day of water on average [17]. Belfast’s water supply
+system is representative of water supply systems on the island of
+Ireland, where the power system data from this study was taken.
+The Belfast water network has a number of interesting charac-
+teristics. Most of the city’s water supply comes from two catch-
+ments: the Mourne mountains to the South, and Lough Neagh to
+the Northwest (Fig. 4). The pumps at Dunore Point (part of the
+Lough Neagh supply) operate against a greater hydraulic head than
+those of the Mourne Conduit. Because of this, energy consumption
+of the Lough Neagh supply is higher than the Mourne supply. How-
+ever, there is a limit of 130 Ml/day on abstraction from the Silent
+Valley reservoir in the Mournes, ensuring that both the Mourne
+and Lough Neagh supplies are always available to provide Belfast’s
+water. Details of both sources can be seen in Table 1.
+Data for the Belfast system were obtained from NIW’s Asset
+Management division, as well as from Ordnance Survey maps
+and NIW press releases [30–32]. Due to the difﬁculty with access-
+ing speciﬁc data on system operation, a number of approximations
+were necessary. Service reservoir capacities were inferred from
+satellite data, while pump power was calculated from pump ﬂow
+rates and system head. Pumps were modelled as single-speed
+units. The water supply of Belfast is not isolated from the rest of
+the Northern Ireland network, and a small proportion of the water
+carried is diverted to other areas. In order to reduce the computa-
+tional complexity of the model this off-take was ignored, and Bel-
+fast itself was represented as four equal demand nodes. Static head
+from the SRs was used to provide system pressure in the city.
+4.3. Scenarios
+For both models, four scenarios were considered:
+ Minimise consumption - Minimising energy consumption and
+calculating cost on the basis of ﬁnal EP2 price (base case).
+ EP2 - Minimising cost on the basis of the ﬁnal EP2 price.
+ EA1 - Minimising cost on the basis of EA1 forecast price and
+calculating cost on the basis of ﬁnal EP2 price.
+Fig. 3. ‘Van Zyl’ test system.
+Fig. 4. Simpliﬁed representation of Belfast water supply (EPANET).
+Table 1
+Belfast’s main sources of water [30,31].
+Mourne Conduit
+Lough Neagh
+Pipe length
+56 km
+18 km
+Service reservoir
+150 Ml
+200 Ml
+capacity (approx.a)
+Total head gain
+76 m
+90 m
+Max pumped ﬂow
+130 Ml/day
+180 Ml/day
+Pump powera
+1.2 MW
+3 MW
+a Approximated from available data.
+398
+R. Kernan et al. / Applied Energy 189 (2017) 395–402
+
+===== PAGE 5 =====
+ Maximise wind - Maximise wind power utilisation by aligning
+demand as much as possible with periods of high wind
+penetration.
+4.4. Optimisation method
+Both systems were optimised on a daily basis in the period 1
+April 2012–31 March 2015. Real data for EA1 and EP2 SMP were
+used as inputs, as were data for wind generation and penetration.
+Water demand proﬁles were taken from data supplied by NIW for
+previous work [33], and scaled according to the size of the system.
+A GA was used for the main optimisation, which integrated with
+the EPANET hydraulic solver to assess the viability of potential
+solutions. Candidate solutions were 72-bit binary strings in the
+case of the ‘Van Zyl’ model and 48-bit strings in the Belfast model,
+corresponding to the operation of each pump modelled hourly over
+a 24-h period. Hydraulically infeasible solutions were penalised,
+and feasible solutions scored based on the objective function of
+the scenario modelled. A solution was produced for each day in
+the modelled period, with the outputs at the end of each day used
+as the initial conditions of the following day.
+In the ‘Van Zyl’ model, 150 generations of GA were used, while
+50 were used in the Belfast model. Both used a population of 200.
+The crossover rate was 100%, meaning all solutions were ‘inter-
+bred’. The mutation rate was 3%. These ﬁgures were arrived at
+through empirical evaluation. A ﬂowchart of the methodology
+can be seen in Fig. 5.
+4.5. Objective function
+For each scenario, the optimisation objective function was dif-
+ferent. In the EA1 and EP2 scenarios, the objective was minimisa-
+tion of cost (Eq. (1)).
+minimise :
+X
+24
+i¼1
+Ei
+ð1Þ
+In the ‘minimise consumption’ scenario, it was to minimise the
+overall quantity of energy consumed (Eq. (2)).
+minimise :
+X
+24
+i¼1
+Pp;i
+8p
+ð2Þ
+The objective of the ‘max wind’ scenario was to maximise the
+quantity of wind energy consumed (Eq. (3)).
+maximise :
+X
+24
+i¼1
+Wi
+ð3Þ
+4.6. Constraints
+For both service reservoirs, the reservoir level at time period i
+was equal to the reservoir level at time period i  1 minus the out-
+ﬂow during i  1 plus the inﬂow during i  1.
+Rp;i ¼ Rp;i1  Dp;i1 þ Fp;i1
+8p8i
+ð4Þ
+The cost of electricity consumption during time period i was
+equal to the unit cost of electricity during i multiplied by the power
+consumption of the pumps during the same period.
+Ei ¼ MiPp;i
+8p8i
+ð5Þ
+SR levels were allowed to vary between speciﬁed minimum and
+maximum levels (Eq. (6)).
+Rp;min 6 Rp;i 6 Rp;max
+8p8i
+ð6Þ
+4.7. Belfast model constraints
+There were two constraints implemented in the Belfast model
+that were not in the ‘Van Zyl’ model - abstraction from Silent Val-
+ley Reservoir was limited to 130 Ml per day, and a ‘mass balance’
+constraint was enforced, requiring SR water levels to be at least
+90% of initial level (on 1 April 2012) at the end of each day (see
+Eq. (7)). The ‘mass balance’ constraint was necessary to prevent
+reservoirs having insufﬁcient capacity for high-demand days.
+X
+24
+i¼1
+Fm 6 130  106
+Rp;i¼24 P 0:9Rp;initial
+8p
+ð7Þ
+4.8. Hydraulic modelling
+The Hazen-Williams equation (Eq. (8)), [34] is an empirical for-
+mula which models the pressure drop of water ﬂowing in pipes.
+The EPANET solver uses this equation to calculate system pressure
+losses, allowing accurate calculation of F and D at each time step.
+Pipes were modelled as plastic-lined, with a roughness coefﬁcient
+(C) of 130.
+hf
+L ¼ 10:67Q 1:85
+C1:85d
+4:87
+ð8Þ
+5. Results
+The algorithm output data for each day showing reservoir level
+variation, pump operation, ﬂow rates, energy consumption and
+ﬁnal solution feasibility (a feasible solution was found for all days
+with both models). Table 2 provides a summary of the salient data.
+Fig. 5. Genetic algorithm and model methodology.
+R. Kernan et al. / Applied Energy 189 (2017) 395–402
+399
+
+===== PAGE 6 =====
+5.1. ‘Van Zyl’ model
+Despite serving the same demand, the scenarios modelled
+showed a signiﬁcant variation in the total amount of water
+pumped. This is because pump 3B (see Fig. 3) acted as a top-up
+pump, transferring water from one SR to another. The ‘max wind’
+scenario saw this pump used extensively, thus resulting in the
+higher energy consumption and pumped ﬂow averages that can
+be seen in Table 2.
+The ‘minimise consumption’ scenario consumed 2% less elec-
+tricity then any other scenario while also maintaining the lowest
+average value of pumped ﬂow. Despite this, it was the most expen-
+sive scenario, costing 13.4% more than the EP2-based optimisation
+(Fig. 6).
+All scenarios showed an increase of wind power contribution
+compared to the system average (Fig. 7). Optimising on the basis
+of the wind penetration saw a large increase of wind contribution
+- 18.2% higher than what would be expected from the system
+average.
+EA1 forecast price was consistently lower than the ﬁnal EP2
+price (underestimating ﬁnal cost by 13.6% on average) but was still
+cheaper than two of the three other scenarios. This optimisation
+also showed similar contributions from wind power to the EP2
+case.
+5.2. Belfast model
+All four scenarios of the Belfast model showed very similar val-
+ues for total pumped ﬂow, as would be expected from the radial
+nature of this network. Energy consumption and pumped ﬂow do
+not correlate directly due to the different energy consumptions
+of both supplies, and the fact that the relationship between ﬂow
+rate and power depend on the operating head of the system, which
+vary due to the level in the SRs. The ‘max wind’ scenario, which
+paid no heed to the cost or quantity of energy, gave the highest val-
+ues for pumped ﬂow and power consumption but also saw a 19.7%
+increase in wind contribution compared to the system average
+(Fig. 9) while also being 10.4% cheaper than the ‘minimise con-
+sumption’ scenario.
+A similar pattern of operating cost was evident for the Belfast
+model as for the ‘Van Zyl’ model: EP2 optimisation was the cheap-
+est, followed by EA1. The one exception to this was the ‘minimise
+consumption’ scenario - this actually produced higher power con-
+sumption than either the EA1 or EP2 optimisations. This is due to a
+cycle observed in the output data, caused by the 24-h horizon of
+the optimisation - initially, both service reservoirs would be
+allowed to drain as much as possible in order to minimise pump-
+ing. As the optimisation started again for the following day, both
+reservoirs would be depleted and signiﬁcant pumping would be
+required to maintain water supply. The Lough Neagh supply con-
+sumed approximately 2.5 times more energy for each litre of water
+pumped compared to the Mourne supply. In the price- and wind-
+based scenarios, more use was made of the cheaper Mourne sup-
+ply, thus reducing the need for the more expensive Lough Neagh
+water. In the Belfast model, ‘max wind’, was cheaper than ‘min-
+imise consumption’ (Fig. 8). This may have been due to the fact
+that the ‘Van Zyl’ ‘max wind’ scenario consumed signiﬁcantly more
+power than the other scenarios (thus increasing energy cost) while
+the Belfast ‘max wind’ scenario consumed only slightly more.
+Table 2
+Summary of results, April 2012–March 2015.
+Daily Averages
+Min. Cons.
+EA1
+EP2
+Max. Wind
+‘Van Zyl’ model
+Energy consumption (kW h)
+3628
+3705
+3713
+3885
+Final (EP2) cost (£)
+189.6
+173.8
+164.2
+183.1
+EP2 unit cost (p/kW h)
+4.79
+4.69
+4.42
+4.71
+Pumped ﬂow (m3)
+14,885
+15,359
+15,613
+16,229
+Cost per m3 pumped (p)
+1.274
+1.131
+1.052
+1.128
+Expected wind contribution (kW h) (18.65% system av. penetration)
+676.6
+690.8
+692.4
+724.4
+Wind contribution (kW h)
+689.8 (+1.95%)
+732.7 (+6.06%)
+745.9 (+ 7.73%)
+856 (+18.17%)
+Belfast model
+Energy consumption (kW h)
+55,250
+55,071
+55,045
+55,874
+Final (EP2) cost (£)
+2846
+2425
+2278
+2550
+EP2 unit cost (p/kW h)
+5.15
+4.40
+4.14
+4.56
+Pumped ﬂow (m3)
+180,449
+180,873
+180,903
+185,957
+Cost per m3 pumped (p)
+1.577
+1.341
+1.259
+1.371
+Expected wind contribution (kW h) (18.65% system av. penetration)
+10,303
+10,270
+10,265
+10,419
+Wind contribution (kW h)
+10,473 (+1.65%)
+11,066 (+7.75%)
+11,352 (+ 10.60%)
+12,467 (+19.65%)
+Fig. 6. Average SMP energy cost, ‘Van Zyl’ model.
+Fig. 7. Average contribution of energy consumption from wind, ‘Van Zyl’ model.
+400
+R. Kernan et al. / Applied Energy 189 (2017) 395–402
+
+===== PAGE 7 =====
+EA1 optimisation underestimated the ﬁnal EP2 cost by 13.8% on
+average but saw an increase in wind power contribution of 7.8%.
+On average, across all scenarios, the Lough Neagh supply pro-
+vided 51% more water than the Mourne supply, due to the con-
+straint on abstraction from Silent Valley and the larger volume of
+the Hydepark SR. 0.16 kW h were used by the Mourne supply
+pumps for each m3 of water supplied, while the Lough Neagh
+pumps consumed 0.4 kW h for each m3 pumped. This was consis-
+tent across all scenarios and is due to the fact that the Lough Neagh
+pumps had to pump against a head of 90 m, while the Mourne
+pumps were moving water against a negative head (76 m).
+6. Discussion
+In this research, two water supply systems (the ‘Van Zyl’ test
+system and a model representing the supply for the city of Belfast)
+were optimised on the basis of minimising electricity consump-
+tion, maximising wind power contribution, and minimising elec-
+tricity
+cost
+(using
+both
+forecast
+and
+actual
+system
+price).
+Pumping costs and contribution from wind power were quantiﬁed,
+with the Belfast model giving results consistent with the bench-
+mark system.
+EP2 optimisation was consistently the least expensive, as might
+be expected as EP2 represents the ﬁnal cost of wholesale electric-
+ity. It would not be possible to optimise on the basis of EP2 in real-
+ity as it is not known until four days after the event, but it
+represents the most cost-efﬁcient operation possible. EA1 optimi-
+sation is achievable, as EA1 data are made available one day in
+advance. Despite underestimating ﬁnal costs by approximately
+14%, EA1-based optimisation nonetheless represented a signiﬁcant
+saving compared to the non-price-based scenarios. A water utility
+optimising pumping on the basis of the publicly available SMP
+forecast could make signiﬁcant savings compared to normal
+operation.
+It should be noted that all prices discussed here are wholesale
+prices - they do not reﬂect the ﬁnal price a customer would pay
+as SMP does not include the cost of distribution or transmission.
+It can be reasonably assumed that this added cost would be fairly
+constant [35] and would not affect the results seen here, other than
+to increase the cost of all scenarios by a comparable margin. A fur-
+ther limitation is that neither of the models analysed here included
+constraints relating to water treatment, which is either a continu-
+ous or batch process. Water is treated before being pumped to ser-
+vice reservoirs, with the treatment plant usually being on the same
+site as the pumping station (as is the case with both Dunore Point
+and Drumaroad). The Belfast model represents a simpliﬁcation of
+the reality, in that the city itself was modelled as four demand
+nodes and offtake from both conduits for other areas were ignored;
+however, this should not have a signiﬁcant effect on the results as
+the demand was scaled to compensate for the excess water that
+would have otherwise served areas beyond Belfast, and ﬂow within
+the Belfast network itself would have little bearing on the demand
+from the SRs.
+For both models, the ‘max wind’ scenario showed a signiﬁcant
+cost saving compared to the ‘minimise consumption’ scenario.
+Both SMP-based optimisations also showed signiﬁcant increases
+in wind power contribution compared to both the system average
+and the ‘minimise consumption’ scenario. This reinforces the sug-
+gestion that there is a correlation between wind penetration and
+system price. While not as conducive to high wind contributions
+as wind-based optimisation, SMP-based optimisation represents
+a viable means of incentivising demand to react to wind genera-
+tion. However, the difference in wind contribution between the
+EA1 and EP2 scenarios shows that this link is dependent on the
+accuracy of wind forecasting in the operation of the electricity
+market. The very high increases in wind contribution seen in the
+‘maximise wind’ scenario are also unlikely to be achievable in real-
+ity as they are based on perfect foresight of wind generation.
+In the Irish SEM, the EA1 forecast is updated later on D-1 with
+an EA2 forecast, and then again on the morning of the day itself
+with the WD1 forecast. In practice, an EA1-based pumping sched-
+ule could be updated when these forecasts are released. The
+increased accuracy of these forecasts should correlate with costs
+and wind contributions closer to those seen in the EP2 scenario.
+High-wind events are frequently multi-day, and so if a period of
+sustained high wind was forecast, relaxing the mass balance con-
+straint of the Belfast system could allow tanks to be ﬁlled during
+this period of low cost generation, or allow the water level to grad-
+ually deplete in anticipation of such an event.
+7. Conclusion
+The main contribution of this study is in showing that price-
+based optimisation of water supply provides an opportunity to
+beneﬁt both the water utility (through reduced cost) and the
+power system (through increased uptake of wind power). Provid-
+ing that the consumer is paying a tariff based on the wholesale cost
+of energy, optimising pump operation on the basis of an SMP fore-
+cast would allow the water utility to make signiﬁcant cost savings
+compared to normal operation while increasing utilisation of wind
+generation. In a market such as the Irish SEM, where wind power is
+price-taking rather than price-making, optimising on the basis of
+SMP effectively amounts to market-driven DSM (rather than that
+which involves explicit operator control) which has the advantage
+of encouraging alignment of energy consumption with wind gener-
+ation. Optimising on the basis of the wind penetration itself
+Fig. 8. Average SMP energy cost, Belfast model.
+Fig. 9. Average contribution of energy consumption from wind, Belfast model.
+R. Kernan et al. / Applied Energy 189 (2017) 395–402
+401
+
+===== PAGE 8 =====
+increases the contribution of wind generation even further, while
+still reducing the cost of electricity. Implementing this in reality
+would be a more explicit form of DSM, either by direct signal from
+the energy utility or by designing a tariff based entirely on wind
+generation rather than SMP.
+Both approaches provide advantages for both consumer and
+system, but a trade-off is required between cost and wind power
+uptake. If the system operator wished to maximise wind genera-
+tion to the fullest extent, more explicit DSM would be desirable,
+thus providing the beneﬁt seen in the ‘max. wind’ scenario here.
+However, if ﬂattening of the load curve was also a priority for
+the system then SMP-based optimisation would be advantageous
+in that it would discourage load during peak times (which, due
+to variable generation, do not always occur at the times reﬂected
+by standard multi-rate tariffs) while also, to a certain extent, pro-
+moting utilisation of wind power.
+The methodology used here could be applied to any water sup-
+ply system, with modiﬁcations to suit the needs of the particular
+system - for example, to take account of water treatment con-
+straints, or daily or seasonal limits on water abstraction. The effec-
+tiveness of the method would in large part be dictated by the ﬂow
+rate of the pumps and storage capacity of service reservoirs in rela-
+tion to the water demand. It should also be noted that the
+approach detailed here could be applied to any dispatchable load.
+If implemented on a sufﬁcient scale, it would reduce both the need
+for thermal generation and for wind power curtailment.
+Acknowledgement
+The authors would like to thank Northern Ireland Water for the
+provision of data and access to system information, and the NI
+Department of Employment and Learning for project funding.
+References
+[1] European Environment Agency. Europe’s onshore and offshore wind energy
+potential.
+Tech.
+rep.
+no.
+6/2009.
+Available
+<https://www.energy.eu/
+publications/a07.pdf>.
+[2] McGarrigle EV, Deane JP, Leahy PG. How much wind power will be curtailed on
+the 2020 Irish power system? Renew Energy 2013;55:544–53.
+[3] Sustainable Energy Authority of Ireland. Ireland’s energy targets: progress,
+ambition and impacts – summary for policy makers. Tech. Rep.; April 2016.
+Available
+<https://www.seai.ie/Publications/Statistics_Publications/Energy_
+Modelling_Group_Publications/Ireland>.
+[4] Wu D, Javadi M, Jiang JN. A preliminary study of impact of reduced system
+inertia in a low-carbon power system. J Mod Power Syst Clean Energy 2015;3
+(1):82–92.
+[5] Eirgrid Group. DS3 programme operational capability outlook 2016. Tech. Rep.
+Available
+<http://www.eirgridgroup.com/site-ﬁles/library/EirGrid/DS3-
+Operational-Capability-Outlook-2016.pdf>.
+[6] Cohen AI, Wang CC. An optimization method for load management scheduling.
+IEEE Trans Power Syst 1988;3(2):612–8.
+[7] Adika CO, Wang L. Autonomous appliance scheduling for household energy
+management. IEEE Trans Smart Grid 2014;5(2):673–82.
+[8] Pourmousavi SA, Patrick SN, Nehrir MH. Real-time demand response through
+aggregate electric water heaters for load shifting and balancing wind
+generation. IEEE Trans Smart Grid 2014;5(2):769–77.
+[9] van Staden AJ, Zhang J, Xia X. A model predictive control strategy for load
+shifting in a water pumping scheme with maximum demand charges. Appl
+Energy 2011;88:4785–94.
+[10] Roos JG, Lane IE. Industrial power demand response analysis for one-part real-
+time pricing. IEEE Trans Power Syst 1998;13(1):159–64.
+[11] Logenthiran T, Srinivasan D, Shun TZ. Demand side management in smart grid
+using heuristic optimization. IEEE Trans Smart Grid 2012;3(3):1244–52.
+[12] Finn P, O’Connell M, Fitzpatrick C. Demand side management of a domestic
+dishwasher:
+wind
+energy
+gains,
+ﬁnancial
+savings
+and
+peak-time
+load
+reduction. Appl Energy 2013;101:678–85.
+[13] Finn P, Fitzpatrick C. Demand side management of industrial electricity
+consumption: promoting the use of renewable energy through real-time
+pricing. Appl Energy 2014;113:11–21.
+[14] Qian LP, Zhang YJ, Huang J, Wu Y. Demand response management via real-time
+electricity price control in smart grids. IEEE J Sel Areas Commun 2013;31
+(7):1268–80.
+[15] Vanthournout K, Dupont B, Foubert W, Stuckens C, Claessens S. An automated
+residential demand response pilot experiment, based on day-ahead dynamic
+pricing. Appl Energy 2015;155:195–203.
+[16] Gholian A, Mohsenian-Rad H, Hua Y. Optimal industrial load control in smart
+grid. IEEE Trans Smart Grid 2016;7(6):2305–16.
+[17] NI Water. Annual report 2014-15. Available <https://www.niwater.com/
+siteﬁles/resources/pdf/reports/annualreport/niwannualreport2014-15.pdf>.
+[18] CER. CER factsheet on the single electricity market; 2011. Available <http://
+www.cer.ie/docs/000262/cer11075.pdf>.
+[19] SEM-O. Pricing and scheduling frequently asked questions. Available <http://
+www.sem-o.com/Publications/General/Pricing>.
+[20] Paudyal S, Cañizares CA, Bhattacharya K. Optimal operation of industrial
+energy hubs in smart grids. IEEE Trans Smart Grid 2015;6(2):684–94.
+[21] Jowitt PW, Germanopoulos G. Optimal pump scheduling in water-supply
+networks. J Water Res Plann Manage 1993;118(4):406–22.
+[22] Chase DV, Ormsbee LE. Computer-generated pumping schedules for satisfying
+operating objectives. J Am Water Works Assoc 1993;85(7):54–61.
+[23] Zhuan X, Xia X. Optimal operation scheduling of a pumping station with
+multiple pumps. Appl Energy 2013;103:250–7.
+[24] US Environmental Protection Agency. EPANET. Available <https://www.
+epa.gov/water-research/epanet>.
+[25] Van Zyl JE, Savic DA, Walters GA. Operational optimization of water
+distribution systems using a hybrid genetic algorithm. J Water Res Plann
+Manage 2004;130(2):2004.
+[26] López-Ibáñez M, Devi Prasad T, Paechter B. Optimal pump scheduling:
+representation and multiple objectives. Edinburgh, Scotland: CEC, Napier
+University; 2012. Tech. Rep..
+[27] Moreira DF, Ramos HM. Energy cost optimization in a water supply system
+case study. Hindawi J Energy 2013.
+[28] Ramos HM, Costa LHM, Gonçalves FV. Energy efﬁciency in water supply
+systems: GA for pump schedule optimization and ANN for hybrid energy
+prediction. Intech Water Supply System Analysis – Selected Topics; 2012
+[chapter 4].
+[29] Goldberg DE. Genetic algorithms in search, optimization and machine
+learning. Boston, USA: Addison-Wesley Longman; 1989.
+[30] UK
+Water
+Projects
+2009.
+Project
+Alpha.
+Available
+<http://www.
+waterprojectsonline.com/case_studies/2009/NIW_Alpha_2009.pdf>.
+[31] NI
+Water.
+Silent
+Valley
+information
+leaﬂet.
+Available
+<https://www.
+niwater.com/siteﬁles/resources/pdf/silent-valley-information-leaﬂet.pdf>.
+[32] UK Water Projects 2003. Aquarius 3 Mourne water treatment works. Tech Rep.
+Available: <http://www.waterprojectsonline.com/case_studies/2003/NI_Water_
+Mourne_2003.pdf>.
+[33] Kernan R, Liu X, McLoone S, Fox B. Management of public water supply to
+reduce power cost and improve wind power uptake. Presented at the 16th
+IEEE EEEIC, Florence, Italy; 2016.
+[34] American Society of Plumbing Engineers. Hazen Williams formula. Plumbing
+Engineering and Design Handbook of Tables. Available <https://www.aspe.
+org/sites/default/ﬁles/webfm/pdfs/TableBookErrata.pdf>.
+[35] CER. Factsheet: electricity prices in Ireland. Tech. Rep. Available <http://www.
+cer.ie/docs/000671/cer10062.pdf>.
+402
+R. Kernan et al. / Applied Energy 189 (2017) 395–402

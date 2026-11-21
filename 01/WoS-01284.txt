@@ -1,0 +1,664 @@
+
+===== PAGE 1 =====
+Pervasive and Mobile Computing 59 (2019) 101048
+Contents lists available at ScienceDirect
+Pervasive and Mobile Computing
+journal homepage: www.elsevier.com/locate/pmc
+ICS-BlockOpS: Blockchain for operational data security in
+industrial control system
+Aung Maw, Sridhar Adepu ∗, Aditya Mathur
+Singapore University of Technology and Design, Singapore
+a r t i c l e
+i n f o
+Article history:
+Received 5 December 2018
+Received in revised form 28 June 2019
+Accepted 29 June 2019
+Available online 2 July 2019
+Keywords:
+Critical infrastructure
+Industrial control system
+Cyber–physical systems
+Cyber attacks
+SCADA systems
+Operational data
+Historian security
+Blockchain
+a b s t r a c t
+Industrial Control Systems (ICS) are the backbone of critical infrastructure found in
+power, water, manufacturing and other industries. An ICS controls a physical plant
+through the use of sensors and actuators. A Historian sits on a plant network and
+receives, parses, and saves data and commands transmitted over the network, across the
+Programmable Logic Controllers (PLCs), sensors and actuators. This data has at least two
+uses. One use is to check for any process anomalies that may occur due to component
+failures and cyber attacks. The other use of this data, and the focus of this work, is to
+serve as critical input to off-line activities such as forensic analysis. A cyber attack on
+the Historian could jeopardize any forensic analysis be it for maintenance, or discovering
+an attack trail. In this work, a novel architecture, named ICS-BlockOpS, is proposed to
+secure plant operational data recorded in the Historian. ICS-BlockOpS is designed to
+enhance data security along two dimensions: immutability and redundancy. An integrity
+checking mechanism, in combination with blockchain, is used to ensure data integrity.
+Data redundancy is achieved by applying an efficient replication mechanism and en-
+ables data recovery after an attack. A prototype implementation of ICS-BlockOpS uses
+Ethereum blockchain in the local network as part of the tamper proofing mechanism.
+The implementation is in an operational six-stage water treatment plant. The underlying
+design ideas are generic and could be applied to other ICS as well.
+© 2019 Elsevier B.V. All rights reserved.
+1. Introduction
+Industrial Control Systems (ICS) [1] are interconnected cyber–physical systems (CPS) for mission critical tasks. Examples
+of such systems include nuclear power plants, power grid, water treatment plants, and autonomous vehicles. Many such
+systems are expanding their communication capabilities for flexibility and ease of management. The use of networked
+computers in an ICS leads to an inherent vulnerability that continues to be exploited by individual, group and state actors.
+Recent incidents, such as the Ukraine power blackout [2] and Stuxnet [3], have raised the importance of cyber security in
+ICS.
+An anomaly detector is a mechanism that monitors the state of an operational plant and detects unusual behavior
+referred to as anomalies. A variety of machine learning algorithms have been used to discover anomalies [4–6]. The data
+logs include sensor measurements of the plant state. This data can also be used for root cause analysis of failures in an
+ICS. Forensic analysis could also be used to determine if a hostile action occurred against the plant controllers [7]. Thus,
+it is of utmost importance that data in the Historian be secured.
+∗Corresponding author.
+E-mail address:
+adepu_sridhar@mymail.sutd.edu.sg (S. Adepu).
+https://doi.org/10.1016/j.pmcj.2019.101048
+1574-1192/© 2019 Elsevier B.V. All rights reserved.
+
+===== PAGE 2 =====
+2
+A. Maw, S. Adepu and A. Mathur / Pervasive and Mobile Computing 59 (2019) 101048
+Data in a Historian could be damaged intentionally, such as via a cyber attack, or mistakenly. Cyber attacks could be
+launched in various ways even when the Historian is secured using traditional means such as through password protection.
+For example, a malicious attacker, or an insider, could enter a plant network, alter the data log and thus prevent the
+determining of what an attacker did during the attack [8].
+To secure plant data in the Historian, the focus is primarily along two dimensions: immutability and redundancy. In
+addition, the solution ought to be usable, reliable, and consistent. These properties imply that (a) isolation of a Historian
+from the network is impractical; the solution (b) must not affect any control logic of the plant, and (c) must be deployed
+and integrated with the existing ICS.
+A novel approach is proposed that ensures data integrity without the need for protection using firewalls. Blockchain
+technology is used together with data registration [9]. The proposed system, referred to as ICS-BlockOpS, uses efficient data
+replication logic to provide data redundancy. ICS-BlockOpS is designed to protect a Historian against attacks and failures.
+The replication logic used is inspired by the HDFS (Hadoop Distributed File System) architecture and is combined with
+blockchain. ICS-BlockOpS addresses two major data requirements: immutability and redundancy. Separate Historians are
+created to collect data from different parts of the plant that uses a distributed ICS. The data from each Historian is time
+stamped and registered in the blockchain ledger. The time stamped data can be validated to ensure data integrity. The time
+stamped data is replicated in the Historian network for recovery. An on-chain permissioning system is included through
+the use of cryptographic key pairs. Details of ICS-BlockOpS including the method used, architecture, implementation, and
+results from an experiment, are described in the remainder of this paper.
+Novelty: The novelty of ICS-BlockOpS lies in the selection of the application domain, the replication architecture used
+for retrieving tampered data, and the design and implementation of a real-time checker that monitors the data in the
+historian.
+Contributions: (a) A secure decentralized Historian database for ICS. (b) A method based on blockchain, and its application
+to a water treatment plant, to secure real-time process data generated during plant operation. (c) Generalization of
+ICS-BlockOpS to ICS found in other critical infrastructures.
+Organization: The remainder of this paper is organized as follows. Section 2 presents information about ICS and security
+requirements of the Historian. Potential solutions to data integrity are in Section 3. Section 4 describes potential solutions
+to data redundancy available in the literature. ICS-BlockOpS is briefly discussed in Section 5. Implementation details and
+experimental results are in Sections 6 and 7, respectively. Section 8 presents related work. Conclusion and future work
+are in Section 9.
+2. Industrial control systems
+An Industrial Control System (ICS) is a combination of control systems and instrumentation used for process control. In
+general, ICS includes a Supervisory Control and data Acquisition (SCADA) and one or more programmable logic controllers
+(PLCs). ICS can be found in chemical plants, manufacturing units, power systems, and oil and gas systems. An ICS [1] also
+includes physical, control, and network devices. The PLCs in an ICS can be viewed collectively as a distributed control
+system that transforms the state of the process through the use of sensors and actuators. Complex CPS, especially those
+found in critical infrastructure, consist of multiple stages where each stage is controlled by a dedicated PLC. In such
+distributed control systems, PLCs communicate to determine the state of the other parts of the system not directly under
+their control. SCADA, HMI, engineering workstation and the Historian are connected to level 1 network for monitoring.
+The logic programmed in the PLCs determines the steps that the physical process should take at any point in time based
+on the current state. The Historian in an ICS can be viewed as a time series database. It stores the sampled plant state in
+a time series where data is indexed by time.
+Requirements: High level requirements were set for ICS-BlockOpS prior to initiating its design. These requirements are:
+(1) Tamper-proof or data integrity of Historian database for ICS systems. (2) High availability of the operational data for
+the analysis of cyber attacks as well as maintenance work. (3) Redundancy to recover the operational data after any cyber
+attack or system/components failure. Blockchain was considered as an effective structure for meeting the requirements
+above. The strength of blockchain in enhancing ICS resilience should be evident from the experimental assessment of its
+effectiveness (Section 7) in meeting the above requirements.
+3. Potential solutions for data integrity
+There are different potential solutions that can provide data integrity. Cryptographic hashes are mostly used for
+integrity checking. However, each solution has its own advantages and disadvantages.
+Solution 1: One hash for a vector: A hash for each vector is generated by using a cryptographic hash function, e.g., sha256
+[10]. Each hash is stored in another database either on the same or a different computer. An attacker can bypass, who
+knows this mechanism overwrite the hash while damaging the vector.
+Solution 2: A hash chain with each hash for a vector: A cryptographic hash for each vector is generated as in solution-1
+discussed above. However, in this case, the input of cryptographic hash function is not only the vector, but it takes the
+hash of the previous vector together with the values of the current vector. However, if the attacker overwrites the entire
+chain of hashes to remain undetected, that this solution cannot detect the attack. When the attacker does not change
+
+===== PAGE 3 =====
+A. Maw, S. Adepu and A. Mathur / Pervasive and Mobile Computing 59 (2019) 101048
+3
+Fig. 1. Blockchain as hash storage.
+anything inside the vector database but deletes some or all the hashes. Then, both solution-1 and solution-2 cannot ensure
+the data integrity due to a lack of validity.
+Solution 3: Decentralized hash chain: The hash generation mechanism of solution-2 is retained but the storage for the hash
+chain is architecturally decentralized and logically centralized. This implies that identical hash chains are stored in many
+computers instead of a single computer. However, several challenges arise in the design of such a decentralized storage:
+How can the hash chain be securely synchronized across the network? How can the correct hash chain be selected when
+there are different hash chains on different computers? These questions have already been answered by making use of
+blockchain [11].
+Solution 4: Blockchain as decentralized hash storage: Blockchain is the underlying technology of bitcoin [11], a distributed
+ledger. Each block may contain one or more transactions. Since each block contains the hash of the previous block, it is
+almost impossible for an attacker to change the data (transactions) inside each block.
+Blockchain is architecturally decentralized and logically centralized. A single identical chain of blocks is stored on
+many computers across the network. The synchronization of the blocks among these computers is achieved by utilizing a
+consensus rule. The choice of this consensus rule can change the behavior of the blockchain decentralization, i.e., public or
+private blockchain. The cryptographic chain of blocks together with a consensus protocol protects the blockchain against
+cyber attacks.
+Blockchain provides tamper proofing of transactions using the underlying architecture and can be used to track digital
+assets, i.e. transactions that contain any information. This is achieved by applying a transaction-based state machine
+running on top of the blockchain. Transactions, in this case are various inputs to trigger the state machine inside
+blockchain. The state variables of this state machine are changed by processing the inputs of the transactions. The state
+machine stores its state variables inside the blocks of the blockchain. Blockchain provides tamper proofing of these state
+variables. This transaction-based state machine was first introduced by Ethereum [12] and termed as a smart contract.
+From the above discussion, it is claimed that by using blockchain, and various consensus rules, one can solve the
+above mentioned decentralization problem. Moreover, any type of data can be stored inside the blockchain using smart
+contracts. The decentralized hash chain architecture can be implemented more easily by using blockchain. The hashes of
+vectors are stored in the blocks of the blockchain as in Fig. 1. Hash chaining and decentralization, are accomplished in the
+underlying blockchain layer. Thus, only the individual hashes of vectors need to be stored inside the blockchain that is
+already tamper proof. This concept of using blockchain as an underlying layer to provide data integrity is shown in Fig. 2.
+Other than those mentioned above, there exist other mechanisms to provide data integrity of the historian. Data
+diodes [13] are solutions to provide read only databases. Data diodes provide unidirectional data flow from the underlying
+network layer. However, using data diodes in a Historian network may affect the current network architecture of ICS in
+legacy plants; BlockOpS does not require any change to the underlying network architecture while providing the security
+of data logs.
+Another method configures a Historian to add values to its database, and does not allow any other operation on the
+data. However, an attacker may not use the Historian engine to overwrite data. Instead, the attacker may change the values
+at the lower layer of the OS. Such manipulation would lead to a significant challenge in detecting data manipulation. The
+method used in BlockOpS will also detect any changes made through the lower layer of the OS; the hashes are difficult
+to compromise as they are stored in blockchain.
+4. Potential solutions for data redundancy
+It is important to provide redundancy in storing operational data from an ICS to enable data recovery. In ICS, the data
+is recorded inside one or more Historians according to the size of the plant. Methods to provide data redundancy, and
+their pros and cons, are discussed in the following.
+Solution 1: Traditional backup systems: A backup system can periodically copy data from a database into an archival file
+and onto another storage device. The purpose of such a backup is to recover the original data after consequent to a data
+loss event [14].
+Solution 2: Static replication In static replication [15] data is replicated in real-time from a Historian into another similar
+device. However, such as a system makes it challenging to use a large number of Historians as each Historian needs to store
+
+===== PAGE 4 =====
+4
+A. Maw, S. Adepu and A. Mathur / Pervasive and Mobile Computing 59 (2019) 101048
+Fig. 2. Blockchain as hash storage.
+Fig. 3. HDFS architecture.
+the entire state data. Therefore, most implementations have only a few Historians. This could be a problem because, an
+attacker can change the data in all replicated Historians or the attacker may selectively wipe-out data inside all Historians.
+Solution 3: Dynamic replication: In dynamic replication data to be replicated is sliced into smaller data blocks. Several
+computers, known as nodes, in the network replicate the data blocks. Each data block is replicated to a set of dynamically
+selected nodes among all nodes in the network. The number of nodes to be replicated can be configured, e.g., each data
+block is replicated to three different nodes such as in the Hadoop Distributed File System (HDFS) [16] (Fig. 3).
+In the HDFS architecture, there are Namenode, Datanodes, and client. Datanodes are responsible for storing data blocks
+of files whereas Namenode is responsible for replication of data blocks across different data nodes. A client provides an
+interface for the end user to manipulate files in the system. Each file in an HDFS is stored as a sequence of blocks. All
+blocks in a file, except the last block, are of the same size. The blocks in a file are replicated dynamically across different
+data nodes in a large cluster. The data nodes, that store a copy of a data block of a file, are listed in metadata of that file
+inside the Namenode. The block size and replication factor are configurable per file.
+In ICS, the above mentioned dynamic replication is used across different Historians in the plant network. Data inside
+the Historians is in the form of vectors of sensor and actuator values collected as multiple time series. Each vector from
+one Historian can be replicated to other Historians, labeled as replica, across the plant network. As an example, suppose
+consider 100 Historians in the plant. Vector 1 of Historian 1 is replicated to Historian 3 and 4, while vector 2 is replicated to
+Historian 6 and 10. When a vector is tampered, it can be recovered from any of the replica nodes. An attacker must know
+the location of all replicas of a vector that is to be damaged. When such information is not available, all Historians must
+be attacked making the task extremely challenging for an attacker. Among the three redundancy mechanisms, dynamic
+redundancy is considered superior to others described above and is used in ICS-BlockOpS.
+5. Architecture and design of ICS-BlockOpS
+Blockchain is used in a decentralized hash storage architecture to provide data integrity. Resilience to data integrity
+attacks is achieved through dynamic replication. Data from each stage of a distributed control plant is saved to the
+corresponding Historians. Measurements from sensors are collected as vectors and saved as time series. One could
+
+===== PAGE 5 =====
+A. Maw, S. Adepu and A. Mathur / Pervasive and Mobile Computing 59 (2019) 101048
+5
+Fig. 4. ICS-BlockOpS architecture.
+generate the hash of each vector and store it inside the blockchain. However, doing so for large plants, and thus large
+vectors, would lead to significant storage overhead. The overhead is a combination of the size of the hash and that of the
+block in the blockchain. To reduce the storage overhead, the hash is generated for groups of vectors within a time range,
+e.g., using vectors collected at one minute intervals.
+Grouping of vectors makes it easy to perform dynamic replication across multiple storage nodes. Each group of vectors
+is replicated to different storage nodes in the plant network. As in HDFS, the storage nodes, with a copy of each vector
+group, must be recorded on some media to enable recovery. As the hash of each vector group is stored inside the
+blockchain, the corresponding storage nodes for each group can be stored inside the blockchain together with the hash.
+The hash, time range, and a list of storage nodes together form the index for a vector group. The indices are stored inside
+the blocks of the blockchain. Data from each PLC in a distributed control plant is stored inside the corresponding storage
+node and dynamically replicated to other storage nodes. Fig. 4 shows the architecture of ICS-BlockOpS. This architecture
+can also work with Industrial Personal Computer (IPC). Data from IPC can be feed into the storage nodes of the ICS-
+BlockOpS like PLCs. The usage of ICS-BlockOpS is not limited to specific plant with unique data. The data can be from any
+domain such as water and power.
+Storing indexes inside the blocks of the blockchain is carried out by using smart contracts. Smart contracts can hold
+state variables of any type such as integer, string, array, mapping, and structure. A structure data type was used for an
+index that contains the hash of the vector group, the time range, and the list of storage nodes. The smart contract can
+be initialized with an empty array of indexes with dynamic length. When the storage nodes store the indexes for vector
+groups, the indexes are appended to the array.
+A smart contract in ICS-BlockOpS contains a function to store new indexes. This function accepts parameters including
+the hash of vector group and the time range. To store an index for a vector group, a storage node sends a transaction that
+contains a function call to the smart contract with the corresponding parameters. The replication of that vector group
+occurs after the index is successfully stored inside the blockchain by means of the smart contract’s state variable.
+In ICS-BlockOpS, each storage node has its own cryptographic key pair. The public keys of storage nodes are marked
+as authorized to store indexes in the smart contract at the time of deployment. The storage nodes then send transactions
+to store indexes of vector groups. This method prevents the storage of indexes received from unknown resources.
+In summary, ICS-BlockOpS is designed to make use of blockchain in an efficient way to provide immutable hashes for
+integrity checking of operational data. The redundancy of the vectors is also achieved in an efficient way by using dynamic
+replication.
+6. ICS-BlockOpS implementation
+The implementation and deployment of ICS-BlockOpS on an operational ICS is explained next. ICS-BlockOpS uses
+blockchain to store indexes of vector groups from storage nodes as mentioned earlier. Therefore, the implementation
+includes the infrastructure setup of the blockchain network, the smart contract development, and its deployment. The
+design and implementation of the storage nodes, that constitute the key parts of the decentralized storage system, is also
+discussed. Details of how ICS-BlockOpS is deployed in the plant follow the description of its implementation.
+
+===== PAGE 6 =====
+6
+A. Maw, S. Adepu and A. Mathur / Pervasive and Mobile Computing 59 (2019) 101048
+Fig. 5. Smart contract design.
+6.1. Blockchain infrastructure setup
+Blockchain platform selection: There exist several implementations of blockchain. Most of the implementations support
+smart contracts, i.e., transaction based state machines, with different programming languages to develop contracts.
+Ethereum [12,17] is an implementation of blockchain with a state machine. There exist several tools to setup ethereum
+blockchain network and deploy smart contracts on it. Therefore ethereum was selected for the implementation of ICS-
+BlockOpS. Ethereum itself is implemented in different programming languages. Specifically, Go-ethereum1 is used in this
+work. The detail design decisions of blockchain: aes-256 algorithm, the design of block, etc., are done by Ethereum, and
+not the focus of this manuscript.
+Blockchain deployment: Private ethereum blockchain is used in ICS-BlockOpS as the blockchain is maintained under one
+ICS. To setup a private ethereum blockchain, ethereum accounts and cryptographic key pairs need to be created. The
+accounts are generated by using the Go-ethereum application. This application generates an account with an encrypted
+private key inside a JSON file. The ethereum address for the corresponding private key is also included in the file. This
+address is used when configuring the genesis block.
+After generating a genesis configuration file, a new blockchain is initiated by using it on different machines. A couple
+of bootnodes are also setup in the network. All the blockchain nodes are configured to connect to the bootnodes and start
+running. The bootnodes improve the peer discovery process of the blockchain nodes by sharing the address among nodes.
+When all nodes are connected to each other, they start creating new blocks by voting consensus. The blockchain can now
+accept all the transactions including the smart contract deployment transaction.
+6.2. Smart contract design
+In ICS-BlockOpS, indexes of the vector groups are stored inside the blockchain by using the smart contracts. Three
+smart contracts are developed for the purpose of modularity and ease of maintenance. The relationship of these smart
+contracts with the external system is shown in Fig. 5. These smart contracts are explained below.
+Storage node contract: This contract is responsible for storing the list of storage nodes inside the network. Only the
+ethereum account address of the storage nodes are stored inside the list. The list can be predefined at the time of contract
+deployment. Also, the new storage nodes can be added to the list by using the storage node registration function of this
+contract. This function can only be triggered by the owner of the contract, i.e., the one who has the account which is
+hard-coded as the owner in this contract. The security of the registration can also be increased by making the smart
+contract to request the permissions from more than one owner. There is also a read only function in this contract to
+verify whether an account is listed as storage node or not. This function is referred to as the verification function.
+Indexer contract: The indexes of the vector groups are stored inside this smart contract. Index registration function in
+this contract accept three parameters; the hash of the vector group, the start and end timestamps of the time range.
+Before creating a new index, the permissions of the sender are verified by using the verification function of the storage
+node contract. If the sender’s address cannot be verified, i.e., the address is not in the list of the storage node contract, the
+request is rejected and the index is not created. If it is verified, the storage nodes to store the replicate of the corresponding
+vector group is selected by using a selection mechanism — currently round robin selection is used. The number of storage
+nodes to select can be defined as the replication factor at the time of contract deployment. After selecting the storage
+nodes, a new index is created using the index structure as mentioned in Section 5 with the sender’s address as the first
+storage node followed by other previously selected as replicated nodes. Finally, a log event for the successful registration
+of a new index is emitted from inside the smart contract. That log event notifies the replicated nodes to proceed with the
+replication process.
+1 https://github.com/ethereum/go-ethereum.
+
+===== PAGE 7 =====
+A. Maw, S. Adepu and A. Mathur / Pervasive and Mobile Computing 59 (2019) 101048
+7
+Fig. 6. ICS-BlockOpS Storage nodes.
+Operator contract: To control the database read access of the operators, this contract stores a list of operator addresses
+together with their permission to a specific part of the operational data of the plant. These permissions can be modified
+by the owner of the contract as in the case of a storage node contract.
+6.3. Storage nodes
+Multiple storage nodes are used in ICS-BlockOpS, together with the blockchain, to provide an immutable, decentralized
+storage system. Each storage node stores the data in the form of time series vectors that are indexed inside the blockchain
+together with the hash. The replication of groups of vectors is performed between different storage units in the plant
+network. Used Javascript library called web3.js was to communicate with the blockchain. Currently, InfluxDB is used as
+the time series database to store the operational data. A block diagram of the storage nodes, together with the procedural
+steps, is in Fig. 6
+Input handler: This program collects operational data from the corresponding PLC and stores it inside the database. This
+program may not be needed when deploying ICS-BlockOpS technology on the existing Historian since the data may be
+stored in some other ways into the Historian.
+Register module: This module runs using a timer with a configurable time interval. After every time interval, the program
+queries the group of vectors for a time range from the database. The time range is formed by using the previously recorded
+last timestamp and current timestamp, i.e., the configured time interval for the timer in an ideal case. The vector at the
+last timestamp is ignored in the database because at the time of querying the vector, the vector might not be written
+fully inside the database. After that, the time stamp of the ignored vector is recorded to use as the starting time for the
+next vector group.
+After querying the vector group, the register module generates the hash of that vector group using the sha-256
+cryptographic hash function. The generated hash, together with the time range, is used to call the index registration
+function of the indexer contract. The function call is done by creating a transaction and sending it to the blockchain. This
+
+===== PAGE 8 =====
+8
+A. Maw, S. Adepu and A. Mathur / Pervasive and Mobile Computing 59 (2019) 101048
+Fig. 7. A six stage real time operational water treatment testbed (SWaT).
+is step 1 of the data indexing and replication processes. In step 2, the indexer contract receives and performs function call
+by making the validation and replica selection.
+Replica handler: This module is responsible for the replication of vector groups across different storage nodes. After the
+trusted entities vote for the new block which contains index registration transaction, the block is successfully added to
+the blockchain in step 3. An event is triggered immediately from the blockchain notifying that a new index is registered
+inside the indexer contract in step 4. The replica handler, which is listening for this event, now checks the new index
+whether the storage node that it was running on, is inside the list of storage nodes of the index. If it is included inside
+the list, the replica handler will query the corresponding vector group from the original storage node which is denoted as
+the first element of the storage node list in the index. As shown in step 5, prior to sending, the query is signed with the
+private key of that node. When the original node responds to the query with the vector group, the replica handler stores
+that vector group inside the database of that node.
+Data gateway: It is a WEB-API service working as an access control layer for the database query. Every database query
+needs to be signed with the sender’s private key and the signature is verified as in blockchain. When the verification
+succeeds, the permissions for the sender are checked by using the storage node contract and operator contract inside the
+blockchain. If the sender is not allowed for that query, the query is rejected.
+Validator: It is a polling process running in each storage node. It reads the indexes that are registered inside the indexer
+contract in the blockchain, from the first index to the currently last one. For each index, it queries the vectors from the
+database with the corresponding time range. It regenerates the hash of that group of vectors and compares it with the hash
+of the index coming from blockchain. If the hashes do not match, alert is raised and logs the violation as a record inside
+the system. Thus, the system operator can check the validity of the data inside the storage nodes. The data replication
+process is carried out when there is some data integrity violation.
+6.4. Deployment in a Secure Water Treament (SWaT) plant
+The approach sketched above was experimentally validated in an operational water treatment (SWaT) plant [18]). SWaT
+(Fig. 7) is described next.
+Stages in SWaT: Stage P1 controls the inflow of water to be treated by opening or closing a valve that connects the inlet
+pipe to the raw water tank. Water from the raw water tank is pumped via a chemical dosing (stage P2) station to another
+Ultrafiltration (UF) feed water tank in stage P3. In stage P3 a UF feed pump sends water, via UF unit, to a Reverse Osmosis
+(RO) feed water tank in stage P4. In P4 an RO feed pump sends water through an ultraviolet dechlorination unit controlled
+by a PLC in stage P4. Stage P5 contains a PLC to control the Reverse Osmosis (RO) unit that further filters the water using
+a 2-stage RO process.
+An independent workstation serves as a Historian. Data transmitted across the network is routed to the Historian
+through a switch. What data is saved, and what is not, can be pre-programmed. For example, commands sent to a pump
+by a PLC, or data sent to a PLC from a level sensor, can be saved in the Historian. This data is collected in real time
+and can be used in real-time, or later, for analysis. One use of this data is to detect process anomaly or network traffic
+anomaly. Another use is to conduct forensics in the event of a plant malfunction due to a component fault or a cyber
+
+===== PAGE 9 =====
+A. Maw, S. Adepu and A. Mathur / Pervasive and Mobile Computing 59 (2019) 101048
+9
+Fig. 8. Deployment in SWaT.
+Table 1
+Hardware specifications.
+Processors
+Dual core
+Memory
+4096 MB
+Storage space
+20480 MB
+Operating System
+64 bit, Ubuntu 16.04
+attack. Hence the importance of ensuring the correctness and tamper-proofing the Historian data. Measurements from
+sensors are collected as time series vectors over the network. The vectors from each PLC are stored in one storage node
+of ICS-BlockOpS. The vector groups are replicated in different storage nodes and indexed using the time range together
+with the hash inside a local private ethereum blockchain.
+In ICS-BlockOpS, storage nodes and blockchain nodes are logically separated, i.e., they can run on different machines
+and communicate over the network. To optimize the resource requirement, Blokchain nodes can be run together with
+storage nodes without affecting the operations of the system. Six different computing machines are used to run storage
+and blockchain nodes. The deployment architecture in SWaT is shown in Fig. 8.
+Following are the advantages of placing both the storage and the blockchain nodes in a single machine: (1) The resource
+requirement is reduced. (2) Storage nodes can send index creation transactions to the blockchain in a faster due to lack
+of a remote network connection. (3) Reading the previous indexes for background validation is smoother. (4) Checking
+permissions from the blockchain is faster.
+Six virtual machines were created using the same specification. Ubuntu is used as the operating system. The hardware
+specifications are shown in Table 1. The nodes are run and data stored for experimentation.
+7. Experiments and results
+Storage nodes contain operational data from six stages of SWaT in the form of vectors. These nodes ensure the integrity
+of the stored vectors and provide data recovery using dynamic replication technique. It is important to note that ICS-
+BlockOpS provides data integrity after the data is successfully stored inside the storage nodes. ICS-BlockOpS cannot detect
+the integrity of data that enters from the plant and the attacker could remain undetected if the data is tampered prior to
+entering the storage nodes. The design, launch, and response of various attacks on the Historian are described next.
+7.1. Threat model
+The attack points in an ICS include sensors, e.g., level sensor, and actuators, e.g., water pump. The Historian is the
+attack point considered in this work. An attacker could access the Historian via the PLC communications network as well
+as directly via the SCADA workstation in cases where access rights have been obtained, say, through social engineering.
+Once attacked, an attacker could modify the Historian database. The following threat model is considered in this case
+study. An attacker has the capability to change plant data, that includes both process data and network traffic, at the Historian.
+Examples of such attacks are described next.
+Selective modification: Upon gaining access, an attacker could selectively modify data in the Historian such that the true
+state values are replaced by ‘‘seemingly correct state values’’. Doing so could make it difficult, or impossible, to correctly
+analyze the causes and perpetrators of an attack. If such modification is done in real-time then a process anomaly detector,
+such as the one proposed in [19], may not create an alarm when it should.
+
+===== PAGE 10 =====
+10
+A. Maw, S. Adepu and A. Mathur / Pervasive and Mobile Computing 59 (2019) 101048
+Table 2
+List of attacks launched on the Historian in SWaT.
+EXP.
+Type
+M
+So
+a
+Se
+a
+Pa
+1
+M
+PIWEBAPI
+UV401 OFF
+UV401 ON
+UV401
+2
+I
+PIWEBAPI
+–
+AIT401 (ORP) Low
+AIT401
+3
+W
+PIWEBAPI
+LIT401 850 mm
+–
+LIT401
+aUV401: Ultraviolet dechlorinator. AIT401: Water quality sensor. LIT401: Level sensor. M: Method or procedure of
+attack. S0: initial state of the system when launching an attack. Se: state of the system when removing an attack.
+Data wipe out: The attacker could wipe out data in the Historian — selectively or all of it.
+Data injection: The attacker could introduce a fraudulent row of data into the Historian database.
+7.2. Attack design and launch
+A sample of attacks designed and launched on the Historian in SWaT are listed in Table 2. Three attacks were designed
+based on the threat model above: data modification (M), data wipe out (W), and data injection (I). These attacks were
+launched on stage 4 of SWaT that prepares water to enter the reverse osmosis stage by removing free chlorine. So and
+Se denote, respectively, pre-attack and post-attack states of the device attacked. ‘M’ is the method used for launching
+an attack and ‘P’ is the attack point such as a specific sensor or actuator. Attacks were launched on data received from
+sensors and actuators located in different stages of SWaT though Table 2 lists only a sample.
+Attack launch on traditional Historian: In SWaT, the Historian uses OSI soft server.2 and PI WEB API client3 Data integrity
+attacks were launched on operational data in the Historian using the PIWEBAPI client.
+Attack on traditional Historian: Attacks on Historian were launched with the aim of performing modification (M), injection
+(I) and wipe out (W) attacks as in Table 2. Modification attack altered the UV401 actuator status from OFF to ON at a
+specific time instant. Injection attack injects a new row into the time series database of the Historian; in Table 2 only
+one sensor AIT401 is shown. The wipe out attack removes the entire row at a specific time stamp from the time series
+database of the Historian; in Table 2 level sensor LIT401 is 850 mm and removed from the database after an attack.
+Attack launch on ICS-BlockOpS: In ICS-BlockOpS deployed in SWaT, InfluxDB is used as the database. Data integrity attacks
+were launched on operational data inside the database using Influx HTTP API.
+Attack on ICS-BlockOpS: Attacks on ICS-BlockOpS were launched with the aim of performing modification, injection and
+wipe out attacks as shown in Table 2. The attacks are performed similar to the ones described above. The only difference
+is the way in which attacks were launched, Influx HTTP API was used instead of PIWEBAPI.
+7.3. Results
+Traditional Historian: In the traditional Historian it was possible to modify (M,W,I) data. This is real time operational sensor
+and actuator data. In this case, it is not possible to recover the data by any means.
+ICS-BlockOpS: The outcome of experiments performed with ICS-BlockOpS implemented in the Historian is presented next.
+Selective modification: As mentioned earlier, the validation process runs periodically on each storage node. After some time,
+the process detects the modification of that group of vectors because of the difference in the hashes. Other than detection,
+the damaged group of vectors can be recovered from the storage nodes that store a copy of that particular vector group
+according to dynamic replication. The system, therefore, can successfully defend from such selective modification attack.
+Data wipe out: The groups of vectors are indexed inside the blockchain. As the indices contain the time range of the vector
+groups, the system can query the vectors from the database with these time range. If some or all of the data is wiped out
+in a certain time range, the resulting hash of that data (even when empty) cannot be the same as the previous one stored
+inside the blockchain. Therefore, the system can detect selective as well as all data wipe out attack.
+Data injection: The injection of additional data within a particular time range can also be detected by comparing the
+resulting hash with the stored hash. On the other hand, the system cannot assure the integrity of the data outside the
+time range of all indexed vector groups. However, no use such un-indexed vectors can be ensured in the implementation.
+Thus, the ICS-BlockOpS can detect data injection for all indexed vector groups.
+7.4. Analysis
+The actual storage space requirements for the traditional centralized Historian and the decentralized Historian of ICS-
+BlockOpS are measured after running the system for two hours. Disk space for the Historian is 8.97 MB which is the
+operational data for the entire six stages for 2 h. In ICS-BlockOpS, the disk size of the six storage nodes is, respectively,
+4.95 MB, 3.82 MB, 4.43 MB, 4.5 MB, 4.48 MB, and 4.13 MB, with a replication factor of 3. The total disk space for all six
+2 https://techsupport.osisoft.com/Products/PI-Server.
+3 https://techsupport.osisoft.com/Documentation/PI-Web-API/help.html.
+
+===== PAGE 11 =====
+A. Maw, S. Adepu and A. Mathur / Pervasive and Mobile Computing 59 (2019) 101048
+11
+Table 3
+Resource requirement: storage space.
+System
+Storage space
+Storage space requirement for one computer
+Traditional Historian
+S*R
+S
+BlockOpS
+S*R
+S*R/N
+Fig. 9. ICS-BlockOpS points of vulnerability.
+nodes is 26.3 MB which is nearly equal to that required for centralized Historian when replicated three times, i.e., 8.97 MB
+* 3 = 27.6 MB. However, in ICS-BlockOpS, the disk space needed for a single computer decreases by increasing the number
+of nodes in the network.
+Next, the applicability and scalability of ICS-BlockOpS is compared with that used in a traditional Historian. Comparison
+of resource requirements is in Table 3. In the table, ‘S’, and ‘R’ denote, respectively, storage space and the number of times
+the operational data is replicated. The number of replications provide the redundancy to the existing operational data.
+‘‘N’’ represents the number of storage nodes used in ICS-BlockOpS. The traditional Historian requires S ∗R space for the
+entire operational plant to maintain ‘R’ replications. The same amount of space is also required in ICS-BlockOpS. In the
+traditional Historian, the space required for every computer is ‘S’, whereas in ICS-BlockOpS it is ‘(S ∗R)/N.’
+Points of vulnerability: The level of vulnerability in each time interval is shown in Fig. 9. The time intervals are considered
+for a vector stored inside the Historian. TS denotes the time instant when the vector is stored inside the Historian. TR is
+the time instant before registering that vector inside a vector group. The duration between TS and TR can be adjusted in
+the implementation. In the current implementation it is set to one minute. Any change made during TS and TR cannot be
+detected in the current implementation of ICS-BlockOpS. Thus, this is the most vulnerable time interval for the Historian.
+TB is the time when the block containing the registration of that vector is successfully added into the blockchain. Between
+TR and TS, the vector can be changed, but that change can be detected when the registration of that is confirmed inside
+the blockchain. However, there is also a chance that the registration can be canceled. TE denotes when the vector is
+successfully replicated to other storage nodes. If the vector was changed before TE, the correct vector cannot be recovered
+even though the modification can be detected. At TE, the vector is both immutable and stored redundantly among the
+replica nodes.
+Any damaged data in a Historian is recovered using BlockOps. In the work described here, the focus has been on using,
+and not testing, blockchains for tamper proofing and recovery. There certainly is a need to ascertain the resilience of
+BlockOps under attacks against blockchain. The method proposed in this work and implemented, makes it challenging for
+an attacker to damage data in a Historian beyond recovery.
+7.5. Discussion
+It is important to note that the blockchain technology proposed here is complementary to existing technologies such
+as firewalls and methods for anomaly detection [20], and several commercially available intrusion detection systems.
+Blockchain inherently provides a platform for tamper-proofing data. Using blockchain as a data storage mechanism
+improves confidence in the authenticity of data in the Historian. It is not fair to compare proposed ICS-BlockOpS with the
+ones presented in Section 3 because they cannot ensure the integrity of data in historian.
+The following properties of blockchain enabled the enhancement of the security of SWaT by securing its Historian:
+(a) Decentralization4 with no infrastructural central point of failure. (b) Secure and auditable: it is possible to audit the
+4 https://medium.com/@VitalikButerin/the-meaning-of-decentralization-0c92b76a274.
+
+===== PAGE 12 =====
+12
+A. Maw, S. Adepu and A. Mathur / Pervasive and Mobile Computing 59 (2019) 101048
+blockchain blocks throughout the network. (c) Immutability: Immutable nature of blockchain guarantees tamper proof
+data.
+The remainder of this section is devoted to a discussion on requirements for a solution to secure a Historian and threats
+that are not considered in the work described here.
+Read/write efficiency: The read and write efficiency of the Historian is important because the data is used real time control
+of the underlying physical process. However, in ICS-BlockOpS, data entering the database is not processed directly; only
+data that is permanently stored inside the database is queried in the background and the hash registered inside the
+blockchain. Therefore, the efficiency of the database is not affected.
+Storage requirements: The storage space required for each blockchain node is the total size of the indices of vector groups
+of the entire plant. This amount is manageable because the size of the hash and other information contained in an index
+is small when compared to the size of a vector group. The number of indices can also be reduced by increasing the time
+range or size of each vector group for large plants. However, it is difficult to detect the actual attack point when the time
+range is too large. The most suitable time range and the size of each vector group can be adjusted according to the ICS
+requirements. Thus, in ICS-BlockOpS, the size of data for which a hash is created can be configured to achieve a balance
+between computational requirements, storage cost, and data security. If the size is too long, the hashes are calculated at
+a slower rate and the storage space required in blockchain is reduced. However, the specific data damaged is difficult to
+identify due to larger data size and vice versa. Size of data for hashing needs to be aligned with the net data rate of the
+ICS. Indeed, balancing the various attributes of security and cost of implementation would be a challenge in environments
+such as a smart grid where a large amount of data enters, possibly into multiple historians, at a rapid rate.
+Computational cost and overhead: In blockchain, the Proof of Work consensus consumes significant computing power as
+it is aimed at a public cluster. In ICS-BlockOpS, the private consensus, Proof of Authority, is used to avoid unnecessary
+computational overhead.
+Scalability in the number of nodes: ICS-BlockOpS is designed to work well with the decentralized Historians in large
+distributed ICS. One could have hundreds of data nodes in such ICS that sample many sensors and manage many actuators.
+The security of the decentralized Historians and blockchain is improved with the increasing number of nodes in the
+network. The storage space requirement for each Historian is much smaller than for a single centralized Historian. The
+storage space required for each blockchain node does not changing with the number of nodes because it depends only
+on the total amount of data generated by the ICS.
+Testing of blockchains: This work does not focus on security testing of blockchain, whether public or private. Hence,
+any alterations to the potential attack surface due to the deployment of the proposed solution, though important, is
+not discussed. Indeed, authorities who govern the private blockchain, could compromise and defeat the entire system.
+In fact, authorities could alter the hash function so that it is easily invertible. Several such attacks are possible by the
+authorities who may have access to the entire code base of ICS-BlockOpS. Hence, additional measures ought to be deployed
+to prevent manipulation of the ICS-BlockOpS itself. Nevertheless, it would be a significant challenge for anyone, including
+the authorities, to beat the system without data tampering being detected assuming that the implementation is as
+proposed.
+Limitation: The data modification attacks which occur before the data is saved in the historian cannot be covered
+by the ICS-BlockOpS. If the attacker can take over all the private blockchain nodes, the data integrity cannot be
+verified.
+8. Related work
+To the best of our knowledge, this is the first attempt to apply blockchain towards data security in industrial control
+systems; closely related articles from ICS blockchain domains are mentioned in this section.
+Security of CPS is gaining attention with the increase in attacks [3]. Framework for information flow security properties
+is presented in [21]. Information flows between different physical processes that are not intended to exchange information,
+should be prevented by multilevel security systems. Researchers [22] have shown how safety critical systems are
+interconnected and complex. CUSUM based approach is proposed in [23] to limit the impact of attacks. [24] offers a
+review of anomaly detection in smart grids. Data driven anomaly based approaches are discussed in [4]. Lee [25] presented
+problems in computing and network technologies for full fledged design of emerging CPS. Attack models designed
+specifically for CPS include a variety of deception attacks such as surge, bias, and geometric [26,27]. Several existing attack
+models were borrowed from network security [28] and do not consider the physical aspects of a CPS.
+In recent years blockchain is creating a revolution [11,29] in the economy sector. Christidis et al. used blockchain to
+address the security and privacy issues in IoT devices [30]. Also, in [31], researchers improved the security of the energy
+sector using blockchain. Bahga et al. proposed a blockchain platform for industrial IoT [32]. In ICS, a framework [33]
+was proposed to protect modern power systems based on blockchain. In [33], the focus is on the communication
+among metering infrastructure in advanced power grid infrastructure. On the contrary, the focus of ICS-BlockOpS is
+on safeguarding data in the Historian. The result is a different implementation architecture of ICS-BlockOpS than that
+proposed in [33]. In [33], the transferred data is broadcast to all other meter-nodes using public, private key pairs,
+consensus and SHA algorithms which is not the case in ICS-BlockOpS. A blockchain-based solution is presented in [34]
+to enhance security and privacy in smart factory with a private blockchain and a case study on IIoT.
+
+===== PAGE 13 =====
+A. Maw, S. Adepu and A. Mathur / Pervasive and Mobile Computing 59 (2019) 101048
+13
+9. Conclusions and future work
+The proposed blockchain platform ICS-BlockOpS improves the security of ICS and, when needed, enables forensic
+analysis with correct plant data. While ICS-BlockOpS has been presented in the context of SWaT, we believe it is broadly
+applicable to other ICS as well. The work presented here can be extended across the following dimensions. (1) Use of
+smart contracts while downloading and uploading the control logic/software updates in ICS. (2) Behavior analysis of the
+blockchain platform when some nodes in a database have failed or compromised.
+Declaration of competing interest
+No author associated with this paper has disclosed any potential or pertinent conflicts which may be perceived to have
+impending conflict with this work. For full disclosure statements refer to https://doi.org/10.1016/j.pmcj.2019.101048.
+Acknowledgments
+This work was supported by the National Research Foundation (NRF), Prime Minister’s Office, Singapore, under
+its National Cybersecurity R&D Programme (Award No. NRF2014NCR-NCR001-40) and administered by the National
+Cybersecurity R&D Directorate. Thanks for the administrative help for Ivan and Mark from iTrust.
+References
+[1] K. Stouffer, J. Falco, K. Scarfone, Guide to industrial control systems (ICS) security, in: NIST Special Publication, vol. 800, 2011.
+[2] R. Lipovsky, New Wave of Cyber Attacks Against Ukrainian Power Industry, 2016, www.welivesecurity.com/2016/01/11.
+[3] R. Langner, Stuxnet: Dissecting a cyberwarfare weapon, IEEE Secur. Priv. 9 (2011) 49–51.
+[4] R. Mitchell, I.-R. Chen, A survey of intrusion detection techniques for cyber-physical systems, ACM Comput. Surv. 46 (2014) 55.
+[5] J. Goh, S. Adepu, M. Tan, Z.S. Lee, Anomaly detection in cyber physical systems using recurrent neural networks, in: 2017 IEEE 18th International
+Symposium on High Assurance Systems Engineering, HASE, 2017, pp. 140–145.
+[6] Q. Lin, S. Adepu, S. Verwer, A. Mathur, TABOR: A graphical model-based approach for anomaly detection in industrial control systems, in:
+Proceedings of the AsiaCCS, ACM, Korea, 2018, pp. 525–536.
+[7] E. Sohl, et al., A field study of digital forensics of intrusions in the electrical power grid, in: Proceedings of the First ACM Workshop on
+Cyber-Physical Systems-Security and/Or PrivaCy, ACM, 2015, pp. 113–122.
+[8] P. Van Vliet, M.-T. Kechadi, N.-A. Le-Khac, Forensics in industrial control system: a case study, in: Security of Industrial Control Systems and
+Cyber Physical Systems, Springer, 2015, pp. 147–156.
+[9] A. Azaria, A. Ekblaw, T. Vieira, A. Lippman, Medrec: Using blockchain for medical data access and permission management, in: Open and Big
+Data, OBD, International Conference on, IEEE, 2016, pp. 25–30.
+[10] A.C. Newman, J. Mari, Cryptographic Infrastructure for Encrypting a Database, Google Patents, 2007, US Patent 7,266,699.
+[11] S. Nakamoto, Bitcoin: A Peer-to-Peer Electronic Cash System, 2010, https://bitcoin.org/bitcoin.pdf.
+[12] G. Wood, Ethereum: A secure decentralised generalised transaction ledger, in: Ethereum Project Yellow Paper 151, 2014, pp. 1–32.
+[13] B.-S. Jeon, J.-C. Na, A study of cyber security policy in industrial control system using data diodes, in: 2016 18th International Conference on
+Advanced Communication Technology, ICACT, IEEE, 2016, pp. 314–317.
+[14] S. Gold, J. Bathie, P. King, I.P. Crighton, Data Backup and Recovery Systems, Google Patents, 2004, US Patent 6, 785, 786.
+[15] A. Caloiaro, Database Replication Techniques (Ph.D. thesis), STETSON UNIVERSITY, 2008.
+[16] D. Borthakur, et al., HDFS architecture guide, in: Hadoop Apache Project 53, 2008, pp. 1–13.
+[17] V. Buterin, et al., A Next-Generation Smart Contract and Decentralized Application Platform, 2014, white paper.
+[18] A.P. Mathur, N.O. Tippenhauer, SWaT: A water treatment testbed for research and training on ICS security, in: International Workshop on
+Cyber-Physical Systems for Smart Water Networks, CySWater, IEEE, USA, 2016, pp. 31–36.
+[19] S. Adepu, A. Mathur, Distributed attack detection in a water treatment plant: Method and case study, IEEE Trans. Dependable Secure Comput.
+(2018).
+[20] S. Adepu, A. Mathur, Distributed detection of single-stage multipoint cyber attacks in a water treatment plant, in: Proceedings of the 11th
+ACM Asia Conference on Computer and Communications Security, ACM, New York, NY, 2016, pp. 449–460.
+[21] T. Gamage, B. McMillin, T. Roth, Enforcing information flow security properties in cyber-physical systems: A generalized framework based on
+compensation, in: COMPSACW, 2010 IEEE 34th Annual, 2010, pp. 158–163.
+[22] J.A. Stankovic, Research directions for cyber physical systems in wireless and mobile healthcare, ACM Trans. Cyber-Phys. Syst. (2016) 1:1–1:12.
+[23] D.I. Urbina, J.A. Giraldo, A.A. Cardenas, N.O. Tippenhauer, J. Valente, M. Faisal, J. Ruths, R. Candell, H. Sandberg, Limiting the impact of stealthy
+attacks on industrial control systems, in: Proceedings of the 2016 ACM CCS, 2016, pp. 1092–1105.
+[24] A.F. Murillo, Review of Anomalies Detection Schemes in Smart Grids, Grupo de Teleinformática e Automacão, UFRJ - COPPE/PEE - DEL/Poli, Rio
+de Janeiro? RJ? Brazil, 2013.
+[25] E.A. Lee, Cyber-physical Systems: Design Challenges, Technical Report UCB/EECS-2008-8, EECS Department, University of California, Berkeley,
+2008, http://www.eecs.berkeley.edu/Pubs/TechRpts/2008/EECS-2008-8.html.
+[26] A.A. Cárdenas, S. Amin, Z.-S. Lin, Y.-L. Huang, C.-Y. Huang, S. Sastry, Attacks against process control systems: Risk assessment, detection, and
+response, in: Proceedings of the 6th ACM Symposium on Information, Computer and Communications Security, 2011, pp. 355–366.
+[27] S. Adepu, A. Mathur, Generalized attacker and attack models for cyber-physical systems, in: Proceedings of the 40th Annual International
+Computers, Software & Applications Conference, Atlanta, USA, IEEE, 2016, pp. 283–292.
+[28] M. Stamp, Information Security: Principles and Practice, second ed., Wiley, 2011.
+[29] T. Aste, et al., Blockchain technologies: The foreseeable impact on society and industry, Computer (2017) 18–28.
+[30] K. Christidis, M. Devetsikiotis, Blockchains and smart contracts for the Internet of Things, IEEE Access 4 (2016) 2292–2303.
+[31] M. Mylrea, S.N.G. Gourisetti, Blockchain for smart grid resilience: Exchanging distributed energy at speed, scale and security, in: 2017 Resilience
+Week, RWS, 2017, pp. 18–23.
+[32] A. Bahga, V. Madisetti, Blockchain platform for industrial Internet of Things, J. Softw. Eng. Appl. (2016) 533–546.
+[33] G. Liang, S.R. Weller, F. Luo, J. Zhao, Z.Y. Dong, Distributed blockchain-based data protection framework for modern power systems against
+cyber attacks, IEEE Trans. Smart Grid (2018).
+[34] J. Wan, J. Li, M. Imran, D. Li, et al., A blockchain-based solution for enhancing security and privacy in smart factory, IEEE Trans. Ind. Inf. (2019).

@@ -1,0 +1,850 @@
+
+===== PAGE 1 =====
+IEEE TRANSACTIONS ON SMART GRID, VOL. 4, NO. 4, DECEMBER 2013
+2131
+Network Capacity Assessment of Combined Heat
+and Power-Based Distributed Generation in Urban
+Energy Infrastructures
+Xianjun Zhang, Student Member, IEEE, George G. Karady, Life Fellow, IEEE, Kalyan R. Piratla, and
+Samuel T. Ariaratnam
+Abstract—The growing penetration of distributed generation
+(DG) and use of combined heat and power (CHP) techniques
+have made electrical distribution systems and water distribu-
+tion systems increasingly interdependent. This paper proposes
+an integrated dispatch model that offers a generalized means
+for
+determining
+the
+potential
+accommodated
+DG
+capacity
+along with appropriate DG sitting for given urban electricity
+and water system conﬁgurations. The AC optimal power ﬂow
+(ACOPF)-based system model was developed for each phase of
+a modiﬁed electrical distribution test feeder. A corresponding
+water distribution system was then designed with its mathematical
+model developed. A mathematical model of the CHP-based DG
+system was also developed to couple the electricity and water
+systems. Results indicate the optimal DG capacity and its optimal
+sitting based on urban electricity and water infrastructures. The
+present water network cannot support the complete recovery
+of the exhaust heat. The mutual impacts on operational perfor-
+mances of CHP-based DG units and urban energy infrastructures
+were also investigated.
+Index Terms—Combined heat and power (CHP), distributed
+generation (DG), load ﬂow analysis, mathematical programming.
+NOMENCLATURE
+Sets
+Set of water network links (indexed by
+).
+Set of shunt capacitors (indexed by ).
+Set of new generators (indexed by ).
+Set of electrical lines (indexed by ).
+Set of electrical buses (indexed by
+).
+Set of pumps (indexed by ).
+Set of valves (indexed by
+).
+Set of water sources (indexed by
+).
+Set of external sources (indexed by
+).
+Manuscript received September 25, 2012; revised February 21, 2013; ac-
+cepted April 30, 2013. Date of publication August 22, 2013; date of current
+version November 25, 2013. This work was supported by the U.S. National
+Science Foundation (NSF), the Emerging Frontiers in Research and Innovation
+(EFRI) under Grant 0836046. Paper no. TSG-00628-2012.
+X. Zhang and G. G. Karady are with the School of Electrical, Computer, and
+Energy Engineering, Arizona State University, Tempe, AZ 85287 USA (e-mail:
+xianjun.zhang@asu.edu; karady@asu.edu).
+K. R. Piratla is with the Glenn Department of Civil Engineering, Clemson
+University, Clemson, SC 29634 USA (email: kpiratl@clemson.edu).
+S. T. Ariaratnam is with the School of Sustainable Engineering and the Built
+Environment, Arizona State University, Tempe, AZ 85287 USA (email: ari-
+aratnam@asu.edu).
+Digital Object Identiﬁer 10.1109/TSG.2013.2264832
+Parameters
+Hazen-Williams roughness coefﬁcient.
+Water heat capacity and density.
+(Max, Min) VAr capacity of
+at
+.
+Link
+diameter and length.
+(Real Power, Reactive Power) demand
+at
+.
+Max MVA capacity on .
+(Conductance, Susceptance) of .
+Energy loss coefﬁcient.
+(From, To) node of
+and .
+(Max, Min), (Electrical, Thermal)
+power output of
+at
+.
+(Max, Min), (P, Q) power output of
+at
+.
+Link
+resistance coefﬁcient.
+Ambient temperature.
+(Max, Min), (Sending, Returning)
+water temperature of
+at
+.
+(Max, Min) voltage at
+.
+Existing water demand at
+.
+(Max, Min ) water head pressure at
+.
+(Max, Min) water ﬂow of
+at
+.
+Location of
+corresponding to .
+Location of
+corresponding to
+.
+Heat exchanger efﬁciency.
+Power angles of
+and
+.
+Variables
+Correction factor of (Water
+Temperature, Water Flow) of
+at
+.
+1949-3053 © 2013 IEEE
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 17,2026 at 14:32:41 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 2 =====
+2132
+IEEE TRANSACTIONS ON SMART GRID, VOL. 4, NO. 4, DECEMBER 2013
+injection onto
+at (From, To)
+node.
+(Electrical, Thermal) power output of
+g at
+.
+Final (Electrical, Thermal) power
+output of g at
+.
+(Real, Reactive) power output by
+at
+.
+Water supplied by
+at
+.
+VAr injection by
+at
+.
+(Sending, Returning) water temperature
+of
+at
+.
+(Voltage level, voltage phase) at
+.
+Water demand by
+at
+.
+Water ﬂow in .
+Water head at
+.
+I. INTRODUCTION
+E
+NGINEERING resilient and sustainable urban energy
+infrastructures is a prerequisite for continual urban
+growth, made challenging due to the interdependency of the
+conﬁning physical and social environment. Currently, rapidly
+evolving environmental concerns and deregulated market
+forces are driving distributed generation (DG) penetration into
+distribution systems. This is changing the way that traditional
+centralized electric power is supplied based on transmission
+lines and substations. Additionally, DG technologies promise to
+be efﬁcient, environmentally friendly, and dependable electric
+power sources [1]–[3].
+One important application of DG technologies is the com-
+bined heat and power (CHP). To promote energy efﬁciency,
+many gas-ﬁred DG units, e.g., microturbines, fuel cells, internal
+combustion (IC) engines, etc., can provide thermal energy by re-
+covering the exhaust heat during electricity generation, which
+could be used to provide hot water, air conditioning, and dis-
+trict heat supply. The CHP technique has been mature in today’s
+market for industrial and commercial applications. Meanwhile,
+it is also making inroads into residential areas, where the water
+supply from water distribution networks explicitly affects the
+captured DG thermal energy [4], [5].
+A wide variety of mathematical optimization-based studies
+have been conducted in the literature on network DG capacity
+analysis, sitting, and sizing problems. Approaches based on AC
+optimal power ﬂow (ACOPF) models, presented in [6]–[8], con-
+sider intrinsic nonlinearities of DG locations and capacity anal-
+ysis, in which DG connection points are ﬁxed and the maximum
+DG power injections are evaluated. In [9] and [10], analytical
+approaches are developed to solve DG sitting and sizing prob-
+lems. Multiobjective-based optimization approaches are pro-
+posed for generation capacity planning in [11] and [12]. In [13],
+gradient and second-order methods are used to determine DG
+sitting based on loss minimization.
+In the urban environment, electricity and water infrastruc-
+tures have developed independently. However, with growing
+DG penetration and employment of CHP techniques, they are
+becoming more interconnected. A number of publications have
+investigated the connections between electricity and water dis-
+tribution systems in areas of microgrid related optimization, dis-
+trict heating and cooling, etc.. However, few studies have been
+conducted to investigate the network capacity of CHP-based
+DG in the context of urban electricity and water infrastructures.
+In reference [14], the integrated load ﬂow method is used in a
+simple case study to examine the interconnected electric power
+and district heating networks. Speciﬁcally, a nine node micro-
+grid feeder with only one location-ﬁxed CHP unit and an eleven
+node district heating network are used in this study. In [9] and
+[10], an approach for integrated optimal power ﬂow for energy
+infrastructures, e.g., electric power, gas and district heating, is
+presented and the energy hub concept is ﬁrst introduced as the
+coupling point between different energy infrastructures. A three
+bus system and a corresponding three node natural gas system
+are also used to examine the optimal dispatch of multiple energy
+carriers. Finally, a network ﬂow optimization model is devel-
+oped in [15] for addressing the economic and physical integrity
+of the national electric power system by integrating the electric
+power, gas, coal, and water systems; this study, however, is fo-
+cused on the transmission level rather than the distribution level.
+Based on the above research, a clear need emerges for the
+development of a model architecture to provide planning guid-
+ance, which integrates electricity and water distribution systems
+with the coupling of the CHP-based DG units. This is espe-
+cially valuable in urban energy planning. To the best knowledge
+of the authors of this paper, no general optimization technique
+regarding the network capacity assessment of CHP-based DG
+has been published based on relatively large distribution energy
+systems. It is the objective of this paper to introduce a gener-
+alized approach that investigates optimal DG capacity and sit-
+ting, and analyzes mutual impacts on operational performances
+of CHP-based DG units, and urban electricity and water infra-
+structures.
+II. ELECTRICAL SYSTEM MODEL DEVELOPMENT
+A. Electrical System Selection and Modiﬁcation
+The IEEE 123 node test feeder [16] was selected as the elec-
+trical system for this study, which is a typical radial distribution
+feeder, as shown in Fig. 1. Reasonable assumptions were made
+to change it to a looped system with improved reliability and
+increased DG capacity accommodation. By adding external AC
+power sources (ExGens) and connecting nodes 51 and 300, the
+original radial feeder is divided into several sections. Each sec-
+tion is one subfeeder connecting two ExGens with a switch at
+one side of the subfeeder. The modiﬁed looped system is still
+not a complete three-phase system. To make the result eval-
+uation more accurate, the ACOPF formulation was applied to
+each phase. Consequently, the nodal DG output is represented
+by summing up nodal DG electrical output and thermal output
+of all three phases.
+B. ACOPF Formulation
+A group of CHP-based DG units were assumed to be placed
+at each node with the capacity from zero to a set value, which
+is multiple times of the base DG unit. The DG electric power
+output and thermal output are treated as continuous variables
+with both lower and upper capacity bounds. The lower capacity
+bounds were defaulted as zero.
+1) Objective Function: The objective of the integrated
+electrical and water systems is to maximize the CHP-based
+DG output, including electrical output and recovered thermal
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 17,2026 at 14:32:41 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 3 =====
+ZHANG et al.: NETWORK CAPACITY ASSESSMENT OF COMBINED HEAT AND POWER-BASED DISTRIBUTED GENERATION
+2133
+Fig. 1. Modiﬁed looped electrical system.
+output. The electrical output is constrained by the electrical
+system model, while the recovered thermal output is con-
+strained by electrical system model, CHP-based DG model,
+and water system model.
+(1)
+2) Capacity Constraints of CHP-Based DG Units: The
+actual max/min electrical and thermal capacity constraints of
+CHP-based DG units should be prorated with the total capacity
+changing of nodal DG units.
+(2)
+3) ExGens Constraints:
+,
+:
+(3)
+4) Nodal Voltage Level Constraint:
+:
+(4)
+5) Capacity Constraint of Shunt Capacitors:
+:
+(5)
+6) Real and Reactive Power Flow Constraints:
+:
+(6)
+(7)
+Apply the same real and reactive power ﬂow [8] constraints
+to the other end of the line.
+7) Nodal Real and Reactive Power Balance Constraints:
+Fig. 2. Flowchart of the water distribution network design.
+(8)
+(9)
+8) Thermal Constraints of Lines:
+:
+(10)
+III. WATER SYSTEM DESIGN AND MODEL DEVELOPMENT
+In this section, according to the electrical system, a general-
+ized urban water distribution system was designed and corre-
+sponding mathematical model was developed as well.
+A. Water Network Design
+In the water network, each node was assumed to represent a
+cluster of houses. The water demand was estimated based on
+the counted number of nodal households and the node loading
+information given by the electrical system.
+Optimization techniques are often used to obtain a design
+of water distribution network. A genetic algorithm based opti-
+mization tool (GANetXL) [17] in combination with a hydraulic
+solver EPANET [18], is used to design a representative water
+distribution network by minimizing costs to choose appropriate
+pipe diameters. The ﬂowchart of this design process is shown
+in Fig. 2.
+The designed water distribution network corresponding to the
+electrical system is shown in Fig. 3. Each node in the water
+network corresponds to the same node in the electrical system. A
+reservoir is located in node 118 to provide all the water demand
+at each node. A pump is located between node 118 and node
+250 to increase the water head up to the designed value (50 m)
+in node 250. This is to ensure that for all existing nodal water
+demand, the nodal water head is above the minimum required
+value. Two pressure reducing valves (PRV) are also included
+into this network to restrict the outﬂow.
+B. Water System Model Development
+To integrate the water system and electrical system, a mathe-
+matical model of the water system was developed based on the
+designed water distribution network.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 17,2026 at 14:32:41 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 4 =====
+2134
+IEEE TRANSACTIONS ON SMART GRID, VOL. 4, NO. 4, DECEMBER 2013
+Fig. 3. Designed water distribution network.
+1) Pump Equation: To represent the relationship between
+water head gain and water ﬂow that a pump can deliver, one
+point (1140
+, 45 m of water head) on the pump curve was
+acquired to generate a representative pump (11) using EPANET.
+(11)
+The reservoir elevation was assumed as 5 m. The system was
+originally designed for a minimum pressure of 60 pounds per
+square inches (psi) or 42.2 m at all nodes during peak hours.
+2) Water Head Drop:
+: When water ﬂows through
+pipelines, the head pressure drops due to friction, as described in
+(12) and (13) [19].
+can be assumed as 130. The elevation
+of all nodes in the water network was assumed the same except
+the reservoir node such that the gravity impact can be neglected.
+(12)
+(13)
+3) Pressure Reducing Valves: PRVs [19] are used in this
+model to restrict the water head at downstream node not ex-
+ceeding 60 m.
+for Globe type of PRVs was assumed as 5.
+(14)
+4) Nodal Balance Equation [19]: The water ﬂows into a
+node equals the existing nodal water demand plus the water
+ﬂows out of the node. The introduction of CHP-based DG units
+may result in additional nodal water demand.
+(15)
+5) Nodal Water Head: The system nodal water head is be-
+tween 42.2 m and 50 m for all nodes during peak hours. The
+minimum water head may be changed for case studies.
+(16)
+IV. CHP-BASED DG MODEL
+A. CHP-Based Microturbines
+The CHP-based DG units are used as coupling points between
+electrical system and water system. The energy efﬁciency of
+microturbines can be boosted up from 30–40% to 85% with the
+exhaust heat recovered [20].
+The exhaust heat from microturbines travels through the heat
+exchanger, normally the isolated or integrated part of microtur-
+bines. The pressurized water by the pump ﬂows inside the heat
+exchanger, used as a medium to carry away part of the exhaust
+heat. The water ﬂow operates as a looped circulating process
+and a certain amount of water is extracted from the water net-
+work periodically or in peak thermal demand besides the nodal
+existing water consumption. This additional water consumption
+by DG units is usually only a one-time use.
+The microturbine C65 [21] was selected as a reference for
+CHP-based DG unit. The capacities of these series of products
+are available in a wide range, which can be modularized and
+show similar electrical and thermal characteristics as the se-
+lected reference unit.
+B. Mathematical Formulation
+The mathematical formulation takes into account impacts of
+units’ electrical output, water ﬂow rate, sending and returning
+water temperatures, and ambient temperatures:
+1) Water Temperature Constraints: The minimum and max-
+imum sending and returning water temperatures are 60
+and
+85
+, and 220
+and 185
+, respectively [22].
+(17)
+2) Water Consumption Constraint: For single microturbine
+unit, the allowable water ﬂow ranges between 5.68
+and
+13.6
+[22]. The actual max/min nodal water consumption
+constraints of microturbines should be prorated with the total
+capacity changing of nodal DG units.
+(18)
+3) Ambient Temperature Constraints:
+:
+When
+exceeds 70
+, both DG electrical output and thermal
+output decrease with
+increasing, as shown in (20) and (19);
+when
+is less than 70
+, the electrical output keeps constant
+while the thermal output increases with
+increasing, as shown
+in (22) and (21) [22]. The rating electrical capacity and thermal
+capacity of a single microturbine unit is 65 kW and 116.5 kW,
+respectively.
+(19)
+(20)
+(21)
+(22)
+4) Heat Transfer Equation:
+: Heat energy
+is transferred from DG exhaust output to heat exchanger and
+carried away by the ﬂowing water. The heat power transferred
+also depends on the water mass ﬂow and temperature difference
+[23].
+was assumed as 0.9.
+(23)
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 17,2026 at 14:32:41 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 5 =====
+ZHANG et al.: NETWORK CAPACITY ASSESSMENT OF COMBINED HEAT AND POWER-BASED DISTRIBUTED GENERATION
+2135
+5) Correction Factors Constraints:
+: The
+inlet water temperature and water ﬂow rate impact the recovered
+thermal output of microturbines, and thus correction factors of
+thermal output are generated [22]:
+(24)
+(25)
+6) Final DG Recovered Thermal Output:
+(26)
+V. PROBLEM SOLVING, CASE STUDIES, AND DISCUSSION
+A. Implementation
+The integrated system model was coded and implemented as
+a nonlinear mathematical programming (MP) problem in the
+AIMMS optimization modeling environment [24]. The MP was
+generated by AIMMS from the model structure and data, and
+then passed to the selected efﬁcient commercial solver—the
+CONOPT 3.14V generalized reduced gradient solver. In its de-
+fault settings, CONOPT 3.14V has proven to be competitive
+with the KNITRO interior point solver; it has shown reliability
+and efﬁciency in convergence [25]. Normally it is not guar-
+anteed for nonlinear solvers to ﬁnd the global optimum. The
+returned solution most often is a local optimum, or possibly
+no feasible solution can be found. The global solver such as
+Baron is time-consuming and usually only works well on rela-
+tively small NLP problems. In addition to the selected nonlinear
+solver, the nonlinear presolver and the multistart procedure [26]
+were also used to reduce problem size, search space, and in-
+crease chances of ﬁnding the global optimum by comparing and
+tracking all found feasible solutions.
+The integrated system solving ﬂowchart is shown in Fig. 4.
+The electrical system model was optimized ﬁrst for each single
+phase to ﬁnd the maximum DG electrical output. The resultant
+nodal DG electrical output is then used as the input parameters
+of upper bounds for the thermal constraints, as shown in (19)
+and (21). The optimal DG thermal output is achieved simulta-
+neously when the electrical system model is optimized. How-
+ever, as for the maximum DG recovered thermal output, it is
+not only constrained by the electrical system model, but also by
+the water system model and CHP-based DG system model. If
+the minimum nodal water pressure is violated, then less water
+will be extracted by DG units from water network to carry away
+the thermal energy from exhaust heat. Subsequently, the DG re-
+covered thermal output is reduced accordingly. This iteration
+continues until no nodal water pressure violation occurs.
+B. Case Studies
+The electrical system model, water system model, and CHP-
+based DG model were developed individually and integrated to-
+gether to constrain the CHP-based DG output. Multiple factors
+primarily affect the CHP-based DG electrical output and recov-
+ered thermal output, such as units’ power factor (PF), capacity
+bounds, ambient temperature, and nodal water head.
+1) Capacity Bounds: By changing the capacity of DG units
+to 0.065 MW, 0.13 MW, 0.325 MW, 0.65 MW, and 1 MW, ﬁve
+cases from Case 1 to Case 5 were studied to investigate the im-
+pact of capacity changes on DG units’ performance and dis-
+tribution. A ﬁxed leading PF of 0.95 was assumed for all DG
+units. The electrical system is 4.16 kV, with real and reactive
+power load of 3.49 MW and 1.92 MVAr, respectively. The real
+and reactive power capacities of ExGens were assumed as
+60
+Fig. 4. Integrated system solving ﬂowchart.
+TABLE I
+ELECTRICAL OUTPUT SUMMARY
+MW and
+50 MVAR, respectively. For capacity bound anal-
+ysis, only the electrical system model was optimized, while the
+water and CHP based DG system models were not integrated.
+The electrical output summary for this study is shown in
+Table I. The total DG electrical output increases with the rise in
+capacity bounds. The extra real and reactive power generated
+by DG units is sent back to grids. Assumptions were made
+that there were three peak hours and credits were given for the
+power sold back to grids at the rate of 10 cents for each kWh of
+electricity. The total and average money earned for each case
+appears as shown in Table I. Moreover for each case, it was
+also found that the reactive power output of shunt capacitors
+was zero, such that all the required reactive power was supplied
+by the DG units.
+The penetration level refers to the ratio between the number
+of nodes connected with DG units and the total number of nodes.
+From Table I, it is found that not every node is appropriate to
+place a CHP-based DG unit and the penetration level reduces
+with the increase of capacity bounds. The reason for this is that
+with an increasing in the capacity bound, a node with DG units
+connected continues raising power output until a violation ap-
+pears at that node, assuming no other constraints exist. The pen-
+etration level should be neither too high nor too low. This is
+because if the penetration level is too high, for e.g., in Case
+1, where DG units are connected at every node, then the fault
+level and stability concerns grow signiﬁcantly in this distribu-
+tion system when all the units work at the same time. If the pen-
+etration level is too low, such as in Case 5 or even lower in other
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 17,2026 at 14:32:41 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 6 =====
+2136
+IEEE TRANSACTIONS ON SMART GRID, VOL. 4, NO. 4, DECEMBER 2013
+Fig. 5. Power output of ExGens at various PFs.
+unstudied cases, the economic beneﬁts will not be sufﬁciently
+achieved. This is because that building new thermal pipelines
+is costly if the load center is located far away from the thermal
+source. Therefore, in the following sections, Case 3 will be used
+as a basis to investigate the impacts of other factors.
+2) PF: For power factor analysis, three different PFs were
+studied: 0.95 lag, unity, and 0.95 lead. Only the electrical system
+model of Case 3 (0.325 MW) was optimized for these three
+different PFs. The water and CHP based DG system models
+were not integrated. All other parameter settings are the same
+as those in the capacity bound analysis.
+The results indicate that the maximum total DG electrical
+power output is 25.21 MW at the unity PF, which exceeds that
+at a 0.95 PF lag by 1.75 MW, and that at a 0.95 PF lead by 0.72
+MW, respectively.
+In Fig. 5, the real and the reactive power output of ExGens are
+shown that take into consideration different PFs. All of these Ex-
+Gens absorb the extra real power delivered by the DG units, in
+which the most real power is sent to ExGen2, while ExGen1 ab-
+sorbs the least real power. Similarly, for each ExGen, the max-
+imum power absorbed always appears at the unity PF. All Ex-
+Gens send reactive power to the system at PFs of 0.95 lag and
+unity, in which ExGen2 sends the most. When the PF is 0.95
+lead, all ExGens absorb the extra reactive power from DG units.
+It is also observed that all shunt capacitors work in full capacity
+when the PFs are 0.95 lag and unity.
+3) Ambient Temperature: For ambient temperature analysis,
+several different ambient temperatures,
+4
+, 32
+, 60
+,
+70
+, 80
+, 100
+, and 122
+, were used as references to
+study their inﬂuences on DG units’ performance. For this case,
+the electrical, water and CHP-based DG system models were in-
+tegrated together to maximize DG electrical output and recov-
+ered thermal output. For electrical system model, Case 3 (0.325
+MW) and a unity PF were selected, and all other electrical pa-
+rameter settings keep the same. The parameter settings of CHP-
+based DG system model have been shown in Section IV. The
+nodal water head in the water network was set as 40 m.
+The total DG electrical output and recovered thermal output
+are shown in Fig. 6 with the changing ambient temperature.
+When the ambient temperature is below 70
+, the electrical
+output is in equilibrium and not affected, while the recovered
+thermal output decreases with the reduction of ambient temper-
+ature. When the ambient temperature is above 70
+, for every
+10
+increase the electrical output and the recovered thermal
+Fig. 6. Total DG output with changing ambient temperature.
+Fig. 7. Nodal power output and water consumption of the CHP-based micro-
+turbines.
+output decreases 5.78% and 1.39%, respectively. The optimal
+ambient temperature is found at 70
+, at which the total DG
+power output reaches the maximum value of 37.24 MW in-
+cluding 12.03 MW of recovered thermal output and 25.21 MW
+of electrical output.
+The nodal recovered thermal output, electrical output and the
+water consumption of the CHP-based DG untis are shown in
+Fig. 7 with the ambient temperature of 70
+. It demonstrates
+that for each node with the electrical output, the thermal output
+may not be recovered at the same node due to the nodal water
+head and water ﬂow rate. For DG IDs between 60 and 120, they
+correspond to the nodes with low water heads, as they are lo-
+cated at the far right side of the pump in the water distribution
+network. The water head automatically drops with increasing
+distance from the pump. If additional pumps are added to the
+right side of the water network, the water head will rise and
+more CHP-based microturbines in these nodes will become ca-
+pable of recovering the exhaust heat. It is also found in Fig. 7
+that wherever there is recovered thermal output, the water con-
+sumption is found in the same node.
+4) Nodal Water Head: Nodal water head is a main factor con-
+straining water consumption and recovered thermal output of
+DG units. It was checked to examine if the existing water distri-
+bution system could support the large penetration of CHP-based
+DG units. For nodal water head analysis, the electrical, water
+and CHP-based DG system models were integrated together
+to maximize DG output. For electrical system model, Case 3
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 17,2026 at 14:32:41 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 7 =====
+ZHANG et al.: NETWORK CAPACITY ASSESSMENT OF COMBINED HEAT AND POWER-BASED DISTRIBUTED GENERATION
+2137
+TABLE II
+POWER OUTPUT WITH DIFFERENT NODAL WATER HEAD LIMITS
+Fig. 8. Nodal water head with different water head limits.
+(0.325 MW) and a unity PF were selected, and all other elec-
+trical parameter settings keep unchanged. The parameter set-
+tings of CHP-based DG system model are shown in Section IV.
+The ambient temperature of 70
+was selected from the above
+analysis and discussion. For the water network, several different
+nodal water heads, 36 m, 38 m, 40 m, and 42 m, were selected
+to investigate their impacts on DG output. The required water
+head was set as 42.2 m and the acceptable water head was set
+as 35.2 m.
+The total DG electrical output and recovered thermal output
+are shown in Table II. It is found that for all nodal water heads,
+electrical output remains unchanged, while the recovered
+thermal output decreases signiﬁcantly with an increase in the
+nodal water head limit.
+The nodal water head with different limit requirements is
+shown in Fig. 8. The top black line indicates the nodal water
+head with existing water demand, while all remaining curves
+represent nodal water heads with the extra water used by DG
+units under different water head limits. For DG IDs between
+20 and 70, the nodal water heads are higher than all remaining
+nodes, with the exception of nodes clustered around 120. This
+is because these nodes are located close to the pump. It is also
+found that the more water extracted from the water network,
+the lower the nodal water head. For DG water consumption,
+the higher the nodal water head limit, the less the extra water
+available for recovering the exhaust heat. The CHP-based DG
+penetration increases with the reduction in the nodal water head
+limit. If an acceptable pressure drop of 10 psi (from 60 psi) is
+allowed, the water system is functional at an acceptable level
+during peak hours for the additional water demand used by the
+DG units.
+The recovered thermal output is summarized in Table III; it
+is found that the total hourly hot water supply decreases signiﬁ-
+cantly with an increase in the nodal water head limit. Similarly,
+the study time period was also assumed as three peak hours. As
+shown in Table III, the more thermal energy supplied, the more
+money is saved. Savings accrue by directly using the hot water
+TABLE III
+RECOVERED THERMAL OUTPUT SUMMARY
+supplied by the CHP-based DG units, which would otherwise
+have been bought from grids.
+C. Discussion
+The integrated mathematical model was solved as a nonlinear
+optimization problem. A local returned optimum may not deﬁ-
+nitely represent the global optimum. Additionally, it is also im-
+practical and not guaranteed to ﬁnd a global optimum for any
+large nonlinear planning problems. The algorithms of nonlinear
+presolve and multistart were employed and only a local solu-
+tion was found, which proved to be the best results generated
+and are likely to be the global results. For this speciﬁc planning
+problem, a technique with an achievable solution provides more
+value than a global optimum which cannot be guaranteed for
+other cases [6]. It should be noted that in a distribution system
+without many meshed loops, such as that shown in Fig. 1, it is
+highly possible that a single local optimum exists.
+It has been demonstrated that for all the cases studied: extra
+electrical output from DG units is available besides that used
+to meet the system load; however, the CHP application cannot
+be employed at every node and the existing water distribution
+network cannot support the complete recovery of exhaust heat.
+The performance of the integrated system depends on multiple
+factors. For real deployment, other concerns, e.g., investment,
+income, and location availability, should also be taken into ac-
+count to size DG units. In reality, the PFs of most gas-ﬁred DG
+units can be speciﬁed according to customer requirements. Fur-
+thermore, the adjustable indoor or outdoor temperature is sug-
+gested to provide an, ensuring that the gas-ﬁred DG units are
+operated in optimal climatic conditions. Finally, the determina-
+tion of water head limit during the planning period has to take
+into account present water demand, additional demand and po-
+tential thermal applications.
+VI. CONCLUSIONS
+The methodology developed for the integrated mathematical
+model is novel as this is the ﬁrst instance of assessing the
+CHP-based DG network capacity by coupling generalized
+electrical distribution system, water distribution system and
+gas-ﬁred CHP-based DG system. The problem of this DG
+capacity maximization is different from cost minimization
+problems as more congestion may appear not only in the
+electrical network, but also in the water network. The proposed
+method is generic and can also be used in a radial distribution
+system, as shown in [5]. The CHP-based DG units are placed at
+every node, rather than being ﬁxed into some nodes, and func-
+tion as continuous decision variables. This solution approach
+is new and being ﬁrst employed in the DG network capacity
+assessment based on urban energy infrastructures.
+REFERENCES
+[1] H. Nikkhajoei and R. H. Lasseter, “Distributed generation interface to
+the CERTS microgrid,” IEEE Trans. Power Del., vol. 24, no. 3, pp.
+1598–1608, Jul. 2009.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 17,2026 at 14:32:41 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 8 =====
+2138
+IEEE TRANSACTIONS ON SMART GRID, VOL. 4, NO. 4, DECEMBER 2013
+[2] P. Chiradeja and R. Ramakumar, “An approach to quantify the tech-
+nical beneﬁts of distributed generation,” IEEE Trans. Energy Convers.,
+vol. 19, no. 4, pp. 764–773, Dec. 2004.
+[3] X. Zhang, G. Karady, and Y. Guan, “Design methods investigation for
+residential microgrid infrastructure,” Eur. Trans. Electr. Power, vol.
+21, pp. 2125–2141, 2011.
+[4] A. D. Peacock and M. Newborough, “Impact of micro-combined heat-
+and-power systems on energy ﬂow in the UK electricity supply in-
+dustry,” Energy, vol. 31, pp. 1804–1818, 2006.
+[5] X. Zhang, G. Karady, K. Piratla, and S. Ariaratnam, “Nexus between
+distributed generation and urban water infrastructure,” in Proc. IEEE
+Power Eng. Soc. Gen. Meet., 2012, pp. 1–8.
+[6] C. J. Dent, L. F. Ochoa, and G. P. Harrison, “Network distributed gen-
+eration capacity analysis using opf with voltage step constraints,” IEEE
+Trans. Power Syst., vol. 25, no. 1, pp. 296–304, 2010.
+[7] A. Keane and M. O’Malley, “Optimal allocation of embedded gener-
+ation on distribution networks,” IEEE Trans. Power Syst., vol. 20, no.
+3, pp. 1640–1646, Aug. 2005.
+[8] C. J. Dent, L. F. Ochoa, G. P. Harrison, and J. W. Bialek, “Efﬁcient se-
+cure ac opf for network generation capacity assessment,” IEEE Trans.
+Power Syst., vol. 25, no. 1, pp. 575–583, 2010.
+[9] M. Geidl and G. Andersson, “Optimal power ﬂow of multiple energy
+carriers,” IEEE Trans. Power Syst., vol. 22, no. 1, pp. 145–155, Feb.
+2007.
+[10] M. Arnold, R. Negenborn, G. Andersson, and B. De Schutter, “Model-
+based predictive control applied to multi-carrier energy systems,” in
+Proc. IEEE Power Eng. Soc. Gen. Meet., 2009, pp. 1–8.
+[11] X. Zhang, R. Sharma, and Y. He, “Optimal energy management of a
+rural microgrid system using multi-objective optimization,” in Proc.
+IEEE PES Innov. Smart Grid Technol. Conf., 2012, pp. 1–8.
+[12] B. Kuri, M. Redfern, and F. Li, “Optimization of rating and positioning
+of dispersed generation with minimum network disruption,” in Proc.
+IEEE Power Eng. Soc. Gen. Meet., Jun. 2004, vol. 2, pp. 2074–2078.
+[13] N. S. Rau and Y. H. Wan, “Optimum location of resources in
+distributed planning,” IEEE Trans. Power Syst., vol. 9, no. 4, pp.
+2014–2020, 1994.
+[14] M. Rees, J. Wu, and B. Awad, “Steady state ﬂow analysis for integrated
+urban heat and power distribution networks,” in Proc. 44th Int. Univ.
+Power Eng. Conf., 2009, pp. 1–5.
+[15] E. M. Gil, “Modeling integrated energy transportation networks for
+analysis of economic efﬁciency and network interdependencies,” in
+Proc. North Amer. Power Symp., Rolla, MO, USA, 2003.
+[16] W. H. Kersting, “Radial distribution test feeder,” IEEE Trans. Power
+Syst., vol. 6, no. 3, pp. 975–985, 1991.
+[17] D. Savić, J. Bicik, and M. Morley, “A dss generator for multiobjective
+optimisation of spreadsheet-based models,” Environ. Model. Softw.,
+vol. 26, no. 5, pp. 551–561, 2011.
+[18] L. A. Rossman, EPANET: User’s Manual U.S. EPA, Cincinnati, OH
+USA.
+[19] L. W. Mays, Hydraulic Design Handbook.
+New York: McGraw-Hill,
+1999.
+[20] Microturbines [Online]. Available: http://www.energy.ca.gov/distgen/
+equipment/microturbines/microturbines.html
+[21] C65
+&
+C65
+ICHP
+MicroTurbine
+Natural
+Gas
+[Online].
+Available:
+http://www.capstoneturbine.com/_docs/datasheets/
+C65%20&%20C65-ICHP%20NatGas_331035E_lowres.pdf
+[22] Technical Reference, Application Guide—Model C65 Integrated CHP
+(ICHP) Capstone Turbine Corporation.
+Chatsworth, CA, USA.
+[23] B. Awad, M. Chaudry, J. Wu, and N. Jenkins, “Integrated optimal
+power ﬂow for electric power and heat in a microgrid,” in Proc. 20th
+Int. Conf. Electr. Distrib., Jun. 2009.
+[24] J. Bisschop and M. Roelofs, AIMMS—The User’s Guide Paragon De-
+cision Technology, 2006.
+[25] Full Details on AIMMS and Associated Solvers [Online]. Available:
+http://www.aimms.com
+[26] J. Bisschop and M. Roelofs, AIMMS—The Language Reference
+Paragon Decision Technology, 2006.
+Xianjun Zhang (S’10) received his B.S. degree in electrical engineering from
+North China Electric Power University, Beijing, China, in 2008, followed by
+a M.S. degree and a Ph.D. degree in electrical engineering from Arizona State
+University, Tempe, AZ, USA, in 2010 and 2013, respectively. His research in-
+terests include distributed generation, design, planning and energy management
+of energy microgrids, and electric power market analysis and development. He
+has worked as a full time intern at NEC Laboratories America, Inc., and Cali-
+fornia ISO in the summer of 2011 and 2012, respectively.
+George G. Karady (SM’70–F’78–LF 98) received his B.S.E.E. and Doctor of
+Engineering degree in electrical engineering from Technical University of Bu-
+dapest, Romania. Dr. Karady is Power System Chair Professor at Arizona State
+University, Tempe, AZ, USA, where he teaches electrical power and performs
+research in Power Electronics, High Voltage Techniques, and Electric Power
+Systems. Previously, he was with EBASCO Services where he served as Chief
+Consulting Electrical Engineer, Manager of Electrical Systems, and Chief En-
+gineer of Computer Technology. He also served as Electrical Task Supervisor
+for the Tokomak Fusion Test reactor project at Princeton. Before that he worked
+for the Hydro Quebec Institute of Research as a Program Manager. Dr Karady
+started his career at Technology University of Budapest where he progressed
+from Post Doctoral Student to Deputy Department Head. Dr. Karady is a Reg-
+istered Professional Engineer in New York. He is the author of more than 200
+technical papers.
+Dr. Karady is active in IEEE; he was chairman of Chapter/ Membership’s
+Award Committee, Education committee’s Award Subcommittee and WG on
+Non-ceramic insulators, etc. Dr. Karady also served in the U.S. National Com-
+mittee of CIGRE as Vice President and Secretary Treasurer.
+Kalyan R. Piratla received his B.S. and M.S. in Civil Engineering from the
+Indian Institute of Technology (IIT) Madras, India, in 2007 and 2008, respec-
+tively, followed by a PhD degree in Construction Management from Arizona
+State University in 2012. Dr. Piratla is presently an assistant professor in the
+Glenn Department of Civil Engineering in the College of Engineering and Sci-
+ence at Clemson University. His research interests lie in the area of sustainable
+and resilient design of civil infrastructure systems with focus on underground
+infrastructure.
+Samuel T. Ariaratnam received his B.A.Sc. in Civil Engineering from the Uni-
+versity of Waterloo, Canada, and his M.S. and Ph.D. from the University of Illi-
+nois at Urbana-Champaign, IL, USA, in 1989, 1991, and 1994, respectively. Dr.
+Ariaratnam currently serves as the Construction Engineering Program Chair at
+Arizona State University, Tempe, AZ, USA. His educational and research inter-
+ests lie in the area of Urban Underground Infrastructure Systems with an em-
+phasis on Horizontal Directional Drilling and Trenchless Pipe Replacement. He
+has published over 175 technical papers, holds three patents, and is active in nu-
+merous professional organizations. Currently, he serves as the Chairman of the
+International Society for Trenchless Technology (ISTT) and is on several com-
+mittees of the American Society of Civil Engineers (ASCE). Dr. Ariaratnam
+serves as an Editor or Associate Editor of several scholarly journals and is a
+co-author of two books related to underground infrastructure. He is a Regis-
+tered Professional Engineer in the State of Arizona and the Province of Ontario,
+Canada.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 17,2026 at 14:32:41 UTC from IEEE Xplore.  Restrictions apply. 

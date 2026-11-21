@@ -1,0 +1,1034 @@
+Reliability Engineering and System Safety 209 (2021) 107421
+Available online 31 December 2020
+0951-8320/© 2021 The Authors. Published by Elsevier Ltd. This is an open access article under the CC BY license (http://creativecommons.org/licenses/by/4.0/).
+Dependent infrastructure system modeling: A case study of the St. Kitts 
+power and water distribution systems 
+Kaia Stødle 1,*, Caroline A. Metcalfe 1, Logan G. Brunner 2, Julian N. Saliani 2, Roger Flage 1, Seth 
+D. Guikema 3 
+1 University of Stavanger, Norway 
+2 Johns Hopkins University, USA 
+3 University of Michigan, USA   
+A R T I C L E I N F O  
+Keywords: 
+Critical infrastructures 
+dependencies 
+modeling 
+case study 
+A B S T R A C T  
+Critical infrastructure systems underlie the economy, national security, and health of modern society. These 
+infrastructures have become increasingly dependent on each other, which poses challenges when modeling these 
+systems. Although a number of methods have been developed for this problem, few case studies that model real- 
+world dependent infrastructures have been conducted. In this paper, we aim to provide another example of such 
+a case study by modeling a real-world water distribution system dependent on a power system. Unlike in the 
+limited previous case studies, our case study is in a developing nation context. This makes the availability of data 
+about the infrastructure systems in this case study very limited, which is a common characteristic of real-world 
+studies in many settings. Thus, a main contribution of the paper is to show how one can still develop repre­
+sentative, useful models for systems in the context of limited data. To demonstrate the utility of these types of 
+models, two examples of different analyses are performed, where the results provide information about the most 
+vulnerable parts of the infrastructures and critical linkages between the power and water distribution systems.   
+1. Introduction 
+Critical infrastructures provide essential services to modern soci­
+eties, and the functionality of these infrastructures are important. There 
+has been an increase in dependencies of a given infrastructure on one or 
+more other infrastructure systems, particularly dependencies on the 
+power system. These dependencies are often poorly understood in 
+practice, despite assumptions to the contrary made by academic mod­
+elers. Even when they are understood, modeling the cascading effects of 
+failures from one system onto other systems is challenging. Many 
+methods for modeling dependent infrastructures using network models 
+have been developed and suggested in existing literature (e.g., [1,8,22]). 
+Many of these papers adopt a network theoretic perspective (e.g, [7,10, 
+17]). That is, they conceptualize a set of infrastructure networks as 
+graphs of vertices and edges and approximate performance with one of a 
+number of topological or connectivity-based approaches. However, 
+LaRocca et al. [18] showed that these network theory-based approaches, 
+while useful for generic networks, provide poor approximations of the 
+performance of actual infrastructure systems. Despite this, relatively few 
+detailed case studies of the modeling of real-world dependent in­
+frastructures are published in the scientific literature (e.g. [3,6,15,16, 
+21,23,29]). Nearly all of these are done in unique data-rich environ­
+ments that are not representative of the situation faced by many infra­
+structure managers. Many infrastructure managers, even in developed 
+countries, face significant data limitations, especially about de­
+pendencies on other infrastructures. In many cases, performance models 
+(e.g., hydraulic models for drinking water systems) are out of date or 
+have not been calibrated in many years. The main contribution of this 
+paper is to show how real infrastructure systems involving dependencies 
+can be modeled in low-data environments in a way that provides useful 
+information on the performance of these systems during natural hazards. 
+This paper differs substantially from previous case studies in rela­
+tively data-rich areas such as the United States and Europe. We present a 
+case study where we analyze the effect of hurricane disruptions on the 
+performance of the power and water distribution systems of the Carib­
+bean island of St. Kitts. The available information about these infra­
+structure systems is highly limited, thus, the objective of this paper is to 
+develop a representative model for these systems despite significant data 
+* Corresponding author 
+E-mail address: kaia.stodle@uis.no (K. Stødle).  
+Contents lists available at ScienceDirect 
+Reliability Engineering and System Safety 
+journal homepage: www.elsevier.com/locate/ress 
+https://doi.org/10.1016/j.ress.2020.107421 
+Received 14 June 2019; Received in revised form 10 April 2020; Accepted 29 December 2020   
+
+Reliability Engineering and System Safety 209 (2021) 107421
+2
+limitations. It should be mentioned that the issue of limited data avail­
+ability might be present for data-rich areas too. Although the requisite 
+data to develop models exist it can be unavailable due to confidentiality 
+reasons. This adds an additional motivation for this paper. 
+This paper is organized as follows: In the next section (Section 2), 
+background information about St. Kitts and its power and water distri­
+bution systems are given along with a description of the threat that 
+hurricanes pose to the island. Section 3 contains a description of the 
+simulation model developed for this case study. In order to demonstrate 
+how this model can be used and what types of modeling results that can 
+be obtained, Section 4 presents the results of analyses aimed at identi­
+fying critical components in the systems. Section 5 shows how the model 
+can be used to simulate failures of recent or forecasted hurricanes. 
+Section 6 includes a discussion of the results as well as of the challenges 
+associated with modeling real-world infrastructure systems and the 
+differences between modeling real-world systems and fictional systems. 
+Finally, Section 7 presents the conclusions. 
+2. Background for the case study 
+St. Kitts is one of the twin islands of the Federation of St. Kitts and 
+Nevis, which is located in the eastern Caribbean Sea. The nation has an 
+estimated population of about 56,000, with most of the population 
+living on the island of St. Kitts [31]. St. Kitts is a small and elongated 
+island with an area of 69 square miles [30]. The island is of volcanic 
+origin and has a group of volcanic peaks in the middle of the island. Due 
+to these steep mountains, the majority of the population reside by the 
+coastline around the island. The highest populated area is in and around 
+the capital of Basseterre, which is located in the south of the island 
+between the mountains and a peninsula (see the map in Fig. 1). 
+The power system is operated by St. Kitts Electricity Company 
+Limited (SKELEC), who provide power from 10 diesel generators located 
+at the power station near Basseterre. The power is distributed to the 
+community through 12 lines (11 kV), of which nine are located in and 
+around Basseterre. The remaining three lines stretch along the entire 
+coastline around the island, where one goes along the peninsula to the 
+southernmost point of the island and the other two go up to the north 
+following opposite sides of the island (see the schematic of the main 
+trunk lines in Fig. 2). 
+St. Kitts is self-sufficient for fresh water. The water distribution 
+system has a production capacity of up to 7 million gallons per day 
+(MGD), which meets the average demand of 5.5 MGD. The different 
+types of water sources come in the form of 30 groundwater wells, 30 
+surface storage tanks, and 6 river reservoirs. Thus, there is a mixture of 
+groundwater and surface water sources with, on average, 67% of water 
+provided from groundwater sources and 33% from surface water sour­
+ces. The system is mainly gravity fed. The exception is the wells that 
+require electricity to pump water into the distribution system. A visit to 
+the site found that there were no back-up generators at the groundwater 
+wells. Thus, the water distribution system is dependent on the power 
+system for water production (see the schematic of the modeled water 
+Fig. 1. Map of St. Kitts with parish labels.  
+Fig. 2. Schematic of the modeled power system.  
+K. Stødle et al.                                                                                                                                                                                                                                   
+
+Reliability Engineering and System Safety 209 (2021) 107421
+3
+system in Fig. 3). 
+Due to the location of St. Kitts, hurricanes pose a significant threat to 
+the functionality of the island’s critical infrastructure. The power system 
+is particularly vulnerable to hurricanes due to its wooden power poles 
+that can fail during strong winds. In addition, the power system in St. 
+Kitts is radial, at least at the time of this case study. That is, there is no 
+redundancy between the lines, particularly between the three lines that 
+provide power to most of the island, discussed further below. When a 
+power outage occurs in an area, the water wells in this area lose their 
+power supply and stop functioning, which puts the water distribution 
+system at risk of negative pressures and insufficient delivery of water. 
+Therefore, in this case study, hurricanes are simulated and used as a 
+natural cause of disruption to the power and water distribution systems. 
+St. Kitts has experienced many strong hurricanes that have caused dis­
+ruptions to infrastructure systems. Most notably was Hurricane Georges 
+that made landfall on the island in 1998, resulting in severe damage to 
+the infrastructure across all parts of the island. Over 80 percent of all 
+homes were damaged, with some completely destroyed. Severe damages 
+were also seen to other buildings, including the airport, the seaport, the 
+main hospital, schools, businesses, hotels, and emergency shelters. 
+Hurricane Georges resulted in five fatalities and left many people 
+without homes and work, with repair costs reaching approximately 
+$445 million USD [5,14]. 
+3. The simulation model 
+This section describes how the infrastructure systems and the hur­
+ricanes are modeled and how the overall simulation process is per­
+formed. This process includes a description of how the power and water 
+system models are coupled together. 
+3.1. The modeled power system 
+Very limited information is available about the power system of St. 
+Kitts. The data we do have is from the SKELEC (St. Kitts Electric Com­
+pany Limited) website [27] and from a visit by one of the authors to the 
+island. Based on this information, the system is modeled as consisting of 
+three main power lines with their center located at the generators near 
+Basseterre. Fig. 2 presents a schematic of the modeled power system. 
+Each line mimics one of the three main trunk lines that surrounds the 
+entire island. In the remainder of this paper, these modeled lines are 
+referred to as the Southern, Western, and Northern power lines. The 
+Southern power line (represented by dots in Fig. 2) supplies Basseterre 
+as well as the peninsula, the Western power line (triangles) supplies the 
+western coast up to the parish of St. Anne, and the Northern power line 
+(squares) supplies the eastern and northern coast to the point where the 
+Western power line stops. Due to limited information about the power 
+network, the nine smaller trunk lines that are located in and around 
+Basseterre are not included. The exclusion of these trunk lines makes the 
+modeled power system in the Basseterre area a very simplified version of 
+the real system. This causes all the wells in Basseterre to be connected to 
+the Southern power line in the model, instead of potentially being 
+connected to different smaller trunk lines. Without access to more 
+detailed power system data as well as data of exact locations of 
+connection between water wells and the power system, it is difficult to 
+evaluate the severity of this simplification. 
+A network-based approach is used to model the power system, where 
+the power poles are modeled as nodes and the power lines as the links 
+between the nodes. There are a total of 157 poles in the modeled system, 
+with pole spacing selected to give span lengths (between pole distances) 
+typical of lower-voltage power systems. The ability of the system to 
+provide power at each pole location depends on the status of all pre­
+ceding poles. If one pole fails due to wind along any of the three lines, all 
+the downstream nodes switch to non-active status and are unable to 
+provide power. That is, there is no redundancy in the system. Because of 
+this lack of redundancy, the failure is assumed to be instantaneous. Note 
+that this is an approximation to the actual power flow. LaRocca et al. 
+[18] showed that such a connectivity-based approach is a poor 
+approximate to actual power flow for high voltage transmission systems. 
+However, for purely radial, lower voltage distribution systems such as 
+the one in our case study, the connectivity-based approach is a much 
+better first order approximation. 
+3.2. The modeled water system 
+The water distribution system is modeled using the publicly avail­
+able widely used software package EPANET 2.0 [25]. EPANET models 
+the hydraulics of water flow in pressurized pipe. We used a 
+demand-driven simulation mode (as opposed to pressure-driven) and 
+assumed there were no pipe breaks in the system. EPANET is widely 
+used in infrastructure modeling in both practice and research, and 
+additional details are available in Rossman [25]. Our EPANET model 
+includes the distribution system pipes along with supply sources and 
+demand nodes. A network schematic of the modeled water system is 
+presented in Fig. 3. The network schematic, supply capacities, and de­
+mand values have been provided and approximated based on informa­
+tion from the St. Kitts Water Department. The department provided 
+information on 24 of the 30 wells in terms of both their safe yield and 
+their respective elevations. Because water consumption data are not 
+readily available, the total 5.5 MDG average water demand is parti­
+tioned per parish based on its population. 
+Fig. 3 shows the network flow model of the water system as modeled 
+in EPANET. The red dots represent the wells within the water system and 
+are located around the perimeter of the island. The green dots represent 
+the demand nodes within the model. The water wells and demand nodes 
+are collectively referred to as the water nodes within the model. The 
+reservoirs are represented as black squares and mainly located towards 
+the center of the island, which is the mountainous region. The storage 
+tanks are shown as black dots. Using EPANET allows the movement of 
+water within the system as well as the pressures at each node to be 
+modeled during a simulation of a specified duration. 
+When the system was first fully mapped to replicate the St. Kitts 
+water system based on the limited information available, there were a 
+significant number of nodes that produced low and negative pressures 
+under normal conditions. Low pressures are in this paper defined as 
+pressures below 20 pounds per square inch [psi]. This pressure limit is 
+chosen because a minimum pressure of 20 psi in water distribution 
+systems is used as a standard in several U.S. states based on pressures 
+Fig. 3. Schematic of the modeled water system.  
+K. Stødle et al.                                                                                                                                                                                                                                   
+
+Reliability Engineering and System Safety 209 (2021) 107421
+4
+needed for fire-fighting activities [9]. Some of the water nodes generate 
+negative pressures that are very close to zero. Therefore, a classification 
+“rule” is made in this study saying that negative pressures are pressures 
+below -1 psi. EPANET was unable to handle the water demand magni­
+tude of each parish effectively, likely because these large demands for 
+each parish are placed at only a few nodes instead of spreading the 
+demand out to replicate the true housing community. The details of 
+these connections to the system were not available, and even in the U.S., 
+demand aggregation to a smaller number of representative nodes is 
+common in developing an approximate hydraulic model for a city. One 
+of the wells in the parish of St. Anne is divided into two wells in the 
+model in order to keep the pressure within the parish from reaching 
+below 0 psi. In order to further mitigate this limitation driven by the 
+available data, the magnitudes of the demands and inflows of water are 
+reduced but kept at the same ratio in order to accurately replicate the 
+overall functionality of the distribution system. 
+3.3. The hurricane model 
+Because hurricanes are one of the more frequent causes of disruption 
+to the power and water systems of St. Kitts, we focused on hurricane- 
+induced damage to the power and water systems. Because of the 
+topography of the island and where the population is located, most of 
+the power and water system components that could be sensitive to 
+flooding are either on poles or are at elevations higher than those 
+impacted by coastal flooding. We consequently focus on only wind- 
+induced damage. To estimate wind speeds, we use a parametric wind 
+field model, the same model used in previous work (e.g., [12] and [11]). 
+This model estimates gust wind speed at the location of each well by 
+assuming a parametric decrease in wind speed with distance from the 
+center of the storm. The hurricane track and intensity (central pressure) 
+are input, and the storm is then translated along the track and rotated on 
+its axis to produce the wind speed estimates. The model has been vali­
+dated against actual time-varying wind speeds in the Gulf Coast region 
+by comparing the wind field estimates with the actual wind fields for 
+hurricanes making landfall in the Gulf Coast region in previous research 
+(e.g., [12]) and has been widely used. Additional details are available in 
+Han et al. [12]. An open source version of the model is available for the 
+R statistical language [4]. 
+This model estimates the maximum wind speed during a hurricane at 
+predefined locations on the island. St. Kitts is divided into nine parishes, 
+each of which is represented by one location in the wind field model. The 
+only exception is for the southernmost parish of St. George which is 
+given three locations because it encompasses the long peninsula and 
+therefore yields different wind speeds depending on where the track is 
+located. Thus, in total 11 locations at St. Kitts are used in the wind field 
+model. The model does not take into account the elevation of the 
+mountainous landscape of St. Kitts. This is likely not particularly 
+limiting for this case study as the power lines are located on the outskirts 
+of the island, which is only slightly above sea level. There may be some 
+reduction in wind speeds on the side of the island sheltered behind the 
+hills in the middle of the island for hurricanes that are close to the island. 
+However, the computational complexity of including these terrain ef­
+fects would be substantial, and the effects are generally not that large 
+given the small size of the island relative to the size of a strong 
+hurricane. 
+Based on the resulting maximum wind speeds, the probability of 
+damage to the power poles is computed from the fragility curve pre­
+sented in Fig. 4. As the maximum wind speeds are simulated on a parish 
+level, also the resulting power pole failure probabilities are given on a 
+parish level. For the case study, this means that all power poles within 
+each parish are given the same probability of failure during a hurricane. 
+The fragility curve was developed through expert judgement (co-author 
+Guikema) based on (1) damage reports of the impacts of previous hur­
+ricanes in St. Kitts, (2) previous research on fragility functions for 
+hurricane-induced failures (e.g., [13]), (3) and informal observations of 
+pole conditions during a visit to the island. The damage reports for the 
+Hurricanes Lenny1, Earl2, Georges [14], Jose3, Hugo4, and Luis5 are 
+publicly available. However, the reports are not consistent in the in­
+formation related to damages caused. Some only give information 
+relaying which main island structures were damaged, while others 
+provided specific damage percentages pertaining to the island’s power 
+system. The maximum wind speed of Hurricane Georges is used to 
+determine the on-island wind speed that caused the failure of approxi­
+mately 50% of the poles on the island. The distribution of the fragility 
+curve is based off the reports for Hurricanes Luis, Hugo, Lenny, and Jose 
+using the framework presented by Shafieezadeh et al. [26]. This resulted 
+in a fragility curve with the 50% failure probability associated with 117 
+miles per hour [mph] or 102 knots [kts] on-island wind speed. 
+3.4. System dependencies 
+Since the wells within the water network rely on the input of elec­
+tricity from the power network to function, the dependencies in the 
+model are formed between all 30 wells within the water network and the 
+power node which they are closest to, allowing multiple wells to depend 
+on the same power node. The electricity within the power network is 
+generated by diesel generators [27] and thus does not rely on input from 
+the water network. Fig. 5 shows the position of the wells in relation to 
+the power nodes and which power nodes each well depends on. The 
+networks within the island are self-contained, and are fairly small in 
+terms of size, making the network relatively simple to model. This allows 
+the electric power and water system of St. Kitts to make a good case 
+study of a real-world dependent infrastructure system. 
+3.5. The simulation procedure 
+The process of simulating hurricanes and their corresponding dam­
+ages to the power and water systems of St. Kitts is a two-stage process. In 
+the first stage, the hurricane of interest is simulated through the hurri­
+cane model. As mentioned above, the hurricane model first simulates the 
+maximum on-land wind speeds for each parish before it computes the 
+Fig. 4. Estimated fragility curve of the power poles in the St. Kitts 
+power system. 
+1 https://reliefweb.int/report/anguilla/hurricane-lenny-ocha-situation-re 
+port-no-7.  
+2 https://reliefweb.int/report/antigua-and-barbuda/cdema-situation-repor 
+t-3-hurricane-earl.  
+3 https://reliefweb.int/report/anguilla/hurricane-jose-post-impact-situation 
+-report-2.  
+4 https://reliefweb.int/report/anguilla/hurricane-jose-post-impact-situation 
+-report-2.  
+5 https://reliefweb.int/report/antigua-and-barbuda/caribbean-hurricane- 
+luis-sep-1995-un-dha-situation-reports-1-10. 
+K. Stødle et al.                                                                                                                                                                                                                                   
+
+Reliability Engineering and System Safety 209 (2021) 107421
+5
+corresponding failure probability of the power poles. 
+In the second stage, a Monte-Carlo simulation model is used to 
+couple the power and water system models. First, the power system 
+model simulates which power nodes break based on the power pole 
+failure probabilities. This is done by first assigning each power pole a 
+random value between 0 and 1. The random value is then compared to 
+the respective node’s probability of power pole failure. If a node’s failure 
+probability is higher than the randomly generated value, the node is set 
+to be failed. This process generates a set of power node failures. We then 
+use a connectivity-based model for the power system. That is, a given 
+node in the system functions (provides power) if (1) there is a path from 
+that node to the generator for which there are no failed nodes and (2) 
+that node itself has not failed. Thus, the power system failure state is 
+generated by setting all power nodes downstream of the initially broken 
+nodes to non-functional. 
+Next, the state of the water system is computed based on the power 
+system failure state. The power and water distribution systems are 
+coupled through the water wells’ dependency on the power system. This 
+dependency is modeled by linking each water well to the power node 
+closest to it, which means that if a power node linked to a well is set to be 
+non-functional, then the well also becomes non-functional. The well 
+states are updated based on the state of the power system, and then the 
+water system is modeled through EPANET for a chosen simulation 
+period (length of time simulated). The simulation period represents the 
+duration of the power outage. This duration can be chosen either based 
+on actual reported power outage durations or estimated based on a best 
+guess of the time it will take the repair crews to arrive at the location, 
+replace damaged equipment, and restore the power. During the 
+simulation, EPANET records the minimum pressures obtained for every 
+node in the water system. This process is repeated for a chosen number 
+of iterations, N, which in this case study is set to 6,000 based on a 
+convergence analysis focused on convergence of the mean. A graphic 
+illustration of the entire simulation process is presented in Fig. 6. 
+A limitation of this modeling approach is that the functionality states 
+of the nodes in the power and water systems are constant during the 
+simulations in EPANET. This means that if a power outage is simulated 
+to last for 24 hours, the model does not allow for any of the power nodes 
+to be repaired and added back as a functional node during the simula­
+tions. In other words, all non-functional power and water nodes remain 
+non-functional throughout the simulation. This could be changed if in­
+formation were available on pole-level restoration times. However, this 
+was not available for past storms for St. Kitts. 
+4. Analysis and results 
+We demonstrate the usefulness of a model such as this by performing 
+two different analyses. The first analysis is a vulnerability assessment 
+that aims to identify critical components in the power system. The sec­
+ond analysis focuses on the linkages between the power and water 
+systems, focusing particularly on how to identify critical wells that 
+would be good candidates for the installation of back-up power. 
+4.1. Identifying critical components in the power system 
+To identify the most critical components of the power system in 
+terms of the cascading effects to the water system, simulations of indi­
+vidual power pole failures are performed. In the simulations, one power 
+node at a time is set to fail, causing all down-stream power nodes to stop 
+functioning. The resulting disruption on the water system is estimated 
+for power outage durations of both 12 and 24 hours. Although failures to 
+the power system can be repaired relatively quickly during normal 
+conditions, the restoration time during hurricanes can be much longer 
+due to weather conditions and difficulties for the repair crew of getting 
+to the damage locations. By analyzing two different outage durations 
+(12 hours vs. 24 hours), we can study the effect on the water system of 
+different power restoration times. The simulated disruptions are 
+measured in the form of the average number of water nodes generating 
+negative (< 0 psi), low (0-20 psi) and high (> 20 psi) pressures during 
+the simulation over all 6,000 iterations. 
+The result of the 24-hour simulations is presented in Fig. 7, where the 
+color of each of the power nodes represents the percentage of water 
+nodes experiencing negative pressure when the given power node is the 
+one node that initially failed. Recall that when one power node fails, all 
+downstream nodes along the given power line also stops functioning. 
+The percentage of water nodes experiencing negative pressures is given 
+by a color scale ranging from white to red, where white means that no 
+water nodes obtained negative pressure and red means that 3.2% of the 
+water nodes obtained negative pressures. The greatest disruption to the 
+water system of 3.2% is obtained when any of the first four nodes along 
+Fig. 5. Schematic illustrating the dependencies within the model.  
+Fig. 6. Graphic illustration of the simulation process.  
+K. Stødle et al.                                                                                                                                                                                                                                   
+
+Reliability Engineering and System Safety 209 (2021) 107421
+6
+the Southern power line initially failed. When one of these nodes breaks 
+and all downstream nodes fail, several of the water wells in the capital of 
+Basseterre become non-functional. Basseterre and the surrounding area 
+have the highest water demand on the island. Thus, when the wells in 
+this area stop pumping water into the distribution system over a time 
+period of 24 hours, the water system is unable to maintain a sufficiently 
+high pressure throughout this period. 
+Negative pressures also appeared when failing any of the nodes along 
+the Northern line. Even failing the very last node along that line causes 
+disruptions to the water system. The reason for this is that this node 
+provides electricity to the well with the highest water production ca­
+pacity in the water system. This well has a capacity that is almost three 
+times as high as the average capacity across all the wells. As this well is 
+connected to the last power node along the Northern line, the well is 
+affected by power outage when any of the power nodes along the line 
+breaks. In addition to this well, the Northern line also supplies 15 other 
+wells, which correspond to half of the wells in the water system. Thus, 
+failures to this power line cause a reduction in the inflow of water to the 
+distribution system that the water system is unable to cope with over a 
+period of 24 hours. In comparison, no disruptions to the water system 
+are seen by disrupting any of the nodes along the Western line, not even 
+the first node that causes the entire line to fail. These results indicate 
+that the power nodes along the Northern line as well as some of the 
+central nodes in Basseterre are the most vulnerable components of the 
+system. 
+Fig. 8 presents the results when the simulation duration is reduced to 
+12 hours. In this figure, we observe that single-node failures have the 
+same effect on the water system as during the 24-hour simulations for 
+most of the power nodes. The only exception is for the four power nodes 
+in Basseterre that induced the greatest disruption to the water system 
+during the 24-hour simulations. Failing any of these nodes do not cause 
+any disruption to the water system during a 12-hour simulation. These 
+results indicate that the water system is able to cope without the 
+contribution from most of the wells supplied by the Southern line for a 
+short period of time due to within-system storage, but not for a longer 
+time. Breaking any of the nodes along the Northern power line, on the 
+other hand, caused negative pressures to occur in the water system also 
+for this shorter simulation duration. 
+4.2. Analyzing linkages between the power and water systems 
+To identify the critical linkages between the power and water sys­
+tems, simulations are performed where the wells’ dependencies to the 
+power system are removed one well at the time. In real life, this can be 
+done by, for instance, installing a back-up power generator at the site of 
+a well, which will allow the well to function even though there is a 
+power outage in the area. The hurricane used in this analysis is a hur­
+ricane that is constructed to make landfall on the island. The hurricane is 
+constructed to move according to typical Caribbean hurricanes that 
+move westwards before bending toward the north. Fig. 9a presents a 
+map of the hurricane track. Different wind speeds ranging from 20 to 
+120 knots are simulated and the resulting power outage is set to last for 
+72 hours. Under normal conditions, this is a relatively long restoration 
+time for the power system. However, in the scenario of a hurricane 
+making landfall on the island, it is not unreasonable to assume that it 
+would take at least 72 hours to get the power system back to normal 
+operation. In Fig. 9b, the resulting average number of negative water 
+node pressures obtained over the 6,000 iterations are plotted against the 
+simulated wind speeds. At wind speeds of 100 knots or higher, the 
+hurricane caused the entire power system to fail, which means that none 
+of the wells are functioning. This situation is referred to as the worst- 
+case scenario for the remainder of this paper. In Fig. 9b, we observe 
+that the average number of negative pressures reaches a plateau at 39 
+(out of a total of 123 nodes in the system) when the hurricane causes this 
+worst-case scenario. 
+Fig. 10 presents the minimum pressures obtained at each water node 
+when simulating the worst-case scenario in EPANET over a time period 
+of 72 hours, where dark red points represent nodes experiencing nega­
+tive pressure, light red points represent low pressure (0-20 psi), and 
+white points represent pressures above 20 psi. We can see that negative 
+pressures are appearing throughout the entire distribution system. 
+The results of the simulations where one well at a time has its de­
+pendency on the power system removed are compared to the result of 
+the worst-case scenario. By doing this, we can study how much each of 
+the wells is able to improve the worst-case results. The resulting per­
+centage reductions in the number of negative water node pressures 
+obtained for each of the wells are presented in Fig. 11. The results are 
+given by a color scale ranging from white to green, where white means 
+that there is no reduction in the average number of negative pressures 
+appearing in the water system compared to the worst-case simulation 
+Fig. 7. The percentage of all water nodes having negative pressure during a 24- 
+hour simulation for each single-pole failure simulation. That is, the color of 
+each power node gives the average percentage of water nodes with negative 
+pressures if that power node fails by itself. 
+Fig. 8. The percentage of water nodes obtaining negative pressure during a 12- 
+hour simulation. 
+K. Stødle et al.                                                                                                                                                                                                                                   
+
+Reliability Engineering and System Safety 209 (2021) 107421
+7
+and green means that a reduction of 31% in negative pressures is 
+obtained. 
+The maximum reduction of negative pressures of 31% is observed 
+when any of the wells along the southwestern coastline has its de­
+pendency on the power system removed. In comparison, no wells on the 
+opposite side of the island, except one at the northernmost point of the 
+island, gave any improvements compared to the worst-case simulation. 
+The reason for that northern well showing some improvements is that 
+this well is the second highest water producing well in the system, with a 
+capacity that is 2.5 times as high as the average capacity across all wells. 
+Recall that the well with the highest capacity is one of the three dark 
+green wells located at the westernmost point. Thus, the water produc­
+tion capacity of the wells has some effect on the results. But we can 
+clearly see that the location of the wells seems to have a higher effect, as 
+the wells on the southwestern side of the island show such a high po­
+tential of reduced disruptions to the water system while most of the 
+wells on the other side does not show any potential to reduce the 
+disruptions. 
+An explanation for these results is that the northeastern side of the 
+island has a higher number of reservoirs and storage tanks, i.e., water 
+sources that are unaffected by power outages, than in the southwestern 
+side. In Fig. 11, the reservoirs and storage tanks are illustrated by black 
+squares and dots, respectively. The area in and around Basseterre has the 
+highest water demand. Due to the pressure drop that will be created as a 
+result of the high demand, we believe that the water from both the 
+western and eastern side of the island is flowing towards Basseterre. 
+Since the western side of the island has a fewer number of reservoirs and 
+storage tanks, this part of the distribution system will struggle more to 
+maintain a positive pressure without any contribution from the wells. 
+Thus, the contribution from allowing only one well to function on 
+backup power is higher when this one well is located along the western 
+side of the island compared to on the northeastern side. 
+5. Model validation 
+In order to validate the developed model for the power and water 
+Fig. 9. A map of the constructed hurricane track (a) and the resulting average number of water nodes that obtained negative pressure during 72-hour power outage 
+simulations caused the hurricane for winds speeds ranging from 20 to 120 knots (b). 
+Fig. 10. Minimum water node pressures simulated when no wells are func­
+tioning over a period of 72 hours. 
+Fig. 11. The percentage reduction in the number of negative water node 
+pressures compared to the worst case where no wells are functioning. 
+K. Stødle et al.                                                                                                                                                                                                                                   
+
+Reliability Engineering and System Safety 209 (2021) 107421
+8
+system at St. Kitts, a real hurricane is simulated in the model with the 
+aim of comparing the simulated disruptions to the infrastructure systems 
+with the actual disruptions caused by the hurricane. The hurricane used 
+in this validation process is Hurricane Maria, which moved over the 
+Eastern Caribbean Sea in September 2017. When passing St. Kitts on the 
+19th of September, Hurricane Maria was a category 5 hurricane with its 
+center located approximately 90 miles southwest of the island [2]. Data 
+about the hurricane track and wind speeds are obtained from the Na­
+tional Oceanic and Atmospheric Administration National Centers for 
+Environmental Prediction FTP site [19]. 
+The track and wind speed data obtained for Hurricane Maria is first 
+used as input to Stage 1 of the simulation process (as shown in Fig. 6) to 
+estimate the on-island wind speeds. The on-island wind speed estimates 
+are then used as input to Stage 2 of the simulation process and the 
+probability of power pole damage for each parish is obtained. 6,000 
+iterations of the simulation are then run to simulate the effects of the 
+hurricane on St. Kitts’ power and water systems. For each iteration, a 
+power outage duration of 60 hours is simulated. A press release from 
+SKELEC [28] states that repair crews began assessing the damage of 
+Hurricane Maria on the 20th of September, 2 days after the power sys­
+tem was first affected by the storm. For power restoration after a hur­
+ricane, there is typically another 1-2 days to fully mobilize repair 
+resources, especially on an isolated island. Therefore, we estimate that 
+repair work began 60 hours after the power outage began. 
+The results first focus on the simulated effect of the hurricane on the 
+power system. Fig. 12 shows the frequency over the 6,000 simulations 
+with which each pole is broken due to the hurricane wind. The nodes 
+along the south-western side of the island have the greatest probability 
+of breaking due to Hurricane Maria. This is the side of the island that the 
+hurricane passed closest to and, therefore, experienced stronger wind 
+speeds during the hurricane. It is worth noting that the greatest fre­
+quency of pole damage due to the winds within the model is low, at just 
+above 2% at 2.15%. 
+For each iteration, the cascading effects of the pole damage on 
+downstream power nodes are recorded, allowing analysis of the fre­
+quency of each power node not functioning. Fig. 13 shows the frequency 
+that each power pole is non-functional during the simulation of Hurri­
+cane Maria. The nodes towards the end of each power line have the 
+greatest frequency of being non-functional. This is as expected, as when 
+a node in a power line breaks, all downstream nodes are set to be non- 
+functioning, and so the nodes towards the end of each power line have 
+a greater probability of being non-functional than those towards the 
+beginning of the line. The greatest frequency of a node being non- 
+functional is 54% of the iterations. 
+The effects the simulated power outages have on the water distri­
+bution is also investigated. First, the frequency with which each well is 
+without power can be shown. Fig. 14 shows that the wells with the 
+greatest frequency of power disruptions follow the same pattern as the 
+frequency of non-functioning power nodes. The frequency is low for 
+those towards the southeast of the island and increases over towards the 
+north-western area of the island, where the ends of both the Western and 
+Northern power lines are located. 
+The effects of the loss of power at the wells on the water system can 
+be seen in Fig. 15, which shows the water nodes that experienced 
+negative pressures during the simulation. All water nodes that experi­
+ence negative pressures during the simulation are located in the north­
+ern part of the island, situated towards the end of the Northern and 
+Western power lines. These areas are more likely to experience power 
+Fig. 12. Frequency of power node breaks during the simulation of Hurri­
+cane Maria. 
+Fig. 13. Frequency of power nodes being in a non-functional state during the 
+simulation of Hurricane Maria. 
+Fig. 14. The frequency of which water wells lost power during the simulation 
+of Hurricane Maria. 
+K. Stødle et al.                                                                                                                                                                                                                                   
+
+Reliability Engineering and System Safety 209 (2021) 107421
+9
+outages to the wells, increasing the likelihood that the closer water 
+nodes will experience negative pressures. However, the water nodes in 
+the middle and south of the island are not affected in the simulation. 
+This analysis can suggest to the water system operator which areas of 
+the system require attention. This could be in the form of introducing 
+redundancy, such as back-up generators for the wells that experience the 
+greatest frequency of power outages during the simulation or in the form 
+of adding storage reservoirs in that portion of the system to increase the 
+ability of the system to withstand short power outages. 
+The aim of using our model to simulate the effects of Hurricane Maria 
+on the power and water systems is to compare the results to the actual 
+outages that occurred on St. Kitts. Unfortunately, the publicly available 
+information about the actual disruptions to the power and water systems 
+is very limited. This is typical, even in the U.S. The best information 
+about disruptions to the power system is found in a press release at the 
+SKELEC webpage [28], which stated that “Most of our feeders remained 
+intact and online during the passage of the storm. Some like the Canada 
+feeder which services Conaree, Halfmoon and Canada Estates came 
+offline, also Basseterre North Buckley’s to Trinity also is fully offline”. 
+For the water system, on the other hand, we are unable to find any in­
+formation about the disruptions caused by Hurricane Maria. 
+From the limited information found on the effects of Hurricane Maria 
+to the power system of St. Kitts, a crude comparison can be made to the 
+results of our simulations. Fig. 16 shows the areas that SKELEC stated in 
+the press release were offline due to Hurricane Maria and the results of 
+our simulations. As the press release from SKELEC only named areas that 
+were without power, the outline of these areas encompasses the entire 
+residential areas mentioned in the press release and, thus, do not 
+represent the actual outages due to Hurricane Maria. 
+The areas that were said to be affected in the SKELEC press release 
+are all located close to the start of either the Northern or Western lines, 
+while areas further downstream of all truck lines were not reported to 
+lose power. This suggests that the outages that occurred due to Hurri­
+cane Maria were due to disruptions in the smaller distribution lines that 
+are not included in the power model. Comparing the areas affected due 
+to the hurricane with the initial outages seen in the model, the affected 
+area of Basseterre North Buckley’s to Trinity (on the south-western side 
+of the island), somewhat matches with power nodes that have a high 
+frequency of breaking during the simulation. 
+The Canada area of St. Kitts is the smallest area outlined in Fig. 16 
+(the northernmost outline shown). The press release states that all 
+outages on the eastern side of the island were due to the feeder at Canada 
+being offline. Therefore, the power outages on the eastern side of the 
+island are not due to disruptions to the main trunk lines and thus cannot 
+be compared to the results of our simulations. 
+No data of the disruption caused to the water system was made 
+publicly available. The only reference to damage within the water sys­
+tem was in the Prime Minister’s post Hurricane Maria address stating 
+“Some critical infrastructure such as our electricity and water services… 
+sustained serious damage” [20]. Unfortunately, the lack of information 
+publicly available to the effects of Hurricane Maria on both the power 
+and water systems make validation of the model difficult. However, this 
+is not unusual and points to a research need. We as a research com­
+munity need to do a better job of collecting and archiving spatially 
+detailed data about the performance of infrastructure systems after 
+natural hazards. 
+6. Discussion 
+A model for the dependent power and water systems at St. Kitts has 
+been developed and the area of application for this model has been 
+exemplified by performing two analyses: one that aimed at identifying 
+critical components in the power system and another that analyzed the 
+linkages between the power and water systems. In this section, we will 
+first discuss how results obtained with our model can be used by 
+providing examples of how the results can support decisions regarding 
+system upgrades and emergency preparedness plans. Afterward, we will 
+discuss the challenges faced when modeling real-world dependent 
+infrastructure systems in relatively data-poor environments, as well as 
+the differences between modeling these systems and fictional systems. 
+6.1. Decision support 
+Many emerging and developing countries do not have access to the 
+resources needed to quickly repair infrastructure failures, which make 
+them significantly more vulnerable to infrastructure damage and water 
+shortages. The power and water systems on St. Kitts fall into this cate­
+gory. The power and water systems are spread across the entire island, 
+but the operators may not have the resources to immediately fix large- 
+scale blackouts or blackouts located away from the population centers. 
+Therefore, the result of analyses like the ones performed in this paper 
+can be used to support decisions about system upgrades that can help the 
+Fig. 15. The frequency of which water nodes experience negative pressures 
+during the simulation of Hurricane Maria. 
+Fig. 16. Comparison of the simulated frequency of power node breaks to the 
+areas of St. Kitts that were reported to lose power due to Hurricane Maria. 
+K. Stødle et al.                                                                                                                                                                                                                                   
+
+Reliability Engineering and System Safety 209 (2021) 107421
+10
+operators avoid disruptions. The results can also help the operators and 
+society in general to support decisions about emergency preparedness 
+plans. For instance, information about the most critical components of 
+the power system can be used to support decisions about which parts of 
+the power system should be strengthened to better withstand strong 
+winds. Repair crews and spare equipment are scarce resources. Thus, 
+when a hurricane is forecasted and severe disruptions are predicted, the 
+utility operators can benefit from knowing which parts of the system are 
+most critical and therefore which parts of the system should be priori­
+tized to be repaired and where to store back-up equipment required to 
+perform repairs. 
+The results of comparing the simulated disruptions to the water 
+system during different power outage durations illustrate the impor­
+tance of getting water wells back in normal operation as fast as possible 
+during downtimes. The results indicate that the water system can cope 
+with power outages in the area of Basseterre for 12 hours, but not for 24 
+hours. Thus, if the power utility operators are not able to restore the 
+power supply to the water system quickly, the water utility operators 
+should consider other alternatives to avoid loss of service. One possi­
+bility is to manually shut down some parts of the system to reduce the 
+pressure drop in the critical areas. Another solution is to supply the 
+critical wells with electricity from a different source such as a back-up 
+power generator. The result of the analysis where the linkages be­
+tween the power and water systems, i.e., the wells, were analyzed can 
+help support decisions about whether or not to invest in back-up power 
+generators, and if so, where these generators should be installed. The 
+analysis in this paper only simulated the situation where one well at a 
+time had access to a back-up generator. The results indicate that a power 
+generator should be installed to supply any of the wells along the 
+southwestern side of the island. We would like to emphasize that this is 
+not a final recommendation. This analysis is only studying the effect of 
+removing a well’s dependency on the power system during a worst-case 
+scenario where the entire island is affected by a power outage. For less 
+severe hurricanes, only parts of the power system will fail, which will 
+cause only a portion of the wells to stop functioning. Such scenarios are 
+not analyzed in this paper. In addition, in this analysis we are only 
+looking at the possibility of removing the dependency between the wells 
+and the power system one well at a time. What if the back-up power 
+generator can supply more than one well at a time? What if two or more 
+back-up power generators can be installed at different locations of the 
+island? These questions cannot be answered from the analysis performed 
+here, and further analysis is required before any conclusions can be 
+made. However, this analysis provides a good example of an area of 
+application for the model. 
+6.2. Challenges when modeling real infrastructure systems in data-poor 
+areas 
+From an academic perspective, there are many potential challenges 
+that can arise when modeling real infrastructure systems, especially 
+when dependencies between the systems have to be accounted for. We 
+discuss some of these challenges in this section, focusing specifically on 
+doing this type of modeling in relatively data-poor areas. 
+The largest challenge is to get access to the requisite data to develop 
+a model. The available data is often limited, which makes the task of 
+developing models that accurately represent the infrastructure systems 
+challenging. The required data includes data about infrastructure to­
+pology, i.e., data about how the systems are structured and how they are 
+connected to each other, data about the infrastructure states both during 
+normal operation and during emergencies, and other relevant data that 
+influence operations, like government and corporate policies [24]. The 
+private sector is often the owners of the infrastructures, and thus, the 
+owner of the data. Therefore, regardless of the system being in a 
+data-poor or data-rich area, the data is usually considered sensitive and 
+is therefore kept confidential. Getting access to the data requires 
+approval from stakeholders, which can be hard to achieve [15]. Limited 
+availability of relevant data was a significant challenge for the case 
+study in this paper. As previously mentioned, the only relevant data 
+found about the power system is the publicly available data obtained 
+through the SKELEC webpage. The available data about the water sys­
+tem, on the other hand, is much better as relevant information was 
+provided from the St. Kitts Water Department. 
+Another problem related to getting access to requisite data is that the 
+available data is not detailed enough or the data might not even exist, 
+which can be the case for operational data. Advances in technology in 
+recent decades have resulted in increased use of sensors and real-time 
+monitoring of infrastructures, which provides large amounts of opera­
+tional data during both normal operations and crises. However, not all 
+infrastructures utilize these new technologies, particularly in resource- 
+constrained systems. For these infrastructures, the quality of the avail­
+able operational data is dependent on the routines of documenting ab­
+normalities and accidents during operations. However, even if 
+infrastructure do have up-to-date technology and are capable of 
+recording data related to operations, the issue of the sensitivity of the 
+data again comes into play. Many companies do not want to advertise 
+how much their operations have been impacted when hazards occur. 
+Another worry for companies is how the release of outage data may 
+affect their customers’ perception of their ability to operate and their 
+public reputation. 
+Even if an infrastructure company agrees to share information about 
+their system to be used to develop a model, the data needs to be 
+reviewed regularly to assess how relevant it is compared to the infra­
+structure. Infrastructures are not static, but instead are constantly being 
+updated either to be better prepared for disruptions or sometimes re- 
+built after a disruption occurs. To ensure that the model is representa­
+tive of the current system, the model developers need information about 
+such updates from the infrastructure management. When modeling de­
+pendencies between infrastructures, the dependencies can also change 
+over time and must be considered when assessing if the model is 
+representative of the current systems and their dependencies. 
+Once the relevant data is available to develop a model, there are 
+always assumptions made in order to go from a complex real-world 
+system to a simpler representation that can be modeled. The more 
+detail included in the model, the more computational power is needed to 
+produce a viable simulation. There is a trade-off process of including 
+enough information within the model that it relates to the real-world 
+system, and not including too much information that the model is 
+slow to run simulations. For dependent infrastructure models, this again 
+extends to the dependencies modelled between the systems. They must 
+represent accurately the interactions between the systems, but not be so 
+complex that the model is difficult to construct. 
+For the model presented, due to the size and population of St. Kitts, 
+the water and power systems are relatively small compared to systems 
+seen in other parts of the world. Despite being relatively small systems, 
+assumptions were made in order to be able to develop the models. The 
+Water Department of St. Kitts agreed to share the data they had available 
+to them, which included information on 24 of the 30 wells and the de­
+mand at the parish level, rather than household level. This affected the 
+water model developed in EPANET which struggled to handle the 
+magnitude of demand and inflow of each parish effectively. In order to 
+combat this issue, the magnitude of the demand and inflow of water was 
+reduced but kept at the same ratio to allow the model to be an accurate 
+representation of the water distribution within the system. 
+Unfortunately, very limited information on the power system is 
+publicly available, and thus more assumptions were made when devel­
+oping the power model than the water model. Only three of the main 
+truck lines were included in the model. The information used to develop 
+the model came from information found on the company website, and 
+observations made by members of the Guikema Research Group on the 
+spacing of the power poles of the 3 trunk lines. The smaller distribution 
+lines could not be included in the model due to lack of available 
+information. 
+K. Stødle et al.                                                                                                                                                                                                                                   
+
+Reliability Engineering and System Safety 209 (2021) 107421
+11
+The hurricane model used is a model developed previously [12]. A 
+limitation of the wind field model is that it currently does not take the 
+elevation of St. Kitts into account. The mountainous area in the center of 
+the island will have some effect on the on-island wind speeds which is 
+not accounted for in the model. The simulation also only accounts for 
+damage to the power and water systems due to the strong winds expe­
+rienced during hurricanes and no other events that can also occur such 
+as flooding due to storm surge. 
+After developing a model, there can be great challenges involved in 
+validating the model, as was experienced in this case study. When col­
+lecting data about a disruptive event and its consequences to the infra­
+structure systems, the same problems as the one faced when collecting 
+system specific and operational data prior to the model development 
+appears. In our case study, we were unable to find public information 
+that in detail described the damages to the systems caused by Hurricane 
+Maria and the duration of the resulting disruptions. An attempt was 
+made to collect data about damages and disruptions caused by other 
+hurricanes too, but even less data was found then. Without access to 
+more data it is impossible to perform a complete validation of the model. 
+6.3. Why study real systems rather than just fictitious systems? 
+There have been many studies of infrastructure that have used 
+fictitious systems to study interdependencies. However, relatively few 
+studies have been conducted with real-world examples (e.g., [15]). The 
+available studies have all been done in wealthy countries with consid­
+erably higher capacity for collecting and maintaining data on infra­
+structure systems than our case study. 
+Real-world studies are undeniably more challenging to perform for 
+academic researchers. The needed data must be gathered if it is even 
+available, and real-world systems are much more complicated than 
+fictitious systems. Why study real systems? One of the main reasons is to 
+better understand if the findings from studies of fictitious systems still 
+hold if more of the complexities of real-world systems are accounted for. 
+Does leaving out the messy, real-world details fundamentally change the 
+insights? In our study, we see that accounting for the actual engineering 
+performance of the water system reveals key insights into where to 
+strengthen it that likely would not be revealed by a more typical network 
+theoretic based approach that does not account for the distribution of 
+demand and the physics of pipe flow. A second key reason for studying 
+real systems is to demonstrate how existing methods can be adapted and 
+used given real-world data and, in many cases, the lack of full data about 
+the systems. This is critical for moving these types of analysis tools from 
+academic studies to real-world use. 
+7. Conclusions 
+The dependent power and water systems of St. Kitts have been 
+modeled, providing a real-world example of a dependent infrastructure 
+model. Although the data available to develop the model was subopti­
+mal, a simple representation of the island’s power and water systems 
+was created. We have seen that dependencies between infrastructures 
+can cause substantial performance degradations, even in relatively 
+simple systems with limited interactions between them. Thus, de­
+pendencies, even in simple systems, need to be taken into consideration. 
+We have also shown how improvements within the water system could 
+be made to reduce the impacts of disruptions within the power system. 
+Even with the challenges associated with developing real-world case 
+studies, we have shown that it is possible in a low-data setting to pro­
+duce a simple model of a real-world case study in a way that could 
+support risk management decision making. 
+CRediT authorship contribution statement 
+Kaia Stødle: Conceptualization, Software, Formal analysis, Investi­
+gation, Writing - original draft, Visualization. Caroline A. Metcalfe: 
+Conceptualization, Software, Validation, Formal analysis, Investigation, 
+Writing - original draft, Visualization. Logan G. Brunner: Methodology, 
+Software, Formal analysis, Investigation, Writing - review & editing. 
+Julian N. Saliani: Methodology, Software, Formal analysis, Investiga­
+tion, Writing - review & editing. Roger Flage: Conceptualization, 
+Writing - review & editing, Supervision, Funding acquisition. Seth D. 
+Guikema: Conceptualization, Methodology, Writing - review & editing, 
+Supervision, Funding acquisition. 
+Declaration of competing interest 
+The authors declare that they have no known competing financial 
+interests or personal relationships that could have appeared to influence 
+the work reported in this paper. 
+Acknowledgement 
+This work was partially funded by the U.S. National Science Foun­
+dation through grant numbers NSF-1621116 and NSF-0968711. The 
+opinions are those of the authors and do not necessarily represent the 
+opinions of the U.S. National Science Foundation. 
+Supplementary materials 
+Supplementary material associated with this article can be found, in 
+the online version, at doi:10.1016/j.ress.2020.107421. 
+References 
+[1] Buldyrev SV, Parshani R, Paul G, Stanley HE, Havlin S. Catastrophic cascade of 
+failures in interdependent networks. Nature 2010;464(7291):1025–8. https://doi. 
+org/10.1038/nature08932. 
+[2] Burke, E. Hurricane Maria remains powerful, dangerous hurricane [News update], 
+St. Kitts & Nevis Observer, http://www.thestkittsnevisobserver.com/breaking-n 
+ews/hurricane-maria-remains-powerful-dangerous-hurricane-news-update/; 2017 
+[accessed 5 February 2019]. 
+[3] Chai WK, Kyritsis V, Katsaros KV, Pavlou G. Resilience of interdependent 
+communication and power distribution networks against cascading failures. In: 
+2016 IFIP Networking Conference (IFIP Networking) and Workshops. IEEE; 2016. 
+p. 37–45. https://doi.org/10.1109/IFIPNetworking.2016.7497224. 
+[4] CRAN. Details of the stormwind package. http://cran.seoul.go.kr/web/package 
+s/stormwindmodel/vignettes/Details.html; 2020 [accessed 9 April 2020]. 
+[5] Douglas, D. L. Dear Mr. Camdessus [Open letter], https://www.imf.org/external/ 
+np/loi/121098.htm; 1998 [accessed 14 January 2019]. 
+[6] Due˜nas-Osorio L, Craig JI, Goodno BJ. Seismic response of critical interdependent 
+networks. Earthquake engineering & structural dynamics 2007;36(2):285–306. 
+https://doi.org/10.1002/eqe.626. 
+[7] Dui H, Meng X, Xiao H, Guo J. Analysis of the cascading failure for scale-free 
+networks based on a multi-strategy evolutionary game. Reliability Engineering & 
+System Safety 2020:106919. https://doi.org/10.1016/j.ress.2020.106919. 
+[8] Fu G, Dawson R, Khoury M, Bullock S. Interdependent networks: vulnerability 
+analysis and strategies to limit cascading failure. The European Physical Journal B 
+2014;87(7):148. https://doi.org/10.1140/epjb/e2014-40876-y. 
+[9] GLUMR Board. Recommended standards for water works: Great Lakes–Upper 
+Mississippi River Board of State Public Health Environmental Managers. Water 
+Supply Committee, https://www.broward.org/WaterServices/Documents/states_s 
+tandards_water.pdf; 2012 [accessed April 2019]. 
+[10] Gao J, Barzel B, Barab´asi AL. Universal resilience patterns in complex networks. 
+Nature 2016;530(7590):307. https://doi.org/10.1038/nature16948. 
+[11] Guikema SD, Nateghi R, Quiring SM, Staid A, Reilly AC, Gao M. Predicting 
+hurricane power outages to support storm response planning. IEEE Access 2014;2: 
+1364–73. https://doi.org/10.1016/j.ress.2008.02.018. 
+[12] Han SR, Guikema SD, Quiring SM, Lee KH, Rosowsky D, Davidson RA. Estimating 
+the spatial distribution of power outages during hurricanes in the Gulf coast region. 
+Reliability Engineering & System Safety 2009;94(2):199–210. https://doi.org/ 
+10.1016/j.ress.2008.02.018. 
+[13] Han SR, Rosowsky D, Guikema S. Integrating models and data to estimate the 
+structural reliability of utility poles during hurricanes. Risk Analysis 2014;34(6): 
+1079–94. https://doi.org/10.1111/risa.12102. 
+[14] IFRC. Caribbean - Hurricane Georges Appeal No. 29/1998 Final Report, https://r 
+eliefweb.int/report/antigua-and-barbuda/caribbean-hurricane-georges-appeal-no- 
+291998-final-report; 2002 [accessed 14 January 2019]. 
+[15] Johansson J, Hassel H. An approach for modelling interdependent infrastructures 
+in the context of vulnerability analysis. Reliability Engineering & System Safety 
+2010;95(12):1335–44. https://doi.org/10.1016/j.ress.2010.06.010. 
+[16] Johansson J, Hassel H, Cedergren A. Vulnerability analysis of interdependent 
+critical infrastructures: case study of the Swedish railway system. International 
+K. Stødle et al.                                                                                                                                                                                                                                   
+
+Reliability Engineering and System Safety 209 (2021) 107421
+12
+journal of critical infrastructures 2011;7(4):289–316. https://doi.org/10.1504/ 
+IJCIS.2011.045065. 
+[17] Johnson Caroline A, Flage Roger, Guikema Seth D. Characterising the robustness of 
+coupled power-law networks. Reliability Engineering & System Safety 2019;191: 
+106560. https://doi.org/10.1016/j.ress.2019.106560. 
+[18] LaRocca S, Johansson J, Hassel H, Guikema S. Topological performance measures 
+as surrogates for physical flow models for risk and vulnerability analysis for 
+electric power systems. Risk Analysis 2015;35(4):608–23. https://doi.org/ 
+10.1111/risa.12281. 
+[19] NOAA. Retrieved from National Centers for Environmental Prediction FTP site: 
+https://ftp.emc.ncep.noaa.gov/wd20vxt/hwrf-init/decks/bal152017.dat; 2017 
+[accessed 24 April 2019]. 
+[20] Organisation of Eastern Caribbean States. Prime Minister Dr. the Hon. Timothy 
+Harris’ Post-Hurricane Maria Address [Press release], https://pressroom.oecs.org/ 
+prime-minister-dr-the-hon-timothy-harris-post-hurricane-maria-address; 2017 
+[accessed 27 February 2019]. 
+[21] Ouyang M, Wang Z. Resilience assessment of interdependent infrastructure 
+systems: With a focus on joint restoration modeling and analysis. Reliability 
+Engineering & System Safety 2015;141:74–82. https://doi.org/10.1016/j. 
+ress.2015.03.011. 
+[22] Parshani R, Rozenblat C, Ietri D, Ducruet C, Havlin S. Inter-similarity between 
+coupled networks. EPL (Europhysics Letters) 2011;92(6):68002. https://doi.org/ 
+10.1209/0295-5075/92/68002. 
+[23] Poljanˇsek K, Bono F, Guti´errez E. Seismic risk assessment of interdependent critical 
+infrastructure systems: The case of European gas and electricity networks. 
+Earthquake Engineering & Structural Dynamics 2012;41(1):61–79. https://doi. 
+org/10.1002/eqe.1118. 
+[24] Rinaldi SM. Modeling and simulating critical infrastructures and their 
+interdependencies. In: Proceedings of the 37th annual Hawaii international 
+conference on System Sciences. IEEE; 2004. https://doi.org/10.1109/ 
+HICSS.2004.1265180. 
+[25] Rossman LA. EPANET 2.0 Users Manual. In: N.R.M.R. Laboratory, editor. United 
+States Environmental Protection Agency; 2000 (Ed.). 
+[26] Shafieezadeh A, Onyewuchi UP, Begovic MM, DesRoches R. Age-dependent 
+fragility models of utility wood poles in power distribution networks against 
+extreme wind hazards. IEEE Transactions on Power Delivery 2014;29(1):131–9. 
+https://doi.org/10.1109/TPWRD.2013.2281265. 
+[27] SKELEC. System Overview [Online]. https://www.skelec.kn/system-overview/ 
+[accessed 14 February 2019]. 
+[28] SKELEC. Hurricane Maria Restoration Update [Online]. http://www.skelec.kn/h 
+urricane-maria-restoration-update-wednesday-september-20-2017/; 2017 
+[accessed 5 February 2019]. 
+[29] Thacker S, Barr S, Pant R, Hall JW, Alderson D. Geographic hotspots of critical 
+national infrastructure. Risk Analysis 2017;37(12):2490–505. https://doi.org/ 
+10.1111/risa.12840. 
+[30] The Official Website of St. Kitts and Nevis. About St. Kitts and Nevis [Online]. 
+https://www.gov.kn/ [accessed 9 January 2019]. 
+[31] World Population Review. Saint Kitts and Nevis Population 2018 [Online]. http:// 
+worldpopulationreview.com/countries/saint-kitts-and-nevis-population/ 
+[accessed 9 January 2019]. 
+K. Stødle et al.                                                                                                                                                                                                                                   

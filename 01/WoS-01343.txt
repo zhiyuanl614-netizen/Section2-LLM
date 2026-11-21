@@ -1,0 +1,923 @@
+Resilience of Water Distribution Systems during
+Real-Time Operations under Limited Water
+and/or Energy Availability Conditions
+Puneet Khatavkar, Ph.D., S.M.ASCE1; and Larry W. Mays, Ph.D., F.ASCE2
+Abstract: A methodology for determining system operation resilience is presented for the real-time operation of water distribution systems
+(WDS) under critical conditions of limited water or electrical energy resulting from extreme drought or electric grid failure. Resilience for
+water distribution systems is defined as how quickly the WDS recovers or bounces back from emergency to normal operations. The algorithm
+for operational resilience was interfaced with an optimization–simulation model for the real-time optimal operation of water distribution
+systems. The resilience methodology considered both demand and water quality requirements of both the municipal WDS and the power
+plant cooling systems. The optimization–simulation modeling approach interfaced a genetic algorithm optimization procedure with the WDS
+hydraulic and water quality simulator (EPANET) in the framework of an optimal control problem. The interfacing of the genetic algorithm in
+MATLAB and the EPANET model was implemented using a MATLAB–EPANET toolkit. An example WDS including two cities, five power
+plants, and reclaimed water from a wastewater treatment plant was used to demonstrate the application of system operation resilience
+concepts to assess the performance. The resilience computation methodology presented in this study is applicable to both short-term
+and long-term failures of WDS. For the purposes of this study, the methodology was applied to three scenarios of short-term (2–6 h) power
+outages for the example WDS. A sensitivity analysis was performed for resilience of example WDSs under varying degrees of long-term
+system-level power and water shortages. Applications of the methodology are used to illustrate improved operation resilience of the system.
+DOI: 10.1061/(ASCE)WR.1943-5452.0001112. © 2019 American Society of Civil Engineers.
+Author keywords: Resilience; Water distribution systems; Water energy nexus; Real-time operations; Optimization; Simulation.
+Introduction
+Power distribution systems (PDSs) and the water distribution
+systems (WDSs) are two critical infrastructure systems with opera-
+tional interdependencies that have been recognized and studied in
+broad generalities for some time. The main dependency of the PDS
+on the WDS is the requirement of water for the cooling cycle of
+thermoelectric power generation. The main dependency of the
+WDS on the PDS is the power for pumping water from the source
+to the treatment plant through the WDS. The interdependencies be-
+come more acute under conditions of limited water or power
+availability. The optimization–simulation framework used for this
+study considers these interdependencies. If power plant cooling
+water demands are not met, the PDS may fail to supply adequate
+power for WDS pumping stations, leading to a cascading failure of
+both systems. This study presents a methodology for computation
+of operational resilience of WDS considering the interdependencies
+between the water and power distribution systems. The methodol-
+ogy can consider both the impacts of reduced water availability and
+reduced power supply simultaneously or individually. This study is
+limited to assessment of the effects of power or water shortage on
+WDS operations. An optimization–simulation model for PDS oper-
+ations is being developed as a part of the ongoing research for NSF
+Project 029013-0010, CRISP Type 2—Resilient cyber-enabled
+electric energy and water infrastructure modeling and control under
+extreme drought. The ongoing research includes development of a
+combined PDS-WDS resilience computation methodology to study
+the effects of power or water shortage on operations of both PDSs
+and WDSs.
+Definition of Operational Resilience for Water
+Distribution Systems
+Several definitions of resilience of engineered systems are present
+in the literature; a few notable ones are presented in this section.
+Resilience measures the ability of a system to recover following
+some disturbance or failure. Following are general definitions of
+resilience not necessarily related to water distribution systems.
+Folke (2006) stated that resilience measures the capacity of an
+engineered system to absorb disturbance while the system is under-
+going changes to retain essentially the same function, structure, and
+feedbacks. Bruneau et al. (2003) defined resilience through the four
+Rs of resilience: robustness, redundancy, resourcefulness, and rap-
+idity. Walker et al. (2004) acknowledged that different interpreta-
+tions of resilience used in the literature cause confusion and stated
+that resilience of a system needs to be considered in terms of the
+attributes that govern a system’s dynamics. Pandit and Crittenden
+(2012) stated that resilience is the capacity of a system to absorb
+shocks and perform under perturbations and that resilience can
+serve as an appropriate indicator of system performance. Hosseini
+et al. (2016) provided a detailed review of definitions and mea-
+sures of resilience for engineered systems. Shin et al. (2018) inves-
+tigated the definitions of quantitative resilience measures for water
+1Graduate Student, School of Sustainable Engineering and the Built
+Environment, Arizona State Univ., Tempe, AZ 85257–5306. ORCID:
+https://orcid.org/0000-0002-6945-820X. Email: pkhatavk@asu.edu
+2Professor, School of Sustainable Engineering and the Built Environ-
+ment, Arizona State Univ., Tempe, AZ 85257–5306 (corresponding
+author). Email: mays@asu.edu
+Note. This manuscript was submitted on June 30, 2018; approved on
+February 26, 2019; published online on August 14, 2019. Discussion per-
+iod open until January 14, 2020; separate discussions must be submitted for
+individual papers. This paper is part of the Journal of Water Resources
+Planning and Management, © ASCE, ISSN 0733-9496.
+© ASCE
+04019045-1
+J. Water Resour. Plann. Manage.
+ J. Water Resour. Plann. Manage., 2019, 145(10): 04019045 
+Downloaded from ascelibrary.org by Nottingham Trent University on 08/14/19. Copyright ASCE. For personal use only; all rights reserved.
+
+distribution systems. Operational resilience is defined as the capac-
+ity of an engineered system to absorb disturbance and reorganize
+while undergoing change so as to retain essentially the same
+function, structure, identity, and feedbacks (Walker et al. 2004;
+Blackmore and Plants 2008).
+A few definitions of resilience for WDS network structures and
+operations have been reported in the literature. Blackmore and
+Plant (2008) focused on the risk-based definition of resilience
+for WDS operations to provide a methodology for resilient design
+of WDSs. Hashimoto et al. (1982) defined resilience for water
+distribution systems as how quickly the WDS recovers or
+bounces back from failure once failure has occurred. Ba˜nos et al.
+(2011) presented a resilience index for WDS performance for
+uncertainty-based design of WDS. Zhuang et al. (2013) presented
+a methodology for resilience of WDSs considering failure recovery
+times. Other similar studies for resilience-based design of WDSs
+include Pandit and Crittenden (2012), Herrera et al. (2016),
+Sweetapple et al. (2018), and Ma et al. (2018).
+Most of the studies in the literature focus on the resilience-based
+design of WDSs, except a couple of studies by Aydin et al.
+(2014a, b), which are based on operational resilience of WDSs.
+Operational resilience is defined as the capacity of an engineered
+system to absorb disturbance and reorganize while undergoing
+change so as to retain essentially the same function, structure, iden-
+tity, and feedbacks (Walker et al. 2004; Blackmore and Plants
+2008). Operational resilience of water distribution systems was de-
+fined by Aydin et al. (2014b) as how quickly a WDS recovers from
+not meeting acceptable pressure levels. Aydin et al. (2014a) defined
+operational resilience as the ratio of the number of times a satis-
+factory performance follows an unsatisfactory performance and
+the number of times an unsatisfactory performance occurs within
+the system. This study uses the definition of operational resilience
+given by Aydin et al. (2014a) for developing a real-time resilience
+assessment methodology for WDS operations under emergency
+conditions. An unsatisfactory performance would result when one
+of the performance conditions, such as pressure requirements, is not
+met. Meeting the end-user water quality requirements is another
+important performance criterion for WDS operations.
+The operational resilience computation methodology presented
+is a comprehensive tool for performance assessment of WDS under
+normal and emergency conditions of limited power and water avail-
+ability. Operational resilience values show in real time the level to
+which the system recovers from a performance failure. Therefore,
+operational resilience is the best tool for WDS operations perfor-
+mance assessment.
+Optimization–Simulation Approach
+Khatavkar and Mays (2018) provided a detailed description of the
+optimization–simulation model for the optimal control problem. The
+optimization model for water distribution systems explained by
+Khatavkar and Mays (2018) optimized operations under limited
+availability of electrical power or water to satisfy the required (re-
+quested) demand for service areas (or pressure zones) while meeting
+the system pressure and water quality requirements of the system.
+The objective of the model for real-time operation is to minimize the
+difference between the requested (Dreq;z;tQbz) and satisfied demand
+(Dsat;z;tQbz) for all service areas z and simulation times t
+min Obj ¼
+X
+t¼T
+t
+X
+z¼Z
+z
+½ðDreq;z;t −Dsat;z;tÞQbzbθz;t
+ð1Þ
+where Obj = objective function; Dreq;z;t and Dsat;z;t = requested and
+satisfied demand multipliers, respectively, for service area z at time t;
+b = power index for the objective function; Z = total number of ser-
+vice areas in the system; T = total simulation time; Qbz = average
+demand (gpm) observed during 24-h operations of the WDS for ser-
+vice area z; and θz;t = penalty multiplier for not satisfying demand for
+service area z at time t.
+The constraints include two types: (a) those solved implicitly by
+the EPANET model and (b) those incorporated into the objective
+function as bound constraint violations.
+The equations solved implicitly by EPANET for hydraulic and
+water quality analysis are:
+1. The conservation of mass at each junction node;
+2. The conservation of energy for each pipe m connecting nodes i
+and j;
+3. The bounds on the water level of storage tanks; and
+4. Equations to define water quality analysis.
+Bound constraints are incorporated as bound violations into the
+objective function.
+1. The nodal pressure head minimum and maximum bounds;
+2. Bounds on pump operation times;
+3. Switch constraint for turning pumps on or off;
+4. Power requirement constraint of the pumps;
+5. Water quality constraint defining minimum and maximum
+bounds on concentrations; and
+6. Bounds on “satisfied” demand multipliers.
+Genetic Algorithm
+Genetic algorithms solve an unconstrained problem that is a re-
+duced optimization problem consisting of the objective function
+with the bound constraints incorporated as penalty functions. In
+summary, the unconstrained optimization problem uses EPANET
+as stated previously to solve constraints defined as the hydraulic
+and water quality constraints, and the bound constraints are incor-
+porated into the objective function as penalty functions to define the
+reduced objective, which is solved using the genetic algorithm. The
+interfacing of the genetic algorithm in MATLAB and the EPANET
+model is implemented using a MATLAB–EPANET toolkit devel-
+oped by Elíades and Kyriakou (2009).
+Fig. 1 illustrates the optimization–simulation procedure inter-
+faced with resilience computations. The optimization–simulation
+model is provided with inputs including the EPANET network file
+and the power availability [PowðavailableÞpump;t] as a function of
+time t. Optimization–simulation iterations are performed to provide
+the optimal pump controls and demands satisfied, which are used in
+the resilience computations (Fig. 1).
+The optimization–simulation model presented by Khatavkar
+and Mays (2018) considers supplied water demands at a service-
+area or pressure-zone level for the example presented herein but can
+also be considered at a higher resolution with an appropriate water
+demand prediction model. The demand patterns are less reliable at
+an individual consumer level as compared to the service-area or
+pressure-zone level. A statistical model that predicts the water
+demands at an individual consumer level and considers historical
+demands would be necessary to predict future demands. Provision
+of flow control valves would be required at an individual consumer
+level to control the supplied demands and would also be needed
+for application of the optimization–simulation model at a higher
+resolution.
+The priority of WDS operations during emergency conditions of
+limited power or water availability is to meet the requested
+demands to the maximum possible extent. Therefore, the model
+presented by Khatavkar and Mays (2018) considered the objective
+of minimizing the difference between the demands requested
+and supplied during real-time operations. The main aim of the
+© ASCE
+04019045-2
+J. Water Resour. Plann. Manage.
+ J. Water Resour. Plann. Manage., 2019, 145(10): 04019045 
+Downloaded from ascelibrary.org by Nottingham Trent University on 08/14/19. Copyright ASCE. For personal use only; all rights reserved.
+
+optimization–simulation model is to provide a real-time control
+strategy for the WDS under emergency conditions. A multiobjec-
+tive optimization model would not be feasible because of the very
+large computation times as a result of the large number of function
+evaluations (EPANET simulations) and resilience computations re-
+quired during real-time operations under emergency conditions.
+Real-Time Operation Framework during Limited
+Electrical Power Generation
+A few studies have been reported in the literature for optimization
+of real-time controls of WDSs considering water-energy nexus in-
+teractions. Fang and Chen (2017) investigated the links between
+WDSs and energy systems for a city. Vakifard et al. (2018) pro-
+vided a detailed literature review for techniques and approaches
+for optimization of water supply systems considering the water-
+energy nexus. Most of the studies explained include design ap-
+proaches for WDSs considering water-energy nexus interactions.
+Li et al. (2018) presented an optimization model for real-time
+operations of water-energy nexus systems. The model considered
+optimization of pump schedules during power outages but did
+not use a WDS simulation model. Oikonomou and Parvania (2019)
+presented a methodology for optimal coordinated controls of
+WDSs and PDSs considering minimization of operational costs
+for both systems. The study did not include simulation of real-time
+WDS operations under emergency conditions. The methodology
+presented herein considers optimization–simulation of real-time
+operations of WDSs under emergency conditions of limited power
+or water availability interfaced with an operational resilience com-
+putation methodology for performance assessment.
+The aim of optimizing the operations of a water distribution sys-
+tem under limited availability of electrical power is an attempt to
+satisfy the requested levels of demand at various locations while
+also meeting the pressure requirements of the system. The objective
+statement formulated here is to minimize the differences between
+the requested and satisfied demands in all service areas in the
+system. The following describes the overall concept of real-time
+operation for each municipal water system:
+1. At real-time t, receive electrical power input from PDS.
+2. Receive latest data [status of pumps, tank levels, status of valves,
+and flows in and out of the system from the supervisory control
+and data acquisition (SCADA) system] for each water distribu-
+tion system.
+3. Update the EPANET for each water distribution system input
+using data from the SCADA system for each WDS.
+4. Run the WDS optimization model to determine the actual de-
+mand pattern and pump operation that can be met with the
+limited electrical energy input. During the optimization and si-
+mulation process, the EPANET model is called repeatedly from
+the genetic algorithm optimization to determine WDS opera-
+tions over the next 24 h. The optimization model searches over
+the decision variables (pump operation and a satisfied demand
+pattern) to minimize the difference between demand requested
+and demand satisfied. The simulator determines the values of
+the state variables (nodal pressure heads, pipe flows, and tank
+levels) for each set of control variables (pump operations and
+satisfied demand multipliers) determined in the optimizer.
+5. Implement the optimal pump schedule over the next hour, which
+is accomplished through the SCADA system.
+6. Repeat Steps 1–5 each time increment during the emergency
+event, each time incrementing the time t ¼ t þ τ, with
+τ ¼ 1 h.
+In this approach, feedback from the EPANET model is provided
+at each iteration of the overall real-time operation model. The
+EPANET output from this process includes satisfied demand multi-
+pliers (Dsat;z;tim), power consumption (Powpump;tim), pressure heads
+at nodes (Pn;tim), and water quality (Cq;n;tim) at simulation time tim.
+The system operation resilience (RESt) is computed at real time (t)
+for simulation using the approach given in Fig. 1.
+Operational Resilience Computations
+The overall objective is to define a resilience as a weighting of the
+pressure, power, demand, and water quality satisfaction. A function
+in this study is defined as a measure of performance efficiency of
+the WDS with respect to a performance parameter (pressure, power,
+demand, and water quality satisfaction).
+The respective functions for pressure, power availability, de-
+mand satisfaction, and water quality are defined as follows.
+Pressure Function
+Pressure bounds are an important performance assessment criterion
+for water distribution system operations. During emergency condi-
+tions, water demands may be satisfied at lower pressures than gen-
+erally acceptable, although lower pressure bound violations are a
+partial failure of the water distribution system because prolonged
+lower pressure bound violations could be a public health safety
+hazard. Similarly, water demands could be satisfied at pressures
+higher than the upper pressure bounds, which may lead to failure
+of WDS components or household faucets. Therefore, from an
+operational resilience perspective, pressure bound satisfaction is
+important for the demands that can be satisfied.
+Pressures within a WDS are maintained within a range defined
+by lower and upper bounds for all nodes in the system. A low-
+pressure function afPn;timg is formulated, which has a value of
+1 when node pressures are above Ps;low, whereas the function value
+is 0 for pressures lower than Plow. The pressure function is allocated
+a value (between 0 and 1) based on its deviation from the Ps;low safe
+Fig. 1. Resilience computation method implementation.
+© ASCE
+04019045-3
+J. Water Resour. Plann. Manage.
+ J. Water Resour. Plann. Manage., 2019, 145(10): 04019045 
+Downloaded from ascelibrary.org by Nottingham Trent University on 08/14/19. Copyright ASCE. For personal use only; all rights reserved.
+
+limit for pressures between Plow and Ps;low. The decision conditions
+for low pressure indication function for nodes n and simulation
+time tim are as follows:
+If Pn;tim ≤Plow; then afPn;timg ¼ 0
+Else; if Pn;tim > Plow and Pn;tim ≤Ps;low; then afPn;timg
+¼ min
+
+0;
+Pn;tim −Plow
+Ps;low −Plow
+
+ð2Þ
+For pressures higher than the safe limit of Ps;upper, a high pres-
+sure indication function bfPn;timg is formulated, which has a value
+of 1 when node pressures are within the safe higher limit of Ps;upper,
+whereas the function value is 0 for pressures higher than the
+extreme limit of Pupper. The pressure function is allocated a value
+between 0 and 1 based on its deviation from the safe limit of Ps;upper
+if the pressure lies within Ps;upper and Pupper. The decision condi-
+tions for the high pressure indication function (bfPn;timg) for nodes
+n and simulation time tim are as follows:
+If Pn;tim ≥Pupper then bfPn;timg ¼ 0
+Else; if Pn;tim ≥Ps;upper and Pn;tim < Pupper:
+then bfPn;timg ¼ max
+
+0;
+ Pupper −Pn;tim
+Pupper −Ps;upper
+
+ð3Þ
+A combined function ffPn;tg for pressures is defined as follows:
+If afPn;timg ¼ 0 or bfPn;timg ¼ 0; then ffPn;timg ¼ 0
+Else; ffPn;timg ¼ afPn;timg þ bfPn;timg
+2
+ð4Þ
+Fig. 2 illustrates the values of combined function ffPn;tg for the
+upper and lower pressure bounds.
+Power Availability Function
+An important function of the model for scheduling pump opera-
+tions and demand satisfaction is to avoid power availability con-
+straint violations for improved operation resilience compliance
+with the power availability as one of the major functions. The
+function for power ffPowpump;tg for all pumps and times t is con-
+sidered binary (0,1). The function has a value of 1 for the pumps
+complying with the power availability; that is, the power con-
+sumed by the pump at that time is within the power available.
+The function assumes a value of 0 when the power availability
+is not satisfied. The decision rule for the power compliance func-
+tion is
+If Powpump;t > PowðavailableÞpump;t then ffPowpump;tg ¼ 0
+If Powpump;t ≤PowðavailableÞpump;t then ffPowpump;tg ¼ 1
+ð5Þ
+Demand Satisfaction Function
+The function for demand satisfaction is given by Dsat;z;t=Dreq;z;t,
+which is an output from the optimization model. The values show
+the extent to which the requested demands are satisfied. The func-
+tion for demand satisfaction is given as
+ffdemandsz;tg ¼ Dsat;z;t
+Dreq;z;t
+ð6Þ
+Water Quality Function
+Meeting the end-user water quality requirements is another impor-
+tant performance criterion for WDS operations. From an end-user
+quality monitoring standpoint, residual chlorine for domestic users
+and TDS levels for power plants are parameters of importance. This
+study considers a generalized constraint for concentration (Cq;z;tim)
+of a water quality parameter (q) at simulation time t and water sup-
+ply zone z. The constraint is applied for TDS concentrations at
+power plants in the example application. The concentration of such
+a substance (parameter) in the water supplied to the end user is gen-
+erally governed by the water quality standards of the water district
+and the specific water supply requirements of the customer. Each
+parameter for water quality is bound by a lower and upper limit for
+concentrations given by Cq and ¯Cq, respectively
+If Cq;z;tim ≤¯Cq and Cq;z;tim ≥Cq; ffCq;z;timg ¼ 1
+Else ffCq;z;timg ¼ 0
+ð7Þ
+Fig. 2. Pressure function for lower and upper pressure bounds.
+© ASCE
+04019045-4
+J. Water Resour. Plann. Manage.
+ J. Water Resour. Plann. Manage., 2019, 145(10): 04019045 
+Downloaded from ascelibrary.org by Nottingham Trent University on 08/14/19. Copyright ASCE. For personal use only; all rights reserved.
+
+System Operation Resilience
+Aydin et al. (2014a, b) used the following definition of resilience
+for functions of pressure, demand, and power in WDS during
+time t as
+RESf;t ¼ # of times satisfactory follows unsatisfactory
+# of times unsatisfactory occurs
+ð8Þ
+This study uses the definition of resilience shown previously for
+deriving the equations for operational resilience under emergency
+condition.
+Pressure Resilience
+Resilience for the upper and lower pressure bound function
+(ffPn;timg) defined in Eq. (4) is formulated using Eq. (8). The
+resilience for pressure bound satisfaction function is given as
+follows:
+RESpressure;t ¼
+PN
+n
+PT
+tim maxð0; ffPn;timg −ffPn;tim−1gÞ
+# of times ffPn;timg < 1
+
+t
+ð9Þ
+where RESpressure;t = resilience related to pressure functions at real
+time t; and ffPn;timg = function of pressure bound satisfaction
+defined in Eqs. (3) and (4) for simulation time tim and node n.
+Power Consumption Resilience
+Resilience for the power availability function (ffPowpump;tg)
+defined in Eq. (5) is formulated using Eq. (8). The resilience for
+power availability function is given as follows:
+RESpow;t
+¼
+PPUMP
+pump
+PT
+tim maxð0;ffPowpump;timg −ffPowpump;tim−1gÞ
+#of timesffPowpump;timg ¼ 0
+
+t
+ð10Þ
+where RESpow;t = resilience related to power functions at real-time
+t; and fðPowpump;timÞ = function of power availability defined in
+Eq. (5) for simulation time tim and pump.
+Demand Satisfaction Resilience
+Resilience for the demand satisfaction function (ffdemandsz;tg)
+defined in Eq. (6) is formulated using Eq. (8). The resilience for
+demand satisfaction function is given as follows:
+RESdemands;t
+¼
+PZ
+z
+PT
+tim maxð0; ffdemandz;timg −ffdemandz;tim−1gÞ
+# of times ffdemandz;timg < 1
+
+t
+ð11Þ
+where RESdemands;t = resilience related to demand satisfaction at
+real time t; and fðdemandz;timÞ = function of demand satisfaction
+at simulation time tim and zone z.
+Water Quality Resilience
+Resilience for the water quality function (ffCq;z;timg) defined in
+Eq. (7) is formulated using Eq. (8). The resilience for water quality
+function is given as follows:
+RESWQ;t ¼
+PQ
+q
+PZ
+z
+PT
+tim maxð0; ffCq;z;timg −ffCq;z;tim−1gÞ
+# of times ffCq;z;timg < 1
+
+t
+ð12Þ
+where RESWQ;t = resilience for water quality at real time t; and
+fðCq;z;timÞ = function of water quality at simulation time tim and
+zone z.
+System Operation Resilience
+The overall resilience is a weighting of the pressure, power,
+demand, and water quality resiliencies
+RESt ¼ WpressureRESpressure;t þ WpowRESpow;t þ WdemandsRESdemands;t þ WWQRESWQ;t
+4
+ð13Þ
+where RESt = total resilience for real time t; and Wpressure, Wpow,
+Wdemands, and WWQ = weights associated with pressure, power, de-
+mand satisfaction, and water quality resilience, respectively. The
+values of these weights are determined through sensitivity analyses
+for a WDS based on the importance of each parameter and its ef-
+fects on the overall performance of the WDS. The values of these
+weights should be in compliance with the following equation:
+Wpressure þ Wpow þ Wdemands þ WWQ ¼ 4
+ð14Þ
+Application Examples
+Two example WDSs were used to illustrate the application of the
+model. The first WDS system in Fig. 3 does not include water stor-
+age tanks at the power plants, whereas the second system considers
+a water storage tank at each of the power plants in the system. Each
+example system includes two cities, a reclaimed wastewater treat-
+ment plant (WWTP), and a power distribution system. City 1 con-
+sists of four service areas (designated as nodes 1.1–1.4) with a total
+base demand of 30,000 gpm, and City 2 (designated as nodes
+2.1–2.5) consists of five service areas with a total base demand
+of 25,000 gpm. A total of 17 freshwater pumps and 11 reclaimed
+water pumps serve the WDS.
+The power distribution system is based on the IEEE 14 bus sys-
+tem (Kodsi and Canizares 2003), which consists of five power
+plants. The cooling water for these power plants is supplied from
+both a freshwater source and the reclaimed water from a wastewater
+treatment plant. For the first WDS system (Fig. 3), instantaneous
+mixing takes place for the fresh and reclaimed water supplied at the
+power plant node, whereas for the second WDS system, the mixing
+takes place within the tank connected to the power plant.
+Each service area has a separate demand pattern. The WDS has
+six demand patterns. One pattern applies to all the residential zones
+within the cities and for each of the five power plants in the system.
+Pipes in the WDS are categorized into three types. Main
+lines (ML1–ML7) connect the freshwater pumps to the various
+power plants and cities, intermediate lines (IL 1.1–IL 1.4 and IL
+2.1–IL 2.5) are interconnecting nodes within the cities, and re-
+claimed water pipelines (RW1–RW5) connect the waste water
+treatment plants to the five power plants in the system. The pumps
+© ASCE
+04019045-5
+J. Water Resour. Plann. Manage.
+ J. Water Resour. Plann. Manage., 2019, 145(10): 04019045 
+Downloaded from ascelibrary.org by Nottingham Trent University on 08/14/19. Copyright ASCE. For personal use only; all rights reserved.
+
+supporting the WDS are categorized as freshwater pumps
+(WP1–WP7) and reclaimed water pumps (RWP1–RWP5).
+The optimization–simulation model (Khatavkar and Mays
+2018) was applied to the two example systems using the three sce-
+narios of power outage in Table 1. The quality considerations for
+the three scenarios are:
+1. No consideration of water quality.
+2. Upper bound for total dissolved solids (TDS) of 2,000 mg=L at
+power plant.
+3. Upper bound for total dissolved solids (TDS) of 1,500 mg=L at
+power plant.
+The operational resilience was applied to the WDS, with storage
+tanks at each power plant for the three different levels of power
+shortage.
+Pressures under normal conditions are between 40 and 80 psi,
+whereas the extreme limits are between 20 and 100 psi. The per-
+formance criteria for resilience are not achieved at all when the
+pressures cross the extreme bounds, whereas partial value is given
+to the function when the pressures are within the extreme bounds
+but cross the safe bounds. The pressure function (PF) is 100% when
+the pressures lie within the safe bound limits. The safe lower limit
+Ps;low used for the example application in this paper was 40 psi, and
+a lower limit Plow of 20 psi was used. The safe upper limit (Ps;upper)
+for pressures was 80 psi, and the extreme upper limit (Pupper) was
+100 psi. The combined function for pressures is shown in Fig. 2.
+The optimization model given by Khatavkar and Mays
+(2018) was applied in conjunction with the resilience computation
+methodology presented in this paper to the two WDSs discussed
+previously for the three scenarios of short-term power outages
+(Table 1). Time of power outage (h) in Table 1 refers to hours after
+the start of simulation. The optimization methodology is applicable
+to both short-term and long-term failures and was applied to long-
+term failures. For the purposes of this study, three scenarios of
+short-term failures (2–6 h) were used. A simulation duration of
+24 h was used for the first WDS for Scenarios 1 and 2 applications,
+whereas a simulation duration of 48 h was used for Scenario 3
+application. Simulation durations of 72 and 168 h were used for
+Scenario 1 and Scenarios 2 and 3 applications, respectively, for
+the second WDS. Optimization–simulation runs with resilience
+computations were also performed for varying degrees of long-term
+limited power and water availability. The example applications
+were performed to assess the effects of water storage, short-term
+power outages, and long-term drought scenarios on the perfor-
+mance of water distribution systems and their ability to meet water
+demands.
+The optimization–simulation model by Khatavkar and Mays
+(2018) is applicable at the service-area, pressure-zone, or nodal
+level. We have applied the model to a network of over 1,800 pipes
+(Khatavkar and Mays 2019). The example application used herein
+is a regional level system with each service area in the system rep-
+resented as a node. WDS operators typically control the flow going
+into a particular service area using flow control valves (FCVs)
+through the supervisory control and data acquisition system. For
+this study, the WDS was skeletonized to the service-area level
+to illustrate the level of controls available for the state of art in prac-
+tice. For a higher resolution implementation, separate demand
+Table 1. Details of power outage scenarios
+Scenario #
+Time of power outage (h)
+Pumps affected
+Consumers affected
+1
+8:00–10:00
+WP 4.1, 4.2, 4.3, 2.1, 2.2, 2.3
+City 1, Power plant 1
+2
+6:00–12:00
+WP 4.1, 4.2, 4.3, 2.1, 2.2, 2.3
+City 1, Power plant 1
+3
+8:00–10:00, 32:00–36:00
+WP 4.1, 4.2, 4.3, 2.1, 2.2, 2.3 and RWP 2.1, 2.2, 2.3
+City 1, Power plant 1
+Fig. 3. Schematic of water supply system WDS 1 (WDS 2 includes storage tanks at each of the five power plants).
+© ASCE
+04019045-6
+J. Water Resour. Plann. Manage.
+ J. Water Resour. Plann. Manage., 2019, 145(10): 04019045 
+Downloaded from ascelibrary.org by Nottingham Trent University on 08/14/19. Copyright ASCE. For personal use only; all rights reserved.
+
+patterns would have to be incorporated for each region. The level of
+skeletonization is dependent on the level or type of problem being
+solved.
+Observations
+The following observations are made based upon application of the
+optimization–simulation model and the resilience computation
+method (Fig. 1). Figs. 4(a–c) show the system operation resilience
+for Scenarios 1, 2, and 3 applications to first example, WDS 1.
+A decline in resilience was observed during the hours of
+limited power availability [Fig. (4a)] for Scenario 1 application
+for the first example WDS. Similar observations were made for
+Scenarios 2 and 3. Because no quality constraints were considered
+in Scenario 1, no changes in the resilience were observed during
+normal power availability because demands were satisfied during
+such times. The value of resilience (RESt) is directly proportional
+to the demand satisfaction and inversely proportional to the num-
+ber of violations of the power availability constraints and pressure
+bounds.
+The system operation resilience of Scenario 2 application
+for WDS 1 [Fig. (4b)] shows a decrease in the resilience at
+hour 18. This decrease is attributed to a quality upper bound
+(2,000 mg=L) imposed within the optimization model. It is evident
+in this scenario that the system resumed normal operations after the
+power shortage period.
+The resilience in Scenario 3 [Fig. (4c)] shows different varia-
+tions of resilience as compared to Scenario 2 [Fig. (4b)] because
+of the more stringent water quality requirements (1,500 mg=L)
+used for this application. The lower values of resilience observed
+in this case are due to the lower level of demand satisfaction at the
+power plants due to quality constraints.
+For the second WDS, the storage tanks provided the system with
+a redundancy in terms of stored water, which can be supplied in case
+of an emergency. The storage tank also provided better control of the
+water quality within the power plants because mixing within the tank
+is not instantaneous and is modeled in EPANET using an extended
+period simulation. With this increased robustness for the system, the
+tanks also provided for increased complexity in terms of increased
+connections, components, and costs. Fig. (5a) illustrates the system
+operation resilience for Scenario 1 application for WDS 2.
+The results of resilience computation show that the system could
+fulfill its functions and did not suffer from any failure, even with a
+limited power availability of 2 h at some pumps in the system
+(given in Table 1). Fig. (5b) shows system operation resilience for
+Scenario 2 application for the second example WDS. It is also evi-
+dent that because system operation resilience values are based on
+recovery of the WDS from a failure, lower values are only observed
+after a failure occurs and not because of any other characteristics of
+system performance. The lowest system operation resilience values
+are observed during the hours of limited power availability only
+for a short period, rather than failing to fulfill the functions for
+the entire emergency period.
+Fig. 4. Operational system resilience for WDS 1: (a) Scenario 1; (b) Scenario 2; and (c) Scenario 3.
+Fig. 5. Operational system resilience for WDS 2: (a) Scenario 1; (b) Scenario 2; and (c) Scenario 3.
+© ASCE
+04019045-7
+J. Water Resour. Plann. Manage.
+ J. Water Resour. Plann. Manage., 2019, 145(10): 04019045 
+Downloaded from ascelibrary.org by Nottingham Trent University on 08/14/19. Copyright ASCE. For personal use only; all rights reserved.
+
+The second example WDS shows an improved performance
+because of the increased functionality provided by the storage tanks
+in the system. The scenario also consists of a TDS upper bound of
+2,000 mg=L for the power plant nodes, which were observed to be
+adhered to for the entire application. This shows an increased
+fulfillment of the system functions for limited power availability
+conditions as well as normal operating conditions. Resilience for
+Scenario 3 application for WDS 2 is illustrated in Fig. 5c. The re-
+sults are similar to Fig. 5b, which illustrates that even the stringent-
+quality upper bounds (1,500 mg=L) do not affect the resilience of
+the system for this WDS, unlike the results for the same scenario
+observed in Fig. 4c for the first system.
+Application of the model for a long-term drought scenario was
+modeled with different levels of water and electrical energy supply
+shortages. Fig. 6 shows the system operation resilience for 24-h
+simulation–optimization under different conditions of water avail-
+ability. The demands were satisfied to the requested levels to about
+55,000 gpm of water availability and thereafter reduced with the
+reducing water availability. The system operation resilience showed
+a decline with a decrease in the water available.
+System operation resilience for 24-h optimization–simulation
+under different conditions of electrical energy availability is illus-
+trated in Fig. 7. For energy availability of up to 150,000 kW-h per
+day, it was observed that all the required system functions were
+achieved to the fullest and hence the resilience values showed
+100% for all values beyond that level of energy availability. With
+a long-term reduction in power availability of 100,000 kW-h,
+system operation resilience was between 0.75 and 0.8. This was
+followed by small decreases in resilience values until an energy avail-
+ability of 40,000 kW-h was reached, where a system operation resil-
+ience of 0.7 was observed. The values of resilience showed a steep
+fall for energy availabilities lower than 30,000 kW-h because the
+pumps cannot be operated under lower energy availabilities.
+For long-term drought scenarios, system-level limited water
+availability was considered. Similarly, for long-term limited energy
+availability scenarios, a user-supplied WDS-level limited electrical
+energy availability was considered. This study is limited to assess-
+ment of the effects of power or water shortage on WDS operations.
+Ongoing research aims at assessment of feedback of the PDS
+and WDS.
+Conclusions
+Performance of water distribution systems under the conditions of
+limited power and water availability is an important consideration
+for design and operation of a water-smart city. The aim of this study
+is to present a mathematical formulation for system operation resil-
+ience under considerations of limited water and power availability
+conditions.
+The resilience computation method presented in this paper
+provides for a real-time WDS performance assessment tool. The
+interactive nature of the optimization–simulation method used in
+conjunction with the resilience computation methodology would
+provide the WDS utility a real-time performance analysis and
+decision-making tool. In addition to the real-time operations appli-
+cations, the methodology presented in this study could also be ap-
+plied to anticipatory drought scenario modeling and policy-making.
+Decision-making using the resilience computation methodology
+would involve several scenario and risk analyses considering the
+various forecasted climate conditions. This paper shows the foun-
+dation for mathematical formulation of an overall anticipatory
+drought management tool based on WDS performance analysis
+and control optimization for water-energy nexus considerations.
+The operational resilience computation methodology presented
+in this paper does not consider WDS component failure (pipe bursts
+or pump failures) in the computation metrics. The objective of the
+research is for extreme drought conditions.
+The operational resilience computation methodology (shown in
+Fig.1)wasapplied totworegional-levelexampleWDSscoupledwith
+a supporting PDS. The system operation resilience was computed
+based on four criteria: demand satisfaction, pressure bound compli-
+ance, power availability, and water quality considerations. Results of
+the application of resilience computation methodology for the exam-
+ple systems showed the applicability of the model for short-term and
+long-term limited power availability and for drought scenarios. Water
+storage tanks at the power plants in the second WDS improved the
+overall operational resilience as compared to the first WDS.
+Future work will involve development of an interactive water-
+energy system combined resilience computation methodology,
+which would consider the performance of both the water and power
+distribution systems under a combined control optimization–
+simulation framework.
+Data Availability Statement
+Some or all data, models, or code generated or used during the
+study are available from the corresponding author by request.
+Fig. 6. Operational system resilience for water availability conditions.
+Fig. 7. Operational system resilience for energy availability conditions.
+© ASCE
+04019045-8
+J. Water Resour. Plann. Manage.
+ J. Water Resour. Plann. Manage., 2019, 145(10): 04019045 
+Downloaded from ascelibrary.org by Nottingham Trent University on 08/14/19. Copyright ASCE. For personal use only; all rights reserved.
+
+Acknowledgments
+This research is supported by the US National Science Foundation
+(NSF) Project 029013-0010. CRISP Type 2–Resilient Cyber-
+Enabled Electric Energy and Water Infrastructures Modeling and
+Control under Extreme Mega-Drought Scenarios.
+Notation
+The following symbols are used in this paper:
+afPn;tg = binary indication function for low pressures;
+bfPn;tg = binary indication function for high pressures;
+b = power index for objective function;
+Cq;z;tim = concentration of water quality parameter q for
+zone z at time t;
+Cq = lower bound concentration for water quality
+parameter q;
+¯Cq = upper bound concentration for water quality
+parameter q;
+Dsat;z;t = satisfied demand multiplier for zone z at time t;
+Dreq;z;t = requested demand multiplier for zone z at time t;
+ffPn;tg = performance evaluation function for pressure
+bounds;
+ffPowpump;tg = performance evaluation function for power
+availability;
+ffdemandsz;tg = performance evaluation function for demand
+satisfaction;
+ffCq;z;timg = performance evaluation function for water
+quality bounds;
+f = index for performance function;
+n = index node in WDS;
+Obj = objective function for optimization model;
+Plow = system lower pressure bound;
+Pn;t = pressure at node n and time t;
+Ps;low = system safe lower pressure bound;
+Ps;upper = system safe upper pressure bound;
+Pupper = system upper pressure bound;
+Powpump;t = power consumed by pump at time t;
+PowðavailableÞpump;t = power available for consumption
+at time t;
+pump = index for pump number;
+Qbz = base demand for service area z;
+q = index for water quality parameter;
+RESdemands;t = system operation resilience for demand
+satisfaction at time t;
+RESf;t = system operation resilience for function f at
+time t;
+RESpow;t = system operation resilience for power
+availability function at time t;
+RESpressure;t = system operation resilience for pressure bound
+function at time t;
+RESt = overall system operation resilience at time t;
+RESWQ;t = system operation resilience for water quality
+function at time t;
+t = index for simulation time;
+tim = index for real-time of optimization–simulation
+implementation;
+Wdemands = weight associated with demand satisfaction
+resilience;
+Wpow = weight associated with power resilience;
+Wpressure = weight associated with pressure resilience;
+WWQ = weight associated with water quality resilience;
+Z = total number of service areas in system;
+z = index for service area in WDS; and
+θz;t = penalty function for not satisfying demand for
+service area z at time t.
+References
+Aydin, N. Y., L. W. Mays, and T. Schmitt. 2014a. “Sustainability assess-
+ment of urban water distribution systems.” Water Resour. Manage.
+28 (12): 4373–4384. https://doi.org/10.1007/s11269-014-0757-1.
+Aydin, N. Y., L. W. Mays, and T. Schmitt. 2014b. “Technical and environ-
+mental sustainability assessment of water distribution systems.” Water
+Resour. Manage. 28 (13): 4699–4713. https://doi.org/10.1007/s11269
+-014-0768-y.
+Ba˜nos, R., J. Reca, J. Martínez, C. Gil, and A. L. Márquez. 2011.
+“Resilience indexes for water distribution network design: A perfor-
+mance analysis under demand uncertainty.” Water Resour. Manage.
+25 (10): 2351–2366. https://doi.org/10.1007/s11269-011-9812-3.
+Blackmore, J. M., and R. A. Plant. 2008. “Risk and resilience to enhance
+sustainability with application to urban water systems.” J. Water Re-
+sour. Plann. Manage. 134 (3): 224–233. https://doi.org/10.1061
+/(ASCE)0733-9496(2008)134:3(224).
+Bruneau, M., Chang, S. E., Eguchi, R. T., Lee, G. C., O’Rourke, T. D.,
+Reinhorn, A. M., Shinozuka, M., Tierney, K., Wallace, W. A., and
+Von Winterfeldt, D. 2003. “A framework to quantitatively assess and
+enhance the seismic resilience of communities.” Earthquake Spectra
+19 (1): 733–752. https://doi.org/10.1193/1.1623497.
+Elíades, D., and M. Kyriakou. 2009. EPANET MATLAB toolkit. Aglantzia,
+Cyprus: Univ. of Cyprus.
+Fang, D., and B. Chen. 2017. “Linkage analysis for the water-energy nexus
+of city.” Appl. Energy 189 (1): 770–779. https://doi.org/10.1016/j
+.apenergy.2016.04.020.
+Folke, C. 2006. “Resilience: The emergence of a perspective for
+social-ecological systems analyses.” Global Environ. Change 16 (3):
+253–267. https://doi.org/10.1016/j.gloenvcha.2006.04.002.
+Hashimoto, T., J. R. Stedinger, and D. P. Loucks. 1982. “Reliability, resil-
+iency, and vulnerability criteria for water resource system performance
+evaluation.” Water Resour. Res. 18 (1): 14–20. https://doi.org/10.1029
+/WR018i001p00014.
+Herrera, M., E. Abraham, and I. Stoianov. 2016. “A graph-theoretic frame-
+work for assessing the resilience of sectorised water distribution net-
+works.” Water Resour. Manage. 30 (5): 1685–1699. https://doi.org/10
+.1007/S11269-016-1245-6.
+Hosseini, S., K. Barker, and J. E. Ramirez-Marquez. 2016. “A review of
+definitions and measures of system resilience.” Reliab. Eng. Syst. Saf.
+145 (1): 47–61. https://doi.org/10.1016/j.ress.2015.08.006.
+Khatavkar, P., and L. W. Mays. 2018. “Model for the real-time
+operations of water distribution systems under limited electrical power
+availability with consideration of water quality.” J. Water Resour.
+Plann. Manage. 144 (11): 04018071. https://doi.org/10.1061/(ASCE)
+WR.1943-5452.0001000.
+Khatavkar, P., and L. W. Mays. 2019. “Testing an optimization–simulation
+model for optimal pump and valve operations with required storage tank
+turnovers.” J. Water Manage. Model. 27 (1): 1–9. https://doi.org/10
+.14796/JWMM.C464.
+Kodsi, S. K., and C. A. Ca˜nizares. 2003. Modelling and simulation of IEEE
+14 bus system with FACTS controllers, 46–52. Ontario, CA: Univ. of
+Waterloo.
+Li, Q., S. Yu, A. Al-Sumaiti, and K. Turitsyn. 2018. “Modeling and
+co-optimization of a micro water-energy nexus for smart communities.”
+In Proc., 2018 IEEE PES Innovative Smart Grid Technologies
+Conference Europe (ISGT-Europe). Piscataway, NJ: IEEE.
+Ma, S., B. Chen, and Z. Wang. 2018. “Resilience enhancement strategy for
+distribution systems under extreme weather events.” IEEE Trans. Smart
+Grid 9 (2): 1442–1451. https://doi.org/10.1109/TSG.2016.2591885.
+Oikonomou, K., and M. Parvania. 2019. “Optimal coordination of water
+distribution energy flexibility with power systems operation.” IEEE
+© ASCE
+04019045-9
+J. Water Resour. Plann. Manage.
+ J. Water Resour. Plann. Manage., 2019, 145(10): 04019045 
+Downloaded from ascelibrary.org by Nottingham Trent University on 08/14/19. Copyright ASCE. For personal use only; all rights reserved.
+
+Trans. Smart Grid 10 (1): 1101–1110. https://doi.org/10.1109/TSG
+.2018.2824308.
+Pandit, A., and J. C. Crittenden. 2012. “Index of network resilience (INR)
+for urban water distribution systems.” In Proc., 2012 Critical Infra-
+structure Symp. Piscataway, NJ: IEEE.
+Shin, S., S. Lee, D. R. Judi, M. Parvania, E. Goharian, T. McPherson, and
+S. J. Burian. 2018. “A systematic review of quantitative resilience mea-
+sures for water infrastructure systems.” Water 10 (2): 164. https://doi
+.org/10.3390/w10020164.
+Sweetapple, C., K. Diao, R. Farmani, G. Fu, and D. Butler. 2018. “A tool
+for global resilience analysis of water distribution systems.” In Proc.,
+WDSA/CCWI Joint Conf. 2018. Kingston, ON: Queens Univ.
+Vakilifard, N., M. Anda, P. A. Bahri, and G. Ho. 2018. “The role of
+water-energy nexus in optimizing water supply systems—Review of
+techniques and approaches.” Renewable Sustainable Energy Reviews
+82 (1): 1424–1432. https://doi.org/10.1016/j.rser.2017.05.125.
+Walker, B., C. S. Holling, S. R. Carpenter, and A. Kinzig. 2004.
+“Resilience, adaptability and transformability in social–ecological
+systems.” Ecol. Soc. 9 (2): 1–9. https://doi.org/10.5751/ES-00650
+-090205.
+Zhuang, B., K. Lansey, and D. Kang. 2013. “Resilience/availability analy-
+sis of municipal water distribution system incorporating adaptive pump
+operation.” J. Hydraul. Eng. 139 (5): 527–537. https://doi.org/10.1061
+/(ASCE)HY.1943-7900.0000676.
+© ASCE
+04019045-10
+J. Water Resour. Plann. Manage.
+ J. Water Resour. Plann. Manage., 2019, 145(10): 04019045 
+Downloaded from ascelibrary.org by Nottingham Trent University on 08/14/19. Copyright ASCE. For personal use only; all rights reserved.

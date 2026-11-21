@@ -1,0 +1,1151 @@
+Journal of Parallel and Distributed Computing 157 (2021) 233–242
+Contents lists available at ScienceDirect
+Journal of Parallel and Distributed Computing
+www.elsevier.com/locate/jpdc
+Modelling and analysing IoT systems ✩
+Chiara Bodei a,∗, Pierpaolo Degano a,b,∗, Gian-Luigi Ferrari a,∗, Letterio Galletta b,∗
+a Department of Computer Science. Università di Pisa, Pisa, Italy
+b IMT School for Advances Studies, Lucca, Italy
+a r t i c l e 
+i n f o
+a b s t r a c t
+Article history:
+Received 13 January 2021
+Received in revised form 18 April 2021
+Accepted 3 July 2021
+Available online 21 July 2021
+Keywords:
+Internet of Things
+Security
+Safety
+Cost evaluation
+Actuation
+The Internet of Things is deeply shaping our society and our lives. Smart devices automatically collect, 
+aggregate and exchange data on our behalf and free us from the drudgery of doing it. These data are 
+often crucial because critical decisions, such as controlling cyber-physical systems, are made depending 
+on them or because they feed learning algorithms. Safety and security issues related to devices and 
+to data can have a major impact on smart systems and can have serious consequences if they oversee 
+essential services, such as delivering power, water, transport, and so on. For this reason, it is crucial to 
+identify the most critical components in a network of devices and to evaluate how they are vulnerable to 
+accidental or to intentional failures. We propose to use the process calculus IoT-LySa to model systems 
+and to apply a Control Flow Analysis to statically predict the manipulation of data, as well as on which 
+data the critical decisions depend, in particular those affecting actuations. By exploiting suitable metrics, 
+we can use the results of the analysis so as to provide system administrators with estimates of the safety 
+and security of their systems.
+© 2021 Elsevier Inc. All rights reserved.
+1. Introduction
+The emergence of the Internet of Things (IoT) is creating a 
+huge demand for safety and security in response to the growing 
+diffusion of connected devices, i.e. of things. There are many sce-
+narios in which IoT systems are being used, ranging from home 
+automation to industrial automation and from precision agricul-
+ture to smart buildings and even smart cities. In these systems, the 
+crucial parts are those that monitor the behaviour of their compo-
+nents, be they sensors or actuators. Any security attacks or any 
+accidental failures could have relevant implications and may also 
+impact on the physical world, when they cause impairment of the 
+critical functionalities of these devices. However, taking security 
+countermeasures or improving smart devices increases costs and 
+downgrades performance, which usually discourage IoT designers. 
+As a consequence, techniques for evaluating where it is more im-
+portant to intervene, and at what cost, are in order to drive the 
+designers’ efforts towards obtaining safer and more secure IoT sys-
+tems.
+✩Partially supported by MIUR project PRIN 2017FTXR7S IT MATTERS (Methods and 
+Tools for Trustworthy Smart Systems).
+* Corresponding authors.
+E-mail addresses: chiara.bodei@unipi.it (C. Bodei), pierpaolo.degano@unipi.it
+(P. Degano), gian-luigi.ferrari@unipi.it (G.-L. Ferrari), letterio.galletta@imtlucca.it
+(L. Galletta).
+Here we exploit the Security by Design development method-
+ology introduced in [6], based on a kernel of a modelling language 
+IoT-LySa to describe the structure of an IoT system and its interac-
+tions. A suitable Control Flow Analysis (CFA) is adapted from [5,8]
+and then applied to derive an abstract and approximate model of 
+system behaviour. Technically, our analysis symbolically follows all 
+possible control ﬂows; it also abstracts from the concrete values 
+and considers only their provenance and how they are put together 
+and processed, resulting in abstract values.
+These abstractions allow us to predict how data may ﬂow inside 
+the system and, in particular on which data a critical computation 
+depends. Typically, a conditional statement causes computations to 
+branch and originates different behaviours and thus the data that 
+are used in its guard are critical. In fact, their alteration can lead 
+to a wrong behaviour, especially for conditions that trigger possi-
+bly risky actuations. In this case, the corresponding abstract data 
+“symbolically” encode the supply chain of the actuations and dis-
+play the logical components of their trigger conditions. Here, we 
+will mainly focus on critical actuations: a similar reasoning applies 
+to each condition identiﬁed as critical by designers.
+We follow the work by Hankin et al. [3,18] who propose some 
+security metrics for identifying critical components in Industrial 
+Control Systems. Inspired by them, we reason about the logic of 
+actuation, by identifying the relevant data for the critical actua-
+tion decisions. In particular, we model the trigger conditions in 
+the form of the abstract values given by the CFA. Their structures, 
+pictorially described by a graph, highlight how each condition de-
+https://doi.org/10.1016/j.jpdc.2021.07.004
+0743-7315/© 2021 Elsevier Inc. All rights reserved.
+
+C. Bodei, P. Degano, G.-L. Ferrari et al.
+Journal of Parallel and Distributed Computing 157 (2021) 233–242
+pends on the raw data collected by sensors and on the logical and 
+aggregation functions applied to these data to drive the decision.
+Abstract values and their graphs help to assess the security and 
+safety of a system, by wondering what can go wrong and affect its 
+behaviour, because of either an accidental failure or of an inten-
+tional attack.
+More precisely, we look for the sets of critical data, the alter-
+ation of which affects the system’s ability to correctly trigger its 
+actuators, e.g. when a tampering attack to the corresponding nodes 
+or an electronic fault occurred.
+On the security side, we associate a numerical score that mea-
+sures the cost of attacking each node or sensor, and therefore 
+of maliciously modifying the data coming from them. As a con-
+sequence, we can estimate and compare the different efforts of 
+the attacker to alter each set of critical data. Based on such a 
+comparison, we can single out which sensors can be most eas-
+ily compromised and deserve additional protections. On the safety 
+side, scores can similarly measure the robustness of nodes and 
+sensors and help designers to determine which of them should 
+be strengthened. For instance, if some of the sensors that provide 
+critical data are predicted to be at risk with these scores, e.g. be-
+cause of battery issues, redundancy should be improved, e.g. with 
+more powerful batteries.
+Structure of the paper
+In Section 2, we gently introduce the syntax 
+and semantics of our process calculus IoT-LySa, by using an IoT 
+system for a museum as running example. Section 3 follows the 
+same pattern to intuitively present the adopted CFA. A formal pre-
+sentation of the process calculus and of the static analysis can be 
+found in [8], while only the relevant aspects are introduced here. 
+In Section 4, the analysis is shown to be useful to reason on the 
+logic of actuations and to estimate the costs of possible security 
+attacks or accidental failures. Conclusions are in Section 5.
+2. Motivating example
+We illustrate our approach through a museum scenario, in 
+which an IoT network provides an indoor environmental monitor-
+ing system. This is mainly used to sense ambient conditions in the 
+rooms and conservation status of artefacts inside the showcases. 
+Each sensor has its own measurement parameters with a range of 
+values for standard behaviour and thresholds for alarm situations. 
+Detection of unwanted ﬂuctuations or imbalances in the values 
+trigger alerts and suitable actuations to regulate the uneven val-
+ues so as to restore the right conditions.
+2.1. The museum scenario
+Here, we give a high-level overview of the museum system. 
+In every room of the museum there are environmental sensors 
+to measure temperature, humidity and light and to detect smoke, 
+ﬁre, and water with different parameters depending on whether 
+or not visitors are present (e.g. most lights are turned off when 
+the museum is closed). Furthermore, there are dedicated sensors 
+in each showcase for checking conservation conditions. These again 
+include temperature, humidity and light and may also contain spe-
+ciﬁc sensors to detect vibrations or unauthorised touch, or sensors 
+that depend on the artefact material, e.g. those able to detect 
+fungal growth in case of organic objects or those for monitoring 
+painted surfaces. Environmental data are collected locally in many 
+points in the room by devices called Environmental nodes. Similarly, 
+Showcase nodes collect data probed in each showcase. All these 
+data are provided to the monitor of that room, called Room con-
+troller. It aggregates them, and decides which regulations are in 
+order, e.g. which action is needed to increase or decrease the tem-
+perature. Furthermore, the Room controller sends appropriate sig-
+nals to take speciﬁc actuations, when selected measurements are 
+Table 1
+Museum Monitoring System: part of speciﬁcation.
+The Network of Smart Devices with p ∈[1,n]
+N
+= M | R1 | R2 ··· | Rn
+R p
+= RC p | ER p1 | ··· | ER pk | SR p1 | ··· | SR pl
+Museum monitor
+M
+= ℓM : [P M ∥AM ∥BM]
+P M
+= μh.(RC1; xcheckRC1 , x1).··· .(RCn; xcheckRCn , xn).
+siren := or(xcheckR1 ,··· , xcheckRn ).⟨siren, Bell, Ring⟩.h
+AM
+= μh.(|Bell,{Ring}|).τ.h
+Room controller (index p omitted)
+RC
+= ℓR : [P R ∥S R ∥AR ∥B R]
+P R
+= μh.
+[Internal control on and regulation of water level]
+(w R := 1R).checkR := rng(w R,tR, T R).
+vsetR = reg(w R).⟨checkR, Pump, PumpReg(vsetR )⟩.
+[Data reception]
+(ER1; w E11,··· , w E16).···(ERk, w Ek1,··· , w Ek6).
+(SR1; w S11,··· , w S14).···(SRl; w Sl1,··· , w Sl4).
+[Room checks: standard regulation]
+checkRE11 = rng(w E11,t1, T1).vsetRE11 = reg(w E11).···
+checkRS11 = rng(w S11,t′
+1, T′
+1).vsetRS11 = reg(w S11).···
+⟨⟨RC, checkRE11, vsetRE11 ,··· , checkRE16, vsetRE16 ⟩⟩▷{ℓER1}.···
+⟨⟨RC, checkRS11, vsetRS11 ,··· , checkRS14, vsetRS14 ⟩⟩▷{ℓSR1}.···
+[Room Checks: ﬁre detection]
+checkRT := gt(avg(w E11,··· , w Ek1), TRT)).
+checkAR1 := dt(w E15).··· .checkARk := dt(w Ek5).
+checkRA := and(checkR, and(checkRT, or(checkAR1,··· , checkARk))).
+⟨checkR A, Pump, PumpReg(alarm)⟩.
+⟨⟨RC, checkR A,alarm⟩⟩▷{ℓER1,...,ℓERk,ℓM}.h
+S R
+= μh.(τ.1R := sR).τ.h
+AR
+= μh.(|Pump,{PumpReg(x)}|).τ.h
+Environmental nodes of the room R (index p omitted) with i ∈[1,k],
+m ∈[1, 6]
+ERi = ℓERi : [Pi ∥Ei1 ∥Ei2 ∥Ei3 ∥Ei4 ∥Ei5 ∥Ei6 ∥Ai1 ∥Ai2 ∥Ai3 ∥Ai4 ∥
+Ai5 ∥Ai6 ∥Bi]
+Pi
+= μh.(zEi1 := 1Ei1).··· .(zEi6 := 6Ei6).
+⟨⟨ERi, zEi1, zEi2, zEi3, zEi4 zEi5, zEi6⟩⟩▷{ℓR}.(RC; zcheckEi1 , vsetEi1,··· ,
+zcheckEi6 , vsetEi6 ).
+⟨zcheckEi1 ,ai1, GoEi1(vsetEi1 )⟩.···⟨zcheckEi6 ,ai6, GoEi6(vsetEi6 )⟩.
+(RC; zcheckARAi , zalarmi ).⟨zcheckARAi ,ai5, Go(zalarmi )⟩.h
+Eim
+= μh.mEim := eEim.τ.h
+Aim = μh.(|aim,{GoEim(x)}|).τ.h, where
+ai1 = Heat,ai2 = Hum,ai3 = Light,ai4 = Smoke,ai5 = F ire,ai6 = W ater
+Showcase nodes of the Room R (index p omitted) with j ∈[1,l], t ∈[1, 4]
+SR j = ℓSRj : [Q j ∥S j1 ∥S j2 ∥S j3 ∥S j4 ∥A j1∥A j2∥A j3∥A j4∥B S
+j ]
+Q j
+= μh.(zS j1 := 1S j1)....(zS j4 := 4S j4).
+⟨⟨SR j, zS j1, zS j2, zS j3, zS j4⟩⟩▷{ℓR}.(RC; zcheckSj1 , vsetS j1 ,··· ,
+vsetSj3, zcheckSj4 , vsetS j4 ).
+⟨zcheckSj1 ,a j1, GoSj1(vsetS j1 )⟩.···⟨zcheckSjk ,a j4, GoSj4(vsetS j4 )⟩.h
+S jt
+= μh.tS jt := sS jt .τ.h
+A jt
+= μh.(|a jt,{GoSjt(x)}|).τ.h, where
+a j1 = sHeat,a j2 = sHum,a j3 = sLight,a j4 = speciﬁcj
+out-of-bounds and cause an alert. To control the different parame-
+ters sampled by sensors some actuators are provided: temperature 
+is controlled by thermostats; humidity by dehumidiﬁers; light in-
+tensity by lamps; warning beeps are emitted when someone im-
+properly touches a showcase; ﬁre extinguishers are activated in 
+case of a ﬁre alarm. The aggregated data computed in each Room 
+controller are then sent to the control room of the whole building, 
+called Museum monitor that stores them in a database, and in case 
+of alert reacts by taking suitable actions, for instance by triggering 
+an automatic call to the Fire Station in case of ﬁre.
+2.2. The IoT-LySa model
+The IoT-LySa model of the network N of our museum is in Ta-
+ble 1. Through it we gently introduce the syntax and the semantics 
+234
+
+C. Bodei, P. Degano, G.-L. Ferrari et al.
+Journal of Parallel and Distributed Computing 157 (2021) 233–242
+Table 2
+Syntax: nodes.
+Nodes
+Systems in IoT-LySa are pools of nodes N (things), each identiﬁed by a label ℓand hosting a shared local store  for internal communication, sensors 
+S and actuators A, and a ﬁnite number of control processes P. Internal components are combined by the parallel operator ∥.
+• Processes specify the logic of the system: they coordinate sensors and actuators, communicate with the other nodes and manage data gathered 
+from sensors and from other nodes.
+• Sensors are active entities that read data from the physical environment and deposit them in reserved locations of the local store of the node.
+• Actuators are instead passive entities: they just wait for a command to become active and operate on the environment.
+Each sensor (actuator) has a unique identiﬁer, hereafter a natural number in the set Iℓ(a name).
+Table 3
+Syntax: processes, sensors and actuators.
+Processes
+• Preﬁxes are sequentialised by the operator “.”.
+• The preﬁx ⟨ ⟨E1,··· , Er⟩ ⟩ ▷L represents a simple form of multi-party communication: the tuple obtained by evaluating E1, ..., Er is asynchronously 
+sent to the nodes with labels occurring in the set L laying in the same transmission range.
+• The input preﬁx (E1, ··· , E j; x j+1, ··· , xr) receives a r-tuple, provided that its ﬁrst j elements match the corresponding input ones, i.e. E1 =
+E′
+1, ··· , E j = E′
+j, and then assigns the variables (after “;”) to the received values. Otherwise, the r-tuple is not accepted.
+• The trigger command ⟨C, j, γ (v)⟩represents the command for actuator j of the action γ , with parameter v, to be executed when the condition 
+C is true.
+• A process repeats its behaviour, when it is deﬁned through the tail recursive construct μh.P (where h is the iteration variable).
+Sensors and actuators
+• A sensor performs an internal action τ , or it puts the value v, sampled from the environment, into its store location i with the action i := v.
+• An actuator performs an internal action τ , or it waits for a command γ ∈ to be executed with actual value v, from the controlling process 
+with ( | j, | ).
+of the calculus; more details are in Tables 2, 3, and 4 and a com-
+plete formalization is in [5,6,8].
+Our network system consists of the node Museum monitor M
+put in parallel with the nodes located in the n rooms of the mu-
+seum. We use the shorthand R p to designate all these parallel 
+nodes: the Room controller node RC p, and a ﬁnite number of nodes 
+of two kinds: Environmental nodes E R pi and Showcase nodes SR pj
+(to avoid double indexing, we omit the index p, when unambigu-
+ous).
+Museum monitor
+The node ℓM : [P M ∥ AM ∥ BM] hosting the Mu-
+seum Monitor, is made of a processing unit P M that executes the 
+logic for coordinating the other nodes and for controlling the ac-
+tuator AM and some components BM including the local store, 
+immaterial here. Each node is uniquely identiﬁed by a label, as 
+it is often the case, e.g. the Museum Monitor has ℓM as its unique 
+address.
+Actually, the process P M is declared tail-recursive by the μh
+keyword, and behaves like the process where P M itself replaces 
+the trailing (bound) variable h. In more detail, at run-time P M:
+• (i) collects the results coming from the rooms through subse-
+quent inputs (sequentialised by “.”) of the form (RC p; xcheckR p ,
+xpi). These inputs will be ﬁred by corresponding outputs only 
+if the sender is indeed RCi, in which case the received value 
+are stored in the variable xcheckRCp and xpi, resp.; the corre-
+sponding and matching outputs are ⟨ ⟨RC p, checkR Ap,alarmp⟩ ⟩ ▷
+L, with L = {ℓER1,··· ,ℓERk,ℓM} (see point (vii) in the descrip-
+tion of RC p), where, at run-time, the variable checkR Ap will be 
+bound with an actual value vcheckR Ap computed in RC p. One 
+can instantiate the semantic rules (Ev-out) and (Multi-com), 
+noting that the ℓM ∈L, that the two nodes M and RC p are 
+in the same range (as assessed by Comp(ℓR, ℓM)) and that the 
+component at the left of “;” is indeed RC p. Thus, accordingly 
+with the inference rule in Table 4, we deduce the following 
+transition, where P ′
+M, P ′
+R are the continuations after the com-
+munications preﬁxes in P M, P R, respectively (note that the 
+local store ℓR of ℓR is updated with the received values):
+ℓM : [⟨⟨RC p, vcheckR Ap ,alarmp⟩⟩▷L. 0 ∥P ′
+M ∥BM] |
+ℓR : [ℓR | (RC p; xcheckRp , xp).P ′
+R ∥B R]
+→
+ℓM : [⟨⟨RC p, vcheckR Ap ,alarmp⟩⟩▷L \ {ℓM}. 0 ∥BM] |
+ℓR : [ℓR{vcheckR Ap /xcheckRp ,alarmp/xp} | P ′
+R ∥B R]
+• (ii) sets the variable siren to the result of aggregating these 
+values through the logical function or, and based on that de-
+cides if special activations are needed; and
+• (iii) sends to the actuator AM the message ⟨siren, Bell, Ring⟩
+that represents the trigger command for the (parameter-less) 
+action Ring, provided that the condition siren holds; otherwise 
+the command is skipped.
+The actuator AM, also tail-recursive, will execute the action Ring
+triggered by P M, on the device Bell. The effect of this action is to 
+ring the alarm and, possibly, to call the Fire Station. Afterwards, the 
+whole process recursively restarts from the beginning after some 
+internal activities summarises by the action τ .
+Room controller
+This node RC (with label ℓR) is made of a pro-
+cessing unit P R, a sensor S R, an actuator AR and of some further 
+immaterial components abstracted by B R.
+The sensor S R makes the level of the water in the pump avail-
+able to the other components of the node RC, by storing it in the 
+location (identiﬁed by) 1R of the shared store.
+The tail recursive process P R performs a sequence of controls 
+grouped together in Table 1 with comments in square brackets. 
+First it controls and regulates the water level by:
+235
+
+C. Bodei, P. Degano, G.-L. Ferrari et al.
+Journal of Parallel and Distributed Computing 157 (2021) 233–242
+Table 4
+Communication semantics rules.
+Communication semantic rules
+The operational semantics is a transition system, based on a two-level reduction relation →deﬁned by a set of induction rules. We give, as examples 
+of semantic rules, those driving asynchronous IoT-LySa multi-communications, where we use tuples of size 2 for simplicity, and the rules (A-com1) 
+and (A-com2) used to communicate with actuators.
+(Ev-out)
+v1 = E1 ∧v2 = E2
+ ∥⟨⟨E1, E2⟩⟩▷L. P ∥B → ∥⟨⟨v1, v2⟩⟩▷L.0 ∥P ∥B
+(Multi-com)
+ℓ2 ∈L ∧Comp(ℓ1,ℓ2) ∧v1 = E12
+ℓ1 : [⟨⟨v1, v2⟩⟩▷L. 0 ∥B1] | ℓ2 : [2 ∥(E1; xa2
+2 ).Q ∥B2] →
+ℓ1 : [⟨⟨v1, v2⟩⟩▷L \ {ℓ2}. 0 ∥B1] | ℓ2 : [2{v2/x2} ∥Q ∥B2]
+– In the (Ev-out) rule, to send a message ⟨ ⟨v1, v2⟩ ⟩obtained by evaluating ⟨ ⟨E1, E2⟩ ⟩, a node with label ℓspawns a new process, running in parallel 
+with the continuation P; this new process offers the evaluated tuple to all the receivers with labels in L.
+– In the (Multi-com) rule, the message coming from ℓ1 is received by a node labelled ℓ2, provided that: (i) ℓ2 belongs to the set L of possible 
+receivers, (ii) the two nodes satisfy a compatibility predicate Comp (e.g. when they are in the same transmission range), and (iii) that the ﬁrst j
+value (before “;”) matches with the evaluations of the ﬁrst j term in the input. When this match succeeds the variable x2 after the semicolon is 
+assigned the corresponding value of the received tuple (updating the store 2 results in 2{v2/x2}). Moreover, the label ℓ2 is removed by the 
+set of receivers L of the tuple. The spawned process terminates when all the receivers have received the message (L = ∅).
+(A-com1)
+γ ∈ ∧C = true
+⟨C, j,γ (v)⟩. P ∥(| j,|). A ∥B →P ∥γ (v). A ∥B
+(A-com2)
+γ ∈ ∧C = false
+⟨C, j,γ (v)⟩. P ∥(| j,|). A ∥B →P ∥(| j,|). A ∥B
+In the rules (A-com1) and (A-com2) a process with preﬁx ⟨C, j, γ (v)⟩commands the actuator j to perform the action γ , with parameter v, if it is 
+one of its actions and it the condition C in the trigger command is true, according to the standard denotational interpretation C.
+• (i) recording in the variables w R the data provided by the wa-
+ter level sensor of the pump and stored in the location 1R;
+• (ii) checking whether the level is within the wanted range by 
+using the predicate rng on the received level and the min-max 
+thresholds tR and TR. If the level of water is out-of-range the 
+variable checkR is assigned true;
+• (iii) computing through the function reg the correct value 
+of the water level vsetR , to be used as a parameter in the 
+trigger command for regulating the actuator ⟨checkR, Pump,
+PumpRegR(vsetR )⟩.
+Then P R acquires the required data from the environmental and 
+showcase sensors, commands the required regulation, and detects 
+if a ﬁre has broken out. This node:
+• (iv) inputs the data of all the environmental nodes E Rim
+and the showcase nodes SR jt, with (E Ri; w Ei1, ··· , w Ei6), ··· ,
+(SR j; w S j1, ··· , w S j4); the corresponding outputs are ⟨ ⟨E Ri,
+zEi1,··· , zEi6⟩ ⟩and ⟨ ⟨SR j, zE j1, ··· , zE j4⟩ ⟩that match and pro-
+vided the data locally provided by their sensors (see e.g. point 
+(ii) in the description of E Ri);
+• (v)
+decides if any regulation activities are in order, by 
+checking if the received values are in the admitted range 
+by using the function rng
+(through the logical variables 
+checkREij) and by computing the needed regulation values 
+vsetR16
+with the function reg. Then it sends the message 
+⟨ ⟨RC, checkREi1, vsetREi1 ,··· , checkREi6, vsetREi6 ⟩ ⟩ ▷{ℓERi} to all the 
+environmental nodes (see point (iii) in the description of E Ri) 
+that in turn will activate the relevant actuators, assuming 
+them within the transmission range; a similar message is sent 
+to showcase nodes;
+• (vi) checks if the average avg(w E11, ··· , w Ek1) of the tem-
+peratures in the room exceeds the given threshold TRT (via 
+the function gt) and stores the result in the logical variable 
+checkRT; then it checks the data sensed by the Ei5 sensors 
+(the ones for ﬁre detection) of the room and received in w Ei5, 
+by using the function dt, keeping the corresponding values 
+in checkARi. Eventually, it stores in the variable checkRA the 
+value resulting from the logical conjunction of checkR (is there 
+enough water in the pump system?) and of the conjunction 
+of checkRT (is the average temperature in the room over the 
+temperature TRT?) and of one of the checkARi (does at least a 
+sensor detect ﬁre?);
+• (vii) possibly sends the actuation command for the ﬁre sup-
+pression system to all the environmental nodes in the room 
+(see point (iv) in the description of E Ri). When the corre-
+sponding trigger condition stored in zcheckARA, i.e. the value of 
+checkRA, is true the action PumpReg is activated with the 
+special value alarm. Note that the message is also sent to the 
+Museum Monitor M that takes the necessary actions, e.g. call-
+ing the Fire Station (see point (i) in the description of M).
+Environmental nodes
+We now illustrate the speciﬁcation and the 
+behaviour of the environmental nodes that are located in the 
+rooms of the Museum. They collect the local data from their sen-
+sors, send them to the Room controller RC, and wait for the cor-
+responding actuation decisions. Each Environmental node (with its 
+own label ℓERi)
+E Ri = ℓERi : [Pi ∥Ei1 ∥... ∥Ei6 ∥Ai1 ∥... ∥Ai6 ∥Bi]
+has a control process Pi that manages the six environmental sen-
+sors Eim and the six corresponding actuators Aim to measure and 
+regulate temperature, humidity, light and for detecting and react-
+236
+
+C. Bodei, P. Degano, G.-L. Ferrari et al.
+Journal of Parallel and Distributed Computing 157 (2021) 233–242
+Table 5
+Sensors, actuators and their activities.
+Sensor
+Actuator
+Activity
+Ei1, S j1
+Ai1
+Temperature
+Ei2, S j2
+Ai2
+Humidity
+Ei3, S j3
+Ai3
+Light
+Ei4
+Ai4
+Smoke detection
+Ei5
+Ai5
+Fire Detection
+Ei6
+Ai6
+Water Detection
+S j4
+A j4
+Showcase-speciﬁc activity
+ing to the presence of smoke, ﬁre, and water, respectively (see 
+Table 5).1
+More in detail, the control process Pi:
+• (i) stores the data collected by its sensors mEim, 1 ≤m ≤k, 
+through the assignment: zEim := mEim;
+• (ii) transmits the collected data to the Room controller RC, 
+with the output ⟨ ⟨E Ri, zEi1, zEi2, zEi3, zEi4, zEi5, zEi6⟩ ⟩ ▷{ℓRC}; the 
+corresponding input in RC is (E Ri; w Ei1, ··· , w Ei6) (see point 
+(iv) in the description of RC). The ﬁrst components match 
+and, at run-time, the variables zEim will be bound to the values 
+mEim and therefore, after the synchronisation also the variables 
+w Eim will be bound to the values mEim .
+• (iii) inputs with (RC; zcheckEi1 , vsetEi1 , ··· , zcheckEi6 , vsetEi6 ) the 
+decision of RC (see point (iv) in the description of RC);
+• (iv) forwards the decision to each actuator Aim, by using the 
+command ⟨zcheckEim , aim, GoEim(vsetEim )⟩, when the trigger con-
+dition zcheckEim is true;
+• (v) waits on the input (RC; zcheckARAi , zalarmi) if the Room con-
+troller signals a ﬁre alarm and if zcheckARAi is true commands 
+the ﬁre suppression actuator with ⟨zcheckARAi , ai5, GoEi5(xalarmi)⟩
+(see point (vii) in the description of RC).
+Each environmental sensor Eim reads the probed value eEim in 
+the shared location mEim , performs some internal actions repre-
+sented by τ , and restarts.
+When triggered by Pi, the actuator Aim executes the action 
+GoEim with the received regulation value vsetEim ; performs some in-
+ternal actions represented by τ ; and restarts. Each GoEim activates 
+a speciﬁc regulation of the room condition, e.g. the temperature 
+governing the thermostat to vsetE1m , as shown in Table 5.
+Showcase nodes
+The Showcase nodes SR j located in the rooms
+SR j = ℓSRj : [Q j ∥S j1 ∥S j2 ∥S j3 ∥S j4 ∥A j1 ∥A j2 ∥A j3 ∥A j4 ∥B S
+j ]
+are modelled similarly. Sensors again include temperature, humid-
+ity and light and speciﬁc sensors (see Table 5) for checking if the 
+material of the artefacts in the showcase are in an acceptable con-
+dition.
+3. Analysis
+Once speciﬁed a system of nodes, a designer can use our CFA to 
+statically predict its behaviour. This analysis estimates the “shape” 
+of the data that nodes may exchange and elaborate across the net-
+work, in the form of composed abstract values. In particular, CFA 
+components approximate, for each piece of data, from which sen-
+sors that piece can be derived and which manipulations it may be 
+subject to, and where. Intuitively, these abstract values “symboli-
+cally” encode where data may be generated, the nodes that they 
+1 For simplicity, here all the actuators are handled by an environmental node, but 
+of course some could also be directly managed by the Room controller.
+may pass through and how they may be processed. In addition, 
+the analysis records the conditions that may trigger actuators.
+We intuitively introduce the CFA through our museum example 
+and with the help of Tables 6, 7, and 8. Again, further details can 
+be found in [5,6,8].
+The terms are uniquely and mechanically annotated with la-
+bels to support the CFA. For the sake of simplicity, we omitted 
+the labels and we assumed that each term E is labelled by f E, 
+and that different occurrences of the same kind of functions take 
+different labels, e.g. zEi1 stands for z
+f Ei1
+Ei1
+and reg(w R) stands for 
+reg freg(w
+f wR
+R
+).
+Formally, the result or estimate of our CFA is a tuple (, κ, , α)
+(a pair (, ) when analysing a term) that satisﬁes the judge-
+ments deﬁned by the CFA rules (some of them are in Tables 8) 
+and where the abstract domains are speciﬁed in Table 7. Techni-
+cally, the analysis “mimics” the evolution of the system, by using 
+abstract values in place of concrete ones and by modelling the 
+consequences of each possible action.
+Consider again our running example. For the sake of presen-
+tation, consider the portion of the analysis estimates described in 
+Table 9, following the path towards the Room controller RC of the 
+data concerning the temperature and ﬁre detection sensed by the 
+Environmental nodes E Ri, and the data on the water level sensed 
+by RC. Every correct analysis estimate must satisfy the constraints 
+displayed in the table. We intuitively discuss the entries going 
+downwards from the left column.
+We represent the value sampled by the mth sensor of E Ri with 
+the abstract term mEim , encoding the identities of both the sensor 
+and of environmental sensor. In particular, the abstract term 1Ei1
+represents the values of the temperature, while 5Ei5 those of the 
+ﬁre detector and 1R those of the water level.
+The ﬁrst constraint says that the abstract values mEim are as-
+signed to the variables zEim (whose labels are fzEim in (2)) of the 
+local store of the node ℓERi. Constraint (3) says that these values 
+are sent to the node RC.
+We brieﬂy illustrate that this constraint has to be part of a 
+correct estimate, in that it statically approximates the run-time be-
+haviour. Since by (2) we have that (ℓERi)( fzEim ) ⊇{mEim}, we are 
+predicting that the variables zEim will assume the values repre-
+sented by mEim, fulﬁlling the condition (, ) |=ℓzE1i . In turn, this 
+condition, together with the constraint (3), permits to fulﬁl the fol-
+lowing formula
+(,κ,,α) |=ℓERi ⟨⟨E R1, zE11, zE12, zE13, zE14 zE15, zE16⟩⟩▷{ℓR}.P
+(Of course the proposed estimate has to be checked for validity 
+also on the continuation P.)
+The constraint (4) is similar to (2), but concerns the abstract 
+value 1R of the water level. The constraints (5) and (6) predict 
+instead that the system may apply the functions rng and reg to 
+check if the value of 1R is in the expected range and to com-
+pute the needed regulation degree, respectively. Similarly the con-
+straints (8) and (9) record the possible applications of functions 
+gt and avg. Note that the abstract value gt(avg(1E11, ..., mEk1), TRT)
+denotes the results of checking whether the average of temper-
+atures sampled by sensors of environmental node 1Ei1 is greater 
+than a given threshold TRT. Similarly, the abstract value dt(5Ei5)
+denotes the application of the detection function dt to the values 
+coming from the ﬁre detection sensor Ei5.
+The Room controller may receive the temperature sensed by 
+the node Ei1, according to (7). In the following constraints, the 
+shorthand ˆv f ire stands for the composite abstract value
+and
+
+rng(1R,tR, TR),
+and(gt(avg(1E11,..., 1Ek1), TRT),
+or(dt(5E15),..., dt(5Ek5)))
+
+237
+
+C. Bodei, P. Degano, G.-L. Ferrari et al.
+Journal of Parallel and Distributed Computing 157 (2021) 233–242
+Table 6
+CFA: abstract values.
+Abstract values
+Abstract values represent data sampled by sensors and resulting from aggregation, comparison and encryption functions. More precisely, abstract 
+values are pairs (ˆv, a) (written as va) where the ﬁrst component is an abstract value and the second records the annotation of the expression where 
+the concrete value may be originated or computed by a function in the dynamic evolution.
+ˆV ∋ˆv ::= abstract terms
+(⊤,a)
+value denoting cut
+(v,a)
+value for clear data
+( f (ˆv1,··· , ˆvn),a) value for aggregated data
+({ˆv1,··· , ˆvn}k0,a) value for encrypted data
+Since at run-time nodes can generate composed terms with an arbitrarily nesting level, the distinguished abstract terms (⊤, a) represent those with a 
+depth greater than a given threshold d.
+Table 7
+CFA: abstract domains.
+Abstract domains
+•  = 
+ℓ∈L ˆℓis the disjoint union of functions ˆℓ: X ∪Iℓ→2
+V mapping a variable in X or a sensor in Iℓto a set of abstract values;
+• κ : L →L × k
+i=1 
+Vi returns the set of the messages that may be received by the node with address ℓ;
+•  : L →A →2
+V yields the set of the abstract values that may be computed by each labelled term Ma in a given node ℓ;
+• α : L → →2
+V returns the set of the abstract values that may affect the condition triggering an action γ ∈.
+Table 8
+CFA: abstract domains.
+Sample of CFA rules (for tuples of size 2, for simplicity)
+(,) |=ℓMa1
+1
+∧(,) |=ℓMa2
+2
+∧(,κ,,α) |=ℓP ∧
+∀ˆv1, ˆv2 : 2
+i=1 ˆvi ∈(ℓ)(ai) ⇒∀ℓ′ ∈L : (ℓ,⟨⟨ˆv1, ˆv2⟩⟩) ∈κ(ℓ′)
+(,κ,,α) |=ℓ⟨⟨Ma1
+1 , Ma2
+2 ⟩⟩▷L. P
+(,) |=ℓMa1
+1 ∧
+∀(ℓ′,⟨⟨ˆv1, ˆv2⟩⟩) ∈κ(ℓ) : Comp(ℓ′,ℓ) ⇒
+(ˆv2 ∈ˆℓ(x2) ∧(,κ,,α) |=ℓP)
+(,κ,,α) |=ℓ(Ma1
+1 ; xa2
+2 ). P
+(,) |=ℓMa ∧
+(ℓ)(a) ⊆α(ℓ)(γ ) ∧(,κ,,α) |=ℓP
+(,κ,,α) |=ℓ⟨Ma, j,γ ⟩. P
+• An estimate is valid for multi-output, if it is valid for the continuation of P and the set of messages communicated by the node ℓto each node ℓ′
+in L, includes all the messages obtained by the evaluation of the r-tuple ⟨ ⟨Ma1
+1 , Ma2
+2 ⟩ ⟩. More precisely, the rule (i) ﬁnds the sets (ℓ)(ai) for each 
+term Mai
+i , and (ii) for all tuples of values (ˆv1, ˆv2) in (ℓ)(a1) × (ℓ)(a2) it checks whether they belong to κ(ℓ′) for each ℓ′ ∈L.
+• Symmetrically, the rule for input requires that the values inside messages that may be sent to the node ℓand that pass the pattern matching, 
+are included in the estimates of the variable x2. More in detail, the rule analyses each term Mai
+i , and requires that for any message that the node 
+with label ℓcan receive, i.e. (ℓ′, ⟨ ⟨ˆv1, ˆv2⟩ ⟩) in κ(ℓ), provided that the two nodes are in the communication range (i.e. Comp(ℓ′, ℓ)), the abstract 
+value ˆv2 is included in the estimates of x2.
+• The rule for actuator trigger predicts in the component α that a process at node ℓmay trigger the action γ for the actuator j, based on the 
+abstract values included in the analysis of the term Ma.
+Table 9
+The estimate where ˆv f ire is a shorthand for the abstract value and
+
+rng(1R,tR, TR), and(gt(avg(1E11,
+..., 1Ek1), TRT), or(dt(5E15), ..., dt(5Ek5)))
+
+.
+(1)
+ℓERi (zEim) ⊇{mEim}
+(8)
+(ℓR)(fcheckRT ) ⊇{gt(avg(1E11,..., 1Ek1), TRT)}
+(2)
+(ℓERi)( fzEim ) ⊇{mEim}
+(9)
+(ℓR)(fcheckARi ) ⊇{dt(5Ei5)}
+(3)
+κ(ℓR) ⊇{(ℓE Ri ,⟨⟨ERi, 1Ei1,..., 6Ei6⟩⟩)}
+(10)
+(ℓR)(fcheckRA) ⊇{ˆv f ire}
+(4)
+(ℓR)(fwR) ⊇{1R}
+(11)
+κ(ℓERi) ⊇(ℓR,⟨⟨RC, ˆv f ire,alarm⟩⟩)
+(5)
+(ℓR)(fcheckR) ⊇{rng(1R,tR, T R)}
+(12)
+(ℓERi)( fzcheckRAi ) ⊇{ˆv f ire}
+(6)
+(ℓR)(vsetR) ⊇{reg(1R)}
+(13)
+(ℓERi))( fzalarmi ) ⊇{alarm}
+(7)
+(ℓR)( f w Ei1 ) ⊇{1Ei1}
+(14)
+αEi5(ℓERi)(GoEi5(alarm)) ⊇{ˆv f ire}
+238
+
+C. Bodei, P. Degano, G.-L. Ferrari et al.
+Journal of Parallel and Distributed Computing 157 (2021) 233–242
+that is assigned to the relevant variable checkRA of the Room con-
+troller (10), whose corresponding assignment in the speciﬁcation 
+is
+and(checkR, and(checkRT, or(checkAR1,··· , checkARk)))
+The value ˆv f ire is then sent to the environmental nodes (there 
+stored in the variables zcheckRAi ), according to (11) and (12).
+Finally, (13) and (14) show that the activation parameter alarm
+is stored in zalarmi and that the condition for triggering the alarm, 
+stored in zcheckRAi , may include the abstract value ˆv f ire.
+Note that the last three constraints make true the following 
+formula (assuming that the estimate is also correct for the con-
+tinuation P)
+(,κ,,α) |=ℓERi ⟨zcheckEi5 ,ai5, GoEi5(zalarmi)⟩.P
+4. Usage of the analysis
+Monitoring environmental parameters, like imbalances in tem-
+perature, humidity and so on, supports informed and intelligent 
+decisions about which actuations are needed when thresholds are 
+exceeded, and alerts raised. Conditions for actuation depends on
+the sensed values, on their aggregations and comparisons, as well 
+as on the reliability of the nodes where data are collected, pro-
+cessed and propagated.
+Our Control Flow Analysis supports us in reasoning on the logic 
+of actuations, in particular by considering the analysis component 
+α that predicts the abstract values corresponding to trigger condi-
+tions. Indeed, the abstract values recorded in an estimate and their 
+structure help us to answer questions like “does the speciﬁcation 
+comply with the intended design?” Typically, the α component 
+enables one to check at development time whether the trigger 
+condition is correctly implemented, while the component  per-
+mits checking if needed computations are distributed as expected 
+among the nodes and, together with the component κ, if the com-
+munications are designed accordingly.
+The analysis can be also useful at maintenance time, when the 
+actuation logic of the speciﬁcation under analysis is made obscure 
+by a stratiﬁed and legacy-dependent work.
+The analysis estimates for the trigger conditions can help sys-
+tem designers not only to check if the implementation provides 
+the correct ingredients for actuation decisions, but also to investi-
+gate the security and the safety of their system through a “what 
+if” reasoning. In other terms, we can study what can go wrong 
+and can lead to change the correct behaviour of an actuator, be-
+cause of either an accidental failure or of an intentional malicious 
+attack. The structure of these abstract values of trigger condition, 
+pictorially represented by rooted directed acyclic graphs, highlights 
+the dependency among data, because they show how the raw data 
+collected by sensors and their aggregation impact on the actuation 
+decision.
+Such graphs, like that in Fig. 1, are called trigger graph. The 
+nodes correspond to the constituents of the abstract values: the 
+root corresponds to the whole abstract value, while the leaves
+represent the data collected by sensors. Internal nodes represent 
+instead the aggregation functions and the data sensors that con-
+tribute to the evaluation of the relevant condition. Note that the 
+labels of the graph nodes record in which network node the corre-
+sponding computations occur. Finally, the edges encode the struc-
+tural dependencies between a term and its sub-terms.
+Clearly, the same construction and reasoning also apply to any 
+other decision point and to the data that the designer considers 
+critical.
+We ﬁrst focus on security issues and, following the approach 
+of Hankin et al. [3], we identify the possible sets of nodes that 
+need to be tampered with to deceive the behaviour of a critical 
+activation, e.g. in our ﬁre suppression system.
+Assume that each kind of attacks requires different efforts, de-
+pending e.g. on how easy is accessing a given sensor or node. As 
+in [3], we assume there is a security numerical score φ that mea-
+sures the cost of attacking each sensor S and each node N. Scores 
+are intended to quantitatively express the efforts required by an 
+attacker to compromise a given node or a given sensor. This score 
+metrics is exploited to determine the set of sensors and nodes that 
+the attacker can alter with an affordable cost.
+Understanding which nodes and sensors are the most critical, 
+and therefore which security countermeasures are the most crucial 
+and where they need to be put at work would greatly help design-
+ers in securing their system. This kind of reasoning can indeed 
+guide designers’ choices on how to reduce the risk of impairing 
+some critical actuations, e.g. by introducing some redundancies in 
+the sources of data, such as adding new hardware and software 
+components or improving the physical protection of the most crit-
+ical devices.
+We want to analyse the ﬁre suppression system of our mu-
+seum scenario. The question we would like to answer is: “which 
+are the data that can affect the trigger condition of the command 
+GoEi5(alarm), once altered?” We know that this command is given 
+when the value stored in the variable checkRA in the Room con-
+troller RC is true (the trigger condition). The analysis estimates 
+encode in ˆv f ire how this value is computed and how it depends 
+on the values of the sensors in the nodes RC and E Ri. This ab-
+stract term encodes the supply chain of the ﬁre detection system 
+and provides the logic of actuation and the localisation of the com-
+putations in the network, and thus reveals which are the critical 
+components for actuation.
+Recall that, according to ˆv f ire, the actuation GoEi5(alarm) de-
+pends on the evaluation of the logic conjunction of the results of 
+the two branches: i.e. on rng(1R, tR, TR) and on the composite con-
+dition
+and(gt(avg(1E11,..., 1Ek1), TRT), or(dt(5E15),..., dt(5Ek5))).
+The ﬁrst condition depends on the evaluation of the function rng
+applied to the data coming from the sensor S R, while the sec-
+ond one results from the conjunction of the outputs of the two 
+branches gt(avg(1E11, ..., 1Ek1), TRT)
+and or(dt(5E15), ..., dt(5Ek5)). 
+The output of the ﬁrst branch comes from the application of the 
+functions avg ◦gt to the data coming from the sensors Ei1. The 
+second output in turn depends on the logical disjunction of the 
+branches dt(5Ei5), where the function dt is applied to the data 
+coming from the sensors Ei5.
+The structure of the abstract value ˆv f ire discussed above can 
+be exploited to investigate security and safety issues. A system is 
+secure, under this aspect, if no attacker exists that can force a spe-
+ciﬁc behaviour of the actuator, by preventing activation of the ﬁre 
+suppression when necessary, or can force its activation when there 
+is no ﬁre, just to ﬂood the rooms. A system is instead safe, when 
+no accidental failure can impair the ﬁre suppression system.
+Now, we focus on security issues. To study which are the pos-
+sible attacks, we look at the trigger graph for ˆv f ire in Fig. 1, and 
+we evaluate how attacking some sensors or nodes may impact on 
+the capacity of the system to correctly trigger the ﬁre suppres-
+sion actuators.2 Suppose the attacker wants to impair the trigger 
+of GoEi5(alarm), by maliciously forcing ˆv f ire to be set to false
+2 Note that although similar in shape to Attack Trees [20], our graphs have a 
+different goal: while the ﬁrst represent the steps of an attack (the goal being the 
+root node and different ways of achieving it as leaf nodes), we represent in the 
+nodes the components of a system to attack and their dependencies.
+239
+
+C. Bodei, P. Degano, G.-L. Ferrari et al.
+Journal of Parallel and Distributed Computing 157 (2021) 233–242
+Fig. 1. Trigger graph of the abstract value ˆv f ire, with blue (in the pdf) boxes for 
+comparison functions and orange ones for aggregation functions.
+– of course it suﬃces to force a single and branch to false. A 
+possible way is to attack some sensors, by
+• tampering with the sensor S R that measures the water level 
+in the node RC, in order to force a false on the left branch; 
+or
+• altering the result of second and, by tampering with
+– enough temperature sensors among E11, ..., Ek1 in order to 
+force their average avgRT(1E11, ..., 1Ek1) not to be greater 
+than TRT; or
+– the ﬁre detector sensors that actually detect ﬁre among 
+E15, ..., Ek5 in order to alter the values dt(5Ei5), so making
+false the result of the or disjunction.
+An attacker can also compromise:
+• the node RC in order to alter the aggregation and the compar-
+ison of data coming from the sensor nodes;
+• the nodes E Ri in order to directly alter the activation condi-
+tions;
+• the communications of data.
+To estimate the cost of the different strategies of attacking the 
+actuation of GoEi5(alarm), we suppose that tampering with tem-
+perature sensors could be easier than tampering with ﬁre detec-
+tors, and each of them requires less effort than attacking the pump 
+water level sensor, even though there is a single one. Indeed this 
+sensor is usually better protected and more diﬃcult to access.
+We therefore assume the following security scores as given, 
+where we suppose, w.l.o.g. that the number of environmental 
+nodes in a room is k = 4, one for each corner of the room, and 
+that the scores are:
+φS(S R) = 3
+φS(Ei1) = 0.1
+φS(Ei5) = 0.3
+Under these hypotheses, it is more convenient for the attacker 
+to attack (i) the temperature sensors or (ii) the ﬁre detectors in 
+the environmental sensor nodes than (iii) attacking the water level 
+sensor of the Room controller. In case (i) the overall cost amounts 
+to 0.1 × 4 = 0.4, while in (ii), in the worst case, i.e. when the 
+attacker must tamper with all the ﬁre detectors, the overall cost 
+amounts to 0.3 × 4 = 1.2. In both cases, the cost is less than that 
+of (iii), that is 3.
+When the attack consists of activating the ﬁre suppression sys-
+tem in absence of ﬁre, the attacker has to force a single ﬁre de-
+tector to signal the presence of ﬂames and to tamper with enough 
+temperature sensors to increase the average temperature above the 
+threshold. In this case, we can estimate the cost of the attack in a 
+way similar to that described above.
+An analogous reasoning can be applied in order to asses safety 
+and reliability of IoT systems. As in the security case, local acci-
+dental failures can impact on the actuation decision as follows:
+• the local failure of the sensor S R that measures the water level 
+in the node RC can force a false on the left branch; or
+• altering the result of second and can be obtained with
+– the local failure of enough temperature sensors among 
+E11, ..., Ek1 that forces avgRT(1E11, ..., 1Ek1) not to be greater 
+than TRT; or with
+– the local failure of the ﬁre detector sensors for alter the 
+values dt(5Ei5) so making false the result of the or dis-
+junction.
+Scores in this case can measure the robustness of nodes and sen-
+sors and our framework can help designers to determine which of 
+them should be strengthened. Back to our example, a question may 
+be “which accidental failures can impair the critical decision of ac-
+tivating the ﬁre suppression system?” Assume now the following 
+robustness scores:
+φR(S R) = 4
+φR(Ei1) = 1
+φR(Ei5) = 2
+according to which, the least robust sensors are the temperature 
+ones, followed by the ﬁre detectors, while the water level sensor is 
+more robust. These scores indicates that the environmental sensors 
+can suffer from battery issues, while the Room controller sensor 
+has a better charge. As a consequence, enhancing environmental 
+sensors is a more cautious choice than enhancing the water level 
+sensor in RC.
+Resilience analysis a là quality
+Our approach can be further pushed 
+in order to consider resilience issues, by answering to question like 
+“Given an aggregation function, how many values must be correct 
+for giving the right answer?” The aim is to ensure a certain level 
+of reliability of actuations even in the presence of unreliable data.
+For instance, consider the check on the temperature average, 
+used to trigger the ﬁre suppression system and suppose that the 
+temperature sensors in the room now are eight.
+gt(avg(1E11, 1E21, 1E31, 1E41, 1E51, 1E61, 1E71, 1E81), TRT)
+A possible detailed question here may be: “What if 1E11 and 
+1E61, give the wrong results?” and “Does the overall result amor-
+tise these weaknesses?” Maybe it does, but “what does it happen 
+if additionally, also 1E41 fails?” In other words, the overall result 
+can also be altered because of more local conditions. To handle 
+these issues, we can embed quality predicates (in the style fol-
+lowed of [19]) inside our abstract terms:
+&∃(ˆv1,··· , ˆvr) and &∀(ˆv1,··· , ˆvr)
+where &∃means that it suﬃces to have at least one correct value, 
+and &∀means that all the values are necessary. More complex 
+nested logical structures like f (&∀(ˆv1, &∃(ˆv2, ˆv3)) are possible, as 
+well. This allows us to encode the dependence of our actuation on 
+a suitable combination of reliable data. For example, the following 
+formula expresses that the reliable data are 1E11, 1E21, 1E51, 1E61, 
+one between 1E31 and 1E41, and one between 1E71 and 1E81:
+gt(avg(&∀(1E11, 1E21, &∃(1E31, 1E41), 1E51, 1E61,
+&∃(1E71, 1E81))), TRT)
+Note that this technique can be used starting from the esti-
+mates of our CFA as they are, because certain quality predicates 
+240
+
+C. Bodei, P. Degano, G.-L. Ferrari et al.
+Journal of Parallel and Distributed Computing 157 (2021) 233–242
+can be applied directly to the resulting abstract values in order to 
+reason about resilience issues.
+5. Conclusions, related and future work
+Conclusions
+In IoT systems data are collected locally and are ag-
+gregated for driving computations. When data are used for de-
+cisions and are subject to unexpected changes, the monitoring 
+system may make a wrong, possibly dangerous decision. This is es-
+pecially risky for conditions that trigger actuations in the presence 
+of critical anomalies in the behaviour of systems. Actually, a sys-
+tem can go wrong because of either accidental failures of devices 
+or of intentional attacks.
+To investigate these security and safety issues, we modelled 
+IoT systems with the IoT-LySa calculus and we statically endowed 
+these models with a Control Flow Analysis that predicts the be-
+haviour of systems. The abstract values in the analysis estimates 
+“symbolically” encode the supply chain of values that drive crit-
+ical decisions, showing their dependencies on the raw data from 
+sensors and their aggregations. This information allows designers 
+to identify the possible nodes or sensors, the data of which can 
+impact on the capacity of the system to correctly trigger the actu-
+ators.
+On the security side, an attacker can compromise sensors or 
+nodes to drive the system into an undesired state. As in [2,3], we 
+assume that each node or sensor is associated with a score that 
+measures the efforts required by an attacker to compromise it and 
+therefore the integrity of its data. Based on that investigation, de-
+signers can compare different attack strategies and devise which 
+nodes need better protection; other metrics of [2,3] can be adopted 
+as well. Similarly, on the safety side, battery issues or accidental 
+faults can alter sensor readings or other critical data. In this case, 
+using scores that measure robustness, designers can choose which 
+nodes and sensors to improve.
+Related work
+Cyber-Physical Systems (CPS) are closely related 
+with the IoT systems studied in this paper. These systems also 
+consist of physical devices that are monitored and controlled by 
+a logic, typically implemented on embedded computers and net-
+works. In the following, we brieﬂy survey the work on CPS security 
+that is closest to ours, and we feel free to refer the interest reader 
+to the survey (of surveys) in [12] for a guide to the vast literature 
+on this topic.
+Providing quantiﬁable measurements by taking into account de-
+pendencies between components is the basis of a recent line of 
+research on the CPS security side [2,3,13,18]. In particular, the ﬁrst 
+work proposes a game theory-based approach to support decision-
+making against attacks on industrial control systems. Nicolaou et 
+al. introduce in [18] a methodology that estimates the number 
+of cyber-physical elements that need to be attacked to compro-
+mise an entire target system, namely its security level. The au-
+thors of [2,3] provide a model that captures complex interdepen-
+dencies among CPS components, in the form of logical combi-
+nations of AND/OR connectives. They further propose a minimal 
+weighted vertex cut in AND/OR graphs that exploits a security 
+metric that measures the efforts required to successfully attack in-
+dividual components. While the papers discussed above focus on 
+the physical dependencies, we focus on the functional dependencies 
+between components to quantitatively evaluate the vulnerability of 
+an actuation logic. Another proposal for identifying critical cyber-
+physical components that also considers functional dependencies 
+is in [10], where vulnerability is analysed in critical infrastructure 
+system that do not have a ﬁxed topological structure.
+Lanotte et al. [16] use the hybrid process calculus CCPSA, an 
+extension of [14], to model cyber-physical systems and the poten-
+tial attacks to physical devices. The authors also introduce a threat 
+model to assess attack tolerance and to estimate the impact of a 
+successful attack, with particular attention to timing aspects. As 
+in our process algebraic model, a cyber component governs in-
+teractions with sensors and actuators, and communications with 
+other cyber components. The behavioural semantics of CCPSA ex-
+plicitly takes into account the presence of attackers, modelling typ-
+ical man-in-the-middle activities such as sensor sniﬃng and drop-
+ping/changing actuator commands, as well as integrity attacks on 
+data coming from sensors or addressed to actuators. These actions 
+directly affect the sensor measurements or the controller com-
+mands. An attack is considered harmless when it changes neither 
+the physical behaviour nor the observable logical behaviour of the 
+system. Finally, the authors deﬁne a metric to estimate the max-
+imum perturbation introduced in the system under attack with 
+respect to its standard behaviour, on both its physical and logi-
+cal processes. In order to investigate how many execution traces 
+can be affected by a speciﬁc attack, part of the authors propose to 
+enrich the metrics in probabilistic terms (see e.g. [15,17]). These 
+proposals are deeply based on the formal dynamic semantics of 
+CCPSA. In contrast to this approach, our design framework also 
+includes a static semantics that supports veriﬁcation techniques 
+and tools to check properties of IoT applications. In [1] the au-
+thors study cyber–physical vulnerabilities within a process algebra 
+approach, as we do. They use SPA [11] to model the interactions 
+between both the cyber and the physical components of a sys-
+tem. Then, information ﬂow properties are veriﬁed using symbolic 
+model checking.
+Future work
+Our current CFA can be integrated with other security 
+analyses available for IoT-LySa. In particular, combined with the 
+one in [4], which predicts how tainted data spread across an IoT 
+system, we could investigate how critical decisions may depend on 
+tainted data.
+Moreover, since the behaviour of IoT systems may depend on 
+the computational context in which they are embedded, we plan 
+to extend IoT-LySa with constructs to represent contexts in which 
+they operate along the lines of [9], and to study their security 
+along the lines of [7].
+Finally, we are interested in the practical application of our 
+techniques to further case studies.
+CRediT authorship contribution statement
+All the authors equally contributed to this work.
+Declaration of competing interest
+The authors have no conﬂict of interest.
+Acknowledgments
+We acknowledge the University Museum Network (Sistema 
+Museale di Ateneo) of the University of Pisa for having shared 
+some considerations about the IoT museum monitoring system 
+they are designing.
+References
+[1] R. Akella, H. Tang, B.M. McMillin, Analysis of information ﬂow security in 
+cyber–physical systems, Int. J. Crit. Infrastruct. Prot. 3 (3) (2010) 157–173.
+[2] M. Barrère, C. Hankin, N. Nicolaou, D.G. Eliades, T. Parisini, Measuring cyber-
+physical security in industrial control systems via minimum-effort attack 
+strategies, J. Inf. Secur. Appl. 52 (2020) 102471.
+[3] M. Barrère, C. Hankin, N. Nicolaou, D.G. Eliades, T. Parisini, Identifying security-
+critical cyber-physical components in industrial control systems, CoRR, arXiv:
+1905 .04796, http://arxiv.org /abs /1905 .04796.
+241
+
+C. Bodei, P. Degano, G.-L. Ferrari et al.
+Journal of Parallel and Distributed Computing 157 (2021) 233–242
+[4] C. Bodei, L. Galletta, Tracking sensitive and untrustworthy data in IoT, in: 
+Procs. of the First Italian Conference on Cybersecurity, ITASEC 2017, in: CEUR, 
+vol. 1816, 2017, pp. 38–52.
+[5] C. Bodei, L. Galletta, Analysing the provenance of IoT data, in: P. Mori, S. Furnell, 
+O. Camp (Eds.), Information Systems Security and Privacy - 5th International 
+Conference, ICISSP 2019, in: Communications in Computer and Information Sci-
+ence, vol. 1221, Springer, 2019, pp. 358–381, Revised Selected Papers.
+[6] C. Bodei, P. Degano, G.L. Ferrari, L. Galletta, Tracing where IoT data are collected 
+and aggregated, Log. Methods Comput. Sci. 13 (3) (2016).
+[7] C. Bodei, P. Degano, L. Galletta, F. Salvatori, Context-aware security: linguistic 
+mechanisms and static analysis, J. Comput. Secur. 24 (4) (2016) 427–477.
+[8] C. Bodei, P. Degano, G.-L. Ferrari, L. Galletta, Security metrics at work on the 
+things in IoT systems, in: From Lambda Calculus to Cybersecurity Through Pro-
+gram Analysis, in: Lecture Notes in Computer Science, vol. 12065, Springer, 
+2020.
+[9] P. Degano, G.L. Ferrari, L. Galletta, A two-component language for adaptation: 
+design, semantics, and program analysis, IEEE Trans. Softw. Eng. 42 (6) (2016) 
+505–529.
+[10] Y. Deng, L. Song, Z. Zhou, P. Liu, Complexity and vulnerability analysis of crit-
+ical infrastructures: a methodological approach, Math. Probl. Eng. 2017 (2017) 
+8673143.
+[11] R. Focardi, R. Gorrieri, The compositional security checker: a tool for the veri-
+ﬁcation of information ﬂow security properties, IEEE Trans. Softw. Eng. 23 (9) 
+(1997) 550–571.
+[12] J. Giraldo, E. Sarkar, A.A. Cardenas, M. Maniatakos, M. Kantarcioglu, Security 
+and privacy in cyber-physical systems: a survey of surveys, IEEE Des. Test Com-
+put. 34 (4) (2017) 7–17.
+[13] C. Hankin, Game theory and industrial control systems, in: C.W. Probst, C. 
+Hankin, R.R. Hansen (Eds.), Semantics, Logics, and Calculi - Essays Dedicated 
+to Hanne Riis Nielson and Flemming Nielson on the Occasion of Their 60th 
+Birthdays, in: Lecture Notes in Computer Science, vol. 9560, Springer, 2016, 
+pp. 178–190.
+[14] R. Lanotte, M. Merro, A calculus of cyber-physical systems, in: Language and 
+Automata Theory and Applications - 11th International Conference, LATA 2017, 
+Umeå, in: Lecture Notes in Computer Science, vol. 10168, 2017, pp. 115–127.
+[15] R. Lanotte, M. Merro, S. Tini, Towards a formal notion of impact metric for 
+cyber-physical attacks, in: C.A. Furia, K. Winter (Eds.), Integrated Formal Meth-
+ods - 14th International Conference, IFM 2018, in: Lecture Notes in Computer 
+Science, vol. 11023, Springer, 2018, pp. 296–315.
+[16] R. Lanotte, M. Merro, A. Munteanu, L. Viganò, A formal approach to physics-
+based attacks in cyber-physical systems, ACM Trans. Priv. Secur. 23 (1) (2020) 
+3.
+[17] R. Lanotte, M. Merro, S. Tini, A probabilistic calculus of cyber-physical systems, 
+Inf. Comput. 279 (2021) 104618.
+[18] N. Nicolaou, D.G. Eliades, C.G. Panayiotou, M.M. Polycarpou, Reducing vulner-
+ability to cyber-physical attacks in water distribution networks, in: 2018 In-
+ternational Workshop on Cyber-Physical Systems for Smart Water Networks, 
+CySWater@CPSWeek, IEEE Computer Society, 2018, pp. 16–19.
+[19] H.R. Nielson, F. Nielson, R. Vigo, A calculus of quality for robustness against 
+unreliable communication, J. Log. Algebraic Methods Program. 84 (5) (2015) 
+611–639.
+[20] B. Schneier, Attack trees, Dr. Dobb’s J. 24 (12) (1999) 436–450.
+Chiara Bodei is Associate Professor in Computer 
+Science since 2005 at the University of Pisa. Her re-
+search interests are related to the theory of concur-
+rency, to systems biology and to the security of dis-
+tributed systems and of the networks; recently she 
+is interested in the study of models and of proper-
+ties of web services and of Internet of Things. Chiara 
+Bodei published about eighty papers on refereed jour-
+nals and international refereed conferences and work-
+shops.
+Pierpaolo Degano has been a full professor of 
+computer science since 1990 and he has been with 
+the Department of Computer Science at the Univer-
+sity of Pisa since 1993. He is member of the Edi-
+torial Board of Theoretical Computer Science, of two 
+sub-series in the Monographs & Texts in Theoretical 
+Computer Science and of Mondo Digitale; he served 
+as editor of many special issues of scientiﬁc journals 
+and of conference proceedings. Pierpaolo Degano is a 
+cofounder, and chairman, of the IFIP TC1WG1.7 on Theoretical Founda-
+tions of Security Analysis and Design; also he is a member of the board of 
+directors of the Microsoft Research-University of Trento Center for Com-
+putational and Systems Biology. He is fellow of the EATCS. His research 
+interests are broadly in Programming Languages, and include security of 
+concurrent and mobile systems, systems biology, semantics and concur-
+rency, methods and tools for program veriﬁcation and evaluation, and 
+programming tools.
+Gian-Luigi Ferrari received the PhD degree in 
+computer science from the University of Pisa, where 
+he has been a full professor at the Department of 
+Computer Science since 2011. His present research in-
+terests include formal methods for software engineer-
+ing, program analysis, security for service-oriented 
+applications, and programming languages design for 
+pervasive software systems.
+Letterio Galletta is Assistant Professor with IMT 
+School for Advanced Studies. Previously, he was a 
+postdoc with the Department of Computer Science, 
+University of Pisa. His research activity mainly focuses 
+on language-based security, i.e. using techniques from 
+programming languages, compilers and formal veriﬁ-
+cation to address security problems. He applied these 
+techniques to different ﬁelds like adaptive software, 
+the Internet of Things, more recently, secure compila-
+tion, ﬁrewalls and smart contracts.
+242

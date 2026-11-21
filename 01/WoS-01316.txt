@@ -1,0 +1,1160 @@
+Full Terms & Conditions of access and use can be found at
+https://www.tandfonline.com/action/journalInformation?journalCode=nurw20
+Urban Water Journal
+ISSN: 1573-062X (Print) 1744-9006 (Online) Journal homepage: https://www.tandfonline.com/loi/nurw20
+Optimization-simulation model for real-time pump
+and valve operation of water distribution systems
+under critical conditions
+Puneet Khatavkar & Larry W. Mays
+To cite this article: Puneet Khatavkar & Larry W. Mays (2019): Optimization-simulation model for
+real-time pump and valve operation of water distribution systems under critical conditions, Urban
+Water Journal, DOI: 10.1080/1573062X.2019.1634108
+To link to this article:  https://doi.org/10.1080/1573062X.2019.1634108
+Published online: 26 Jun 2019.
+Submit your article to this journal 
+Article views: 7
+View Crossmark data
+
+Optimization-simulation model for real-time pump and valve operation of water
+distribution systems under critical conditions
+Puneet Khatavkar
+and Larry W. Mays
+School of Sustainable Engineering and the Built Environment, Arizona State University, Tempe, AZ, USA
+ABSTRACT
+A new methodology is developed for the real-time operation of water distribution systems (WDS) under
+critical conditions of limited electrical energy and/or water availability due to emergencies such as
+extreme drought conditions, electric grid failure, and other severe conditions including natural and
+manmade disasters. The methodology is tested for three diﬀerent scenarios of limited electrical energy
+availability for an example WDS, but it is also applicable for conditions of limited water availability. The
+basic objective of optimizing the operations of WDS under critical conditions is to minimize the
+diﬀerence between requested demands and satisﬁed demands while meeting pressure requirements
+of the system. The approach adopted here is to interface an optimization procedure (genetic algorithm)
+with a simulator (EPANET) in the framework of an optimal control problem to determine the real-time
+optimal operation (pump and valve operations) of a water distribution system. Interfacing of the
+simulator and the genetic algorithm has been accomplished within the framework of MATLAB.
+ARTICLE HISTORY
+Received 6 July 2018
+Accepted 15 June 2019
+KEYWORDS
+Genetic algorithm; water
+distribution system; water –
+energy nexus; evolutionary
+algorithm; pump operations;
+valve operations
+Background: electrical power system and water
+distribution system interdependencies
+The interdependencies of a WDS over the PDS depend upon
+severalfactors relatedtothelayoutandcomponentsofthesystem.
+Major energy consumption involved in pumping of water from the
+source to treatment facility and ﬁnally to the consumer. Rinaldi,
+Peerenboom, and Kelly (2001) present a detailed study on critical
+infrastructure interdependencies highlighting the ripple eﬀect
+caused by disruption of power supply on other critical infrastruc-
+ture systems including WDS. Zachariadis and Poullikkas (2012)
+present an economic analysis of disruptions to water distribution
+due to power outages with a case study from Cyprus. Power
+outages can cause widespread disruption of water supply and
+hence are a great concern for WDS operations. The interdepen-
+dencies between power distribution systems (PDS) and water
+distribution systems (WDS) have been recognized as the water-
+energy nexus.
+The interaction between these two supervisory control and
+data acquisition (SCADA) systems is to exchange real-time data,
+through software-deﬁned networking middleware architecture
+(see Figure 1). The overlay enables a reliable and eﬃcient data
+exchange between the two otherwise isolated PDS and WDS
+systems. This is the ultimate measure of how the two systems
+behave when subjected to various disturbances in either system
+as well as under conditions of long-term water shortages. Control
+actions undertaken in both networks represent an improvement
+over the current practices.
+This paper addresses the development of an optimization/
+simulation model for the real-time operation of water distribution
+systems that would operate under the critical conditions of limited
+electrical energy supply and/or limited water availability. The
+novelty of this model is that it can be used to determine optimal
+real-time pump and valve operations under critical conditions.
+Previous optimization models for pump operation
+Goldman, Sakarya, and Mays (2002) provide a detailed list
+of optimization models developed for pump operations.
+Models optimizing pump operations in water distribution
+systems (WDS) developed after 2002 include works by: Rao
+and Salomons (2007); Sakarya and Mays (2000); Salomons
+et al. (2007); Shamir and Salomons (2008); Ramos and
+Ramos (2009); Costa, Ramos, and Castro (2010); Kurek
+and Ostfeld (2013); Goldman, Sakarya, and Mays (2002);
+Hashemi, Tabesh, and Ataeekia (2014); Ghaddar et al.
+(2014) and Khatavkar and Mays (2017).
+There have been a few optimization/simulation models
+for pump operation reported in the literature that have
+developed optimization models interfaced with EPANET
+(Rossman
+2000).
+EPANET
+(developed
+by
+the
+US
+Environmental Protection Agency) is the commonly used
+open-source
+software
+for
+hydraulic
+and
+quality
+simulations.
+Sakarya and Mays (2000) developed a model using
+nonlinear programming interfaced with EPANET for both
+water quality and hydraulic performance requirements.
+Goldman
+and
+Mays
+(2005)
+developed
+a
+methodology
+that linked the simulated annealing with the EPANET
+model to ﬁnd optimal pump operation for WDS while
+meeting both water quality and hydraulic performance
+requirements.
+Ozger
+and
+Mays
+(2005)
+interfaced
+a simulated annealing model with EPANET for determining
+CONTACT Puneet Khatavkar
+pkhatavk@asu.edu
+URBAN WATER JOURNAL
+https://doi.org/10.1080/1573062X.2019.1634108
+© 2019 Informa UK Limited, trading as Taylor & Francis Group
+
+the optimal location of isolation valves in water distribu-
+tion systems for security purposes.
+Kurek and Ostfeld (2013) linked EPANET with a multi-
+objective methodology using a strength pareto evolutionary
+algorithm to demonstrate the trade-oﬀs between pumping
+cost, water quality and tank sizing of WDS. Costa, Ramos,
+and Castro (2010) have developed a branch and bound algo-
+rithm interfaced with EPANET for optimal pump operation
+of WDS.
+Previous real-time optimal pump operation models
+Several attempts at developing models for the real-time
+operation of water distribution systems have been reported
+in the literature. Most of these eﬀorts have simpliﬁed the
+hydraulics such as models by Rao and Alvarruiz (2007), Rao
+and Salomons (2007), Shamir and Salomons (2008), and others
+with more detail below. Broad, Dandy, and Maier (2005) and
+Salomons et al. (2007) used a surrogate hydraulic model (or
+meta-model) ‘trained’ to approximate the nonlinear hydraulic
+equations using a machine learning approach which is
+a support vector machine that replaces EPANET. Cheng, Yu,
+and Xu (2014) presented an approach for real-time operation
+of a WDS using a state estimation method with measured data
+via a SCADA and a steady-state WDS simulation model. To
+develop real-time pump scheduling tools, Pasha and Lansey
+(2014) presented two approaches (a linear programming
+model and the shuﬄed frog leaping algorithm) to ﬁnd approx-
+imate solutions which can be used as warm solutions in
+evolutionary algorithms to reduce computation time.
+Other investigators have proposed the use of an artiﬁcial
+neural network. These include Jamieson et al. (2007); Broad,
+Maier, and Dandy (2010); and Odan, Reis, and Kapelan (2014)
+who substituted an artiﬁcial neural network for a hydraulic
+simulation model to speed up the process. Odan, Reis, and
+Kapelan (2014) used an adaptive ANN training (Islam et al.
+2009) for the simulation of the water distribution system and
+used a multi-method optimization algorithm as an alternative
+to a genetic algorithm (GA). The multi-algorithm genetically
+adaptive method, proposed by Vrugt and Robinson (2007) was
+chosen as the optimization method to solve the pump sche-
+duling problem for real-time operation. Kang (2014) devel-
+oped a real-time optimal control model for pump operation
+in WDS to minimize operation costs which interfaced a GA
+with the EPANET model. As pointed out by Kang (2014) ‘the
+contemporaneous portion of the current GA decisions can be
+used as initial starting conditions for the next GA runs.’
+Boulos
+et
+al.
+(2014)
+developed
+a
+real-time
+model
+referred to as smart water network decision support sys-
+tem. As stated by the authors, ‘The mart water network
+decision support system runs in near real-time by reading
+SCADA measurements as they become available, updating
+the network model boundary conditions and operational
+statuses, pausing execution and generating the corre-
+sponding network analysis results, and then waiting for
+the new SCADA measurements to reload the network
+model and rerun the network simulation.’ The authors
+applied this real-time network modeling system to the
+Las Vegas Valley Water District in Las Vegas, Nevada to
+reduce water age and enhance water quality and to
+decrease the operational cost of the network through
+improved daily operating plans and pump control rules.
+Odan,
+Ribeiro
+Reis,
+and
+Kapelan
+(2015)
+developed
+a multi-objective optimization model for real-time opera-
+tions of water supply pumps using an interface between
+a water demand forecasting model, EPANET and an opti-
+mization model for minimization of energy utilization.
+Candelieri,
+Perego,
+and
+Archetti
+(2018)
+presented
+a Bayesian optimization approach for pump operations
+for WDS using probabilistic functions and EPANET for
+simulation of the results. Mala-Jetmarova, Sultanova, and
+Savic (2018) provide a detailed literature review for recent
+optimization modes for WDS operations and design.
+Limited research related to optimization of WDS con-
+trols under critical conditions of limited power availability
+is available in the literature. Li. et al. (2018) presented an
+optimization model for operations of water-energy nexus
+systems. The model presented by Li. et al. (2018) consid-
+ered
+optimization
+of
+pump
+schedules
+during
+power
+outages. Khatavkar and Mays (2018) proposed an optimi-
+zation-simulation model for real-time control of water dis-
+tribution pumps under the conditions of limited power
+availability. No research is reported in the literature that
+provides a comprehensive optimization-simulation model
+for both pump and valve operations under conditions of
+limited power availability and/or water availability. The
+overall eﬀort of the research reported in this paper is to
+expand
+the
+Khatavkar
+and
+Mays
+(2018)
+optimization-
+simulation model for the pump and valve controls of
+WDS that will communicate with an PDS optimization –
+simulation model through the middleware as illustrated in
+Figure
+1.
+This
+paper
+presents
+a
+new
+optimization-
+simulation model for the real-time operation of water
+distribution systems that would operate under the critical
+conditions
+of
+limited
+electrical
+energy
+supply
+and/or
+Figure 1. Real-time operation model for optimal operation of power – water
+systems.
+2
+P. KHATAVKAR AND L. W. MAYS
+
+limited water availability. The novelty of this model is that
+it can be used to determine optimal real-time pump and
+valve operations for a WDS.
+Real-time operation framework
+The basic objective of optimizing the operations of a water
+distribution system is an attempt to satisfy requested demand
+in a WDS while satisfying pressure requirements. The objective
+statement considers a particular-requested demand Dreq,z,t
+Qbz, where Dreq,z,t is the demand coeﬃcient for service area
+z at a time t and Qbz is the base demand for service area z. The
+average of demand coeﬃcients over a 24-h time-period must
+be 1.0, since a 24-h average daily water demand is used as the
+base demand for WDS simulation. Forecasting water demands
+for real-time operations of WDS can be achieved through use
+of statistical forecasting methodologies or average water
+demands. This study uses average water demands for the real-
+time WDS operations. The following describes the overall
+concept of the real-time operation for pump and valve
+controls.
+(1) At real-time t receive electrical energy input from elec-
+trical system and water availability from water utilities.
+(2) Receive latest data (status of pumps, tank levels, status
+of valves, and ﬂows in and out of the system from the
+SCADA (Supervisory Control and Data Acquisition)
+system.
+(3) Update the EPANET water distribution system (WDS)
+input using data from the SCADA system.
+(4) WDS optimization model is run to determine the actual
+demand pattern and pump operation that can be met
+with the limited electrical energy input. During the
+optimization/simulation process the EPANET model is
+used repeatedly within the GA optimization to deter-
+mine the status of the network over the next 24 h. The
+optimization model searches over the decision vari-
+ables which are the pump operations and/or valve
+operations to determine the optimal demand pattern
+that minimizes the diﬀerence between the requested
+demands and satisﬁed demands. The simulator deter-
+mines the values of the state variables (nodal pressure
+heads, pipe ﬂows, and tank levels) for each set of con-
+trol variables determined in the optimizer.
+(5) Implement the optimal pump schedule over the next 1
+h only which is accomplished through the SCADA
+system.
+(6) Repeat steps 1 through 5 continuously during the
+emergency event each time incrementing the time t =
+t + Δt in which case Δt = 1 h.
+WDS optimization model
+The actual demand that can be satisﬁed in service area z during
+time-period t is Dsat;z;tQbz. The objective of WDS operation is to
+minimize the diﬀerence between demands requested and
+demands satisﬁed; however, if energy and/or water availability
+are not suﬃcient, the requested demand is not satisﬁed then
+Dsat;z;t ≤Dreq;z;t.
+The following is the problem statement for the WDS opti-
+mization model.
+Objective Function
+The objective function for the WDS optimization model can
+be expressed as
+Minimize Z ¼
+Xt¼T
+t
+Xz¼N
+z
+ðDreq;z;t  Dsat;z;tÞQbz
+
+nPz;t
+(1)
+where Pz;t is a penalty for not meeting the requested demands
+in service area z at time t. The objective function is subjected
+to several constraints, those solved by the simulator EPANET
+and bound constraints incorporated into the objective func-
+tions as penalty functions.
+Model constraints solved by EPANET
+The distribution of ﬂow throughout the network must satisfy
+the conservation of mass and the conservation of energy
+which are deﬁned as the hydraulic constraints. The hydraulic
+constraints are solved implicit to the optimization model using
+EPANET (Rossman 2000) and are documented in detail by
+Khatavkar and Mays (2018).
+Bound constraints incorporated into reduced problem
+Additional inequality constraints, which are the bound con-
+straints, include bounds on nodal pressure heads, pump
+operation times, number of times pumps can be turned oﬀ
+and on (switches), bounds on demand satisfaction multiplier,
+bounds on valve operation, and bounds on power availability.
+These constraints cannot be solved using the simulator,
+EPANET. They are incorporated into the reduced problem
+which is solved using the GA.
+Nodal pressure head bounds are expressed as
+Hkt  Hkt  Hkt
+" k ¼ 1; . . . ; K and t ¼ 1; . . . ; T
+(2)
+in which Hkt and Hkt are the lower and upper bounds, respec-
+tively, on pressure head at node k at time t, Hkt. There are no
+universally accepted values for the lower and upper bound
+values.
+The lower and upper bounds on pump operation time are
+expressed as,
+Δtmin;p 
+X
+t Xp;t
+ Δtmax;p
+" p ¼ 1; . . . ; P and t ¼ 1; . . . ; T
+(3a)
+where Xp;t is a binary variable (0 or 1) depicting the pump
+operation for pump (p) at time t, and Δtmin,p and Δtmax,p are
+the lower and upper bounds on total number of hours the
+pump p is switched on, respectively. Δtmin can be zero to
+simulate a closed pump and Δtmax is equal to the maximum
+length of time-period pump p could be operated during
+a particular simulation period. Switch constraints deﬁne the
+minimum and maximum number of times a pump is turned
+on referred to as the number of switches expressed as
+Swmin p
+ð Þ 
+X
+t maxð0;
+Xp;t  Xp;t1
+
+
+Þ
+ Swmax p
+ð Þ
+" p ¼ 1; . . . ; P and t ¼ 1; . . . ; T
+(3b)
+URBAN WATER JOURNAL
+3
+
+where Swmin p
+ð Þ and Swmax p
+ð Þ are the minimum and maximum
+number of switches allowed for the pump p. Bounds for
+demand satisfaction multiplier, Dsat;z;t are
+aDreq;z;t  Dsat;z;t  Dreq;z;t
+"z ¼ 1; . . . ; Z and t ¼ 1; . . . ; T
+(4)
+where a  1.
+Flow control valves (FCV) play an important role in main-
+taining required pressures at the nodes and ﬂows in the pipes
+in a WDS. Flow control valves are used to control the ﬂow to
+node or a service area in the WDS (Jowitt and Xu 1990). For
+control of WDS under conditions of limited electrical energy
+input, valve operations are introduced in the model presented
+following equation with a binary variable (Xv iz;t
+ð
+ÞÞ for valve
+controls. The constraint for valve operations for a valve
+between two consecutive nodes i and service area z is as
+follows
+Xv iz;t
+ð
+Þ Qiz;t  Dsat;z;tQbz
+" z ¼ i ¼ 1; . . .:; Z; t ¼ 1; . . . ; T (5)
+where Xv iz;t
+ð
+Þis a binary variable (0 for valve closed, 1 for valve
+open) showing operations of a valve between node i and service
+area z and Qiz;t is the ﬂow from node i to service area z.
+Consideration of power availability during energy
+limitations
+The above optimization model deﬁned by Equations (1–5) is
+expanded to determine the optimal pump operation to max-
+imize the amount of demands that can be satisﬁed. The rela-
+tion of available pump discharges to power available from the
+power distribution system (given by Khatavkar and Mays 2017)
+is expressed as
+Xp;t
+Qp;t Hp;t
+3956ηp
+ PAvail;t
+(6)
+where PAvail;t is the total power available for the water distri-
+bution system for time-period t; Xp;t is a binary variable (0 or 1)
+depicting the pump operation for pump p at time t as
+described above; and ηp is the eﬃciency of pump p.
+The optimization model described above must be reformu-
+lated as an unconstrained optimization model for solution
+using a GA. Constraints on the conservation of mass and
+energy and storage tank continuity are solved implicitly to
+the optimization using the EPANET model and the remaining
+bound constraints (Equations 2–6) are incorporated into the
+objective function as penalties resulting in the reduced pro-
+blem which is an unconstrained optimization problem solved
+by the GA. The optimizer (in this model a GA) searches over
+the control variable (pump operation times) using the values
+of the state variables (nodal heads, pipe ﬂows, and tank levels
+determined in the simulator. In other words, the optimizer
+passes pump and valve operations to the simulator which
+determines the state variables (nodal heads, pipe ﬂows, and
+tank levels). This process continues until an optimal or near
+optimal solution is reached.
+Reduced optimization problem solved by genetic
+algorithm
+The reduced problem is an unconstrained optimization pro-
+blem developed by incorporating the above-bound con-
+straints (Equations 2–6) into the objective function (1) as
+penalty
+functions.
+The
+reduced
+optimization
+problem,
+described by Equation (7) below is solved using a GA:
+Minimize Zreduced ¼ W1;t
+Xt¼T
+t
+Xz¼Z
+z
+Dreq;z;t  Dsat;z;t
+
+
+Qbz
+
+n Pz;t
+þW2;t
+Xt¼T
+t
+Xk¼N
+k
+W1 max 0; Hk;t  Hn
+
+
+
+
+
+2 þ W2 min 0; Hk;t  Hk
+
+
+
+
+
+2
+
+þW3 min 0; Hk;t  0
+
+
+
+
+
+2Þ þ W3;t
+Xp¼pu
+p
+max 0; Δtmin;p 
+Xt¼T
+t
+Xp;t
+
+
+
+
+
+2
+
+þ
+Xp¼pu
+p
+max 0;
+Xt¼T
+t
+Xp;t  Δtmax;p
+
+
+
+
+
+2
+
+þ W4;t
+Xp¼Pu
+p
+max 0; SwminðpÞ 
+X
+t max 0; Xp;t  Xp;t1
+
+
+
+
+
+
+
+
+
+2
+
+þ
+Xp¼Pu
+p
+max 0;
+X
+t max 0; Xp;t  Xp;t1
+
+
+
+
+ SwmaxðpÞ
+
+
+
+
+
+2
+
+þ W5;t
+Xt¼T
+t
+Xp¼Pu
+p
+max 0;
+Xp;t
+Qp;tHp;t
+3956ηp
+ PAvailðp;tÞ
+ 
+!
+ 
+!
+ 
+!2
+þW6;t
+Xz¼Z
+z
+Xi¼z1
+i
+min 0; Xvðiz;tÞQiz;tDsat;z;tQbz
+
+
+
+
+
+2
+(7)
+where Wm,t is the penalty weight associated with term m for
+time t; n is the index associated with the objective term: w is
+the weight associated with a pressure constraint; Z is the total
+number of demand patterns in the system; Pu is the total
+number of pipes in the system; N is the total number of
+tanks plus the number of nodes monitored for pressure; and
+Pz is the priority associated with demand pattern z.
+The penalty weights W1,t – W6,t are associated with demand
+satisfaction, pressure constraints, power constraints, total power
+utilization, switch constraints and valve constraints, respectively.
+The penalty weights are determined through a sensitivity analy-
+sis for each application of the optimization model. The sensitivity
+analyses are performed for all terms involved in the reduced
+optimization model. The value of weights to be used for
+a particular term depend upon the relative importance of the
+penalty term and the magnitude of the numeric value of the
+penalty term. Parameters considered for the sensitivity analyses
+are the value of the objective function, number of pressure
+bound violations, number of power bound violations and the
+number of switch constraint violations. The optimization model
+is tested for a range of values for each of the penalty weights and
+a combination of penalty weights yielding the minimum objec-
+tive function value and least amount of bound violations for
+pressures, power and water quality is chosen for the application.
+EPANET is a demand-driven simulation model that always
+meets the demands irrespective of pressures at nodes in the
+WDS. The solutions may have negative pressures at certain
+nodes for operations where enough water is not pumped to
+meet the water demands. For every iteration, the GA pro-
+vides a new set of decision variables (including satisﬁed
+demand multipliers and pump and valve controls) and an
+EPANET simulation is performed based on the decision vari-
+ables. A negative pressure penalty function with a large
+penalty weight is used in the reduced optimization model
+to exclude EPANET solutions with negative pressures. The
+ﬁnal solution from the optimization-simulation can never
+4
+P. KHATAVKAR AND L. W. MAYS
+
+include an operation schedule that results in negative
+pressures.
+Optimization/simulation model
+The overall model interface between the WDS model and the
+EPANET simulator is shown in Figure 2 is accomplished using
+MATLAB. Within MATLAB communication with EPANET is per-
+formed
+using
+the
+open-source
+EPANET-MATLAB
+toolkit
+(Eliades 2016). The interface facilitates use of all the function-
+alities in the EPANET code within the MATLAB environment by
+passing the various commands to and from the MATLAB
+mathematical language to the EPANET simulator. This toolkit
+was used in conjunction with GA in MATLAB to accomplish an
+overall optimization/simulation methodology for a WDS. The
+methodology works through an interface facilitating data
+exchange between three systems including the optimization
+model to solve (reduced problem), WDS Supervisory Control
+and Data Acquisition (SCADA) system and EPANET as illu-
+strated in Figure 2.
+Figure 3 is a schematic of the overall simulation/optimiza-
+tion procedure being implemented for every unit time period
+for the entire simulation period. Starting at the ﬁrst-time
+period, the optimization/simulation model in MATLAB receives
+inputs from the power optimization/simulation model includ-
+ing observed and predicted power availability schedule for
+each time period and data from WDS SCADA system including
+pressure heads, discharges and tank levels as well as pump
+status at various nodes and links in the system. The optimiza-
+tion/simulation model for WDS is then run with the updated
+information to obtain the pump controls, valve controls, and
+demand satisfaction multipliers for the next time. This process
+continues until the GA stopping conditions are met. The solu-
+tion of the GA is then sent to the power optimization/simula-
+tion model and the WDS SCADA system as inputs for the next
+time until the last time period for simulation is reached.
+Example application
+The WDS network shown in Figure 4 is used to illustrate the
+applicability of the optimization – simulation model. The WDS
+consists of 92 nodes, 117 pipes, and 5 service areas. Service area
+1 was modeled for the purposes of this application. The remain-
+ing service areas are comparatively smaller regions modeled as
+single nodes with individual demand patterns. Table 1 gives the
+demand types and total base demand (Qbz) for the service areas
+in WDS. The system includes three tanks, two sources of water,
+and two pumps. This network has been used over the years as
+an example by several investigators including Vasconcelos et al.
+(1996), Sakarya and Mays (2000), Goldman and Mays (2005),
+Bagirov et al. (2013) and others.
+Inputs for the GA include the number of function calls
+(iterations), weights for diﬀerent penalty terms, and the
+ﬁtness function for the solution. Results of several sensitivity
+analyses show that a total of 1100 function calls provides
+a solution with minimum pressure and power constraint
+violations. The results for the three scenarios considered
+required a total of 982, 952 and 1086 function calls (number
+of times EPANET model is solved) respectively. The time
+taken for obtaining the results for the three scenarios were
+13.09, 12.69 and 14.48 min, respectively. The time taken for
+obtaining the GA results was much less than the operations
+unit time of 1 h. Therefore, the GA can be eﬀectively used
+for real-time WDS operations. Larger WDS networks would
+need skeletonizing for application of the methodology.
+Pressure bounds were applied for all the nodes in the sys-
+tem except for the nodes representing tanks in the WDS.
+The upper and lower bounds for tank heads (levels) used
+were 151 ft and 149 ft, respectively. The pressure heads at
+service area nodes were bound between 100 psi and 40 psi,
+respectively. No bounds were used for pump operations in
+this application.
+An interface between the WDS optimization-simulation model
+and a PDS optimization-simulation model is being developed as
+a part of the ongoing research for NSF Project 029013–0010, CRISP
+Type 2 – Resilient cyber-enabled electric energy and water infra-
+structures modeling and control under extreme mega droughts
+for combined operations under emergency conditions of limited
+power and/or water availability. This combined model enables
+simulations of long-term emergency conditions such as droughts
+or other natural and manmade disasters as a tool for contingency
+planning. The power availability at diﬀerent pumping stations in
+the WDS would be communicated by the PDS optimization-
+simulation model at real-time.
+Three scenarios were considered in the example applica-
+tion: (1) observed pump schedules and demands without
+optimization from the simulation model, (2) optimization –
+simulation model application for limited power availability
+for pump controls and (3) optimization – simulation model
+application for limited power availability for pump controls
+and valve controls. In the second scenario, only pump controls
+were considered for optimization using the model for pump
+controls only while the third scenario considered optimization
+of both pump controls, as well as valve, controls using the
+model for pump and valve controls. The values used for the
+weights W1,t through W6,t for scenarios 2 and 3 below are 108,
+105, 1050, 10°, 105 and 100, respectively. A lower penalty
+weight was used for the upper bound on pump switches,
+since during short-term emergency conditions pump switches
+are not a major concern. For long-term operations of the WDS,
+pump switches are an important consideration. The total
+number of pump switches observed for the three scenarios
+were 10, 12 and 11, respectively.
+Figure 2. Water distribution simulation/optimization model in MATLAB.
+URBAN WATER JOURNAL
+5
+
+Scenario 1- Observed pump schedules and demands with-
+out optimization
+Through application of the EPANET model, the power
+requirements for the pump-observed operations were deter-
+mined. The results of this simulation provide a basis for
+comparison of the results for other two scenarios. The
+observed power requirements for meeting the requested
+demands are presented in Figure 5. The requested and
+satisﬁed demand patterns (multipliers) are presented in
+Figure 6(a–e) for service areas 1 to 5, respectively. These
+ﬁgures illustrate that all the demands were satisﬁed in this
+case, since the simulation was performed assuming a 100%
+demand satisfaction.
+Scenario 2 – Optimization/simulation model application for
+pump controls under limited power availability
+In this scenario, a limited amount of power availability for
+a few hours of the day was considered. The optimization/simula-
+tion model (developed for pump controls with a maximum
+demand satisfaction objective) was applied. The power availabil-
+ity as a function of time as illustrated in Figure 7 compared with
+the power consumption. The power disruptions considered in
+this study represent worst-case scenarios since the limited power
+availability (shown in Figure 7) is at peak water demand hours.
+For all times, the power consumption is within the limits of the
+power available, which shows that there were no power con-
+straint violations in the application of the optimization/
+Figure 3. Schematic of the overall simulation/optimization procedure.
+6
+P. KHATAVKAR AND L. W. MAYS
+
+simulation model. Figure 8(a–e) illustrate the demand require-
+ment and demand satisfaction (multipliers) patterns for service
+areas 1–5 in the network. The results obtained for this application
+had an average demand satisfaction of about 78%.
+Requested demands for the service areas in the system are
+given in Figure 6(a–e). Since scenario 1 provides the observed
+pump
+schedules
+and
+demand
+patterns,
+the
+requested
+demands are assumed to be met in this case, and no power
+bounds were imposed. Figure 7 gives the power availability
+and consumption trends for the system considered in the
+scenario 2 run performed as a part of this study. There are
+two limited power availability periods hours 10–15 and hours
+35–40 in this power availability pattern. The results for this
+scenario show that both the pumps were switched oﬀduring
+these times of limited power availability since the power
+available was not enough to run either of the pumps. The
+model attempts to ﬁnd the most optimum results with max-
+imum possible demand satisfaction. Figure 8(a–e) shows the
+patterns of demands requested and the demands satisﬁed by
+the optimized operations of the WDS for scenario 3 for the ﬁve
+service areas in the system, respectively. These result show
+that the model attempts to ﬁnd a solution of the satisﬁed
+demand patterns, with a minimum diﬀerence between the
+demands requested and the demands satisﬁed during various
+times of the simulation period.
+Scenario 3 – Optimization/simulation model application for
+optimal pump and valve operations under limited power
+availability
+The model was applied to the limited power availability con-
+ditions in scenario 2. The ﬂow control valves (FCV) that were used
+for control optimization were those at the downstream of the
+three tanks in the system. These valves control the water ﬂow
+from the tanks to the WDS. Figure 9 gives the power availability
+and consumption for scenario 3 run of the system considering
+pump and valve controls. No power availability bound violations
+were observed for this run. Figure 10(a–e) shows the patterns of
+Figure 4. Example water distribution system network showing the connection to the four other service areas.
+Table 1. Details of demands for WDS.
+Service area (z)
+Type of demand
+Total base demand Qbz
+(in gpm)
+1
+Residential/Irrigation
+2970
+2
+Commercial
+1859
+3
+Commercial
+620
+4
+Residential
+1856
+5
+Irrigation
+4643
+Figure 5. Required power for observed pump operations and demands for scenario 1.
+URBAN WATER JOURNAL
+7
+
+Figure 6. Demand requirement for observed conditions.
+Figure 7. Power availability and power consumption for optimized pump schedules and demand satisfaction for scenario 2.
+Figure 8. Demand requirement and demand satisfaction multipliers of the ﬁve service areas for scenario 2.
+8
+P. KHATAVKAR AND L. W. MAYS
+
+Figure 9. Power availability and power consumption for optimized pump schedules and demand satisfaction for scenario 3.
+Figure 10. Demand requirement and demand satisfaction multipliers of the ﬁve service areas for scenario 3.
+Figure 11. Details of valve operations for scenario 3.
+URBAN WATER JOURNAL
+9
+
+demands requested and demands satisﬁed for the system. The
+demands are observed to be satisﬁed for most of the simulation
+period except for the periods of lowest power availability. The
+average demand satisfaction for scenario 3 was about 87%, which
+is a considerable increase from the 78% observed in scenario 2.
+Comparing Figure 8(a–e) with Figure 10(a–e), better demand
+satisfaction is observed in case of scenario 3 for the entire simula-
+tion period as compared to scenario 2 results. This is attributed to
+the improved controls on account of pump and valve control
+optimization in scenario 3 application. Figure 11(a–c) show the
+optimized operations of the three valves in the system.
+Summary and conclusions
+The algorithm presented is a novel methodology for determi-
+nation of optimal operations for water distribution systems
+under normal and emergency conditions of limited power
+availability and/or water availability. The model employs
+a methodology for minimizing the diﬀerence between the
+demands requested and the demands satisﬁed to optimize
+pump and valve operations of the WDS.
+The example application of the model provides evidence of
+applicability of the model for real-time operations of a WDS
+under limited power availability. The demands are observed to
+be satisﬁed in the period of suﬃcient power availability while
+the demand satisfaction is curtailed in case of limited power
+availability time periods. Improved demand satisfaction was
+observed with consideration of both pump and valve controls.
+A few potential limitations of this study are identiﬁed. No
+forecasting model for water demands was used for this study.
+Another limitation of the model is that random disruptions of the
+system are not considered. An interface between the WDS optimi-
+zation-simulation model and a PDS optimization-simulation model
+is being developed as a part of the ongoing research for NSF
+Project 029013–0010, CRISP Type 2 – Resilient cyber-enabled elec-
+tric energy and water infrastructures modeling and control under
+extreme mega droughts for combined operations under emer-
+gency conditions of limited power and/or water availability. This
+combined model would enable simulations of long-term emer-
+gency conditions such as droughts or other natural and manmade
+disasters as a tool for contingency planning. The power availability
+at diﬀerent pumping stations in the WDS would be communicated
+by the PDS optimization-simulation model at real-time. Future
+work would also involve development of a model for generation
+of random power disruptions, to be used in conjunction with the
+optimization-simulation model presented in this study.
+The methodology presented in this paper could be used in
+conjunction with a similar optimization/simulation model to
+obtain real-time operations of a combined power – water
+system, thus providing a robust solution for cascading failures
+arising out of contingencies in any of the system.
+Acknowledgements
+This research is supported by the US National Science Foundation (NSF)
+Project 029013-0010. CRISP Type 2 – Resilient Cyber–Enabled Electric
+Energy and Water Infrastructures Modeling and Control under Extreme
+Mega Drought.
+Disclosure statement
+No potential conﬂict of interest was reported by the authors.
+Funding
+This work was supported by the National Science Foundation [029013-
+0010].
+ORCID
+Puneet Khatavkar
+http://orcid.org/0000-0002-6945-820X
+References
+Bagirov, A. M., A. F. Barton, H. Mala-Jetmarova, A. Al Nuaimat, S. T. Ahmed,
+N. Sultanova, and J. Yearwood. 2013. “An Algorithm for Minimization of
+Pumping Costs in Water Distribution Systems Using a Novel Approach
+to Pump Scheduling.” Mathematical and Computer Modelling 57 (3):
+873–886. doi:10.1016/j.mcm.2012.09.015.
+Boulos, P. F., L. B. Jacobsen, J. E. Heath, and S. Kamojjala. 2014. “Real-Time
+Modeling of Water Distribution Systems: A Case Study.” Journal of
+AWWA 106 (9): 391–401. doi:10.5942/jawwa.2014.106.0076.
+Broad, D. R., G. C. Dandy, and H. R. Maier. 2005. “Water Distribution System
+Optimization Using Meta Models.” Journal of Water Resources Planning
+and Management 131 (3): 172–180. doi:10.1061/(ASCE)0733-9496(2005)
+131:3(172).
+Broad, D. R., H. R. Maier, and G. C. Dandy. 2010. “Optimal Operation of
+Complex Water Distribution Systems Using Meta Models.” Journal of
+Water
+Resources
+Planning
+and
+Management
+136
+(1):
+433–443.
+doi:10.1061/(ASCE)WR.1943-5452.0000052.
+Candelieri, A., R. Perego, and F. Archetti. 2018. “Bayesian Optimization of
+Pump Operations in Water Distribution Systems.” Journal of Global
+Optimization 71 (1): 213–235. doi:10.1007/s10898-018-0641-2.
+Cheng, W. P., T. C. Yu, and G. Xu. 2014. “Real-Time Model of a Large-Scale
+Water Distribution System.” Proceedings 16th Conference on Water
+Distribution Systems Analysis, WDSA 2014 89 (1): 457–466. doi:10.1016/
+j.proeng.2014.11.212.
+Costa, L. H. M., H. M. Ramos, and M. A. H. Castro. 2010. “Hybrid Genetic
+Algorithm in the Optimization of Energy Costs in Water Supply
+Networks.” Water Science & Technology: Water Supply 10 (3): 315–326.
+doi:10.2166/ws.2010.194.
+Eliades, D. 2016. “EPANET-MATLIB-Tookit. KIOS-Research Center, University of
+Cyprus.” Republic of Cyprus. https://www.mathworks.com/MATLIBcentral/
+ﬁlesexchange/25100-kios-research-epanet-MATLAB-tookit/
+Ghaddar, B., J. Naoum-Sawaya, A. Kishimoto, N. Taheri, and B. Eck. 2014.
+“A Lagrangian Decomposition Approach for the Pump Scheduling
+Problem in Water Networks.” European Journal of Operation Research
+241: 490–501. doi:10.1016/j.ejor.2014.08.033.
+Goldman, F. E., A. B. A. Sakarya, and L. W. Mays. 2002. “Optimal Operation
+of Water Systems.” In Chapter 12. Urban Water Supply Handbook, edited
+by L. W. Mays, 12.1–12.39. New York, NY: McGraw-Hill.
+Goldman, F. E., and L. W. Mays. 2005. “Water Distribution System
+Operation: Application of Simulated Annealing.” Chap. 5. in Water
+Resources Systems Management Tools, edited by L. W. Mays, 5.1–5.17.
+New York, NY: McGraw-Hill.
+Hashemi, S., M. Tabesh, and B. Ataeekia. 2014. “Ant-Colony Optimization of
+Pumping Schedule to Minimize the Energy Cost Using Variable-Speed
+Pumps in Water Distribution Networks.” Urban Water 11 (5): 335–347.
+doi:10.1080/1573062X.2013.79523.
+Islam, M. M., M. A. Sattar, M. F. Amin, X. Yao, and K. Murase. 2009. “A New
+Adaptive Merging and Growing Algorithm for Designing Artiﬁcial
+Neural Networks.” IEEE Transactions on Systems, Man, and Cybernetics,
+Part B (Cybernetics) 39 (3): 705–722. doi:10.1109/TSMCB.2008.2008724.
+Jamieson, D. G., U. Shamir, F. Martinez, and M. Franchini. 2007.
+“Conceptual Design of a Generic, Real-Time, Near-Optimal Control
+System for Water-Distribution Networks.” Journal of Hydroinformatics
+9 (1): 3–14. doi:10.2166/hydro.2006.013.
+10
+P. KHATAVKAR AND L. W. MAYS
+
+Jowitt, P. W., and C. Xu. 1990. “Optimal Valve Control in Water-Distribution
+Networks.” Journal of Water Resources Planning and Management 116
+(4): 455–472. doi:10.1061/(ASCE)0733-9496(1990)116:4(455).
+Kang, D. 2014. “Real-Time Optimal Control of Water Distribution Systems.”
+Proceeding 12th International Conference on Computing and Control for
+the
+Water
+Industry,
+CCWI
+2013
+70:
+917–923.
+doi:10.1016/j.
+proeng.2014.02.102.
+Khatavkar, P., and L. W. Mays. 2017. “Model for Optimal Operation of
+Water Distribution Pumps with Uncertain Demand Patterns.” Water
+Resources Management 31 (12): 3867–3880. doi:10.1007/s11269-017-
+1712-8.
+Khatavkar, P., and L. W. Mays. 2018. “Model for the Real-Time
+Operations of Water Distribution Systems under Limited Electrical
+Power Availability with Consideration of Water Quality.” Journal of
+Water
+Resources
+Planning
+and
+Management
+144
+(11):
+1–8.
+doi:10.1061/(ASCE)WR.1943-5452.0001000.
+Kurek, W., and A. Ostfeld. 2013. “Multi-Objective Optimization of
+Water Quality, Pumps Operation, and Storage Sizing of Water
+Distribution Systems.” Journal of Environmental Management 115:
+189–197. doi:10.1016/j.jenvman.2012.11.030.
+Li., Q., S. Yu., A. Al-Sumaiti., and K. Turitsyn. 2018. “Modeling and
+Co-Optimization
+of
+a
+Micro
+Water-Energy
+Nexus
+for
+Smart
+Communities.”
+In
+Proc.,
+2018
+IEEE
+PES
+Innovative
+Smart
+Grid
+Technologies Conference Europe (Isgt-Europe), Sarajevo, Bosnia and
+Herzegovina, 1–5. doi:10.1109/ISGTEurope.2018.8571840.
+Mala-Jetmarova,
+H.,
+N.
+Sultanova,
+and
+D.
+Savic.
+2018.
+“Lost
+in
+Optimisation of Water Distribution Systems? A Literature Review
+of System Design.” Water 10 (3): 307. doi:10.3390/w10030307.
+Odan, F. K., L. F. Ribeiro Reis, and Z. Kapelan. 2015. “Real-Time
+Multiobjective
+Optimization
+of
+Operation
+of
+Water
+Supply
+Systems.” Journal of Water Resources Planning and Management
+141 (9): 04015011. doi:10.1061/(ASCE)WR.1943-5452.0000515.
+Odan, F. K., L. F. R. Reis, and Z. Kapelan. 2014. “Use of Metamodels in
+Real-Time Operation of Water Distribution Systems.” Proceedings
+16th Conference on Water Distribution Systems Analysis, WDSA 89
+(1): 449–456. doi:10.1016/j.proeng.2014.11.211.
+Ozger, S., and L. W. Mays. 2005. “Optimal Location of Isolation Valves
+in
+Water
+Distribution
+Systems:
+A
+Reliability/Optimization
+Approach.” In Water Resource Systems Management Tools, edited
+by L. W. Mays, 7.1–7.27. New York, NY: McGraw Hill.
+Pasha, F. M. K., and K. Lansey. 2014. “Strategies to Develop Warm Solutions
+for Real-Time Pump Scheduling for Water Distribution Systems.” Water
+Resource Management 28 (12): 3975–3987. doi:10.1007/s11269-014-
+0721-0.
+Ramos, J. S., and H. M. Ramos. 2009. “Sustainable Application of
+Renewable Sources in Water Pumping Systems: Optimized Energy
+System
+Conﬁguration.”
+Energy
+Policy
+37:
+633–643.
+doi:10.1016/j.
+enpol.2008.10.006.
+Rao,
+Z.,
+and
+E.
+Salomons.
+2007.
+“Development
+of
+a
+Real-Time,
+Near-Optimal
+Control
+System
+for
+Water-Distribution
+Networks.”
+Journal of Hydroinformatics 9 (1): 25–38. doi:10.2166/hydro.2006.015.
+Rao, Z., and F. Alvarruiz. 2007. “Use of an Artiﬁcial Neural Network to Capture
+the Domain Knowledge of a Conventional Hydraulic Simulation Model.”
+Journal of Hydroinformatics 9 (1): 15–24. doi:10.2166/hydro.2006.014.
+Rinaldi, S. M., J. P. Peerenboom, and T. K. Kelly. 2001. “Identifying,
+Understanding, and Analyzing Critical Infrastructure Interdependencies.”
+IEEE Control Systems 21 (6): 11–25. doi:10.1109/37.969131.
+Rossman,
+L.
+A.
+2000.
+EPANET
+2
+Users
+Manual.
+(EPA/600/R-00/057).
+Cincinnati, USA: U.S. Environmental Protection Agency.
+Sakarya, A. B., and L. W. Mays. 2000. “Optimal Operation of Water
+Distribution Pumps considering Water Quality.” Journal of Water
+Resources Planning and Management 126 (4): 210–220. doi:10.1061/
+(ASCE)0733-9496(2000)126:4(210).
+Salomons, E., A. Goryashko, U. Shamir, Z. Rao, and S. Alvisi. 2007. “Optimizing
+the Operation of the Haifa-A Water Distribution Network.” Journal of
+Hydroinformatics 9 (1): 51–64. doi:10.2166/hydro.2006.017.
+Shamir, U., and E. Salomons. 2008. “Optimal Real-Time Operation of Urban
+Water Distribution Systems Using Reduced Models.” Journal of Water
+Resources Planning and Management 134 (2): 181–185. doi:10.1061/
+(ASCE)0733-9496(2008)134:2(181).
+Vasconcelos, J. J., L. A. Rossman, W. M. Grayman, P. F. Boulos, and
+R. M. Clark. 1996. Characterization and Modelling of Chlorine Decay in
+Distribution Systems. Denver, CO: AWWA Research Foundation.
+Vrugt, J. A., and B. A. Robinson. 2007. Improved Evolutionary Optimization
+from Genetically Adaptive Multimethod Search. Proceedings of the
+National
+Academy
+of
+Sciences,
+104
+(3):708–711.
+doi:10.1073/
+pnas.0610471104.
+Zachariadis, T., and A. Poullikkas. 2012. “The Costs of Power Outages:
+A
+Case
+Study
+from
+Cyprus.”
+Energy
+Policy
+51
+(1):
+630–641.
+doi:10.1016/j.enpol.2012.09.015.
+URBAN WATER JOURNAL
+11

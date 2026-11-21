@@ -1,0 +1,2896 @@
+Contents lists available at ScienceDirect
+Reliability Engineering and System Safety
+journal homepage: www.elsevier.com/locate/ress
+Resilience-driven restoration model for interdependent infrastructure
+networks
+Yasser Almoghathawia,b, Kash Barkera,⁎, Laura A. Albertc
+a School of Industrial and Systems Engineering, University of Oklahoma, Norman, OK, USA
+b Systems Engineering Department, King Fahd University of Petroleum and Minerals, Dhahran, Saudi Arabia
+c Industrial and Systems Engineering Department, University of Wisconsin-Madison, Madison, Wisconsin, USA
+A R T I C L E I N F O
+Keywords:
+Interdependent networks
+Resilience
+Restoration
+Optimization
+Mixed-integer programming
+A B S T R A C T
+Critical infrastructure networks such as electric power, water distribution, natural gas, transportation and tel-
+ecommunications are the backbone of modern societies as they provide them with the services that are essential
+for their continuous functioning. However, these infrastructure networks are not isolated from each other but
+instead, most of them rely on one another to be functional. Hence, they are highly vulnerable to any disruptive
+event (e.g., components deteriorating, terrorist attacks, or natural disasters) which makes their restoration more
+challenging task for decision makers. In this paper, we study the restoration problem of a system of inter-
+dependent infrastructure networks following a disruption event considering different disruptions scenarios. We
+propose a resilience-driven multi-objective restoration model using mixed-integer programming that aims to
+maximize the resilience of the system of interdependent infrastructure networks while minimizing the total cost
+associated with the restoration process. The restoration model considers the availability of limited time and
+resources and provides a prioritized list of components, nodes or links, to be restored along with assigning and
+scheduling them to the available work crews. The proposed model is illustrated through a generated system of
+interdependent power-water networks, however it is applicable to any physically interdependent networks.
+1. Introduction
+A critical infrastructure network is defined as a network of in-
+dependent, mostly privately-owned, man-made systems and processes
+that function collaboratively and synergistically to produce and dis-
+tribute a continuous flow of essential goods and services [59]. Hence,
+critical infrastructure networks such as electric power, water distribu-
+tion, natural gas, transportation and telecommunications are the
+backbone of modern societies as they provide them with the services
+that are essential for their continuous functioning.
+Where previous work in planning for disruptions to critical infra-
+structure networks emphasized prevention and protection, such plan-
+ning has recently shifted more broadly to capture the ability of infra-
+structure networks to withstand a disruption and recovery timely from
+it. The ability to withstand, adapt to, and recover from a disruption is
+generally referred to as resilience [8], a definition with which many
+would largely agree [3, 4, 26]. For critical infrastructures in particular,
+the Infrastructure Security Partnership [58] described that a resilient
+infrastructure sector would “prepare for, prevent, protect against, re-
+spond or mitigate any anticipated or unexpected significant threat or
+event” and “rapidly recover and reconstitute critical assets, operations,
+and services with minimum damage and disruption.”
+The study of critical infrastructure networks under disruption has
+matured considerably in the past fifteen years, where emphasis has
+been given to identifying topological descriptors [e.g., 6, 30, 44, 45]
+and flow-based descriptors [e.g., 37, 46, 48, 54] that enable the study of
+critical network components that lead to network vulnerability. On the
+other hand, other studies provide methods and algorithms for restoring
+critical infrastructure networks following the occurrence of a disruptive
+event by determining the set of disrupted network components that
+need to be restored to maximize the performance of the network, as-
+signing these components to work crews, determining the restoration
+sequence of these components, or an integrated approach [e.g., 1, 21,
+32, 33, 36, 42, 47, 60, 66].
+However, these infrastructure networks rely on each other in dif-
+ferent ways in order for them to be functional; hence they are in-
+creasingly becoming more interdependent (i.e., two infrastructure
+networks are said to be interdependent if there is a bidirectional re-
+lationship between them through which the state of each infrastructure
+is dependent on the other one) [53]. Hence, the US federal planning
+https://doi.org/10.1016/j.ress.2018.12.006
+Received 5 December 2017; Received in revised form 22 October 2018; Accepted 15 December 2018
+⁎ Corresponding author.
+E-mail address: kashbarker@ou.edu (K. Barker).
+Reliability Engineering and System Safety 185 (2019) 12–23
+Available online 15 December 2018
+0951-8320/ © 2018 Elsevier Ltd. All rights reserved.
+T
+
+documents suggest (as do many across the globe) the importance in
+addressing critical infrastructure resilience in such a way that reflects
+its “interconnectedness and interdependency” [63]. Rinaldi et al. [53]
+stated in a seminal paper on infrastructure interdependencies that
+“critical infrastructures are highly interconnected and mutually de-
+pendent in complex ways, both physically and through a host of in-
+formation and communications technologies.” Despite acknowledging
+the interdependent nature of “lifeline” infrastructures at roughly the
+same period [2], literature on the study of interdependent networks has
+only recently began appearing [e.g., 12, 13, 15, 18, 29, 39, 49, 50, 64,
+67].
+Rinaldi et al. [53] defined the interdependency between two in-
+frastructure networks as “a bidirectional relationship between two in-
+frastructures through which the state of each infrastructure influences
+or is correlated to the state of the other”. They classified the inter-
+dependencies between infrastructure networks into four categories:
+physical, cyber, geographical and logical interdependencies. The phy-
+sical interdependency means that an output from an infrastructure
+network is an input to another one and vice versa. The cyber inter-
+dependency is existed for an infrastructure networks if it depends on
+information transmitted through an information infrastructure. Two
+infrastructure networks are geographically interdependent if they are
+affected by the same local disruptive event). Finally, all other types of
+interdependencies are classified as logical interdependencies.
+As a result of the interdependencies between infrastructure net-
+works, a disruption in some components of one of these infrastructure
+networks could lead to disruptions in other components of other de-
+pendent infrastructure networks. Therefore, they are highly vulnerable
+to any disruptive event (e.g., random failure, malevolent attack, natural
+disaster) that might propagate from one infrastructure network to an-
+other due to their interdependencies leading to inoperability in some or
+all of them [13, 18, 20, 41, 49, 61, 64]. Therefore, the restoration of
+such interdependent infrastructure networks following a disruptive
+event becomes more challenging for decision makers.
+The problem of the restoration of a system of interdependent in-
+frastructure networks after a disruptive event has been addressed with
+different approaches in the literature. Lee et al. [38] proposed an in-
+terdependent layer network model using mixed-integer programming
+(MIP) whose objective is to minimize the flow costs along with the slack
+costs but not including the cost associated with the restoration process
+of the disrupted components. Moreover, it focuses on determining the
+set of disrupted components to be restored, though it does not specify
+the time they need to be restored at or the work crews that they are
+assigned to. On the other hand, Gong. et al. [24] focused on scheduling
+the set of disrupted components assuming that they are known with a
+predefined due date for them. They provided a multi-objective re-
+storation planning model and solve it through a benders decomposition
+approach. The model aims to minimize the cost, tardiness, and make-
+span to find the optimal restoration schedule for disrupted components.
+Coffrin et al. [17] studied the problem of restoring interdependent
+power and gas networks. They integrated two network-specific flow
+models (i.e., a linearized direct current flow model for the power net-
+work and a maximum flow model for the gas network) using MIP with
+the objective of maximizing the weighted sum of interdependent de-
+mand during over the restoration time horizon. However, the proposed
+model did not consider different restoration time for the disrupted
+component in addition for being developed for specific types of infra-
+structure networks. Cavdaroglu et al. [15] integrated the two ap-
+proaches by Lee et al. [38] and Gong et al. [24] by providing a MIP
+model that integrates determining the set of disrupted components to
+be restored along with assigning and scheduling them to work crews.
+The objective of this model is to minimize the sum of the flow cost,
+unsatisfied demand cost, and installation and assignment cost asso-
+ciated with the full restoration of the interdependent infrastructure
+networks. González et al. [25] formulated an MIP model for the inter-
+dependent network design problem considering functionally and geo-
+graphically interdependencies. The model determines the set of dis-
+rupted components to be restored and the order of their restoration
+with the objective of minimizing the cost associated with preparing
+geographical locations, restoration, unbalance from disconnection, and
+flow. However, the model does not specify which work crews should
+restore particular disrupted components. Also, they assumed that a
+work crew can restore any disrupted component from any infra-
+structure network without taking into account the skills required for
+each infrastructure network.
+In this paper, we study the problem of the restoration of a system of
+interdependent infrastructure networks after the occurrence of a dis-
+ruptive event considering different disruption scenarios. We propose a
+Notation
+K
+Set of infrastructure networks.
+T
+Set of available time periods.
+Ψ
+Set of interdependent nodes.
+Rk
+Set of available work crews for network k ∈K.
+Nk
+Set of nodes in network k ∈K.
+Ns
+k
+Set of source nodes in network k ∈K.
+Nd
+k
+Set of demand nodes in network k ∈K.
+N k
+Set of disrupted nodes in network k ∈K.
+Lk
+Set of links in network k ∈K.
+L k
+Set of disrupted links in network k ∈K.
+bi
+k
+Amount of supply at node i
+Ns
+k in network k ∈K.
+uij
+k
+Capacity of link (i, j) ∈Lk in network k ∈K.
+μk
+Weight of network k ∈K.
+So
+k
+Total slacks at all demand nodes in network k ∈K before a
+disruption.
+Sd
+k
+Total slacks at all demand nodes in network k ∈K after a
+disruption.
+fnit
+k
+Cost of restoration for node i
+N k in network k ∈K at
+time period t ∈T.
+flijt
+k
+Cost of restoration for link i j
+L
+( , )
+k in network k ∈K at
+time period t ∈T.
+pit
+k
+Cost of unmet demand in node i
+Nd
+k in network k ∈K at
+time period t ∈T.
+cij
+k
+Cost of flow through link (i, j) ∈Lk in network k ∈K.
+dni
+k
+Restoration duration of node i
+N k in network k ∈K.
+dlij
+k
+Restoration duration of link i j
+L
+( , )
+k in network k ∈K.
+sit
+k
+Variable representing the amount of unmet demand at
+node i
+Nd
+k in network k ∈K at time period t ∈T.
+xijt
+k
+Variable representing the flow through link (i, j) ∈Lk in
+network k ∈K at time period t ∈T.
+zi
+k
+Variable indicating whether or not node i
+N k in net-
+work k ∈K is to be restored.
+yij
+k
+Variable indicating whether or not link i j
+L
+( , )
+k in net-
+work k ∈K is to be restored.
+it
+k
+Variable indicating whether or not node i ∈Nk in network
+k ∈K is operational at time period t ∈T.
+ijt
+k
+Variable indicating whether or not link (i, j) ∈Lk in net-
+work k ∈K is operational at time period t ∈T.
+it
+kr
+Variable indicating whether or not node i
+N k in net-
+work k ∈K is restored by work crew r ∈Rk at time period
+t ∈T.
+ijt
+kr
+Variable indicating whether or not link i j
+L
+( , )
+k in net-
+work k ∈K is restored by work crew r ∈Rk at time period
+t ∈T.
+Y. Almoghathawi et al.
+Reliability Engineering and System Safety 185 (2019) 12–23
+13
+
+resilience-driven multi-objective optimization model using mixed-in-
+teger programming (MIP) with the objectives of (i) maximizing the
+resilience of the system of interdependent infrastructure networks, and
+(ii) minimizing the costs associated with the restoration process, in-
+cluding flow, disruption, and restoration costs. Moreover, the proposed
+MIP restoration model takes into account the availability of the time
+and resources considering that there is a set of available resources or
+work crews or that are specific to each network (i.e., different than the
+assumption considered for the available models in the literature where
+a work crew can be assigned to restore a disrupted component in any
+network in the system of interdependent networks). It provides a set of
+prioritized restoration tasks to which to allocate and schedule available
+work crews considering the physical interdependence between the in-
+frastructure networks such that the resilience of the system of inter-
+dependent infrastructure networks is maximized while the restoration
+cost is minimized. While the cost is generally a typical objective of
+restoration models in the literature, our proposed model aims to restore
+disrupted components of the system of interdependent networks to
+enhance its resilience (i.e., retain its performance prior to the occur-
+rence of a disruptive event) while minimizing the cost associated to it
+(flow, restoration, and disruption costs). Hence, the proposed restora-
+tion model focuses on enhancing the resilience of the system of inter-
+dependent infrastructure networks to reach to a specific level with the
+minimum cost associated to it. Consequently, the disrupted components
+in the system of interdependent networks might not be all restored with
+the schedule resulting from this optimization problem, especially if they
+do not have any influence on the resilience of the system. While this
+work addresses interdependent network restoration, a resilience mea-
+sure in the objective function will enable future explorations of the
+balance between “withstanding a disruption” and “recovering from a
+disruption,” which represent the two primary dimensions of resilience.
+The remainder of the paper is organized as follows. Section 2 pro-
+vides brief definitions and notation, an overview of network resilience,
+and disruption scenarios. The proposed resilience-driven multi-objec-
+tive optimization model for the restoration of a system of inter-
+dependent infrastructure network is presented in Section 3. In
+Section 4, an illustrative example is presented with a generated system
+of interdependent power-water networks considering different disrup-
+tions scenarios. Finally, concluding remarks are provided in Section 5.
+2. Methodological background
+In this section, we discuss the background required to develop our
+proposed restoration model for a system of interdependent infra-
+structure networks.
+2.1. Definitions and notation
+In this work, we consider a network that is classified as an un-
+directed graph and is denoted by G
+N L
+(
+,
+)
+=
+where N is a set of n nodes
+and L⊂{(i, j): i, j ∈N, i ≠j} is a set of undirected links. The flow and
+capacity on link (i, j) ∈L are denoted by xij and uij, respectively. Let
+nodes s and t represent source and demand nodes, respectively. Nodes s
+and t are connected by a finite directed path, P, through a set of internal
+nodes in N and one or more links in L. The maximum capacity of a path
+equals the minimum capacity of all the links within that path (i.e., min(i,
+j) ∈Puij) [22].
+The objective of the s
+t max flow problem is to find the maximum
+flow from node s to node t by utilizing a subset of all possible paths
+between them accounting for link capacity. It can be formulated as a
+linear programing (LP) model as shown in Eqs. (1)–(3) [11]. The ob-
+jective of the model, Eq. (1), is to maximize the flow from node s to
+node t, fst, where s, t ∈N and s ≠t. Eq. (2) represents the flow con-
+servation constraints, which ensure that the flow into and out of in-
+ternal nodes are equal and the flow out of node s and into node t equal
+the maximum flow between them, fst. Eq. (3) represents the non-ne-
+gativity of the flow within the network along with the capacity con-
+straint of the links to ensure that they do not exceed their capacities.
+f
+max
+st
+(1)
+x
+x
+f
+if i
+s
+if i
+N
+s t
+f
+if i
+t
+s. t.
+0
+{ , }
+i j
+L
+ij
+j i
+L
+ji
+st
+st
+( , )
+( , )
+=
+=
+=
+(2)
+x
+u
+i j
+N
+0
+,
+,
+ij
+ij
+(3)
+In this paper, we consider infrastructure networks with multiple
+source and demand nodes, which represent reality in many infra-
+structure networks (e.g., electric power networks) [55]. The multiple
+source, multiple demand network can be reduced to a single source,
+single demand network by using the Ford-Fulkerson [23] algorithm as
+follows:
+(i) Add a new source node s* (i.e., super-source), and connect it to all
+source nodes by adding a link (s*, s) from s* to every source node s.
+(ii) Add a new demand node t* (i.e., super-demand), and connect it to
+all demand nodes by adding a link (t, t*) from every node t to t*.
+(iii) Assign a capacity to each link (s*, s) equal to the capacity of node s
+(iv) Assign a capacity to each link (t, t*) equal to the demand of node t.
+The maximum flow from the super-source node, s*, to the super-
+demand node, t*, represents the total flow that can be supplied from the
+source nodes to the demand nodes within the network.
+Fig. 1. Network performance, φ(t), across state transitions before, during, and after the occurrence of a disruptive event, ej.
+Y. Almoghathawi et al.
+Reliability Engineering and System Safety 185 (2019) 12–23
+14
+
+2.2. Network resilience
+Several approaches have recently been offered in the literature to
+quantify the resilience [31] such as: the normalized shaded area un-
+derneath the performance function curve of a system [16], topological
+measures [57], the ratio of the probability of failure and recovery [40],
+among others. In this paper, we will consider the resilience paradigm
+based on network performance shown in Fig. 1 [7, 9, 10, 28, 51, 52].
+Two primary dimensions of resilience, vulnerability and recoverability,
+are illustrated in Fig. 1. The vulnerability of a network can be defined as
+the magnitude of the damage to the network caused by a disruptive
+event [35], while the recoverability of a network refers to the speed at
+which the network recovers to a desired level of performance following
+a disruptive event [56].
+Fig. 1 shows the performance of a network across different states
+over time, measured by function φ(t), which describes the behavior of
+the network before, during and after the occurrence of a disruptive
+event, ej. Accordingly, network resilience,
+, can be defined as the time
+dependent ratio of network recovery over its loss (i.e.,
+t( ) = Recovery
+(t)/Loss(t) [28]) and can be mathematically represented by Eq. (4).
+B
+t e
+t e
+t e
+t
+t e
+t
+t
+t
+( | )
+( |
+)
+( |
+)
+( )
+( | ) ,
+( ,
+)
+j
+j
+d
+j
+o
+d
+j
+s
+f
+=
+(4)
+The value of the network resilience,
+t e
+( |
+)
+j , at time t given the
+occurrence of a disruptive event, ej, is between 0 and 1 where
+t e
+( |
+)
+j = 1 indicates that the network is fully resilient. In this work, we
+consider the maximum flow of an interdependent infrastructure net-
+work from its multiple supply nodes to its multiple demand nodes to be
+the function by which the network performance is measured, and its
+resilience is determined accordingly.
+2.3. Disruption scenarios
+Interdependent infrastructure networks are subjected to different
+scenarios of disruptions which could affect their performances differ-
+ently. These disruption scenarios can be categorized into three groups
+[62]: random failures, malevolent attacks, and spatial failures. Random
+failures include common failures and manmade accidents such as aging,
+operating errors, and poor maintenance. For this scenario of disrup-
+tions, interdependent network components (nodes or links) are re-
+moved randomly with equal failure probability for all components.
+Malevolent attacks reflect intelligent attacks such as terrorism where
+important network components are targeted. Two scenarios are con-
+sidered for malevolent attacks: capacity-based, where components with
+higher capacity are targeted, and degree-based, where components with
+higher degree (i.e., connections with other components) are targeted.
+For the capacity-based scenario, the capacities of the internal nodes are
+determined as the min of the sum of capacities for the incoming and
+outgoing links, respectively (i.e.,
+{
+}
+u
+u
+u
+min
+,
+i
+k
+j i
+L
+ji
+k
+i l
+L
+il
+k
+( , )
+( , )
+k
+k
+=
+,
+where ui
+kis the capacity of node i in network k and Lk is the set of links
+in network k). For the degree-based scenario, the degree of link (i, j) is
+defined as the average of the degree of node i and node j (i.e.,
+deg
+deg
+deg
+(
+)
+ij
+i
+j
+1
+2
+=
++
+, where the degree of node i is the number of
+connections it has with other nodes in the network). Hence, inter-
+dependent network components are removed from their networks ac-
+cording to their capacity or degree where the components with the
+highest capacity or degree have higher failure probabilities than others.
+Finally, spatial failures capture natural disasters, such as earthquakes
+and hurricanes, that disrupt geographical locations. Consequently, the
+spatial disruptions affect the components of the interdependent net-
+works that are spatially closed to each other (i.e., can be affected by the
+same local disruption). In this work, the area of the interdependent
+networks is divided into multiple regions where if a disruption occurs in
+a region, all the interdependent networks components within that re-
+gion will be disrupted and hence removed from their networks.
+3. Interdependent infrastructure network restoration
+In this paper, we propose a multi-objective resilience-driven re-
+storation
+optimization
+model
+using
+mixed-integer
+programming,
+aiming to maximize the resilience of the collective set of networks while
+minimizing the costs associated with the restoration process. It includes
+three sets of constraints: flow constraints for each infrastructure net-
+work, interdependencies constraints between networks, and assignment
+and scheduling constraints for the restoration tasks.
+3.1. Assumptions
+There are several assumptions and considerations for the proposed
+optimization model for the restoration of a system of interdependent
+infrastructure network:
+– Each infrastructure network consists of a set of components (used
+generally to refer to nodes and/or links) that are subjected to dis-
+ruptions (e.g., manmade accidents, malevolent attacks, or natural
+disasters). However, cascading disruptions are not considered here
+and are considered future work.
+– Components of each infrastructure network are either completely
+disrupted or undisrupted following a disruptive event.
+– Each disrupted component in each infrastructure network can be
+restored with different restoration durations (i.e., recovery dura-
+tions are not fixed or the same for all disrupted components).
+– A disrupted component is not operational unless it is completely
+restored. That is, the proposed model does not consider partial re-
+covery where a component functions partially.
+– Each supply node, demand node, and link in each infrastructure
+network has a known supply capacity, demand, and flow capacity,
+respectively.
+– The flow cost through each link in each infrastructure network is
+known and fixed.
+– The physical interdependence among different infrastructure net-
+works is considered. That is, for a dependent node in an infra-
+structure network to be operational, it requires a specific node or
+nodes from another infrastructure network to also be operational.
+– The number of available work crews for each infrastructure network
+(i.e., infrastructure-specific resources) for the restoration of its dis-
+rupted components is known and could be different from one in-
+frastructure network to another.
+– Each work crew in each infrastructure network can work on re-
+storing a single disrupted component at a time.
+– A work crew is not allowed to move from a disrupted component to
+another unless they complete the restoration of the previous one
+(i.e., the model considers a non-preemptive recovery process).
+3.2. Notation
+We are given a set of infrastructure networks, K, and a set of
+available time periods T
+{1,
+, }
+=
+…
+. For each network k ∈K, there is a
+set of nodes, Nk, and a set of links, Lk. Also, there is a set of source
+nodes, N
+N
+s
+k
+k, and a set of demand nodes, N
+N
+d
+k
+k. The disrupted
+components in each network k ∈K are denoted by N k and L k for dis-
+rupted nodes and disrupted links, respectively.
+Let bi
+k be the amount of supply at node i
+Ns
+k in network k ∈K that
+is considered in this work to be the maximum flow from node i
+Ns
+k to
+all demand nodes in network k ∈K. As such, bi
+k, assumed to be time
+independent, can be obtained by solving the model (1)–(3). The amount
+of unmet demand, called slack, at node i
+Nd
+k in network k ∈K at time
+period t ∈T is denoted by sit
+k. Hence, the total slacks at all demand
+nodes in network k ∈K after recovery at time period t ∈T equals
+s
+i
+N
+it
+k
+dk
+. We assume that resilience is a function of sit
+k, representing the
+extent to which demand in the network is not being met (as opposed to
+Y. Almoghathawi et al.
+Reliability Engineering and System Safety 185 (2019) 12–23
+15
+
+using bi
+k, which is a fixed desired performance level of the inter-
+dependent infrastructure networks for our proposed model).
+Accordingly, the slacks in the model represent the loss in the max-
+imum flow, and reducing them to a desired level represents a means to
+measure the effectiveness of the restoration process. Hence, the resi-
+lience of the system of interdependent infrastructure networks, one of
+the main objectives of the restoration process, can be represented
+mathematically by Eq. (5), where μk is the weight of network k ∈K such
+that
+µ
+1
+k
+K
+k =
+, and So
+kand Sd
+k represent the total slacks at all demand
+nodes in network k ∈K before and after a disruption, respectively (i.e.,
+So
+k refers to the total original slacks at all demand nodes in network
+k ∈K at time to, and Sd
+k refers to the total slacks at all demand nodes in
+network k ∈K at time td following a disruptive event, ej, as shown in
+Fig.
+1).
+Hence,
+[ (
+)
+(
+)]
+t S
+s
+t
+S
+s
+(
+1)
+t
+d
+k
+i
+N
+it
+k
+d
+k
+i
+N
+i t
+k
+1
+(
+1)
+dk
+dk
+=
+represents the cumulative recovery of network k ∈K over the restora-
+tion time horizon, where the recovery of the network at time t ∈T is
+determined by S
+s
+d
+k
+i
+N
+it
+k
+dk
+, while its total loss is represented by
+S
+S
+(
+)
+d
+k
+o
+k .
+µ
+t S
+s
+t
+S
+s
+S
+S
+(
+1)
+(
+)
+k
+K
+k
+t
+d
+k
+i
+N
+it
+k
+d
+k
+i
+N
+i t
+k
+d
+k
+o
+k
+1
+(
+1)
+dk
+dk
+=
+(5)
+Another important and conflicting objective for the restoration
+process is the total cost of the restoration itself. Let the restoration cost
+for node i
+N k and link i j
+L
+( , )
+k in network k ∈K at time period t ∈T
+be denoted by fnit
+k and flijt
+k , respectively. The flow unitary cost (i.e., the
+cost for each unit of flow) through link (i, j) ∈Lk in network k ∈K is
+represented by cij
+k, and pit
+k denotes the unit cost of unmet demand at
+node i
+Nd
+k in network k ∈K at time period t ∈T. Hence, the system
+cost, which includes restoration cost, flow cost, and disruption cost (i.e.,
+unmet demand), can be represented mathematically by Eq. (6), where
+zi
+k is a binary decision variable that equals 1 if node i
+N k in network
+k ∈K is to be restored and 0 otherwise, yij
+k is a binary decision variable
+that equals 1 if link i j
+L
+( , )
+k in network k ∈K is to be restored and 0
+otherwise, and xijt
+k is a non-negative decision variable that represents
+the flow through link (i, j) ∈Lk in network k ∈K at time period t ∈T.
+fn z
+fl y
+c x
+p s
+k
+K t
+T
+i
+N
+it
+k
+i
+k
+i j
+L
+ijt
+k
+ij
+k
+i j
+L
+ij
+k
+ijt
+k
+i
+N
+it
+k
+it
+k
+( , )
+( , )
+k
+k
+k
+dk
++
++
++
+(6)
+Let the restoration duration of node i
+N k and link i j
+L
+( , )
+k in
+network k ∈K be denoted by dni
+k and dlij
+k, respectively. Each link (i,
+j) ∈Lk in network k ∈K has a capacity of uij
+k. The status of each com-
+ponent at time period t ∈T is represented by two binary decision
+variables:
+it
+k equals 1 if node i ∈Nk in network k ∈K is operational at
+time period t ∈T and 0 otherwise, and similarly,
+ijt
+k equals 1 if link (i,
+j) ∈Lk in network k ∈K is operational at time period t ∈T and 0
+otherwise. For each network k ∈K, there is a set of available work crews
+or resources, Rk, that are specific to network k (e.g., expertise or
+equipment necessary to restore network k). The binary decision vari-
+ables denoted by
+it
+krand
+ijt
+kr represent the scheduling variables of the
+model, where
+it
+kr equals 1 if node i
+N k in network k ∈K is restored by
+work crew r ∈Rk in time period t ∈T and 0 otherwise. Likewise,
+ijt
+kr
+equals 1 if link i j
+L
+( , )
+k in network k ∈K is restored by work crew
+r ∈Rk in time period t ∈T and 0 otherwise. Finally, the interdependence
+between the networks is captured by Ψ, where
+i k
+i k
+(( ,
+), (¯, ¯))
+de-
+note that node i
+N
+¯
+k¯ in network k
+K
+¯
+depends physically on node
+i ∈Nk in network k ∈K in order to be operational.
+3.3. Mathematical model
+The proposed mathematical model focuses on optimizing two main
+objectives: (i) a resilience objective, and (ii) a cost objective. The re-
+silience objective, Eq. (7), maximizes the resilience of the system of
+interdependent networks over the restoration time horizon. However,
+the cost objective, Eq. (8), minimizes the total cost associated with the
+restoration process as the sum of flow cost, restoration cost, and dis-
+ruption cost (i.e., unmet demand cost).
+µ
+t S
+s
+t
+S
+s
+S
+S
+max
+(
+1)
+(
+)
+k
+K
+k
+t
+d
+k
+i
+N
+it
+k
+d
+k
+i
+N
+i t
+k
+d
+k
+o
+k
+1
+(
+1)
+dk
+dk
+=
+(7)
+fn z
+fl y
+c x
+p s
+min
+k
+K t
+T
+i
+N
+it
+k
+i
+k
+i j
+L
+ijt
+k
+ij
+k
+i j
+L
+ij
+k
+ijt
+k
+i
+N
+it
+k
+it
+k
+( , )
+( , )
+k
+k
+k
+dk
++
++
++
+(8)
+The two objectives of the proposed optimization model are subject
+to several sets of constraints: (i) network flow constraints, (ii) restora-
+tion constraints, (iii) interdependence constraints, (iv) logical link
+constraints for the network flow with restoration, and (v) constraints
+governing the nature of the decision variables. All sets of constraints are
+explained and formulated in the following sections.
+Network flow constraints are represented by constraints (9)–(12).
+For each infrastructure network, the flow conservation at each of its (i)
+supply nodes, i
+Ns
+k, (ii) transshipment nodes, i
+N
+N
+N
+{
+,
+}
+k
+s
+k
+d
+k , and
+(iii) demand nodes, i
+Nd
+k in network k ∈K at time t ∈T is represented
+by constraints (9), (10), and (11), respectively. Constraint (12) ensures
+that the flow through link (i, j) ∈Lk in network k ∈K at time t ∈T does
+not exceed its capacity.
+x
+b
+i
+N
+k
+K t
+T
+,
+,
+,
+i j
+L
+ijt
+k
+i
+k
+s
+k
+( , )
+k
+(9)
+x
+x
+i
+N
+N
+N
+k
+K t
+T
+0,
+{
+,
+},
+,
+i j
+L
+ijt
+k
+j i
+L
+jit
+k
+k
+s
+k
+d
+k
+( , )
+( , )
+k
+k
+=
+(10)
+x
+s
+b
+i
+N
+k
+K t
+T
+,
+,
+,
+j i
+L
+jit
+k
+it
+k
+i
+k
+d
+k
+( , )
+k
++
+=
+(11)
+x
+u
+i j
+L
+k
+K
+t
+T
+0,
+( , )
+,
+,
+ijt
+k
+ij
+k
+k
+(12)
+Restoration constraints (i.e., assignment and scheduling constraints)
+are represented by constraints (13)–(21). Constraints (13) and (14)
+ensure that if node i
+N k or link i j
+L
+( , )
+k, respectively in network
+k ∈K is to be restored, it is scheduled to be restored by work crew r ∈Rk
+at time t ∈T. Work crew r ∈Rk in network k ∈K can work on the re-
+storation of at most one disrupted network component, node i
+N k or
+link i j
+L
+( , )
+k, during time period t ∈T, as shown in constraint (15).
+Constraints (16) and (17) ensure that if node i
+N k or link i j
+L
+( , )
+k,
+repectively in network k ∈K is operational at time t ∈T, it is completed
+by work crew r ∈Rk. Constraints (18) and (19) ensure that node i
+N k
+or link i j
+L
+( , )
+k, repectively in network k ∈K cannot be operational
+prior to its restoration duration. Similarly, work crew r ∈Rk cannot
+complete the restoration of node i
+N k or link i j
+L
+( , )
+k in network
+k ∈K prior to it restoration duration, as shown in constraints (20) and
+(21), respectively.
+z
+i
+N
+k
+K
+,
+,
+i
+k
+r
+R
+t
+T
+it
+kr
+k
+k
+=
+(13)
+y
+i j
+L
+k
+K
+,
+( , )
+,
+ij
+k
+r R
+t
+T
+ijt
+kr
+k
+k
+=
+(14)
+k
+K
+r
+R
+t
+T
+1,
+,
+,
+i N k
+l
+t
+t
+dnik
+il
+kr
+i j
+L k
+l
+t
+t
+dlijk
+ijl
+kr
+k
+min{ ,
+1}
+( , )
+min
+,
+1
++
+=
++
+=
++
+(15)
+Y. Almoghathawi et al.
+Reliability Engineering and System Safety 185 (2019) 12–23
+16
+
+i
+N
+k
+K
+t
+T
+,
+,
+,
+it
+k
+r
+R
+l
+t
+il
+kr
+k
+1
+k
+=
+(16)
+i j
+L
+k
+K
+t
+T
+,
+( , )
+,
+,
+ijt
+k
+r
+R
+l
+t
+ijl
+kr
+k
+1
+k
+=
+(17)
+i
+N
+k
+K
+0,
+,
+t
+dn
+it
+k
+k
+1
+1
+ik
+=
+=
+(18)
+i j
+L
+k
+K
+0,
+( , )
+,
+t
+dl
+ijt
+k
+k
+1
+1
+ijk
+=
+=
+(19)
+i
+N
+k
+K
+0,
+,
+r
+R
+t
+dn
+it
+kr
+k
+1
+1
+k
+ik
+=
+=
+(20)
+i j
+L
+k
+K
+0,
+( , )
+,
+r
+R
+t
+dl
+ijt
+kr
+k
+1
+1
+k
+ijk
+=
+=
+(21)
+The physical interdependence among different infrastructure net-
+works is represented by constraint (22), which ensures that for a node
+i
+N
+¯
+k¯ in network k
+K
+¯
+to be operational at time period t ∈T, node
+i ∈Nk in network k ∈K must be operational at time t ∈T, where
+i k
+i k
+(( ,
+), (¯, ¯))
+.
+i k
+i k
+t
+T
+0,
+(( ,
+), (¯, ¯))
+,
+it
+k
+it
+k
+¯
+¯
+(22)
+Constraints (23)–(25) represent the logical link for the network flow
+with restoration decisions. The flow through link (i, j) ∈Lk in network
+k ∈K is determined by the capacity of the link as well as: (i) the op-
+erational status of the nodes at both ends on that link, as shown in
+constraints (23) and (24), and (ii) the operational status of the link
+itself, as shown in constraint (25).
+x
+u
+i j
+L
+i
+N
+k
+K
+t
+T
+0,
+( , )
+,
+,
+,
+ijt
+k
+ij
+k
+it
+k
+k
+k
+(23)
+x
+u
+i j
+L
+j
+N
+k
+K
+t
+T
+0,
+( , )
+,
+,
+,
+ijt
+k
+ij
+k
+jt
+k
+k
+k
+(24)
+x
+u
+i j
+L
+k
+K
+t
+T
+0,
+( , )
+,
+,
+ijt
+k
+ij
+k
+ijt
+k
+k
+(25)
+Finally, constraints (26)–(33) represent the nature of the decision
+variables in the restoration model. The amount unmet demand (slack),
+sit
+k, and flow through link (i, j) ∈Lk, xijt
+k , for infrastructure network k ∈K
+at time t ∈T must be non-negative, as shown in constraints (26) and
+(27), respectively. Constraints (28) and (29) represent the restoration
+status of node i
+N k and link i j
+L
+( , )
+k, respectively in network k ∈K.
+Likewise, the operational status of node i
+N k and link i j
+L
+( , )
+kin
+network k ∈K at time period t ∈T is represented by constraints (30) and
+(31), respectively. Constraints (32) and (33) represent the binary re-
+storation variables for node i
+N k and link i j
+L
+( , )
+k, respectively in
+network k ∈K at time t ∈T.
+s
+i
+N
+k
+K
+t
+T
+0,
+,
+,
+it
+k
+k
+(26)
+x
+i j
+L
+k
+K
+t
+T
+0,
+( , )
+,
+,
+ijt
+k
+k
+(27)
+z
+i
+N
+k
+K
+{0, 1},
+,
+i
+k
+k
+(28)
+y
+i j
+L
+k
+K
+{0, 1},
+( , )
+,
+ij
+k
+k
+(29)
+i
+N
+k
+K
+t
+T
+{0, 1},
+,
+,
+it
+k
+k
+(30)
+i j
+L
+k
+K
+t
+T
+{0, 1},
+( , )
+,
+,
+ijt
+k
+k
+(31)
+i
+N
+k
+K
+t
+T
+r
+R
+{0, 1},
+,
+,
+,
+it
+kr
+k
+k
+(32)
+i j
+L
+k
+K
+t
+T
+r
+R
+{0, 1},
+( , )
+,
+,
+,
+ijt
+kr
+k
+k
+(33)
+From the definition of the decision variable in the proposed
+restoration
+optimization
+model,
+the
+model
+has
+[
+]
+N T
+N
+T
+N R T
+L
+T
+R
+L T
+(1
+)
+[1
+(1
+)]
+k
+K
+d
+k
+k
+k
+k
+k
+k
+k
++
++
++
++
++
++
++
+vari-
+ables. As for the number of constraints in the restoration model, net-
+work
+flow
+constraints
+(i.e.,
+constraints
+(9)–(12))
+have
+in
+total
+N T
+L T
+[
+]
+k
+K
+k
+k
++
+constraints. Constraints (13)–(21) represent the re-
+storation
+decisions
+constraints,
+which
+consist
+of
+[(
+)
+]
+N
+L
+T
+R T
+(3
+)
+k
+K
+k
+k
+k
++
++
++
+constraints. The number of inter-
+dependent constraints (i.e., constraints (22)) is ΨT. Finally, the logical
+link between the network flow and the restoration decisions (i.e.,
+constraints (23)–(25)) includes
+[
+]
+N L T
+L T
+2
+k
+K
+k k
+k
++
+. Accordingly, the
+total number of constraints in the proposed restoration model is
+[
+]
+N
+T
+L
+T
+N T
+L T
+N L T
+R T
+T
+(3
+)
+(3
+2 )
+2
+k
+K
+k
+k
+k
+k
+k k
+k
++
++
++
++
++
++
++
++
+.
+The proposed optimization model has multiple objectives which
+could be difficult to solve since many tradeoff solutions between the
+multiple objectives must be identified for consideration in the restora-
+tion of a system of interdependent infrastructure networks. Hence,
+different multi-objective optimization techniques can be applied to find
+tradeoff solutions. In this paper, we use ɛ-constraint method proposed
+by Haimes et al. [27] to generate Pareto-optimal solutions for our re-
+storation model as it does not aggregate the multiple objectives but
+instead minimizes one of them while the remaining objectives are
+constrained within given target values specified by decision makers.
+Accordingly, the multiple objectives of our proposed model, (7) and (8),
+can be substituted by the new objective function (34) and the additional
+constraint (35), where ɛ ∈[0, 1] since we are dealing with the resilience
+of the system of interdependent infrastructure networks, and the value
+of the network resilience,
+t( ), at time t is between 0 and 1 (see
+Section 2.2).
+fn z
+fl y
+c x
+p s
+min
+k
+K t
+T
+i
+N
+it
+k
+i
+k
+i j
+L
+ijt
+k
+ij
+k
+i j
+L
+ij
+k
+ijt
+k
+i
+N
+it
+k
+it
+k
+( , )
+( , )
+k
+k
+k
+dk
++
++
++
+(34)
+µ
+t S
+s
+t
+S
+s
+S
+S
+(
+1)
+(
+)
+k
+K
+k
+t
+d
+k
+i
+N
+it
+k
+d
+k
+i
+N
+i t
+k
+d
+k
+o
+k
+1
+(
+1)
+dk
+dk
+=
+(35)
+4. Illustrative example
+In this section, we illustrate our proposed restoration model with
+some a generated system of two interdependent infrastructure net-
+works.
+4.1. Data
+Since data for real infrastructure networks are hard to obtain [5,
+34], we illustrate our proposed restoration model in this paper with
+fictional interdependent infrastructure networks. We generate these
+networks using the extended algorithm for proximal topology generator
+proposed by Xin-Jian [65] which was originally introduced by Casey
+[14]. The generation process is executed in two phases: (i) generation of
+individual networks and (ii) building the interdependencies across
+them [50, 68].
+In this paper, we illustrate our restoration model considering two
+infrastructure networks, namely simulated power and water networks,
+where the water network depends on the power network for operation
+and the power network depends on the water network for cooling and
+emission control [19, 68]. For the power network, the power generators
+are the source nodes, substations are the demand nodes, and the lines
+between these nodes are the links. For the water network, the water
+pumps are the source nodes, storage tanks are the demand nodes, and
+the pipelines between these nodes are the links.
+Y. Almoghathawi et al.
+Reliability Engineering and System Safety 185 (2019) 12–23
+17
+
+For the first phase of the generation process of the interdependent
+infrastructure networks, each network will initially be seeded with in-
+dependent and randomly distributed source nodes (i.e., no links be-
+tween them). At each time step, a new randomly distributed node is
+added to the network and connected to nearest existing node based on
+Euclidean distance by adding a new undirected link between them.
+Then, a sparse random graph is added after the final time step to the
+generated network.
+In the proposed restoration model, the physical dependence be-
+tween the infrastructure networks is considered to describe their in-
+terdependence, that is the functionality of a node in one network is
+dependent on the functionality of a node in another network.
+Accordingly, we assume that the water pumps and storage tanks in the
+water network need power in order to be functional. Hence, for the
+second phase of the generation process of the interdependent infra-
+structure networks, each water pump and storage tank in the water
+network is depends on the nearest power supply node in the power
+network (i.e., power generators or substation), based on Euclidean
+distance.
+Hence, following the above algorithm adapted from Zhang et al.
+[68], the two independent infrastructure networks are generated as
+illustrated in Fig. 2. The general properties for each network are shown
+in Table 1 which includes number of: nodes, undirected links, source
+nodes, and demand nodes, as well as the average node degree for each
+network.
+4.2. Experiment
+Considering the different possible scenarios of disruptions discussed
+in Section 2.3 (“Random” for random failures, “Capacity” for capacity-
+based malevolent attacks, “Degree” for degree-based malevolent at-
+tacks, and “Spatial” for spatial failures), the efficiency of each inter-
+dependent infrastructure network with the removal of a fraction of
+components (nodes or links) of the system of interdependent networks
+is illustrated in Fig. 3. Efficiency is measured as the ratio of the current
+max flow over the original max flow. It can be observed from Fig. 3 that
+the removal of the components of the system of interdependent infra-
+structure networks with the highest capacity result in the largest de-
+cline in the individual network efficiencies as the fraction of compo-
+nents removal increases. On the other hand, the spatial removal of the
+components of the system of interdependent infrastructure networks
+mostly result in the smallest drop in the individual networks efficiencies
+among other disruptions scenarios which could because of the existence
+of alternative routes within the networks since it affects a specific area
+in the network.
+To assess the proposed multi-objective restoration model, a subset
+of the Pareto optimal set (i.e. non-dominated solutions) were obtained
+using LINGO 17.0 by varying the value of ɛ and solve the optimization
+model again for each value of ɛ. Fig. 4 illustrates the generation of
+different points of the subset of Pareto front using different values of ɛ
+(i.e., ɛ ∈[0.5, 1]) considering the availability of one work crew for each
+network during the restoration process with different possible scenarios
+of disruptions, see Section 2.3. In addition, the restoration cost is con-
+sidered for Fig. 4 to be higher than the unmet demand cost for node
+i
+N k in network k ∈K (i.e., fn
+p
+it
+k
+it
+k
+>
+). Otherwise, the resilience will
+always be 1 given that there is enough time to recover the essential
+components because both objectives are focused on unmet demand, and
+by doing so, the resilience of the system of interdependent networks
+Fig. 2. An interdependent network example.
+Table 1
+General properties of the interdependent networks.
+Network
+N
+L
+Ns
+Nd
+deg
+Power
+25
+31
+5
+5
+2.48
+Water
+25
+35
+5
+5
+2.8
+Y. Almoghathawi et al.
+Reliability Engineering and System Safety 185 (2019) 12–23
+18
+
+will be maximized and the total cost associated with the restoration will
+be minimized as well. In Fig. 4, the horizontal axis represents the re-
+silience of the system of interdependent infrastructure networks for
+which a maximum is sought, while the vertical axis represents total cost
+(i.e., restoration cost, flow cost, and disruption cost) that we would like
+to minimize. As observed in Fig. 4, the total cost associated with the
+restoration process increases as the value of ɛ (i.e., the minimum value
+of the interdependent networks resilience desired) increases. The lowest
+value of objective 1 (i.e. resilience) for all different scenarios of dis-
+ruptions in Fig. 4 is when
+0.5
+=
+while the highest value is when
+1
+=
+.
+Hence, Fig. 4 serves to illustrate the tradeoffs between the two objec-
+tives of the restoration optimization model where when a higher level
+of resilience is desired for the system of interdependent networks, the
+total cost associated with the restoration process will be higher.
+Without loss of generality, we consider the following parameter
+distributions and values for illustrative purposes of the proposed multi-
+objective
+restoration
+model:
+µ
+K
+1/| |
+k =
+,
+50
+=
+,
+fn
+fl
+u
+U
+,
+,
+(20, 50)
+it
+k
+ijt
+k
+ij
+k
+,
+c
+U (1, 10)
+ij
+k
+,
+p
+60
+it
+k =
+,
+and
+dn
+dl
+U
+,
+(1, 5)
+i
+k
+ij
+k
+. In this example, though the restoration cost of
+disrupted nodes and links are different (i.e., not the same for all dis-
+rupted components), they are assumed to be the same for all time
+periods. That is, the restoration time for a disrupted component does
+not change with time. Similarly, the cost of unmet demand in this ex-
+ample is assumed to be the same for all time periods. In this work, The
+disruption cost for node i
+N k in network k ∈K (i.e., unmet demand
+cost, pit
+k) is considered higher than its restoration cost, fnit
+k, since we are
+aiming to maximize the resilience of the system of interdependent in-
+frastructure networks. Hence, both objectives will be focusing on
+minimizing the unmet demand at node i
+N k in network k ∈K. Figs. 5
+through 8 depict the trajectory of system of interdependent infra-
+structure network resilience considering the three different scenarios
+for availability of the work crews (WC): one work crew (“1 WC”), two
+work crews (“2 WCs”), and three work crews (“3 WCs”), with random,
+capacity-based, degree-based, and spatial disruption scenarios, respec-
+tively which could help decision makers when developing their re-
+storation plans following a disruptive event (e.g., considering more
+work crews for one network than the other). The percentages of dis-
+rupted components in the system of interdependent power-water net-
+works are: 20.9%, 20.9%, 20.9%, and 21.4% for the scenarios of
+random,
+capacity-based,
+degree-based,
+and
+spatial
+disruptions,
+Fig. 3. Network efficiency with fraction components removals of the interdependent networks considering four disruptions scenarios for the (a) power network, and
+(b) water network.
+Fig. 4. Objectives tradeoffs.
+Fig. 5. Network resilience over the recovery time horizon for a random disruption with different number of work crews for the (a) power network, and (b) water
+network.
+Y. Almoghathawi et al.
+Reliability Engineering and System Safety 185 (2019) 12–23
+19
+
+respectively. The disrupted components in the first three disruptions
+scenarios are: 10 nodes, 5 from each network, and 14 bi-directional
+links, 7 from each network. For the spatial disruptions: 11 nodes, 5 from
+the power network and 6 from the water network, and 14 bi-directional
+links, 7 from the power network and 7 from the water network.
+Moreover, the number of removed components from the system of in-
+terdependent infrastructure networks in the first three disruption sce-
+narios are equal, 10 nodes and 14 links, as we are removing them in-
+dividually according to specific criteria (i.e., random, highest capacity,
+highest degree). However, for the spatial disruption scenario, they are
+removed according to their locations (i.e., if a disruption occurs in a
+region, all the components of the system of interdependent networks
+within that region will be disrupted and hence removed from their
+networks).
+As can be observed from Figs. 5 through 8, considering more work
+crews helps in achieving full resilience of the system of interdependent
+infrastructure networks earlier. That is, increasing the number of work
+crews in each network could reduce the time to full resilience of the
+system of interdependent infrastructure networks. However, it should
+be noted that it could take one network longer time reach a full resi-
+lience status (i.e., retain its performance prior to the occurrence of a
+disruptive event) than other networks within the same system of in-
+terdependent networks even if they are assigned same number of work
+crews. This could result due to one of the following possible reasons: (i)
+the nature of interdependencies among such networks within the
+system, (ii) the restoration durations of the disrupted components in
+each network in the system, or (iii) both (i) and (ii). For example, water
+network took longer time to be fully resilient, considering four different
+disruption scenarios, than power network as it depends on some nodes
+on power network that were disrupted and need to be restored first, as
+shown in Figs. 5 through 8. Similarly, the power network could also
+take a longer time to regain its performance prior to a disruption if it
+depends on some disrupted nodes in the water network or its disrupted
+components have higher restoration durations than the ones for dis-
+rupted components in water. Hence, assigning more work crews to
+restore the disrupted components in one network than the other could
+help in expediting the restoration process of that network, accordingly
+reaching the maximum level of resilience of the system of inter-
+dependent infrastructure networks faster considering the available time
+periods. In general, there are three factors that affect the progress of
+improvement for the resilience of the system of interdependent infra-
+structure networks: (i) the set of disrupted components in the system of
+interdependent networks, (ii) the nature of the interdependencies
+among the infrastructure networks, and (iii) the number of available
+work crews for each infrastructure network during the restoration
+process. Furthermore, the available time horizon and budget for the
+restoration process can decide what will be the maximum level of
+resilience that the system of interdependent infrastructure networks can
+reach. Accordingly, what are the disrupted components in the system of
+interdependent networks that need to be restored. Fig. 6, Fig. 7 and
+Fig. 8.
+The set of disrupted components (“DC”), nodes and links, in power
+and water networks considering four different disruption scenarios,
+discussed earlier in Section 2.3, are shown in Tables 2 and 3, respec-
+tively. Tables 2 and 3 provide the combination of the restoration time
+for each disrupted component in power and water networks, respec-
+tively that is selected to be restored (i.e., the time at which a disrupted
+component is restored by one of the available work crews) and the work
+crew who restored that disrupted components (“RT,WC”) considering
+three different scenarios for availability of the work crews (WC): one
+work crew (“1 WC”), two work crews (“2 WCs”), and three work crews
+(“3 WCs”) with four different disruption scenarios, random, capacity-
+based, degree-based, and spatial disruption scenarios. For example,
+considering the availability of two worker crews (2 WCs) with random
+disruption scenario for power network, node 23 (i.e., DC = 23) is re-
+stored at time 6 and assigned to WC 1 (i.e., RT,WC = 6,1) and link
+(6,10) (i.e., DC = (6,10)) is restored at time 4 and assigned to WC 2
+(i.e., RT,WC = 4,2), as illustrated in Table 2. Similarly, considering the
+availability of three work crews (3 WCs) with spatial disruption sce-
+nario for water network, node 19 (i.e., DC = 19) is restored at time 10
+and assigned to work crew 3 (i.e., RT,WC = 10,3) and link (16,23) (i.e.,
+DC = (16,23)) is restored at time 2 and assigned to work crew 1 (i.e.,
+RT,WC = 2,1), as shown in Table 3.
+Moreover, there could be a disrupted network component in any
+network that is not selected to be restored due to one of two reasons: (i)
+this disrupted component is not influential for the resilience of the
+system of interdependent networks (i.e., restoring such component will
+not enhance the resilience of the system of interdependent networks),
+or (ii) restoring this disrupted component costs more than what that
+restoration would save in the flow cost. Accordingly, such network
+component is not restored (“NR”) as shown in Tables 2 and 3 for power
+and water networks, respectively. For example, four components were
+not restored in power network considering degree-based disruption
+scenario, see Table 2. Likewise, five components were not restored in
+water network considering degree-based disruption scenario, as shown
+in Table 3. Table 3 shows that all disrupted components in water net-
+work are restored when considering the spatial disruption scenario,
+which mean all of the disrupted component are critical for the system of
+interdependent network (i.e., restoring these disrupted component will
+enhance the resilience of the system).
+The proposed resilience-driven multi-objective restoration model
+focuses on maximizing the resilience of the system of interdependent
+infrastructure networks to retain their performance level prior to the
+disruption. Hence, the disrupted components might not be all restored,
+Fig. 6. Network resilience over the recovery time horizon for a capacity-based disruption with different number of work crews for the (a) power network, and (b)
+water network.
+Y. Almoghathawi et al.
+Reliability Engineering and System Safety 185 (2019) 12–23
+20
+
+especially if they do not have an effect on the resilience of the other
+networks. Accordingly, the full resilience of the system of inter-
+dependent infrastructure networks could be achieved prior to complete
+restoration of these networks (i.e., time to full resilience (TFR) ≤time
+to complete restoration (TCR) [7,9]). Table 4 shows a comparison be-
+tween the time when the system of interdependent power-water net-
+works is fully resilient and the time when all the disrupted components
+of the system of interdependent networks are restored considering the
+different disruptions scenarios, discussed earlier in Section 2.3, along
+with three different scenarios for availability of the work crews (i.e.,
+one, two, or three work crews).
+As shown in Table 4, the time to full resilience for the system of
+interdependent networks is less than the time to complete restoration of
+the all disrupted components in the system when considering the dis-
+ruption scenarios of random, capacity-based, and degree-based with all
+three levels of work crews availability. This indicates that not all the
+disrupted components are influential for the resilience of the system of
+interdependent networks; hence they are not required to be restored.
+On the other hand, considering the spatial disruption scenario, the time
+to full resilience for the system of interdependent networks equals the
+time to complete restoration of the all disrupted components in the
+system. This could be a result of one of two reasons: (i) all the disrupted
+Fig. 7. Network resilience over the recovery time horizon for a degree-based disruption with different number of work crews for the (a) power network, and (b) water
+network.
+Fig. 8. Network resilience over the recovery time horizon for a spatial disruption with different number of work crews for the (a) power network, and (b) water
+network.
+Table 2
+Restoration time and assignment for disrupted components in the power network.
+Random
+Capacity-based
+Degree-based
+Spatial
+DC
+RT,WC
+DC
+RT,WC
+DC
+RT,WC
+DC
+RT,WC
+1 WC
+2 WCs
+3 WCs
+1 WC
+2 WCs
+3 WCs
+1 WC
+2 WCs
+3 WCs
+1 WC
+2 WCs
+3 WCs
+7
+10,1
+5,1
+4,1
+3
+18,1
+11,2
+9,3
+7
+3,1
+3,1
+3,1
+1
+4,1
+8,2
+5,3
+13
+4,1
+2,2
+2,2
+7
+7,1
+5,1
+3,3
+11
+NR
+NR
+NR
+2
+24,1
+11,1
+9,3
+21
+1,1
+1,1
+1,1
+21
+4,1
+2,1
+2,1
+12
+12,1
+9,1
+6,1
+7
+10,1
+6,2
+4,2
+23
+7,1
+6,1
+5,2
+23
+11,1
+6,2
+4,3
+23
+4,1
+1,2
+1,3
+22
+1,1
+1,1
+1,2
+35
+NR
+NR
+NR
+25
+10,1
+5,2
+5,1
+25
+9,1
+6,1
+5,2
+25
+7,1
+3,2
+3,3
+(1,7)
+15,1
+9,2
+6,3
+(5,21)
+3,1
+2,2
+2,2
+(3,12)
+18,1
+9,1
+6,3
+(1,7)
+15,1
+8,1
+5,1
+(2,11)
+NR
+NR
+NR
+(7,23)
+13,1
+7,1
+4,2
+(7,23)
+6,1
+3,2
+2,2
+(2,7)
+21,1
+12,2
+9,2
+(6,10)
+6,1
+4,2
+4,2
+(12,14)
+NR
+NR
+NR
+(11,12)
+NR
+NR
+NR
+(2,11)
+NR
+NR
+NR
+(7,23)
+17,1
+8,1
+6,1
+(13,16)
+1,1
+1,1
+1,1
+(12,14)
+NR
+NR
+NR
+(7,8)
+2,1
+12,1
+5,2
+(10,19)
+21,1
+12,1
+9,2
+(17,23)
+NR
+NR
+NR
+(12,20)
+13,1
+4,2
+6,1
+(7,17)
+NR
+NR
+NR
+(13,16)
+2,1
+2,1
+1,3
+(18,19)
+20,1
+9,1
+8,2
+(21,23)
+NR
+NR
+NR
+(7,23)
+17,1
+3,1
+7,1
+(17,23)
+NR
+NR
+NR
+(21,23)
+NR
+NR
+NR
+(23,25)
+NR
+NR
+NR
+(22,25)
+NR
+NR
+NR
+Y. Almoghathawi et al.
+Reliability Engineering and System Safety 185 (2019) 12–23
+21
+
+components are influential for the resilience of the system of inter-
+dependent networks, accordingly all of them need to be restored to
+retain the performance of the system prior to the disruption (this is not
+the case for our example since there are some disrupted components in
+the power network that are not restored as restoring them will not
+enhance the resilience of the system, as shown in Table 2); or (ii) non-
+critical disrupted components of one network can be restored (i.e., to
+get the time to full restoration of disrupted components) prior to the
+time at which another network in the system becomes fully resilient
+(this is the case for our example). For example, the three non-critical
+components in the power network are restored prior to the time at
+which the water network becomes fully resilient (i.e., the time needed
+to restore all the critical disrupted components in the water network).
+5. Concluding remarks
+Infrastructure networks are increasingly becoming more inter-
+dependent, potentially making them highly vulnerable. These inter-
+dependent infrastructure networks can be disrupted in different sce-
+narios (i.e., random failures, malevolent attacks, or spatial disruptions).
+Consequently, a disruption in one infrastructure network could lead to
+disruptions in other infrastructure networks due to their inter-
+dependencies.
+Therefore,
+the
+restoration
+process
+of
+these
+inter-
+dependent infrastructure networks following any disruptive event has
+become a challenging task for decision makers.
+In this paper, we study the restoration problem of a system of in-
+terdependent infrastructure networks given the occurrence of a dis-
+ruptive event considering different disruptions scenarios and the phy-
+sical interdependence between the infrastructure networks. We propose
+a multi-objective resilience-driven restoration model using mixed-in-
+teger programming with the objective of maximizing the resilience of
+the system of interdependent networks over the restoration time hor-
+izon while the total cost as the sum of flow cost, restoration cost, and
+disruption cost (i.e., unmet demand cost) is minimized. The model takes
+into account the availability of the time periods along with the re-
+sources, as well as the different restoration times for the disrupted
+components. It provides the set of disrupted components to be restored
+in order to have a fully resilient system of interdependent networks and
+allocate and schedule these disrupted components to the available work
+crews, noting that not necessarily all disrupted components need to be
+restored to achieve full resilience. The proposed model is illustrated
+through a generated system of interdependent power-water networks,
+though the approach is applicable to any system of physically inter-
+dependent networks. Managerial insights for utility companies and
+municipalities come in the form of determining an optimal restoration
+plan for infrastructure network components and a schedule to assign
+work crews to those restoration tasks. Managers can determine, for
+example, the number of work crews by comparing recovery trajectories
+in various networks or locations where equipment can be stored to
+expedite restoration tasks [43]. Such insights also highlight the benefits
+of centralized decision making, which assumes that all utilities co-
+operate for a common objective.
+The proposed restoration model assigns one work crew to restore a
+disrupted component which could be extended to allow the assignment
+of more than one work crew to the same disrupted component if it is so
+critical in order to restore it at an earlier time as some components have
+a huge impact on the efficiency of their network. In addition, the pro-
+posed restoration model considers binary disruption status for the dis-
+rupted components in the interdependent networks (i.e., a network
+component is either fully disrupted or undisrupted). Hence, a partial
+disruption status could be considered for the disrupted networks com-
+ponent which could allow for partial functioning of the disrupted
+components and dependent components as well. Moreover, studying
+the vulnerability of the components in each infrastructure network
+could help in identifying the critical ones to reinforce or protect prior to
+any disruption, thus potentially leading a shorter time to achieve full
+resilience as well as a lower cost associated with the restoration process.
+Therefore, a tradeoff between the vulnerability and restoration of the
+system of interdependent infrastructure networks could be studied to
+find the optimal strategy for investment. Furthermore, heuristic or
+metaheuristics method could be tried to solve the proposed restoration
+model for larger problems in a timely manner. Also, the proposed model
+considers only the physical interdependency among infrastructure
+networks. However, other types of interdependency could be con-
+sidered such as geographical interdependency. Finally, the proposed
+restoration model could be extended to consider network-specific
+constraints and apply the new restoration model on a real-life system of
+interdependent infrastructure networks.
+Acknowledgement
+This work was supported in part by the National Science Foundation
+through award 1541165.
+Table 3
+Restoration time and assignment for disrupted components in the water network.
+Random
+Capacity-based
+Degree-based
+Spatial
+DC
+RT,WC
+DC
+RT,WC
+DC
+RT,WC
+DC
+RT,WC
+1 WC
+2 WCs
+3 WCs
+1 WC
+2 WCs
+3 WCs
+1 WC
+2 WCs
+3 WCs
+1 WC
+2 WCs
+3 WCs
+2
+7,1
+5,1
+5,3
+1
+5,1
+5,1
+5,1
+1
+5,1
+5,2
+5,3
+3
+15,1
+12,2
+7,3
+6
+NR
+NR
+NR
+2
+20,1
+11,1
+6,1
+6
+NR
+NR
+NR
+5
+35,1
+7,2
+13,2
+9
+12,1
+7,2
+5,1
+23
+10,1
+5,2
+5,2
+14
+NR
+NR
+NR
+16
+4,1
+6,2
+4,3
+13
+16,1
+9,1
+6,2
+24
+23,1
+8,2
+8,3
+23
+13,1
+8,2
+5,2
+18
+12,1
+9,2
+7,2
+21
+4,1
+4,1
+4,3
+25
+33,1
+16,1
+13,3
+24
+8,1
+3,2
+3,2
+19
+34,1
+15,2
+10,3
+(6,10)
+NR
+NR
+NR
+(2,9)
+19,1
+12,2
+9,2
+(1,21)
+21,1
+13,2
+10,2
+23
+9,1
+5,1
+5,2
+(10,14)
+NR
+NR
+NR
+(2,13)
+28,1
+17,2
+11,1
+(6,14)
+NR
+NR
+NR
+(3,18)
+21,1
+14,1
+7,1
+(12,20)
+25,1
+16,2
+11,3
+(2,15)
+41,1
+21,1
+14,3
+(16,23)
+16,1
+8,1
+5,1
+(5,18)
+39,1
+9,1
+14,3
+(13,25)
+18,1
+11,1
+7,3
+(3,18)
+15,1
+10,1
+5,3
+(18,23)
+14,1
+6,1
+6,1
+(16,23)
+11,1
+2,2
+2,1
+(16,23)
+6,1
+2,2
+2,2
+(6,8)
+NR
+NR
+NR
+(21,24)
+NR
+NR
+NR
+(18,19)
+26,1
+19,1
+12,2
+(19,23)
+23,1
+12,2
+10,1
+(13,25)
+35,1
+18,1
+13,1
+(23,25)
+22,1
+9,1
+6,3
+(18,23)
+16,1
+8,2
+6,2
+(20,21)
+30,1
+16,1
+11,2
+(15,16)
+40,1
+22,2
+14,2
+(24,25)
+NR
+NR
+NR
+(19,23)
+31,1
+20,2
+12,1
+(23,25)
+40,1
+20,1
+14,2
+Table 4
+Comparison between time to full resilience (TFR) and time to complete re-
+storation (TCR) for the system of interdependent networks considering different
+disruption scenarios with different number of work crews.
+Disruption Scenario
+One work crew
+Two work crews
+Three work crews
+TFR
+TCR
+TFR
+TCR
+TFR
+TCR
+Random
+30
+45
+21
+31
+11
+16
+Capacity
+41
+50
+26
+31
+14
+18
+Degree
+22
+41
+16
+29
+10
+20
+Spatial
+40
+40
+20
+20
+14
+14
+Y. Almoghathawi et al.
+Reliability Engineering and System Safety 185 (2019) 12–23
+22
+
+References
+[1] Aksu DT, Ozdamar L. A mathematical model for post-disaster road restoration:
+enabling accessibility and evacuation. Transp Res Part E 2014;61(1):56–67.
+[2] Amin M. Toward secure and resilient interdependent infrastructures. J Infrastruct
+Syst 2002;8(3):67–75.
+[3] Aven T. On some recent definitions and analysis frameworks for risk, vulnerability,
+and resilience. Risk Anal 2011;31(4):515–22.
+[4] Ayyub B. Systems resilience for multihazard environments: definition, metrics, and
+valuation for decision making. Risk Anal 2013;34(2):340–55.
+[5] Bagchi A, Sprintson A, Guikema S, Bristow E, Brumbelow K. Modeling performance
+of interdependent power and water networks during urban fire events. 48th Annual
+Allerton Conference on Communication, Control, and Computing. IEEE; 2010. p.
+1637–44.
+[6] Barabasi AL, Albert R. Emergence of scaling in random networks. Science
+1999;286(5439):509–12.
+[7] Barker K, Ramirez-Marquez JE, Rocco CM. Resilience-based network component
+importance measures. Reliab Eng Syst Safety 2013;117(1):89–97.
+[8] Barker K, Lambert JH, Zobel CW, Tapia AH, Ramirez-Marquez JE, McLay LA,
+Nicholson CD, Caragea C. Defining resilience analytics for interdependent cyber
+physical-social networks Submitted to Sustainable and Resilient Infrastructure2016.
+[9] Baroud H, Ramirez-Marquez JE, Barker K, Rocco CM. Stochastic measures of net-
+work resilience: applications to waterway commodity flows. Risk Anal
+2014;34(7):1317–35.
+[10] Baroud H, Barker K, Ramirez-Marquez JE, Rocco CM. Inherent costs and inter-
+dependent impacts of infrastructure network resilience. Risk Anal
+2015;35(4):642–62.
+[11] Bazaraa MS, Jarvis JJ, Sherali HD. Linear programming and network flows.
+Hoboken, NJ: John Wiley & Sons, Inc.; 2011.
+[12] Buldyrev SV, Shere NW, Cwilich GA. Interdependent networks with identical de-
+grees of mutually dependent nodes. Phys Rev Part E 2011;83(1):016112.
+[13] Buldyrev SV, Parshani R, Paul G, Stanley HE, Havlin S. Catastrophic cascade of
+failures in interdependent networks. Nature 2010;464(7291):1025–8.
+[14] Casey MJ. Self-organization and topology control of infrastructure sensor networks.
+College Park: University of Maryland; 2005.
+[15] Cavdaroglu B, Hammel E, Mitchell JE, Sharkey TC, Wallace WA. Integrating re-
+storation and scheduling decisions for disrupted interdependent infrastructure
+systems. Annal Oper Res 2013;203(1):279–94.
+[16] Cimellaro G, Reinhorn A, Bruneau M. Seismic resilience of a hospital system. Struct
+Infrastruct Eng 2010;6(1):127–44.
+[17] Coffrin C, Van Hentenryck P, Bent R. Last-Mile restoration for multiple inter-
+dependent infrastructures. Proceedings of the 26th AAAI conference on Artificial
+Intelligence. 12. 2012. p. 455–63.
+[18] Danziger MM, Shekhtman LM, Bashan A, Berezin Y, Havlin S. Vulnerability of in-
+terdependent networks and networks of networks. Interconnected networks.
+Switzerland: Springer International Publishing; 2016. p. 79–99.
+[19] Dueñas‐Osorio L, Craig JI, Goodno BJ. Seismic response of critical interdependent
+networks. Earthq Eng Struct Dyn 2007;36(2):285–306.
+[20] Eusgeld I, Nan C, Dietz S. “System-of-systems” approach for interdependent critical
+infrastructures. Reliab Eng Syst Safety 2011;96(6):679–86.
+[21] Fang YP, Pedroni N, Zio E. Resilience-based component importance measures for
+critical infrastructure network systems. IEEE Trans Reliab 2016;65(2):502–12.
+[22] Ford LR, Fulkerson DR. Maximal flow through a network. Can J Math
+1956;8(3):399–404.
+[23] Ford LR, Fulkerson DR. Flows in networks. Princeton, NJ: Princeton University
+Press; 1962.
+[24] Gong J, Lee EE, Mitchell JE, Wallace WA. Logic-based multiobjective optimization
+for restoration planning. Optimization and logistics challenges in the enterprise. US:
+Springer; 2009. p. 305–24.
+[25] González AD, Dueñas‐Osorio L, Sánchez‐Silva M, Medaglia AL. The interdependent
+network design problem for optimal infrastructure system restoration.
+Comput‐Aided Civil Infrastruct Eng 2016;31(5):334–50.
+[26] Haimes YY. On the definition of resilience in systems. Risk Anal
+2009;29(4):498–501.
+[27] Haimes YY, Ladson LS, Wismer DA. Bicriterion formulation of problems of in-
+tegrated system identification and system optimization. IEEE Trans Syst Man
+Cybernet 1971;1(3):296–7.
+[28] Henry D, Ramirez-Marquez JE. Generic metrics and quantitative approaches for
+system resilience as a function of time. Reliab Eng Syst Safety 2012;99(1):114–22.
+[29] Holden R, Val DV, Burkhard R, Nodwell S. A network flow model for inter-
+dependent infrastructures at the local scale. Safety Sci 2013;53(1):51–60.
+[30] Holmgren AJ. Using graph models to analyze the vulnerability of electric power
+networks. Risk Anal 2006;26(4):955–69.
+[31] Hosseini S, Barker K, Ramirez-Marquez JE. A review of definitions and measures of
+system resilience. Reliab Eng Syst Safety 2016;145:47–61.
+[32] Iloglu S, Albert LA. An integrated network design and scheduling problem for
+network recovery and emergency response. Oper Res Perspect 2018;5:218–31.
+[33] Iloglu S, Albert LA. A maximal multiple coverage and network restoration problem
+for disaster recovery Madison: University of Wisconsin; 2018. Technical report.
+[34] Johansson J, Hassel H. An approach for modelling interdependent infrastructures in
+the context of vulnerability analysis. Reliab Eng Syst Safety 2010;95(12):1335–44.
+[35] Jönsson H, Johansson J, Johansson H. Identifying critical components in technical
+infrastructure networks. J Risk Reliab 2008;222(2):235–43.
+[36] Kamamura S, Shimazaki D, Genda K, Sasayama K, Uematsu Y. Disaster recovery for
+transport network through multiple restoration stages. IEICE Trans Commun
+2015;98(1):171–9.
+[37] LaRocca S, Johansson J, Hassel H, Guikema S. Topological performance measures as
+surrogates for physical flow models for risk and vulnerability analysis for electric
+power systems. Risk Anal 2015;35(4):608–62.
+[38] Lee EE, Mitchell JE, Wallace WA. Restoration of services in interdependent infra-
+structure systems: a network flows approach. Systems, Man, Cybernet, Part C
+2007;37(6):1303–17.
+[39] Lee EE, Mitchell JE, Wallace WA. Network flow approaches for analyzing and
+managing disruptions to interdependent infrastructure systems. Wiley Handbook of
+Science and Technology for Homeland Security 2009:1419–28.
+[40] Li Y, Lence BJ. Estimating resilience of water resources systems. Water Resour Res
+2007;43(7):W07422.
+[41] Little RG. Controlling cascading failure: understanding the vulnerabilities of inter-
+connected infrastructures. J Urban Technol 2002;9(1):109–23.
+[42] Matisziw TC, Murray AT, Grubesic TH. Strategic network restoration. Netw Spatial
+Econ 2010;10(3):345–61.
+[43] Mooney EL, Almoghathawi Y, Barker K. Facility location for recovering systems of
+interdependent networks To appear in IEEE Syst J2018.
+[44] Nagurney A, Qiang Q. Fragile Networks: identifying vulnerabilities and synergies in
+an uncertain world. New York, NY: Wiley; 2009.
+[45] Newman MEJ, Barabasi A-L, Watts DJ. The structure and dynamics of networks.
+Princeton, NJ: Princeton University Press; 2006.
+[46] Nicholson CD, Barker K, Ramirez-Marquez JE. Flow-based vulnerability measures
+for network component importance: experimentation with preparedness planning.
+Reliab Eng Syst Safety 2016;145:62–73.
+[47] Nurre SG, Cavdaroglu B, Mitchell JE, Sharkey TC. Restoring infrastructure systems:
+an integrated network design and scheduling (INDS) problem. Eur J Oper Res
+2012;223(3):794–806.
+[48] Ouyang M. Comparisons of purely topological model, betweenness based model and
+direct current power flow model to analyze power grid vulnerability. Chaos
+2013;23:023114.
+[49] Ouyang M. Review on modeling and simulation of interdependent critical infra-
+structure systems. Reliab Eng Syst Safety 2014;121:43–60.
+[50] Ouyang M, Hong L, Mao Z-J, Yu M-H, Qi F. A methodological approach to analyze
+vulnerability of interdependent infrastructures. Simulat Modell Pract Theory
+2009;17(5):817–28.
+[51] Pant R, Barker K, Ramirez-Marquez JE, Rocco CM. Stochastic measures of resilience
+and their application to container terminals. Comput Ind Eng 2014;70(1):183–94.
+[52] Ramirez-Marquez JE, Rocco CM, Barker K, Moronta J. Quantifying the resilience of
+community structures in networks. Manuscript Submitted for Publication 2016.
+[53] Rinaldi SM, Peerenboom JP, Kelly TK. Identifying, understanding and analyzing
+critical infrastructure interdependencies. IEEE Control Syst Mag 2001;21(6):11 25.
+[54] Rocco CM, Ramirez-Marquez JE, Salazar DE, Zio E. A flow importance measure
+with application to an italian transmission power system. Int J Performab Eng
+2010;6(1):53–61.
+[55] Rocco CM, Barker K, Ramirez-Marquez JE. Community detection and resilience in
+multi-source, multi-terminal networks with application in electric power systems.
+Manuscript Submitted for Publication 2016.
+[56] Rose A. Economic resilience to natural and man-made disasters: multidisciplinary
+origins and contextual dimensions. Environ Hazards 2007;7(4):383–98.
+[57] Rosenkrantz DJ, Goel S, Ravi SS, Gangolly J. Resilience metrics for service-oriented
+networks: a service allocation approach. IEEE Trans Serv Comput 2009;2(3):183–96.
+[58] The Infrastructure Security Partnership. Regional Disaster Resilience Guide for
+Developing an Action Plan American Society of Civil Engineers; 2011. Technical
+Report.
+[59] The Report of the President's Commission on Critical Infrastructure Protection.
+1997. Critical Foundation: Protecting America's Infrastructure. USA.
+[60] Vugrin ED, Turnquist MA, Brown NJ. Optimal recovery sequencing for enhanced
+resilience and service restoration in transportation networks. Int J Crit Infrastruct
+2014;10(3-4):218–46.
+[61] Wallace WA, Mendonca DM, Lee EE, Mitchell JE, Chow Wallace JH, Monday JL.
+Managing disruptions to critical interdependent infrastructures in the context of the
+2001 World Trade Center attack. Beyond September 11th: An Account of Post-
+Disaster Research. Natural Hazards Research and Applications Information Center,
+University of Colorado; 2003. p. 165–98. special publication #39.
+[62] Wang S, Hong L, Ouyang M, Zhang J, Chen X. Vulnerability analysis of inter-
+dependent infrastructure systems under edge attack strategies. Safety Sci
+2013;51(1):328–37.
+[63] White House. Washington, DC: Office of the Press Secretary; 2013.
+[64] Wu B, Tang A, Wu J. Modeling cascading failures in interdependent infrastructures
+under terrorist attacks. ReliabEng Syst Safety 2016;147:1–8.
+[65] Xin-Jian X, Zhang X, Mendes JFF. Impacts of preference and geography on epidemic
+spreading. Phys Rev E 2007;76(5):056109.
+[66] Xu N, Guikema SD, Davidson R, Nozick L, Cagnan Z, Vaziri K. Optimizing sche-
+duling of post-earthquake electric power restoration tasks. Earthq Eng Struct Dyn
+2007;36(2):265–84.
+[67] Yagan O, Qian D, Zhang J, Cochran D. Optimal allocation of Interconnecting links
+in cyber-physical systems: interdependence, cascading failures, and robustness.
+IEEE Trans Parallel Distrib Syst 2012;23(9):1708–20.
+[68] Zhang Y, Yang N, Lall U. Modeling and simulation of the vulnerability of inter-
+dependent power-water infrastructure networks to cascading failures. J Syst Sci Syst
+Eng 2016;25(1):102–18.
+Y. Almoghathawi et al.
+Reliability Engineering and System Safety 185 (2019) 12–23
+23

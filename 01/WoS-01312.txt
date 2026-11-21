@@ -1,0 +1,1730 @@
+
+===== PAGE 1 =====
+IEEE TRANSACTIONS ON CONTROL OF NETWORK SYSTEMS, VOL. 6, NO. 1, MARCH 2019
+37
+Optimal Water–Power Flow-Problem:
+Formulation and Distributed Optimal Solution
+Ahmed S. Zamzam
+, Student Member, IEEE, Emiliano Dall’Anese
+, Member, IEEE,
+Changhong Zhao
+, Member, IEEE, Josh A. Taylor, Member, IEEE,
+and Nicholas D. Sidiropoulos
+, Fellow, IEEE
+Abstract—This paper formalizes an optimal water–power
+ﬂow (OWPF) problem to optimize the use of controllable
+assets across power and water systems while accounting
+for the couplings between the two infrastructures. Tanks
+and pumps are optimally managed to satisfy water demand
+while improving power grid operations; for the power net-
+work, an ac optimal power-ﬂow formulation is augmented
+to accommodate the controllability of water pumps. Unfor-
+tunately, the physics governing the operation of the two
+infrastructures and coupling constraints leads to a noncon-
+vex (and, in fact, NP-hard) problem; however, after refor-
+mulating OWPF as a nonconvex, quadratically constrained
+quadratic problem, a feasible point pursuit-successive con-
+vex approximation approach is used to identify feasible and
+optimal solutions. In addition, a distributed solver based
+on the alternating direction method of multipliers enables
+water and power operators to pursue individual objectives
+while respecting the couplings between the two networks.
+The merits of the proposed approach are demonstrated for
+the case of a distribution feeder coupled with a municipal
+water distribution network.
+Index Terms—Distributed algorithms, optimal power ﬂow,
+optimal water ﬂow, power systems, successive convex ap-
+proximation (SCA), water systems.
+I. INTRODUCTION
+P
+OWER and water networks are critical infrastructures.
+These systems are predominantly planned and operated
+independently, although their operation is intrinsically coupled
+Manuscript received August 21, 2017; revised November 7, 2017;
+accepted January 5, 2018. Date of publication January 12, 2018; date of
+current version March 14, 2019. The work of A. S. Zamzam and N. D.
+Sidiropoulos was supported in part by NSF under Grant CIF-1525194.
+The work of E. Dall’Anese and C. Zhao was supported in part by the
+Laboratory Directed Research and Development program at the National
+Renewable Energy Laboratory. Recommended by Associate Editor M.
+Rabbat. (Corresponding author: Ahmed S. Zamzam.)
+A. S. Zamzam is with the Department of Electrical and Computer
+Engineering, University of Minnesota, Minneapolis, MN 55455 USA
+(e-mail: ahmedz@umn.edu).
+E. Dall’Anese and C. Zhao are with the National Renewable En-
+ergy Laboratory, Golden, CO 80401 USA (e-mail: emiliano.dallanese@
+nrel.gov; changhong.zhao@nrel.gov).
+J. A. Taylor is with the Department of Electrical and Computer Engi-
+neering, University of Toronto, Toronto, ON M5S 3G4, Canada (e-mail:
+josh.taylor@utoronto.ca).
+N. D. Sidiropoulos is with the Department of Electrical and Com-
+puter Engineering, University of Virginia, Charlottesville, VA 22904 USA
+(e-mail: nikos@virginia.edu).
+Digital Object Identiﬁer 10.1109/TCNS.2018.2792699
+at multiple spatial and temporal scales. For example, electric
+pumps for agricultural and municipal water systems affect the
+operation (in the form of power and energy demands) of power
+distribution grids [1]–[3]; on the other hand, the capacity of
+thermoelectric power plants strongly depends on the availabil-
+ity of cooling water [4]–[6]. With reference to municipal and
+wastewater systems, electric pumps are key elements to over-
+coming geographical differences in head pressure and head
+losses caused by pipe friction, and they enable the supply of
+water demand within given water-quality standards. Electricity
+consumption from pumps constitutes major operating costs for
+water utilities. For example, in the U.S., the overall operation
+of drinking and wastewater networks represents 4% of the total
+electricity consumption [7]. Optimizing water pump operation
+has, therefore, signiﬁcant potential to save energy, reduce emis-
+sions, and enhance the reliability and efﬁciency of the power
+grid.
+Under dynamic electricity pricing, water utilities can sched-
+ule their pumps and adjust the consumption of variable-speed-
+drive pumps to minimize the cost of energy. The optimal pump
+scheduling problem is often formulated as a (nonconvex) mixed-
+integer nonlinear program (MINLP), wherein nonlinearity stems
+from the water network hydraulic model, and binary variables
+indicate the pumps’ ON/OFF status. In the literature, various
+approaches have been developed for MINLPs. These include
+(piecewise) linear approximations [8]–[11], nonconvex nonlin-
+ear programming relaxation [12], continuous constraint relax-
+ation combined with branch and bound [13], hydraulic simula-
+tion to implicitly enforce nonlinear constraints [14], Lagrange
+decomposition integrated with simulation-based search [15],
+gradient method together with sensitivity analysis [16], and
+problem-speciﬁc presolving techniques [17]. Finally, Fooladi-
+vanda and Taylor [18] bypass the nonlinearity of the water
+network hydraulic model by leveraging a second-order cone
+relaxation, and sufﬁcient conditions for the exactness of the
+relaxation are provided. Optimizing the operation of municipal
+water distribution networks in response to time-varying electric-
+ity prices was also considered in [19]. A two-step approach is
+taken whereby the operation of the water network is optimized
+a priori, and the controllable assets in the power network are
+then optimized in a subsequent stage based on the consumption
+of the water pumps.
+A variety of additional objectives and constraints can arise
+when optimizing the operation of water pumps. Examples
+2325-5870 © 2018 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See http://www.ieee.org/publications standards/publications/rights/index.html for more information.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:47:59 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 2 =====
+38
+IEEE TRANSACTIONS ON CONTROL OF NETWORK SYSTEMS, VOL. 6, NO. 1, MARCH 2019
+include the cost of energy loss caused by pipe friction [18], max-
+imum electricity demand charges (together with unit charges)
+[16], peak power consumption, maintenance costs, reservoir-
+level variation [20], and land subsidence [21]. Another line of
+work focuses on dynamic optimal pump management, which
+is usually formulated as a dynamic programming problem
+[22]–[24]. A difﬁculty is to obtain a near optimal solution of the
+dynamic program in a reasonable amount of time. To overcome
+this challenge, techniques such as simplifying hydraulic
+dynamics [24], spatial decomposition of water networks, and
+temporal decomposition of operation periods [22], [23] are
+exploited in formulating and solving the dynamic program.
+The works mentioned above pertain to optimal manage-
+ment of water networks, and the main interaction with power
+systems—if any—is in the form of responsiveness to electricity
+prices. It is, however, increasingly recognized that a joint opti-
+mization of power and water infrastructures can bring signiﬁcant
+beneﬁts from operational and economical standpoints [25]. Con-
+trollable assets of water utilities can provide valuable services
+to power systems to enhance reliability and efﬁciency, as well as
+to cope with the volatility of distributed renewable generation;
+these services include frequency regulation, regulating reserves,
+and contingency reserves. On the other hand, the incentives for
+the provisioning of grid services to electric utilities could be used
+by water system operators for capital improvements and capac-
+ity expansion. To the best of our knowledge, however, there are
+no systematic approaches to jointly optimize the use of control-
+lable assets across power and water systems while acknowledg-
+ing intrinsic couplings between the two infrastructures.
+This paper formulates an optimal water–power-ﬂow (OWPF)
+problem to minimize the (sum of the) cost functions associated
+with water and power operators while respecting relevant engi-
+neering and operational constraints of the two systems as well
+as pertinent intrasystem coupling constraints. In particular, the
+power consumed by a pump is related to the pump’s pressure
+gain and ﬂow rate. The problem is tailored to coupled power
+distribution feeders and municipal water distribution networks
+(although its applicability is not limited to this operational set-
+ting), and it addresses the controllability of distributed energy
+resources (DERs) and water pumps. Pump selection is not ad-
+dressed because it is assumed that a pump scheduling problem
+is solved at a slower timescale than the OWPF. Because of the ac
+power-ﬂow equations and the water network hydraulic model,
+the OWPF problem is nonconvex (and NP-hard).
+The proposed technical approach involves the reformulation
+of nonconvex constraints as equivalent nonconvex quadratic
+constraints, thus leading to an equivalent OWPF problem that
+is in the prototypical form of a nonconvex quadratically con-
+strained quadratic program (QCQP). The resulting noncon-
+vex QCQP is then solved by using the feasible point pursuit-
+successive convex approximation (FPP-SCA) method
+[26],
+[27]. The FPP-SCA algorithm replaces the nonconvex con-
+straints by inner convex surrogates around a speciﬁc point to
+construct a convex restriction of the original problem. Because
+such a restriction might lead to infeasibility, the main operating
+principles of the algorithm to identify a feasible and optimal
+point involve the following two phases.
+1) Feasibility phase: A feasible solution is obtained by solv-
+ing a sequence of approximations of the original prob-
+lem, where slack variables are added after restriction to
+quantify and ultimately zero-out the amount of constraint
+violations.
+2) Reﬁnement phase: SCA of the feasible set is used to
+ﬁnd a Karush–Kuhn–Tucker (KKT) point of the OWPF
+problem.
+One of the practical challenges of the solution outlined above
+is the need for a centralized computational platform that can
+solve the OWPF problem. To bypass the need for a central con-
+troller, we develop a distributed solver based on the alternating
+direction method of multipliers [28]. With the distributed solu-
+tion method, water and power operators can pursue individual
+operational objectives and retain controllability of their own as-
+sets (pumps for the water network and DERs for the power net-
+work) while respecting operational couplings between the two
+networks [25]. In the resulting iterative procedure, each system
+operator solves a smaller optimization problem with variables
+associated only with its network and controllable devices; wa-
+ter and power operators subsequently exchange information re-
+garding the shared variables to reach consensus on the powers
+consumed by the water pumps. This represents an additional
+unique contribution of this paper.
+Centralized and distributed methods are tested using an IEEE
+distribution test feeder connected to a municipal water distribu-
+tion network adopted from the literature.
+It is worth pointing out that for the ac optimal power-ﬂow
+problem, a number of approaches have been proposed in the lit-
+erature based on semideﬁnite relaxations, second-order cone
+relaxation, and linearization methods for the ac power-ﬂow
+equations; see, for example, [29]–[35] and pertinent references
+therein. In this paper, we adopt the FPP-SCA method [27] be-
+cause it allows us to tackle the nonconvexity of constraints of
+both water and power networks in a uniﬁed manner.
+The rest of this paper is organized as follows. Section II
+contains the modeling of a municipal water network, and
+Section III introduces the model for the power distribution
+network. Section IV outlines the proposed OWPF problem.
+Section V illustrates the application of the FPP-SCA approach
+to the joint optimization problem, and Section VI presents the
+distributed algorithm. Section VII demonstrates the effective-
+ness of the proposed algorithm via a test case from the literature,
+and Section VIII summarizes conclusions and ﬁndings.
+Notation: Matrices (vectors) are denoted by boldface capital
+(small) letters unless otherwise stated; (·)T , (·)∗, and (·)H stand
+for transpose, conjugate, and complex-conjugate transpose, re-
+spectively; and |(·)| denotes the magnitude of a number or the
+cardinality of a set.
+II. MODELING THE WATER NETWORK
+As in [18], we consider a municipal water network compris-
+ing a set of nodes N and a set of pipes L linking the nodes.
+The disjoint sets J , T , and R, with N = J ∪T ∪R, denote
+the sets of junctions, tanks, and reservoirs, respectively. The
+disjoint subsets P and V of L have variable-speed pumps and
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:47:59 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 3 =====
+ZAMZAM et al.: OPTIMAL WATER–POWER FLOW-PROBLEM
+39
+Fig. 1.
+Example of municipal water network [36]; this network will be
+utilized in the numerical experiments.
+pressure-reducing valves, respectively. We optimize the water
+system operation during an interval t = 1, . . . , T, with δ
+representing the time interval between two consecutive time
+periods. We assume that the ON/OFF states of the pumps
+and valves are determined at a slower timescale and, hence,
+constant over t = 1, . . . , T. Note that water can only ﬂow in
+one direction through a pump or a valve. Moreover, we assume
+that the directions of water ﬂow in pipes without pumps or
+valves do not change over t = 1, . . . , T. Therefore, (N, L) can
+be modeled as a directed graph, wherein P and V are the sets
+of pipes with pumps and valves that are in an “on” state during
+t = 1, . . . , T, respectively. Let qt
+ij denote the volumetric water
+ﬂow rate through a pipe ij ∈L at time t = 1, . . . , T. Next,
+we list the models for different components in water networks.
+Fig. 1 illustrates an example of water network taken from [36];
+the network features seven junctions, two reservoirs, a tank,
+three pumps, and two valves. This network will be utilized in
+the numerical experiments in Section VII.
+Junctions: Denote the water demand at junction j ∈J at time
+t as dt
+j. Then, the following mass conservation constraint must
+hold:
+
+i:ij∈L
+qt
+ij −
+
+k:jk∈L
+qt
+jk = dt
+j
+∀j ∈J
+∀t = 1, . . . , T. (1)
+The head pressure at junction j ∈J at time interval t, denoted
+by ht
+j, must satisfy the following condition:
+ht
+j ≥hmin
+j
+∀j ∈J
+∀t = 1, . . . , T
+(2)
+where hmin
+j
+is the minimum-allowable pressure head at junction
+j (assigned by the water system operator based on engineering
+considerations).
+Tanks: Let μt
+k denote the volume of water in a tank k ∈T at
+time t. The pressure head ht,out
+k
+at the outlet of tank k at time
+t satisﬁes the equation Akht,out
+k
+= μt
+k, where the constant Ak
+denotes the cross-sectional area of tank k. Furthermore, the tank
+outlet pressure heads satisfy the following constraints:
+ht,out
+k
+= ht−1,out
+k
++ δ
+Ak
+⎛
+⎝
+i:ik∈L
+qt
+ik −
+
+j:kj∈L
+qt
+kj
+⎞
+⎠
+(3)
+0 ≤ht,out
+k
+≤ht,in
+k
+∀k ∈T
+∀t = 1, . . . , T
+(4)
+with the initial pressure head h0,out
+k
+determined based on the
+initial volume μ0
+k as h0,out
+k
+= μ0
+k/Ak. The inlet pressure head
+ht,in
+k
+is a variable that can be adjusted to determine the inlet ﬂow
+rate. An upstream node of tank k sees its inlet head ht,in
+k , whereas
+a downstream node sees its outlet head ht,out
+k
+. In the sequel,
+for notational simplicity, we use only ht
+k to denote ht,in
+k
+in an
+equation related to an upstream node, and ht,out
+k
+in an equation
+related to a downstream node. In Fig. 1, the tank corresponds to
+node 10.
+Reservoirs: We treat the reservoirs r ∈R as inﬁnite sources
+of water where the mass conservation constraint (1) is not im-
+posed. The pressure heads at reservoirs are set to zero
+ht
+r = 0
+∀r ∈R
+∀t = 1, . . . , T.
+(5)
+The reservoirs in Fig. 1 are color-coded in blue and are located
+at nodes 8 and 9.
+Variable-speed pumps: The pressure head gain due to a
+variable-speed pump, which is denoted by ˆht
+ij, is modeled
+as [37] and [38]
+ˆht
+ij = Aij
+
+qt
+ij
+2 + Bijqt
+ijwt
+ij + Cij
+
+wt
+ij
+2
+(6)
+0 ≤wt
+ij ≤wmax
+ij
+∀ij ∈P
+∀t = 1, . . . , T
+(7)
+where wt
+ij and wmax
+ij
+are the ratios of the actual pump speed to the
+nominal speed and the maximum-allowable wt
+ij, respectively.
+The coefﬁcients Aij ≤0, Bij ≥0, and Cij ≥0 are pump pa-
+rameters evaluated at nominal speed. The following constraints
+hold for the pumps with an “on” state:
+ˆht
+ij =
+
+ht
+j + hj
+
+−
+
+ht
+i + hi
+
+(8)
+ˆht
+ij ≥0
+(9)
+qt
+ij ≥0
+∀ij ∈P
+∀t = 1, . . . , T
+(10)
+where hi denotes the elevation of node i. In Fig. 1, the pumps
+are located on the pipes 8 →1, 9 →2, and 4 →5.
+Pressure-reducing valves: Let Rt
+ij denote the head loss along
+a pipe ij with a valve. Then, the following equations pertain to
+a pipe with a valve in an “on” state
+Rt
+ij =
+
+ht
+i + hi
+
+−
+
+ht
+j + hj
+
+(11)
+qt
+ij ≥0
+∀ij ∈V
+∀t = 1, . . . , T.
+(12)
+In Fig. 1, two valves are present on the pipe between junctions
+1 and 2, as well as between junctions 3 and 6.
+Pipes without pumps or valves: Nodal pressure heads are re-
+lated by head losses. The following constraints must be satisﬁed
+for pipes without pumps or valves:
+˜ht
+ij =
+
+ht
+i + hi
+
+−
+
+ht
+j + hj
+
+(13)
+qt
+ij ≥0
+∀ij ∈L/(P ∪V)
+∀t = 1, . . . , T.
+(14)
+The head loss ˜ht
+ij can be approximated by the following Darcy–
+Weisbach equation:
+˜ht
+ij = Fij
+
+qt
+ij
+2
+∀ij ∈L/(P ∪V)
+∀t = 1, . . . , T
+(15)
+where the parameter Fij depends on the pipe characteristics.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:47:59 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 4 =====
+40
+IEEE TRANSACTIONS ON CONTROL OF NETWORK SYSTEMS, VOL. 6, NO. 1, MARCH 2019
+Fig. 2.
+Example of the distribution network: the IEEE 13-node feeder.
+This feeder will be utilized in the experiments.
+Power consumption of pumps: Let ρ denote the water density,
+g the standard gravity coefﬁcient, and ηij the efﬁciency of pump1
+ij. Then, the power consumption of pump ij at time t is given
+by the following expression [38]:
+pt
+pump,ij = ρg
+ηij
+ˆht
+ijqt
+ij
+(16)
+for all t = 1, . . . , T.
+Equation (16) captures fundamental coupling between the
+water network and the power system because it relates the elec-
+trical power consumption of a pump to the volumetric water
+ﬂow rate and the head gain.
+III. MODELING POWER DISTRIBUTION NETWORKS
+In this section, we outline the so-called bus injection model
+for a distribution feeder [32]. The advantage of the bus injection
+model is that it facilitates the formulation of the ac power-ﬂow
+equations in a (nonconvex) quadratic form [27]. For ease of
+exposition and notational simplicity, the model is outlined for
+a balanced system; however, the proposed technical approach
+naturally extends to unbalanced multiphase systems, as shown
+in [27].
+Let M = {0, 1, . . . , M} denote the set of nodes of the
+power distribution network. Assume that node 0 corresponds
+to the substation, and deﬁne M+ := M \ {0}. Let E denote
+the set of distribution lines connecting the nodes. An exam-
+ple of power distribution network is illustrated in Fig. 2; the
+distribution network is formed by 13 buses and 12 lines; the
+substation (i.e., the point of connection with the transmission
+grid) is located at node 650. For each node m ∈M, let vt
+m
+denote its complex voltage, and let st
+m denote the net com-
+plex power injection at the same node at time t = 1, . . . , T.
+For each line (m, n) ∈E, let zmn and ymn denote the com-
+plex series impedance and shunt admittance of a π-equivalent
+1Here, the energy conversion efﬁciencies ηij s are assumed to be constant.
+For further discussion regarding this assumption, we refer the reader to [18].
+circuit model. The admittance matrix Y is obtained by setting
+to −z−1
+mn, (m, n) ∈E, its off-diagonal elements, whereas the
+mth diagonal element is given by 	
+n:(m,n)∈E(z−1
+mn + 1
+2 ymn).
+Accordingly, using Ohm’s law and Kirchhoff’s law, the vector
+of current injections it := [it
+0, it
+1, . . . , it
+M ]T and the vector of
+voltages vt := [vt
+0, vt
+1, . . . , vt
+M ]T are related as
+it = Yvt.
+(17)
+The net complex power injection st
+m is given by st
+m = vt
+m(it
+m)⋆.
+Through standard manipulations, the net active and reactive
+power injections at node m can be expressed as
+pt
+m = vtH Ymvt
+(18)
+qt
+m = vtH Ymvt
+(19)
+where the Hermitian matrices Ym and Ym are given by
+Ym = 1
+2
+
+emeT
+mY + YH emeT
+m
+
+(20)
+Ym = j
+2
+
+emeT
+mY −YH emeT
+m
+
+(21)
+where em represents the (m + 1)th basis of RM +1. Similarly,
+the squared voltage magnitude at node m can be expressed as
+|vt
+m|2 = vtH Mmvt
+(22)
+where Mm := emeT
+m.
+Deﬁne D ⊆M+ to be the subset of nodes where controllable
+DERs are located, and let pt
+r,m and qt
+r,m denote the active and
+reactive power generations from the DER(s) at node m at time
+t. The power setpoints for a DER at node m are assumed to lie
+within a set
+(pt
+r,m, qt
+r,m) ∈Ct
+m ⊂R2
+(23)
+which is assumed convex. For DERs such as photovoltaic (PV)
+systems, energy storage systems, and electric vehicles, the set
+Ct
+m is described by linear inequality constraints or convex
+quadratic constraints [27], [32], [39]. Let pt
+L,m and qt
+L,m denote
+the (noncontrollable) active and reactive loads at node m ∈M+
+at time t. Then, the net real and reactive power injections at node
+m ∈M+ are given by
+pt
+m = pt
+r,m −pt
+L,m
+(24)
+qt
+m = qt
+r,m −qt
+L,m.
+(25)
+For any node m /∈D, we have that pt
+r,m = 0 and qt
+r,m = 0. For
+notational simplicity, we assume that one DER is connected at
+a node of the power system, and we do not describe additional
+constraints governing the operation of energy storage systems
+and electric vehicles; however, the methodology proposed in the
+following sections is straightforwardly applicable to the case
+where multiple DERs are connected at a node and where the
+OWPF problem includes the constraints for, e.g., the state of
+charges of energy storage systems and electric vehicles.
+IV. OWPF PROBLEM
+Water and power networks are coupled because the power
+consumed by a pump is proportional to the pump’s pressure gain
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:47:59 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 5 =====
+ZAMZAM et al.: OPTIMAL WATER–POWER FLOW-PROBLEM
+41
+times its ﬂow rate. Assume that a pump ij ∈P is electrically
+connected to one node in the power network. Let σ : P →M
+map water pumps to the electrical nodes to which they are
+connected; for example, if pump ij ∈P is connected to node
+m ∈M of the distribution system, then m = σ(ij). For the
+electrical nodes σ(P), we can substitute (16) into (24) to obtain
+pt
+σ(ij) = pt
+r,σ(ij) −pt
+L,σ(ij) −ρg
+ηij
+ˆht
+ijqt
+ij
+(26)
+which couples optimization variables in both the water and
+power networks.
+With (26) in place, we formulate OWPF as the following
+multiperiod optimization problem:
+min
+T
+
+t=1
+
+Ct
+s(vt, pt
+0) +
+
+m∈D
+Ct
+c,m(pt
+r,m, qt
+r,m)
++
+
+ij∈P
+Ct
+w,σ(ij)(pt
+σ(ij))
+⎞
+⎠
+(27a)
+over
+{vt, {pt
+r,m, qt
+r,m}∀m∈D}∀t=1,...,T
+{qt, ht, ˆht, ˜ht, wt, Rt}∀t=1,...,T
+s.t.
+(1)–(15), (18)–(19), (23), (25)
+pt
+m = pt
+r,m −pt
+L,m −ρg
+ηij
+ˆht
+ijqt
+ij ∀m∈σ(P)
+(27b)
+pt
+m = pt
+r,m −pt
+L,m
+∀m ∈M+\σ(P)
+(27c)
+vt
+0 = vref
+0
+∀t = 1, . . . , T
+(27d)
+v2 ≤vtH Mmvt ≤v2
+∀m ∈M+
+∀t
+(27e)
+where the constraint (27d) speciﬁes a constant voltage magni-
+tude vref
+0 at the power substation, and (27e) imposes the voltage
+regulation requirement for the other nodes (i.e., ANSI C84.1
+limits). Additional engineering constraints for the power net-
+work such as ampacity limits or ﬂow limits can be added
+without requiring modiﬁcations to the procedure outlined in
+Section V [27].
+The cost function (27a) is composed of the following three
+terms.
+1) Power system operator cost (Ct
+s): This function captures
+operational objectives of the power network operator; for
+example, minimization of voltage deviations, minimiza-
+tion of power losses, or deviations from given setpoints
+for the power at the substation. For example, the latter
+can be expressed as cs(pt
+0 −pt
+0,set)2, where cs > 0 is a
+given constant/price.
+2) DER cost (Ct
+c,m): This function captures DER-related
+objectives. For example, for a PV system, one might con-
+sider the cost βt(pt
+m −pt
+r,m) + Rc(pt
+r,m), where pt
+m de-
+notes the active power available from a PV system located
+at node m at time t (based on prevailing irradiance con-
+ditions), βt is the price of power or reward for ancillary
+service provisioning (received by the customers from the
+utility) at time t, and the function Rc(pt
+r,m) represents a
+convex regularization term that can be used to promote
+solutions with speciﬁc characteristics.
+3) Water network cost (Ct
+w,σ(ij)): This function models
+objectives of the water network operator. For exam-
+ple, payments of the water network operator for the
+power consumed by the pumps can be expressed as
+αtpt
+σ(ij) + Rw(pt
+σ(ij)), where αt is the price of electricity
+(received from the power systems operator) and the reg-
+ularization term Rw(pt
+σ(ij)) is used again to promote the
+preferred features of the optimal solution (e.g., smooth-
+ness or sparsity). In particular, the sparsity of the solution
+leads to the case where only a subset of the pumps are
+used. On the other hand, the smoothness of the solution
+prevent the case where one of the pumps is overloaded
+while the other pumps do not operate.
+In the OWPF problem (27), the coupling across multiple time
+periods appears only in the tank dynamics (3) [with h0,out
+k
+in (3)
+a given constant]; however, additional constraints for the state
+of charge of energy storage systems and electric vehicles can be
+straightforwardly added to the problem formulation.
+Problem (27) is nonconvex because of the constraints (6), (15),
+(18), (19), and (27b) and the lower bound in (27e); however,
+these constraints will be reformulated as nonconvex quadratic
+inequalities in the following section, and they will be efﬁciently
+managed by the FPP-SCA approach [26], [27].
+V. SUCCESSIVE CONVEX APPROXIMATION
+The FPP-SCA is a two-step algorithm that solves convex
+problems iteratively. In the ﬁrst step, a feasible solution is ob-
+tained by solving an inner approximation of (27). The inner
+approximation is obtained by rewriting a nonconvex quadratic
+inequality as a difference of two convex functions, and then
+linearizing the concave term around a given restriction point.
+To promote the feasibility of the approximation, we add slack
+variables to the constraints and minimize the norm of the slack
+variables over the approximate feasible set. We then use the
+solution as a restriction point for the next step. If the slack vari-
+ables become zero, we by construction have a feasible point
+of (27). In the second stage, we solve a sequence of convex
+inner approximations of (27) until convergence to a KKT point.
+A. Nonconvexity in Power Network Constraints
+Notice ﬁrst that the matrices Ym and Ym are indeﬁnite [32].
+Rewrite (18) as the following two inequalities:
+vtH Ymvt ≤pt
+m
+(28)
+vtH (−Ym)vt ≤−pt
+m.
+(29)
+Constraint (28) can be rewritten as
+vtH 
+Y(+)
+m
++ Y(−)
+m
+
+vt ≤pt
+m
+(30)
+where Y(+)
+m
+and Y(−)
+m
+are the positive and negative semideﬁ-
+nite parts of matrix Ym (obtained through eigenvalue decom-
+position). Focusing on the negative semideﬁnite matrix Y(−)
+m ,
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:47:59 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 6 =====
+42
+IEEE TRANSACTIONS ON CONTROL OF NETWORK SYSTEMS, VOL. 6, NO. 1, MARCH 2019
+we can write
+(vt −ut)H Y(−)
+m (vt −ut) ≤0
+(31)
+where ut is a restriction point. By rearranging terms, we get
+vtH Y(−)
+m vt ≤2ℜ
+
+utH Y(−)
+m vt
+−utH Y(−)
+m ut.
+(32)
+Using (32), a convex surrogate of the nonconvex constraint (28)
+can be obtained as follows:
+vtH Y(+)
+m vt + 2ℜ
+
+utH Y(−)
+m vt
+≤pt
+m + utH Y(−)
+m ut + s(p)
+m,t
+(33)
+where the nonnegative slack variable s(p)
+m,t is utilized to ensure
+the feasibility of the constraint. Similarly, the nonconvex con-
+straint (29) is replaced by
+−vtH Y(−)
+m vt −2ℜ
+
+utH Y(+)
+m vt
+≤−pt
+m −utH Y(+)
+m ut + s(p)
+m,t.
+(34)
+Following a similar procedure, the quadratic equality con-
+straint (19) can be replaced by the following convex constraints:
+vtH Y
+(+)
+m vt + 2ℜ
+
+utH Y
+(−)
+m vt
+≤qt
+m + utH Y
+(−)
+m ut + s(q)
+m,t
+(35)
+−vtH Y
+(−)
+m vt −2ℜ
+
+utH Y
+(+)
+m vt
+≤−qt
+m −utH Y
+(+)
+m ut + s(q)
+m,t
+(36)
+where s(q)
+m,t is added in order to ensure feasibility of the convex
+inner approximation, whereas Y
+(+)
+m
+and Y
+(−)
+m
+are the positive
+and negative semideﬁnite parts of Ym.
+Finally, the lower bound on the bus voltage magnitude (27e)
+is replaced by
+−2ℜ
+
+utH Mmvt
+≤−v2 −utH Mmut + s(v)
+m,t
+(37)
+where s(v)
+m,t is a nonnegative slack variable.
+B. Nonconvexity in Water Network Constraints
+Constraint (6) is nonconvex. However, it has been shown
+in [18] that (6) can be replaced by the following constraint
+without loss of optimality:
+ˆht
+ij ≤Aij
+
+qt
+ij
+2 + Bmax
+ij
+qt
+ij + Cmax
+ij
+(38)
+where Bmax
+ij
+:= Bijwmax
+ij
+and Cmax
+ij
+:= Cij
+
+wmax
+ij
+2. Because
+Aij < 0, (38) is a convex quadratic constraint. With this refor-
+mulation, the variables wt
+ij can be eliminated; in fact, a unique
+wt
+ij that satisﬁes (7) can always be recovered from any feasible
+solution (qt
+ij, ˆht
+ij).
+Next, consider replacing (15) with the following two
+inequalities:
+˜ht
+ij ≥Fij
+
+qt
+ij
+2
+(39)
+−˜ht
+ij ≥−Fij
+
+qt
+ij
+2
+(40)
+and notice that (39) is convex because Fij > 0 [18]. On the
+other hand, (40) is nonconvex. A convex restriction of (40) can
+be written as
+Fij
+
+zt
+q,ij
+2 −2zt
+q,ijFijqt
+ij ≤−˜ht
+ij + s(q)
+ij,t
+(41)
+where the nonnegative slack variable s(q)
+ij,t is added to insure
+feasibility.
+Regarding the power balance constraint (27b), it is convenient
+to introduce the auxiliary variables βt
+ij and pt
+pump,ij per pump
+ij ∈P, and rewrite (27b) as the following equivalent set of
+constraints:
+pt
+σ(ij) = pt
+r,σ(ij) −pt
+L,σ(ij) −pt
+pump,σ(ij)
+(42)
+βt
+ij = pt
+pump,ij
+(43)
+βt
+ij = ρg
+ηij
+ˆht
+ijqt
+ij.
+(44)
+The auxiliary variables βt
+ij and pt
+pump,ij facilitate the applica-
+tion of the FPP-SCA method as well as the development of a
+distributed algorithm in Section VI. Re-express (44) as
+yt
+ij
+T Tijyt
+ij ≤−βt
+ij
+(45)
+yt
+ij
+T (−Tij)yt
+ij ≤βt
+ij
+(46)
+where yt
+ij := [ˆht
+ij, qt
+ij]T for simplicity and Tij is a two-by-
+two matrix with ρ/g2ηij on the off-diagonal entries. Con-
+straints (45)–(46) are nonconvex. Rewriting Tij as Tij =
+T(+)
+ij
++ T(−)
+ij , where T(+)
+ij
+and T(−)
+ij
+are the positive and neg-
+ative semideﬁnite parts of Tij, surrogate convex constraints
+for (45) and (46) can be written as
+yt
+ij
+T T(+)
+ij yt
+ij + 2zt
+ij
+T T(−)
+ij yt
+ij
+≤−βt
+ij + zt
+ij
+T T(−)
+ij zt
+ij + s(p)
+ij,t
+(47)
+−yt
+ij
+T T(−)
+ij yt
+ij −2zt
+ij
+T T(+)
+ij yt
+ij
+≤βt
+ij −zt
+ij
+T T(+)
+ij zt
+ij + s(p)
+ij,t
+(48)
+where zt
+ij represents any linearization (restriction) point, and
+s(p)
+ij,t is a nonnegative slack variable.
+We are now ready to outline the FPP-SCA algorithm for
+solving OWPF—the subject of the following section.
+C. FPP-SCA Algorithm
+For notational simplicity, collect in the matrices Sp, Sq, Sv ∈
+RM ×T
++
+the slack variables s(p)
+m,t, s(q)
+m,t, and s(v)
+m,t, respectively.
+Similarly, let the matrices Sp ∈R|P|×T
++
+and Sq ∈Rn×T
++
+, where
+n = |L/(P ∪V)|, collect all the slack variables s(p)
+ij,t and
+s(q)
+ij,t, respectively. In addition, let Qt ∈R|L|
++ , βt ∈R|P|, and
+ht ∈R|N| collect all the water ﬂow variables, powers con-
+sumed by pumps, and head pressures. Finally, let the matrices
+Z ∈R2|P|×T , Zq ∈Rn×T , and U ∈CM ×T collect the restric-
+tion points zt
+ij, zt
+q,ij, and ut, respectively.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:47:59 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 7 =====
+ZAMZAM et al.: OPTIMAL WATER–POWER FLOW-PROBLEM
+43
+With this notation in place, deﬁne the convex sets ΨU and
+ΩZ,Zq (which are functions of the restriction points) pertaining
+to power and water networks, respectively, as
+ΨU :=
+
+({vt, pt
+r, qt
+r, pt
+pump}T
+t=1, Sp, Sq, Sv) |
+(23), (25), (27c), (27d), (33)–(37), (42)
+vtH Mmvt ≤v2
+∀m ∈M+
+∀t = 1, . . . , T
+
+(49)
+ΩZ,Zq :=
+
+({Qt, ht, βt}T
+t=1, Sp, Sq) |
+(1)–(5), (8)–(14), (39), (41), (47), (48)
+
+(50)
+where pt
+r := [{pt
+r,m}m∈D]T , qt
+r := [{qt
+r,m}m∈D]T , and pt
+pump
+:= [{pt
+pump,m}m∈σ(P)]T .
+It follows that the convex optimization problem to be solved
+at the kth iteration of the feasibility phase of the FPP-SCA
+algorithm can be compactly written as
+min
+∥Sp∥2
+F + ∥Sq∥2
+F + ∥Sv∥2
+F + ∥Sp∥2
+F + ∥Sq∥2
+F
+(51a)
+over
+{vt, pt
+r, qt
+r, pt
+pump}T
+t=1, Sp, Sq, Sv
+{Qt, ht, βt}T
+t=1, Sp, Sq
+s.t.
+({vt, pt
+r, qt
+r, pt
+pump}T
+t=1, Sp, Sq, Sv) ∈ΨU(k)
+(51b)
+({Qt, ht, βt}T
+t=1, Sp, Sq) ∈ΩZ(k),Zq (k)
+βt
+ij = pt
+pump,σ(ij)
+∀ij ∈P, t = 1, . . . , T
+(51c)
+where the cost function aims to minimize the violation of
+the nonconvex constraint in the original OWPF, and U(k),
+Z(k), and Zq(k) are the restriction points at iteration k. In
+particular, U(k), Z(k), and Zq(k) coincide with the optimal
+solution of (51) at the previous iteration k −1. Algorithm 1
+summarizes the overall feasibility procedure. Notice that prob-
+lem (51) is a second-order cone program, and observe that the
+cost function is monotonically nonincreasing because the re-
+striction points are always feasible. Although this method in not
+guaranteed to ﬁnd a feasible point, it converged in all simulations
+to operating points that were feasible for the water and power
+systems considered.
+Once a feasible operating point is identiﬁed through
+Algorithm 1, the nonconvex feasible set of OWPF is replaced at
+each iteration by an inner convex approximation. The optimiza-
+tion problem to be solved at the kth iteration of the reﬁnement
+phase can be formulated as
+min
+T
+
+t=1
+
+Ct
+s(vt, pt
+0) +
+
+m∈D
+Ct
+c,m(pt
+r,m, qt
+r,m)
++
+
+ij∈P
+Ct
+w,σ(ij)(pt
+σ(ij))
+⎞
+⎠
+(52a)
+over
+{vt, pt
+r, qt
+r, pt
+pump, Qt, ht, βt}T
+t=1
+s.t.
+({vt, pt
+r, qt
+r, pt
+pump}T
+t=1) ∈˜ΨU(k)
+(52b)
+({Qt, ht, βt}T
+t=1) ∈˜ΩZ(k),Zq (k)
+βt
+ij = pt
+pump,σ(ij)
+∀ij ∈P, t = 1, . . . , T
+(52c)
+where ˜ΨU(k) is the restriction of the set ΨU(k) to the plane Sp =
+Sq = Sv = 0. Similarly, the set ˜ΩZ(k),Zq (k) is the projection of
+ΩZ(k),Zq (k) when Sq = Sp = 0. At each step k = 2, . . ., the
+sets ˜ΨU(k) and ˜ΩZ(k),Zq (k) are formed based on the optimal
+solution of (52) at the previous iteration k −1. The proposed
+methodology generates a monotone sequence that converges
+to a KKT point of the original OWPF (27), and it is given as
+Algorithm 2.
+Algorithm 2 has converged if the cost function between two
+consecutive steps is less than a given quantity 0 < ϵ ≪1.
+Claim 1 (Convergence): From [40, Th. 1], it follows that
+every limit point generated by the proposed algorithms is a KKT
+point. Hence, the ﬁrst phase converges to a KKT point of (51). In
+addition, if the algorithm starts the second phase from a feasible
+point, then the sequence converges to the set containing all the
+KKT points of the problem (27).
+The convergence of the ﬁrst phase of the algorithm follows
+from [40]. Since the SCA phase is initialized from a feasible
+point of the OWPF, the sequence produced by Algorithm 2 is
+always feasible; i.e., every point in the sequence lies in the
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:47:59 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 8 =====
+44
+IEEE TRANSACTIONS ON CONTROL OF NETWORK SYSTEMS, VOL. 6, NO. 1, MARCH 2019
+feasibility set of (27). Thus, the sequence converges to a set that
+contains all the KKT points of (27).
+In the following section, a distributed solution strategy will be
+outlined based on the alternating direction method of multipliers
+(ADMM).
+VI. DISTRIBUTED ALGORITHM
+Power and water networks are usually planned and operated
+independently. In this section, we develop a distributed solver
+where water and power operators pursue individual operational
+objectives and retain controllability of their own assets (pumps
+for the water network and DERs for the power network). In
+particular, in the proposed setting, each system operator solves
+a smaller optimization problem with variables associated only
+with its network and controllable devices—a rendition of the
+ac optimal power ﬂow for the power network operator, and an
+optimal water ﬂow problem for the water system operator. The
+two operators subsequently exchange information regarding the
+shared variables to reach consensus on the powers consumed by
+the water pumps. Using this approach, both systems keep their
+private information and only exchange the optimized values of
+the powers consumed by the pumps.
+Assume that each system has determined an operational pro-
+ﬁle that satisﬁes all network-level constraints. The proposed
+technical approach consists of deﬁning the following augmented
+Lagrangian associated with (52):
+Lρ
+
+vt, pt
+r, qt
+r, pt
+pump, Qt, ht, βt, {νt
+ij}ij∈P
+T
+t=1
+
+=
+T
+
+t=1
+⎛
+⎝Ct
+s(pt
+0) +
+
+m∈D
+Ct
+c,m(pt
+m) +
+
+ij∈P
+Ct
+w,σ(ij)(βt
+ij)
++
+
+ij∈P
+νt
+ij
+
+βt
+ij −pt
+pump,σ(ij)
+
++ ρ
+2
+
+βt
+ij −pt
+pump,σ(ij)
+2
+⎞
+⎠
+(53)
+where νt
+ij is the dual variable associated with the consensus-
+enforcing constraint (52c), and ρ > 0 is an given parameter.
+Leveraging the decomposability of (53), the proposed
+ADMM-based algorithm is summarized in Algorithm 3,
+wherein k is the iteration index.
+Each iteration of the procedure described in Algorithm 3
+consists of two main steps. In step [S1], power and water oper-
+ators solve two local subproblems to update variables {vt(k +
+1), pt
+r(k + 1), qt
+r(k + 1), pt
+pump(k + 1)}T
+t=1
+and
+{Qt(k +
+1), ht(k + 1), βt(k + 1)}T
+t=1, respectively. The subproblem
+solved by the power network operator coincides with an ac
+optimal power ﬂow, with the cost augmented by the consensus-
+enforcing regularization term 	T
+t=1
+	
+m∈σ(P)(−νt
+mpt
+pump,m +
+ρ
+2 (βt
+m(k) −pt
+pump,m)2). The problem solved by the water
+system operator is an optimal water ﬂow [18], augmented
+with the regularization term 	T
+t=1
+	
+ij∈P(νt
+ijβt
+ij + ρ
+2 (βt
+ij −
+pt
+pump,σ(ij)(k))2). After solving the two problems, the water
+and power operators exchange the variables {pt
+pump,m(k + 1)}
+and {βt
+m(k + 1)} and they locally perform the dual step in [S2].
+TABLE I
+JUNCTIONS DETAILS
+Junction
+Elevation (m)
+Minimum Head Pressure (m)
+1
+6
+0
+2
+33
+0
+3
+1.5
+35
+4
+−8
+40
+5
+33
+40
+6
+8
+35
+7
+4
+40
+The algorithm terminates when the norm of the difference be-
+tween two consecutive restriction points is less than ϵ. Once the
+algorithm terminates, it holds that βt
+ij = pt
+pump,σ(ij), i.e., the two
+systems agree on the power consumed by the pumps.
+VII. EXPERIMENTAL RESULTS
+In this section, the proposed approach is tested in a setting
+where the IEEE 13-node test feeder is coupled with a municipal
+water distribution network [36]. The OWPF is solved using the
+proposed centralized and the distributed solvers. The MATLAB-
+based optimization package YALMIP [41] is used along with
+the interior-point solver SeDuMi [42]. The centralized solver
+initializes the voltage with the ﬂat voltage proﬁle; the parameter
+ϵ is set to 10−5.
+The water network is shown in Fig. 1, and it is a modiﬁed
+version of the ones described in [36]. It consists of seven junc-
+tions, two reservoirs, and a tank, and it features ﬁve pipes, two
+pressure-reducing valves, and three pumps. The elevation of all
+junctions and the minimum allowable head pressure are given
+in Table I. The elevation of the water reservoirs at nodes 8 and
+9 are −2.5 m and 5 m, respectively. The water demands over
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:47:59 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 9 =====
+ZAMZAM et al.: OPTIMAL WATER–POWER FLOW-PROBLEM
+45
+Fig. 3.
+Water demand at the junctions with time.
+the optimization time at junctions 3, 4, 5, 6, and 7 are shown in
+Fig. 3. The tank has an area of 490.87 m2 and maximum height
+of 30 m. The initial height of the water in the tank is 10 m. As
+an example of application, the optimization problem is solved
+over an interval of 12 h (from 6 A.M. to 6 P.M.), with intervals
+of 30 min. The regularization term of the water cost function is
+chosen to be the Frobenius norm of the power consumption of
+the pumps over the optimization period with a weight of 10−3.
+The pumping stations are connected to the IEEE 13-node
+distribution test feeder, which is shown in Fig. 2. In particular,
+pump 8 →1 is connected to node 633 of the feeder, pump
+9 →2 to node 645, and pump 4 →5 to node 684. A single-
+phase model of the distribution feeder is considered, wherein
+PV inverters are assumed to be located at the nodes 634, 646,
+675, 611, and 652. Because of the high PV penetration, the
+system is likely to experience overvoltage challenges. In this
+case, curtailment of the active power at the PV units is necessary
+to maintain voltage magnitudes within prescribed limits. The
+prices of electricity (utilized in the cost function for the water
+network and to discourage curtailment from PV systems) are
+obtained from the Midcontinent Independent System Operator2
+for June, 20, 2017. The regularization term of the curtailment
+cost function is chosen to be a weighted Frobenius norm of the
+active power curtailed during the optimization period with a
+weight of 10−3.
+The OWPF strategy is compared with the decoupled case,
+where 1) water system operator solves an optimal ﬂow problem
+to minimize the power consumption based on the electricity
+prices [18]; and 2) the powers consumed by the water pumps
+are then used an inputs to the ac optimal power ﬂow problem
+(i.e., they are uncontrollable loads) solved by the power distribu-
+tion operator, where the power curtailment from the PV systems
+is minimized along with the discrepancy from a given setpoint
+for the power at the substation [35]. Table II summarizes the
+achieved costs in the two cases. The total cost across the two
+systems is signiﬁcantly lower in the OWPF case. It is clear that
+a coupled optimization approach enhances ﬂexibility, which re-
+duces the total cost compared with the decoupled optimization
+strategy. The operating cost of the water system is increased, and
+an increased amount of water in the tank at the end of the 12-h
+2Available at: https://www.misoenergy.org
+TABLE II
+RESULTS OF OWPF FORMULATION AND THE DECOUPLED APPROACH
+Cost
+OWPF
+Decoupled Solver
+Water cost
+460.26
+268.47
+Curtailment cost
+769.30
+1506.17
+Substation cost
+170.11
+23.94
+Total cost
+1399.67
+1798.58
+Fig. 4.
+OWPF approach solution.
+Fig. 5.
+Decoupled approach solution.
+optimization slot is observed; this calls for a systematic payment
+to the water system operator for providing services—an inter-
+esting future research topic. On the other hand, the cost of PV
+power curtailment is almost halved, thus enabling a signiﬁcantly
+higher utilization of renewable-based power. Fig. 4 illustrates
+the power proﬁles using OWPF, whereas Fig. 5 shows the same
+proﬁles for the decoupled approach.
+Finally, the convergence characteristics of the proposed dis-
+tributed algorithms are demonstrated using the same power and
+water networks. Each network operator initializes its local vari-
+ables by optimizing a local operational cost without consider-
+ing the other network constraints (i.e., the decoupled solution).
+Then, the distributed algorithm is used to reach a consensus on
+the powers consumed by the water pumps. The value of the
+parameter ρ is chosen to be 106. Fig. 6 shows the cost of op-
+erating the pumps at each local solver per each iteration. The
+discrepancy between the variables βt
+ij and pt
+σ(ij) is shown in
+Fig. 7 by considering the Frobenius norm square measure of the
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:47:59 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 10 =====
+46
+IEEE TRANSACTIONS ON CONTROL OF NETWORK SYSTEMS, VOL. 6, NO. 1, MARCH 2019
+Fig. 6.
+Operational cost of the water network by each system.
+Fig. 7.
+Convergence of the distributed solver.
+difference between the two quantities in per unit. After approx-
+imately 50 iterations, the consensus error is lower than 1%.
+VIII. CONCLUSION
+This paper presented an OWPF problem to optimize the use
+of controllable assets across power and water systems while
+accounting for the couplings between the two infrastructures.
+Although the physics governing the operation of the two sys-
+tems and coupling constraints lead to a nonconvex problem,
+an FPP-SCA approach was proposed to identify feasible and
+optimal solutions. A distributed solver based on the ADMM
+was developed to enable water and power operators to pursue
+individual objectives while respecting the couplings between
+the two networks. The merits of the proposed approach were
+demonstrated for the case of a distribution feeder coupled with
+a municipal water distribution network. Future efforts will look
+at incorporating pump selection strategies into the OWPF, as
+well as the formulation of stochastic OWPF problems to ac-
+count for errors in the forecasts of power and water demands as
+well as powers available from renewable-based DERs.
+REFERENCES
+[1] M. H. Albadi and E. El-Saadany, “A summary of demand response in
+electricity markets,” Elect. Power Syst. Res., vol. 78, no. 11, pp. 1989–
+1996, 2008.
+[2] P. Siano, “Demand response and smart grid—A survey,” Renew. Sustain.
+Energy Rev., vol. 30, pp. 461–478, 2014.
+[3] G. Marks, E. Wilcox, D. Olsen, and S. Goli, “Opportunities for demand
+response in California agricultural irrigation—A scoping study,” iP Solu-
+tions Corp. and Lawrence Berkeley Nat. Lab., Berkeley, CA, USA, Tech.
+Rep. no. LBNL-6108E, Jan. 2013.
+[4] E. A. Byers, J. W. Hall, and J. M. Amezaga, “Electricity generation
+and cooling water use: UK pathways to 2050,” Global Environ. Change,
+vol. 25, pp. 16–30, 2014.
+[5] J. Colman, “The effect of ambient air and water temperature on power
+plant efﬁciency,” Duke Univ. Libraries, Durham, NC, USA, 2013.
+[6] B. Wang, Y. Zhou, P. Mancarella, and M. Panteli, “Assessing the impacts
+of extreme temperatures and water availability on the resilience of the
+GB power system,” in Proc. IEEE Int. Conf. Power Syst. Technol., 2016,
+pp. 1–6.
+[7] D. Denig-Chakroff, “Reducing electricity used for water production:
+Questions state commissions should ask regulated utilities,” Water Res.
+Policy, Nat. Regul. Res. Inst., p. 5, Jun. 2008.
+[8] P. W. Jowitt and G. Germanopoulos, “Optimal pump scheduling in water-
+supply networks,” J. Water Resour. Plan. Manage., vol. 118, no. 4, pp. 406–
+422, 1992.
+[9] C. Giacomello, Z. Kapelan, and M. Nicolini, “Fast hybrid optimization
+method for effective pump scheduling,” J. Water Resour. Plan. Manage.,
+vol. 139, no. 2, pp. 175–183, 2012.
+[10] D. Verleye and E.-H. Aghezzaf, “Optimising production and distribution
+operations in large water supply networks: A piecewise linear optimisation
+approach,” Int. J. Prod. Res., vol. 51, no. 23–24, pp. 7170–7189, 2013.
+[11] H. D. Sherali, S. Subramanian, and G. Loganathan, “Effective relaxations
+and partitioning schemes for solving water distribution network design
+problems to global optimality,” J. Global Optim., vol. 19, no. 1, pp. 1–26,
+2001.
+[12] J. Burgschweiger, B. Gn¨adig, and M. C. Steinbach, “Optimization models
+for operative planning in drinking water networks,” Optim. Eng., vol. 10,
+no. 1, pp. 43–73, 2009.
+[13] B. Ulanicki, J. Kahler, and H. See, “Dynamic optimization approach for
+solving an optimal scheduling problem in water distribution systems,” J.
+Water Resource Plan. Manage., vol. 133, no. 1, pp. 23–32, 2007.
+[14] L. M. Brion and L. W. Mays, “Methodology for optimal operation of
+pumping stations in water distribution systems,” J. Hydraul. Eng., vol. 117,
+no. 11, pp. 1551–1569, 1991.
+[15] B. Ghaddar, J. Naoum-Sawaya, A. Kishimoto, N. Taheri, and B. Eck, “A
+Lagrangian decomposition approach for the pump scheduling problem in
+water networks,” Eur. J. Oper. Res., vol. 241, no. 2, pp. 490–501, 2015.
+[16] G. Yu, R. Powell, and M. Sterling, “Optimized pump scheduling in water
+distribution systems,” J. Optim. Theory Appl., vol. 83, no. 3, pp. 463–488,
+1994.
+[17] A. Gleixner, H. Held, W. Huang, and S. Vigerske, “Towards globally
+optimal operation of water supply networks,” Numer. Algebra, Control
+Optim., vol. 2, no. 4, pp. 695–711, 2012.
+[18] D. Fooladivanda and J. A. Taylor, “Energy-optimal pump scheduling and
+water ﬂow,” IEEE Trans. Control Netw. Syst., to be published.
+[19] K. Oikonomou, M. Parvania, and S. Burian, “Integrating water distribution
+energy ﬂexibility in power systems operation,” presented at the IEEE
+Power and Energy Society Gen. Meeting, Chicago, IL, USA, 2017.
+[20] B. Bar´an, C. von L¨ucken, and A. Sotelo, “Multi-objective pump scheduling
+optimisation using evolutionary strategies,” Adv. Eng. Softw., vol. 36, no. 1,
+pp. 39–47, 2005.
+[21] J.-Y. Wang, T.-P. Chang, and J.-S. Chen, “An enhanced genetic algorithm
+for bi-objective pump scheduling in water supply,” Expert Syst. Appl.,
+vol. 36, no. 7, pp. 10249–10258, 2009.
+[22] U. Zessler and U. Shamir, “Optimal operation of water distribution syste-
+ms,” J. Water Resource Plan. Manag., vol. 115, no. 6, pp. 735–752, 1989.
+[23] V. Nitivattananon, E. C. Sadowski, and R. G. Quimpo, “Optimization
+of water supply system operation,” J. Water Resource Plan. Manage.,
+vol. 122, no. 5, pp. 374–384, 1996.
+[24] K. E. Lansey and K. Awu, “Optimal pump operations considering pump
+switches,” J. Water Resource Plan. Manage., vol. 120, no. 1, pp. 17–35,
+1994.
+[25] E. Dall’Anese, P. Mancarella, and A. Monti, “Unlocking ﬂexibility: In-
+tegrated optimization and control of multi-energy systems,” IEEE Power
+Energy Mag., vol. 15, no. 1, pp. 43–52, Jan. 2017.
+[26] O. Mehanna, K. Huang, B. Gopalakrishnan, A. Konar, and N. D.
+Sidiropoulos, “Feasible point pursuit and successive approximation of
+non-convex QCQPs,” IEEE Signal Process. Lett., vol. 22, no. 7, pp. 804–
+808, Jul. 2015.
+[27] A. S. Zamzam, N. D. Sidiropoulos, and E. Dall’Anese, “Beyond relaxation
+and Newton-Raphson: Solving AC OPF for multi-phase systems with
+renewables,” IEEE Trans. Smart Grid, to be published.
+[28] S. Boyd, N. Parikh, E. Chu, B. Peleato, and J. Eckstein, “Distributed
+optimization and statistical learning via the alternating direction method
+of multipliers,” Found. Trends Mach. Learn., vol. 3, no. 1, pp. 1–122,
+2011.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:47:59 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 11 =====
+ZAMZAM et al.: OPTIMAL WATER–POWER FLOW-PROBLEM
+47
+[29] R. A. Jabr, “Radial distribution load ﬂow using conic programming,” IEEE
+Trans. Power Syst., vol. 21, no. 3, pp. 1458–1459, Aug. 2006.
+[30] D. K. Molzahn, J. T. Holzer, B. C. Lesieutre, and C. L. DeMarco, “Imple-
+mentation of a large-scale optimal power ﬂow solver based on semideﬁnite
+programming,” IEEE Trans. Power Syst., vol. 28, no. 4, pp. 3987–3998,
+Nov. 2013.
+[31] E. Dall’Anese, H. Zhu, and G. B. Giannakis, “Distributed optimal power
+ﬂow for smart microgrids,” IEEE Trans. Smart Grid, vol. 4, no. 3,
+pp. 1464–1475, Sep. 2013.
+[32] S. H. Low, “Convex relaxation of optimal power ﬂow Part I: Formulations
+and equivalence,” IEEE Trans. Control Netw. Syst., vol. 1, no. 1, pp. 15–27,
+Mar. 2014.
+[33] B. A. Robbins, H. Zhu, and A. D. Dom´ınguez-Garca, “Optimal tap setting
+of voltage regulation transformers in unbalanced distribution systems,”
+IEEE Trans. Power Syst., vol. 31, no. 1, pp. 256–267, Jan. 2016.
+[34] L. Gan and S. H. Low, “Convex relaxations and linear approximation for
+optimal power ﬂow in multiphase radial networks,” in Proc. Power Syst.
+Comput. Conf., Wroclaw, Poland, Aug. 2014.
+[35] E. Dall’Anese, S. Guggilam, A. Simonetto, Y. Chen, and S. Dhople,
+“Optimal regulation of virtual power plants,” IEEE Trans. Power Syst.,
+to be published.
+[36] D. Cohen, U. Shamir, and G. Sinai, “Optimal operation of multi-quality
+water supply systems-II: The QH model,” Eng. Optim., vol. 32, no. 6,
+pp. 687–719, 2000.
+[37] B. Coulbeck, C. H. Orr, and A. E. Cunningham, “Ginas 5 reference man-
+ual,” Dept. Electron. Elect. Eng., De Montford Univ., Leicester, U.K., Res.
+rep. no. 56, 1991.
+[38] B. Ulanicki, J. Kahler, and B. Coulbeck, “Modeling the efﬁciency and
+power characteristics of a pump group,” J. Water Resource Plan. Manage.,
+vol. 134, no. 1, pp. 88–93, 2008.
+[39] N. Li, L. Chen, and S. H. Low, “Optimal demand response based on utility
+maximization in power networks,” in Proc. IEEE Power Energy Soc. Gen.
+Meeting, 2011, pp. 1–8.
+[40] M. Razaviyayn, “Successive convex approximation: Analysis and appli-
+cations,” Ph.D. dissertation, Elect. Comput. Eng. Dept., Univ. Minnesota,
+Minneapolis, MN, USA, 2014.
+[41] J. L¨ofberg, “YALMIP: A toolbox for modeling and optimization in MAT-
+LAB,” in Proc. IEEE Int. Conf. Robot. Autom., Taipei, Taiwan, Sep. 2004,
+pp. 284–289.
+[42] J. F. Sturm, “Using SeDuMi 1.02, a MATLAB toolbox for optimization
+over symmetric cones,” Optim. Meth. Softw., vol. 11, no. 1–4, pp. 625–653,
+Jan. 1999.
+Ahmed S. Zamzam (S’14) received the B.Sc.
+(with highest Hons.) degree in electronics and
+communications engineering from Cairo Univer-
+sity, Giza, Egypt, in 2013, and the M.Sc. de-
+gree in wireless technologies from Nile Univer-
+sity, Giza, Egypt, in 2015, and has been working
+toward the Ph.D. degree in electrical and com-
+puter engineering at the University of Minnesota,
+Minneapolis, MN, USA.
+His research interests include power sys-
+tems monitoring and operations, optimization,
+and signal processing.
+Emiliano Dall’Anese (S’08–M’11) received the
+Ph.D. degree in information engineering from the
+Department of Information Engineering, Univer-
+sity of Padova, Padua, Italy, in 2011.
+From 2009 to 2010, he was a Visiting Scholar
+with the Department of Electrical and Com-
+puter Engineering, University of Minnesota, Min-
+neapolis, MN, USA. From 2011 to 2014, he was
+a Postdoctoral Associate with the Department
+of Electrical and Computer Engineering, Univer-
+sity of Minnesota, within the group directed by
+Prof. G. B. Giannakis. Since 2014, he has been a Senior Researcher
+with the National Renewable Energy Laboratory, Golden, CO, USA. His
+research interests include the broad areas of optimization, control, and
+signal processing. The objective of current research efforts is to advance
+theory, algorithms, and analysis for optimization, control, and monitoring
+of large-scale cyber-physical systems. Application domains include, but
+are not limited to, large-scale power systems, water networks, and com-
+munication systems.
+Changhong Zhao (S’12–M’15) received the
+B.Eng. degree in automation from Tsinghua Uni-
+versity, Beijing, China, in 2010, and the Ph.D. de-
+gree in electrical engineering from the California
+Institute of Technology, Pasadena, CA, USA, in
+2016.
+He is a Researcher with the National Re-
+newable Energy Laboratory, Golden, CO, USA.
+His research interests include distributed control
+of networked systems, power system dynamics
+and stability, and optimization of power and mul-
+tienergy systems.
+Dr. Zhao was the recipient of the Caltech Demetriades-Tsafka-
+Kokkalis Ph.D. Thesis Prize, the Caltech Charles Wilts Ph.D. Thesis
+Prize, and the 2015 Qualcomm Innovation Fellowship Finalist Award.
+Josh A. Taylor (M’11) received the B.S. degree
+from Carnegie Mellon University, Pittsburgh, PA,
+USA, in 2006, and the S.M. and Ph.D. degrees
+from the Massachusetts Institute of Technology,
+Cambridge, MA, USA, in 2008 and 2011, all in
+mechanical engineering.
+He is an Assistant Professor with the
+Department of Electrical and Computer En-
+gineering, University of Toronto, Toronto, ON,
+Canada. From 2011 to 2012, he was a Postdoc-
+toral Researcher with the Department of Electri-
+cal Engineering and Computer Sciences, University of California, Berke-
+ley, Berkeley, CA, USA. His research interest focuses on control and
+optimization of power systems.
+Nicholas D. Sidiropoulos (F’09) received the
+Diploma degree in electrical engineering from
+Aristotelian University of Thessaloniki, Thessa-
+loniki, Greece, in 1988, and the M.S. and Ph.D.
+degrees in electrical engineering from the Uni-
+versity of Maryland-College Park, College Park,
+MD, USA, in 1990, and 1992, respectively.
+He has served on the faculty of the Univer-
+sity of Virginia (UVA), Charlottesville, VA, USA;
+University of Minnesota, Minneapolis, MN, USA;
+and the Technical University of Crete, Chania,
+Greece. He is currently the Chair of Electrical & Computer Engineering
+with UVA. His research interests include signal processing, communi-
+cations, optimization, tensor decomposition, and factor analysis, with
+applications in machine learning and communications.
+Dr. Sidiropoulos was the recipient of the NSF/CAREER Award in
+1998; the IEEE Signal Processing Society (SPS) Best Paper Award in
+2001, 2007, and 2011; the 2010 IEEE Signal Processing Society Merito-
+rious Service Award; and the 2013 Distinguished Alumni Award from the
+Department of Electrical and Computer Engineering, University of Mary-
+land. He served as an IEEE SPS Distinguished Lecturer (2008–2009),
+and currently serves as the Vice President—Membership of IEEE SPS.
+He is a Fellow of EURASIP (2014).
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:47:59 UTC from IEEE Xplore.  Restrictions apply. 

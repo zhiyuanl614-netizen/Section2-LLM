@@ -1,0 +1,2112 @@
+Contents lists available at ScienceDirect 
+Electrical Power and Energy Systems 
+journal homepage: www.elsevier.com/locate/ijepes 
+Optimal energy management of a renewable microgrid integrating water 
+supply systems 
+Quan Sui, Fanrong Wei, Xiangning Lin, Zhengtian Li⁎ 
+State Key Laboratory of Advanced Electromagnetic Engineering and Technology, Wuhan, Hubei 430074, China  
+A R T I C L E I N F O  
+Keywords: 
+Microgrid 
+Water supply system 
+Water supply safety 
+Two-stage dispatching strategy 
+A B S T R A C T  
+The interdependence between the power grid and water supply system (WSS) provides opportunities for energy 
+conservation. However, the existing water supply flexibility has not been fully developed, resulting in an un­
+satisfactory effect. To address the problem, this paper proposes an optimal energy management strategy for a 
+renewable microgrid (MG) integrating WSSs. First, a novel supply model that evaluates the interdependence 
+between the large WSS and several islanded sub-systems, hydraulic stability, and desalination characteristic is 
+established, in order to reduce the hydraulic coupling constraints and ensure water supply safety. To achieve an 
+optimal performance of the MG integrating WSSs, a novel two-stage dispatching method is designed, where the 
+day-head decisions fully consider the real-time power fluctuation, and the real-time stage corrects renewable 
+generation deviation and supports external grid. Additionally, a two-stage algorithm is proposed to efficiently 
+solve the scheduling problem. Simulation studies on a MG integrating WSSs indicate the proposed energy 
+management strategy can reduce the water supply loss by 5.2%, and improve the MG economy by 19.5%, while 
+supporting the external grid (EG).   
+1. Introduction 
+Water supply systems (WSSs) are responsible for seawater desali­
+nation, and living water distribution in the offshore island commu­
+nities. It is indicated that a lot of electricity is consumed by WSSs in 
+many offshore microgrids (MGs) [1,2]. Due to the presence of water 
+tanks (WTs) or reservoirs, water supply loads (such as desalination and 
+pumping loads) can be flexibly adjusted [3]. Therefore, if properly 
+managed, it can not only significantly reduce the loss of water supply, 
+but also greatly improve the operation economy of MG. 
+1.1. Literature review 
+There have been many research efforts on optimizing water supply 
+for economic or security purposes. For example, [4,5] develop a La­
+grangian relaxation-based algorithm for a collaborative water supply 
+chain network design problem that coordinates the coordinate the 
+water supply and wastewater collection. Ref. [6] presents a water re­
+source and distribution system design optimization model with many 
+objectives including minimizing operating costs while maximizing en­
+gineering performance. Ref. [7] discusses an energy efficiency evalua­
+tion measure for WSS designs and a mathematical model for optimizing 
+water pump (WP) operation through the arrangement of WTs in a 
+building. Mitigation and control strategies are studied in [8] to mini­
+mize the energy consumption of the desalination device (DD) con­
+sidering environmental factors. A robust optimization framework for 
+urban bulk WSSs is proposed in [9] to explore the trade-off between 
+efficiency and sensitivity to different climate change scenarios. A two- 
+stage stochastic model is presented in [10,11] to reduce the energy 
+consumption of WPs considering water demand and rainfall un­
+certainties. A price-dependent load management method is used in [12] 
+to optimize the municipal water supply and wastewater treatment. 
+Likely, an optimal water distribution model is developed in [13] to 
+optimize the WPs according to the dynamic electricity price. 
+Although a lot of work has been done in the development of water 
+supply flexibility, due to pipe hydraulic coupling constraints, the WPs 
+and WTs still cannot be fully regulated, resulting in serious water dis­
+tribution loss. Additionally, due to the lack of a feasible power-output 
+model reference, DDs generally operate at rated power to ensure the 
+freshwater supply, which causes a waste of power regulation capacity. 
+As a further study, the energy-water management in cost saving and 
+consumption reduction has attracted researchers' interest [14]. A 
+system-based framework is proposed in [15] to synthesize the inter­
+woven connections between energy consumption and water use in a 
+city. A bond graph of system modeling language is used in [16] to 
+analyze the interdependence between the power grid and WSS. A fuzzy 
+https://doi.org/10.1016/j.ijepes.2020.106445 
+Received 9 April 2020; Received in revised form 5 July 2020; Accepted 8 August 2020    
+⁎ Corresponding author. 
+E-mail address: 453874933@qq.com (Z. Li). 
+Electrical Power and Energy Systems 125 (2021) 106445
+Available online 17 August 2020
+0142-0615/ © 2020 Elsevier Ltd. All rights reserved.
+T
+
+decision based energy dispatch for offshore industrial MGs is designed 
+in [17] to coordinate desalination process and multi-stage DGs. A se­
+curity constrained unit commitment problem that optimizes the com­
+mitment and schedule of power generators and DDs is formulated in  
+[18]. A novel scheduling strategy that coordinates the DD and batteries 
+is presented in [19]. Ref. [20] proposes a network-constrained unit 
+commitment model that integrates and optimizes the energy flexibility 
+of water distribution systems in the day-ahead operation of power 
+systems. Ref. [21] presents a real-time rolling horizon energy man­
+agement method for stand-alone wind-powered-desalination MGs to 
+maximize wind energy utilization and minimize diesel generation. Ref.  
+[22] discusses an optimal two-step demand response scheduling 
+framework where the first step optimizes the WPs and WTs for mini­
+mizing the water procurement cost, and the second step optimizes the 
+demand response for maximizing the service profit. Ref. [23] designs a 
+water-electricity combined supply method for building-integrated- 
+photovoltaics communities to optimize the operational costs and power 
+fluctuation on multiple time scales. An optimal pump demand response 
+scheduling problem is formulated as a mixed-integer optimization 
+problem and solved using a branch and bound algorithm in [24]. A new 
+mathematical programming approach is proposed [25] for WP sche­
+duling in a common class of branched networks with one pumping 
+station raising water to elevated tanks. We can learn much from the 
+above literature. 
+Nomenclature 
+Abbreviations 
+MG 
+Microgrid 
+WSS 
+water supply system 
+DE 
+desalination device 
+EG 
+external grid 
+WP 
+water pump 
+WT 
+water tank 
+MPC 
+model predictive control 
+PV 
+Photovoltaic 
+MILP 
+mixed-integer linear programming 
+Indices 
+t, j 
+index for time 
+DD 
+index for desalination device 
+WP 
+index for WP 
+PV 
+index for PV 
+Wind 
+index for wind 
+Re 
+index for renewable energy 
+R 
+index for water supply 
+D 
+index for water demand 
+In 
+index for the purchasing power from EG 
+Out 
+index for the sale power to EG 
+Load 
+index for load 
+M 
+index for the MPC 
+T 
+index for the dispatching cycle 
+exp 
+index for the expectation 
+Λ 
+Day-head decision 
+K 
+number of breakpoint k 
+iter 
+iteration number 
+Variables 
+It
+split control matrix of water supply systems 
+Zt
+nodal correlation matrix after system splitting 
+Qt
+R
+vector of water supply from the sources 
+Qt
+D
+vector of the water demand 
+Qt
+vector of water flow of pipes 
+Lt
+vector of the flow from or to WTs 
+Vt
+vector of the water storage 
+Vt
+1
+vector of the water storage of WTs 
+Vt
+2
+vector of the water storage of reservoirs 
+Ht
+vector of nodal hydraulic pressure heads 
+Pt
+DD
+vector of desalination power 
+Qt
+DD
+vector of desalination outputs 
+t
+k
+vector of desalination model linearization 
+t
+k
+vector of desalination model linearization 
+Pt
+WP
+vector of WP power 
+t
+vector of WP speeds 
+Ptj
+in
+MG power purchased from the EG 
+Ptj
+out
+MG power sold to the EG 
+ut
+in
+MG electricity purchase flag 
+ut
+out
+MG electricity sale flag 
+Fd
+MG operational cost 
+Parameters 
+A
+nodal correlation matrix before system splitting 
+node-WT incidence matrix 
+B
+node-WP incidence matrix 
+Q
+vector of minimum pipe water flows 
+Q¯
+vector of maximum pipe water flows 
+G
+matrix of the pipe resistance parameters 
+H
+vector of minimum nodal pressure heads 
+H¯
+vector of maximum nodal pressure heads 
+H
+vector of up ramp limits of nodal pressure heads 
+H¯
+vector of down ramp limits of nodal pressure heads 
+L
+vector of minimum WT flows 
+L¯
+vector of maximum WT flows 
+QR
+vector of minimum water supply from the sources 
+Q¯R
+vector of maximum water supply from the sources 
+V
+vector of minimum water storage 
+V¯
+vector of maximum water storage 
+PDDN
+vector of DDs’ rated power 
+PDD
+vector of down ramp limits of desalination power 
+P¯DD
+vector of up ramp limits of desalination power 
+QDD k
+,
+vector of desalination output at discrete power 
+PWPN
+vector of WPs’ rated power 
+PWP
+vector of down ramp limits of WP power 
+P¯WP
+vector of down ramp limits of WP power 
+a, b, c, d WP parameters 
+( )
+unit sign function 
+Ptj
+PV
+PV power at hour t, minute j 
+Pm
+PV
+maximum PV output 
+,
+1
+1
+PV output error parameter 
+Ptj
+Wind
+wind power at hour t, minute j 
+Pm
+Wind
+maximum wind generation 
+,
+2
+2
+wind generation error parameter 
+pt
+in
+electricity purchase price 
+pt
+out
+electricity sale price 
+P¯GD
+maximum exchange power between the EG and MG 
+Ptj
+Load
+electric load 
+Vexp
+expected water storage at the end 
+Ptj
+Re
+forecasting error of renewable energy generation 
+M,E,Y
+coefficient matrixes 
+X
+the matrix of variables xt
+iter_m 
+maximum iterative number 
+ε 
+allowed error   
+Q. Sui, et al.   
+Electrical Power and Energy Systems 125 (2021) 106445
+2
+
+However, the frequent use of WPs to smooth electric power will 
+cause water pressure fluctuations on the minute-time scale, resulting in 
+a bad user experience, while without a feasible model reference, direct 
+regulation of desalination load will cause desalination loss. Even worse, 
+the classic day-head dispatching model cannot consider the real-time 
+electric and hydraulic power fluctuation on the minute-time scale. 
+Therefore, following the day-head decisions, both the DDs and WPs 
+may not smooth the instantaneous renewable generation variation due 
+to power ramp constraints, and the real-time water pressure fluctuation 
+may exceed the allowance. Additionally, regarding the MG connected 
+to the external grid (EG), the WSSs can not only respond to the local 
+MG, but also support EG (reduce the demand for peak and frequency 
+modulation), which has not been discussed. 
+1.2. Contribution 
+It can be seen from the literature review that the water supply loads 
+are not well studied on flexibility development and energy saving. 
+Therefore, a novel water-energy management strategy needs to be de­
+signed. 
+Note that there are two main obstacles to solve the above problem. 
+Firstly, a novel water supply model needs to be proposed, in order to 
+release the regulation ability. Secondly, a novel dispatching method 
+needs to be presented to ensure the performance of the MG integrating 
+WSSs. 
+To tackle the first challenge, we propose that by controlling pipe 
+valves, the large WSS can be split into several islanded sub-systems to 
+reduce nodal coupling constraints. The nodal hydraulic relationship 
+before and after the system splitting is modelled. Also, the hydraulic 
+stability and desalination characteristic are analyzed to ensure water 
+supply safety. To tackle the second challenge, we propose a novel two- 
+stage dispatching method. The day-head stage fully considers the hy­
+draulic fluctuation, and instantaneous load regulation difficulty due to 
+the real-time power fluctuation, and the real-time stage corrects re­
+newable generation deviation and supports EG. Hence, the main con­
+tributions of this paper are summarized below: 
+(1) A novel water supply model is proposed, where the inter­
+dependence between the large WSS and several islanded sub-sys­
+tems, and the hydraulic stability and desalination characteristic are 
+analyzed.  
+(2) A novel two-stage MG dispatching strategy is designed, where the 
+day-head decisions fully consider the electric and hydraulic fluc­
+tuation using Latin hypercube sampling method, while the real-time 
+stage corrects renewable generation deviation and supports EG.  
+(3) A feasible two-stage algorithm is designed to solve the optimization 
+problem efficiently. 
+(4) Using the realistic demand and renewable generation, the effec­
+tiveness and benefits of the proposed energy management strategy 
+are illustrated. 
+The rest of this paper is organized as follows: Materials and Methods 
+are presented in Section 2. Experimental results and discussion are in­
+troduced in Section 3. The conclusion is drawn in Section 4. 
+2. Materials and methods 
+Fig. 1 shows the typical structure of a renewable MG integrating 
+WSSs. Due to the existence of tanks and reservoirs, the water supply 
+load can respond to the MG and EG demand while satisfying the hy­
+draulic usage demand. To achieve an optimal performance of the MG 
+integrating WSSs, a novel water-energy management strategy is pro­
+posed in this paper. 
+2.1. Novel water supply model 
+Fig. 2 shows a novel water supply mode. The WSS consists of a DD, 
+reservoirs, WPs, WTs, water pipes, and water usage loads. Living water 
+is produced by the DD and stored in the reservoir. WPs can distribute 
+water in the source to the hydraulic load, and WTs are used to regulate 
+the pipe flow by storing or releasing water. According to the flow law, 
+the hydraulic factors (such as pressure heads) of adjacent nodes are 
+connected to each other. To reduce the hydraulic coupling constraints, 
+the large WSS can be split into several islanded sub-systems by con­
+trolling pipe valves. The detailed model is presented as follows:  
+1) Large system split model 
+The split of the WSS will impact the nodal correlation matrix and 
+water flow constraints, as follows: 
+=
+Z
+I A
+t
+t
+(1)  
+=
++
+Q
+Q
+Z Q
+G L
+t
+R
+t
+D
+t
+t
+T
+t
+(2)  
+BQ
+0
+t
+(3)  
+Q
+Q
+Q¯
+t
+(4) 
+where (1) expresses the nodal correlation relationship before and after 
+the large system splitting, (2) denotes the pipe flow balance constraint, 
+(3) represents the unidirectional flow limit for the pipeline where the 
+WP is located, and (4) indicates the allowed water flow range. Note that 
+the nodal correlation matrixes of the WSS in Fig. 2 can be presented as 
+follows: 
+=
+×
+I
+I
+I
+1
+1
+0
+0
+0
+0
+1
+1
+0
+0
+0
+0
+0
+0
+0
+0
+1
+1
+1 0 0 0
+0 1 0 0
+0 0
+0
+0 0 0 1
+1
+1
+0
+0
+0
+0
+1
+1
+0
+0
+0
+0
+1
+1
+0
+0
+0
+0
+1
+1
+t
+t
+Z
+t
+I
+A
+3
+3
+3
+t
+t
+2) Hydraulic stability model 
+Excessive demand response of the WSS may damage the water usage 
+experience. Therefore, the hydraulic stability factors such as pressure 
+fluctuation must be considered while carrying out the demand re­
+sponse. 
+=
+V
+H
+t
+t
+(5)  
+=
+Z H
+G
+Q
+Q
+(
+)|
+|
+t
+t
+t
+t 1.852
+(6)  
+H
+H
+H¯
+t
+(7)  
+H
+H
+H
+H¯
+t
+t
+1
+(8) 
+where (5) denotes the water pressure of the tanks and reservoirs, (6) 
+expresses the pressure head loss due to pipe frictions [26,27], (7)–(8) 
+represent the allowed pressure head value and pressure fluctuation 
+range.  
+3) Energy storage model 
+The WT and reservoir can regulate the pipe flow by storing or 
+Fig. 1. Structure of a renewable MG integrating WSSs.  
+Q. Sui, et al.   
+Electrical Power and Energy Systems 125 (2021) 106445
+3
+
+releasing water, as follows: 
+L
+L
+L¯
+t
+(9)  
+=
++
+V
+V
+L
+t
+t
+t
+1
+1
+1
+(10)  
+Q
+Q
+Q¯
+R
+t
+R
+R
+(11)  
+=
++
+V
+V
+Q
+Q
+t
+t
+t
+DD
+t
+R
+2
+1
+2
+(12)  
+=
+V
+V
+V
+[
+,
+]
+t
+t
+t
+1
+2
+(13)  
+V
+V
+V¯
+t
+(14) 
+where the input/output flow and water storage variation constraints of 
+WTS are expressed in (9)–(10), the output flow and water storage 
+variation limits of water sources are represented in (11)–(12), the water 
+storage volumes are constrained to (13)–(14).  
+4) Controllable load model 
+Both the desalination and pumping loads of the WSS are controllable. 
+Their operational models are needed for energy management. The 
+power-output characteristic is modelled by analyzing the internal de­
+salination mechanism. To increase the readability, the detailed analyses 
+are depicted in Appendix, and Fig. 3 directly shows the result. Linear­
+ized techniques are used to mathematically depict the power-output 
+characteristic, as shown in (15)–(22). Note that the obtained desalina­
+tion characteristic is consistent with the experimental results on dis­
+crete conditions [28], implying the feasibility and correctness of the 
+derived model. 
+P
+P
+0
+t
+DD
+DDN
+(15)  
+P
+P
+P
+P¯
+DD
+t
+DD
+t
+DD
+DD
+1
+(16)  
+=
+=
+P
+k
+K P
+t
+DD
+k
+K
+DDN
+t
+k
+1
+(17)  
+=
+=
+Q
+Q
+t
+DD
+k
+K
+DD k
+t
+k
+1
+,
+(18)  
+=
+=
+1
+k
+K
+t
+k
+1
+1
+(19)  
+=
+=
+1
+k
+K
+t
+k
+1
+(20)  
++
+t
+k
+t
+k
+t
+k
+1
+(21)  
+0
+1
+t
+k
+(22) 
+where (15)–(16) denote the allowed desalination power and ramp rate 
+constraints, (17)–(18) express that the actual desalination power and 
+output are linear combinations of two adjacent fixed power and output 
+points with weights t
+k and 
++
+t
+k
+1, (19)–(22) limit the active adjacent 
+power points with binary variables t
+k. 
+Additionally, the WP model is presented as follows: 
+P
+P
+0
+t
+WP
+WPN
+(23)  
+P
+P
+P
+P¯
+WP
+t
+WP
+t
+WP
+WP
+1
+(24)  
+=
+P
+d
+e
+BQ
+( 1
+((1
+)
+))
+t
+WP
+t
+U
+U
+t
+t
+3
+(25)  
+=
+BZ H
+a
+b
+BQ
+( 1
+((1
+)
+) )
+t
+T
+t
+t
+U
+U
+t
+t c
+2
+(26) 
+where the WP power and ramp rate constraints are denoted in 
+(23)–(24), the relationships between the WP power, speed and driven 
+flow are represented in (25)–(26) [26,27]. Note that the nonlinear 
+formulas can be linearized according to [20,22]. 
+To summarize, the novel water supply model consisting of linear 
+constraints can increase the regulation flexibility and operational sta­
+bility. It can improve the demand response performance according to 
+the following dispatching strategy. 
+2.2. Two-stage dispatching strategy 
+To ensure the performance of the MG integrating WSSs, a novel two- 
+stage dispatching strategy is proposed, as observed in Fig. 4. Fully 
+considering the real-time electric and hydraulic fluctuation, the day- 
+head stage optimizes the WSS to minimize the MG operational cost, and 
+the real-time stage mitigates the MG renewable power fluctuation and 
+respond to the EG demand. We can see the WSS can not only satisfy the 
+MG demand, but also support the EG.  
+(1) Day-ahead dispatching stage 
+Based on an hour scheduling step, the classic day-head dispatching 
+model cannot consider the real-time power fluctuation. However, the 
+violent variation of renewable generation on the minute-time scale may 
+exceed the ramp ability of the controllable loads in (16) and (24). Also, 
+the hydraulic stability constraint of (8) may not be satisfied. To solve 
+the problem, a novel day-head model considering the real-time power 
+fluctuation is proposed, as follows: 
+First, the real-time power fluctuation is simulated in the day-head 
+stage using Latin hypercube sampling method. As we all know, the 
+hourly wind power Pt
+Wind and photovoltaic (PV) output Pt
+V can be pre­
+dicted in the day-head stage, and the power fluctuation law has been 
+studied, as shown in (27)–(28) [19,29]. Therefore, we can use Latin 
+hypercube sampling method to simulate the real-time power on the 
+minute-time scale. For example, the real-time power on a 2-min time 
+scale can be obtained if 30 points are sampled per hour. Define Ptj
+PV and 
+Ptj
+Wind denote the PV output and wind power on hour t, minute j. Note 
+that compared with Monte Carlo sampling [19], Latin hypercube 
+sampling can obtian more comprehensive power distribution, which 
+can better ensure load ramping and hydraulic stability. 
+=
+f P
+P
+B
+P
+P
+P
+P
+(
+)
+1
+(
+,
+)
+1
+t
+t
+t
+PV
+m
+PV
+1
+1
+PV
+m
+PV
+1
+PV
+m
+PV
+1
+1
+1
+(27)  
+=
+f P
+P
+B
+P
+P
+P
+P
+(
+)
+1
+(
+,
+)
+1
+t
+m
+t
+m
+t
+m
+Wind
+Wind
+2
+2
+Wind
+Wind
+1
+Wind
+Wind
+1
+2
+2
+(28)  
+The day-head dispatching problem can be presented as follows: 
+Fig. 2. Novel water supply mode.  
+Fig. 3. Desalination characteristic.  
+Q. Sui, et al.   
+Electrical Power and Energy Systems 125 (2021) 106445
+4
+
+=
+=
+F
+min
+P
+p
+P
+p
+:
+(
+·
+·
+)
+d
+t
+T
+j
+J
+tj
+in
+t
+in
+tj
+out
+t
+out
+1
+1
+(29)  
+P
+u
+P
+s.t
+0
+¯
+tj
+in
+t
+in
+GD
+(30)  
+P
+u
+P
+0
+¯
+tj
+out
+t
+out
+GD
+(31)  
++
+u
+u
+1
+t
+in
+t
+out
+(32)  
+=
+P
+P
+P
+P
+i j
+,
+tj
+in
+tj
+out
+ti
+in
+ti
+out
+(33)  
++
++
+=
++
++
+P
+P
+P
+P
+P
+P
+P
+tj
+tj
+tj
+in
+tj
+out
+tj
+tj
+DD
+tj
+PV
+Wind
+WP
+Load
+(34)  
+=
+V
+Vexp
+0
+(35) 
+where the objective is denoted in (31), the exchange power is con­
+strained to (30)–(33), the power balance is limited in (34), the energy 
+storage is constrained to (35).  
+(2) Real-time dispatching stage 
+In the real-time stage, the EG may have power demand for peak 
+shaving or frequency modulation. This demand can be reflected in the 
+real-time electricity price. By correcting the exchange power, the MG 
+integrating a WSS can provide power support for the EG. Based on the 
+above consideration, the model predictive control (MPC) method is 
+used to coordinate the MG energy arbitrage and EG power support si­
+multaneously. The detailed model is presented as follows: 
+=
++
+=
+F
+min
+P
+p
+P
+p
+:
+(
+·
+·
+)
+rd
+t
+t
+M
+j
+J
+in
+j
+in
+out
+j
+out
+1
+1
+(36)  
+=
++
++
+V
+V
+s.t.
+t
+M
+t
+M
+1
+1
+(37)  
+=
++
+P
+P
+P
+P
+P
+tj
+tj
+tj
+tj
+tj
+Re
+PV
+Wind
+PV
+Wind
+(38)  
++
+>
++
++
+<
++
+<
++
++
+>
+P
+P
+P
+P
+P
+if
+P
+P
+P
+P
+P
+P
+if
+P
+,
+0
+,
+0
+tj
+tj
+DD
+tj
+tj
+tj
+tj
+tj
+tj
+tj
+tj
+tj
+tj
+WP
+WP
+DD
+Re
+Re
+WP
+DD
+WP
+DD
+Re
+Re
+(39) 
+where ^ marks the day-ahead prediction, the real-time dispatching ob­
+jective is denoted in (36), the SOC that follows the day-ahead decisions 
+is constrained to (37), the controllable load constraints are expressed in 
+(38)–(39). Three scenarios are analyzed as follows:  
+1) Scenario 1 (
+<
+P
+0
+tj
+Re
+). When the real-time purchased-electricity 
+price is reduced (the MG is encouraged to purchase more power 
+from the EG), the MG can increase the exchange power by in­
+creasing controllable load power according to (38). If the purchased- 
+electricity price is increased (the MG is encouraged to purchase less 
+power from the EG), the MG can maintain the day-head exchange 
+power by reducing controllable load power, rather than increase the 
+EG burden.  
+2) Scenario 2 (
+>
+P
+0
+tj
+Re
+). For a higher real-time electricity price, the 
+MG can reduce the exchange power by decreasing controllable load 
+power according to (38). On the other hand, for a lower electricity 
+price, the MG can maintain the exchange power by consuming more 
+renewable generation. 
+3) Scenario 3 (
+=
+P
+0
+tj
+Re
+). The MG can directly support the EG ac­
+cording to the real-time electricity price. 
+2.3. Solution algorithm 
+The above dispatching model consists of linear objectives and con­
+straints. Therefore, it can be converted into a classic mixed-integer 
+linear programming (MILP) problem. The day-head dispatching pro­
+blem can be presented as follows: 
+=
+=
+=
+=
+F
+MX
+s t
+EX
+Y
+X
+X
+X
+X
+x
+x
+x
+X
+x
+x
+x
+: min
+. .
+[ 1,
+2]
+1
+[
+,
+, ...,
+]
+2
+[ ,
+, ...,
+]
+d
+T
+T
+1·
+2·
+·
+1
+2
+(40) 
+where M, E and Y express the coefficient matrixes, X denotes the 
+variables matrix, where X1 represents the matrix of the fast-action 
+variables xt· (
+=
+x
+x
+x
+x
+[
+,
+, ...,
+]
+t
+t
+t
+TJ
+·
+1
+2
+), X2 expresses the matrix of the slow- 
+action variables xt. 
+However, a large number of binary variables make it hard to effi­
+ciently solve this problem. To speed up the solution, a two-stage 
+method is proposed in this paper, as follows: 
+In the first stage, the slow-action variables are determined. With 
+J = 1 of (40), the classic day-head dispatching model can be obtained. 
+By optimizing this model, we can obtain the slow-action values such as 
+split control variables It, and exchange power control variables ut
+in/ut
+out. 
+These values are called X2* and passed to the second stage. 
+In the second stage, with J = 30 of (40), the proposed day-head 
+dispatching model is optimized. First, considering that the storage 
+water are the only variables related to time series, the original dis­
+patching problem is separated into two sub-problems with the asso­
+ciated variables Vt. 
+=
+=
+F
+MX
+s t
+EX
+Y
+X
+X
+X
+: min
+. .
+[ 1,
+2 ]
+d
+*
+(41)  
+=
+=
+=
+F
+M X
+s t
+E X
+Y
+V
+V
+X
+x
+x
+x
+: min
+. .
+[ ,
+, ...,
+]
+d
+T
+T
+1
+1
+1
+1
+1
+1
+2
+*
+1
+1
+2
+2
+(42)  
+=
+=
+=
++
++
+F
+M X
+s t
+E X
+Y
+V
+V
+X
+x
+x
+x
+: min
+. .
+[
+,
+, ...,
+]
+d
+T
+T
+T
+T
+2
+2
+2
+2
+2
+2
+2
+2
+2
+1
+2
+2
+(43)  
+We can see that the end water storage of the first problem is the 
+initial storage of the second problem. Because a larger V* will result in 
+the increase of Fd
+1, and decrease of Fd
+2, we speculate that 
+=
++
+F
+F
+F
+d
+d
+d
+1
+2
+will first reduce and then increase as V* increases. 
+Based on the above analysis, we use iterative methods to solve the 
+sub-problems. The iterative factor is set as follows: 
+=
++
+V
+V
+F
+F
+V
+V
+(
+) (
+)
+ter
+ter
+d
+ter
+d
+ter
+ter
+ter
+*
+i
+1
+*
+i
+i
+i
+1
+*
+i
+*
+i
+1
+(44) 
+where 
+is the scaling factor. 
+The solution steps are represented as follows: 
+Step 1: Initialization 
+The renewable generation, electric and hydraulic load, WSS data 
+and electricity price are provided. Additionally, the initial iterative 
+number iter = 0, maximum iterative number iter_m, initial V ter
+*
+i
+, and 
+maximum error ε are set. 
+Step 2: The first stage solution 
+With J = 1, (40) is solved. The values of the slow-action variables 
+are called X2* and passed to the second stage. 
+Fig. 4. Diagram of two-stage MG dispatching strategy.  
+Q. Sui, et al.   
+Electrical Power and Energy Systems 125 (2021) 106445
+5
+
+Step 3: The second stage solution 
+With J = 30, (42) and (43) are solved. 
+Step 4: Iterative stopping condition checking   
+Case 1: iter  >  iter_m   
+Case 2: 
++
+V
+V
+|
+|
+ter
+ter
+*
+i
+1
+*
+i
+The appearance of any case above will stop the iteration. Or 
+else, go to Step 4. 
+Step 4: Update V ter
+*
+i
+. 
+Calculate V ter
+*
+i
+according to (44), and go to Step 3. 
+3. Experimental results and discussion 
+3.1. Test system 
+A grid-connected MG integrating a WSS is used to verify the effec­
+tiveness of the proposed strategy. The renewable generation, electric 
+loads, hydraulic loads and electricity price are shown in Fig. 5 [30].  
+Fig. 6 shows the typical WSS [10]. Without loss of generality, the large 
+WSS can be split three sub-systems marked as ①②③. The rated desali­
+nation power is set to 600 kW, and the water supply parameters are 
+shown in Table 1 in appendix [23]. Considering the natural precipita­
+tion, the daily freshwater production is set to 2100 m3 in summer and 
+3150 m3 in winter, respectively. 
+To show the superiority of the proposed strategy, three cases are 
+compared, as follows: 
+Case 1: The novel WSS model is used to carry out demand side re­
+sponse using the proposed dispatching strategy. 
+Case 2: The WSS is dispatched to respond to the MG demand ac­
+cording to [23], where the WSS cannot be split and the DD always 
+works at rated power.   
+Case 3: The WSS carries out demand side response according to 
+electricity price [22], where the WSS cannot be split and the DD 
+works at rated power. 
+The simulations are coded in MATLAB and solved by Gurobi on a 
+Windows-based PC with 8 GB of RAM. 
+3.2. Analysis of the energy management method 
+According to the above simulation parameters, the MG integrating 
+WSSs is tested. The results are as follows: 
+3.2.1. Energy consumption analysis   
+1) Typical scenario in summer 
+Fig. 7 shows that the electricity consumption of the controllable 
+loads in three cases in summer. As observed from the figure, the con­
+trollable loads in case 3 are shifted to carry out energy arbitrage by 
+consuming more low-price electricity and less high-price electricity. 
+Unlike this, the controllable loads in case 1 and 2 closely follow the 
+abundant renewable generation. However, compared with those in case 
+2, the energy consumption of the controllable loads in case 1 is more 
+elastic. Therefore, the controllable loads in case 1 can better carry out 
+peak shaving and valley filling. 
+Fig. 8 shows the desalination power and production efficiency in 
+three cases. For case 2 and case 3, the DDs are only allowed to work at 
+rated power. The desalination time is optimized to reduce the system 
+operational cost. However, in case 1, both the working time and power 
+of the DD are dispatched according to the desalination characteristic. 
+To satisfy the freshwater demand of 2100 m3, 5551-kWh, 6000-kWh, 
+and 6000-kWh electricity are consumed by DDs in three cases, that is, 
+the freshwater productions per kilowatt hour are 0.3783 m3 in case 1, 
+and 0.3500 m3 in case 2 and case 3, respectively. Compared with that in 
+case 2 and 3, desalination energy consumption in case 1 can be reduced 
+by 7.5%. 
+Fig. 9 depicts the WP power in three cases. ①②③ express the sub- 
+systems, and the connection between them indicates the large system 
+split state. As observed from the figure, the WSS in case 1 can be dy­
+namically split by controlling valves, and the WP can be operated in the 
+range of 38.10–398 kW. However, limited by the nodal coupling con­
+straints, the WPs can only work within 86.40–422.2 kW in case 2 and 
+71.01–345.14 kW in case 3. In the dispatching period, the WPs in case 
+1–3 consume 3713.1-kWh, 3918.2-kWh, and 4022.0 kWh electricity, 
+respectively. Compared with that in case 2 and 3, the water distribution 
+loss in case 1 can be reduced by 5.2%, and 7.7%, respectively. 
+Fig. 10 shows the exchange power between the MG and EG in three 
+cases. We can see that compared with that in case 2 and 3, the exchange 
+power in case 1 is smother. Additionally, unlike that the exchange 
+energy is 3704.0 kWh in case 2, and 8959.3 kWh in case 3, only 2946.1- 
+kWh electricity is traded in case 1. The results show that the MG in­
+tegrating the novel WSS is more elastic and friendly to the EG.  
+2) Typical scenario in winter 
+Fig. 11 shows the energy consumption of the controllable loads in 
+three cases in winter. The controllable load in case 3 still only responds 
+to the low-price electricity. Although both of them can follow the re­
+newable generation variation, the controllable load in case 1 is more 
+elastic than that in case 2. 
+Fig. 12 shows the desalination performance in three cases. Only the 
+Fig. 5. Curve of the typical power and electricity price.  
+Q. Sui, et al.   
+Electrical Power and Energy Systems 125 (2021) 106445
+6
+
+desalination time can be optimized in case 2 and case 3, while both the 
+time and power are dispatched in case 1. To produce the 3150-m3 
+freshwater, 8357.7-kWh, 9000-kWh, and 9000-kWh electricity are 
+consumed in three cases, that is, the freshwater productions per 
+kilowatt hour are 0.3769 m3 in case 1, and 0.3500 m3 in case 2 and case 
+3. Therefore, the desalination loss can be reduced by 7.1% in case 1. 
+Fig. 13 depicts the WP power in three cases. Benefiting from the 
+WSS split, the WPs in case 1 can be operated in the range of 
+42.43–404.3 kW, and the energy consumption is 3779.6 kWh. How­
+ever, the WPs in case 2 can only work within 78.25–366.59 kW, and the 
+energy loss is 4019.5 kWh. Also, the WP operational range in case 3 is 
+78.52–352.20 kW, and the electricity consumption is 3989.1 kWh. 
+Compared with that in case 2 and 3, the water distribution loss in case 1 
+can be decreased by 6.0% and 5.3%, respectively. 
+Fig. 14 depicts the exchange power between the MG and EG. 
+Compared with the exchange electricity of 5460.9 kWh in case 2 and 
+8585.7 kWh in case 3, the exchange electricity in case 1 is reduced to 
+4609.1 kWh. Also, the exchange power in case 1 is smother. The results 
+indicate that the novel WSS can make the exchange power more elastic 
+and friendly to the EG. 
+3.2.2. Power smoothing analysis 
+Taking the typical scenario in summer as an example, the real-time 
+MG performances are analyzed, as follows: 
+Fig. 15 depicts the real-time electric and hydraulic balance in case 1. 
+In this case, the power fluctuations are smoothed by the DD and WPs, 
+while most of hydraulic pressure heads remain stable. 
+Fig. 16 shows the real-time power balance in case 2. In this case, the 
+regulation ability of the control loads is not fully developed. Although 
+the WSS is used to carry out demand side response, both the exchange 
+power and pressure head fluctuate. 
+Fig. 17 shows the power balance in case 3. The hydraulic stability is 
+Fig. 6. Distributed water supply system.  
+Table 1 
+MG operational costs.         
+Season 
+Case 
+Electricity purchased 
+Electricity sold 
+Cost 
+(Yuan) 
+Electricity 
+(kWh) 
+Cost (yuan) 
+Electricity 
+(kWh) 
+Cost 
+(yuan)  
+Summer 
+Case 1 
+3007.4 
+1442.0 
+0 
+0 
+1442.0 
+Case 2 
+3704.0 
+1845.4 
+0 
+0 
+1845.4 
+Case 3 
+6308.9 
+3041.0 
+2650.4 
+483.6 
+2557.4 
+Winter 
+Case 1 
+4623.5 
+2308.2 
+0 
+0 
+2308.2 
+Case 2 
+5460.9 
+2813.8 
+0 
+0 
+2813.8 
+Case 3 
+7027.4 
+3599.4 
+1558.3 
+294.6 
+3304.8 
+Fig. 7. Electricity consumption of the controllable loads in three cases in summer.  
+Fig. 8. Desalination power and production efficiency in three case 3 in summer.  
+Q. Sui, et al.   
+Electrical Power and Energy Systems 125 (2021) 106445
+7
+
+ensured. However, the exchange power fluctuates all the time. 
+To summarize, the WSS in case 1 can well conduct on the demand 
+side response while ensuring the hydraulic stability. 
+3.3. Economy analysis 
+Table 1 shows the MG operational economy in three cases. As ob­
+served from the table, the typical daily operational costs in summer are 
+1442.0 yuan in case 1, 1845.4 yuan in case 2 and 2557.4 yuan in case 3. 
+Likely, in a winter typical day, the MGs for three cases spend 2308.2 
+yuan, 2813.8 yuan and 3304.8 yuan in supplying electricity, respec­
+tively. 
+Suppose that there are 180 days in summer and winter every year. 
+Fig. 9. WSS split and WP power in three case 3 in summer.  
+Fig. 10. Exchange power between the MG and EG in summer.  
+Fig. 11. Electricity consumption of the controllable loads in winter.  
+Fig. 12. Desalination power and production efficiency in three case 3 in winter.  
+Q. Sui, et al.   
+Electrical Power and Energy Systems 125 (2021) 106445
+8
+
+The annual MG costs are 675,036 yuan in case 1,838,660 yuan in case 
+2, 1,055,200 yuan in case 3, respectively. Compared with that in case 2 
+and case 3, the MG cost in case 1 can be reduced by 163,624 yuan 
+(19.5%), and 380,164 yuan (36.0%), respectively. The results indicate 
+that the proposed strategy in this paper has the best economy. 
+4. Conclusion 
+This paper proposes an optimal energy management strategy for a 
+renewable MG integrating WSSs. A novel water supply model is pre­
+sented that considers the large system split feasibility, hydraulic sta­
+bility, and desalination characteristic. To ensure the performance of the 
+MG integrating WSSs, a two-stage scheduling method is designed for 
+minimizing the MG operational costs and power fluctuations. This 
+scheduling problem is efficiently solved by a two-stage algorithm. The 
+simulation study indicates that the energy-water management strategy 
+can carry out energy arbitrage, power smoothing while supporting the 
+external grid simultaneously. 
+The novel water supply model can significantly improve the op­
+erational flexibility of the DD and WP. The desalination loss and water 
+distribution loss can be reduced by more than 7.1% and 5.2%, re­
+spectively. Additionally, using the proposed scheduling strategy, the 
+operational cost of the MG integrating WSSs can be reduced by 19.5%. 
+The hydraulic and electric stability can also be ensured. 
+However, some technical details neglected in the theoretical dis­
+cussion of this paper may be of great importance in practical applica­
+tion. Therefore, we will conduct a real case study in the future. 
+Additionally, the extreme weather significantly affects the reliability of 
+the power supply. The resilience of power gird integrating water supply 
+systems will also our future work. 
+Declaration of Competing Interest 
+The authors declare that they have no known competing financial 
+interests or personal relationships that could have appeared to influ­
+ence the work reported in this paper. 
+Acknowledgments 
+This work was supported by the State Grid Corporation of China 
+(5700-201999495A-0-0-00).   
+Fig. 13. WSS split and WP power in three case 3 in winter.  
+Fig. 14. Exchange power between the MG and EG in winter.  
+Fig. 15. Real-time electric and hydraulic balance in case 1.  
+Fig. 16. Real-time electric and hydraulic balance in case 2.  
+Fig. 17. Real-time electric and hydraulic balance in case 3.  
+Q. Sui, et al.   
+Electrical Power and Energy Systems 125 (2021) 106445
+9
+
+Appendix 1 
+See Table 2. 
+Appendix 2 
+See Table 3 and Fig. 18. 
+To make full use of the regulation ability, the desalination characteristic is analyzed quantitatively. The DD consists of the high-pressure pump, 
+booster pump, reverse osmosis membrane and closed recovery unit [31], as observed in Fig. 1. Qf and QDD denote the input seawater and freshwater 
+output, respectively. Pf and PP express the corresponding flow pressure, respectively. Q1 and Q2 represent the inflow of the high-pressure pump and 
+booster seawater, respectively. PS and P0 denote the pressurized seawater pressure and Atmospheric pressure, respectively. Qc and Pc represent the 
+flow and pressure in the recovery unit, respectively. 
+According to the system design equation from Dow, desalination mechanism is presented as follows [32,33]: 
+=
+×
+Q
+N S
+TCF FF
+P
+P
+P
+C
+C
+CPF
+SR
+A( ¯)
+·
+·
+{
+0.5
+[ ¯
+¯
+(1
+¯ )]}
+P
+E
+E
+f
+fc
+P
+f
+fc
+f
+(1) 
+where NE and SE express the number and area of the membranes, A( ¯) and ¯ denote the hydraulic permeability coefficient and average osmotic 
+pressure between the raw water and concentrated brine, TCF and FF represent the temperature correction coefficient and membrane fouling factor, 
+Cf is the concentration of the raw water, C¯fc and Pfc are the average pressure difference and concentration between the raw water and concentrated 
+salt water, f is the osmotic pressure of pretreated raw water, CPF
+¯
+and SR¯ express the average concentration polarization coefficient and desalination 
+rate of the system. 
+Define q¯fc denotes the average flow of inlet and outlet water of each RO membrane pressure vessel. We can obtain the following formulas: 
+=
++
+=
++
+=
+q
+Q
+Q
+Q
+Q
+Q
+Q
+Y
+Q
+¯
+0.5(
+)
+0.5(
+)
+0.5
+fc
+fPV
+bPV
+fPV
+fPV
+pPV
+pPV
+pPV
+(2)  
+=
+Y
+Q Q
+p
+f
+(3) 
+where QpPV represents the water production flow of each pressure vessel, Y denotes the system recovery rate. 
+The average pressure drop between raw water and concentrated brine meets the following relationship [34]: 
+=
+P
+nq
+0.01
+¯
+fc
+fc
+1.7
+(4) 
+where n expresses the number of membrane elements of each pressure vessel. 
+Table 2 
+Water supply pipe parameters.     
+Pipe 
+Length (m) 
+Diameter (m)  
+J1 
+18 
+0.15 
+J2 
+401 
+0.23 
+J3 
+18 
+0.30 
+J4 
+1087 
+0.40 
+J5 
+1002 
+0.24 
+J6 
+846 
+0.24 
+J7 
+44 
+0.25 
+J8 
+18 
+0.25 
+J9 
+23 
+0.25 
+J10 
+16 
+0.11 
+J11 
+1003 
+0.32 
+J12 
+30 
+0.15 
+J13 
+6 
+0.23 
+J14 
+13 
+0.30 
+Table 3 
+Membrane parameters.    
+NE (each RO membrane) 
+392 
+SE (ft2) 
+400 
+f (gfd) 
+9 
+πf (psi) 
+328.2 
+A(π) (gfd/psi) 
+0.125 
+TCF 
+0.8597 
+FF 
+0.60 
+n (each RO membrane) 
+7 
+PV (each RO membrane) 
+56 
+QpPV (gpm) 
+32.35 
+SR 
+99.95%    
+Q. Sui, et al.   
+Electrical Power and Energy Systems 125 (2021) 106445
+10
+
+The relationship between the concentration changes before and after the solution passes through the membrane is shown as follows: 
+C
+C
+Y
+Y
+¯
+ln(1
+)
+fc
+f
+(5)  
+=
+CPF
+Y
+¯
+exp{0.7[1
+(1
+)
+]}
+n
+1/
+(6)  
+=
+×
+×
+C
+C
+CPF
+¯
+¯
+¯
+f
+fc
+f
+(7)  
+According to (1)–(7) and membrane parameters in Table 2, we can obtain a novel equation about QP. (8) can be further obtained by converting 
+unit gpd to m3 /h, as follows: 
+=
++
+×
+Q
+P
+Y
+Y
+Y
+e
+1.594(
+0.035(32.35
+16.175)
+328.2(ln(1
+)
+)
+0.0005)
+DD
+f
+Y
+1.7
+0.7(1
+(1
+)
+)
+1 7
+(8)  
+On the other hand, the energy and material for the freshwater production satisfy the following balance relationship [32,33]: 
+=
++
+×
+P
+P Q
+P
+P Q
+Q
+¯
+(
+(
+)
+(3.6 10 ·
+))
+f
+f
+S
+e
+p
+1
+2
+6
+1
+(9)  
+=
++
+P
+P¯
+0.05·P
+DD
+DDN
+(10)  
+=
++
+=
++
+Q
+Q
+Q
+Q
+Q
+f
+p
+c
+1
+2
+(11)  
+=
+P
+P
+P
+fc
+f
+c
+(12) 
+where the energy balances are constrained to (9)–(10), where P¯ denotes the desalination motor power, e and P represent the motor and pump 
+efficiency, PDDN and PDD represent the rated and actual desalination power. The material balance is given in (11). The pressure difference constraint 
+between the head and end is written in (12). 
+According to (9)–(12) and membrane parameters in Table 2, we can obtain the following equation: 
+=
+×
+×
++
+×
++
+P
+P Y
+P
+P
+Y
+P
+Y
+ln
+Y
+Y
+exp
+Y
+0.0030507
+[
+0. 855(
+)(1
+1)] (
+)
+[
+0.035(32.35
+16.175)
+0.0005)
+328.2(
+(1
+)
+(0.7(1
+(1
+)
+))]
+0.05P
+DD
+f
+f
+fc
+e
+p
+f
+1.7
+1 7
+SDEN
+(13)  
+On this basis, the DD devotes to maximizing the desalination output by optimizing the Pf and Pf , as follows: 
+Q
+max
+DD
+(14)  
+s t
+P
+psi
+. .
+1001.5
+f
+(15)  
+Y
+45%
+(16)  
+(8) and (13) 
+where (14)–(16) express the mechanical strength constraints. 
+Based on the MATLAB platform, the desalination characteristic can be solved using Fmincon solver. The power-output relationship is shown in  
+Fig. 3.  
+References 
+[1] Koren G, Shlezinger M, Katz R, et al. Seawater desalination and serum magnesium 
+concentrations in Israel. J Water Health 2017;15(2):296–9. 
+[2] Campana Pietro Elia, Li Hailong, Yan Jinyue. Dynamic modelling of a PV pumping 
+system with special consideration on water demand. Appl Energy 2013;112:635–45. 
+[3] Selek István, Bene József Gergely, Ho Csaba. Optimal (short-term) pump schedule 
+detection for water distribution systems by neutral evolutionary search. Appl Soft 
+Comput 2012;12:2336–51. 
+[4] Sahebjamnia N, Fathollahi-Fard AM. A Lagrangian relaxation-based algorithm to 
+solve a collaborative water supply chain network design problem. Int J Emerg 
+Trends Eng Res 2018;6(7):40–5. 
+[5] Fathollahi-Fard AM, Hajiaghaei-Keshteli M, Tian G, Li Z. An adaptive Lagrangian 
+relaxation-based algorithm for a coordinated water supply and wastewater 
+collection network design problem. Inf Sci 2020;512:1335–59. 
+[6] Matrosov ES, Huskova I, Kasprzyk JR, Harou JJ, Lambert C, Reed PM. Many-ob­
+jective optimization and visual analytics reveal key trade-offs for London’s water 
+supply. J Hydrol 2015;531:1040–53. 
+[7] Cheung CT, Mui KW, Wong LT. Energy efficiency of elevated water supply tanks for 
+high-rise buildings. Appl Energy 2013;103:685–91. 
+[8] Elsaid Khaled, Sayed Enas Taha, Abdelkareem Mohammad Ali, Baroutaji Ahmad, 
+Olabi AG. Environmental impact of desalination processes: mitigation and control 
+strategies. Sci Total Environ 2020;740:140125. https://doi.org/10.1016/j. 
+scitotenv.2020.140125. 
+[9] Mortazavi-Naeini M, Kuczera G, Kiem AS, Cui L, Henley B, Berghout B, et al. Robust 
+optimization to secure urban bulk water supply against extreme drought and un­
+certain climate change. Environ Modell Software 2015;69:437–51. 
+[10] Ghelichi Z, Tajik J, Pishvaee MS. A novel robust optimization approach for an in­
+tegrated municipal water distribution system design under uncertainty: a case study 
+Fig. 18. Desalination mechanism.  
+Q. Sui, et al.   
+Electrical Power and Energy Systems 125 (2021) 106445
+11
+
+of Mashhad. Comput. Chem. Eng. 2018;110:13–34. 
+[11] Mo S, Duan H, Shen B, Wang D. Interval two-stage stochastic integer programming 
+for urban water resource management under uncertainty. J Coastal Res 
+2015;73(sp1):160–5. 
+[12] Pabi S, Amarnath A, Goldstein R, Reekie L. Electricity use and management in the 
+municipal water supply and wastewater industries. Electric Power Research 
+Institute 2013;194.. 
+[13] Manish K, Vassilis K. Optimal scheduling of water distribution systems. IEEE Trans 
+Control Network Syst 2018:1–10. 
+[14] Thompson L. Automated demand response opportunities in wastewater treatment 
+facilities. Lawrence Berkeley National Laboratory; 2008. 
+[15] Chen Shaoqing, Chen Bin. Urban energy–water nexus: a network perspective. Appl 
+Energy 2016;184:905–14. 
+[16] Santhosh A, Farid AM, Youcef-Toumi K. Real-time economic dispatch for the supply 
+side of the energy-water nexus. Appl Energy 2014;122:42–52. 
+[17] Fang X, Yang Q, Dong W. Fuzzy decision based energy dispatch in offshore in­
+dustrial microgrid with desalination process and multi-stage DGs. Energy 
+2018;148:744–55. 
+[18] Mohammadi Farshad, Sahraei-Ardakani Mostafa, Al-Abdullah Yousef M, Heydt 
+Gerald Thomas. Coordinated scheduling of power generation and water desalina­
+tion units. IEEE Trans Power Syst 2019;34(5):3657–66. 
+[19] Wei Fanrong, Wan Zhiqiang, He Haibo, Lin Xiangning, Li Yuanzheng. A novel 
+scheduling strategy for controllable loads with power-efficiency characteristics. 
+IEEE Trans Smart Grid 2020;11(3):2151–61. 
+[20] Oikonomou Konstantinos, Parvania Masood. Optimal coordination of water dis­
+tribution energy flexibility with power systems operation. IEEE Trans Smart Grid 
+2019;10(1):1101–10. 
+[21] Guo Li, Liu Wenjian, Li Xialin, Liu Yixin, Jiao Bingqi, Wang Wei, et al. Energy 
+management system for stand-alone wind-powered-desalination microgrid. IEEE 
+Trans Smart Grid 2016;7(2):1079–87. 
+[22] Oikonomou K, Parvania M, Khatami R. Optimal demand response scheduling for 
+water distribution systems. IEEE Trans Indus Inform 2018;99:1–10. 
+[23] Sui Q, Wei F, Zhang R, Lin X, Tong N, Wang Z, et al. Optimal use of electric energy 
+oriented water-electricity combined supply system for the building-integrated- 
+photovoltaics community. Appl Energy 2019. 
+[24] Menke R, Abraham E, Parpas P, Stoianov I. Demonstrating demand response from 
+water distribution system through pump scheduling. Appl Energy 
+2016;170:377–87. 
+[25] Bonvin Gratien, Demassey Sophie, Le Pape Claude, Maïzi Nadia, Mazauric Vincent, 
+Samperio Alfredo. A convex mathematical program for pump scheduling in a class 
+of branched water networks. Appl Energy 2017;185:1702–11. 
+[26] Mays LW, et al. Water distribution systems handbook 17. New York: McGraw-Hill; 
+2000. 
+[27] Mays LW. Water resources engineering. John Wiley & Sons; 2010. 
+[28] de la Nuez Pestana I, Latorre FJG, Espinoza CA, Gotor AG. Optimization of RO 
+desalination systems powered by renewable energies. Part I: wind energy. 
+Desalination 2004;160(3):293–9. 
+[29] Sun Y, Zhong J, Li Z, Tian W, Shahidehpour M. Stochastic scheduling of battery- 
+based energy storage transportation system with the penetration of wind power. 
+IEEE Trans Sustain. Energy 2017;8(1):135–44. 
+[30] Xu Y, Le X, Singh C. Optimal scheduling and operation of load aggregators with 
+electric energy storage facing price and demand uncertainties. North American 
+Power Symposium 2011. 
+[31] Lu Y, Hu Y, Zhang X, Wu L, Liu Q. Optimum design of reverse osmosis system under 
+different feed concentration and product specification. J Membr Sci 
+2007;287:219–29. 
+[32] Vince F, Marechal F, Aoustin E, et al. Multi-objective optimization of RO desali­
+nation plants. Desalination 2008;222(1):96–118. 
+[33] Ding Xu. Study on the optimal operation and scheduling for seawater reverse os­
+mosis. Hangzhou Dianzi University; 2010. 
+[34] Wei F, Quan S, Lin X, et al. Energy control optimization strategy for isolated island 
+microgrid with wind/photovoltaic/diesel/thermal storage under consideration of 
+transferable load efficiency. Proceedings of the CSEE. 2017. p. 1–9. 
+Quan Sui received the B.Sc. degree in electrical en­
+gineering from Huazhong University of Science and 
+Technology (HUST) in 2017. He is studying for a Ph.D at 
+HUST. His research interests are microgrid planning and 
+scheduling as well as optimal power system.  
+Fanrong Wei received the Ph.D. degree in electrical en­
+gineering, Huazhong University of Science and Technology 
+(HUST). His researches mainly focus on optimal power 
+system/microgrid scheduling and protective relay.  
+Xiangning Lin is currently a Professor at Huazhong 
+University of Science and Technology (HUST). He received 
+the M.Sc. and Ph.D. degrees in electrical engineering from 
+HUST, Wuhan, China. His research interests are modern 
+signal processing and power system protective relaying.  
+Zhengtian Li received the B.Sc. degree from Wuhan 
+University in 2002 and the Ph.D. degree from the Huazhong 
+University of Science and Technology (HUST) in 2011. 
+Currently, he is an Associate Professor at HUST. His re­
+search interests are digital protection relaying.    
+Q. Sui, et al.   
+Electrical Power and Energy Systems 125 (2021) 106445
+12

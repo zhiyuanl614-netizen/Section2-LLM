@@ -1,0 +1,1863 @@
+
+===== PAGE 1 =====
+Risk Analysis, Vol. 37, No. 7, 2017
+DOI: 10.1111/risa.12681
+Analysis of Affordance, Time, and Adaptation in the
+Assessment of Industrial Control System Cybersecurity Risk
+J. S. Busby,1,∗B. Green,2 and D. Hutchison2
+Industrial control systems increasingly use standard communication protocols and are in-
+creasingly connected to public networks—creating substantial cybersecurity risks, especially
+when used in critical infrastructures such as electricity and water distribution systems. Meth-
+ods of assessing risk in such systems have recognized for some time the way in which the
+strategies of potential adversaries and risk managers interact in deﬁning the risk to which
+such systems are exposed. But it is also important to consider the adaptations of the systems’
+operators and other legitimate users to risk controls, adaptations that often appear to un-
+dermine these controls, or shift the risk from one part of a system to another. Unlike the
+case with adversarial risk analysis, the adaptations of system users are typically orthogonal
+to the objective of minimizing or maximizing risk in the system. We argue that this need to
+analyze potential adaptations to risk controls is true for risk problems more generally, and
+we develop a framework for incorporating such adaptations into an assessment process. The
+method is based on the principle of affordances, and we show how this can be incorporated
+in an iterative procedure based on raising the minimum period of risk materialization above
+some threshold. We apply the method in a case study of a small European utility provider
+and discuss the observations arising from this.
+KEY WORDS: Adaptation; affordance; cybersecurity; industrial control systems
+1. INTRODUCTION
+It has become widely recognized that indus-
+trial control systems are inherently vulnerable to the
+risk of cybersecurity failure as they become exten-
+sively connected to the public network. Modern so-
+cieties rely heavily on such systems for their basic
+utilities and production processes,(1) much of which
+constitutes “critical national infrastructure.”(2) Yet
+“decades of competition have led to infrastructure
+that is very lean and very fragile.”(3) The vulnerabil-
+ity was vividly illustrated by the Stuxnet and Flame
+1Department of Management Science, Lancaster University, Lan-
+caster, UK.
+2School of Computing and Communications, Lancaster Univer-
+sity, Lancaster, UK.
+∗Address correspondence to J. S. Busby, Department of Manage-
+ment Science, Lancaster University, Lancaster LA1 4YX, UK;
+j.s.busby@lancaster.ac.uk.
+events in 2010 and 2012,(4) a recent attack on the
+control systems of a German steelworks,(5) and even
+more recently the attack on parts of the Ukrainian
+electricity distribution system.(6,7)
+In some ways networked industrial control sys-
+tems have an inherent resilience because an attacker
+intending a speciﬁc harm not only has to achieve
+privileged access to physical controllers, or the data
+coming from physical sensors, but needs speciﬁc
+engineering knowledge to achieve physical damage.
+However, in some ways they have an inherent
+vulnerability because they offer a virtual, remote
+pathway to physical damage that does not require
+physical proximity, physical intrusion, or physical
+action. An attacker who can shut down a SCADA
+(supervisory control and data acquisition) server
+can cause considerable, nonspeciﬁc disruption. And
+when such systems control basic infrastructures,
+1298
+0272-4332/17/0100-1298$22.00/1 C⃝2017 Society for Risk Analysis
+
+===== PAGE 2 =====
+Analysis of Affordance, Time, and Adaptation
+1299
+such as water and electricity distribution, there is a
+large-scale risk at a societal level.
+Assessing risk of this kind has much in common
+with assessing risk from deliberate, adversarial
+action in other types of system. Those working in
+this area have long recognized the need to analyze
+how defensive actions inﬂuence adversarial actions,
+and have used decision-theoretic or game-theoretic
+approaches to represent this adaptation. In this arti-
+cle, however, we argue that there has been very little
+recognition of how the system at risk—in particular,
+legitimate operators and organizations—also adapts
+to security measures and risk controls over time,
+sometimes nullifying those controls, and sometimes
+displacing rather than mitigating risk. We suggest
+that it is important to anticipate such adaptations,
+and to use some systematic theory to anticipate when
+and how adaptation occurs. We base our approach
+on the principle of affordances(8,9) from ecological
+psychology, which appears especially suited to antic-
+ipating potential adaptations because of its emphasis
+on the ﬁt between an entity and its environment in
+terms of the action possibilities this ﬁt creates. We
+show how the resulting framework can be applied
+in a case study of a small utility serving a town in
+Europe. In the remainder of this article, we brieﬂy
+review the relevant literature, describe the proposed
+method of analysis, show how it was applied, and
+discuss its contributions and limitations.
+2. A BRIEF REVIEW OF THE LITERATURE
+2.1. Risk and Industrial Control Systems
+Past work on analyzing risk in industrial control
+systems has tackled a wide variety of issues. It has
+developed methods for assessing threats based on
+general systems theory,(10–12) assessing risks arising
+speciﬁcally from automated and robotic systems,(13)
+and assessing vulnerability and survivability in com-
+plex industrial controls.(14) It has also produced more
+speciﬁc methods of risk assessment—for example,
+using fuzzy logic for verifying safety criteria in nu-
+clear power plants,(15) applying hybridized proba-
+bilistic and AI-based approaches to real-time risk
+controls in systems such as gas compressors on off-
+shore production platforms,(16) and applying simula-
+tion approaches to the complex dynamics in chemical
+batch reactors.(17)
+Methods
+have
+been
+developed
+for
+analyz-
+ing dependency in access control systems,(18) the
+vulnerability of interdependent SCADA systems to
+cascade failures,(19) reliability in the control room
+operations of process control systems,(20) and risk
+in digital controls.(21) Some of our understanding
+is about the particular risks associated with speciﬁc
+industries—such as water distribution systems.(22,23)
+But other work has been concerned with techniques
+to deal with the general problems of analyzing risk
+in control systems, for example, the use of hierar-
+chical Bayesian approaches to address the sparsity
+of empirical data about rare failures,(24) and Petri
+net approaches to deal with state space explosion
+problems in analyzing the safety of digital control
+systems.(25)
+Cybersecurity risks to industrial control systems,
+speciﬁcally, have received increasing attention, es-
+pecially when they form part of what is regarded
+as critical infrastructure. For example, Henry and
+Haimes(26) develop an extensive model of security
+risk in process control networks. Ralston et al.(27)
+provide a broad view of concerns and risk assessment
+methodologies for SCADA and distributed control
+systems (DCS). Kundur et al.(28) present a frame-
+work for assessing the impact of cyberattacks on
+smart grids, synthesizing analysis of both the infor-
+mation and physical systems. Naedele(29) presents
+a review of commonly discussed SCADA security
+challenges, including the newly interconnected na-
+ture of control systems, and the use of commer-
+cial off-the-shelf products. Fleury et al.(30) develop
+a taxonomy of attacks against energy control sys-
+tems. And various studies use a range of different
+formalisms for risk and reliability assessments. For
+example, Zhang et al.(31) use Bayesian attack graph
+models to analyze attacks on SCADA elements in
+an electricity distribution system, while Ten et al.(32)
+use Petri nets for a similar purpose. Other instruc-
+tive applications of similar methods include Henry
+et al.’s(33,34) use of Petri nets to represent the coupled
+development of attacks on a computer network and
+failure of physical control, and Ingols et al.’s(35) use
+of attack graphs to model both attacks and counter-
+measures, and to automate the process of risk
+assessment.
+However, we argue below that there is a prob-
+lem that has not yet received much attention in this
+literature: the way in which a complex sociotech-
+nical system inevitably adapts in some way to any
+attempt to protect it—and the need to recognize
+this in the risk assessment and management pro-
+cess. Henry and Haimes(26) took the step of building
+into their framework the analysis of candidate risk
+ 15396924, 2017, 7, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/risa.12681 by <Shibboleth>-member@ucas.ac.cn, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+===== PAGE 3 =====
+1300
+Busby, Green, and Hutchison
+controls. We take the further step of building in the
+analysis of adaptations of the system to those con-
+trols. As we discuss in detail later, this involves an-
+ticipating how such controls provoke legitimate sys-
+tem operators and users to change their behavior.
+This then requires iterating through the risk assess-
+ment and control identiﬁcation process, recognizing
+such adaptive behavior, and continuing until risks are
+judged acceptable. This inherent iteration is not in-
+tended to reduce uncertainty in some general sense,
+as in certain other approaches,(36) but to ﬁnd the state
+in which a system exhibits acceptable risk even after
+it has adapted to newly applied risk controls.
+2.2. Risk of Deliberate Harm
+The general problem of how to assess risk of
+harm that is inﬂicted deliberately, by some ad-
+versary, has received considerable attention. There
+are surveys and comparative views of the different
+methods—both decision theoretic and game theo-
+retic, and combinations of these—that can be used
+for risk assessment with intelligent adversaries.(37,38)
+There are assessment frameworks dealing with spe-
+ciﬁc problems, such as the identiﬁcation of critical
+assets,(39) and incomplete information about early
+moves in adversarial games.(40) There are also empir-
+ical models of terrorism risk estimated from regional
+characteristics,(41) and of cybersecurity incidents and
+their effects on Internet trafﬁc.(42)
+Terrorism risk has attracted particular interest.
+Special journal issues show a range of concerns and
+approaches, including the effects of terrorist attacks
+on utilities,(43) the use of historical data on distur-
+bances to analyze utility risk,(44) and methods for as-
+sessing the vulnerability of critical infrastructures.(45)
+Recent work provides assessment methods for ter-
+rorist threats to airports speciﬁcally,(46) and methods
+that recognize the interaction of countermeasures
+in a portfolio-based analysis.(47) A central aspect
+of much of this work is the mutual adaptation
+between attackers and defenders. McGill et al.,(39)
+for instance, deal with attacker preference changes
+in response to security measures. Merrick and
+Parnell(37) explicitly refer to the attacker adaptations
+to defender decisions and advocate further develop-
+ment of adaptive adversary risk assessment, and Rios
+and Rios Insua(38) similarly deal with strategic ad-
+versaries. Bier’s(48) work shows how game-theoretic
+models capture signiﬁcant aspects of the decision
+problem faced by risk managers anticipating, with
+uncertainty, the responses of adversaries—such as
+the centralization of defensive choices, and choices
+to leave targets undefended. Research such as that
+of Chatterjee et al.(47) similarly shows how we can
+deal with the interactions between risk controls that
+seem inevitable in systems of any complexity.
+Much of this work has come to be called adver-
+sarial risk analysis and is characterized by having
+two decisionmakers with opposing interests rather
+than the single decisionmaker of traditional, prob-
+abilistic risk analysis.(49) Its main limitation, as a
+general approach to analysis, is that it deals with the
+way adversaries adapt to risk controls but not how
+nonadversaries—such as a system’s operators—also
+adapt to such controls. Our aim in this article is to ar-
+gue that this is a signiﬁcant problem and to propose a
+way of dealing with it. We also argue that this prob-
+lem, in general terms, has a key difference from that
+of adversarial risk analysis. In adversarial analysis,
+it is typically reasonable to portray the attacker as
+having the opposite motivation to the defender—to
+maximize rather than minimize the risk. But it would
+be unreasonable to portray legitimate system opera-
+tors and users in this way. The reason they adapt to
+risk controls is not in order to nullify or avoid those
+controls but to pursue some orthogonal objective,
+such as reducing time and intellectual or physical
+effort. Therefore, to predict their adaptations we
+need another theory, one not primarily concerned
+with risk. Our approach is to base this on the idea of
+affordances, as explained and justiﬁed below.
+2.3. The Adaptation Problem
+It is not hard to anticipate how attempts to make
+passwords more secure by forcing them to be more
+complex can lead to individuals writing them down,
+using the same passwords on multiple systems, shar-
+ing them with colleagues, and adopting other inse-
+cure practices. It would not be surprising if people
+forced to go through extensive authentication pro-
+cesses leave computers logged-on when they leave
+their desks unattended. It is quite likely that people
+having to exchange emergency information in a cri-
+sis will break rules that prohibit the sharing of conﬁ-
+dential information. More generally, any attempt to
+intervene in a complex adaptive system, in order to
+control risk, is likely to produce an unexpected and
+perhaps self-defeating response.(50)
+This principle that risks are deﬁned as much
+by a system’s adaptations as by exogenous threats
+is central to some theories of disaster, such as
+Vaughan’s(51) idea of “normalized deviance.” It
+ 15396924, 2017, 7, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/risa.12681 by <Shibboleth>-member@ucas.ac.cn, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+===== PAGE 4 =====
+Analysis of Affordance, Time, and Adaptation
+1301
+occurs in Reason’s(52) model of organizations operat-
+ing in a protection–production space, in which gains
+in protection are typically exchanged for gains in pro-
+duction. And it emerges in observations of risk mi-
+gration, when attempts to manage risk simply trans-
+form it from one type to another.(53) Phenomena such
+as risk compensation and risk homeostasis(54) indi-
+cate that people adapt to risk controls even when
+they realize this adaptation can undermine those con-
+trols. Similarly, work on the violation of information
+security policies intended to control risk(55) shows
+how readily people can rationalize such violations.
+Adaptation to technical risk controls—such as
+aircraft collision avoidance technology—has been
+implicated in large-scale risk events such as the
+¨Uberlingen disaster.(56) But adaptation is especially
+likely in connection with social controls and the
+control of social elements of system vulnerability.
+Much of what we know about counterproductive
+adaptation to risk controls involves the use of
+organizational rules in particular.(51,57–60) In the
+security context, many modes of attack are largely
+technical, involving vulnerabilities and associated
+exploits in speciﬁc software and hardware compo-
+nents. Yet many modes of attack involve “social
+engineering,”(61) for which social controls are often
+the most important and sometimes the only feasible
+form of risk mitigation. It is these that are the most
+liable to provoke adaptations when implemented.
+3. DEVELOPMENT OF THE METHOD
+3.1. A Synopsis
+We ﬁrst summarize the basic principles of the
+proposed approach, before explaining the detail.
+Fig. 1 shows the essential ecology. There is an inter-
+action between risk manager and adversary as they
+create and encounter protective measures in the sys-
+tem, with broadly opposing objectives of trying to
+minimize or maximize risk. There is also an inter-
+action between risk manager and legitimate users of
+the system (which includes those operating and main-
+taining it), through the protective measures created
+by risk managers and negotiated, confronted, ac-
+cepted, or bypassed, by the users. The users broadly
+have the objective of achieving some level of conve-
+nience, minimizing effort, or generally being able to
+engage in some task without impedance.
+The analysis is based on the principle of
+affordances—the action possibilities created by the
+ﬁt between an actor and its environment. Its starting
+point is a graph that represents how risks material-
+ize over time during attacks on a system. The edges
+in this graph are the affordances presented to the ad-
+versary by the vulnerabilities of a system. The mate-
+rialization of a risk involves spanning the graph from
+a starting node to some node at which harm takes
+place. Edges in the graph are weighted by the uncer-
+tain time taken to exploit these affordances, and the
+ﬁrst aim of the assessment is to ﬁnd the path of least
+duration spanning the graph from start to end nodes.
+This is a heuristic intended to minimize the effort
+needed for the subsequent analysis. It assumes that
+if all paths can be raised above some minimum dura-
+tion, the system is resilient to a required degree be-
+cause intrusion along all such paths can be detected
+and intercepted. If the shortest path falls below this
+minimum, candidate risk controls have to be identi-
+ﬁed, and an attempt is made to anticipate how these
+controls change the affordances experienced by le-
+gitimate users of the system. This predicts how such
+users might exploit alternative affordances. The ﬁ-
+nal step, before iterating, is to assess how this then
+changes the original adversary affordance graph. The
+process repeats until the minimum path duration is
+acceptable.
+In this approach, risk is not measured directly,
+and the test of acceptable risk is not that a direct
+measure of risk falls below some risk acceptance
+threshold. Instead, the test is that the time for a risk
+to materialize rises above some minimum tolerable
+handling time. This avoids the need to quantify
+the probability of an adversary choosing a spe-
+ciﬁc method of attack—an inherently problematic
+requirement.(3) And it more clearly concerns the
+capacity of the system to withstand attack. Fig. 2 out-
+lines the method and in the remainder of this section,
+we explain and justify the method in detail, discussing
+separately the main components of the analysis. In
+Section 4, we apply the method to a case study.
+3.2. The Affordance Principle
+Affordances are the possibilities for action in
+an environment that ﬁt an actor’s capabilities.(8,9) It
+is this idea of ﬁt between actor and environment,
+expressed in terms of potential actions, that makes
+the affordance principle so promising as a basis for
+identifying adaptations. Affordances often advertise
+themselves in some sense—being action possibilities
+that actors notice and are motivated to exploit.(62,63)
+But they emerge in the relationship between actor
+ 15396924, 2017, 7, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/risa.12681 by <Shibboleth>-member@ucas.ac.cn, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+===== PAGE 5 =====
+1302
+Busby, Green, and Hutchison
+Risk minimizing
+Adversary
+Risk manager 
+Legitimate users
+Risk maximizing
+System at risk
+Protective 
+measures
+Convenience maintaining
+Fig. 1. The essential ecology.
+Develop graph of attack affordances
+Find spanning path of minimal duration
+Find probabilities of other paths as minimal
+Determine acceptability of minimal path
+Identify controls on minimal path
+Predict affordances changed
+Anticipate ramifications for the graph
+Acceptable risk
+Unacceptable risk
+Fig. 2. Outline of the assessment method.
+and environment, and do not inhere in either
+separately.(64)
+There are various ways in which the affordance
+concept has been formalized, and Sahin et al.(65) pro-
+vide a brief survey. Stoffregen’s(64) approach is to
+express affordances as a “higher-order” property of
+the actor–environment system in the form of a re-
+lation between “lower-order” properties of actors
+and environments within that system. Chemero,(66)
+who reviews earlier attempts at formulating a the-
+ory of affordances, sees them as relations between
+“features” of an environment and “abilities” of an
+organism. Steedman’s(67) approach is to stress the
+way in which an affordance provides a linear implica-
+tion from some precondition to a postcondition. And
+Sahin et al.(65) incorporate the effect of an affordance
+into its deﬁnition. We follow this approach, broadly,
+considering the effect as a cost that can be used to
+predict how an actor might choose among competing
+affordances.(63,68,69) Thus, we generally represent an
+affordance fࢠF as a tuple f = <φ, χ, π, κ, σ s, σ d> in
+which φࢠ is a relevant feature of the environment,
+χࢠX is a relevant property of an actor, πࢠ is
+the action possibility, κࢠK is some cost of exploit-
+ing this, σ sࢠ	 is a source state in which the action
+possibility is available (that is, a precondition), and
+σ dࢠ	 a destination state that exploitation of the ac-
+tion possibility produces (the postcondition). This is
+ 15396924, 2017, 7, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/risa.12681 by <Shibboleth>-member@ucas.ac.cn, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+===== PAGE 6 =====
+Analysis of Affordance, Time, and Adaptation
+1303
+Fig. 3. The affordance principle.
+illustrated in Fig. 3, showing how an affordance con-
+sists of an action possibility produced in the relation-
+ship between a feature of an actor’s environment and
+its own properties. This action possibility, when ex-
+ploited, makes a transition from source to destination
+states at some cost.
+In practice, large parts of the affordance space
+can remain unspeciﬁed. In the analysis of the attack
+risk, as we explain below, the actor properties are
+irrelevant because no attempt is made to predict
+attacker decisions. Their properties (such as skill
+levels) are regarded as being random, in order to
+avoid making fragile assumptions about people
+and groups that analysts may have little knowledge
+about. On the other hand, in the analysis of user
+adaptations to risk controls, where the pre- and
+postconditions are not informative, it is these that
+are left unspeciﬁed.
+3.3. The Attack Affordance Graph
+Stoffregen(70) points out that affordances are of-
+ten nested, and this is clearly the case for an at-
+tacker, for whom one affordance’s destination state is
+a subsequent affordance’s source state. For example,
+contemporary accounts of the recent cyberattack on
+Ukrainian electricity distribution(6,7) indicated that
+malware was introduced through an email attach-
+ment, inﬁltration was from the operators’ business
+networks into their control networks, and the attack-
+ers could then directly control breakers in the distri-
+bution system. Prior work in this area similarly rep-
+resents attacks as developing progressively. It is thus
+commonly based on attack trees or graphs, Markov
+processes, state space models, Bayesian networks,
+etc.,(31,71–73) in which the central feature is that being
+in one state gives access to another.
+To represent this progressive materialization
+through the sequential exploitation of affordances,
+our approach also uses a directed, acyclic graph R =
+< N, E > of nodes N and edges E. This is illustrated
+in Fig. 4. Each node n = <y, v> is a state in which an
+attacker has access to a particular device yࢠY (e.g.,
+a computer, router, programmable logic controller
+[PLC], and so on), at a particular level of privilege
+vࢠV. This is similar to prior work, such as McQueen
+et al.’s(74) “compromise graph.” Each edge eࢠE is
+associated with an affordance f = <φ, π, κ, σ s, σ d>
+where σ s, σ d (the source and destination states) are
+its source and destination nodes ns = <ys, vs> and
+nd = <yd, vd>. The environmental feature φ is typi-
+cally some vulnerability in device ys, and the action
+possibility π is some exploit available to someone
+having access at level vs to ys. As described in Section
+3.4, the graph is weighted by a measure of time, so it
+is natural to associate this time with the cost of the
+affordance although, as we explain, this is not used to
+predict an attacker’s decisions.
+What is of interest are paths P from a speciﬁc
+starting access state nstart, to which no edges point,
+to a state of access to harm nharm from which no
+edges emerge. A path essentially deﬁnes a “risk”:
+some route from the status quo to a harm, with an
+associated probability and consequence. The mate-
+rialization of a risk involves traversing the associ-
+ated path, and this generally deﬁnes a trajectory of
+increasing privilege to devices with increasing prox-
+imity to physical processes. A risk control cࢠC is a
+modiﬁcation of one edge e that modiﬁes its weight
+t(e), as described below.
+3.4. The Time Metric
+The basic principle is to estimate the uncertain
+exploitation time that it would take to traverse the
+ 15396924, 2017, 7, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/risa.12681 by <Shibboleth>-member@ucas.ac.cn, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+===== PAGE 7 =====
+1304
+Busby, Green, and Hutchison
+Fig. 4. The principle of the attack affordance graph.
+edges in the affordance graph, and ﬁnd the mini-
+mum time to span the graph from start node to harm
+node. This focus on the shortest path in the network
+does not assume that attackers will always take the
+shortest path, but does assume that if an attack on
+the shortest path can be intercepted (because the
+shortest path is greater than some threshold time)
+then any attack on a longer path can also be in-
+tercepted. “Interception” could mean preventing the
+further development of any attack beyond a certain
+node through a periodic software patching cycle, or
+could mean the detection of a speciﬁc attack through
+periodic audit and monitoring activity. This focus on
+the shortest path is a heuristic that makes the pro-
+cess substantially more economical, as will become
+evident in Section 3.4, but it is just a heuristic and it
+is possible to imagine circumstances in which it will
+not work. These are discussed further in Section 5.2.
+A range of methods is available for eliciting
+the probability distributions over the estimated edge
+times (see e.g., the survey by Garthwaite et al.(75)).
+The choice needs to be based on what, in a particular
+context, is a suitable statistic for a subject area expert
+to judge and whether, for example, a judge is better
+able to estimate absolute bounds or quantiles.(76) We
+choose to use van Dorp’s(76) procedure based on a
+family of two-sided power distributions, which has a
+bounded domain and straightforward deﬁnition that
+subject area experts are likely to ﬁnd intuitive:
+f (t | tmin, tmode, tmax, n)
+=
+⎧
+⎨
+⎩
+λ((t −tmin) /(tmode −tmin))n−1
+for tmin < t < tmode
+λ((tmax −t)/(tmax −tmode))n−1
+for tmode ≤t < tmax
+(1)
+where λ = n/(tmax −tmin).
+Fig. 5 illustrates f() for a ﬁxed choice of tmin,
+tmode, tmax, with varying n. It is uniform for n = 1. Its
+use requires expert estimation of an exponent n as
+well as the bounding and modal values of t, for ex-
+ample, by choosing from distributions expressed pic-
+torially. Van Dorp(76) also describes a method that
+avoids eliciting the bounding values, instead elicit-
+ing quantiles and deriving the bounding values from
+these. But in a context such as ours it appears no eas-
+ier to elicit quantiles than bounds, and the procedure
+for deriving the latter from the former is complex,
+approximate, and opaque.
+Prior methods such as McQueen et al.’s(74) ﬁnd
+the expected duration of paths spanning the graph
+from start to end states, adding means of relevant
+edges. But there may be an appreciable probability
+that the shortest mean path is not the shortest path,
+and that the materialization time for a risk is substan-
+tially less than the mean. So it makes sense to esti-
+mate, for each path pi, the duration for which there
+is some probability Q it will be exceeded by an ac-
+tual duration—for example, to ﬁnd the path dura-
+tions t0.95(pi) that are exceeded with Q = 0.95, and
+to iterate through the process of identifying risk con-
+trols and adaptations until the shortest path duration
+Mini [tQ(pi)] is greater than the threshold duration T
+(which, in the case study below, is 24 days). We use a
+simple Monte Carlo procedure, assuming edge dura-
+tions are independent.
+It is difﬁcult to specify a sensitivity analysis be-
+cause, as explained further below, the procedure it-
+erates through qualitative judgments of appropriate
+risk controls, anticipated adaptations to the controls,
+and expected ramiﬁcations of the adaptations. The
+most important outcome of the quantitative anal-
+ysis at each iteration is the selection of the short-
+est path through the graph for comparison with the
+acceptable minimal path duration. It therefore be-
+comes necessary to know whether the selection of the
+ 15396924, 2017, 7, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/risa.12681 by <Shibboleth>-member@ucas.ac.cn, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+===== PAGE 8 =====
+Analysis of Affordance, Time, and Adaptation
+1305
+Fig. 5. The two-sided power distribution with tmin = 2, tmode = 4, tmax = 8, for n from 1.1 to 5.
+shortest path is marginal, and sensitive to small
+changes in the elicited probability distributions. So
+we measure the probability that the duration of any
+path could be less than that of the shortest, qerror (pi)
+= Pr[tQ(pi) < tQ(pmin)], again using a Monte Carlo
+procedure. Then qerror is made available for a deci-
+sion about whether to revisit the estimation of the du-
+rations associated with the edges in the shorter paths
+through the graph.
+There are various alternatives to these assump-
+tions about appropriate distributions, elicitation
+procedures, and acceptance criteria. The evidence
+on expert elicitation seems to suggest that mode
+estimates are reasonably accurate, but that estimates
+of variances and distribution tails are less so,(75) so
+how judgments about probabilistic time should be
+expressed remains in need of further exploration.
+It is not the main component of our method, and
+not its particular contribution, so we pass over these
+issues here.
+3.5. The User Adaptation Problem
+Our central concern is to anticipate how legit-
+imate actors such as users adapt to potential risk
+controls C, when these modify the affordances they
+currently experience, Flegit, and how this in turn mod-
+iﬁes the attack affordance graph R. It would be an
+extremely onerous task to identify Flegit completely.
+However, an analyst only needs to identify controls
+(perhaps only one control) for what is currently the
+shortest path in the attack affordance graph, and
+the effect of a new control might only be to change
+the costs of existing affordances rather than to add
+completely new affordances or completely withdraw
+old ones.
+Having identiﬁed the way a proposed control c
+impedes some prior affordance f = (φ, χ, π, κ) by
+modifying its cost to κpost, for example, the analyst
+needs to anticipate how such a modiﬁcation might
+provoke an adaptation. This involves the user ex-
+ploiting some other affordance f’ in place of f, if f’
+achieves the same goal as f, and does so at a lower
+cost. In this case, the relevant user property in the
+affordance deﬁnition, χ, is the user’s goal. So we ex-
+pect f’ to substitute for f if both χ’ = χ and κ’ < κ
+post. An example we give in Section 4 is where attacks
+via malicious emails suggest controls that prohibit ﬁle
+exchange by email. This kind of control might pro-
+voke legitimate users into making ﬁle exchanges by
+USB (universal serial bus) devices—dropping the af-
+fordance f of exchanging a ﬁle (the goal χ) by email
+when they have access to a device (some φ), because
+the cost κpost involves the possibility of disciplinary
+action. Instead, the affordance f’ of exchanging a ﬁle
+using a USB drive is now taken up.
+Finally, the analyst has to anticipate the effects
+of exploiting f’ on R. In particular, it can modify the
+traversal times for the edges, making certain attack
+ 15396924, 2017, 7, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/risa.12681 by <Shibboleth>-member@ucas.ac.cn, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+===== PAGE 9 =====
+1306
+Busby, Green, and Hutchison
+paths longer or (more likely) shorter. In the exam-
+ple in Section 4, the routine use of USB drives is
+expected to make illicit use of USB ports less no-
+ticeable, discourage system managers from disabling
+USB ports on devices in public places (like some of
+the utility’s commercial ofﬁces), and lead users to be
+less suspicious of USB drives left in such places. This
+modiﬁes a number of edges in R, including one on
+the shortest path.
+The process in practice relies heavily on expert
+judgment, requiring deep social understanding of the
+goals that legitimate users are pursuing, the alterna-
+tive ways they have to meet them, and how these can
+make attacker moves more or less difﬁcult. The pro-
+cedure moves from the domain of an attacker’s affor-
+dances to that of users, and then back again. These
+two domains have some common ground in terms
+of shared features of the environment (the states of
+access on various devices), but the affordances are
+directed to orthogonal purposes. But the analyst’s
+task is limited: there is no need to identify user af-
+fordances Flegit completely, only the affordances f
+modiﬁed by introducing a candidate control, and the
+alternative affordances f’ that share a goal with the
+modiﬁed f. There is also no need to identify the space
+of user goals X completely, only the shared goal
+χ(f, f’) for the modiﬁed f.
+3.6. An Orientation Process
+As the process is founded on a series of expert
+judgments, it is important to ensure these are well-
+informed, and this is not just a matter of developing
+a coherent analytical framework but also of having
+a systematic process of engagement between expert
+and system under analysis. Assessment of social en-
+gineering attack time distributions, in particular, is
+contextual and judgmental. It has to be informed by
+a social process in which the analyst engages.
+Gollman’s(77) basic taxonomy of an attack—
+under the headings of “impact” (states of harm), “ex-
+posure” (actors intending some harm), and “vulner-
+ability” (states of the system facilitating the harm)—
+provides a way of organizing this process of engage-
+ment. This suggests the following main elements:
+(1) “Impact” requires identiﬁcation of the primary
+attack target(s) within the industrial control
+system. These are states of harm that the sys-
+tem offers affordances to reach.
+(2) “Exposure” requires identiﬁcation of actors
+who illegitimately experience these affor-
+dances. Identifying such affordances requires
+understanding of the potential motives and ca-
+pacities of these actors.
+(3) “Vulnerability” requires identiﬁcation of the
+affordances offering direct and derived access
+to the targets. This will typically require (a)
+identiﬁcation of device interconnections and
+perimeter devices; (b) search for poor conﬁgu-
+ration and lack of security patching; (c) assess-
+ment of social norms, cues, and responses; (d)
+discovery of responsibilities and competences
+for protection.
+This process is ad hoc and reliant on the artful-
+ness of the analyst. But the principle of affordances
+remains the guiding idea. It is the inherent ﬁt be-
+tween attacker capabilities and system functions that
+creates the risk, and the ﬁt between legitimate user
+capabilities and system functions that creates adapta-
+tions when risk controls are introduced. These need
+to be the focus of the analyst’s familiarization with,
+and orientation to, the organization and system un-
+der assessment.
+4. APPLICATION OF THE METHOD
+4.1. The Organization and Its Systems
+To illustrate the use of the method, it was ap-
+plied in a small utility providing the ﬁnal distribution
+of a commodity to consumers in a speciﬁc region of
+a European state. For reasons of conﬁdentiality and
+security the organization has been anonymized, and
+some of the analysis simpliﬁed and changed. The ori-
+entation process described in Section 3.6 involved an
+intensive two day’s work by a researcher who, until
+recently, had worked as a computer security profes-
+sional for ﬁve years in the speciﬁc ﬁeld of industrial
+control systems. He carried out interviews, worked
+through documentation, and undertook some basic
+vulnerability analysis at the organization’s site. The
+primary observations from the orientation process
+were as follows:
+(1) The primary target was a single SCADA
+server with affordances to various types of
+harm, most obviously the disruption of service
+to domestic or commercial consumers. An at-
+tacker would be able to delay the restoration
+of service by excluding access for legitimate
+users, typically by changing all account pass-
+words.
+ 15396924, 2017, 7, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/risa.12681 by <Shibboleth>-member@ucas.ac.cn, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+===== PAGE 10 =====
+Analysis of Affordance, Time, and Adaptation
+1307
+Start 
+Eng WS 
+@ Root
+Eng WS 
+@ User
+WiFi  
+@ Any
+SCADA WS
+@ Root 
+WAN/LAN 
+Gateway  
+@ Any 
+File SRV 
+@ Root
+File SRV 
+@ User
+Office WS 
+@ Root
+Office WS 
+@ User
+Cam SRV 
+@ Root
+Cam SRV  
+@ User
+Harm 
+Fig. 6. The initial affordance graph.
+(2) The candidate sources of an attack were mul-
+tiple, and included disenchanted former em-
+ployees. The different types of attacker were
+associated with distinct affordances. For exam-
+ple, former employees had greater affordances
+for certain elements of “social engineering,”
+whereas remote attackers with technical capa-
+bilities were associated with the affordances
+presented by technical vulnerabilities in cer-
+tain systems.
+(3) The vulnerabilities were both social and tech-
+nical. Interviews suggested a susceptibility to
+malicious emails as employees appeared will-
+ing to open messages and attachments from
+known senders. Firewalls had been conﬁgured
+to allow direct remote access for subcontrac-
+tors who interacted with certain subsystems
+from remote locations over the public Inter-
+net.
+(4) There was public accessibility to machines
+with exposed, active USB ports. And there was
+a strong culture of treating clients as clients,
+not as vulnerabilities or threats. This helped
+the organization serve its community in a prin-
+cipled way, but suggested a possible reluctance
+to see clients as potential sources of vulner-
+ability or threat. The ways in which speciﬁc
+utilities become vulnerable to speciﬁc risks is
+documented and modeled in the literature: for
+example, Zechman(23) on water distribution
+systems, and Zhang et al.(31) on electrical distri-
+bution systems. But this understanding of local
+conditions is an important element in a risk as-
+sessment of a particular system in a particular
+social organization.
+4.2. The First Iteration
+Fig. 6 shows the initial graph of attack affor-
+dances in the organization. Moving from left to right
+moves to access on devices that are increasingly close
+to physical controls with increasing privilege. There
+is a single start node, denoting an undifferentiated
+state in which any attack begins. There is a single
+end node denoting a state in which the attacker
+causes physical harm. The remaining nodes deﬁne
+access to some entity (e.g., “Eng WS,” denoting an
+engineering workstation and “File SRV” denoting a
+ﬁle server) at some level of privilege (e.g., “@ Root,”
+denoting root or administrator level). The system
+under analysis was a very small one. Its computing
+network had three perimeter nodes, one accessible
+locally via wi-ﬁ, one accessible over the public
+Internet, and one conﬁgured within a so-called DMZ
+(“demilitarized zone”) on a gateway router. These
+deﬁne the early states of access in the graph, directly
+linked to the “Start” node. Access with root privilege
+on a SCADA (supervisory control and data acquisi-
+tion) server was the primary target in the sense that it
+enabled a user to alter physical processes and states
+of operational sites. Henry and Haimes(26) argue
+that it is na¨ıve to specify targets, as these emerge
+in practice as an attack progresses. But in such a
+simple system as this one, it seems reasonable to do
+ 15396924, 2017, 7, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/risa.12681 by <Shibboleth>-member@ucas.ac.cn, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+===== PAGE 11 =====
+1308
+Busby, Green, and Hutchison
+so. There were also programmable logic controllers
+linked to the network but these were excluded from
+the analysis by request of the operating organization.
+The graph has been somewhat modiﬁed to avoid
+undue disclosure, and simpliﬁed to aid exposition.
+Some edges were feasible, in the analyst’s judgment,
+but did not form part of a coherent failure path
+and so were excluded. In general, the shorter paths
+through the affordance network (e.g., those in which
+there is a direct connection from the “Start” node
+to later nodes such as root-level access on an engi-
+neering work station) involve some kind of social
+engineering.
+Table I shows the analyst’s exploitation time es-
+timates, in days, for each edge. As McQueen et al.(74)
+argue, the expertise of the attacker is clearly relevant
+to exploitation time (or “time to compromise” in his
+or her work), but it is also relevant to the frequency
+of attacks—and in this case more frequent attacks
+were expected from less expert attackers. The prob-
+ability distribution over exploitation times expresses
+the analyst’s judgments over all sources of exploita-
+tion for each edge. Most edges have a common min-
+imum of one day reﬂecting the analyst’s assumption
+that an attack would not proceed over N affordances
+in less than N days. Many edges in this particular
+analysis share a common maximum of 21 days, par-
+ticularly those associated with technical rather than
+socially engineered modes of attack. McQueen et al.
+suggest this as a general value where there are no
+known vulnerabilities and exploits and the attacker
+has an expert level of capability. We make no as-
+sumptions about capabilities, so this estimate is con-
+servative. The exponent value, common to all entries,
+gives a distribution with substantial weight in the
+tails, indicating a relatively large uncertainty for the
+analyst.
+Table II shows the paths pi in this graph, together
+with associated values of duration, t0.90(pi), the dura-
+tions for which the probability of exceedance is 0.90.
+The table also shows the mean durations E[t(pi)] and
+the probabilities qerror (pi) = Pr[t0.90(pi) < t0.90(pmin)]
+that the paths may be shorter than the identiﬁed
+shortest path.
+The analysis shows a primarily technical path,
+path 14, to be the shortest. The control proposed
+at this stage was a technical one, reconﬁguring the
+WAN/LAN (wide area network/local area network)
+gateway such that a port formerly open to the public
+Internet is brought within a ﬁrewall. There were no
+affordances that were modiﬁed by the introduction
+of this control in the analyst’s judgment.
+4.3. The Second Iteration
+The second graph is a trivial adaptation of the
+ﬁrst, modifying the exploitation time distribution for
+two edges (edges 16 and 17). On reanalysis, path 6
+was then the shortest according to t0.90(p6). But this
+duration remained below the acceptance threshold
+of 24 days. The path involved a spear-phishing at-
+tack giving direct root access to the engineering work
+station, for example, via a PDF (portable document
+format) attachment that is vulnerable to an exploit
+in a PDF viewer, or via an executable ﬁle disguised
+with a .pdf extension. The analyst had discovered, un-
+surprisingly, that most employees in the organization
+would open an email attachment with high probabil-
+ity if apparently sent from another employee, and if
+it appeared to be technical in nature they would open
+it anyway—almost regardless of its source (e.g., if it
+appeared to be a consumer emailing them with a sup-
+posed photograph of a defective installation).
+The obvious risk control was to prohibit email
+attachments, introducing an organizational rule that
+forbids the opening of received attachments and for-
+bids ﬁle attachments on sent emails. But fairly clearly
+this reduces the affordance for legitimate users—
+the organization’s employees—to exchange ﬁles via
+email attachments and the analyst judged it highly
+likely that employees would simply violate the rule.
+This would restore the legitimate users’ affordance
+but nullify the effect of the control, leaving the attack
+affordance graph virtually unchanged.
+4.4. The Third Iteration
+The analyst therefore proposed the automatic
+removal of all ﬁle attachments from emails received
+in the organization. Again this undermines the af-
+fordance provided by the email system to share ﬁles,
+but this affordance cannot be restored by simple rule
+violation. Users of the system are therefore likely
+to substitute competing affordances for achieving
+the same goal. The most obvious competing affor-
+dance was provided by USB drives. In the analyst’s
+judgment, the result would be that the use of USB
+drives would become normal and habitual, and
+that employees would not ﬁnd it suspicious when
+an unidentiﬁed USB drive was observed in a USB
+port. Moreover, there were several ofﬁce work
+stations in a public area with exposed, enabled USB
+ports—allowing a visitor to insert surreptitiously
+a USB device with key logging or wireless access.
+This led to a modiﬁcation of the exploitation times
+ 15396924, 2017, 7, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/risa.12681 by <Shibboleth>-member@ucas.ac.cn, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+===== PAGE 12 =====
+Analysis of Affordance, Time, and Adaptation
+1309
+Table I. Estimates for the Initial Affordance Graph
+Edge
+Nodestart
+Nodeend
+Timemin
+Timemode
+Timemax
+Exponent
+0
+Start
+WiFi
+1
+10
+21
+1.8
+1
+Start
+EngWSRoot
+5
+15
+40
+1.8
+2
+Start
+OfﬁceWSRoot
+5
+20
+40
+1.8
+3
+Start
+WLGateway
+1
+4
+21
+1.8
+4
+WiFi
+EngWSUser
+1
+10
+21
+1.8
+5
+WiFi
+EngWSRoot
+1
+20
+30
+1.8
+6
+WiFi
+FileSVRRoot
+1
+16
+21
+1.8
+7
+WiFi
+OfﬁceWSRoot
+1
+16
+21
+1.8
+8
+WiFi
+FileSVRUser
+1
+10
+21
+1.8
+9
+WiFi
+OfﬁceWSUser
+1
+10
+21
+1.8
+10
+WLGateway
+EngWSUser
+1
+10
+21
+1.8
+11
+WLGateway
+FileSVRUser
+1
+12
+21
+1.8
+12
+WLGateway
+EngWSRoot
+1
+20
+30
+1.8
+13
+WLGateway
+OfﬁceWSUser
+1
+10
+21
+1.8
+14
+WLGateway
+FileSVRRoot
+1
+20
+30
+1.8
+15
+WLGateway
+OfﬁceWSRoot
+1
+20
+30
+1.8
+16
+WLGateway
+CamSVRRoot
+1
+4
+21
+1.8
+17
+WLGateway
+CamSVRUser
+1
+3
+21
+1.8
+18
+EngWSUser
+EngWSRoot
+1
+8
+21
+1.8
+19
+FileSVRUser
+FileSVRRoot
+1
+8
+21
+1.8
+20
+OfﬁceWSUser
+OfﬁceWSRoot
+1
+8
+21
+1.8
+21
+CamSVRUser
+CamSVRRoot
+1
+4
+21
+1.8
+22
+EngWSRoot
+ScadaRoot
+1
+4
+21
+1.8
+23
+FileSVRRoot
+ScadaRoot
+1
+8
+21
+1.8
+24
+OfﬁceWSRoot
+ScadaRoot
+1
+6
+21
+1.8
+25
+CamSVRRoot
+ScadaRoot
+1
+4
+21
+1.8
+26
+ScadaRoot
+Harm
+1
+2
+21
+1.8
+attached to edge 2 in another path (path 7) in the
+affordance network—a path that involved socially
+engineered strategies using USB drives. The analysis
+of the modiﬁed graph made path 7 the shortest, with
+a t0.90(p7) of 22 days, which remained below the
+24-day acceptance threshold.
+4.5. The Fourth Iteration
+The ﬁnal iteration involved ﬁnding a control on
+this second path—involving the blocking of USB
+ports in public spaces, and the provision to staff of
+distinctively marked USB drives for all ﬁle sharing
+activity. The analyst could identify no relevant af-
+fordances that were materially affected, and the con-
+trol brought the shortest path just above the criterion
+threshold.
+For such a small example this kind of iteration
+is likely to be intuitive and regarded as part of what
+we would expect a competent organization to do as a
+matter of course. But some of the steps laid out here
+had not been obvious to the organization in ques-
+tion. It had no systematic knowledge of the possi-
+ble routes of attack laid out in the attack affordance
+graph, it had no speciﬁc understanding of which paths
+were the ones that presented the greatest vulnerabil-
+ity given their possible traversal times, and it had no
+planned series of risk controls. There was no appar-
+ent appreciation of the way in which, if it did have to
+introduce additional controls, this could lead to adap-
+tations that might create or amplify further risks. The
+outcome of the analysis was therefore not only a
+better-protected system, but also a deepening of the
+organization’s understanding of its own systems and
+their vulnerabilities, and of its own responses to these
+vulnerabilities.
+5. DISCUSSION AND CONCLUSION
+5.1. Contributions of the Method
+Although this study is about a speciﬁc class
+of risk—deliberate attacks on industrial control
+systems—its basic premise and method are more gen-
+eral. Any system that receives some intervention
+to control risk can adapt to that intervention and
+ 15396924, 2017, 7, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/risa.12681 by <Shibboleth>-member@ucas.ac.cn, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+===== PAGE 13 =====
+1310
+Busby, Green, and Hutchison
+Table II. Estimates of Path Durations
+Path
+t0.90(pi)
+E[t(pi)]
+Node 1
+Node 2
+Node 3
+Node 4
+Node 5
+Node 6
+qerror (pi)
+0
+28.0
+44.9
+Start
+WiFi
+EngWSRoot
+ScadaRoot
+Harm
+0.24
+1
+25.6
+41.1
+Start
+WiFi
+OfﬁceWSRoot
+ScadaRoot
+Harm
+0.30
+2
+33.0
+49.0
+Start
+WiFi
+EngWSUser
+EngWSRoot
+ScadaRoot
+Harm
+0.16
+3
+27.2
+41.7
+Start
+WiFi
+FileSVRRoot
+ScadaRoot
+Harm
+0.33
+4
+34.0
+50.1
+Start
+WiFi
+FileSVRUser
+FileSVRRoot
+ScadaRoot
+Harm
+0.15
+5
+33.0
+49.6
+Start
+WiFi
+OfﬁceWSUser
+OfﬁceWSRoot
+ScadaRoot
+Harm
+0.15
+6
+22.8
+37.8
+Start
+EngWSRoot
+ScadaRoot
+Harm
+0.44
+7
+23.5
+39.8
+Start
+OfﬁceWSRoot
+ScadaRoot
+Harm
+0.38
+8
+26.3
+43.2
+Start
+WLGateway
+EngWSRoot
+ScadaRoot
+Harm
+0.28
+9
+26.3
+43.8
+Start
+WLGateway
+OfﬁceWSRoot
+ScadaRoot
+Harm
+0.28
+10
+30.0
+47.3
+Start
+WLGateway
+EngWSUser
+EngWSRoot
+ScadaRoot
+Harm
+0.17
+11
+27.1
+44.4
+Start
+WLGateway
+FileSVRRoot
+ScadaRoot
+Harm
+0.26
+12
+32.0
+49.0
+Start
+WLGateway
+FileSVRUser
+FileSVRRoot
+ScadaRoot
+Harm
+0.16
+13
+32.0
+47.9
+Start
+WLGateway
+OfﬁceWSUser
+OfﬁceWSRoot
+ScadaRoot
+Harm
+0.23
+14
+20.8
+35.4
+Start
+WLGateway
+CamSVRRoot
+ScadaRoot
+Harm
+N/A
+15
+28.0
+44.1
+Start
+WLGateway
+CamSVRUser
+CamSVRRoot
+ScadaRoot
+Harm
+0.26
+change the risk in a way that was not the intention be-
+hind the control. Therefore, assessment should natu-
+rally be an iterative process—and our aim was to pro-
+pose a method for carrying it out. This method makes
+the iteration relatively economical, by concentrating
+attention on the shortest known risk materialization
+path. And it makes the iteration relatively systematic,
+by using a consistent principle (that of affordances)
+to anticipate adaptations to risk controls. The itera-
+tion reﬂects the fundamental idea that risk is reﬂex-
+ive, and that knowing about a risk almost inevitably
+changes it in some way.
+The principle that these adaptations take place
+because risk controls change affordances appears to
+be a general one. And the affordances principle has
+a big advantage. Because affordances concern the re-
+lationship between actors and environments in terms
+of actions, they help predict in a direct way how a
+change in behavior might follow a change to sys-
+tem. We do not have to predict how actors build
+their representations of the system and work out
+their plans for using it(69) because actors “pick up”
+affordances in a direct and effortless way.(78) This di-
+rectness makes affordances a plausible explanation
+of what happens and also a more practical way of
+predicting what can happen. They offer “consider-
+able heuristic guidance”(64) when we search for pos-
+sible adaptations. There are various developments of
+the affordance principle that on face value appear
+to suit risk analysis—notably the idea of affordances
+as probabilistic functions.(79) But to adopt such ideas
+would involve quantifying an attacker’s probability
+of acting in a particular way, a step fraught with the
+difﬁculties of estimating how such probabilities will
+change as attackers discover information about the
+system they are targeting.(3) So it is the basic idea of
+an affordance that appears to have most relevant to
+risk assessment generally.
+We have also suggested there has to be a clear
+“orientation” process. This is not part of the for-
+malized structure of the assessment procedure but
+it is an essential part of putting it into practice. In
+our case study, for example, the analyst found that
+to predict how system users would react required
+provoking them into responding—confronting them
+with typical malicious emails and getting them to
+describe what actions they would take. The analyst
+also only found out through physical engagement
+that an important vulnerability was created by a sys-
+tem that had been conﬁgured to give remote access
+to a camera server used by an external organization
+to monitor the organization’s protected sites. This
+orientation process is especially important in an
+iterative assessment that takes account of possible
+adaptations because the analyst needs not just a
+record of the system as it currently exists but also an
+understanding of the affordances that people in the
+system currently exploit—and what they might do if
+those affordances were modiﬁed.
+5.2. Limitations and Further Work
+Because our intention was to analyze the adap-
+tations of the legitimate system and its users we have
+ 15396924, 2017, 7, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/risa.12681 by <Shibboleth>-member@ucas.ac.cn, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+===== PAGE 14 =====
+Analysis of Affordance, Time, and Adaptation
+1311
+neglected a range of issues addressed in earlier work.
+We do not deal with the adaptations of adversaries
+to risk controls,(37–39) which includes the possibility
+that risk controls may inadvertently create new affor-
+dances for an attacker. We do not address the inter-
+actions between different risk controls.(47) We do not
+deal with the effects on dependent infrastructures,(80)
+and we ignore the costs of risk measures, which
+form an important component of other methods.(46)
+We also neglect the problem of multiple actors fac-
+ing independent choices about protective actions
+that are nonetheless interdependent.(81) And we do
+not address the analysis of threat agents, their ca-
+pacities, incentives, and motivations. Further work
+is therefore needed to synthesize all these ele-
+ments in some way, although the complexities of
+the individual methods suggest a single, overarch-
+ing method may not be feasible. Perhaps what we
+should be looking for is a way of deﬁning individ-
+ual methods in such a way that they can be selected
+and combined for the purposes of any speciﬁc risk
+assessment.
+Probably the greatest weakness of the method as
+it stands is the working assumption that if all path
+durations can be raised above some threshold with
+a given conﬁdence level then risk is acceptable. As
+a reviewer of an earlier version of this article em-
+phasized, this ignores the variation in detectability
+of the paths, and the attraction to potential attackers
+of the less detectable paths. In the current method,
+the times assigned to the edges in these paths are the
+times it takes the attacker to negotiate them, not the
+times that the defender has in order to respond to the
+attack. An edge with a long negotiation time may of-
+fer very little response time if its detectability is low
+in some way. While attackers are negotiating some
+edge, they have access to some device at some level
+deﬁned by the start node of that edge. So, to deal
+with the problem of variable detectability, an analyst
+would need to quantify the detectability δn of every
+node n in R that starts an edge. This detectability ex-
+presses for what fraction of time an attacker occupy-
+ing a state is detectable in that state, which nominally
+starts at the time the state is attained and ends at the
+time a transition is made out of it. This is the time as-
+sociated with an outgoing edge from that node. For
+example, if an attacker having root status to an ofﬁce
+workstation has a 0.25 detectability level, offering an
+affordance to gaining user status on a SCADA work-
+station after an expected period of 5 days, or to root
+status after 10 days, the detectable period of these
+affordances becomes 1.25 and 2.5 days, respectively.
+It is the detectability-adjusted path durations in the
+graph that then have to be compared with the time
+threshold. Of course, detectabilities may themselves
+be uncertain, and the Monte Carlo procedure for
+ﬁnding shortest path durations to some conﬁdence
+level would also then sample from probability distri-
+butions over detectability values.
+Another complexity is that legitimate users’
+adaptations may respond not just to changes in af-
+fordances but also to their evaluations of security. If
+users know a particular risk measure is intended to
+control a risk on a short compromise path then they
+might not undermine it through a self-serving adapta-
+tion. This contingency between adaptation and threat
+perception reinforces the need for the analyst to
+make judgments. Our approach is just a framework
+that helps prompt and organize these judgments, but
+it does not avoid the need to make them and empha-
+sizes the importance of what we have called the “ori-
+entation process” of properly familiarizing oneself, as
+an analyst, with social conditions in the organization
+under analysis.
+The study also neglected the problem of scalabil-
+ity. The organization used in the case study, and its
+systems, were small in scale. This made it suitable for
+a research study, but raises questions about how well
+the method will scale up. Assessing a speciﬁc system
+necessarily requires a detailed representation of that
+system, and an assessment based on identifying, test-
+ing, and mitigating a minimum path through a failure
+graph necessarily requires a comprehensive identiﬁ-
+cation of all possible paths that could be minimal.
+But how the judgmental and computational burden
+increases with the scale of the system depends on the
+structure of the system, and its decomposability. The
+economizing property of the method is its focus on
+the minimal path spanning the graph, which means
+that identiﬁcation of risk controls, and identiﬁcation
+of potential adaptations, is limited to this path. But—
+as we indicated earlier—this rests on the assumption
+that the path of minimal duration is always the worst
+case with some known probability. When this cannot
+be known with conﬁdence, the analyst has to explore
+more paths and the method becomes less economi-
+cal, and much more sensitive to increasing scale.
+We also make assumptions about the best ap-
+proach to eliciting and expressing judgments about
+uncertainty and time, generally assuming such distri-
+butions are unimodal, and assuming the distributions
+over different edges in the graph are independent.
+These assumptions need examining in any particu-
+lar context. It is plausible, for example, that attacker
+ 15396924, 2017, 7, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/risa.12681 by <Shibboleth>-member@ucas.ac.cn, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+===== PAGE 15 =====
+1312
+Busby, Green, and Hutchison
+capabilities could cluster around expert, highly-
+skilled actors and unskilled actors who only use ex-
+isting, downloadable exploits. Such clustering could
+produce bimodal distributions. However, the core of
+the method is the identiﬁcation of affordances, and
+the prediction of adaptations. Other distributions,
+and joint distributions, could be substituted for those
+we have used, and the use of simulation rather than
+an analytical approach means that substitution is rel-
+atively straightforward. Overall, the basic principle
+that risk analysis in contexts like this should not stop
+at analyzing the status quo, but also analyze candi-
+date risk controls and potential adaptations to them,
+appears robust. And the use of the affordances prin-
+ciple to do this appears productive.
+ACKNOWLEDGMENTS
+Many thanks are due to the members of the or-
+ganization in which the case study took place. We are
+also very grateful to the anonymous reviewers and
+the editor for their perceptive and constructive ad-
+vice. This study was partly funded by an E.U. Sev-
+enth Framework Programme grant, no. 608090, on
+“Hybrid Risk Management for Utility Networks.”
+REFERENCES
+1. Stouffer K, Falco J, Scarfone K. Guide to Industrial Control
+Systems (ICS) Security. Gaithersburg, MD: National Institute
+of Standards and Technology, 2013; Special Publication 800–
+882.
+2. CPNI. The National Infrastructure. UK Centre for the
+Protection of National Infrastructure, 2014. Available at:
+http://www.cpni.gov.uk/about/cni/, Accessed March 11, 2014.
+3. Brown GG, Cox LA. How probabilistic risk assessment can
+mislead terrorism risk analysts. Risk Analysis, 2011; 31:196–
+204.
+4. Miller B, Rowe D. A survey of SCADA and critical infrastruc-
+ture incidents. Proceedings of the 1st Annual Conference on
+Research in Information Technology, Calgary, October 10–13,
+2012, pp. 6, 51–56.
+5. Pauli D. Phishing proves too hot for plant: Hackers pop
+German steel mill, wreck furnace. The Register. Posted 22nd
+December 2014. Available at: http://www.theregister.co.uk/
+2014/12/22/hackers_pop_german_steel_mill_wreck_furnace,
+Accessed September 20, 2015.
+6. Pultarova T. Ukraine grid hack is wake-up call for network
+operators. Engineering and Technology, February 2016, 12–
+13.
+7. Zetter K. Everything we know about Ukraine’s power
+plant hack. Wired, January 20. Available at: http://www.
+wired.com/2016/01/everything-we-know-about-ukraines-pow-
+er-plant-hack/, Accessed on 26 February 2016.
+8. Gibson JJ. The theory of affordances. Pp. 67–82 in Shaw RE,
+Bransford J (eds). Perceiving, Acting, and Knowing: Toward
+an Ecological Psychology. Hillsdale, NJ: Lawrence Erlbaum
+Associates, 1977.
+9. Norman DA. Affordance, conventions and design. Interac-
+tions, May–June 1999, 38–42.
+10. Cowlagi RV, Saleh JH. Coordinability and consistency in acci-
+dent causation and prevention: Formal system theoretic con-
+cepts for safety in multilevel systems. Risk Analysis, 2013;
+33:420–433.
+11. Sharit J. A modelling framework for exposing risks in complex
+systems. Risk Analysis, 2000; 20:469–482.
+12. Pasman HJ, Knegtering B, Rogers WJ. A holistic approach to
+control process safety risks: Possible ways forward. Reliability
+Engineering & System Safety, 2013; 117:21–29.
+13. Goossen LHJ. Risk prevention and policy-making in auto-
+matic systems. Risk Analysis, 1991; 11:217–228.
+14. Einarsson S, Rausand M. An approach to vulnerability analy-
+sis of complex industrial systems. Risk Analysis, 1998; 18:535–
+546.
+15. Rastogi A, Gabbar HA. Fuzzy-logic-based safety veriﬁcation
+framework for nuclear power plants. Risk Analysis, 2013;
+33:1128–1145.
+16. Pat´e-Cornell M-E, Regan PJ. Dynamic risk management sys-
+tems: Hybrid architecture and offshore platform illustration.
+Risk Analysis, 1998; 18:485–496.
+17. Podoﬁllini L, Dang VN. Conventional and dynamic safety
+analysis: Comparison on a chemical batch reactor. Reliability
+Engineering & System Safety, 2012; 106:146–159.
+18. Kobza JE, Jacobson SH. Addressing the dependency problem
+in access security system architecture design. Risk Analysis,
+1996; 16:801–812.
+19. Nan C, Eusgeld I, Kr¨oger W. Analyzing vulnerabilities be-
+tween SCADA system and SUC due to interdependen-
+cies. Reliability Engineering & System Safety, 2013; 113:76–
+93.
+20. Sikorski M. Use of digital simulation in reliability analysis for
+the design of industrial process control systems. Reliability
+Engineering & System Safety, 1991; 31:281–295.
+21. Garrett CJ, Apostolakis GE. Automated hazard analysis of
+digital control systems. Reliability Engineering & System
+Safety, 2002; 77:1–17.
+22. Coulbeck B, Orr CH. Essential considerations in the computer
+control of water distribution systems. Reliability Engineering
+& System Safety, 1993; 42:55–64.
+23. Zechman EM. Agent-based modeling to simulate contam-
+ination events and evaluate threat management strategies
+in water distribution systems. Risk Analysis, 2011; 31:758–
+772.
+24. Yan Z, Haimes YY. Cross-classiﬁed hierarchical Bayesian
+models for risk-based analysis of complex systems under
+sparse data. Reliability Engineering and Systems Safety, 2010;
+95:764–776.
+25. Bobbio A, Ciancamerla E, Franceschinis G, Gaeta R,
+Minichino M, Portinale L. Sequential application of heteroge-
+neous models for the safety analysis of a control system: A case
+study. Reliability Engineering & System Safety, 2003; 81:269–
+280.
+26. Henry MH, Haimes YY. A comprehensive network security
+risk model for process control networks. Risk Analysis, 2009;
+29:223–248.
+27. Ralston PAS, Graham JH, Hieb JL. Cyber security risk assess-
+ment for SCADA and DCS networks. ISA Transactions, 2007;
+46:583–594.
+28. Kundur D, Feng X, Mashayekh S, Liu S, Zourntos T, Butler-
+Purry KL. Towards modelling the impact of cyber attacks on
+a smart grid. International Journal of Security and Networks,
+2011; 6:2–13.
+29. Naedele M. Addressing IT security for critical control systems.
+Proceedings of the 40th Annual Hawaii International Confer-
+ence on System Sciences HICSS2007, Jan 3–6, 2007, p. 115.
+30. Fleury T, Khurana H, Welch V. Towards a taxonomy of at-
+tacks against energy control systems. Pp. 71–85 in Para M,
+Shenoi S (eds). Critical Infrastructure Protection II. Berlin:
+Springer, 2008.
+ 15396924, 2017, 7, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/risa.12681 by <Shibboleth>-member@ucas.ac.cn, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+===== PAGE 16 =====
+Analysis of Affordance, Time, and Adaptation
+1313
+31. Zhang Y, Wang L, Xiang Y, Ten C-W. Power system relia-
+bility evaluation with SCADA cybersecurity considerations.
+IEEE Transactions on Smart Grid, 2015; 6:1707–1721.
+32. Ten C-W, Liu C-C, Manimaran G. Vulnerability assessment
+for cybersecurity for SCADA systems. IEEE Transactions on
+Power Systems, 2008; 23:1836–1846.
+33. Henry MH, Layer RM, Snow KZ, Zaret DR. Evaluating the
+risk of cyber attacks on SCADA systems via Petri net analysis
+with application to hazardous liquid loading operations. IEEE
+International Conference on Technologies for Homeland Se-
+curity, May 11–12, 2009, pp. 607–614.
+34. Henry MH, Layer RM, Zaret DR. Coupled Petri nets for com-
+puter network risk analysis. International Journal of Critical
+Infrastructure Protection, 2010; 3:67–75.
+35. Ingols K, Chu M, Lippman R, Webster S, Boyer S. Model-
+ing modern network attacks and countermeasures using attack
+graphs. Proceedings of the 25th Annual Computer Security
+Applications Conference ASAC ’09, Austin, December 6–10,
+2009, pp. 117–126.
+36. Long J, Fischhoff B. Setting risk priorities: A formal model.
+Risk Analysis, 2000; 20:339–351.
+37. Merrick J, Parnell GS. A comparative analysis of PRA and
+intelligent adversary methods for counterterrorism risk man-
+agement. Risk Analysis, 2011; 31:1488–1510.
+38. Rios J, Rios Insua D. Adversarial risk analysis for counterter-
+rorism modelling. Risk Analysis, 2012; 32:894–915.
+39. McGill
+WL,
+Ayyub
+BM,
+Kaminskiy
+M.
+Risk
+analysis
+for critical asset protection. Risk Analysis, 2007; 27:1265–
+1281.
+40. Rothschild C, McLay L, Guikema S. Adversarial risk analysis
+with incomplete information: A level-k approach. Risk Anal-
+ysis, 2012; 32:1219–1231.
+41. Chatterjee S, Abkowitz MD. A methodology for modeling re-
+gional terrorism risk. Risk Analysis, 2011; 31:1133–1140.
+42. Davis G, Garcia A, Zhang W. Empirical analysis of the effects
+of cyber security incidents. Risk Analysis, 2009; 29:1304–1316.
+43. Rose A, Oladosu G, Liao S-Y. Business interruption impacts
+of a terrorist attack on the electric power system of Los An-
+geles: Customer resilience to a total blackout. Risk Analysis,
+2007; 27:513–531.
+44. Simonoff JS, Restrepo CE, Zimmerman R. Risk-management
+and risk-analysis-based decision tools for attacks on electric
+power. Risk Analysis, 2007; 27:547–570.
+45. Ezell BC. Infrastructure vulnerability assessment model (I-
+VAM). Risk Analysis, 2007; 27:571–583.
+46. Shaﬁeezadeh A, Cha EJ, Ellingwood BR. A decision frame-
+work for managing risk to airports from terrorist attack. Risk
+Analysis, 2015; 35:292–306.
+47. Chatterjee S, Hora SC, Rosoff H. Portfolio analysis of layered
+security measures. Risk Analysis, 2015; 35:459–475.
+48. Bier V. Choosing what to protect. Risk Analysis, 2007; 27:607–
+620.
+49. Rios Insua D, Rios J, Banks D. Adversarial risk analysis. Jour-
+nal of the American Statistical Association, 2009; 104:841–854.
+50. Forrester JW. Counterintuitive behavior of social systems.
+Theory and Decision, 1971; 2:109–140.
+51. Vaughan D. The Challenger Launch Decision. Chicago: Uni-
+versity of Chicago Press, 1996.
+52. Reason J. Managing the Risks of Organizational Accidents.
+Aldershot, UK: Ashgate, 1997.
+53. Busby JS, Alcock RE, MacGillivray BM. Types of risk trans-
+formation: A case study. Journal of Risk Research, 2012;
+15:67–84.
+54. Wilde GJS. The theory of risk homeostasis: Implications for
+safety and health. Risk Analysis, 1982; 2:209–225.
+55. Siponen M, Vance A. Neutralization: New insights into the
+problem of employee information systems security policy vi-
+olations. MIS Quarterly, 2010; 34:487–502.
+56. Busby JS, Bennett SA. Loss of defensive capacity in protective
+operations: The implications of the ¨Uberlingen and Linate dis-
+asters. Journal of Risk Research, 2007; 10:3–27.
+57. Hynes T, Prasad P. Patterns of “mock bureaucracy” in min-
+ing disasters: An analysis of the Westray coal mine explosion.
+Journal of Management Studies, 1997; 34:601–623.
+58. Wicks D. Institutional mindsets of invulnerability: Differenti-
+ated institutional ﬁelds and the antecedents of organizational
+crisis. Organization Studies, 2001; 22:659–692.
+59. Mascini P. The blameworthiness of health and safety rule vio-
+lations. Law and Policy, 2005; 27:472–490.
+60. Reason J, Parker D, Lawton R. Organizational controls and
+safety: The varieties of rule-related behavior. Journal of
+Occupational and Organisational Psychology, 1998; 71:289–
+304.
+61. Kaivanto K. The effect of decentralized behavioral decision
+making on system-level risk. Risk Analysis, 2014; 34:2121–
+2142.
+62. Rietveld E. Situated normativity: The normative aspect of em-
+bodied cognition in unreﬂective action. Mind, 2008; 117:974–
+1001.
+63. Withagen R, de Poel HJ, Araujo D, Pepping G-J. Affor-
+dances can invite behavior: Reconsidering the relationship be-
+tween affordances and agency. New Ideas in Psychology, 2012;
+30:250–258.
+64. Stoffregen TA. Breadth and limits of the affordance concept.
+Ecological Psychology, 2004; 16:79–85.
+65. S¸ahin E, C¸ akmak M, Do˘gar MR, U˘gur E, ¨Uc¸oluk G. To af-
+ford or not to afford: A new formalization of affordances
+toward affordance-based robot control. Adaptive Behavior,
+2010; 15:447–472.
+66. Chemero A. An outline of a theory of affordances. Ecological
+Psychology, 2003; 15:181–195.
+67. Steedman M. Plans, affordances, and combinatory grammar.
+Linguistics and Philosophy, 2002; 25:723–753.
+68. Reed ES. The intention to use a speciﬁc affordance: A frame-
+work for psychology. Pp. 45–75 in Wozniak R, Fisscher K
+(eds). Development in Context: Acting and Thinking in Spe-
+ciﬁc Environments. Hillsdale, NJ: Lawrence Erlbaum Asso-
+ciates, 1993.
+69. Cisek P. Cortical mechanisms of action selection: The affor-
+dance competition hypothesis. Philosophical Transactions of
+the Royal Society B, 2007; 362:1585–1599.
+70. Stoffregen
+TA.
+Affordances
+are
+enough:
+Reply
+to
+Chemero et al (2003). Ecological Psychology, 2003; 15:29–
+36.
+71. Kanoun W, Cuppens-Boulahia N, Cuppens F, Dubus S, Mar-
+tin A. Success likelihood of ongoing attacks for intrusion
+detection and response systems. Proceedings of the Inter-
+national Conference on Computational Science and Engi-
+neering (CSE’09), Vancouver, August 29–31, 2009, pp. 83–
+91.
+72. Pietre-Cambac´ed`es L, Bouissou M. Modeling safety and se-
+curity interdependencies with BDMP (Boolean logic driven
+Markov Processes). Proceedings of the IEEE International
+Conference on Systems Man and Cybernetics (SMC), Istan-
+bul, October 10–13, 2010, pp. 2852–2861.
+73. Nzoukou W, Wang L, Jajodia S, Singhal A. A uniﬁed frame-
+work for measuring a network’s mean time-to-compromise.
+Proceedings of the IEEE 32nd International Symposium on
+Reliable Distributed Systems (SRDS), Braga, September 30
+to October 3, 2013, pp. 215–224.
+74. McQueen MA, Boyer WF, Flynn MA, Beitel GA. Quan-
+titative risk reduction estimation methodology for a small
+SCADA control system. Proceedings of the 39th An-
+nual Hawaii International Conference on System Sciences,
+HICSS2006, January 4–7, 2006, p. 226.
+ 15396924, 2017, 7, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/risa.12681 by <Shibboleth>-member@ucas.ac.cn, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+===== PAGE 17 =====
+1314
+Busby, Green, and Hutchison
+75. Garthwaite
+PH,
+Kadane
+JB,
+O’Hagan,
+A.
+Statistical
+methods
+for
+eliciting
+probability
+distributions.
+Journal
+of the American Statistical Association, 2005; 100:680–
+701.
+76. Van Dorp JR. Indirect parameter elicitation procedures
+for some distributions with bounded support—With applica-
+tions in program evaluation and review technique (PERT).
+Structure
+and
+Infrastructure
+Engineering,
+2012;
+8:393–
+401.
+77. Gollmann D. Computer Security, 3rd ed. Chichester, UK: Wi-
+ley, 2011.
+78. Zhang J, Patel VL. Distributed cognition, representation, and
+affordance. Pragmatics and Cognition, 2006; 14:333–341.
+79. Franchak J, Adolph K. Affordances as probabilistic functions:
+Implications for development, perception, and decisions for
+action. Ecological Psychology, 2014; 26:109–124.
+80. Chang SE, McDaniels T, Fox J, Dhariwal R, Longstaff H.
+Toward disaster-resilient cities: Characterizing resilience of
+infrastructure systems with expert judgments. Risk Analysis,
+2014; 34:461–434.
+81. Heal G, Kunreuther H. Modeling interdependent risks. Risk
+Analysis, 2007; 27:621–634.
+ 15396924, 2017, 7, Downloaded from https://onlinelibrary.wiley.com/doi/10.1111/risa.12681 by <Shibboleth>-member@ucas.ac.cn, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License

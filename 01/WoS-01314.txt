@@ -1,0 +1,2534 @@
+
+===== PAGE 1 =====
+Contents lists available at ScienceDirect
+Applied Energy
+journal homepage: www.elsevier.com/locate/apenergy
+Optimal use of electric energy oriented water-electricity combined supply
+system for the building-integrated-photovoltaics community
+Quan Suia, Fanrong Weia, Rui Zhangb, Xiangning Lina, Ning Tonga, Zhixun Wanga, Zhengtian Lia,⁎
+a State Key Laboratory of Advanced Electromagnetic Engineering and Technology, Huazhong University of Science and Technology, Wuhan, Hubei 430074, China
+b State Power Economic Research Institute, Beijing 100000, China
+H I G H L I G H T S
+• A water and electricity combined supply system in a smart community is proposed.
+• Shapley value method is firstly introduced to distribute the cooperation revenues.
+• Forecast errors are addressed by a two-stage electric and hydraulic combined method.
+• The iterative procedure can solve the hydraulic and electric dispatching problem efficiently.
+A R T I C L E I N F O
+Keywords:
+Building-integrated photovoltaics
+Water distribution system
+Shapley value method
+Electric-hydraulic combined dispatching
+Iterative method
+A B S T R A C T
+As a new application form of sustainable energy generation, building-integrated photovoltaics provide great
+flexibility for energy conservation and emission reduction. However, due to the randomness and volatility from
+photovoltaic generation, the full exploitation of the advantages of building-integrated photovoltaics has become
+an important question for the utilities. To address this issue, this paper proposes a novel and comprehensive
+(combined) water-energy supply system applied to the smart community with building-integrated photovoltaics
+and two-stage electric-hydraulic dispatching method. It was designed to minimize the electricity consumption
+cost and power fluctuation while meeting the water demand loads, followed by the iterative algorithm as well as
+linearized techniques to solve the optimisation model. The Shapley value method was introduced to ensure the
+fair revenue between the property company and owners. Simulation studies on a building-integrated-photo-
+voltaics community and a 15-node water distribution system indicates that the annual operation cost of the
+water-electricity combined supply system was reduced by 29.6% while the external grid obtained a better
+prediction regarding the real-time exchange power. The results confirm the effectiveness of the proposed model
+on peak shaving and valley filling and fluctuation smoothing.
+1. Introduction
+The current energy crisis and environmental requirements have
+stimulated the development of building-integrated photovoltaics (BIPV)
+[1]. However, BIPV applications must deal with the problem of the
+owners bearing an economic loss due to either PV power curtailment or
+selling to the external grid (EG) at a low price during the time periods
+when the photovoltaic (PV) peak output exceeds the load demand [2].
+Meanwhile, the unpredictability and volatility characteristics of PV give
+rise to great challenges in achieving power balance and reliable mi-
+crogrid (MG) operation [3]. Although the above problems can be solved
+well by electric energy storage systems, their application has been
+limited by their high operational and maintenance costs and other
+drawbacks [4]. Thermal energy storage systems such as residential
+buildings with air conditioning [5], wall bricks with a heater [6] or hot
+water storage with a heat pump [7] are regarded as economic solutions,
+but the weak heating/cooling demand in regions with perennial com-
+fortable temperature leads to a limited annual comprehensive utiliza-
+tion rate. Therefore, to fully exploit to the advantages of BIPV, the
+development of an economical and universal energy storage system is
+urgently needed.
+On the other hand, as it is well known that the water treatment acts
+as a common and considerable consumer, thus many studies have fo-
+cused on its electricity consumption and sought breakthroughs in the
+energy conservation. For instance, it occupied approximately 3% of the
+total electricity in the United States [8] and 20% of that in California
+https://doi.org/10.1016/j.apenergy.2019.04.059
+Received 4 December 2018; Received in revised form 20 March 2019; Accepted 14 April 2019
+⁎ Corresponding author.
+E-mail address: 453874933@qq.com (Z. Li).
+Applied Energy 247 (2019) 549–558
+Available online 19 April 2019
+0306-2619/ © 2019 Elsevier Ltd. All rights reserved.
+T
+
+===== PAGE 2 =====
+[9] and 30–40% of that consumed by municipal governments [10].
+According to the estimation of the World Bank, the above proportion
+will increase significantly due to the growing water demand at an ex-
+pected rate ranging from 43% in North America to 283% in Sub-Sa-
+haran Africa from 2005 to 2030 [11]. However, unlike other rigid large
+energy consumers, water distribution systems (WDS) incorporated
+water pumps (WPs) with the flexible adjustment capability for im-
+proving the efficiency and providing various services. For example, the
+WP was optimized by shifting electricity consumption to low-price
+periods to decrease its operational costs in [12]. Considering the rain-
+fall and water demand uncertainties, [13] proposed a robust two-stage
+strategy to optimize the WP power. On this basis, [14] introduced an
+online robust control method for practical application and [15] carried
+out the multiple experiments and analysed a corresponding systematic
+error for improving reliability of the test results. In addition to the
+above works, several mathematical and heuristic optimization algo-
+rithms were introduced accordingly. Ref. [16] presented an algorithm
+for WP modelling and scheduling. It uses the WP start/end run times as
+continuous variables and the WP status at the beginning of the sche-
+duling period as binary variables. On this basis, [17] introduced a two-
+stage solution method for the optimal scheduling problem of WDS
+where the relaxed continuous variables are optimized in the first stage
+and the binary variables are processed in the second stage by using a
+local branch and bound method. In [18], the operational optimization
+of pumping station with multiple WPs was treated as a dynamic pro-
+gramming problem and was solved using the reduced dynamic pro-
+gramming algorithm. Ref. [19] adopted a neutral evolutionary search
+method to solve the least cost WP operation optimization problem for
+an industrial size WDS. Six multi-objective evolutionary algorithms
+including strength Pareto evolutionary algorithm, multiple objective
+genetic algorithm and so on were introduced to solve the optimal WP-
+scheduling problem and compare the solution performance [20]. The
+operation optimization problems and solutions of WDS were compre-
+hensively reviewed in [21].
+The above-mentioned literature mainly focuses on the primary WDS
+operated by the water supply corporation in which the flexible opera-
+tion of WPs can benefit the operators. However, for the secondary WDS
+(such as in a community) owned by a property company, in addition to
+WPs, water tanks are generally used to ensure safe and adequate water
+supply to the owners and these WDS have rarely attracted the attention
+of academic researchers. In practice, by optimizing WPs and tanks, the
+secondary WDS purchases electricity at a low price from the EG to re-
+duce its operational cost as much as possible regardless of the MG,
+which means that the problems caused by the BIPV still exist. However,
+the perfect regulation effects of secondary WDS indicate that the
+community with BIPV can consume the excessive energy generated
+during PV peak output by storing the water in a tank and mitigating the
+power fluctuation by regulating the WPs; this approach has not yet been
+applied or mentioned in the literature. To elucidate the problems and
+verify the performance characteristics of these approaches, a novel
+water and electricity combined supply system (WECSS) involving dif-
+ferent stakeholders, together with a detailed hydrodynamic model in-
+corporating water tanks is proposed for the first time in this paper.
+The existing work focusing on the linkages between the water and
+electricity industries to find opportunities to reduce energy consump-
+tion and operating costs provide an excellent reference for the modeling
+of WECSS [22]. For example, a multi-plant real-time simultaneous
+economic dispatch of power and water was developed to address the
+coupling relationship between WDS and the power grid in [23]. A
+quantitative engineering system of the energy–water nexus was mod-
+elled using bond graph representations of the system’s modelling lan-
+guage in [24]. Ref. [25] developed a day-ahead power systems opera-
+tion model that integrated the energy regulation flexibility of the WDS.
+Ref. [26] introduced an energy efficiency evaluation strategy for WDS
+design and a mathematical model for optimizing WP operation in high-
+rise buildings. Ref. [27] presented the energy-water optimal scheduling
+model using harvested rooftop rain water and the time-of-use electricity
+price tariff. A framework consisting of two optimization models was
+proposed in [28] where the first-step model optimizes the procurement
+cost of the WDS operators and the second-step model optimizes the
+demand response and frequency regulation. Furthermore, with different
+peak price of the electricity tariff, the model that optimizes variable
+speed WPs in WDS to provide the demand response for a power system
+was established in [29]. Models that focus on passive energy efficiency
+and price-dependent load management methods in WPs and water
+treatment plants were presented in [30]. In [31], the energy use and the
+state of demand response readiness in wastewater treatment facilities
+were characterized. Although the long-time scale performance of WDS
+has been well examined in the above literatures, the flexibility provided
+by water tanks and WPs on a short-time scale such as by eliminating
+power fluctuations has not been modelled and studied. Additionally,
+concentrating on the WDS and large power grid, these models neglect
+the electric limits of the power flow and WP ramp rate and the hy-
+drodynamic constraints of WDS for which the dispatching strategies
+may not be supported in WECSS involving WDS, MG and EG particu-
+larly under risk conditions. Moreover, as the basic premise for pro-
+moting cooperation, the distribution of the cooperation revenues
+among the participants with different interests and price barriers has
+not been discussed to date.
+In addition to supplementing the shortcomings of existing work in
+modelling, this paper also proposes a two-stage hydraulic and electric
+combined dispatching method to ensure the performance of the WECSS
+on multiple time-scales. In fact, the dispatching problem has been a hot
+research topic [32]. For example, economic power generation strategies
+are formulated in the day-ahead stage while prediction errors are mi-
+tigated in the real-time stage in [33]. On this basis, [34] integrated
+model predictive control (MPC) into the two-stage dispatching model,
+significantly enhancing the ability of the dispatching system to cope
+with risks. Regardless of the violent fluctuation of real-time power, [35]
+directly adopted a one-stage MPC strategy to minimize the operational
+cost. Likewise, [36] used a hierarchical iterative control algorithm for
+optimal balance of the grid load (both the voltage drop and current
+load) while satisfying users power demand. By contrast, a power
+smoothing objective adopted in [37] resulted in the poor operation
+economy of an energy storage system. However, unlike the existing
+dispatching system, for WECSS, both electric balance and hydraulic
+balance in multiple stages should be met to simultaneously ensure safe
+water and electricity supply to residents. More importantly, the pre-
+diction errors such as the PV output error will have a profound impact
+on the electric and hydraulic balance on multiple time-scales, further
+increasing the dispatching difficulty of WECSS. Consequently, a novel
+dispatching method must be designed to coordinate the hydraulic and
+electric systems and eliminate the impact on multiple time-scales
+caused by prediction errors. Meanwhile, the method for solving the
+novel dispatching model of WECSS efficiently to meet the actual de-
+mand of the novel dispatching system must be carefully considered.
+Summarising, to solve the storage problem caused by BIPV, a novel
+combined water-energy supply system is proposed. A detailed com-
+prehensive model with technical considerations, constraints and its
+profit distribution is presented for the first time, to analyse its perfor-
+mance on multiple time-scales. (This is the special consideration and
+the main contribution in this paper.) In addition, the Shapley value
+method is introduced firstly to distribute the cooperation revenues
+between both sub-systems. Lastly, to reduce the impact of forecast er-
+rors, a two-stage dispatching method is proposed and an iterative
+procedure as well as linearized techniques is adopted to solve the
+problem efficiently.
+The rest of this paper is organized as follows: Section 2 presents the
+materials and methods involving the structure of the water-energy
+supply system, the electric-hydraulic combined model, the two-stage
+dispatching method, case study and parameters and the multiple in-
+teger linear programming formulation. Results and discussion are
+Q. Sui, et al.
+Applied Energy 247 (2019) 549–558
+550
+
+===== PAGE 3 =====
+conducted in Section 3. Finally, the conclusions are drawn in Section 4.
+2. Materials and methods
+2.1. Structure of the water-energy supply system
+With BIPV and WDS in a smart community, the designed WECSS is
+shown in Fig. 1. As observed from the figure, the electric-hydraulic
+systems are coupled with WPs. The MG connected to the EG can not
+only supply power to various electric loads, but also supports the power
+demand of WPs directly. The water demand loads are met by WDS
+service. There exist two operation modes of WECSS in the process of
+exchanging power with EG:
+Mode 1: Water storage mode. Electric energy is converted into po-
+tential energy of water by WPs and is stored in the tanks;
+Mode 2: Water release mode. Water with high potential energy in
+the tanks is released to reduce the power demand of WPs.
+Of course, a reasonable revenue distribution method is the first
+prerequisite of the cooperation. To promote and maintain the co-
+operation between the property company and the owners, the Shapley
+value method used in economics is introduced in this paper to distribute
+the revenues equally according to their contributions [38]. The theory
+is as follows:
+Assume that set N = {1,2,⋅⋅⋅, n} indicates that n members are en-
+gaged in economic activities. V(S) expresses the revenues of co-
+operative S (a subset of N) and is represented by:
+=
++
+=
+V
+V S
+S
+V S
+V S
+S
+S
+( )
+0
+(
+)
+(
+)
+(
+)
+1
+2
+1
+2
+1
+2
+(1)
+where V is the strategy eigenfunction.Φ = (Φ1(υ),Φ 2(υ),⋅⋅⋅, Φ n(υ))
+expresses the revenue distribution vector where Φ i(υ) denotes the
+revenues belonging to member i:
+=
+=
+w S
+S
+S i
+i
+n
+( )
+(
+)( ( )
+(
+)),
+1, 2,
+,
+i
+i
+S
+(2)
+=
+w S
+n
+S
+S
+n
+(
+)
+(
+| |)!(| |
+1)!
+!
+(3)
+where |S| and n indicates the number of the subsets and members, re-
+spectively, and υ (S \ i) denotes the contribution of member i in S.
+In this paper, water independent supply mode (WISM) for the
+property company and electricity-independent supply mode (EISM) for
+the owners and WECSS are denoted as
+S = ({WISM}, {WISM}, {WECSS}) in which the corresponding
+revenue space can be expressed as V = (V({WISM}), V({EISM}), V
+({WECSS})), and the distribution vector is Φ = (Φ 1(υ), Φ 2(υ)).
+2.2. Electric and hydraulic combined model
+The solar radiation, power constraints and dynamic structure of
+WDS (for instance, the pressure head) have a significant impact on the
+performance of WECSS in both the long and short term. As a result, a
+precise electric and hydraulic combined model incorporating the power
+flow limits and WP ramp rate was established to evaluate the working
+characteristics of WECSS on multiple time-scales.
+First of all, power sources modeling of PV and the EG were pre-
+sented. Define PPV as the output power of PV and G as the solar ra-
+diation at the surface of a photovoltaic panel (W/m2). The output
+power of PV is controlled by the solar spectrum and can be represented
+as follows:
+=
+×
+×
+P
+G
+P
+1000
+PV
+PV rated
+MMPT
+,
+(4)
+where PPV rated
+,
+is the rated power of the PV array at G = 1000 W/m2 and
+MMPT is the efficiency of the PV’s DC/DC converter in the Maximum
+Power Point Tracking System.
+A smart community can purchase electricity from an EG at a price
+pin t, and sell electricity to the EG at a price pout t, . Assume that the power
+exchanged between the EG and the community is PEX t, including the
+sold power PEX t
+out
+, and the purchased power PEX t
+in
+, . The exchanged power
+satisfies the following constraint:
+P
+P
+P
+t
+EX
+EX t
+EX
+,
+(5)
+where PEX and PEX are the upper and lower limits of the power ex-
+changed between the community and the EG.
+Secondly, the WECSS model on the electric side with the ramp rate
+constraints was established. The vectors of the WPs’ power at time t are
+defined as
+=
+P
+(P , ...,P
+)
+t
+W
+t
+W
+t U
+W
+T
+,1
+,
+. The power constraints are given by:
+P
+P
+t
+0
+t
+W
+W
+(6)
+P
+P
+P
+P
+t
+W
+t
+W
+t
+W
+W
+- 1
+(7)
+where PW,
+PW and
+PW are the
+×
+U
+1 vectors of the maximum WP
+power, maximum down ramp rate and maximum upper ramp rate.
+Finally, the WECSS model on the hydraulic side including the SOC
+(state of charge) definition was presented. The variables related to the
+hydrodynamic model shown in Fig. 2 are defined as follows: The ex-
+ternal variable
+=
+Q
+Q
+Q
+[
+,...,
+]
+t
+D
+t
+D
+t N
+D
+T
+,1
+,
+is the
+×
+N
+1 vector of the water load.
+The adjustable variables It and Ot are the
+×
+K
+1 vectors of the tanks’
+water input and output flows, respectively. State variables Vt and SOCt
+are the
+×
+K
+1 vectors of the storage water and the corresponding energy
+storage state. To facilitate the understanding of the hydrodynamic Eqs.
+(8)–(21), the typical hydrodynamic network model consisting of a
+water pipe, WP, tank, source and loads is shown in Fig. 3 where the
+energy storage and energy release process are marked by the red and
+blue lines while black lines indicate the other flow exchange.
+The dynamic balance between the water supply and demand is
+maintained at all times in WDS and can be expressed by the following
+formula:
+=
++
+Q
+Q
+AQ
+I
+O
+t
+[
+]
+t
+R
+t
+D
+t
+T
+t
+t
+(8)
+where Qt
+R is the
+×
+N
+1 vector of the source’s water inflow, Qt is the
+×
+J
+1
+vector of the arc’s flow rate, A and
+are the
+×
+N
+J node-arc and the
+×
+K
+N tank-node incidence matrix, respectively.
+The equations of the water storage and release in the water tank can
+be expressed by:
+=
++
++
+V
+V
+I
+O
+t
+t
+t
+t
+t
+1
+(9)
+I
+I
+t
+0
+t
+(10)
+O
+O
+t
+0
+t
+(11)
+Water demand 
+loads
+PV
+External 
+grid
+MG
+WDS
+Electric 
+loads
+WP
+Elecricity
+Water 
+Elecricity
+Smart 
+community
+Tank 
+Energy 
+storage
+Owners
+Energy 
+release
+Fig. 1. Structure of the WECSS applied to a smart community with BIPV.
+External varibles:
+Water demand loads 
+Solar radiation   G
+Controllable variables:
+Input flow of water tank  
+Output flow of water tank 
+WP power
+Outputs:
+Hydraulic equations
+State variables:
+tI
+WDS structural 
+parameters
+t
+V
++1
+t
+V
+t
+O
+SOC t
++1
+SOCt
+W
+tP
+t
+D
+Q
+Fig. 2. Input-output relationship of the hydrodynamic model.
+Q. Sui, et al.
+Applied Energy 247 (2019) 549–558
+551
+
+===== PAGE 4 =====
+V
+V
+V
+t
+t
+(12)
+SOC
+V
+V
+V
+V
+t
+= (
+) (
+)
+t
+t
+(13)
+=
+V
+H
+t
+t
+t
+(14)
+where the storage water is influenced by the input/output flow of the
+tanks in (9) that is constrained by the maximum and minimum limits of
+the input flow, output flow and the storage water volume in (10)–(12)
+where I and O are the
+×
+K
+1 vectors of the maximum input and output
+flows, V , V and Vt are the
+×
+K
+1 vectors of the maximum, minimum and
+real-time water storage in the tank. In (13), SOCt represents the energy
+storage state. The pressure head at the tank nodes in (14) is determined
+by the water stored in the tanks where
+=
+H
+(H
+, ...,H
+)
+t
+t
+t N
+,1
+,
+is the pres-
+sure head and
+is the
+×
+S
+S diagonal matrix of the tank surface para-
+meters.
+Based on the empirical Hazen-Williams head loss constraint in [39],
+the pressure head loss Ht due to the friction between the water flow and
+the pipe can be expressed by:
+=
+A H
+G
+Q
+Q
+t
+(
+)
+T
+t
+t
+t 1.852
+(15)
+H
+H
+H
+t
+t
+(16)
+Q
+Q
+Q
+t
+t
+(17)
+where G is the
+×
+F
+F diagonal matrix of the pipe friction parameters, H
+and H are the maximum and minimum pressure level, respectively, and
+Qt is constrained in (17) by the minimum and maximum flow level
+Q
+and Q .
+As an active component, WP can increase the pressure head and
+control the water flow rate which is expressed in (18)–(19).
+Meanwhile, WP can only drive the water flow forward which is
+formulated in (20).
+=
+P
+W
+W
+BQ
+d
+e
+t
+1
+1
+(
+((
+)
+))
+t
+t
+W
+t
+U
+U
+t
+3
+(18)
+=
+BA H
+W
+W
+BQ
+a
+b
+t
+1
+1
+(
+((
+)
+) )
+T
+t
+t
+U
+U
+t
+t c
+2
+(19)
+BQ
+t
+0
+t
+(20)
+where a, b, c, d and e are the WP parameters [40],
+=
+W
+W
+W
+(
+, ...,
+)
+t
+U T
+t,1
+t,
+is the
+×
+U
+1 vector of the WP speed, B is the
+×
+U
+J WP-arc incidence
+matrix and 1U is the
+×
+U
+1 unity vector.
+The nodal pressure heads of the water sources such as reservoirs are
+considered to be constant, and are given by:
+=
+H
+Y
+t
+t
+(21)
+where Y is the
+×
+R
+1 vector representing the source nodes’ elevation.
+To summarize, (4)–(21) represent the detailed operation model of
+WECSS on multiple time-scales that is dispatched by the two-stage
+electric and hydraulic combined dispatching method introduced in
+Section 2.3.
+2.3. Two-stage electric and hydraulic combined dispatching method
+As observed from Fig. 4, a two-stage dispatching model including
+the day-ahead stage and the real-time stage was proposed to optimize
+WECSS operation in the smart community. In the day-ahead dis-
+patching stage, the sub-problem of hydraulic dispatching to meet the
+predicted water load demand is addressed first and is followed by the
+optimization of WPs in the electric problem in order to minimize the
+cost. Originated from day-ahead dispatching, the power exchange be-
+tween the community and the EG is applied to guide real-time dis-
+patching. To eliminate the risk of SOC violation of WECSS due to
+forecast errors, a risk management modular is introduced to regulate
+the exchange power. In the real-time stage, based on the difference
+between the actual data and the predicted data, real-time MPC dis-
+patching is devoted to mitigating the negative effects on both the
+electric sub-problem and the hydraulic problem. The corresponding
+detailed explanations are as follows:
+Firstly, in the day-ahead dispatching stage, the water tank in the
+hydraulic side is optimized to release as little energy as possible with
+the given WP power:
+=
+F
+O
+: min
+sp
+t
+T
+t
+1
+(22)
+SOC
+SOC
+=
+s.t.
+T
+0
+(23)
+(8)-(21).where Fsp is the objective of the hydraulic sub-problem and
+Ot is the output flow.
+Meanwhile, in the electric side, the objective function Fd is expected
+to minimize the electricity cost to the community by optimizing the WP
+power, as formulated by:
+=
+F
+min
+P
+p
+P
+p
+:
+(
+·
+·
+)
+d
+t
+T
+EX t
+in
+in t
+EX t
+out
+out t
+1
+,
+,
+,
+,
+(24)
++
+=
++
+=
+=
+=
+P
+P
+P
+P
+t
+s.t.
+i
+N
+i t
+PV
+EX t
+i
+N
+i t
+W
+i
+N
+i t
+E
+load
+1
+,
+,
+1
+,
+1
+,
+PV
+W
+E
+(25)
+=
+P
+P
+i j
+valley hours
+,
+·
+EX i
+EX j
+,
+,
+(26)
+where the power balance is expressed in (25), and for the EG, the en-
+ergy consumption of the community in (26) is expected to be constant
+during the valley hours.
+Secondly, as mentioned above, a risk management modular is in-
+troduced to ensure the reliability of the dispatching model. In other
+words, the SOC of WECSS should remain within [0 1] constraints for
+various risks, even when the actual data deviate ε% (or –ε%) from the
+predicted value. As observed from Fig. 5, the exchange power can be
+N1
+H1
+Q1
+Q2
+Q3
+J1
+J2
+J4
+N2
+N3
+N4
+H2
+H3
+H4
+D
+W
+R
+W
+D
+C
+S
+Q4
+N5
+H5
+V
+J3
+WP
+Tank
+Water Pipe
+e
+cr
+u
+o
+S
+w
+olf
+reta
+W
+D
+W
+Fig.3. Typical hydrodynamic network model of WECSS.
+Real time data
+Predicting  solar 
+radiation, electric and 
+hydraulic loads
+Power 
+exchanged       
+Result
+Start
+Day-ahead
+dispatching stage
+Real-time 
+dispatching stage
+Electric problem: 
+minimum 
+fluctuation
+t+1
+Water & electricity 
+balance
+Update
+No 
+Electric 
+problem:
+minimum cost
+EX,t
+P
+Adjust
+Water 
+requirements
+Risk management modular
+Hydraulic 
+subproblem: 
+minimum output
+Hydraulic 
+subproblem: 
+minimum output
+No 
+Yes
+Update
+t
+0
+1
+Fig. 4. Two-stage electric-hydraulic combined dispatching model.
+Predicted SOC
+SOC under ±
+% deviation
+0
+1
+0.5
+SOC
+SOC
+t
+SOC
+SOC
+Predicted SOC
+SOC under ±
+% deviation
+0
+1
+0.5
+SOC
+SOC
+t
+(a) Exhaustion risk of SOC  
+(b) Spillover risk of SOC 
+Fig. 5. Risk of SOC deviation from the upper or lower limits.
+Q. Sui, et al.
+Applied Energy 247 (2019) 549–558
+552
+
+===== PAGE 5 =====
+adjusted among the valley hours, as given by:
+=
+=
+P
+SOC E
+m
+valley
+morning
+P
+SOC E
+n
+valley
+night
+·
+-
+·
+-
+t
+m
+EX t
+in
+WECSS
+t
+n
+EX
+in
+WECSS
+0
+,
+max
+22
+,t
+max
+(27)
+where
+SOC is the maximum deviation of SOC from the upper or lower
+limits, and EWECSS
+max
+is the maximum energy storage capacity of WECSS.
+Although the electrical load of the smart community will be pre-
+dicted and updated to the EG in the day-ahead stage, the exchange
+power between the community and the EG will fluctuate due to forecast
+errors.
+Lastly, an MPC on the hydraulic and electric sides is conducted to
+mitigate the impact of forecast errors in the real-time stage. Assume
+that M is the prediction horizon of MPC and that ∧represents the
+predicted values. The hydraulic sub-problem in the real-time stage Frsp
+is to minimize the decrease in the stored water.
++
+=
++
+F
+I
+:
+min
+(
+ O )
+rsp
+t
+t
+M
+1
+(28)
+=
++
++
+SOC
+SOC
+s.t.
+t
+M
+t
+M
+1
+1
+(29)
+(8)–(21).
+Meanwhile, the electric problem in the real-time stage Frd is focused
+on minimizing the power fluctuation.
+=
++
+F
+P
+P
+P
+P
+: min
+|(
+)
+|
+rd
+t
+t
+M
+EX
+in
+EX
+out
+EX
+in
+EX
+out
+1
+,
+,
+,
+,
+(30)
+s.t. (5)–(7), (25).
+2.4. Case study and parameters
+A grid-connected MG with BIPV is shown in Fig. 1 and a typical
+WDS with 15nodes, 14 arcs, 2 tanks, 1 water source and 3 water loads
+in Fig. 6 was introduced to verify the performance of WECSS. The de-
+tailed data of the WDS are provided in [41]. The typical curves of PV
+output, electric loads and water loads in the summer are shown in Fig. 7
+[42–44]. The peak-valley electricity prices in China, i.e. 0.7 Yuan/kWh
+at 6:00–22:00 and 0.3 Yuan/kWh at 0:00–6:00 and 22:00–24:00 were
+adopted. The surplus electricity of MG is sold to the EG at 0.2 Yuan/
+kWh. The initial SOC of WECSS was set to 0.5.
+Assuming that the dispatching strategy of WECSS proposed in the
+paper is Case 1 while WEISM (WISM & EISM) is Case 2 for comparison.
+In Case 2, the optimization objective function of WISM is used to
+minimize the operational cost as follows:
+=
+=
+min
+P
+p
+·
+t
+T
+i
+N
+i t
+W
+in t
+1
+1
+,
+,
+W
+(31)
+s.t. (5)–(20).
+The corresponding operational costs of EISM are given as follows:
+=
+=
+=
+P
+p
+P
+t
+T
+i
+N
+i t
+E
+load
+in t
+i
+N
+i t
+PV
+1
+1
+,
+,
+1
+,
+E
+PV
+(32)
+2.5. Multiple integer linear programming formulation
+Due to the nonlinear terms (such as (15), (18), (19) and (30)) and
+the complexity of the water-electricity combined dispatch, the optimi-
+zation model is difficult to solve efficiently. An iterative procedure and
+linearized techniques were adopted to coordinate the novel dispatching
+system and meet the actual demand.
+First of all, the optimization model with nonlinear terms is con-
+verted to a multiple integer programming problem.
+For
+the
+nonlinear
+constraints,
+assume
+that
+=
+L
+Q
+G
+Q
+Q
+(
+)
+(
+)
+x t
+x t
+X
+x t
+x t
+,
+,
+,
+,
+1.852 is the pressure head loss between two
+nodes with respect to (15). As shown in Fig. 8 (a), axis Qx t, is divided
+into K-1 segments, and the breakpoints are expressed by qx
+1, qx
+2,…, qx
+k.
+The breakpoint k is related to the continuous variable
+[0, 1]
+x t
+k
+,
+and
+the interval
++
+q
+q
+[
+,
+]
+x
+k
+x
+k
+1 is related to the binary variable ux t
+k
+, .
+=
+=
+Q
+q
+x
+t
+,
+x t
+k
+K
+x
+k
+x t
+k
+,
+1
+,
+(33)
+=
+=
+L
+L
+q
+x
+t
+(
+)
+,
+x t
+k
+K
+x
+x
+k
+x t
+k
+,
+1
+,
+(34)
+=
+=
+u
+x
+t
+1
+,
+k
+K
+x t
+k
+1
+1
+,
+(35)
+=
+=
+x
+t
+1
+,
+k
+K
+x t
+k
+1
+,
+(36)
++
+=
+u
+u
+x
+t k
+K
+,
+,
+2, ...,
+1
+x t
+k
+x t
+k
+x t
+k
+,
+,
+1
+,
+(37)
+u
+x
+t
+,
+x t
+x t
+,
+1
+,
+1
+(38)
+u
+x
+t
+,
+x t
+K
+x t
+K
+,
+,
+1
+(39)
+x
+t
+0
+1
+,
+x t
+K
+,
+(40)
+where any given points
++
+q
+Q
+q
+x
+k
+x t
+x
+k
+,
+1 and Lx t, can be expressed by a
+linear combination of coordinates qx
+k and L
+q
+(
+)
+x
+x
+k with different weights
+x t
+k
+, [25] in (33) and (34). (35) ensures the only active line segment with
+the binary variable ux t
+k
+, equal to 1. (36)–(40) represent the only pair of
+consecutive positive continuous variables, and
+x t
+K
+, and
++
+x t
+K
+,
+ 1 take non-
+zero values.
+N10
+N11
+J10
+J9
+N9
+J8
+N8
+J7
+N7
+N6
+J6
+J11
+J12
+N12
+N13
+J13
+N14
+J14
+N15
+J5
+N5
+J4
+N4
+J3 N3 J2
+J1
+N1
+: Water source
+: Water tank
+WP
+N2
+Node
+:
+:
+Fig. 6. Schematic representation of WDS.
+0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24
+0
+200
+400
+600
+800
+480
+360
+240
+120
+0
+Period 
+h
+Power
+kW
+Water load D( m /h)
+3
+PV output in sunny 
+PV output in cloudy 
+Electric load power
+Water  load demand
+Fig. 7. Curves of PV output, electric load and water load.
+,x t
+L
+3
+,x t
+3
+,x t
+1
+,
+K
+x t
+1
+K
+x
+q
+1
+,
+K
+x t
+K
+x
+q
+3x
+q
+2x
+q
+1x
+q
+,
+K
+x t
+2
+,x t
+1
+,x t
+2
+,x t
+1
+,x t
+,x t
+Q
+,
+u t
+W
+,
+u t
+Q
+1
+m
+u
+m
+u
+1
+v
+uq
+v
+uq
+,
+W
+u t
+P
+a
+Pressure head loss function
+b
+Pressure head increase function
+,
+u t
+h
+Fig. 8. Piecewise linear approximation of nonlinear functions.
+Q. Sui, et al.
+Applied Energy 247 (2019) 549–558
+553
+
+===== PAGE 6 =====
+Similarly, as shown in Fig. 8 (b), any given WP power P
+Q
+W
+(
+,
+)
+u t
+W
+u t
+u t
+,
+,
+,
+in (18) and pressure head
+h
+Q
+W
+(
+,
+)
+u t
+u t
+u t
+,
+,
+,
+in (19) can be determined by
+the corresponding points P
+q
+(
+,
+)
+u t
+W
+u
+m
+u
+m
+,
+and
+h
+q
+(
+,
+)
+u t
+u
+m
+u
+m
+,
+with different
+weights
+x t
+k
+, [25]. Limited to the space, no detailed description is given
+here.
+For the nonlinear objective function, to minimize the fluctuation of
+exchange
+power
+in
+(30),
+the
+PV
+output
+error
+=
+=
+=
+P
+P
+P
+- -
+e
+err t
+i
+N
+i t
+PV
+i
+N
+i t
+PV
+,
+1
+,
+1
+,
+PV
+PV
+should be mitigated by adjusting the
+WP’s power as much as possible. Based on the analysis, taking a single
+period as an example, (30) can be given as follows if
+P
+0
+e
+err t,
+:
++
+P
+P
+P
+P
+min( (
+)
+)
+EX t
+in
+EX t
+out
+EX t
+in
+EX t
+out
+,
+,
+,
+,
+(41)
++
+=
+=
+P
+P
+P
+s. t
+i
+N
+i t
+W
+i
+N
+i t
+W
+e
+err t
+1
+,
+1
+,
+,
+W
+W
+(42)
+Similarly, for
+<
+P
+0
+e
+err t,
+, the objective function and constraint are
+expressed by:
+P
+P
+P
+P
+min((
+)
+)
+EX t
+in
+EX t
+out
+EX t
+in
+EX t
+out
+,
+,
+,
+,
+(43)
++
+=
+=
+P
+P
+P
+s. t
+i
+N
+i t
+W
+i
+N
+i t
+W
+e
+err t
+1
+,
+1
+,
+,
+W
+W
+(44)
+In addition, to speed up the solution procedure, an iterative fra-
+mework was proposed for the first time to solve the hydraulic sub-
+problem and the electric problem. Taking the day-ahead stage as an
+example, the iterative procedure is described as follows.
+Step 1: Initialization
+The input parameters include loads, PV output and WDS data, and
+the evaluated WP power P *
+i t
+W
+,
+. Additionally, the initial iteration number
+iter is set to 1, and the maximum iteration number is Iter_max, and the
+error is .
+Step 2: Solve the hydraulic sub-problem
+The objective (22) with constraints (8)–(21) and (23) can be
+transformed as follows:
+F : min
+sp
+(45)
+S
+s.t
+t
+t
+(46)
+S
+t
+0
+t
+(47)
+=
+=
+=
+P
+P
+t
+- S
+i
+N
+i t
+W
+t
+i
+N
+i t
+W
+1
+,
+1
+,
+*
+W
+W
+(48)
+(8)–(14), (16)–(21), (23), (33) and (40).
+By solving the hydraulic sub-problem, the optimized objective
+and
+WP power Pi t
+W
+,
+can be obtained.
+Step 3: Check stopping criteria
+The solution procedure has two stopping criteria:
+Rule 1: iter > Iter_max
+Rule 2:
+If any of one of the criteria are satisfied, the iteration process will be
+terminated. If neither of the criteria are satisfied, update the
+=
+P
+P
+*
+i t
+W
+i t
+W
+,
+,
+and go to Step 4.
+Step 4: Solve the electric sub-problem
+Solve
+the
+objective
+function
+(24)
+using
+the
+cut
+constraint
+=
+=
+=
+P
+P *
+t
+i
+N
+i t
+W
+t
+i
+N
+i t
+W
+1
+,
+1
+,
+W
+W
+and Eqs. (5)–(7), and (25) and (26).
+Step 5: Update
+=
+P
+P
+*
+i t
+W
+i t
+W
+,
+,
+and return to Stage 2.
+The solution process is illustrated in Fig. 9.
+3. Results and discussion
+3.1. Numerical simulations results
+To facilitate the understanding of the performance of WECSS, the
+basic properties of WECSS were analyzed. On the one hand, the cor-
+relation between the flow rate, elevation difference and WP power is
+shown in Fig. 10 (a). As observed from the figure, with the pipe re-
+sistance parameter G = 1297, both the WP power and elevation dif-
+ference between the nodes could drive the water flow increase while
+the rates of flow increase would decrease. For instance, the flow rate
+rose from 427 m3/h to 2998 m3/h as the WP power increased from
+0 kW to 100 kW under the conditions of 25 m elevation difference, but
+it only increased to 3667 m3/h when the WP power reached 200 kW. As
+a consequence, WP determines the efficiency of the water supply. On
+the other hand, it is assumed that the WP is located in the front pipe, the
+tank is in the intermediate node, and the water load is in the later node,
+and the performance of the tank is shown in Fig. 10 (b). With 0 ele-
+vation difference and 1000 m3 water stored in the tank initially, it is
+observed that the input flow was controlled by the front WP, the output
+flow was determined by water demand and the flow difference was
+regulated by the tank. For instance, keeping 500 m3/h water demand
+fixed, the stored water increased to 2937 m3/h with a WP power of
+100 kW while it was 3628 m3/h with a WP power of 200 kW. Conse-
+quently, the tank is essential for keeping the water supply and demand
+balance at all times.
+Comparing Fig. 10 (a) and 10 (b), it can be concluded that the WP
+and tank are active components in WECSS. Fully considering their
+properties, the optimization results based on the proposed two-stage
+dispatching method are reported as follows:
+First of all, the day-ahead electric consumption of WECSS and
+WEISM is shown in Fig. 11. As observed from Fig. 11(a), for WEISM on
+a sunny day, WDS consumed electricity regardless of the energy output
+*
+*
+Fig. 9. Flowchart of the proposed iterative procedure.
+(a) Flow rate property
+(b) Water storage property
+Fig. 10. Basic properties of WECSS.
+Q. Sui, et al.
+Applied Energy 247 (2019) 549–558
+554
+
+===== PAGE 7 =====
+of MG. Specifically, WPs did not follow the variation of PV output
+during the time period of 7:00–15:00 even if the abundant PV output
+exceeded the necessary power consumption of electric loads. In this
+case, the surplus power of MG was sold to the EG at a low price of 0.2
+Yuan/kWh while WPs purchased power from the EG at a high price of
+0.7 Yuan/kWh to maintain the necessary WDS operation, as shown in
+Fig. 11(b). This is because the price barriers block the direct deal be-
+tween WISM and EISM when the EG must act as a middleman. To save
+operational costs, during the 0:00–6:00 and 23:00–24:00 time periods
+(valley hours), WDS consumed a high amount of electricity from the EG
+at a relatively low price of 0.3 Yuan/kWh to store as much water as
+possible. By comparison, for the WECSS with power and water supplied
+jointly, the power of WPs followed the change in the PV output when
+the PV power was sufficient with the increase in its SOC. During other
+periods, WPs maintained low-power operation while the water demand
+of the community was compensated by the water stored in the tanks in
+advance. Consequently, the target of peak shaving and valley filling was
+achieved.
+As calculated by (24) and (31), (32), the expenditures of WECSS and
+WEISM were 1574 Yuan and 2899 Yuan (1398 Yuan for WISM, 1501
+Yuan for EISM), implying that WECSS can save 1325 Yuan for property
+company and owners on a sunny day. Additionally, the maximum ex-
+change power during the peak hours of the two cases was 421 kW and
+347 kW, respectively, indicating that the community with WECSS has a
+lower and smoother power exchange and is more friendly to EG.
+As shown in Fig. 12, compared with WEISM, the water supply load
+of WECSS during the peak hours was shifted to the valley hours in the
+cloudy day with insufficient PV output. The operational costs of WECSS
+and WEISM were 2115 Yuan and 3237 Yuan, respectively (1398 Yuan
+for WISM, 1839 Yuan for EISM), so that WECSS could save 1122 Yuan
+for the community. Additionally, the maximum exchange power of the
+two cases was 496 kW and 416 kW, respectively, implying that the MG
+with WECSS is even more friendly to EG.
+Secondly, the robustness of WECSS under risks is shown in Fig. 13.
+As observed from Fig. 13(a), compared with the predicted value, the
+actual PV output would increase or decrease during the dispatching
+period on sunny days. Faced with the power deviation, the WP regu-
+lated their power consumption correspondingly, resulting in the
+changes in the storage energy in WECSS as shown in Fig. 13(b). It is
+observed from the figure that the SOC of WECSS under a 15% stochastic
+prediction error remained within the [0 1] constraint for various risks.
+Consequently, with balancing the water supply and demand, WECSS
+has a perfect property to resist the influence of prediction errors. Note
+that for WEISM, due to the price barriers between WISM and EISM, the
+deviation of PV output caused by errors was transited to the EG while
+the water supply load maintained the same as predicted power.
+Finally, the real-time electric-hydraulic balance is shown in Fig. 14.
+2
+13 14 15 16 17 18 19 20 21 22 23 24
+800
+Power output of PV
+WP power of WECSS
+ Storage water of WECSS
+1000
+2000
+3000
+4000
+Water volume 
+m
+3
+10 11 12
+3 4
+5
+6 7 8
+9
+0 1
+0
+200
+400
+600
+Period 
+h
+Power 
+kW
+0
+WP power of WEISM
+ Storage water of WEISM
+(a) Power consumption in a sunny day 
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24
+-800
+-600
+-400
+-200
+0
+200
+400
+600
+ Power exchange of  WECSS
+Power 
+kW
+Period 
+h
+ Power exchange of  WEISM
+ Power consumption of WISM
+ Power consumption of EISM
+(b) Power exchange in a sunny day 
+Fig. 11. Power consumption and power exchange in a sunny day.
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24
+0
+100
+200
+300
+400
+1000
+2000
+3000
+4000
+Power output of PV
+WP power of WECSS
+Storage water of WECSS
+Power 
+kW
+Water volume 
+ V/m)
+3
+Period 
+h
+0
+WP power of WEISM
+Storage water of WEISM
+(a) Power consumption on a cloudy day 
+0
+1 2 3
+4 5 6
+7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24
+-400
+-200
+0
+200
+400
+600
+Power exchange of WECSS 
+Power consumption of WISM
+Power 
+kW
+Period 
+h
+Power exchange of WEISM 
+Power consumption of EISM
+(b) Power exchange on a cloudy day 
+Fig. 12. Power consumption and power exchange on a cloudy day.
+0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24
+0
+200
+400
+600
+800
+PV output
+WP power
+Power
+kW
+Period 
+h
+(a) Real-time correlation between PV output and WP power 
+SOC with  PV positive bias 15%
+0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24
+0
+0.2
+0.4
+0.6
+0.8
+1
+SOC with  no PV positive bias 
+SOC with  PV negative bias 15%
+SOC
+Period
+h
+(b) SOC of WECSS within 15% forecast errors 
+Fig. 13. Robustness analysis of WECSS.
+-200
+0
+200
+400
+600
+800
+1000
+670
+-20
+-10
+0
+10
+20
+660
+680
+690
+700
+710
+7200.45
+0.5
+0.55
+0.60
+30
+Input/output flow in tanks of WECSS
+SOC of WECSS
+Power 
+kW
+Period 
+min
+Flow rate V/m 3
+SOC
+Power output of PV
+WP power of WECSS
+Real time exchange power  
+Day-ahead scheduled exchange power  
+Fig. 14. Real-time electric and hydraulic balance recovery of WECSS.
+Q. Sui, et al.
+Applied Energy 247 (2019) 549–558
+555
+
+===== PAGE 8 =====
+As observed from the figure, for WECSS, the WPs followed the fluc-
+tuation of PV output while water tanks regulated the input/output flow
+in the real-time stage. The electric balance and hydraulic balance were
+realized simultaneously. In addition, the red line in Fig. 14(a) suggests
+that real-time exchange power was almost the same as that dispatched
+in the day-ahead stage. However, for WEISM mode in Fig. 15, the
+fluctuation of the PV output was shifted to the exchange power because
+the WPs and the tanks did not respond. It can be seen that the WECSS
+makes it possible to mitigate the negative impact of solar radiation.
+3.2. Economy analysis
+For convenience's sake, assume the Spring and Autumn are rela-
+tively short while Winter and Summer are 180 days long, including 60%
+sunny days and 40% cloudy days. According to the data shown in
+Table 1, it can be calculated that WECSS with annual an operational
+cost of 615,000 Yuan has a better economy than WEIM with 874,000
+Yuan cost (WISM with 403,000 Yuan, EISM with 471,000 Yuan), which
+means that the annual operational cost for WECSS can be reduced by
+29.6% (259,000 Yuan) compared to that of WEIM.
+Furthermore, taking EISM as an example, as calculated by the
+Shapley value method (1)-(3), the cost distribution process is shown as
+Table
+2.
+The
+annual
+operational
+cost
+of
+EISM
+was
+235,500 + 106,000 = 341,500 Yuan and the annual operational cost of
+WISM was 615,000–341,500 = 273,500 Yuan, suggesting that the
+EISM and WISM can save 129,000 and 129,500 Yuan, respectively.
+3.3. Comparison
+To reflect the superiority of the two-stage dispatching model, a one-
+stage MPC dispatching model used in [35] was introduced to optimize
+the operational cost of WECSS. The dispatching results are shown as
+Fig. 16. Comparing Fig. 16 (a) with Fig. 11 (a), it can be seen that the
+proposed dispatching model achieved peak load shaving and valley
+filling better than the one-stage model. As a result, the former with an
+operational cost of 1709 Yuan was more economical than the latter
+with 1574 Yuan. Further, comparing Fig. 16 (b) with Fig. 14 (a), the
+proposed two-stage model smoothed the exchange power and mitigated
+the negative impact of forecast errors in the real-time stage while the
+one-stage model failed.
+In addition, the original model with nonlinear terms optimized di-
+rectly by the COUENNE solver was presented for comparison with the
+proposed iterative solution to the linearized model by Gurobi. The
+operational costs and computation times for sunny and cloudy scenarios
+are shown in Table 3. Compared with the iterative solution to the lin-
+earized model, the direct solution to the original model obtained lower
+operating costs for WECSS in both scenarios, accounting for 1.4% and
+1.2% respectively. However, the computation times of the original
+model was more than 19 times longer. The computational results show
+that the proposed solution algorithm provides fairly accurate results in
+a relatively short time.
+-1000
+-800
+-600
+-400
+-200
+0
+200
+400
+600
+800
+1000
+-20
+-10
+0
+10
+20
+30
+660
+670
+680
+690
+700
+710
+7200.3
+0.33
+0.36
+0.39
+0.42
+Power output of PV
+Pump power of WEIM
+Input/output flow in tanks of WEIM
+SOC of WEIM
+Power 
+kW
+Flow rate V/m3
+Period 
+min
+SOC
+Power exchange of WEIM
+Fig. 15. Real-time electric and hydraulic balance of WEISM.
+Table 1
+Operation cost for community users in summer.
+Weather
+Case
+Electricity purchased
+(kWh)
+Electricity sold
+(kWh)
+Cost
+(Yuan)
+On-peak
+Off-peak
+Sunny
+WECSS
+1866
+1362
+702
+1574
+WEISM
+WISM
+1400
+1391
+0
+1398
+EISM
+3080
+490
+4010
+1501
+Cloudy
+WECSS
+2290
+1705
+0
+2115
+WEISM
+WISM
+1400
+1391
+0
+1398
+EISM
+3080
+490
+2321
+1839
+Table 2
+WECSS profit distribution based on the Shapley value method.
+S
+{EISM}
+{WECSS}
+V(S)
+471,000
+615,000
+V(S\{EISM})
+0
+403,000
+V(S)-V(S\{EISM})
+471,000
+212,000
+|S|
+1
+2
+W(|S|)
+1/2
+1/2
+W(|S|)[V(S)-V(S\{EISM})]
+235,500
+106,000
+670
+660
+680
+690
+700
+710
+720
+Power 
+kW
+Period 
+min
+0 1
+2
+3
+4
+5
+6
+7
+8
+9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24
+-400
+-200
+0
+200
+400
+600
+800
+Power output of PV
+WP power of  WECSS
+Power exchange of  WECSS
+(a)  Power consumption with one-stage dispatching in a sunny day
+Period (hour)
+-400
+-200
+0
+200
+400
+600
+800
+Power exchange of WECSS
+Power 
+kW
+Power output of PV
+WP power of WECSS
+(b)  Real-time power balance with one-stage dispatching in a sunny day
+Fig. 16. Typical day-ahead and real-time curves with one-stage dispatching.
+Table 3
+Performance comparison between the iterative solution and direct solution.
+Solution algorithms
+Sunny
+Cloudy
+Cost
+(Yuan)
+Time (sec)
+Cost
+(Yuan)
+Time (sec)
+Iterative solution to the
+linearized model
+1574
+24.3
+2115
+25.1
+Direct solution to the original
+model
+1548
+463.5
+2076
+519.7
+Q. Sui, et al.
+Applied Energy 247 (2019) 549–558
+556
+
+===== PAGE 9 =====
+4. Conclusion
+In this paper, a novel water-electricity combined supply system with
+economy and universality involving different stakeholders was pro-
+posed to solve the problems arising from the integration of building-
+integrated photovoltaics. To evaluate the performance of the water-
+electricity combined supply system on multiple time-scales, a detailed
+electric-hydraulic combined analytic model incorporating the power
+flow limits and WP ramp rate and a two-stage dispatching method were
+proposed, followed by the iterative solution algorithm to efficiently
+solve the optimization model. The simulation study indicated that the
+water-electricity combined supply system could ensure the balance
+between supply and demand of both water and electricity, and based on
+the Shapley value method, the fair distribution of cooperative profits
+could be realized.
+Based on the proposed two-stage dispatching method, the water-
+electricity combined supply system could achieve peak shaving and
+valley filling and smooth power fluctuation by storing the water in
+tanks and regulating the operating power of water pumps. Therefore,
+the operational cost of the community could be reduced by 29.6%
+(259,000 yuan) while the operational pressure of the external grid
+could be decreased. In addition, the proposed iterative algorithm could
+greatly improve the computational efficiency of the operation model for
+a water-electricity combined supply system by more than 19 times.
+Although the excellent performance of the water-electricity com-
+bined supply system on multiple time-scales was verified by the simu-
+lation, the work was only about theoretical discussion and ignored
+some technical details. In real application, the water tanks should be
+equipped with the self-regulating valves to flexibly control the water
+inflow and outflow while the water pumps should have the function of
+automatic power regulation and both of them should be able to respond
+to remote control instructions. Future work also will include the ex-
+perimental verification of the model results.
+Acknowledgments
+This work was supported in part by the Science and Technology
+Project of Guangxi Power Grid Co., Ltd., China Southern Power Grid
+(GXKJXM20170244),
+in
+part
+by
+the
+National
+Natural
+Science
+Foundation of China (51537003). Also, we gratefully acknowledge the
+technical assistance and the insightful idea from China Scholarship
+Council “International Clean Energy Talent Program (iCET)”.
+Appendix A. Supplementary material
+Supplementary data to this article can be found online at https://
+doi.org/10.1016/j.apenergy.2019.04.059.
+References
+[1] Luthander Rasmus, Widén Joakim, Nilsson Daniel, Palm Jenny. Photovoltaic self-
+consumption in buildings: A review. Appl Energy 2015;142:80–94.
+[2] Su W, Wang J, Roh J. Stochastic energy scheduling in microgrids with intermittent
+renewable energy resources. IEEE Trans Smart Grid 2014;5:1876–83.
+[3] Liu Hui, Huang Kai, Wang Ni, Qi Junjian, Qiuwei Wu, Ma Shicong, et al. Optimal
+dispatch for participation of electric vehicles in frequency regulation based on area
+control error and area regulation requirement. Appl Energy 2019;240:46–55.
+[4] Numbi BP, Malinga SJ. Optimal energy cost and economic analysis of a residential
+grid-interactive solar PV system-case of eThekwini municipality in South Africa.
+Appl Energy 2017;186:28–45.
+[5] Maomao Hu, Xiao Fu, Wang Lingshi. Investigation of demand response potentials of
+residential air conditioners in smart grids using grey-box room thermal model. Appl
+Energy 2017;105:2759–65.
+[6] Wong S, Pinard JP. Opportunities for smart electric thermal storage on electric grids
+with renewable energy. IEEE Trans Smart Grid 2017;8:1014–22.
+[7] Kuboth Sebastian, Heberle Florian, Konig-Haagen Andreas, Bruggemann Dieter.
+Economic model predictive control of combined thermal and electric residential
+building energy systems. Appl Energy 2019;240:372–85.
+[8] Appelbaum B. Water & sustainability (volume 4): Us electricity consumption for
+water supply & treatmentthe next half century. Tech Rep 2002.
+[9] Klein G, Krebs M, Hall V, OBrien T, Blevins B. Californias water-energy relationship.
+California Energy Commission 2005.
+[10] Copeland C. Energy-water nexus: the water sectors energy use. Congr Res Serv
+2014;2014:3.
+[11] Wanjiru Evan M, Zhang Lijun, Xia Xiaohua. Model predictive control strategy of
+energy-water management in urban households. Appl Energy 2016;179:821–31.
+[12] Menke R, Abraham E, Parpas P, Stoianov I. Exploring optimal pump scheduling in
+water distribution networks with branch and bound methods. Water Resour
+Manage 2016;30:5333–49.
+[13] Ghelichi Z, Tajik J, Pishvaee MS. A novel robust optimization approach for an in-
+tegrated municipal water distribution system design under uncertainty: A case
+study of mashhad. Comput Chem Eng 2017.
+[14] Gao Dian-ce, Wang Shengwei, Shan Kui. In-situ implementation and evaluation of
+an online robust pump speed control strategy for avoiding low delta-T syndrome in
+complex chilled water systems of high-rise buildings. Appl Energy
+2016;171:541–54.
+[15] Kaldellis JK, Meidanis E, Zafirakis D. Experimental energy analysis of a stand-alone
+photovoltaic-based water pumping installation. Appl Energy 2011;88:4556–62.
+[16] Bagirov AM, Barton A, Mala-Jetmarova H, Al Nuaimat A, Ahmed S, Sultanova N,
+et al. An algorithm for minimization of pumping costs in water distribution systems
+using a novel approach to pump scheduling. Math Comput Modell 2013;57:873–86.
+[17] Ulanicki B, Kahler J, See H. Dynamic optimization approach for solving an optimal
+scheduling problem in water distribution systems. J Water Resour Plann Manage
+2007;133:23–32.
+[18] Zhuan Xiangtao, Xia Xiaohua. Optimal operation scheduling of a pumping station
+with multiple pumps. Appl Energy 2013;104:250–7.
+[19] Selek István, Bene József Gergely. Csaba Hos. Optimal (short-term) pump schedule
+detection for water distribution systems by neutral evolutionary search. Appl Soft
+Comput 2012;12:2336–51.
+[20] Barán Benjamín, von Lücken Christian, Sotelo A. Multi-objective pump scheduling
+optimization using evolutionary strategies. Adv Eng Softw 2005;36(1):39–47.
+[21] Mala-Jetmarova H, Sultanova N, Savic D. Lost in optimization of water distribution
+systems? A literature review of system operation. Environ Modell Softw
+2017;93:209–54.
+[22] Chen Shaoqing, Chen Bin. Urban energy–water nexus: A network perspective. Appl
+Energy 2016;184:905–14.
+[23] Santhosh A, Farid AM, Youcef-Toumi K. Real-time economic dispatch for the supply
+side of the energy-water nexus. Appl Energy 2014;122:42–52.
+[24] Lubega WN, Farid AM. Quantitative engineering systems modeling and analysis of
+the energy–water nexus. Appl Energy 2014;135:142–57.
+[25] Oikonomou K, Parvania M, Burian S. Integrating water distribution energy flex-
+ibility in power systems operation. IEEE Power and Energy Society General
+Meeting. 2017.
+[26] Cheung CT, Mui KW, Wong LT. Energy efficiency of elevated water supply tanks for
+high-rise buildings. Appl Energy 2013;103:685–91.
+[27] Wanjiru EM, Xia Xiaohua. Energy-water optimization model incorporating rooftop
+water harvesting for lawn irrigation. Appl Energy 2015;160:521–31.
+[28] Oikonomou K, Parvania M, Khatami R. Optimal demand response scheduling for
+water distribution systems. IEEE Trans Indus Informat 2018;99:1–10.
+[29] Menke R, Abraham E, Parpas P, Stoianov I. Demonstrating demand response from
+water distribution system through pump scheduling. Appl Energy
+2016;170:377–87.
+[30] Pabi S, Amarnath A, Goldstein R, Reekie L. Electricity use and management in the
+municipal water supply and wastewater industries. Electric Power Res Inst
+2013;2013:194.
+[31] Thompson L. Automated demand response opportunities in wastewater treatment
+facilities. Lawrence Berkeley National Laboratory; 2008.
+[32] Jiang Q, Xue M, Geng G. Energy management of microgrid in grid-connected and
+stand-alone modes. IEEE Trans Power Syst 2013;28:3380–9.
+[33] Zhang Z, Wang J, Ding T, Wang X. A two-layer model for microgrid real-time dis-
+patching based on energy storage system charging/discharging hidden costs. IEEE
+Trans Sustain Energy 2017;8:33–42.
+[34] Raimondi Cominesi S, Farina M, Giulioni L, Picasso B, Scattolini R. A two-layer
+stochastic model predictive control scheme for microgrids. IEEE Trans Control Syst
+Tech 2017;26:1–13.
+[35] Bianchini Gianni, Casini Marco, Pepe Daniele. Antonio Vicino, Giovanni Gino
+Zanvettor. An integrated model predictive control approach for optimal HVAC and
+energy storage operation in large-scale buildings. Appl Energy 2019;240:327–40.
+[36] Brandstetter M, Schirrer A, Miletić M, Henein S, Kozek M, Kupzog F. Hierarchical
+predictive load control in smart grids. IEEE Trans Smart Grid 2017;8:190–9.
+[37] Song M, Gao C, Yan H, Yang J. Thermal battery modeling of inverter air con-
+ditioning for demand response. IEEE Trans Smart Grid 2018;9:5522–34.
+[38] Zhang YJ, Wang AD, Da YB. Regional allocation of carbon emission quotas in China:
+Evidence from the Shapley value method. Energy Policy 2014;74:454–64.
+[39] Mays LW. Water distribution systems handbook. McGraw-Hill New York; 2000.
+p. 3.
+[40] Mays LW. Water resources engineering. John Wiley & Sons; 2010.
+[41] Node Test Water Distribution System. Available at: https://usmart.ece.utah.edu/
+datasets/.
+[42] Sun DZ, Oort AH. Humidity-temperature relationships in the tropical troposphere. J
+Clim 1995;8:1974–87.
+[43] Wei X Lin, Chen L, Yu M, Zhang X, Jin N, Li Z, et al. Microgrid comprehensive
+energy consumption System based on phase change building materials. Proceedings
+of the CSEE. 2018. p. 792–804.
+[44] House L. Water supply related electricity demand in California. Contract 2006.
+Q. Sui, et al.
+Applied Energy 247 (2019) 549–558
+557
+
+===== PAGE 10 =====
+Quan Sui received the B.Sc. degree in electrical en-
+gineering
+from
+Huazhong
+University
+of
+Science
+and
+Technology (HUST) in 2017. He is a Ph.D candidate at
+HUST. His research interests are microgrid planning and
+scheduling as well as optimal power system.
+Fanrong Wei received the Ph.D. degree in electrical en-
+gineering, Huazhong University of Science and Technology
+(HUST). His researches mainly focus on optimal power
+system/microgrid scheduling and protective relay.
+Rui Zhang received the Ph.D. degree in electrical en-
+gineering, Huazhong University of Science and Technology
+(HUST) in 2015. He is currently a member of the State
+Power Economic Research Institute, Beijing, China.
+Xiangning Lin is currently a Professor at Huazhong
+University of Science and Technology (HUST). He received
+the M.Sc. and Ph.D. degrees in electrical engineering from
+HUST, Wuhan, China. His research interests are modern
+signal processing and power system protective relaying.
+Ning Tong received the Ph.D. degree in electrical en-
+gineering
+from
+Huazhong
+University
+of
+Science
+and
+Technology (HUST) in 2016. He is currently conducting
+post-doctoral research in electrical power engineering in
+HUST. His research interests include novel protection re-
+lays, wind power, and the VSC-HVDC.
+Zhixun Wang received the B.Sc. degree in electrical en-
+gineering
+from
+Huazhong
+University
+of
+Science
+and
+Technology (HUST) in 2016, where he is currently pursuing
+the Ph.D. degree in electrical power engineering. His re-
+searches mainly focus on micro-gird planning and optimi-
+zation.
+Zhengtian Li received the B.Sc. degree from Wuhan
+University in 2002 and the Ph.D. degree from the Huazhong
+University of Science and Technology (HUST) in 2011.
+Currently, he is an Associate Professor at HUST. His re-
+search interests are digital protection relaying.
+Q. Sui, et al.
+Applied Energy 247 (2019) 549–558
+558

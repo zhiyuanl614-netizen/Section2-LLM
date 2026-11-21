@@ -1,0 +1,1795 @@
+2054
+IEEE SYSTEMS JOURNAL, VOL. 14, NO. 2, JUNE 2020
+Cyber-Attacks in a Looped Energy-Water Nexus:
+An Inoculated Sub-Observer-Based Approach
+Haris M. Khalid
+, Member, IEEE, S. M. Muyeen
+, Senior Member, IEEE, and Jimmy C.-H. Peng
+, Member, IEEE
+Abstract—The deployment of advanced sensors has strength-
+ened the monitoring capability of power plants. In the context of
+the cogeneration process, the plant cooling is performed by the
+cooling towers using the condensation process on exhaust steam.
+However, the computer networks and industrial control systems
+built on this sensor-based digital layer may become vulnerable to
+cyberattacks. This may eventually raise a concern on the perfor-
+mance and security of these energy utilities. To resolve this issue, an
+inoculated subobserver-based fusion ﬁlter is proposed. It improves
+the resilience against malicious attacks in combined cycle power
+plants with desalination units, which are usually functioning in
+a closed-loop environment and infected with injected attacks. A
+time-delay-based state representation is considered for the system.
+To access latency in a closed-loop environment, a subsystem-based
+set of subobservers are introduced. Information from each sensor
+is then gathered using the interacting-multiple-model-based fusion
+process. The stability of the system has been proved and kept
+in-check at two different implementation levels of the procedure
+using functional equivalence and Lyapunov stability criteria, re-
+spectively. Performance evaluation is then conducted on a water-
+level system. Results show that the proposed scheme accurately
+extracted the system parameters from the contaminated measure-
+ments in the presence of multiple system disturbances and cyber
+intervention.
+Index Terms—Closed-loop systems, cool water basin, cooling
+towers, cyberattacks, cyber-physical systems, data fusion, energy-
+water nexus, intrusion detection, liquid-level control, power
+and water desalination plant, quadruple tank system, security,
+subobserver, time delay, water utility.
+NOMENCLATURE
+IMM
+Interacting multiple model.
+FD
+Fault diagnosis.
+HPC
+High performance computing.
+HRSG
+Heat recovery steam generator.
+MENA
+Middle-East and North Africa.
+MIMO
+Multiinput–multioutput.
+MSE
+Mean-square error.
+Manuscript received March 7, 2019; revised August 6, 2019; accepted
+September 5, 2019. Date of publication October 7, 2019; date of current version
+June 3, 2020. (Corresponding author: Haris M. Khalid.)
+H. M. Khalid is with the Department of Electrical and Electronics Engi-
+neering, Higher Colleges of Technology, Sharjah 7947, United Arab Emirates
+(e-mail: harism.khalid@yahoo.com).
+S. M. Muyeen is with the School of Electrical Engineering Computing and
+Mathematical Sciences, Curtin University, Perth WA 6102, Australia (e-mail:
+s.m.muyeen@ieee.org).
+J. C.-H. Peng is with the Department of Electrical and Computer En-
+gineering, National University of Singapore, Singapore 119077 (e-mail:
+jpeng@nus.edu.sg).
+Digital Object Identiﬁer 10.1109/JSYST.2019.2941759
+SOFF
+Subobserver-based fusion ﬁlter.
+UKF
+Unscented Kalman ﬁlter.
+IE
+Expectation operator.
+N
+Number of measurements.
+ˆh
+Rate of change of water level.
+t
+Time instant.
+Q
+Water ﬂow storage demand.
+a
+Tank cross-sectional area.
+apipe
+Pipe cross-sectional area.
+Qc
+Water ﬂow consumption demand.
+Δh
+Δt
+Velocity of water feed ﬂow.
+τs
+Sampling time.
+(τF, τψ, τC, τd)
+Set of time delay.
+(hU, hV, .... hZ)
+Set of water tanks.
+(qU, qV, .... qZ)
+Set of water pumps.
+hH
+System’s water-level state.
+n
+State-vector size.
+IR
+Subspace.
+FH
+Modal matrix of the liquid-level height.
+V Q
+Voltage supplied to the pump.
+ΨQ
+j
+Transition matrix for pump voltage.
+G
+Noise transition.
+w
+Random process noise.
+y
+Simultaneous observations.
+C
+Observation.
+v
+Observation noise.
+d(al)
+Attack-vector function.
+¯o
+Size of attack vector.
+C
+Size of set A.
+h1
+State of the subsystem 1.
+h2
+State of the subsystem 2.
+o
+Outlet cross-sectional area.
+g
+Acceleration due to gravity.
+¯w, ¯v
+Resultant noises.
+Kp
+Pump-ﬂow constant.
+ℵ
+Process noise correlation factor.
+δ
+Kronecker delta function.
+K
+Filter gain.
+˜h
+Difference between state and its estimate.
+I
+Identity matrix.
+P
+Filter error covariance.
+ω
+Computing weight.
+Z
+Possible height models for water level.
+A1, A2, A3, A4
+Matrix variables.
+L0
+Lyapunov function.
+R
+Covariance error.
+1937-9234 © 2019 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:56:47 UTC from IEEE Xplore.  Restrictions apply. 
+
+KHALID et al.: CYBERATTACKS IN A LOOPED ENERGY-WATER NEXUS: AN INOCULATED SUBOBSERVER-BASED APPROACH
+2055
+ξ
+Variation parameter.
+eres
+Residual.
+Γstat
+Test statistic.
+λ
+Likelihood ratio.
+ηth
+Threshold value.
+I. INTRODUCTION
+T
+HE scarcity of the potable water lead to the concept of
+hybrid power and water desalination plants in the Middle-
+East and North Africa (MENA) region [1]. Large volumes of
+brackish water are accessed from the sea, and further, utilized by
+the combined-cycle gas turbine units for electricity generation
+andpotablewaterprocessesusingdesalination.Inthecombined-
+cycle gas turbine, the water-based plant cooling system repre-
+sents almost all of the power plant cooling requirements [2].
+With increased industrial development and economic growth,
+this energy-water nexus operation has expanded by relying on
+advance sensor-based remote monitoring systems. For example,
+ASEA Brown Boveri (ABB) has provided solutions like next
+level control center, OPTIMAX and Symphony-Plus to increase
+the situational awareness of power plants [3]–[5]. These solu-
+tions have designed support functions to the industries, with
+particular focus on factors such as improving the availability of
+plant components, optimal operational, and maintenance cost.
+However, equal weightage should be given to the fact that the
+water-energy systems have been connected to the Internet for
+an adequate implementation of these solutions. Thus, while
+providing provision to access more plant operations and remote
+monitoring, it also opened a window for hackers. This window
+could provide access to the critical infrastructure, followed by
+the breach of security, and thus, an emerging public risk. Such
+a risk is recently recorded by ABB, where the following two
+vulnerabilities:1 1) Meltdown (CVE-2017-5754) and 2) Spectre
+(CVE2017-5753, CVE-2017-5715) have affected the processors
+[6]. Such risks could eventually leave thousands of kilometers of
+pipes, pumps, valves, and water distribution systems inherently
+vulnerable to cyberattack [7], [8], and raising concerns over the
+robustness of the energy-water nexus. The focus of this article is
+toward the cybersecurity of the cool water basin in plant cooling
+and its distribution toward electricity generation and potable
+water processes using desalination.
+The maintenance of hydraulic plants can be made effective
+by integrating a fault-diagnosis (FD) scheme into the system
+[9]–[14]. The FD schemes are incorporated as an integral part
+of the system with a focus to look into the occurrence of break-
+down and system faults, such as component failure faults, ﬂuid
+contamination, pipe leakage fault, material wear, etc. [15]–[17].
+With a hindsight, these FD functions could also help the cause of
+monitoring cyberattacks in one way or another, since the system
+failure is an obvious by-product of an attack. However, the
+situation around this concern could become more challenging
+and worse if some of these failures are the deliberate actions
+1Note there are no vulnerabilities speciﬁc to ABB. These situations are related
+to microprocessors in general that could affect the control devices of the plants.
+of a hacker. For instance, a deliberate system contamination, a
+willful inﬂuence on physical processes of the system through the
+closed-loop feedback actuation, and a predetermined material
+wear to divert the focus of the control center from major plant
+operations. Despite several methods proposed for cyberattacks
+in general [18]–[20] and for hydraulic systems [21]–[24], none
+explored the problem of handling dynamics of an energy-water
+nexus, and that too in a closed-loop environment. Thus, the
+motivation of this article is to improve the resilience of the
+system while making it inoculated against cyberattacks in a
+closed-loop environment.
+Closed-loop systems at the industrial level have always been
+utilized to tackle the situational processes for those physical
+quantities and parameters, which may vary constantly and re-
+quire a measure–decide–actuate sequence from the control loop.
+In energy-water systems, these physical quantities could be
+a set-point temperature of different processes, speed of the
+pump, water level in the cooling tower, etc. Since, feedbacks
+cannot be removed due to various reasons, such as generation
+of data, complexity of the process, and production quality
+reasons, closed-loop identiﬁcation has received considerable
+attention in the system identiﬁcation literature [25]–[27]. From
+the perspective of cyber-physical systems, the closed-loop
+brings additional challenges of time delay and undetectable
+attacks. To the best of author’s knowledge, such a situa-
+tion has not been investigated in the context of energy-water
+systems.
+Therefore, this article proposed a signal processing solution to
+enhance the immunity of digital measurements against cyberat-
+tacks and system breakdowns. A subobserver-based fusion ﬁlter
+(SOFF) is derived to augment the hinderance of the hydraulic
+system against the contaminated measurements. The aim is to
+maintain the accuracy of the digital measurements extracted
+as well as detecting and isolating the sensors compromised by
+the cyberattacks. To understand the integration of cyberattacks
+into the energy-water application, an overview of the proposed
+SOFF approach is illustrated in Fig. 1. A detailed ﬁgure of
+the water distribution in the combined cycle gas turbine-based
+power generation with the desalination unit is represented. The
+considered scenario assumed that the attacker has accessed the
+cool water basin in the plant cooling system. This could further
+make the water network vulnerable, especially the connected
+processorssuchascondenser,steamturbine,heatrecoverysteam
+generator (HRSG) unit, and the desalinated water. This could
+also affect the components that make system adequate for the
+water distribution such as the water tank, pipes, their manifolds,
+pumps, motors, and timers. To maximize the damage while
+remaining undetected, the injected attacks may imitate regular
+variations, and can eventually drain the cooled water or push the
+limitsofactuators. Theproposedschemecantacklethissituation
+by estimating the parameters extracted from all the installed
+sensors. The estimated parameters are collected efﬁciently using
+IMM-based fusion, which considers the model probabilities and
+mixed estimate to ensure adequate collection. Note that each
+installed sensor is employed with a subsystem-based set of
+the subobserver to extract the dynamic parameters, and further
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:56:47 UTC from IEEE Xplore.  Restrictions apply. 
+
+2056
+IEEE SYSTEMS JOURNAL, VOL. 14, NO. 2, JUNE 2020
+Fig. 1.
+Proposed SOFF scheme to estimate and detect cyberattacks in the water utility sector.
+provide their estimate. Also, each sensor is able to communicate
+with its neighboring sensors through the time-based communi-
+cation sequence. A number of steps of the procedure are adopted
+here to handle a closed-loop working system. The proposed
+scheme provides a novel and convenient way to enhance the
+immunity of the system by making the parametric estimations
+at states, which are dominated by nonlinearity and system
+perturbations.
+Notations: In this article, IE is the expectation operator. When
+any of the variables become a function of time, the time index t
+appears as a subscript (e.g., ht, Ct, and yt). When any of these
+variables are collected from sensors (U, V, . . ... Z) installed at
+tanks or pumps, it will appear as a part of superscript (e.g., hU
+t ,
+hV
+t , qU
+t , and qV
+t ). When any of these variables are collected from
+a subsystem 1 or 2, it will appear as a part of subscript (e.g.,
+h1,t, h2,t, C1,t, C2,t, y1,t, and y2,t).
+The rest of the article is organized as follows. The problem
+formulation is presented in Section II. The proposed scheme
+is formulated in Section III, followed by its evaluation in
+Section IV. Finally, conclusions are drawn in Section V.
+II. PROBLEM FORMULATION: WATER-LEVEL
+SYSTEM UNDER ATTACK
+The problem formulation of the water-level system under
+attack is derived in this section. An overview of the framework
+is illustrated in Fig. 2. It is assumed that the cool water basin is
+a water-level system that is supplying the water for condensate
+and steam turbine to the tank U, and for the HRSG to the tank
+V, respectively. The process is portrayed using a quadruple tank
+system. Fig. 2 summarizes the steps involved in the problem
+formulation as follows. N number of measurements are col-
+lected from each sensor installed in the water-level system. In
+(1), these measurements are modeled for the water level and
+ﬂow. This results in development of time-delay-based dynamic
+model and an observation model of the system in (2) and (3).
+An attack vector is modeled in (4) and (5).
+The quadruple tank system is one of the most widely used
+laboratory system for liquid-level control [28], [29]. It repre-
+sents various industrial applications while providing features of
+multiinput–multioutput (MIMO) and nonlinear dynamics. Note
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:56:47 UTC from IEEE Xplore.  Restrictions apply. 
+
+KHALID et al.: CYBERATTACKS IN A LOOPED ENERGY-WATER NEXUS: AN INOCULATED SUBOBSERVER-BASED APPROACH
+2057
+Fig. 2.
+Formulation framework of the proposed scheme.
+that the tank conﬁguration may be classiﬁed into various types
+[30], [31]. This is based on the system conﬁguration and the
+interaction required between the tanks.
+A. Modeling of Water-Level and Flow
+Consider a liquid-level control unit having multiple water
+tanks and actuators. In this unit, each tank is monitored by a
+level sensor and each actuator (pump) is equipped with a ﬂow
+sensor. These sensors monitor the dynamics of the water level
+as follows:
+ˆht = Qt
+a = apipe
+a
+Δh
+Δt
+
+−Qc,t
+a
+(1)
+where ˆht is the rate of change of the water level at time instant
+t, Qt is the water ﬂow storage demand, a is the cross-sectional
+area of the tank, and apipe is the pipe cross-sectional area. Qc,t is
+the water ﬂow consumption demand, Δh
+Δt represents the velocity
+of the feed ﬂow of water. The physical system exhibits a highly
+nonlinear behavior. The ﬂow rate saturates at 4.5 L per second.
+The dead-band effect in the actuator exhibits itself as a delay in
+the output response, thereby, making steady state nonzero. All
+sensors are operating at the same sampling rate, τs of 50 ms.
+Note that the plant unit is a closed-loop system under the sensor
+attack. Therefore, it possesses properties of time delay τ at input,
+output, plant states, and in undetectable sensor attack.
+B. State Representation of the Plant With Time Delay
+While the system is under the sensor attack, it has been
+initially assumed that there is no loss of generality between the
+sensors. The plant can be represented by a general discrete-time
+dynamic model with time delay as
+hH
+t+1 =
+τF
+
+i=0
+FH
+i hH
+t−i +
+τΨ
+
+j=0
+ΨQ
+j V Q
+t−j + Gtwt
+(2)
+yt =
+τC
+
+k=0
+CH
+k FH
+t−khH
+t +
+τd
+
+l=0
+d(al)V Q
+t−j + vt
+(3)
+where hH
+t ∈IRn×1 denote the system’s state of the water level
+at time instant t with H = [hU
+t , hV
+t , . . ... hZ
+t ] for Z number of
+water tanks in the plant. Superscript n is the size of the state
+vector in subspace IR. FH
+i
+∈IRn×n is a modal matrix of the
+state response of the height of the liquid level, such that i =
+0, . . .. . ., τF. V Q
+t ∈IRn×1 is the voltage supplied to the pump for
+an adequate water ﬂow with Q = qU
+t , qV
+t , . . .., qZ
+t for Z number
+of pumps in the plant. ΨQ
+j ∈IRn×n is the transition matrix for
+the pump voltage, such that j = 0, . . .., τj. Gt ∈IRn×n is the
+noise transition, which can be deﬁned as a probability vector,
+whose elements are nonnegative real numbers and sum to 1. wt ∈
+IRn×1 is the random process noise. In the observation model (3),
+yt ∈IRm×1 is the number of simultaneous observations obtained
+from m sensor of set S = {1, 2, . . ..m} at time instant t. The
+observations were CH
+k ∈IRm×m, such that k = 0, . . .., τk. vt ∈
+IRm×1 is the observation noise. d(al) ∈IR¯o×1 is the attack-vector
+function.
+C. Attack Vector
+The attack vector is represented in the observation model
+(3) such that d(al) ∈IR¯o×1. Here, d(al) denotes the function
+of an attack vector and is unknown to the system such that
+l = 0, . . .., τd, where superscript ¯o belongs to the set A ⊆
+{1, 2, . . ..¯o}. It contains level and ﬂow sensors installed in the
+plant that are under attack. This shows the attack vector for any
+Uth and Vth sensor as d(aUV
+l ) = 0, where U ∈AC and V ≥0.
+Superscript C represents the size of the set A, such that AC = S
+A.
+This also employs that sup(aV
+l ) ⊆A for all V ≥0. The function
+d(al) itself represent the stochastic nonlinearity, such that
+IE[d(al)|hH
+t−i] = 0.
+(4)
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:56:47 UTC from IEEE Xplore.  Restrictions apply. 
+
+2058
+IEEE SYSTEMS JOURNAL, VOL. 14, NO. 2, JUNE 2020
+Also,
+IE[d(aU
+l )d′(aV
+l )] = 0, U̸ = V
+(5)
+where superscript “′” represents the transpose operator.
+Once the attack vector is modeled on the measurements,
+which are extracted from the affected part, the proposed scheme
+is formulated.
+III. PROPOSED SCHEME
+An overview of the proposed scheme can be seen in the
+framework of Fig. 2. A delay operator-based equivalent for-
+mation of the system is made in (6)–(12). This is a time-delay
+free formation, which is introduced to reverse generality and
+the presence of symmetry in the system. To achieve precision,
+the formation model is formulated toward the subsystem-based
+set of subobservers in (13)–(16). This step is further processed
+to collect information on cross covariance at (17)–(22), and
+functional equivalence at (23)–(31). The subobservers are syn-
+thesized into the main system at (32)–(34). This now calls for
+the fusion of information at (35) and (36), residual generation
+(37), (38), and residual evaluation (39), respectively.
+To preserve the generality and the presence of symmetry,
+a delay operator is introduced for the equivalent formation of
+systems that are free of time delay.
+A. Delay Operator-Based Equivalent Formation
+A delay operator ∇is deﬁned here for the plant state ht in
+the form of polynomial matrices, such that ∇τF ht = h(t −τF),
+with τF ∈IN. Implying this delay operator in (2) gives a variable
+˘ht as
+˘ht = T[∇]ht
+(6)
+where T[∇] ∈IR[∇]n×n. This property deﬁnes the following
+lemma for (2) and (3).
+Lemma III.1: The original liquid level control plant (2), (3)
+implies the delay operator as in (6), if and only if there exist
+Ti ∈IRn×n for i = 0, 1, . . ..., τm with τm = sup(τF, τψ, τC, τd).
+For supremum of τF
+k
+
+i=0
+TiFk−i = ¯FkTk, k = 0, 1, . . . τm + τF
+(7)
+where ¯Ft = ˘Ft and ¯Fk = 0 ∀k > 0. For supremum of τψ
+k
+
+i=0
+TiΨk−i = ¯ΨkTk, k = 0, 1, . . .τm + τΨ
+(8)
+where ¯Ψt = ˘Ψt and ¯Ψk = 0 ∀k > 0. sup(τC) gives
+k
+
+i=0
+TiCk−i = ¯CkTk, k = 0, 1, . . . τm + τC
+(9)
+where ¯Ct = ˘Ct and ¯Ck = 0 ∀k > 0. sup(τd) gives
+k
+
+i=0
+Tid(ak−i) = ¯d(ak)Tk, k = 0, 1, . . . τm + τd(a)
+(10)
+where ¯d(at) = ˘d(at) and ¯d(ak) = 0 ∀k > 0.
+The determinant of the delay operator can be deﬁned as:
+det(τm
+i=0 Ti∇i) ∈IR. This gives equivalent formation of (2)
+and (3) as
+˘hH
+t+1 = ˘FH
+t ˘hH
+t + ˘ΨQ
+t V Q
+t
++ Gtwt
+(11)
+yt = ˘Ct ˘FH
+t hH
+t + ˘d(at)V Q
+t
++ vt.
+(12)
+Note the aforementioned formation exists if and only if the
+conditions in Lemma II.1 satisfy.
+Once the delay-based equivalent formation is made, the plant
+model is further analyzed. To estimate ˘hH
+t in (11) and (12) from
+yt may be a difﬁcult problem. This is both due to the dynamic
+system and a possible nonlinear function-based cyberattack.
+This will eventually result in a compromise to access the latency
+in the liquid level and ﬂow in the presence of cyberattack,
+and difﬁculty in tackling the computational cost to estimate the
+plant states and their covariates. To overcome these challenges,
+a subsystem-based set of the subobserver approach has been
+proposed.
+B. Subsystem-Based Set of Subobservers
+A quadruple tank system was used to formulate and derive the
+subsystem-based set of subobservers [32]. Consider a quadruple
+tank system, which consists of four water tanks driven by two
+pumps as shown in Fig. 2. The aim is to control the water levels
+hU
+t and hV
+t of the lower tanks U and V, respectively. The inputs
+of this tank-based liquid-level control problem are the voltages
+V U
+t
+and V V
+t of pumps U and V, respectively. The outputs are
+the corresponding water levels in the tanks hU
+t and hV
+t . All
+the dynamics are monitored by installed sensors. The system
+can actually be represented by the dynamic model of (11) and
+(12), such that H = {hU
+t , hV
+t , hW
+t , hX
+t }. The system can then be
+further transformed into the following two subsystem-based set
+of subobservers. This is achieved by introducing transformation
+of (11), such that ˘hH
+t = R[h
+′
+1,t h
+′
+2,t]′ with h1,t ∈IRn1×1 and
+h2,t ∈IRn2×1 as
+hH
+1,t+1 = F0,th
+H, 1
+2
+1,t
++ Ψ0,tV U
+t + Ψ1,tV U
+t + Ψ2,tV V
+t + Gtwt
+(13)
+hH
+2,t+1 = ¯F0,th
+H, 1
+2
+2,t
++ ¯Ψ0,tV U
+t + ¯Ψ1,tV U
+t + ¯Ψ2,tV V
+t + Gt ¯wt
+(14)
+yt = CtFtht + d(at) + ¯vt
+(15)
+where h1,t and h2,t are states of subsystems 1 and 2 representing
+the full dynamics of the quadruple tank system. A bar “¯” is
+used to represent transition matrices of the subsystem 2. In (13),
+F0,t = −o√2g
+a , where o is the cross-sectional area of an outlet, g
+is the acceleration due to gravity, and a is the cross-sectional area
+of the tanks. Ψ0,t = γU
+t Kp
+a
+, where γU
+t is the ratio of the liquid ﬂow
+generated from the voltage supply V U
+t for the pump U, and Kp
+is the pump-ﬂow constant. Ψ1,t = Kp
+a , Ψ2,t = −γV
+t Kp
+a
+, where
+γV
+t is the ratio of the liquid ﬂow generated from the voltage
+supply V V
+t for the pump V. In (14), ¯F0 = −o√2g
+a , ¯Ψ0,t =
+Kp
+o√2g,
+¯Ψ1,t = −γU
+t Kp
+o√2g , and ¯Ψ2,t = −γV
+t KpV V
+t
+o√2g . Referring to (13)–(15),
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:56:47 UTC from IEEE Xplore.  Restrictions apply. 
+
+KHALID et al.: CYBERATTACKS IN A LOOPED ENERGY-WATER NEXUS: AN INOCULATED SUBOBSERVER-BASED APPROACH
+2059
+theresultantnoises ¯wt and ¯vt willhaveadiagonalizableexpected
+value as
+IE
+
+¯wt
+¯v1
+′
+t
+
+,
+
+¯w
+′
+t ¯v2
+′
+t
+	
+= ℵ1,2
+t δ1,2
+t
+(16)
+where ℵ1,2
+t
+is the process noise correlation factor between
+subsystems 1 and 2, δ1,2
+t
+is the Kronecker delta function used
+for shifting the integer variable after the presence or absence
+of noise. Note the control input for the whole system are the
+voltages generated from the pumps U and V. The pump U
+provided interaction to the tank U and tank X as γU
+t KpV U
+t and
+(1 −γU
+t )KpV U
+t , respectively. Similarly, the pump V provides
+interaction to the tank V and tank W as γV
+t KpV V
+t
+and (1 −
+γV
+t )KpV V
+t , respectively. This fulﬁlls the developed notion of
+subobservers since the liquid level and ﬂow control is estimated
+by formulating the pump ﬂow toward the liquid tanks. Note that
+in this article, monitoring quadruple tank system to enhance
+the immunity of digital measurements against cyberattacks and
+closed-loop system breakdown is used as an application. The
+proposed scheme can be utilized by any other application as
+well.
+Once the subsystems-based set of subobservers are con-
+structed to provide the accessibility and enhanced observability
+toward any variations of cyber-induced attacks, a tool is required
+that can cross verify the results extracted from the subsystems-
+based subobserver model to avoid any false alarms and unusual
+shutdownofthesystem.Acalculationforthequantitativeassess-
+ment of the similarity of the measured and estimated signal was
+opted. This calculation was made by cross-covariance analysis
+to ﬁnd features of possible deviations, time shifts, or time lag
+caused by the induced cyberattack.
+C. Information Processing for Cross Covariance
+1) Prediction and Filtering Error Equations: Suppose the
+recursive equation of state hH
+1,t is computed as
+hH
+1,t+1|t+1 = ˜F0,t(In1 −K1,tCt)˜hH
+1,t|t−1
++ Ψ0,t(In1 −K1,tCt) ˜V U
+t|t−1
++ (Ψ1,t + Ψ2,t)(In1 −K1,tCt) ˜V V
+t|t−1
++ Gtwt −( ˜F0,tK1,t + Jt)¯vt
+(17)
+where ˜hH
+1,t|t−1 is the difference between hH
+1,t and ˆhH
+1,t|t−1, ˜F0,t =
+F0,t −Jt ¯Ct, Jt = Gtℵ−1
+¯vt , and F0,t = ˜Ft −(In1 −K1,tCt) −
+Gtℵ−1
+ϵ,t ¯Ct. In1 is an n1 × n1 identity matrix. K1,t is the ﬁltering
+gain. The corresponding updated a posteriori equation of the
+state hH
+1,t will be
+˜hH
+1,t|t = (In1 −K1,t ˜Ct)
+
+˜hH
+1,t|t−1 + ( ˜V U
+t|t−1 + ˜V V
+t|t−1) −
+(Kt˜vt)
+(In1 −K1,t ˜Ct)
+
+(18)
+where ˜hH
+1,t|t is the difference between hH
+1,t and ˆhH
+1,t|t. Once
+the updated and predicted error equations of the liquid-level
+state hH
+1,t of the subsystem 1 is achieved, the state hH
+2,t of the
+subsystem 2 can be expressed as
+˜hH
+2,t|t = [ ¯F0,t(In1 −K2,t ¯Ct) −Gtℵ−1
+ε,t ¯Ct]˜hH
+1,t|t−1
++ [(¯Ψ0,t + ¯Ψ1,t)(In1 −K2,t ¯Ct) −Gtℵ−1
+ϵ,t ¯Ct]V U
+t
++ [¯Ψ2,t(In1 −K2,t ¯Ct) −Gtℵ−1
+ϵ,t ¯Ct]V V
+t +[Gt, (−¯F0,t,
+−¯Ψ0,t, ¯Ψ1,t, ¯Ψ2,t)K2,t −Gtℵ−1
+ϵ,t][w
+′
+t, v
+′
+t]′.
+(19)
+2) Cross Covariance of the Subsystem 1 hH
+1,t: The cross
+covariance equation of the prediction and ﬁltering errors of the
+state hH
+1,t between the subsystems 1 and 2 can be computed as
+P 1,2
+1,t+1|t+1 = ˜F0,t[In1 −K1,t ¯C1,t]P 1,2
+1,t|t−1[In1 −K1,t ¯C2,t]
+′
++ Ψ0,t[In1 −K1,t ¯C1,t]P 1,2
+1,t|t−1[In1 −K1,t ¯C2,t]
+′
++ (Ψ1,t + Ψ2,t)[In1 −K1,t ¯C1,t]
+′P 1,2
+1,t|t−1[In1
+−K1,t ¯C2,t]
+′ + [Gt −¯F0,1,tK1,t −J1,t]ℵ1,2
+t
+[Gt −¯F0,2,tK2,t −J2,t]
+′
+(20)
+where the subscripts 1 and 2 represent the subsystems 1 and
+2, respectively. Similarly, the ﬁltering error equation for the
+subsystem 1 will be stated as
+P 1,2
+1,t|t = [In1 −K1,t ¯C1,t]P 1,2
+1,t|t−1[In1 −K2,t ¯C2,t]
+′
++ K1,tℵ1,2
+v,tK2,t.
+(21)
+3) Cross Covariance of the Subsystem 2, hH
+2,t: The cross co-
+variance of the subsystem 2 considers the computation between
+the modal transition matrices. It can be expressed as
+P 1,2
+2,t|t = [ ¯F0,t(In2 −K2,t ¯C1,t) −Gtℵ−1
+ϵ,t ¯C1,t]P 1,2
+2,t|t[ ¯F0,t(In2
+−K2,t ¯C2,t) −Gtℵ−1
+ϵ,t ¯C2,t]
+′ +[(¯Ψ0,t + ¯Ψ1,t)(In2
+−K2,t ¯C1,t) −Gtℵ−1
+ϵ,t ¯C1,t]P 1,2
+2,t|t[(¯Ψ0,t + ¯Ψ1,t)(In2
+−K2,t ¯C2,t) −Gtℵ−1
+ϵ,t ¯C2,t]′ + [¯Ψ2,t(In2 −K2,t ¯C1,t)
+−Gtℵ−1
+ϵ,t ¯C1,t]P 1,2
+2,t|t[¯Ψ2,t(In2K2,t ¯C2,t) −Gtℵ−1
+ϵ,t
+¯C2,t]
+′ + [Gt, (−¯F0,t, −¯Ψ0,t, ¯Ψ1,t, ¯Ψ2,t)K2,t
+−Gtℵ−1
+ϵ,t]ℵ1,2
+t [Gt, (−¯F0,t, −¯Ψ0,t, ¯Ψ1,t, ¯Ψ2,t)
+Kt −Gtℵ−1
+ϵ,t]
+′
+(22)
+where P 1,2
+2,t|t is the ﬁltering error covariance for the subsystem 2.
+Once the information processing has been made for the sub-
+systems 1 and 2, it generates two covariance and gain matrices to
+represent the system. However, this requires functional equiv-
+alence to measure invariance across the subsystems such that
+f(hH
+t+1|hH
+1,t+1, hH
+2,t+1) = f(hH
+t+1|hH
+1,t+1) = f(hH
+t+1|hH
+2,t+1).
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:56:47 UTC from IEEE Xplore.  Restrictions apply. 
+
+2060
+IEEE SYSTEMS JOURNAL, VOL. 14, NO. 2, JUNE 2020
+D. Functional Equivalence of Subobservers
+If the number of sensors used for data fusion have measure-
+ment matrices with equal dimensions, such that C1,t = C2,t =
+· · · = CN,t, then the subsystem 1 is functionally equivalent to the
+subsystem 2. This requires some inversion of matrices according
+to the following formula:
+
+A1
+A2
+A3
+A4
+−1
+=
+
+B1
+B2
+B3
+B4
+
+(23)
+(A + CBC
+′)−1 = A−1 −A−1C(B−1 + C
+′A−1C)−1C
+′A−1
+(24)
+where A1, A2, A3, and A4 are variables representing a ma-
+trix, B1 = (A1 −A2A−1
+4 A3)−1, B2 = −B1A2A−1
+4 , B3 =
+−A−1
+4 A3B1, and B4 = A−1
+4
++ A−1
+4 A3B1A2A−1
+4 .
+Consider the case when the gain matrices of the subsystems 1
+and 2 are added, such that
+K1,t+K2,t = ωP 1,2
+t|t−1 ¯C1,2
+′
+t
+
+¯C1,tP 1,2
+1,t|t−1 ¯C
+′
+1,t + Rt
+−1
++(1 −ω)P 1,2
+t|t−1 ¯C1,2
+′
+t
+
+¯C2,tP 1,2
+2,t|t−1 ¯C2,t
+′ +Rt
+
+−1
+(25)
+where ω is the weight assigned to compute the covari-
+ance matrices, Ξ1,2
+1,t = ( ¯C1,tP 1,2
+1,t|t−1 ¯C
+′
+1,t + Rt)−1, and Ξ1,2
+2,t =
+( ¯C2,tP 1,2
+2,t|t−1 ¯C
+′
+2,t + Rt)−1.
+K1,t + K2,t = ωP 1,2
+t|t−1 ¯C1,2
+′
+t
+
+R1,t + Ξ1,2
+1,t
+Ξ1,2
+1,t
+Ξ1,2
+1,t
+R2,t + Ξ1,2
+1,t
+−1
++ (1 −ω)P 1,2
+t|t−1 ¯C1,2
+′
+t
+
+R1,t + Ξ1,2
+2,t
+Ξ1,2
+2,t
+Ξ1,2
+2,t
+R2,t + Ξ1,2
+2,t
+−1
+= ωP 1,2
+t|t−1 ¯C
+′
+1,t
+
+A4
+
+
+
+R2,t + Ξ1,2
+1,t
+−1
+×
+A3
+
+R2,t
+
+B1
+
+
+
+R1,t + Ξ1,2
+1,t −Ξ1,2
+1,t(R2,t + Ξ1,2
+1,t)Ξ1,2
+1,t
+−1
+×
+
+A4
+
+
+
+R2,t + Ξ1,2
+1,t
+−1
+−
+
+A4
+
+
+
+R2,t + Ξ1,2
+1,t
+−1
+×
+A3
+
+R2,t
+
+B1
+
+
+
+R1,t + Ξ1,2
+1,t −Ξ1,2
+1,t(R2,t + Ξ1,2
+1,t)−1Ξ1,2
+1,t
+	−1
+×
+A2
+
+Ξ1,2
+1,t
+
+A4
+
+
+
+R2,t + Ξ1,2
+1,t
+−1	
++ (1 −ω)P 1,2
+t|t−1 ¯C2,t
+
+A4
+
+
+
+R2,t + Ξ1,2
+2,t
+−1
+×
+A3
+
+R2,t
+
+B1
+
+
+
+R1,t + Ξ1,2
+1,t −Ξ1,2
+1,t(R2,t + Ξ1,2
+1,t)−1Ξ1,2
+1,t
+	−1
+×
+
+A4
+
+
+
+R2,t + Ξ1,2
+2,t
+−1
+−
+
+A4
+
+
+
+R2,t + Ξ1,2
+2,t
+−1
+×
+A3
+
+R2,t
+
+B1
+
+
+
+R1,t + Ξ1,2
+2,t −Ξ1,2
+1,t(R2,t + Ξ1,2
+2,t)−1Ξ1,2
+2,t
+	−1
+×
+A2
+
+Ξ1,2
+2,t
+
+A4
+
+
+
+R2,t + Ξ1,2
+2,t
+−1
+.
+(26)
+This can be further simpliﬁed as
+(R2,t+Ξ1,2
+1,t)−1R2,t
+
+R1,t+Ξ1,2
+t
+−Ξ1,2
+1,t(R2,t+Ξ1,2
+1,t)−1Ξ1,2
+1,t
+−1
+=
+
+Ξ1,2
+1,t + R1,t(R1,t + R2,t)−1R2,t
+−1R2,t(R1,t + R2,t)−1
+(27)
+and
+(R2,t+Ξ1,2
+1,t)−1 −(R2,t+Ξ1,2
+1,t)−1R2,t ×
+
+R1,t + Ξ1,2
+1,t −Ξ1,2
+t
+× (R2,t + Ξ1,2
+1,t)−1Ξ1,2
+1,t
+−1Ξ1,2
+1,t(R2,t + Ξ1,2
+1,t)−1
+=
+
+Ξ1,2
+1,t + R1,t(R1,t + R2,t)−1R2,t
+−1R1,t(R1,t + R2,t)−1.
+(28)
+Similar can be applied for Ξ1,2
+2,t from (27) and (28). Based on
+(26)–(28), it is further expressed as
+K1,t + K2,t = ωP 1,2
+t|t−1 ¯C
+′
+t ×
+ ¯C1,tP 1,2
+′
+1,t ¯C
+′
+1,t + R1,t(R1,t
++ R2,t)−1R2,t
+−1 ×
+
+R2,t(R1,t+R2,t)−1R1,t
+× (R1,t + R2,t)−1
++ (1 −ω)P 1,2
+t|t−1C
+′
+t
+×
+ ¯CtP 1,2
+2,t|t−1 ¯C
+′
+t+R1,t(R1,t+R2,t)−1R2,t
+−1
+×
+
+R2,t(R1,t + R2,t)−1R1,t(R1,t + R2,t)−1
+.
+(29)
+The interaction of gains with the observation matrix can be
+expressed as
+(K1,t + K2,t) ¯Ct = ωP 1,2
+t|t−1 ¯C
+′
+t ×
+ ¯CtP 1,2
+1,t|t−1 ¯C
+′
+t
++ R1,t(R1,t + R2,t)−1R2,t
+−1 ¯Ct
++ (1 −ω)P 1,2
+t|t−1 ¯C
+′
+t ×
+ ¯CtP 1,2
+t|t−1 ¯C
+′
+t
++ R1,t(R1,t + R2,t)−1R2,t
+−1 ¯Ct. (30)
+Similar goes to its interaction with the observation output as
+(K1,t + K2,t)yt = ωP 1,2
+t|t−1 ¯C
+′
+t ×
+ ¯CtP 1,2
+1,t|t−1 ¯C
+′
+t + R1,t(R1,t
++ R2,t)−1R2,t]−1 ×
+
+R2(R1 + R2)−1y1,t
++ R1,t(R1,t + R2,t)−1y2,t] + (1 −ω)
+P 1,2
+t|t−1 ¯C
+′
+t ×
+ ¯C
+′
+tP 1,2
+2,t|t−1 ¯C
+′
+t + R1,t(R1,t
++ R2,t)−1R2,t]−1 ×
+
+R2,t(R1,t
++ R2,t)−1y1,t+R1,t(R1,t+R2,t)−1y2,t].
+(31)
+This marks the functional equivalence here with gain Kt inter-
+action as the center of existence for all the calculations. This
+will be followed by evolving the subobservers into a synthesis
+matrix having covariates.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:56:47 UTC from IEEE Xplore.  Restrictions apply. 
+
+KHALID et al.: CYBERATTACKS IN A LOOPED ENERGY-WATER NEXUS: AN INOCULATED SUBOBSERVER-BASED APPROACH
+2061
+E. Evolution Into Synthesis Matrix
+The covariates of subobservers are evolved into a synthesis
+matrix that is deﬁned to evolve information from the subsys-
+tems 1 and 2. The covariance matrix P 1,2
+t|t between estimate of
+subobserver 1, ˜h1,t|t and subobserver 2, ˜h2,t|t is represented as
+P 1,2
+t|t = Rt
+⎡
+⎣
+P 1,2
+1,t|t
+P 1,2
+t|t
+P 2,1
+t|t
+P 1,2
+2,t|t
+⎤
+⎦R
+′
+t
+(32)
+where the correlated matrix P 1,2
+t|t is calculated from (25) and
+(26) as
+P 1,2
+t|t =
+K1,t + K2,t
+
+ω ¯C1,2
+′
+t
+Ξ1,2−1
+1,t
++ (1 −ω) ¯C1,2
+′
+t
+Ξ1,2−1
+2,t
+	
+(33)
+with P 1,2
+t|t = P 2,1
+′
+t|t . ˆhH
+t|t is computed by
+ˆhH
+t|t = Rt[ˆh
+′
+1,t|t, ˆh
+′
+2,t|t]
+′.
+(34)
+Using the information for processing and relationships be-
+tween the sensors, the information fusion architecture is estab-
+lished using the IMM algorithm [33]. The IMM is preferred
+over here on other fusion techniques [34], since it considers state
+hypothesis of multiple models with changing and time-varying
+dynamics.
+F. IMM-Based Fusion
+The IMM-based fusion is processed by fusing information of
+estimated parameters from each installed sensor. The extracted
+information from the level sensor ht is merged as
+ˆhIMM
+t|t
+=
+Z
+
+H=U
+pUV(hU
+t )ˆhU
+t|t
+(35)
+P IMM
+t|t
+=
+Z
+
+H=U
+pUV
+
+hU
+t
+ 
+P hU
+t|t +
+
+ˆhhU
+t|t −ˆht|t
+	 
+ˆhhU
+t|t −ˆht|t
+	′
+(36)
+where superscript IMM represents the processed variable after
+any IMM-based fusion performed, Z is the total number of
+possible models for the height of the water level, pUV is the
+probability that model will switch from the sensor hU
+t to hV
+t ,
+given the probability of hU
+t at time instant t. The output of the
+IMM fusion will determine the residual generation.
+G. Residual Generation
+The residual of measurements for the estimated parameter
+could be generated when:
+1) for each installed sensor, there exists a Lyapunov function
+L0 such that for any norm bounded h1,t, h2,t ∈IRn, the
+following inequality holds: ∥f(yt, h1,t) −f(yt, h2,t)∥≤
+L0∥h1,t −h2,t∥;
+2) the transfer function matrix is strictly positive real, where
+K1,t, K2,t ∈IRn×r;
+3) for a given positive deﬁnite matrix ℵt > 0 ∈IRn×n at time
+instant t, there exists covariance matrices P 1,2
+t
+= P 1,2
+′
+t
+>
+0 ∈IRn×n and a scalar covariance error Rt at each sensor,
+such that
+
+Ft −KtCt
+′
+P 1,2
+t
+
+Ft −KtCt
+
+= −ℵt.
+(37)
+The residual eres,t can be deﬁned by
+eres,t =(Ft −KtCt)(ht −ˆht)+Ψ[ξtf(yt, ht) −ξf,tf(yt, ht)]
+(38)
+where ξt, ξf,t ∈IR are parameters that change unexpectedly
+when a variation occurs due to fault injection. The convergence
+of the residual is guaranteed by the following theorem.
+Theorem III.1: The ﬁlter is asymptotically convergent when
+no fault occurs (ξt = ξf,t), i.e., limt→∞Ct(ht −ˆht) = 0.
+Proof of Theorem III.1: This is proved in the Appendix. ■
+Once the residual generation is made, the next step is to
+evaluate the residual.
+H. Residual Evaluation Using Likelihood Ratio
+The residual is based on comparing the likelihood ratio λ. The
+likelihood ratio is deﬁned here as the ratio of conditional prob-
+abilities (under the presence or absence of fault) to a threshold
+value. It can be represented as
+Γstat(λ) = log(h0,t) −log(ˆht)
+
+≤ηth,
+no fault
+> ηth,
+fault
+(39)
+where Γstat(λ) is the test statistic computed using the likelihood
+ratio λ. ηth is a threshold value computed using the innovation
+principle, which is the difference between the system observed
+state and its optimal forecast based on information available
+prior to the time t. The threshold value is chosen to ensure a low
+false alarm probability while making an accurate residual fault
+evaluation to facilitate the operator.
+IV. EVALUATION OF THE PROPOSED SCHEME
+The operation of the proposed subobserver-based ﬁlter was
+evaluated on an actual quadruple tank system, the schematic
+structure of which is already presented in Fig. 2. The system
+consists of a connected circuit of water tanks, pumps, and actu-
+atorsthatreplicatethefunctionalityofabasinintheplantcooling
+system. The two upper level tanks (tank W and X) replicate the
+water from the cool water basin. The bottom level tank U is
+supplying water to condenser and steam turbine, whereas the
+tank V is supplying water to the HRSG, respectively. The piping
+system is designed such that each pump affects the liquid level
+of both measured tanks. A portion of the ﬂow from one pump is
+directed into one of the lower level tanks and the rest is directed
+to the overhead tank that drains into the other lower level tank.
+By adjusting the bypass valves of the system, the proportion
+of the water pumped into different tanks can be adjusted. This
+alterstheinteractingrelationshipbetweenthepump-throughputs
+and the water level. The pumps were each 12 V due to the large
+water distribution load.
+In this article, the proposed SOFF scheme is evaluated using
+the following metrics.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:56:47 UTC from IEEE Xplore.  Restrictions apply. 
+
+2062
+IEEE SYSTEMS JOURNAL, VOL. 14, NO. 2, JUNE 2020
+1) Attack detection time (ADT): Time from the attack occur-
+rence to ﬁrst sensitive detection of the attack.
+2) Missed attack detection rate (MADR): The ratio of test
+runs for which the attack occurrence is not detected.
+3) False detection rate (FDR): The ratio of test runs for which
+the attack occurrence is detected under no-fault/attack
+condition.
+4) Attack isolation time (AIT): Time from the attack occur-
+rence to ﬁrst correct isolation of intrusion.
+5) Missed isolation rate (MIR): The ratio of test runs for
+which the correct attack isolation is not obtained.
+In order to evaluate the proposed methodology, a test case has
+been designed. This test case has natural system dynamics as
+well as cyberattacks, which are spread over the case duration of
+3000 s. To simulate the attack scenario, several false data have
+been injected deliberately and spread over the case duration as
+follows.
+1) First injection: A random noise attack from 1250–1900-s
+window on the height sensor.
+2) Second injection: A predicted data-repetition attack ini-
+tially from 0–1200-s window on the height sensor.
+3) Third injection: A noise attack from 500–1000-s window
+on the ﬂow sensor.
+4) Fourth injection: A stability betrayal attack from 2000–
+2500-s window on the ﬂow sensor.
+The proposed method here is evaluated against the standard
+unscented Kalman ﬁlter (UKF) [35], which is a mainstream re-
+cursive nonlinear technique. However, the UKF is not originally
+framed to consider cyberattacks, and that too in an energy-water
+sector. All estimations are computed using a sampling time, τs
+of 50 ms.
+An attacker usually aims to maneuver within the norms de-
+ﬁned by the observation model (3) and (12). This would help the
+attacker’s cause of probing and hibernating into the system while
+not being diagnosed. The ﬁrst attack is a sparse attack generated
+from random noise. The attacker wanted to leave an impression
+to the remote monitoring system and the operator that the refer-
+ence height of water in the basin is reached before time. This was
+portrayed by having no ﬂuctuation in the height level achieved.
+This will further bafﬂe the operations of actuators (pumps and
+motors). The second attack is a data-repetition attack, which
+can be categorized as a deception attack. Deception attacks
+usually repeat the past recorded measurements. However, in this
+case, the attacker had a detailed knowledge about the sea water
+make-up and the cooled water process. The attacker was able to
+generate a predicted data-repetition attack at the beginning of the
+hydraulic proﬁle window. Portraying a full cool water basin, the
+actuators would stop to function and might also stop the process
+of the pumping water from the sea. This could adversely affect
+the recirculation process, inlet air cooling of the combustion
+turbines, and steam cycle make up. The third attack shows the
+injection of the heavy noise in the water-ﬂow proﬁle. This could
+replicate as if the controller has malfunctioned or there is a
+blockage in the pipe network or its manifolds. The fourth attack
+can be categorized as an advanced deception attack. The attacker
+wanted to show a stationary water as if there is no supply of sea
+Fig. 3.
+Fault injections in hydraulic (a) height level and (b) ﬂow proﬁle.
+watertothebasin,orthereisnodemandmadefromthecombined
+cycle process, which could eventually create a shutdown in the
+plant. Note the aim of injecting a diversiﬁed data injection is to
+assess the robustness of the proposed scheme.
+The ﬁrst and second injections were made on the hydraulic-
+level sensor as shown in Fig. 3(a). The tracking performance is
+monitored in all the time windows by comparing both methods
+in Table I. The ﬁrst injection considered the system suffering
+from the random noise of few large spikes spread across the
+1250–1900-s window. It can be observed that the proposed
+scheme estimated the output more accurately. This is due to
+its architecture of approximating information collected from
+each local sensor, and thereby, upgrading each state with the
+IMM-based feedback. The UKF also performed well due to
+its nonlinear estimation nature. However, its convergence time
+was demonstrated to be slower than the proposed method. The
+second injection considered a predicted data-repetition attack
+from 0–1200-s window on the height sensor. It can be seen that
+initially the UKF was unable to track changes in the parameter.
+However, around 300 s, it started to converge and track the
+injection. In contrast, the SOFF performed better despite of the
+fact that attack happened at ﬁrst instants of the hydraulic proﬁle.
+It was able to track changes in parameter faster and took less
+time to converge.
+The third and fourth injections were made on the hydraulic
+ﬂow sensor as shown in Fig. 3(b). An MSE-based estimation
+comparison can be seen in Table II. The third injection was a
+heavy noise attack in the 500–1000-s window. Both methods
+accurately tracked the change in ﬂuctuations. The amplitude of
+the MSE was high for the UKF while tracking the proﬁle of ﬂow
+sensor. This is due to the natural nonlinear instant variations in
+the hydraulic ﬂow proﬁle, which challenged the capability of the
+unscented transform in the UKF for generating the moments.
+However, the proposed method was more accurate as it did not
+suffer from deterministic covariance issues. The fourth injection
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:56:47 UTC from IEEE Xplore.  Restrictions apply. 
+
+KHALID et al.: CYBERATTACKS IN A LOOPED ENERGY-WATER NEXUS: AN INOCULATED SUBOBSERVER-BASED APPROACH
+2063
+TABLE I
+MSE-BASED ESTIMATION COMPARISON ANALYSIS FOR HYDRAULIC HEIGHT SENSOR1
+1In this table, MSE is the mean-square error of estimates, subscript UKF and SOFF are the acronyms of the unscented Kalman ﬁlter approach [35] and the proposed SOFF,
+respectively.
+TABLE II
+MSE-BASED ESTIMATION COMPARISON ANALYSIS FOR HYDRAULIC FLOW SENSOR
+TABLE III
+PERFORMANCE EVALUATION OF PROPOSED SOFF SCHEME TOWARD CYBER-ATTACKS2
+2In this table, ADT is the attack detection time, MADR is the missed attack detection rate, FDR is the false detection rate, AIT is the attack
+isolation time, and MIR is the missed isolation rate.
+Fig. 4.
+Residual evaluation in hydraulic (a) height level and (b) ﬂow sensor.
+was an attack portraying the stationary water from the 2000–
+2500-s window. This was a more challenging scenario since
+it could diversify the attention of the operator and the system
+toward many components. The UKF was unable to track the
+trap of false stability. This resulted in generating a high MSE
+value. In contrast, the proposed scheme estimated the variation
+accurately. The predictive and interactive nature of the algorithm
+helped to achieve better MSE results.
+Once the estimation accuracy is achieved, the likelihood ratio
+was deployed to make the residual evaluation. This can be seen
+in Fig. 4(a) and (b). The threshold selected for the hydraulic
+level and ﬂow sensor are ±10 and ±1, respectively. As observed
+in Fig. 4(a), injected attacks were captured accurately by the
+thresholds. Similar was the case in Fig. 4(b), where the ﬂow
+variations were more challenging. The likelihood-ratio-based
+threshold was able to adequately detect all injected variations.
+Referring to Table III gives the performance evaluation of the
+proposed scheme. The metrics the ADT (in seconds), MADR,
+FDR, AIT (in seconds), and MIR are considered for all injected
+attacks. It can be noted that injected attacks in both height sensor
+and ﬂow sensor are detected within reasonable time, despite of
+the fusion of information. The accuracy was also observed for
+any missed attack detections. Though the isolation ratio is quiet
+low, there were some missed isolations. The SOFF made a better
+overall performance than the standard UKF. The UKF took more
+time than the SOFF. This could be due to the matrix square root
+Cholesky transformation computation in a standard UKF.
+V. CONCLUSION
+In this article, the estimation accuracy of an infected water
+cooling system in a combined cycle power plant has been
+improved. This is achieved by using an IMM-based fusion
+approach to consider the instant and time-varying nonlinear
+dynamics. At the local level, the IMM structure is supported
+by the subobserver-based estimation approach, which further
+computes the time-delay and cross-covariance between mea-
+surements to enhance the observability of the system. As a
+result, the proposed scheme is able to provide immunity to the
+system against the injected attacks. One observed limitation of
+the proposed method is the computational complexity, which is
+increased by information processing at the local level and the
+fusion level. However, this may be resolved by conducting both
+computations in parallel using the HPC. Future work may lead
+toward analyzing possible situations in the energy-water sector,
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:56:47 UTC from IEEE Xplore.  Restrictions apply. 
+
+2064
+IEEE SYSTEMS JOURNAL, VOL. 14, NO. 2, JUNE 2020
+which may cause vulnerability to the system due to remote
+monitoring.
+APPENDIX
+Proof of Theorem III.1: Consider the following Lyapunov
+function:
+L0
+
+eres,t
+
+= e
+′
+res,tP 1,2
+t
+eres,t
+(40)
+where P 1,2
+t
+is the solution of (37) for the residual generation of a
+given positive deﬁnite matrix ℵt. The corresponding Lyapunov
+difference for the trajectory eres,t is
+ΔL0 = IE
+
+L0(et+1|et, P 1,2
+t
+)
+
+−L0
+
+eres,t
+
+=
+
+Fe,teres,t + Ψe,tVe,t
+′
+P 1,2
+t
+
+Fe,teres,t + Ψe,tVe,t
+
+−e
+′
+res,tPteres,t
+= e
+′
+res,t
+
+P 1,2
+t
+(Ft −KtCt) + (Ft −KtCt)
+′P 1,2
+t
+
++ P 1,2
+t
+Ψtξf,t[f(yt, ht) −f(yt, ˆht)]
+	
+eres,t.
+(41)
+From assumptions and (37), it can be further claimed that
+ΔL0 ≤−e
+′
+res,tℵteres,t + 2∥Ct(ht −ˆht)∥.|Rt|ξf,tL0∥eres,t∥
+≤−ρ∥eres,t∥2 < 0
+(42)
+where ρ is deﬁned to minimize ℵt, while maintaining its positive
+deﬁnite domain. Thus, limt→∞eres,t = 0 and limt→∞Ct(ht −
+ˆht) = 0. This completes the proof.
+■
+REFERENCES
+[1] A. Siddiqui and L. Anadon, “The water energy nexus in Middle East
+and North Africa,” Energy Policy, vol. 39, no. 8, pp. 4529–4540,
+Aug. 2011.
+[2] J. S. Maulbetsch and M. N. Diﬁlippo, “Cost and value of water use at
+combined-cycle power plants,” PIER Final Project Rep., CEC-500-2006-
+034, pp. 1–134, Apr. 2006.
+[3] ABB to Automate 225 Megawatt Combined Cycle Power Plant in
+Myanmar, ABB, Zürich, Switzerland, Feb. 2017.
+[4] ABB “ABB solutions for combined cycle power plants,” Tech. Rep. power-
+generation-solution/2011-02-18, pp. 1–28, Feb. 2011.
+[5] ABB “Complete integrated electrical and automation solution for Summit
+Meghnaghat power plant in Bangladesh,” Tech. Rep. power-generation-
+references/combined-cycle-power-plant/2015, pp. 1–2, Jun. 2015.
+[6] ABB “Cyber security notiﬁcation—Meltdown and spectre, impact on sym-
+phony plus,” ABB Security Notiﬁcation Rep., ID 8VZZ000522, pp. 1–4,
+Jan. 2018.
+[7] “Conspiracy to commit computer hacking that operates Bowman
+dam.”Mar.2016.[Online].Available:https://www.justice.gov/usao-sdny/
+ﬁle/835061/download
+[8] A. Ostfeld, “Enhancing water-distribution system security through mod-
+eling,” J. Water Resour. Planning Manage., vol. 132, no. 4, pp. 209–210,
+Jul. 2006.
+[9] C. M. Torres, L. Lavigne, F. Cazaurang, E. A. Garca, and D. D. Romero,
+“Fault detection and isolation on a three tank system using differential
+ﬂatness,” in Proc. Eur. Control Conf., Jul. 2013, pp. 2433–2438.
+[10] R. Mattone and A. D. Luca, “Nonlinear fault detection and isolation in a
+three-tank heating system,” IEEE Trans. Control Syst. Technol., vol. 14,
+no. 6, pp. 1158–1166, Nov. 2006.
+[11] S. Zhao, B. Huang, and F. Liu, “Detection and diagnosis of multiple
+faults with uncertain modeling parameters,” J. Water Resour. Plannning
+Manage., vol. 25, no. 5, pp. 1873–1881, 2017.
+[12] X. He, Z. Wang, Y. Liu, L. Qin, and D. Zhou, “Fault-tolerant con-
+trol for an internet-based three-tank system: Accommodation to sensor
+bias faults,” IEEE Trans. Ind. Electron., vol. 64, no. 3, pp. 2266–2275,
+Mar. 2017.
+[13] D. H. Zhou, X. He, Z. Wang, G.-P. Liu, and Y. D. Ji, “Leakage
+fault diagnosis for an internet-based three-tank system: An experimental
+study,” IEEE Trans. Control. Syst. Technol., vol. 20, no. 4, pp. 857–870,
+Jul. 2012.
+[14] X. He, Z. Wang, L. Qin, and D. Zhou, “Active fault-tolerant control for an
+internet-based networked three-tank system,” IEEE Trans. Control. Syst.
+Technol., vol. 24, no. 6, pp. 2150–2157, Nov. 2016.
+[15] M. Jelali and H. Schwarz, “Nonlinear identiﬁcation of hydraulic servo-
+drive systems,” IEEE Control Syst. Mag., vol. 15, no. 5, pp. 17–22,
+Oct. 1995.
+[16] H. Khan, S. Abou, and N. Sepehri, “Fault detection in electro-hydraulic
+servo-positioning systems using sequential test of Wald,” in Proc. Can.
+Conf. Elect. Comput. Eng., 2002, pp. 1628–1633.
+[17] M. K. Zavarehi, P. D. Lawrence, and F. Sassani, “Nonlinear modeling and
+validation of solenoid controlled pilot-operated servovalves,” IEEE/ASME
+Trans. Mechatronics, vol. 4, no. 3, pp. 324–334, Sep. 1999.
+[18] A. S. Musleh, H. M. Khalid, S. M. Muyeen, and A. Al-Durra, “A
+prediction algorithm to enhance grid resilience towards cyber attacks
+in WAMCS applications,” IEEE Syst. J., vol. 13, no. 1, pp. 710–719,
+Mar. 2019.
+[19] H. M. Khalid and J. C.-H. Peng, “Immunity towards data-injection attacks
+using track fusion-based model prediction,” IEEE Trans. Smart Grid,
+vol. 8, no. 2, pp. 697–707, Mar. 2017.
+[20] H. M. Khalid and J. C.-H. Peng, “A Bayesian algorithm to enhance the
+resilience of WAMS applications against cyber attacks,” IEEE Trans.
+Smart Grid, vol. 7, no. 4, pp. 2026–2037, Jul. 2016.
+[21] Z. Skolicki, M. M. Wadda, M. H. Houck, and T. Arciszewski, “Reduc-
+tion of physical threats to water distribution systems,” J. Water Resour.
+Plannning Manage., vol. 132, no. 4, pp. 211–217, 2006.
+[22] W. Dawsey, B. Minsker, and V. VanBlaricum, “Bayesian belief networks
+to integrate monitoring evidence of water distribution system contamina-
+tion,” J. Water Resour. Plannning Manage., vol. 132, no. 4, pp. 234–241,
+2006.
+[23] M. Propato, “Contamination warning in water networks: General mixed-
+integer linear models for sensor location design,” J. Water Resour.
+Plannning Manage., vol. 132, no. 4, pp. 225–233, 2006.
+[24] T. M. Baranowski and E. J. LeBoeuf, “Consequence management op-
+timization for contaminant detection and isolation,” J. Water Resour.
+Plannning Manage., vol. 132, no. 4, pp. 274–282, 2006.
+[25] M. S. Mahmoud and H. M. Khalid, “Closed loop identiﬁcation of uncertain
+systems,” in Signal Processing: New Research. Commack, NY, USA:
+Nova, 2013, pp. 135–160.
+[26] R. Doraiswami, L. Cheded, H. M. Khalid, Q. Ahmed, and A. Khoukhi,
+“Robust control of a closed loop identiﬁed system with parametric/model
+uncertainties and external disturbances,” in Proc. Int. Conf. Syst., Model.
+Simul., Jan. 2010, pp. 270–275.
+[27] P. V. Hof and R. Schrama, “Identiﬁcation and control—Closed loop
+issues,” Automatica, vol. 31, no. 12, pp. 1751–1770, 1995.
+[28] K. H. Johansson and J. L. Nunes, “A multivariable laboratory process with
+an adjustable zero,” in Proc. Amer. Control Conf., Philadelphia, PA, USA,
+Jun. 24–26, 1998, pp. 2045–2049.
+[29] E. P. Gatzke, E. S. Meadows, C. Wang, and F. J. Doyle III, “Distributed
+model predictive control of a four-tank system,” J. Comput. Chem. Eng.,
+vol. 24, no. 2–7, pp. 1503–1509, 2000.
+[30] H. A. Chianeh, J. D. Stigter, and K. J. Keesmana, “Optimal input design
+for parameter estimation in a single and double tank system through direct
+control of parametric output sensitivities,” J. Process Control, vol. 21,
+no. 1, pp. 111–118, 2011.
+[31] S. Skogestad and I. Postlehwaite, Multivariable Feedback Control. Engle-
+wood Cliffs, NJ, USA: Prentice-Hall, 2001.
+[32] S. Shu-Li and M. Jing, “Distributed reduced-order optimal fusion Kalman
+ﬁlters for stochastic singular systems,” Acta Automatica Sinica, vol. 32,
+no. 2, pp. 286–290. Mar. 2006.
+[33] E. Mazor, A. Averbuch, Y. Bar-Shalom, and J. Dayan, “Interacting multiple
+modelmethodsintargettracking:Asurvey,”IEEETrans.Aerosp.Electron.
+Syst., vol. 34, no. 1, pp. 103–23, Jan. 1998.
+[34] Y. Bar-Shalom and X. Li, Estimation and Tracking: Principles, Tech-
+niques, and Software. Norwell, MA, USA: Artech House, 1993.
+[35] E. A. Wan and R. Van Der Merwe, “The unscented Kalman ﬁlter for
+nonlinear estimation,” in Proc. Adaptive Syst. Signal Process., Commun.,
+Control Symp., Lake Louise, AB, Canada, Oct. 2000, pp. 153–158.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:56:47 UTC from IEEE Xplore.  Restrictions apply. 
+
+KHALID et al.: CYBERATTACKS IN A LOOPED ENERGY-WATER NEXUS: AN INOCULATED SUBOBSERVER-BASED APPROACH
+2065
+Haris M. Khalid (M’13) received the B.S. (Hons.)
+degree in mechatronics and control systems engineer-
+ing from the University of Engineering and Tech-
+nology, Lahore, Pakistan, in 2007, and the M.S. and
+Ph.D. degrees in control systems engineering from
+the King Fahd University of Petroleum and Minerals
+(KFUPM), Dhahran, Saudi Arabia, in 2009 and 2012,
+respectively.
+He is currently an Assistant Professor in electrical
+and electronics engineering with the Higher Col-
+leges of Technology, Sharjah, United Arab Emirates
+(UAE). In 2012, he joined the Distributed Control Research Group, KFUPM,
+as a Research Fellow. From 2013 to 2016, he worked as a Research Fellow
+with the Power Systems Research Laboratory, iCenter for Energy, Masdar
+Institute, Khalifa University of Science and Technology, Abu Dhabi, UAE,
+which is an MI-MIT Cooperative Program with the Massachusetts Institute of
+Technology, Cambridge, MA, USA. During this tenure, he also worked as a
+Visiting Scholar with Energy Systems, Control, and Optimization Lab, ADNOC
+Research and Innovation Center, Khalifa University of Science and Technology.
+He has authored/coauthored more than 60 peer-reviewed research publications.
+His current research interests include power systems, cyber-physical systems,
+electricvehicles,signalprocessing,vehicle-to-gridtechnology,faultdiagnostics,
+ﬁltering, estimation, and condition monitoring.
+Dr. Khalid has served as an Energy Specialist with the UAE Space Agency
+“Tests in Orbit” Competitions, which are partnered with Dream-up and Nano-
+Racks. He has also served as the Technical Chair of IEEE-Advances in Science
+andEngineeringTechnology(ASET)’2018–2020(SevenGroupofConferences)
+organized in UAE.Heisalso aReviewer for theIEEE TRANSACTIONS ON POWER
+SYSTEMS, Neural Network and Learning Systems, Control of Network Systems,
+Transportation Electriﬁcation, and IEEE SYSTEMS JOURNAL.
+S. M. Muyeen (S’03–M’08–SM’12) received the
+B.Sc. Eng. degree from the Rajshahi University of
+Engineering and Technology, Rajshahi, Bangladesh,
+formerly known as the Rajshahi Institute of Technol-
+ogy, in 2000, and the M. Eng. and Ph.D. degrees from
+the Kitami Institute of Technology, Kitami, Japan,
+in 2005 and 2008, respectively, all in electrical and
+electronic engineering.
+He is currently working as an Associate Professor
+with the School of Electrical Engineering Computing
+and Mathematical Sciences, Curtin University, Perth,
+Australia. He has authored and coauthored more than 200 articles in different
+journals and international conferences, and six books as an author or editor. His
+research interests include power system stability and control, electrical machine,
+ﬂexible ac transmission system, energy storage system, renewable energy, and
+HVdc system.
+Dr. Muyeen has been a Keynote Speaker and an Invited Speaker at many
+international conferences, workshops, and universities. He is serving as an
+Editor/Associate Editor for many prestigious Journals from IEEE, IET, and
+other publishers including IEEE TRANSACTIONS OF SUSTAINABLE ENERGY,
+IEEE POWER ENGINEERING LETTERS, IET Renewable Power Generation, IET
+Generation, Transmission, and Distribution, etc. He is a Fellow of Engineers
+Australia.
+Jimmy C.-H. Peng (S’04–M’12) received the B.E.
+and Ph.D. degrees in electrical and computer engi-
+neering from the University of Auckland, Auckland,
+New Zealand, in 2008 and 2012, respectively.
+He is currently an Assistant Professor in electrical
+and computer engineering with the National Univer-
+sity of Singapore, Singapore. He was an Assistant
+Professor with the Masdar Institute (now part of the
+Khalifa University), Abu Dhabi, United Arab Emi-
+rates. In 2013, he was a Visiting Scientist with the
+Research Laboratory of Electronics, Massachusetts
+Institute of Technology, Cambridge, MA, USA, where he became a Visiting As-
+sistant Professor in 2014. His research interests include power system stability,
+cyber security, microgrids, and high-performance computing.
+Dr. Peng is currently the Secretary of the IEEE Power and Energy Society
+Working Group on High-Performance Computing for Power Grid Analysis and
+Operation. He is also a Committee Member for Singapore Standard SS 535.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:56:47 UTC from IEEE Xplore.  Restrictions apply. 

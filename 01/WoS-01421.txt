@@ -1,0 +1,1498 @@
+Environmental Modelling and Software 123 (2020) 104514
+Available online 26 September 2019
+1364-8152/© 2019 Elsevier Ltd. All rights reserved.
+A water-electricity nexus model to analyze thermoelectricity supply 
+reliability under environmental regulations and economic penalties during 
+drought events 
+Mengfei Mu a,b,c, Zhenxing Zhang c,**, Ximing Cai d, Qiuhong Tang a,b,* 
+a Key Laboratory of Water Cycle and Related Land Surface Processes, Institute of Geographical Sciences and Natural Resources Research, Chinese Academy of Sciences, 
+Beijing, China 
+b University of Chinese Academy of Sciences, Beijing, China 
+c Illinois State Water Survey, Prairie Research Institute, University of Illinois at Urbana-Champaign, Champaign, IL, United States 
+d Department of Civil and Environmental Engineering, University of Illinois at Urbana-Champaign, Urbana, IL, United States   
+A R T I C L E I N F O  
+Keywords: 
+Water-electricity nexus 
+Thermoelectricity 
+Cooling water 
+Economic penalties 
+Drought 
+A B S T R A C T  
+A reliable thermoelectricity supply system requires available cooling water. Recent electricity supply failures that 
+have occurred all over the world during drought events indicate that the thermoelectricity system is vulnerable. 
+However, knowledge and policy gaps remain regarding water-electricity interactions at the watershed scale. In 
+this study, a water-electricity nexus model is developed to facilitate electricity generation decisions and envi­
+ronmental policy designs involving cooling water consumption and temperature controls. This nexus model 
+consists of three modules, a physically based hydrologic module, a decentralized optimization module, and a 
+thermoelectricity generation module, which are closely integrated at the daily time step. The model is used to 
+quantify tradeoffs between environmental impacts and potential electricity supplies at the power plant and 
+watershed levels. A case study is conducted to demonstrate the model application for a watershed-wide, coor­
+dinated water-energy policy design under different combinations of environmental regulations and economic 
+penalties during a drought event.   
+1. Introduction 
+The reliability and future expansion of the thermoelectricity supply 
+system are vulnerable to inadequate cooling water availability (Tidwell 
+et al., 2012; Zhou et al., 2018). Cooling of thermal power plants requires 
+a significant amount of water withdrawal and consumption during the 
+electricity generation process (Meldrum et al., 2013). An estimated 13 
+billion m3 of fresh water is consumed annually for energy production all 
+over the world (Spang et al., 2014). The United States and China account 
+for the most cooling water use. In the US, 45% of water withdrawal, of 
+which approximately 3% is consumed, is used for cooling (Maupin et al., 
+2010), a percentage that is even higher than water withdrawal used for 
+irrigation. The 1,290 thermoelectric power plants in the US withdraw 
+and consume an estimated 488 and 13 million m3 of cooling water per 
+day, respectively (Diehl and Harris, 2014). This amount of water can 
+support hundreds of cities the size of New York City each day (Averyt 
+et al., 2011). In China, 178 and 13 million m3 of water are withdrawn 
+and consumed per day for thermoelectricity generation, respectively 
+(Liao et al., 2016; Zheng et al., 2016; Zhang et al., 2017), and are pro­
+jected to exceed 767 and 41 million m3 by 2050, possibly violating the 
+government quotas on water if no technological changes are adopted 
+(Qin et al., 2015). 
+Water intensity, i.e., water withdrawal or consumption per unit of 
+electricity generation, is spatially heterogeneous because thermal power 
+plants in different areas use various cooling technologies (Macknick 
+et al., 2012). Open-loop cooling plants have a large water withdrawal 
+intensity but a small water consumption intensity. Most of the water 
+withdrawn is discharged to water bodies with high thermal pollution, 
+potentially elevating the water temperature and causing unintended 
+consequences to the aquatic ecosystem, such as reducing the dissolved 
+* Corresponding author. Key Laboratory of Water Cycle and Related Land Surface Processes, Institute of Geographical Sciences and Natural Resources Research, 
+Chinese Academy of Sciences, Beijing, China. 
+** Corresponding author. 
+E-mail addresses: zhang538@illinois.edu (Z. Zhang), tangqh@igsnrr.ac.cn (Q. Tang).  
+Contents lists available at ScienceDirect 
+Environmental Modelling and Software 
+journal homepage: http://www.elsevier.com/locate/envsoft 
+https://doi.org/10.1016/j.envsoft.2019.104514 
+Received 18 May 2019; Received in revised form 9 September 2019; Accepted 24 September 2019   
+
+Environmental Modelling and Software 123 (2020) 104514
+2
+oxygen and killing aquatic wildlife (Madden et al., 2013). On the other 
+hand, closed-loop cooling (recirculating ponds or towers) plants have a 
+much smaller water withdrawal intensity than that of open-loop cooling 
+plants but a larger water consumption intensity. A plant with a recir­
+culating pond may discharge thermal pollution to a water body if the 
+return flow is not completely cooled before being discharged. 
+Recirculating-tower plants have little impact on the water temperature 
+since most of the cooling water evaporates through the tower rather 
+than being discharged into a water body. In general, thermoelectricity 
+supply infrastructures substantially alter the local hydrology and need to 
+be well managed (McManamay et al., 2017). 
+Environmental regulations involving water withdrawal, consump­
+tion, and temperature constraints are commonly adopted to regulate 
+thermoelectric power plants and limit their impacts on public waters. In 
+the US, water withdrawal constraints are implemented per section 316 
+(b) of the US Clean Water Act (US EPA, 2013) during the planning or 
+construction stages of a plant. These constraints require that the water 
+withdrawal does not exceed the allowable amount to minimize the 
+adverse effects, e.g., entrainment and impingement, on aquatic species 
+associated with the plant’s intake. Enforced by the National Pollution 
+Discharge Elimination System (NPDES) (Gaba, 2007) under section 316 
+(a) of the Clean Water Act, water temperature constraints require that 
+the discharge water does not exceed the allowable maximum tempera­
+ture or maximum temperature change enacted to protect aquatic eco­
+systems (Logan and Stillwell, 2018). State or local regulations (IPCB, 
+2018; Texas Administrative Code, 2014) are also used to further dictate 
+the discharge water temperature. Temperature constraints are applied 
+only to those plants that discharge thermal pollution to surface water. 
+There are no specific federal policies that regulate cooling water con­
+sumption in the US, though requests for such policies have been made in 
+recent years (Eheart, 2004; Zhang and Balay, 2014). The absence of 
+water consumption constraints may influence the water supplies used 
+for other purposes during a drought event when a significant amount of 
+water is used for cooling. Cooling water consumption is assumed to be 
+no larger than 1% of the streamflow (Gjorgiev and Sansavini, 2018), 
+which may be underestimated during a drought. 
+In recent years, many cases of curtailment and shutdown have been 
+reported in Europe (Payet-Burin et al., 2018; Povoledo, 2003), in the US 
+(Averyt et al., 2011; Lydersen, 2016), and in other countries (WRI, 2017; 
+Luo et al., 2018) during droughts because of limited cooling water 
+availability and high water temperatures. These circumstances have led 
+to power outages in some regions, resulting in chaos (BBC, 2003) and 
+even increased mortality (Anderson and Bell, 2012). As a result, thermal 
+variances or relaxed constraints were proposed (Lubega and Stillwell, 
+2018) or granted (Kopytko and Perkins, 2011; Lydersen, 2016) to power 
+plants during droughts and heat waves to maintain the electricity sup­
+ply. However, these variances are considered anticompetitive subsidies 
+and are controversial as a way to sustain the electricity supply, even 
+during drought events (Micha, 2014). 
+To address these issues, some models have been developed (Sattler 
+et al., 2012; Miara and V€or€osmarty, 2013; Miara et al., 2013; Jornada 
+and Leon, 2016; Parkinson et al., 2016; Khan et al., 2018) to investigate 
+the water-electricity nexus at a regional or national scale in planning for 
+the future. Sattler et al. (2012) integrates the Regional Energy Deploy­
+ment System (ReEDS) with the Water Evaluation and Planning (WEAP) 
+model, which is used to investigate the impacts of different future 
+electricity profiles on water resources in the southwestern US (Yates 
+et al., 2013). Miara and V€or€osmarty (2013) develops a Thermoelectric 
+Power & Thermal Pollution Model (TP2M) for a hypothetical watershed 
+to examine the tradeoffs between electricity production and thermal 
+pollution. Findings show that strict water constraints may reduce some 
+plants’ electricity generation, but may also increase generation effi­
+ciency at the watershed scale (Miara et al., 2013). TP2M is applied in 
+Miara et al. (2018) to analyze the impact of thermal pollution on the 
+electricity supply in the Mississippi River watershed. A two-stage opti­
+mization model that minimizes capital costs and water withdrawal in 
+the first stage, and maximizes the robustness under future uncertainties 
+in the second stage, is built in Texas to address electricity expansion and 
+planning problems (Jornada and Leon, 2016). Parkinson et al. (2016) 
+integrates the electricity and freshwater supply systems to ascertain the 
+feasibility of low-carbon electricity strategies in Saudi Arabia under the 
+constraints of a groundwater conservation policy. Khan et al. (2018) 
+develops a coupled water-energy optimization model that tracks the 
+entire life cycle of water and energy with linear representations for 
+long-term resource security enhancement and to increase resource use 
+efficiencies. 
+In these models, power plants in a watershed or region with similar 
+fuels and cooling technologies are usually aggregated as one represen­
+tative plant to simplify the simulation (e.g., Sattler et al., 2012). As a 
+result, spatial distributions of power plants and local streamflow con­
+ditions are usually overlooked. These models generally consider the 
+long-term water resources conditions, while neglecting the impacts of a 
+specific drought or low flow episode. The models typically provide 
+long-term electricity expansion strategies, such as the technology and 
+location selections of new power plants. For example, retrofitting to 
+water-efficient cooling technologies (Tidwell et al., 2014) is proposed to 
+enhance the reliability of the future electricity supply, regardless of the 
+large capital costs and energy penalties. Some studies, e.g., Khan et al. 
+(2018), consider the cost as one of the criteria when evaluating the 
+reliability of the water-electricity nexus. 
+Optimization models for the short term (Cortinovis et al., 2009; 
+Sanders et al., 2014; Sanders, 2015; Fooladivanda and Taylor, 2015; 
+Gjorgiev and Sansavini, 2017, 2018; Lubega and Stillwell, 2018) have 
+also been developed at a finer spatial scale, e.g., a watershed scale, to 
+examine the electricity supply reliability during a drought when both 
+water and electricity demands peak and cooling technologies cannot be 
+immediately retrofitted. Cortinovis et al. (2009) presents a systemic 
+approach to optimize the operation of a wet-cooling tower system by 
+minimizing operating costs, including cooling water costs. Sanders et al. 
+(2014) uses a unit commitment and dispatch model, PLEXOS, to esti­
+mate how the dispatch and water use of power plants would respond to 
+various levels of water fees in the Electric Reliability Council of Texas 
+(ERCOT), which is responsible for operating the power grid throughout 
+most of the state. Fooladivanda and Taylor (2015) demonstrates a nu­
+merical dispatch model to minimize the total cost of a power system 
+while satisfying the constraints, including water use of once-through 
+cooling systems. Gjorgiev and Sansavini (2017) develops a smart 
+water management model that integrates the operation of an upstream 
+hydropower plant and a downstream thermal power plant to maximize 
+the gross electricity output and reduce possible power curtailment of the 
+downstream plant with a once-through cooling system. The model has 
+been applied to investigate the impacts of water constraints on elec­
+tricity generation (Gjorgiev and Sansavini, 2018). Lubega and Stillwell 
+(2018) develops a linear optimization model to identify how much and 
+to which plants the thermal pollution variances should be granted to 
+maintain the power grid reliability during a specific drought event. 
+Most of the models investigate the reliability of the open-loop or 
+recirculating-pond plants, which may resort to violating the water 
+temperature constraints for more power generation during a hot sum­
+mer. Some thermal variances are proposed (Gjorgiev and Sansavini, 
+2018; Lubega and Stillwell, 2018) to avoid power plant curtailment or 
+temporary shutdown. The impact of the cooling water consumption on 
+streamflow is usually neither considered nor underestimated in previous 
+studies. This impact is minimal during normal hydrologic conditions or 
+wet seasons but can be serious during a drought event, especially in a 
+watershed with many closed-loop cooling plants that consume a sig­
+nificant amount of water. Cooling technologies are shifting from 
+open-loop to closed-loop, which would exert increasing effects on water 
+consumption but decreasing impacts on water withdrawal and temper­
+ature. The existing models usually oversimplify hydrologic processes 
+and use observed streamflow or results from conceptual hydrologic 
+models to represent the cooling water availability. For example, 
+M. Mu et al.                                                                                                                                                                                                                                      
+
+Environmental Modelling and Software 123 (2020) 104514
+3
+Gjorgiev and Sansavini (2018) use streamflow and water temperature as 
+exogenous inputs but do not explicitly simulate them in the modeling 
+framework. Lubega and Stillwell (2018) use principal components 
+analysis (PCA) to determine streamflow. Thus, the dynamics of 
+streamflow and the impact of upstream cooling water consumption on 
+downstream water availability and power generation cannot be simu­
+lated in detail, which, to some degree, limits the applicability of these 
+models to ungagged sites and future scenarios. In addition, the top-down 
+centralized optimization framework commonly used in the existing 
+models assumes full cooperation among the power plants to achieve 
+watershed-wide benefits, which is usually not true in the real world and 
+would overestimate the potential electricity supply (Gjorgiev and San­
+savini, 2018). The centralized optimization framework approaches the 
+realistic representation when all plants in a region are operated by the 
+same utility. In other cases, plants would maximize their own profits 
+rather than fully cooperate with each other to achieve system-wide 
+benefits. Therefore, a decentralized optimization framework (Yang 
+et al., 2009) is preferred in this context, as in our study. 
+This study contributes to water-energy nexus research communities 
+by providing a coupled modeling tool, PyHSPF-WE (Water-Electricity 
+nexus model based on a hydrologic model Hydrological Simulation 
+Program-Fortran written in Python programming language), closely 
+combining hydrologic processes (streamflow and water temperature), 
+thermoelectricity generation, and economic incentive determination at 
+the watershed level and at the daily time step. First, this tool enables a 
+more explicit assessment of the impact of thermal power plant cooling 
+Start
+Input
+Data
+i = 1
+t = 1
+HSPF
+Decentralized Optimization
+Module
+Thermoelectricity
+Generation Module
+Streamflow and
+Water Temperature
+Optimized
+Electricity Output
+Cooling Water
+Consumption,
+Water Temperature
+Rise
+Last Time
+Step?
+t = t + 1
+No
+Last Power
+Plant?
+End
+Yes
+Yes
+i = i + 1
+No
+Module
+IO Data
+Condition
+Legend
+Fig. 1. Workflow of the water-electricity nexus model. (t: time index; i: plant index.)  
+M. Mu et al.                                                                                                                                                                                                                                      
+
+Environmental Modelling and Software 123 (2020) 104514
+4
+water consumption on daily streamflow, which is commonly under­
+represented in previous studies (e.g., Gjorgiev and Sansavini, 2018; 
+Lubega and Stillwell, 2018). Second, solutions that involve both envi­
+ronmental regulations (i.e., via different levels of environmental con­
+straints) and economic penalties are explored to deal with the tradeoffs 
+between electricity generation and environment protection. Third, 
+spatially distinguished policies are examined for different thermal 
+power plants, thereby producing more realistic solutions that lead to 
+more environmental benefits and electricity generation within a 
+watershed. 
+The physically based hydrologic module, Hydrological Simulation 
+Program-Fortran (HSPF) (Bicknell et al., 2005), is used to simulate daily 
+hydrological processes and take into account the impact of cooling water 
+consumption on streamflow and power generation over time. The 
+thermoelectricity generation module links cooling water consumption 
+and thermal pollution to the electricity generation of a plant. We 
+formulate a decentralized optimization module (Yang et al., 2009) for 
+each power plant to determine how power plants would respond to 
+different hydrologic conditions, environmental constraints, and eco­
+nomic penalties. A case study is conducted for the drought in 2012 
+(Knapp et al., 2017) in the Kaskaskia River watershed in Illinois, US to 
+demonstrate the model applicability, while exploring the tradeoffs be­
+tween environmental constraints and the electricity supply. The poten­
+tial for using economic penalties to mitigate the environmental effects of 
+electricity generation and the upstream vs. downstream effect at the 
+watershed level is also demonstrated. This water-electricity nexus model 
+can be easily adopted for other watersheds to examine the thermoelec­
+tricity supply reliability under environmental regulations and economic 
+penalties, serving as a versatile modeling tool to investigate a wide range 
+of policy issues regarding the water-electricity nexus. 
+2. Methods 
+The flowchart in Fig. 1 shows the workflow for integrating three 
+modules to create a water-electricity nexus model. An interface is 
+developed that integrates these three modules on a daily basis. At each 
+time step, the HSPF module assimilates the necessary input data and 
+simulates the hydrologic conditions, daily streamflow and water tem­
+perature, that serve as the input for the other two modules. The 
+decentralized optimization module is then used to optimize the power 
+plant’s electricity generation to maximize its own profits. The electricity 
+generation of each plant that has a specific cooling technology further 
+determines the cooling water consumption, which would be input back 
+to HSPF to update the initial hydrologic conditions of the next time step. 
+These processes iterate over time and space, i.e., from upstream to 
+downstream plants, to determine the impact of cooling water con­
+sumption on the next-time-step and downstream hydrologic conditions. 
+This nexus modeling framework captures the interactions between hy­
+drology and thermoelectricity generation. The following is the detailed 
+description of each module. 
+2.1. The hydrologic module: HSPF 
+HSPF (Bicknell et al., 2005) is a physically based hydrologic model 
+that can simulate the spatially distributed water quantity and quality 
+processes at a watershed scale and at various time steps from 1 min to 
+one year. The model has been developed and maintained by the US 
+Environmental Protection Agency (EPA) and the US Geological Survey 
+(USGS) since the 1960s. In the HSPF, a watershed is divided into indi­
+vidual Hydrologic Response Units (HRUs), in which the hydrologic re­
+sponses are assumed homogeneous. HSPF uses climate forcing, land use, 
+and hydrography data as inputs and provides hydrologic variables, such 
+as streamflow and river water temperature, as outputs. 
+With the original FORTRAN codes, the HSPF is time-consuming to 
+compile, maintain, and extend. For example, the most recent model 
+release does not provide formal makefiles or detailed documentation to 
+compile the source codes. Here, we use a recently developed open- 
+source HSPF interface called PyHSPF (Lampert and Wu, 2015, 2018) 
+to prepare the input data and run the HSPF. Coded in the Python pro­
+gramming language, PyHSPF offers the advantages of having an 
+open-source nature and the flexibility to extend for certain purposes. In 
+our study, we further extend the PyHSPF by 1) adding a new interface to 
+interact with the water temperature simulation module in the HSPF, and 
+2) adding a new interface to account for the impact of cooling water 
+consumption on streamflow. HSPF is calibrated and run at a daily time 
+step using the PyHSPF. The extended PyHSPF is further integrated with 
+the decentralized optimization and thermoelectricity generation 
+modules. 
+2.2. The decentralized optimization module 
+The optimization problem in this study is formulated in a decen­
+tralized optimization framework (Yang et al., 2009) to determine how 
+much electricity would be produced by each plant in response to specific 
+streamflow conditions, environmental regulations, and economic pen­
+alties. This decentralized optimization can represent a more realistic 
+setting taken from the real world, in which the upstream and down­
+stream plants usually do not cooperate with each other to achieve the 
+best system-level benefit, but instead manage to maximize their indi­
+vidual benefits, i.e., the economic profit in this context. This setting 
+indicates that an upstream plant would use as much water and discharge 
+as much thermal pollution as necessary to maximize its profit as long as 
+the environmental constraints are not violated. The upstream power 
+plants would not sacrifice their water rights to conserve water for those 
+downstream. The result of the decentralized optimization would 
+converge with that of the centralized optimization if the upstream plants 
+are always more water-efficient than those downstream when a water 
+shortage occurs during a drought (Yang et al., 2009). The following 
+describes the decentralized optimization formulation used in this study. 
+The optimization of each plant is conducted from upstream to 
+downstream at each daily time step to maximize its own objective 
+function fi;t : 
+max
+ei;t fi;t
+
+ei;t; Qi;t; Tin
+i;t
+
+(1)  
+where i is the index of the plants, t is the time index, ei;t is the daily 
+electricity generation ðMWhÞ, which is the decision variable, and Qi;t and 
+Tin
+i;t are the streamflow ðm3=sÞ and inlet water temperature ðCÞ, 
+respectively. 
+The above optimization problem is limited by four constraints for 
+each plant i. The first is the physical limitation of the generating unit of 
+the plant: 
+Emin
+i
+ ei;t
+
+24  Emax
+i
+or ei;t ¼ 0
+(2)  
+where Emin
+i 
+and Emax
+i 
+are the minimum load ðMWÞ and maximum ca­
+pacity ðMWÞ. Power plants can operate continuously only above the 
+minimum load and below the maximum capacity. Otherwise, plants will 
+temporarily shut down, thereby reducing their electricity output to zero. 
+The second constraint is introduced by the cooling water consump­
+tion rate constraint and applies to all plants, regardless of their cooling 
+technologies: 
+Wi;t  ðW0 þ βWÞQi;t
+(3)  
+where Wi;t is the cooling water consumption rate ðm3=sÞ and W0 is the 
+initial water consumption rate constraint, i.e., 1% (Gjorgiev and San­
+savini, 2018). βW is the constraint relaxation, which varies from 0 to 
+14% at the step of 1.4% in this study, used to analyze the tradeoffs be­
+tween water consumption and the electricity supply. A maximum 
+constraint relaxation of 14% allows operating all the plants at full ca­
+pacity during the studied period. 
+M. Mu et al.                                                                                                                                                                                                                                      
+
+Environmental Modelling and Software 123 (2020) 104514
+5
+The other two constraints are introduced by water temperature 
+regulations, which apply to plants with a cooling pond and not to those 
+with recirculating towers: 
+Tout
+i;t  T0 þ βT
+(4)  
+ΔTi;t  ΔT0 þ βT
+(5)  
+where T0 and ΔT0 are the initial allowable maximum temperature and 
+temperature rise above the natural water temperature (C), and βT is the 
+constraint relaxation for thermal pollution, varying from 0 to 3C at the 
+step of 0:3C in this study. A maximum temperature constraint relaxa­
+tion of 3C allows operating all the temperature-sensitive plants at full 
+capacity during the studied period. 
+The average electricity output (Ei : MW) by plant i during the sum­
+mer months can be calculated as: 
+Ei ¼
+1
+24∗Nt
+X
+t
+ei;t
+(6)  
+where Nt is the length of the study period, i.e., 92 days in the case study. 
+The total electricity output ðMWÞ at the watershed level is the sum of 
+the electricity output by all plants located in the study watershed over 
+time: 
+X
+i
+Ei ¼
+1
+24∗Nt
+X
+i;t
+ei;t
+(7)  
+2.3. The thermoelectricity generation module 
+The following thermoelectricity generation module links the HSPF 
+and the optimization modules by defining the objective function and 
+relevant components, such as the water consumption requirement and 
+thermal pollution. The objective function f is defined as the daily profit 
+of the plant: 
+fi;t ¼ Ri;t   OMi;t   PWi;t   PTi;t
+(8)  
+where i is the plant index, t is the time index, Ri;t is the revenue ð$Þ for 
+selling electricity to the market, OMi;t is the operating and maintenance 
+cost ð$Þ (including the fuel cost), and PWi;t and PTi;t are the economic 
+penalties ð$Þ for the extra water consumption and water temperature 
+rise. 
+The revenue for selling electricity to the market is: 
+Ri;t ¼ ei;t∗EPt
+(9)  
+where ei;t is the daily electricity generation ðMWhÞ and EPt is the elec­
+tricity price ð$=MWhÞ in the market. 
+The O&M cost is: 
+OMi;t ¼ ei;t∗OPi
+(10)  
+where OPi is the plant-specific O&M cost per unit of electricity genera­
+tion ð$=MWhÞ. 
+In the following pages, we introduce the concepts of economic 
+penalties for plants that violate the initial environmental constraints, 
+W0, T0, and ΔT0. During a drought, some policy flexibility and con­
+straints relaxation are usually assumed necessary (Gjorgiev and Sansa­
+vini, 2018; Lubega and Stillwell, 2018) and are granted by 
+environmental agencies. In this study, we propose that economic pen­
+alties should also be imposed on the plants that relax the constraints, 
+since a water pricing strategy has been advocated to have more ad­
+vantages and social welfare gains compared to those of the policy con­
+trols (Mansur and Olmstead, 2012; Luby et al., 2018). In the short run, 
+these penalties may result in a greater contribution to the electricity 
+market by water-efficient plants and a smaller contribution by 
+water-inefficient plants. The penalties that the plants pay may be used 
+for environmental recovery after the drought. In the long run, these 
+penalties may encourage plants to retrofit to more water-efficient 
+cooling technologies to avoid economic penalties, eventually reducing 
+the impacts on water resources. 
+The penalty for extra water consumption ðPWÞ is calculated as: 
+PWi;t ¼ αWmax
+ Wi;t   W0 ∗Qi;t; 0
+2
+(11)  
+where W0 is the initial water consumption constraint, which is set as 1% 
+(Gjorgiev and Sansavini, 2018) due to the absence of general policies 
+and regulations related to cooling water consumption in the US (Eheart, 
+2004; Zhang and Balay, 2014). W0  Qi;t is the allowable maximum 
+cooling water consumption rate ðm3=sÞ if the initial water consumption 
+policy is strictly enforced and when the consumption rate of cooling 
+water does not exceed 1% of the natural streamflow Qi;t. In this context, 
+maxðWi;t   W0  Qi;t; 0Þ is the daily average extra water consumption 
+rate ðm3=sÞ; αW is the penalty factor ð$=ðm3=sÞ2Þ for violating the water 
+consumption rate constraint; and αWmaxðWi;t   W0  Qi;t; 0Þ is the 
+penalty price ð$ =ðm3 =sÞÞ of the extra water consumption, which means 
+the plants would have to pay a higher unit price for a higher extra water 
+consumption rate. The penalty price equals zero and the plants do not 
+need to pay if water consumption Wi;t is less than 1% (W0) of Qi;t when 
+the initial water consumption constraint is not violated. 
+The cooling water consumption rate ðWi;t : m3=sÞ is determined by 
+electricity generation and water consumption intensity: 
+Wi;t ¼ ei;t∗WIi
+
+ð3600 ∗24Þ
+(12)  
+where WIi is the plant-specific cooling water consumption intensity ðm3=
+MWhÞ and 360024 is the unit conversion factor. 
+Similarly, the penalty for an extra temperature rise ðPTÞ is defined as: 
+PTi;t ¼ αTmax
+
+Tout
+i;t   T0; ΔTi;t   ΔT0; 0
+2
+(13)  
+where T0 and ΔT0 are the allowable maximum temperature and tem­
+perature rise above the natural water temperature in the initial policy 
+context. Tout
+i;t is the water temperature at the ending point of the cooling 
+mixing zone. ΔTi;t is the temperature rise caused by thermal pollution, 
+which elevates the water temperature from Tin
+i;t to Tout
+i;t . αT and 
+αTmaxðTout
+i;t   T0; ΔTi;t   ΔT0; 0Þ are the penalty factor ð$=ðCÞ2Þ and 
+penalty price ð$=CÞ, respectively, for violating the initial water tem­
+perature constraints. The plants would not be penalized if none of the 
+temperature constraints were violated. PTi;t is applied only to 
+recirculating-pond cooling plants in this study since recirculating-tower 
+cooling plants discharge minimal thermal pollution to the river. 
+The water temperature rise ðΔTi;tÞ is calculated following the heat 
+transfer model and energy balance: 
+ΔTi;t ¼ ei;tð1   ηiÞ
+ηi
+ Vi ∗ρ ∗Cp
+
+∗3:6∗109
+(14)  
+where ηi is the thermal efficiency of the plant ð%Þ , which is assumed 
+constant during the study period (Gjorgiev and Sansavini, 2017, 2018; 
+Lubega and Stillwell, 2018), although it actually fluctuates with the 
+climatic and hydrologic conditions and the performance of generators. 
+Vi is the volume of the cooling mixing zone ðm3Þ. ρ is the water density 
+ðkg=m3Þ. Cp is the heat capacity of water ðJ=kg=CÞ. 3:6  109 is the 
+conversion factor that converts the unit MWh to J. 
+The outlet water temperature ðTout
+i;t Þ at the cooling mixing zone is: 
+Tout
+i;t ¼ Tin
+i;t þ ΔTi;t
+(15)  
+where Tin
+i;t is the inlet river water temperature. 
+The decentralized optimization module is formulated in the Pyomo 
+(Hart et al., 2017) programming environment and solved with a 
+nonlinear solver IPOPT (W€achter and Biegler, 2006), which allows 
+high-speed computing with good accuracy. A closed-loop optimization 
+M. Mu et al.                                                                                                                                                                                                                                      
+
+Environmental Modelling and Software 123 (2020) 104514
+6
+is performed in terms of the feedback between the decisions related to 
+electricity generation, the environmental impacts, and policy controls. 
+One sub-optimization process is conducted for each power plant during 
+the study period, so the number of sub-optimization processes depends 
+on the number of plants in the case study. 
+3. Case study and data 
+3.1. Case study description 
+A case study is conducted in the Kaskaskia River watershed (Fig. 2) in 
+southern Illinois to demonstrate the application of the water-electricity 
+nexus model. This watershed, which hosts four large thermal power 
+plants (EIA, 2016a), denoted by P1–P4, suffered from the 2012 drought 
+(Knapp et al., 2017). Many communities in this region were forced to 
+limit their water usage (Erickson, 2012), while the power plants 
+consumed a significant amount of cooling water during this period to 
+generate electricity and discharged thermal effluents at high tempera­
+tures (EIA, 2016b). Four 8-digit HUCs (Hydrologic Unit Codes) are 
+contained in this watershed and are divided into 106 HRUs (Hydrologic 
+Response Units). The study period focuses on the drought event in 
+summer 2012 (92 days from June 1 to August 31) (Miara et al., 2018) 
+when the electricity demands were at the peak, the water temperatures 
+were the highest, and the water flows were the lowest. Power plants P1 
+and P2 are located upstream, and thus their cooling water availabilities 
+are not affected by other plants. The nexus model runs at P1 and P2 over 
+time to determine the dynamics of cooling water availability and elec­
+tricity generation. The impact of the current-time-step cooling water 
+consumption on the next-time-step cooling water availability is included 
+at each plant. After finishing the modeling processes at P1 and P2, the 
+nexus model moves forward to P3 while considering the impact of P1 
+and P2, and then to P4 while considering the impact of all three up­
+stream plants. In this way, the impact of the upstream plants’ cooling 
+water consumption on downstream plants is included. 
+Since currently there is no specific cooling water consumption 
+constraint applied in this watershed, 1% (Gjorgiev and Sansavini, 2018) 
+of the natural streamflow at each plant is set as the initial water con­
+sumption constraint to limit the impact on water resources. Required by 
+Code 302.211 in Title 35 of the Illinois Administrative Code (IPCB, 
+2018), the allowable maximum temperature ðT0Þ and temperature rise 
+ðΔT0Þ above the natural water temperature at the cooling mixing zone 
+should not exceed 32C and 2:8C, respectively. In the model, re­
+laxations ðβW and βTÞ of water consumption constraints and tempera­
+ture constraints are granted to plants when necessary during a drought 
+to maintain the reliability of the electricity supply, but with subsequent 
+economic penalties ðαW and αTÞ. 
+The water-electricity nexus model built in the case study is imple­
+mented on a PC with an Intel (R) Core (TM) i5-2500 CPU (3.30 GHz). 
+Each run with a specific combination of parameters takes about 
+25 minutes. 
+3.2. Input data 
+Hydrography data in the Kaskaskia River watershed, e.g., flowlines, 
+catchments, elevations, slopes, and boundaries, are extracted from the 
+National Hydrography Dataset Plus Version 2 (NHDPlusV2) (McKay 
+et al., 2012). Land use data are obtained from the Cropland Data Layer 
+(CDL) (NASS, 2017). Streamflow and river water temperature data are 
+downloaded from the USGS National Water Information System (NWIS) 
+(USGS, 2018) for model calibration and validation. 
+Climate forcing data are obtained from various sources. Station- 
+based precipitations are extracted from the Hourly Precipitation Data­
+set DSI-3240 (NCDC, 2003) and aggregated for each sub-watershed 
+using the inverse distance weighting method. Daily maximum and 
+minimum temperatures, snow depths, and snowfalls are extracted from 
+the Global Historical Climatology Network (GHCN) (Menne et al., 
+2016). Daily wind speeds and dew points are extracted from the Global 
+Surface Summary of the Day (GSOD) (NCDC, 2017). Solar radiation data 
+are taken from the National Solar Radiation Database (NSRDB) (Sen­
+gupta et al., 2014). Daily cloud cover data are necessary for the water 
+temperature simulation module and are extracted from the Advanced 
+Very High Resolution Radiometer (AVHRR) remote-sensing product 
+PATMOS-x (Heidinger et al., 2014). A summary of the input data for the 
+HSPF is shown in Table 1. 
+Using the input data in Table 1, the HSPF is run at a daily time step 
+from 1980 to 1995 for streamflow calibration and from 2001 to 2012 for 
+streamflow validation at the gage station USGS 05594100. The simu­
+lation between 1995 and 2000 is eliminated because of the inconsis­
+tency in precipitation and streamflow observations (high streamflows 
+with low precipitations). The water temperature simulation module in 
+Fig. 2. Kaskaskia River watershed and the locations of four thermal power 
+plants and USGS gage stations. (Daily streamflow observations are provided by 
+the gage station USGS 05594100 for calibration during 1980–1995 and for 
+validation during 2001–2012. Water temperature observations during 
+1980–1995 are provided by the USGS 05594100 for calibration and by 15 other 
+USGS stations for validation.) 
+Table 1 
+Summary of the input data for the hydrologic module HSPF.  
+Input data 
+Sources 
+References 
+Hydrography data 
+National Hydrography 
+Dataset 
+Plus Version 2 
+(NHDPlusV2) 
+McKay et al., 
+2012 
+Land use 
+Cropland Data Layer 
+(CDL) 
+NASS, 2017 
+Streamflow and river water 
+temperature observation 
+National Water 
+Information System 
+(NWIS) 
+USGS, 2018 
+Precipitation 
+Hourly Precipitation 
+Dataset DSI-3240 
+NCDC, 2003 
+Daily maximum and minimum 
+temperatures, snow depths and 
+snowfalls 
+Global Historical 
+Climatology Network 
+(GHCN) 
+Menne et al., 
+2016 
+Daily wind speeds and dew points 
+Global Surface Summary 
+of the Day (GSOD) 
+NCDC, 2017 
+Solar radiation 
+National Solar Radiation 
+Database (NSRDB) 
+Sengupta 
+et al., 2014 
+Cloud cover 
+AVHRR PATMOS-x 
+Heidinger 
+et al., 2014  
+M. Mu et al.                                                                                                                                                                                                                                      
+
+Environmental Modelling and Software 123 (2020) 104514
+7
+HSPF is calibrated at USGS 05594100 during 1980–1995 and validated 
+at the other 15 USGS stations during the same period. This calibration 
+method is applicable since all the sub-watersheds share the same cali­
+brated parameters in the water temperature simulation module. The 
+detailed calibration and validation results for streamflow and water 
+temperature can be found in Appendix A. Next, we focus our study 
+period on the 2012 summer: 92 days from June 1 to August 31. The 
+HSPF outputs daily streamflow and water temperature data that serve as 
+the input for the thermoelectricity generation and optimization 
+modules. 
+The operating and maintenance cost ðOPiÞ is obtained from the 
+Electric Power Annual Table 8.4 (EIA, 2017a). P1 uses the Natural Gas 
+Fired Combined Cycle (NGCC) and its OP is 35:67 $=MWh. P2, P3, and 
+P4 use Conventional Steam Coal (CSC) and their OP is 37:60 $= MWh. 
+Here, the OP differences between P2, P3, and P4 are ignored due to the 
+lack of more detailed information. The plant-specific operating cost is 
+usually confidential and unavailable (Payet-Burin et al., 2018). Average 
+cooling water consumption intensity ðWIiÞ in summer months is 
+compiled from the US Energy Information Administration (EIA) Ther­
+moelectric Cooling Water Data (EIA, 2017b) for each plant. The mini­
+mum load ðEmin
+i
+Þ and maximum capacity ðEmax
+i
+Þ of each plant are 
+obtained from Form EIA-860 (EIA, 2016a). Thermal efficiency ðηiÞ of the 
+plant during the summer season is calculated as the average rate of the 
+net electricity output to electric fuel consumption from Form EIA-923 
+(EIA, 2016b). Vi is the volume of the cooling mixing zone of a 
+recirculating-pond cooling plant, which is obtained from Form EIA-923 
+(EIA, 2016b). A summary of the characteristic data of the four plants in 
+the Kaskaskia River watershed is shown in Table 2. 
+The price of electricity during the study period is obtained from the 
+Intercontinental Exchange (ICE) database (ICE, 2012) during the sum­
+mer of 2012 in the Indiana Hub, where the Kaskaskia River watershed is 
+located. 
+4. Results 
+4.1. Electricity supply under varying environmental constraint relaxation 
+levels but no economic penalties 
+The model results allow us to understand how the electricity supplies 
+at both the plant and watershed levels respond to varying environmental 
+constraint relaxation levels during the summer 2012. For the modeling 
+analysis in this section, economic penalties αW and αT for water con­
+sumption and temperature constraints violation, respectively, are set as 
+zero, which means the plants are granted constraints relaxation with no 
+penalties. βT varies from 0 to 3C at the step of 0.3, and βW varies from 
+0 to 14% at the step of 1.4%. 
+In Fig. 3, the four plants show different responses to the changes of 
+βW and βT. The warmer color in Fig. 3 represents a larger value at the Z- 
+axis, and the cooler color represents a smaller value; this same labeling 
+applies to the figures hereinafter if not specified. The electricity supplies 
+by P1 (Fig. 3a) and P3 (Fig. 3c) increase with βW but are not affected by 
+the increase of βT since they are equipped with recirculating-tower 
+cooling technology, which is not limited by temperature constraints. 
+More water consumption constraint relaxation is needed by P1 (14%) 
+than P3 (10%) to reach maximum capacity. P2 (Fig. 3b) uses cooling 
+pond technology and thus is subject to temperature constraints. We as­
+sume that P2 is not limited by water consumption constraints since it 
+withdraws water from a nearby reservoir, which can provide adequate 
+cooling water. The minimum temperature constraint relaxation βT is 1C 
+for P2 to operate at full capacity. P4 (Fig. 3d) is significantly subject to 
+both water consumption and temperature constraints. When βW is set as 
+zero, the increase of βT does not increase the electricity supply at all. 
+When βT is set as zero, as much as 52% of the capacity can be used when 
+βW is increased to 14%. The relaxation of βT is necessary if more than 
+52% of the capacity is expected by the electricity market. The minimum 
+βT and βW are 3C and 14%, respectively, for P4 to operate at its full 
+capacity. At the watershed level, the sensitivities of the total electricity 
+supplies by the four plants are shown in Fig. 3e. The violation and 
+relaxation of the initial water consumption constraint are necessary if a 
+significant increase in the electricity supply is expected. A larger in­
+crease can also be achieved with the relaxation of water temperature 
+constraints. It should be noted that the pattern at the watershed level 
+(Fig. 3e) follows P4 (Fig. 3d). The reason is that P4 has a large capacity 
+and is constrained by both the water consumption and temperature 
+limitations, which is similar to the setting at the watershed level, while 
+the other three power plants are constrained by either consumption or 
+temperature limitations. 
+4.2. Electricity supply under fixed environmental constraint relaxation 
+levels and varying economic penalties 
+In this section, the fixed maximum constraint relaxation levels, i.e., 
+βW ¼ 14% and βT ¼ 3C, are set for the four plants but with varying 
+economic penalties. The penalty factor αWð$=ðm3=sÞ2Þ for extra water 
+consumption varies from 0 to 10 at the step of 1, and αT ð$=ðCÞ2Þ for an 
+extra temperature rise varies from 0 to 2 at the step of 0.2. Fig. 4 shows 
+the response of electricity supplies to varying economic penalties and 
+the associated cooling water consumption. 
+The electricity supplies by P1 (Fig. 4a) and P3 (Fig. 4c) decrease with 
+an increase of αW but are not affected by αT since they are insensitive to 
+temperature constraints. More than half of their capacities will be cur­
+tailed with the maximum αW as 10. P2 (Fig. 4b) will decrease the elec­
+tricity supply when αT increases. Of its capacity, 20% will be curtailed if 
+the maximum αT is imposed. The electricity supply by P4 (Fig. 4d) will 
+experience a quick drop, even if a small αW and αT are adopted. In some 
+cases, P4 would slightly increase its electricity supply when the penalty 
+factor increases, for example, when αW is fixed as 4 and αT increases 
+from 0 to 0.2. This result is reasonable since P4 is located downstream of 
+the Kaskaskia River and can receive more cooling water if upstream 
+plants use less water when a penalty is imposed. However, when the 
+penalty factor becomes larger, P4 would choose to decrease its elec­
+tricity supply to avoid a penalty and maximize its profits, even though 
+there is more available cooling water. The total electricity supply 
+(Fig. 4e) at the watershed level closely follows the pattern of P4. 
+The second Z-axis in Fig. 4 demonstrates the cooling water con­
+sumption ðWÞ. The patterns of W exactly follow the patterns of E, since 
+W is a linear function of E, as shown in equation (12) in Section 2.3. In 
+Fig. 4, generally, the downstream plants P3 and P4 (Fig. 4c and Fig. 4d) 
+consume more water than the upstream plants P1 and P2 do (Fig. 4a and 
+Fig. 4b). This is a reasonable location design since power plants with a 
+large capacity and water consumption, such as P3 and P4, are usually 
+located downstream where the water is adequate to support electricity 
+production except during a drought. Comparing W in Fig. 4c and Fig. 4d, 
+P4 consumes nearly 1.5 times as much as P3 with a same level of elec­
+tricity production, which is caused by the larger cooling water con­
+sumption intensity at P4. 
+Another aspect of the environmental impacts, the rise in water 
+Table 2 
+Characteristic data of the four thermal power plants used in this study. Data 
+sources: EIA, 2017a; EIA, 2017b; EIA, 2016a; EIA, 2016b. (i: plant index, Emax
+i
+: 
+maximum capacity ðMWÞ , Emin
+i
+: minimum load ðMWÞ , WIi: water consumption 
+intensity ðm3=MWhÞ, ηi: thermal efficiency ð%Þ, Vi: volume of cooling mixing 
+zone 
+ 106m3
+, OPi: maintenance and operating cost ð$=MWhÞ ).  
+i  
+Primary Fuel 
+Emax
+i  
+Emin
+i  
+Cooling  
+Technology 
+WIi  
+ηi  
+Vi  
+OPi  
+1 
+Natural Gas 
+610 
+50 
+Tower 
+2.67 
+45 
+- 
+35.7 
+2 
+Coal 
+895 
+190 
+Pond 
+0.90 
+31 
+27.1 
+37.6 
+3 
+Coal 
+1628 
+420 
+Tower 
+1.62 
+36 
+- 
+37.6 
+4 
+Coal 
+1778 
+250 
+Pond 
+2.48 
+33 
+33.3 
+37.6  
+M. Mu et al.                                                                                                                                                                                                                                      
+
+Environmental Modelling and Software 123 (2020) 104514
+8
+Min of E
+Legend
+Max of E
+Fig. 3. Electricity supply ðEÞ by (a) P1, (b) P2, (c) P3, (d) P4, and (e) total four plants, under varying water consumption (βW) and temperature (βT) constraint 
+relaxation levels but no economic penalties (αW ¼ αT ¼ 0). The warmer color represents a larger value at the Z-axis, and the cooler color represents a smaller value; 
+the same labeling applies to the figures hereinafter if not specified. 
+Min of E (or W)
+Legend
+Max of E (or W)
+Fig. 4. Electricity supply ðEÞ and cooling water consumption ðWÞ by (a) P1, (b) P2, (c) P3, (d) P4, and (e) total four plants, under fixed environmental constraint 
+relaxation levels for water consumption (βW ¼ 14%) and temperature ðβT ¼ 3CÞ, and varying economic penalty factors for violation of water consumption con­
+straints (αW) and temperature constraints (αT). 
+M. Mu et al.                                                                                                                                                                                                                                      
+
+Environmental Modelling and Software 123 (2020) 104514
+9
+temperature ðΔTÞ by plants P2 and P4, is quantified in Fig. 5. P1 and P3 
+do not discharge thermal pollution to water bodies, raising the water 
+temperature. Focusing on the αT axis and fixing αW as zero, when the 
+penalty factor on a water temperature rise is larger than 0.4, both P2 and 
+P4 will reduce ΔT to around the initial allowable maximum level of 2:8
+C to avoid economic losses. However, in Fig. 4b and Fig. 4d, the elec­
+tricity generation will continue to slightly decrease with a larger αT. This 
+implicates that adopting an αT larger than 0.4 is impractical when 
+making the policy decision since it does not significantly reduce ΔT but 
+decreases the electricity generation. At P4 in Fig. 5b, ΔT is further 
+reduced to lower than 2:8C when αW is increased, which indicates that 
+a larger economic penalty on the extra water consumption would also 
+help to relieve the environmental impacts of a rising water temperature. 
+P2 is not limited by the cooling water constraint βW or the economic 
+penalty αW. 
+4.3. Electricity supply under varying environmental constraint relaxation 
+levels and economic penalties 
+Following the results from the modeling exercises that have fixed 
+environmental constraint relaxation levels or economic penalties to 
+separate their impacts on electricity supply, in this section, different 
+combinations of constraint relaxation levels and economic penalties are 
+used to investigate the joint impacts at the watershed level. 
+Economic penalties are set as five levels in the subfigures of Fig. 6, as 
+αW increases from 0 to 10 and αT increases from 0 to 2. In each subfigure, 
+the increase of βW at the step of 1.4% is represented by the horizontal 
+axis, and the increase of βT at the step of 0.2 is represented by scenarios 
+S1 to S11. When no penalties are applied (Fig. 6a), the electricity supply 
+increases with βW and βT, though at different rates. The increase of E is 
+largely driven by βW when βW is smaller than 5.6%, and the increase of 
+βT contributes slightly to the increase of E. When βW is larger than 8.4%, 
+the increase of E is largely driven by βT and the increase of βW con­
+tributes just a little. Different combinations of βW and βT can maintain 
+the same level of electricity supply, e.g., EA ¼ EB (Fig. 6a). Comparing A 
+to B, there is less impact on water quantity but more on water temper­
+ature. To increase the electricity supply from EB to EC (or ED), we can 
+choose the path from B to D, which consumes more water but with the 
+same level of impact on water temperature, or the path from B to C, 
+which causes a greater water temperature rise but with the same water 
+consumption. These tradeoffs between the electricity supply, water 
+consumption, and river water temperature need to be balanced by 
+watershed agencies during a drought event. When larger penalties are 
+imposed (from Fig. 6a to Fig. 6e), profit-driven plants would decrease 
+their electricity supplies to avoid paying a penalty. Comparing Fig. 6b to 
+Fig. 6a, a small increase of αT would cause a quick decrease of E and 
+reduce the differences among scenarios S1 to S11, which means that the 
+temperature constraints relaxation cannot encourage an increased 
+electricity supply if the penalty factor αT is larger than 0.25. The 
+contribution to E by the increase of βW would significantly decrease if 
+the penalty factor αW is larger than 5. In Fig. 6e, E would not increase 
+with βW when βW is larger than 1.4% since the penalty is high for 
+violating the initial cooling water consumption constraint. 
+Generally, the upstream aquatic environment in a watershed is more 
+fragile and sensitive than the one downstream. The water availability is 
+usually smaller upstream and its capability to absorb the hydrologic 
+disturbance is limited. In addition, upstream water consumption would 
+result in a cumulative impact on the aquatic ecosystem and less water 
+Min of T
+Legend
+Max of T
+Fig. 5. Water temperature rise ðΔTÞ by power plants (a) P2 and (b) P4. (P1 and P3 do not discharge thermal pollution to water bodies and raise the water 
+temperature.) 
+a
+d
+b
+e
+c
+Small penalty
+Large penalty
+Moderate penalty
+A
+B
+C
+D
+Fig. 6. Watershed-level total electricity supply ðEÞ under varying water consumption (βW) and temperature (βT) constraint relaxation levels and economic penalties 
+(αW and αT). Scenarios S1 to S11 represent βT increasing from 0C to 2C at the step of 0:2C. 
+M. Mu et al.                                                                                                                                                                                                                                      
+
+Environmental Modelling and Software 123 (2020) 104514
+10
+availability for users downstream. Therefore, resource agencies may 
+apply more stringent constraints or penalties at the headwaters than at 
+downstream locations (SRBC, 2012). For this reason, we further apply a 
+spatially distinguished penalty, or penalty price discrimination (Stole, 
+2007), by imposing a larger penalty factor on the two upstream plants 
+(P1 and P2) and a smaller factor on the two downstream plants (P3 and 
+P4). Ten levels of penalty price discrimination are applied. The penalty 
+factor for extra cooling water consumption under the price discrimina­
+tion is: 
+αi
+W ¼
+(
+α’
+W  ð1 þ pÞ; i ¼ 1; 2
+α’
+W  ð1   pÞ; i ¼ 3; 4
+(16) 
+The penalty factor for an extra rise in water temperature under the 
+discrimination is: 
+αi
+T ¼
+(
+α’
+T  ð1 þ pÞ; i ¼ 1; 2
+α’
+T  ð1   pÞ; i ¼ 3; 4
+(17)  
+where p is the penalty discrimination level expressed as a percentage, 
+varying from 0 to 100%. When p ¼ 0 , all four plants share the same 
+penalty factors α’
+W ¼ 5 and α’
+T ¼ 1, which are the same as in Fig. 6d, 
+regarded as the baseline penalty scenario. A positive p means a larger 
+penalty for upstream plants and a smaller penalty for downstream 
+plants. When p ¼ 100%, the largest penalty is imposed on the upstream 
+plants, but there is no penalty for those downstream. Scenarios S01 to 
+S011 represent the different levels of environmental constraint relaxa­
+tion, with βT increasing from 0Cto 2C at the step of 0:2C and βW 
+increasing from 0 to 14% at the step of 1:4%. As shown in Fig. 7, the 
+watershed-level total electricity supply would significantly increase if 
+the penalty discrimination is applied in this watershed. This kind of 
+increase shows in all constraint relaxation scenarios, S01 to S011. Some 
+small decreases are observed when p varies from 90% to 100% in sce­
+narios S02 to S05. Compared to the baseline penalty scenario, as much as 
+60% more electricity can be supplied if the largest penalty discrimina­
+tion is applied in scenario S011 with the maximum constraints 
+relaxation. 
+These modeling results reveal the quantitative tradeoffs between the 
+electricity supply and environmental constraints under various man­
+agement regulations and economic penalties. The final decision is left to 
+watershed agencies to decide which and how much constraints relaxa­
+tion should be granted to each power plant and how much of a penalty 
+should be imposed on constraints violation. Agencies’ different prefer­
+ences may lead to different policies and thus different environmental 
+impacts and electricity supplies. For example, an aggressive agency that 
+only values the reliability of the thermoelectricity supply system may 
+allow plants to break the initial environmental constraints as much as 
+needed to maintain the maximum electricity supply. An agency that 
+chooses to reduce the cooling water consumption and thereby transfer 
+more water supply to other sectors may set a small βW and a large αW. An 
+agency that seeks to maintain a suitable water temperature for aquatic 
+life may set a small βT and a large αT. The modeling of watershed-level 
+decisions is warranted in the future. 
+4.4. Sensitivity analysis of electricity supply to the market electricity price 
+The market electricity price ðEPÞ is a critical exogenous parameter in 
+the water-electricity nexus model. In the above analysis, EP is assumed 
+as a constant during the whole study period, which is referred to as the 
+baseline scenario EP0. However, there are great daily variations in EP, 
+ranging from 30 to 80 $=MWh during the 2012 summer (ICE, 2012). To 
+analyze the sensitivity of electricity supply to EP, four scenarios are 
+designed in this section. The daily EPs during the study period are ob­
+tained from the ICE database (ICE, 2012) and are linearly interpolated to 
+fill data gaps, referred to as the first scenario EP1
+t . 
+The electricity price in the baseline scenario is calculated as the 
+average of the daily EP1
+t : 
+EP0 ¼ EP1
+t
+(18) 
+In the second scenario EP2
+t , the daily EP1
+t are increased by 20%: 
+EP2
+t ¼ EP1
+t  ð1 þ 20%Þ
+(19) 
+In the third scenario EP3
+t , the daily EP1
+t are decreased by 20%: 
+EP3
+t ¼ EP1
+t  ð1   20%Þ
+(20) 
+In the fourth scenario EP4
+t , the daily EP1
+t are increased by 20% if they 
+are larger than the average price and decreased by 20% if smaller: 
+Fig. 7. Watershed-level total electricity supply ðEÞ change ð%Þ under varying 
+penalty factor discrimination levels ðp : %Þ. Scenarios S01 to S011 represent the 
+different levels of environmental constraint relaxation, with βT increasing from 
+0Cto 2C at the step of 0:2C and βW increasing from 0 to 14% at the step 
+of 1:4%. 
+Fig. 8. Watershed-level electricity supply in different electricity price sce­
+narios: (a) EP1
+t , (b) EP2
+t , (c) EP3
+t , (d) EP4
+t . 
+M. Mu et al.                                                                                                                                                                                                                                      
+
+Environmental Modelling and Software 123 (2020) 104514
+11
+EP4
+t ¼
+8
+<
+:
+EP1
+t  ð1 þ 20%Þ; EP1
+t  EP1
+t
+EP1
+t  ð1   20%Þ; EP1
+t < EP1
+t
+(21) 
+The water-electricity nexus model is run over the four scenarios with 
+all other parameters remaining the same as in Section 4.2. The 
+watershed-level results are shown in Fig. 8. Comparing Fig. 8a to Fig. 4e, 
+when the daily variations in the electricity price are considered, the 
+potential electricity supply is reduced at most by 50%. This implicates 
+more power generation curtailment during the days when the electricity 
+price is lower. Compared to Fig. 8a, when the daily electricity prices are 
+increased (decreased) by 20%, the potential electricity supply would be 
+dramatically increased (decreased) in Fig. 8b (Fig. 8c). Comparing 
+Fig. 8d to Fig. 8a, when there are larger daily variations in electricity 
+price, the potential electricity supply is slightly decreased. The sensi­
+tivity analysis demonstrates that power plants are more willing to pay 
+the economic penalties for more electricity generation when the EP is 
+high and stable (Fig. 8a and 8b) but are less willing when the EP is low or 
+unstable (Fig. 8c and 8d). The nexus modeling results prove to be very 
+sensitive to EP. Therefore, much attention should be paid to determining 
+a proper EP when the nexus model is used in future works. Modeling the 
+electricity market equilibrium at the grid scale and obtaining an 
+endogenous electricity price would advance the nexus model. 
+5. Conclusions and discussion 
+In this study, a water-electricity nexus model (PyHSPF-WE) is 
+developed to support both water resources management and electricity 
+supply planning during a drought event. The hydrologic module HSPF, 
+the decentralized optimization module, and the thermoelectricity gen­
+eration module are closely integrated at a daily time step at the water­
+shed scale. The nexus model is capable of testing the various 
+environmental regulations and economic penalties and quantifying the 
+tradeoffs among streamflow, water temperature, and electricity supply 
+at both the power plant and watershed levels. Findings show that some 
+flexibility in environmental policies, i.e., relaxations of cooling water 
+consumption and temperature constraints, would generally allow 
+improvement in the reliability of the thermoelectricity supply system 
+during a drought. Applying economic penalties can regulate the con­
+tributions of the individual power plants with different environmental 
+impacts. The different responses of the power plants to various envi­
+ronmental policies, including environmental constraints relaxation and 
+economic penalties on constraints violation, can be attributed to the 
+different hydrologic conditions that exist at the plants’ locations and 
+their thermoelectric characteristics, such as primary fuels and cooling 
+technologies. These general findings can be extended to other water­
+sheds or drought events, even though the magnitude of the tradeoffs and 
+the effects of environmental regulations and economic penalties may 
+depend on the specific situation of the case study. 
+A case study is conducted in the Kaskaskia River watershed. The 
+results show that the minimum required relaxations of cooling water 
+consumption and temperature constraints are 14% and 3C, respec­
+tively, if the power plants are expected to operate at their full capacities 
+during the 2012 drought. At the watershed level, a spatially distin­
+guished penalty policy, i.e., a larger penalty factor for upstream plants 
+and a smaller one for downstream plants, is found to improve the total 
+electricity supply by as much as 60% compared to the baseline penalty 
+scenario. These results indicate that plant-specific policies have more 
+advantages than uniform policies, although more efforts will be required 
+for the watershed agencies to put these policies into practice. 
+The water-electricity nexus model developed in this study may be 
+used for a wide range of applications, including planning and assessment 
+and operational use. Our analyses in this study primarily focus on the 
+planning and assessment of the tradeoffs between electricity supplies 
+and environmental impacts during a drought event. For operational use 
+with real-time hydrologic information unknown, weather forecast 
+information can be used as the climatic inputs to the HSPF module to 
+predict the future streamflow and water temperature. One of the ad­
+vantages of our nexus model is that it directly uses climatic inputs, and 
+thus no streamflow inputs are required due to integration of the hy­
+drologic model. We admit that the current nexus model would introduce 
+uncertainties to hydrologic forecasts under an operational setting. How 
+to incorporate the hydrologic uncertainties into water resources man­
+agement is a typical issue investigated in many previous studies, e.g., Cai 
+and Rosegrant (2004). Since the hydrologic uncertainties would in­
+crease with the lead time, in practice, we may suggest running the nexus 
+model for a short period (e.g., a week rather than 3 months as in the 
+current case study), and then running the model for the next period with 
+an updated weather forecast. The data assimilation technique (Vrugt 
+et al., 2005; Liu and Gupta, 2007) may be used to update the initial 
+conditions of the next period with observed hydrologic data in the past 
+period. The stochastic optimization technique (Salazar et al., 2013; 
+Guerra et al., 2019) may also be used to consider the different hydro­
+logic scenarios and provide the expected outcomes. The exact duration 
+and extent of a drought event cannot be known before it ends under the 
+operational setting. Based on the nexus model, however, environmental 
+agencies can still be supported in obtaining useful hydrologic forecast 
+information on the drought and setting predicted values for constraints 
+relaxation and economic penalties. 
+A limitation of the proposed nexus model is that the electricity price 
+is set as an exogenous variable, though a sensitivity analysis is con­
+ducted to demonstrate the responses of power plants to different price 
+scenarios. We also assume that paying economic penalties for extra 
+water consumption and a rise in the water temperature would not affect 
+bidding offers of the power plants and the electricity price at the grid 
+scale. This study focuses on the thermal power plants within a watershed 
+with a relatively small number of plants and total generation capacity. 
+From an economic point of view, in a market with many competitive 
+sellers, the power sellers within such a watershed, which is much smaller 
+than the region with a power grid, is usually not powerful enough to 
+affect the market equilibrium price. If the model is applied to a much 
+larger spatial scale, all these factors must be taken into account. Some 
+future works may improve this newly developed water-electricity nexus 
+model for more policy implications. For example, if the predictive daily 
+or even hourly electricity demands and prices in the coming months are 
+available, the dynamics of the electricity market and the response of 
+each power plant can be represented with more details. This would 
+require the incorporation of a system-level electricity market model that 
+allows us to investigate the impacts of paying economic penalties on the 
+bidding offers and finally the market electricity price by simulating the 
+electricity demand, supply, and the equilibrium price in a consistent 
+framework. The inclusion of a unit commitment and dispatch model 
+(Fooladivanda and Taylor, 2015) has the potential to simulate the 
+changes in electricity generation associated with electricity price and 
+test the assumption of the exogenous price in the current case study. A 
+more detailed thermoelectricity generation model at the power plant 
+level would also help simulate the dynamic status of the generating units 
+(Zhai et al., 2011). For example, dynamic cooling water consumption 
+intensities and operating costs at each time step can be determined 
+considering the ambient hydrologic conditions such as cooling water 
+availability and river water temperature. The current nexus model fo­
+cuses on the daily average analysis, mainly limited by the availability of 
+hydrologic information. The nexus model can be enhanced to capture 
+the sub-daily dynamics of the power generation and the associated 
+environmental impacts, if sub-daily hydrologic conditions, e.g., hourly 
+streamflow and river water temperature, can be simulated by climatic 
+inputs with a finer temporal resolution or estimated by some assump­
+tions on the sub-daily variations of streamflow. 
+Acknowledgment 
+This work was supported by National Natural Science Foundation of 
+M. Mu et al.                                                                                                                                                                                                                                      
+
+Environmental Modelling and Software 123 (2020) 104514
+12
+China (41730645, 41425002 and 41790424), China Scholarship Coun­
+cil, and the International Partnership Program of Chinese Academy of 
+Sciences (131A11KYSB20170113). The authors declare no conflict of 
+interest. We are grateful to Lisa Sheppard for her editorial review.  
+Appendix A. HSPF calibration and validation results 
+The HSPF model calibration and validation results are presented here. The Nash-Sutcliffe efficiency coefficient (NS:   ∞e1) (Nash and Sutcliffe, 
+1970) is used to evaluate the model performance. A higher NS means a better model performance. 
+Streamflow is calibrated during 1980–1995 and validated during 2001–2012 at the gage station USGS 05594100. Fig. A1 shows the results of 
+simulated daily streamflow for calibration (Fig. A1a) and validation (Fig. A1b). The NS coefficients are 0:721 and 0:635, respectively, which are 
+adequate for capturing the streamflow variations in the watershed. However, a good calibration of the model at that station does not necessarily 
+guarantee the model accuracy in other sections of the basin. 
+Fig. A2 shows the results of simulated daily water temperatures. Observed data for water temperatures ðTÞ are not as adequate as those for 
+streamflow. Only a small amount of observation records are available for the Kaskaskia River watershed (USGS, 2018), especially after the year 2000. 
+For this reason, we calibrate (Fig. A2a) the HSPF water temperature module with observed data from the gage station USGS 05594100 during 
+1980–1995, while validating (Fig. A2b) for the same period with observed data from the 15 other USGS stations. This validation strategy is like 
+one-round cross-validation. HSPF shows a good performance for simulating daily water temperature, with NS as 0.917 and 0.882 for calibration and 
+validation, respectively.
+Fig. A1. Evaluation of HSPF simulated daily streamflow ðQ : m3=sÞ: a) calibration and b) validation at the gage station USGS 05594100.  
+Fig. A2. Evaluation of HSPF simulated daily river water temperature ðT : CÞ: a) calibration at the gage station USGS 05594100, and b) validation at the other 15 
+USGS stations, both during 1980–1995. 
+M. Mu et al.                                                                                                                                                                                                                                      
+
+Environmental Modelling and Software 123 (2020) 104514
+13
+References 
+Anderson, G.B., Bell, M.L., 2012. Lights out: impact of the August 2003 power outage on 
+mortality in New York, NY. Epidemiol. Camb. Mass 23, 189–193. https://doi.org 
+/10.1097/EDE.0b013e318245c61c. 
+Averyt, K., Fisher, J., Huber-Lee, A., Lewis, A., Macknick, J., Madden, N., Rogers, J., 
+Tellinghuisen, S., 2011. Freshwater use by U.S. Power plants: electricity’s thirst for a 
+precious resource. Energy water warm. World Initiat. - Union Concerned Sci. 1–62. 
+BBC, 2003. Blackouts cause N America chaos [WWW Document]. URL. http://news.bbc. 
+co.uk/2/hi/americas/3152451.stm. 
+Bicknell, B.R., Imhoff, J.C., Kittle Jr., J.L., Jobes, T.H., Donigian Jr., A.S., Johanson, R., 
+2005. Hydrological simulation program-Fortran: HSPF version 12.2 user’s manual. 
+AQUA TERRA Consult. Mt. View Calif. 
+Cai, X., Rosegrant, M.W., 2004. Irrigation technology choices under hydrologic 
+uncertainty: a case study from Maipo River Basin, Chile. Water Resour. Res. 40. 
+https://doi.org/10.1029/2003WR002810. 
+Cortinovis, G.F., Paiva, J.L., Song, T.W., Pinto, J.M., 2009. A systemic approach for 
+optimal cooling tower operation. Energy Convers. Manag. 50, 2200–2209. https:// 
+doi.org/10.1016/j.enconman.2009.04.033. 
+Diehl, T.H., Harris, M.A., 2014. Withdrawal and Consumption of Water by 
+Thermoelectric Power Plants in the United States, 2010. US Geological Survey. 
+Report 2014–5184. https://doi.org/10.3133/sir20145184. 
+Eheart, J.W., 2004. No river left behind: a call for regulation in a deregulating and 
+misregulating era. J. Water Resour. Plan. Manag. 130, 357–358. https://doi. 
+org/10.1061/(ASCE)0733-9496(2004)130:5(357). 
+EIA, 2017. Electric power annual [WWW Document]. URL. https://www.eia.gov/elect 
+ricity/annual/. 
+EIA, 2017. Thermoelectric cooling water data [WWW Document]. URL. https://www.eia 
+.gov/electricity/data/water/. accessed 4.18.18.  
+EIA, 2016. Form EIA-860 detailed data [WWW Document]. URL. https://www.eia. 
+gov/electricity/data/eia860/. accessed 4.18.18.  
+EIA, 2016. Form EIA-923 detailed data [WWW Document]. URL. https://www.eia. 
+gov/electricity/data/eia923/. accessed 4.18.18.  
+Erickson, K., 2012. State convenes drought task force [WWW Document]. South. 
+Springfieldl Bur. URL. https://thesouthern.com/news/local/govt-and-politics/state 
+-convenes-drought-task-force/article_bc5e9b74-cb9e-11e1-a8bf-001a4bcf887a.html. 
+Fooladivanda, D., Taylor, J.A., 2015. Dispatching thermal power plants under water 
+constraints. In: 2015 53rd Annual Allerton Conference on Communication, Control, 
+and Computing (Allerton). Presented at the 2015 53rd Annual Allerton Conference 
+on Communication, Control, and Computing (Allerton), pp. 396–401. https://doi. 
+org/10.1109/ALLERTON.2015.7447031. 
+Gaba, J.M., 2007. Generally illegal: NPDES general permits under the clean water act. 
+Harv. Environ. Law Rev. 31, 409–474. 
+Gjorgiev, B., Sansavini, G., 2018. Electrical power generation under policy constrained 
+water-energy nexus. Appl. Energy 210, 568–579. https://doi.org/10.1016/j. 
+apenergy.2017.09.011. 
+Gjorgiev, B., Sansavini, G., 2017. Water-energy nexus: impact on electrical energy 
+conversion and mitigation by smart water resources management. Energy Convers. 
+Manag. 148, 1114–1126. https://doi.org/10.1016/j.enconman.2017.06.053. 
+Guerra, O.J., Tejada, D.A., Reklaitis, G.V., 2019. Climate change impacts and adaptation 
+strategies for a hydro-dominated power system via stochastic optimization. Appl. 
+Energy 233–234, 584–598. https://doi.org/10.1016/j.apenergy.2018.10.045. 
+Hart, W.E., Laird, C.D., Watson, J.-P., Woodruff, D.L., Hackebeil, G.A., Nicholson, B.L., 
+Siirola, J.D., 2017. Pyomo — optimization modeling in Python. In: Springer 
+Optimization and its Applications, Second. Springer International Publishing, Cham 
+https://doi.org/10.1007/978-3-319-58821-6.  
+Heidinger, A.K., Foster, M.J., Walther, A., Zhao, X., 2014. The pathfinder 
+atmospheres–extended AVHRR climate Dataset. Bull. Am. Meteorol. Soc. 95, 
+909–922. https://doi.org/10.1175/BAMS-D-12-00246.1. 
+ICE, 2012. Wholesale electricity and natural Gas market data [WWW Document]. URL. 
+https://www.eia.gov/electricity/wholesale/. 
+IPCB, 2018. Title 35 procedural and environmental rules [WWW Document]. URL. htt 
+ps://pcb.illinois.gov/SLR/IPCBandIEPAEnvironmentalRegulationsTitle35. 
+Jornada, D., Leon, V.J., 2016. Robustness methodology to aid multiobjective decision 
+making in the electricity generation capacity expansion problem to minimize cost 
+and water withdrawal. Appl. Energy 162, 1089–1108. https://doi.org/10.1016/j. 
+apenergy.2015.10.157. 
+Khan, Z., Linares, P., Rutten, M., Parkinson, S., Johnson, N., García-Gonzalez, J., 2018. 
+Spatial and temporal synchronization of water and energy systems: towards a single 
+integrated optimization model for long-term resource planning. Appl. Energy 210, 
+499–517. https://doi.org/10.1016/j.apenergy.2017.05.003. 
+Knapp, H.V., Angel, J.R., Atkins, J.R., Bard, L., Getahun, E., Hlinka, K.J., Keefer, L.L., 
+Kelly, W.R., Roadcap, G.S., 2017. The 2012 Drought in Illinois. Illinois State Water 
+Survey. 
+Kopytko, N., Perkins, J., 2011. Climate change, nuclear power, and the adaptation- 
+mitigation dilemma. Energy Policy 39, 318–333. https://doi.org/10.1016/j.enp 
+ol.2010.09.046. 
+Lampert, D.J., Wu, M., 2018. Automated approach for construction of long-term, data- 
+intensive watershed models. J. Comput. Civ. Eng. 32, 06018001. https://doi. 
+org/10.1061/(ASCE)CP.1943-5487.0000762. 
+Lampert, D.J., Wu, M., 2015. Development of an open-source software package for 
+watershed modeling with the Hydrological Simulation Program in Fortran. Environ. 
+Model. Softw 68, 166–174. https://doi.org/10.1016/j.envsoft.2015.02.018. 
+Liao, X., Hall, J.W., Eyre, N., 2016. Water use in China’s thermoelectric power sector. 
+Glob. Environ. Chang. 41, 142–152. https://doi.org/10.1016/j.gloenvcha.2016.0 
+9.007. 
+Liu, Y., Gupta, H.V., 2007. Uncertainty in hydrologic modeling: toward an integrated 
+data assimilation framework. Water Resour. Res. 43. https://doi.org/10.1029/200 
+6WR005756. 
+Logan, L.H., Stillwell, A.S., 2018. Probabilistic assessment of aquatic species risk from 
+thermoelectric power plant effluent: incorporating biology into the energy-water 
+nexus. Appl. Energy 210, 434–450. https://doi.org/10.1016/j.apenergy.2017.09.0 
+27. 
+Lubega, W.N., Stillwell, A.S., 2018. Maintaining electric grid reliability under hydrologic 
+drought and heat wave conditions. Appl. Energy 210, 538–549. https://doi.org/10 
+.1016/j.apenergy.2017.06.091. 
+Luby, I.H., Polasky, S., Swackhamer, D.L., 2018. U.S. Urban water prices: cheaper when 
+drier. Water Resour. Res. 54. https://doi.org/10.1029/2018WR023258. 
+Luo, T., Krishnan, D., Sen, S., 2018. Parched Power, Water Demands, Risks, and 
+Opportunities for India’s Power Sector. World Resources Institute. 
+Lydersen, K., 2016. Amid climate concerns, nuclear plants feel the heat of warming 
+water. Energy News Network. https://energynews.us/2016/09/09/midwest/ 
+nuclear-plants-feel-the-heat-of-warming-water/. 
+Macknick, J., Newmark, R., Heath, G., Hallett, K.C., 2012. Operational water 
+consumption and withdrawal factors for electricity generating technologies: a review 
+of existing literature. Environ. Res. Lett. 7. https://doi.org/10.1088/1748-9326/7 
+/4/045802. 
+Madden, N., Lewis, A., Davis, M., 2013. Thermal effluent from the power sector: an 
+analysis of once-through cooling system impacts on surface water temperature. 
+Environ. Res. Lett. 8. https://doi.org/10.1088/1748-9326/8/3/035006. 
+Mansur, E.T., Olmstead, S.M., 2012. The value of scarce water: measuring the 
+inefficiency of municipal regulations. J. Urban Econ. 71, 332–346. https://doi. 
+org/10.1016/j.jue.2011.11.003. 
+Maupin, M.A., Kenny, J.F., Hutson, S.S., Lovelace, J.K., Barber, N.L., Linsey, K.S., 2010. 
+Estimated Use of Water in the United States in 2010 Circular 1405. US Geological 
+Survey. https://doi.org/10.3133/cir1405. 
+McKay, L., Bondelid, T., Dewald, T., Johnston, J., Moore, R., Rea, A., 2012. NHDPlus 
+Version 2: user guide. Natl. Oper. Hydrol. Remote Sens. Cent. Wash. DC. 
+McManamay, R.A., Surendran Nair, S., DeRolph, C.R., Ruddell, B.L., Morton, A.M., 
+Stewart, R.N., Troia, M.J., Tran, L., Kim, H., Bhaduri, B.L., 2017. US cities can 
+manage national hydrology and biodiversity using local infrastructure policy. Proc. 
+Natl. Acad. Sci. 114, 9581–9586. https://doi.org/10.1073/pnas.1706201114. 
+Meldrum, J., Nettles-Anderson, S., Heath, G., Macknick, J., 2013. Life cycle water use for 
+electricity generation: a review and harmonization of literature estimates. Environ. 
+Res. Lett. 8, 015031. https://doi.org/10.1088/1748-9326/8/1/015031. 
+Menne, M., Durre, I., Korzeniewski, B., McNeal, S., Thomas, K., Yin, X., Anthony, S., 
+Ray, R., Vose, R., Gleason, B., others, 2016. Global Historical Climatology Network- 
+Daily (GHCN-Daily), Version 3.22. NOAA National Climatic Data Center. 
+Miara, A., V€or€osmarty, C.J., 2013. A dynamic model to assess tradeoffs in power 
+production and riverine ecosystem protection. Environ. Sci. Process. Impacts 15, 
+1113–1126. 
+Miara, A., V€or€osmarty, C.J., Macknick, J.E., Tidwell, V.C., Fekete, B., Corsi, F., 
+Newmark, Robin, 2018. Thermal pollution impacts on rivers and power supply in the 
+Mississippi River watershed. Environ. Res. Lett. 13, 034033. https://doi.org/10.10 
+88/1748-9326/aaac85. 
+Miara, A., V€or€osmarty, C.J., Stewart, R.J., Wollheim, W.M., Rosenzweig, B., 2013. 
+Riverine ecosystem services and the thermoelectric sector: strategic issues facing the 
+Northeastern United States. Environ. Res. Lett. 8. https://doi.org/10.1088/1748 
+-9326/8/2/025017. 
+Micha, P.K., 2014. In hot water: Clean Water Act provisional variances and their 
+relationship to the impact of heat waves and droughts on the supply and demand of 
+electricity. Chic.-Kent J Env. Energy Law 4. 
+Nash, J.E., Sutcliffe, J.V., 1970. River flow forecasting through conceptual models part I - 
+A discussion of principles. J. Hydrol. 10, 282–290. https://doi. 
+org/10.1016/0022-1694(70)90255-6. 
+NASS, (National Agricultural Statistics Service), 2017. CropScape - Cropland data layer 
+[WWW Document]. URL. https://nassgeodata.gmu.edu/CropScape/. 
+NCDC, 2017. Global summary of the day (GSOD) [WWW Document]. URL. htt 
+ps://www1.ncdc.noaa.gov/pub/data/gsod/. 
+NCDC, 2003. Data Documentation for Dataset 3240 (DSI-3240) Hourly Precipitation 
+Data. 
+Parkinson, S.C., Djilali, N., Krey, V., Fricko, O., Johnson, N., Khan, Z., Sedraoui, K., 
+Almasoud, A.H., 2016. Impacts of groundwater constraints on Saudi arabia’s low- 
+carbon electricity supply strategy. Environ. Sci. Technol. 50, 1653–1662. https://do 
+i.org/10.1021/acs.est.5b05852. 
+Payet-Burin, R., Bertoni, F., Davidsen, C., Bauer-Gottwein, P., 2018. Optimization of 
+regional water - power systems under cooling constraints and climate change. 
+Energy 155, 484–494. https://doi.org/10.1016/j.energy.2018.05.043. 
+M. Mu et al.                                                                                                                                                                                                                                      
+
+Environmental Modelling and Software 123 (2020) 104514
+14
+Povoledo, E., 2003. Massive Power Failure Sweeps Across Italy. The New York Times. 
+https://www.nytimes.com/2003/09/28/international/europe/massive-power-fai 
+lure-sweeps-across-italy.html. 
+Qin, Y., Curmi, E., Kopec, G.M., Allwood, J.M., Richards, K.S., 2015. China’s energy- 
+water nexus - assessment of the energy sector’s compliance with the “3 Red Lines” 
+industrial water policy. Energy Policy 82, 131–143. https://doi.org/10.1016/j.enp 
+ol.2015.03.013. 
+Salazar, J.M., Diwekar, U., Constantinescu, E., Zavala, V.M., 2013. Stochastic 
+optimization approach to water management in cooling-constrained power plants. 
+Appl. Energy 112, 12–22. https://doi.org/10.1016/j.apenergy.2013.05.077. 
+Sanders, K.T., 2015. Critical review: uncharted waters? The future of the electricity- 
+water nexus. Environ. Sci. Technol. 49, 51–66. https://doi.org/10.1021/es504293b. 
+Sanders, K.T., Blackhurst, M.F., King, C.W., Webber, M.E., 2014. The impact of water use 
+fees on dispatching and water requirements for water-cooled power plants in Texas. 
+Environ. Sci. Technol. 48, 7128–7134. https://doi.org/10.1021/es500469q. 
+Sattler, S., MacKnick, J., Yates, D., Flores-Lopez, F., Lopez, A., Rogers, J., 2012. Linking 
+electricity and water models to assess electricity choices at water-relevant scales. 
+Environ. Res. Lett. 7. https://doi.org/10.1088/1748-9326/7/4/045804. 
+Sengupta, M., Habte, A., Gotseff, P., Weekley, A., Lopez, A., Molling, C., Heidinger, A., 
+2014. A Physics-Based GOES Satellite Product for Use in NREL’s National Solar 
+Radiation Database (NSRDB). National Renewable Energy Laboratory. 
+Spang, E.S., Moomaw, W.R., Gallagher, K.S., Kirshen, P.H., Marks, D.H., 2014. The water 
+consumption of energy production: an international comparison. Environ. Res. Lett. 
+9, 105002. https://doi.org/10.1088/1748-9326/9/10/105002. 
+SRBC, 2012. Low flow protection policy related to withdrawal approvals [WWW 
+Document]. URL. https://www.srbc.net/regulatory/policies-guidance/. 
+Stole, L.A., 2007. Chapter 34 price discrimination and competition. In: Armstrong, M., 
+Porter, R. (Eds.), Handbook of Industrial Organization. Elsevier, pp. 2221–2299. 
+https://doi.org/10.1016/S1573-448X(06)03034-2. 
+Texas Administrative Code, 2014. SECTION 307.4. General criteria, CHAPTER 307. 
+Texas SURFACE WATER QUALITY STANDARDS, PART 1. Texas COMMISSION ON 
+ENVIRONMENTAL QUALITY, TITLE 30. ENVIRONMENTAL QUALITY, Texas 
+administrative code [WWW Document]. State Tex. URL. http://txrules.elaws.us/rule 
+/title30_chapter307_sec.307.4. 
+Tidwell, V.C., Kobos, P.H., Malczynski, L.A., Klise, G., Castillo, C.R., 2012. Exploring the 
+water-thermoelectric power nexus. J. Water Resour. Plan. Manag. 138, 491–501. 
+https://doi.org/10.1061/(ASCE)WR.1943-5452.0000222. 
+Tidwell, V.C., Macknick, J., Zemlick, K., Sanchez, J., Woldeyesus, T., 2014. Transitioning 
+to zero freshwater withdrawal in the U.S. for thermoelectric generation. Appl. 
+Energy 131, 508–516. https://doi.org/10.1016/j.apenergy.2013.11.028. 
+US EPA, 2013. History of the Clean Water Act. US Environmental Protection Agency. htt 
+ps://www.epa.gov/laws-regulations/history-clean-water-act. 
+USGS, 2018. National water information system [WWW Document]. URL. http://wate 
+rdata.usgs.gov/nwis. 
+Vrugt, J.A., Diks, C.G.H., Gupta, H.V., Bouten, W., Verstraten, J.M., 2005. Improved 
+treatment of uncertainty in hydrologic modeling: combining the strengths of global 
+optimization and data assimilation. Water Resour. Res. 41. https://doi.org/10.1029/ 
+2004WR003059. 
+W€achter, A., Biegler, L.T., 2006. On the implementation of an interior-point filter line- 
+search algorithm for large-scale nonlinear programming. Math. Program. 106, 
+25–57. https://doi.org/10.1007/s10107-004-0559-y. 
+WRI, 2017. No water, No power [WWW Document]. World Resour. Inst. URL. 
+https://www.wri.org/blog/2017/06/no-water-no-power. 
+Yang, Y.-C.E., Cai, X., Stipanovic, D.M., 2009. A decentralized optimization algorithm for 
+multiagent system–based watershed management. Water Resour. Res. 45, W08430. 
+https://doi.org/10.1029/2008WR007634. 
+Yates, D., Meldrum, J., Averyt, K., 2013. The influence of future electricity mix 
+alternatives on southwestern US water resources. Environ. Res. Lett. 8. https://doi. 
+org/10.1088/1748-9326/8/4/045005. 
+Zhai, H., Rubin, E.S., Versteeg, P.L., 2011. Water use at pulverized coal power plants 
+with postcombustion carbon capture and storage. Environ. Sci. Technol. 45, 
+2479–2485. https://doi.org/10.1021/es1034443. 
+Zhang, X., Liu, J., Tang, Y., Zhao, X., Yang, H., Gerbens-Leenes, P.W., van Vliet, M.T.H., 
+Yan, J., 2017. China’s coal-fired power plants impose pressure on water resources. 
+J. Clean. Prod. 161, 1171–1179. https://doi.org/10.1016/j.jclepro.2017.04.040. 
+Zhang, Z., Balay, J.W., 2014. How much is too much?: challenges to water withdrawal 
+and consumptive use management water withdrawal and consumptive use 
+regulation in the susquehanna river basin. J. Water Resour. Plan. Manag. 140, 
+01814001. https://doi.org/10.1061/(ASCE)WR.1943-5452.0000446. 
+Zheng, X., Wang, C., Cai, W., Kummu, M., Varis, O., 2016. The vulnerability of 
+thermoelectric power generation to water scarcity in China: current status and future 
+scenarios for power planning and climate change. Appl. Energy 171, 444–455. 
+https://doi.org/10.1016/j.apenergy.2016.03.040. 
+Zhou, Q., Hanasaki, N., Fujimori, S., Yoshikawa, S., Kanae, S., Okadera, T., Zhou, Q., 
+Hanasaki, N., Fujimori, S., Yoshikawa, S., Kanae, S., Okadera, T., 2018. Cooling 
+water sufficiency in a warming world: projection using an integrated assessment 
+model and a global hydrological model. Water 10, 872. https://doi.org/10.3390/ 
+w10070872. 
+M. Mu et al.                                                                                                                                                                                                                                      

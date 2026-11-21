@@ -1,0 +1,2811 @@
+Contents lists available at ScienceDirect
+Applied Thermal Engineering
+journal homepage: www.elsevier.com/locate/apthermeng
+Robust optimal self-scheduling of potable water and power producers under
+uncertain electricity prices
+Farkhondeh Jabaria, Behnam Mohammadi-ivatlooa,b,⁎, Mousa Mohammadpourfardc
+a Faculty of Electrical and Computer Engineering, University of Tabriz, Tabriz, Iran
+b Institute of Research and Development, Duy Tan University, Da Nang 550000, Viet Nam
+c Faculty of Chemical and Petroleum Engineering, University of Tabriz, Tabriz, Iran
+H I G H L I G H T S
+• Robust optimization based self-scheduling of fresh water and power producers is presented.
+• No need to probability density and membership functions for modeling price uncertainty.
+• Both risk-neutral and risk-aversion generation schedules are optimally obtained.
+• Sensitivity of water-energy nexus schedules to budget of uncertainty is analyzed.
+A R T I C L E I N F O
+Keywords:
+Robust optimization
+Water-power hub system
+Uncertain electricity prices
+Mixed integer non-linear program (MINLP)
+Generalized algebraic mathematical modeling
+system (GAMS)
+A B S T R A C T
+Recently, seawater desalination and power generation units are optimally co-scheduled because of inter-
+connection between electricity and water networks. A typical water-energy hub grid consists of the conventional
+thermal power plants and the combined water and power (CWP) generating units. In the CWP plants, the waste
+heat of the ﬂue gases exhausted from the power generation process is utilized for water treatment. If the water
+and power generation company aims to maximize its daily proﬁt, the electricity price uncertainty will aﬀect the
+optimum operating point of the generating units. In other words, the ﬂuctuations of the energy prices cause the
+power generation patterns of thermal and CWP units to change. Hence, this paper implements a robust opti-
+mization strategy on water-power nexus model to handle the uncertainty of the electricity price with no need for
+its probability distribution and membership functions. The lower and upper bounds and the forecasted prices are
+used for solving the robust mixed-integer non-linear program and making the risk-averse decisions against the
+uncertainty. It is indicated that the proposed approach is suitable for the price taker water-power cogeneration
+companies, which seek the optimal schedule of their thermal and CWP units for a certain operating period.
+1. Introduction
+In recent years, 40% of the global population face with the water
+scarcity, environmental pollution, and the limited capacities of the
+fossil fuels based power generation stations [1]. The higher energy
+consumption in developing countries such as Iran has caused the huge
+volume of the pure water is utilized by the conventional steam turbine
+power plants [2,3]. In other words, the desalted water is utilized in the
+energy procurement processes such as thermally driven power plants
+and the electricity is consumed by the gross water treatment units and
+the fresh water distribution equipment such as pumps [4,5]. It is fore-
+casted that the global water and electricity demands are supposed to
+increase by 50% and 80% in 2050 [6,7]. In the tropical areas, the water
+scarcity and the energy crisis usually increase due to the temperature
+rise, which may lead to the load-generation imbalance and the forced
+outages of power and potable water distribution lines [8]. Therefore,
+the water and energy networks should be co-operated in order to
+minimize the fuel cost of power only units and cogeneration plants
+[9,10].
+Many researchers have proposed the innovative designs of the re-
+newable energy resources based interconnected water and power gen-
+eration systems and optimized their performance from the energy, ex-
+ergy, economic, environmental, eﬃciency points of view. Jabari et al.
+[9] presented a water-heat-power nexus model and optimized its
+https://doi.org/10.1016/j.applthermaleng.2019.114258
+Received 20 April 2019; Received in revised form 9 July 2019; Accepted 13 August 2019
+⁎ Corresponding author.
+E-mail addresses: f.jabari@tabrizu.ac.ir (F. Jabari), bmohammadi@tabrizu.ac.ir (B. Mohammadi-ivatloo),
+Mohammadpour@tabrizu.ac.ir (M. Mohammadpourfard).
+Applied Thermal Engineering 162 (2019) 114258
+Available online 14 August 2019
+1359-4311/ © 2019 Elsevier Ltd. All rights reserved.
+T
+
+performance over a 24-h study horizon. In this research, it is supposed
+that the peak electrical demand is more than the maximum power
+generation bound of thermal units, combined heat and power (CHP)
+systems, and combined fresh water and power (CWP) generation cycles.
+Hence, it is infeasible to satisfy it without co-operation of thermal,
+CWP, and CHP units. Moreover, the pure water consumption in the
+benchmark hub system is higher than the maximum capacity of the
+desalination only units. Therefore, desalination plants and CWP units
+are optimally co-dispatched to satisfy this volume of the potable water.
+The similar concept is considered for the heat demand, which can be
+supplied by the CHPs and boilers. Moreover, a time-value based de-
+mand-side management strategy is implemented on heat/water/power
+loads to shift a percentage of each demand from peak periods to oﬀ-
+peak hours, ﬂat their daily variation patterns, and reduce the fuel cost
+of the trigeneration grid. The economic beneﬁt of the aggregated plug-
+in pure electric vehicles in transportation and energy procurement
+sectors is proved by solving a mixed integer nonlinear programming
+problem (MINLP). The uncertainty of water/heat/power demands,
+electricity prices, and availability of the electric drive vehicles in a 1-
+year study period should be incorporated to the risk-constrained long-
+term planning of the trigeneration systems using the time series Box-
+Jenkins model such as autoregressive integrated moving average
+(ARIMA) and diﬀerential autoregressive moving average (ARMA) tools
+[11]. In [12], the waste-water puriﬁcation and water consumption
+during the energy production from the wind source are evaluated. The
+network-environ analysis of China’s standard network demonstrated
+that the wind power generation system consumes lower fresh water
+than others. In addition, 90% of the power consumption in water sys-
+tems is related to the water extraction process. Although the waste
+water recycling utilizes a large portion of the wind power, the com-
+partment of the ground/surface water is beneﬁciary from the waste
+treatment. Some factors such as the old types and high corrosion of the
+constructed pipelines, maintenance of pumps and valves, and the me-
+chanical damage cause the underground water system leakage [13]. To
+solve this issue, the pressure of the pumping stage should be arisen,
+which makes the water leakage worse, as well as more electricity will
+be consumed by the water pumps [14]. The water leakage detection
+tools reduce the energy requirement of the water distribution systems
+[15]. Authors of [16–18] proved that the ocean thermal energy
+conversion based binary cycle generates the electrical power and de-
+salted water. Authors of [19] studied the potential of the wave energy
+powered desalination plant to solve the potable water scarcity of the
+mid-latitude areas such as Canary Islands. Oﬀshore compressed air
+energy storage (OCAES) [20] and undersea pumped storage system
+[21] could be integrated with marine, tidal and ocean wave based en-
+ergy production facilities to increase eﬃciency and output power.
+In [22], the biogas-fueled Brayton cycle is coupled with a humidi-
+ﬁcation-dehumidiﬁcation (HDH) desalination unit to supply the energy
+and fresh water demands of the industrial consumer. The uncertainty of
+loads and climatic condition could be modeled using the information
+gap decision theory to make the robust or risk-aversion and the op-
+portunistic or risk-taker decisions and minimize the capital investment,
+maintenance and the operating costs of the multi-generation system
+[23]. In addition, bioethanol [24] and biodiesel [25] could be used
+instead of biogas to improve the overall eﬃciency of the cogeneration
+system. The optimal design of the grid-tied and oﬀ-grid solar PV/diesel
+generator/battery/inverter power system for coupling with seawater
+desalination unit is provided by Ghenaei et al. [26]. It is recommended
+to make its performance more robust against the uncertainty of the
+solar irradiance. For instance, molten salt thermal storage should be
+installed for saving heat at hot hours and discharging it for desalting
+water and generating power at night or cloudy sky condition [27]. In
+[28,29], organic Rankine cycle (ORC) is used for generating heat and
+power for membrane distillation and reverse osmosis cycles, respec-
+tively. The output brine of the reverse osmosis process is reheated by
+the surplus heat exhausted from the ORC to treat more fresh water from
+the membrane distillation procedure. It is found that integration of
+membrane distillation with ORC coupled reverse osmosis unit improves
+both economic saving and environmental aspects associated with nat-
+ural gas utilization. In comparison with membrane distillation ap-
+proach, the implementation of HDH [30], forward osmosis [31], and
+multi-stage ﬂash desalination [32] to the ORC-reverse osmosis com-
+bined cycle could result in better emission footprint, eﬃciency, and
+power consumption, respectively.
+Authors of [33] proved that the integration of Brayton, multi-eﬀect
+desalination and vapor compression cycles using a dual-pressure heat
+recovery steam generator leads to produce 85 kg/s pure water, 30 MW
+electricity, 2 MW cool, and 1 MW heat under 39% energy eﬃciency for
+Nomenclature
+Subscripts and superscripts
+i
+thermal power plant
+j
+combined water and power generation unit
+t
+operation time[h]
+Symbols
+a b c
+, ,
+i
+i
+i
+constant factors related to the fuel cost of thermal unit i
+a b c d e f
+, , , , ,
+j
+j
+j
+j
+j
+j
+fuel cost coeﬃcients of CWP unit j
+Ccwp
+the operation cost of the gas-ﬁred CWP plants during the
+sample day ($)
+Ci ini
+k
+,
+/Ci fin
+k
+,
+the initial/ﬁnal fuel cost of the thermal unit i for gen-
+erating Pi ini
+k
+,
+/Pi fin
+k
+,
+($)
+FCp, STCp,SDCp the fuel cost, start-up cost, and the shut-down cost
+of the thermal power only units over the study horizon ($)
+Pg
+t
+the total electrical power generated by the thermal power
+plants and the CWP units (MW)
+Pj t,
+the output power of the co-producer j at hour t (MW)
+Pi ini
+k
+,
+/Pi fin
+k
+,
+the initial/ﬁnal value of the power generation of unit i in
+block k (MW)
+Pi t,
+the output power of the thermal power plant i at hour t
+(MW)
+P
+P
+i t
+i t
+_
+,
+,
+the lower/upper bound of the power generation region for
+the thermal unit i at hourt (MW)
+Pj
+min/Pj
+max the minimum/maximum values of the power produced by
+the CWP unit j (MW)
+R
+the total money obtained from selling energy to the local
+electricity network ($)
+sti and sdi the start-up cost and the shut-down cost of the power only
+unit i at operating time interval t ($/h)
+SU SD
+i
+i
+the start-up/shut-down rate of unit i at hour t (MW/h)
+Wj t,
+the output fresh water of the co-producer j at hour t (m3/
+s)
+W j
+min/W j
+max
+the minimum/maximum values of the water produced
+by the CWP unit j (m3/s)
+y
+z
+and
+i t
+i t
+,
+,
+the auxiliary binary decision variables for modeling the
+start-up and shut-down of unit i at hour t
+Γ
+budget of uncertainty
+P
+Δ i
+k
+the length of the linear section k (MW)
+δ ξ
+,
+t
+dual variables of the risk-averse optimization problem̂
+λt
+the maximum deviation of the actual energy price from
+the forecasted one at hour t [$ MWh]
+λt
+the uncertain electricity price at time interval t [$ MWh]
+λ¯t
+the forecasted value of the energy price at hour t [$ MWh]
+F. Jabari, et al.
+Applied Thermal Engineering 162 (2019) 114258
+2
+
+a large-scale industrial customer. If an air source heat pump is installed
+for precooling the air, the Brayton cycle will consume less electrical
+power in the compression stage and more electricity will be produced
+by the gas turbine [34,35]. In [36], the brackish water reverse osmosis
+desalination unit is controlled by the power ﬁeld oriented control
+strategy to protect the DC bus voltage stability against the undesired
+values of power and pure water utilization of the hydro-mechanical
+customers. Moreover, the electrical power is shared between the pumps
+and motors for managing the energy demand. The gas-steam combined
+cycle, thermochemical copper-chlorine, proton exchange membrane
+fuel cell, and the reverse osmosis are integrated in [37] to generate
+1.7 MW power, 51.8 kg/h hydrogen, and 2.3 kg/s desalted water at
+58% energy eﬃciency for 200 residential buildings. In this research, the
+ﬂue gases exhausted from the steel melting furnace with the tempera-
+ture 810 °C is used for driving system. In summer, the interconnected
+power system is usually overloaded. Hence, some of the large industries
+such as steel making companies may voluntarily or mandatory be
+participated in peak-clipping programs by shifting their operation
+period to oﬀ-peak time intervals [38,39]. Hence, the reliability of the
+poly-generation system will decrease due to the zero production of the
+ﬂue gases. It is recommended that another auxiliary fuel is also utilized
+to improve its coeﬃcient of performance when the furnace is oﬀ.
+Noorollahi et al. [40,41] demonstrated that the abandoned gas and oil
+wells as the clean and sustainable source of the heat reservoirs can drive
+the multi-eﬀect desalination system as well as produce electricity and
+heat. They studied Ahwaz oil ﬁeld in Iran and found that at least 565 m3
+potable water, 1.8 MW heat and 364 kW power are produced during the
+sample summer day, which can mitigate the greenhouse gases, water
+shortage, and energy crisis in this hot and humid region. It is re-
+commended that the molten salt thermal energy storage and the solar
+photovoltaic panels are linked with the ground source heat pump to
+improve the thermal and energy eﬃciencies of the system, provide heat
+for HDH desalination cycle, and generate more electricity [42,43].
+According to [44,45], the pumped hydro-electric storage and the cyber-
+physical systems such as internet of things (IOTs) are the cost-eﬀective
+tools in energy management of waste water recycling, purifying and
+distributing stages. The nuclear ﬁssion reaction is a more reliable and
+renewable heat source to distillate the gross water [46]. If the heating
+energy extracted from the nuclear reactor is employed by the steam
+driven seawater desalination unit, its output electrical power will be
+reduced. In [47], it is demonstrated that the supercritical CO2 Brayton
+cycle should be replaced with the ORC to mitigate the power decrease
+during the waste heat recovery. Moreover, He et al. [48] proved that
+the eﬃciency and values of power and water outputs of the ORC-HDH
+combined cycle should be improved by ﬂashing steam and utilizing it
+for generating power. This heated brine can be used for heating the
+impure water, dehumidifying the humid warm air, and producing the
+fresh water. Because of the lower ramp up and down rates of the nu-
+clear power stations in comparison with the steam and gas-ﬁred ones
+[49,50] as well as safety factors of integral pressurized water reactor,
+they can coupled with thermally driven vapor compression and multi-
+eﬀect distillation cycles and generate 475 kg/s fresh water from 800 kg/
+s seawater.
+In the literature review, it is found that there are many valuable and
+interesting works on design, performance assessment, and optimization
+of water-energy nexus models. However, the robust optimization of the
+cogeneration grids under the uncertainties associated with water and
+power demands, energy market prices, and renewable energy resources
+have not been presented by scholars. Therefore, this paper proposes a
+risk-constrained optimization framework for CWP generation systems.
+The novelties of the present paper are as following items:
+Fig. 1. The schematic presentation of the proposed energy trade between the price-taker cogeneration company and the main electricity network.
+F. Jabari, et al.
+Applied Thermal Engineering 162 (2019) 114258
+3
+
+• A robust optimization technique is implemented on water-energy
+coupled networks. In this research, it is supposed that a typical
+water-power generating company (Genco) is composed of some
+power only plants and gas-ﬁred thermal generating units. In the gas
+turbine power generation cycle, the high-temperature waste heat is
+exhausted from the ﬂue gases and used for seawater puriﬁcation.
+Therefore, these units are called CWP generation stations. The daily
+proﬁt of the Genco, which is equal to the revenue obtained from
+selling energy minus the total operating cost of CWP units and
+power only plants, is maximized as the objective function. The op-
+eration cost of the thermal power plants consists of their fuel cost,
+start-up cost, and shut-down cost. The linearized fuel cost calcula-
+tion model, ramp up and down rates of power only units, minimum
+up and down times of thermal power plants, generation capacity,
+and the power-water ratio of the CWP units are incorporated in the
+robust optimization problem.
+• The uncertainty associated with the electricity market prices is
+modeled via the robust optimization algorithm. In the robust model,
+the lower and upper boundaries of the energy prices are used for
+making some stochastic scenarios. The forecasted electricity prices
+are ﬁrstly considered to solve a deterministic or risk-neutral opti-
+mization problem without considering uncertainty. Then, the sto-
+chastic scenarios are selected within the price interval to solve the
+risk-aversion robust problem.
+• The sensitivity of the daily proﬁt to the budget of uncertainty are
+discussed. The budget of uncertainty changes from 0 to 100% for a
+1-day study horizon. For example, if the budget of uncertainty is
+considered to be equal to 50%, the cogeneration company max-
+imizes its proﬁt by considering that the actual price values in 50% of
+hours ( =
+t
+1 to
+=
+t
+12) may be diﬀerent from the forecasted ones.
+The rest of the present work is organized as follows: Section 2 for-
+mulates a self-scheduling problem for CWP and thermal units. In
+Section 3, the robust optimization is applied on the water-energy nexus
+model to maximize the daily proﬁt of the cogeneration system. In
+Section 3, simulations are conducted on a real case study to reveal the
+robustness and eﬀectiveness of the presented approach. Then, the
+conclusion is provided in Section 4.
+2. Problem formulation
+In a combined water and energy production grid, the electricity
+price is aﬀected by both generation and consumption sides. Therefore,
+the energy market price is a ﬂuctuated parameter. In the literature,
+several scholars have used the scenario based stochastic programming
+approaches [51,52], Monte Carlo simulation [53], fuzzy method
+[54,55], artiﬁcial neural network [56] to model the uncertainty of the
+energy rates. The main objective of the current research is to robustly
+schedule the water-energy nexus model against the uncertainty of the
+electricity market prices using a robust optimization algorithm. Ac-
+cording to Fig. 1, it is supposed that a water and energy cogeneration
+company, which composed of some thermal units and CWP plants, is
+linked with the main electricity grid. In the CWP production facilities,
+the low-grade waste heat of the ﬂue gases exhausted from the power
+generation stage, is utilized for seawater desalination applications.
+Hence, the freshwater is considered as a byproduct. According to ob-
+jective function (1), the Genco is a proﬁt maker and desires the max-
+imum revenue obtained from selling energy and the minimum oper-
+ating cost of CWP and thermal units over a T-hour study horizon [57].
+As given by (2), R refers to the total money obtained from selling en-
+ergy to the local electricity network. At each time interval t, the total
+electrical power generated by the thermal power plants and the CWP
+units, Pg
+t, is computed as constraint (3). The operation cost of the gas-
+ﬁred CWP plants during the sample day is shown with Ccwp and calcu-
+lated from (4). The output power and fresh water of the co-producer j
+at hour t, which depends on the binary decision variable uj t, , are
+represented with Pj t, and Wj t, , respectively.
+=
+−
+−
+−
+−
+R
+C
+FC
+STC
+SDC
+Objective function of cogeneration company
+Max(
+)
+cwp
+p
+p
+p
+(1)
+∑
+=
+∈
+R
+λ P
+¯
+t
+T
+t
+g
+t
+(2)
+∑
+∑
+=
++
+∀
+∈
+∈
+∈
+P
+P
+P
+t
+T
+;
+g
+t
+i
+i t
+j
+j t
+Ω
+,
+Ω
+,
+p
+cwp
+(3)
+∑
+=
++
++
++
++
++
+∈
+∈
+C
+a P
+bP W
+c W
+dP
+e W
+f u
+(
+)
+cwp
+j
+t
+T
+j
+j t
+j t
+j t
+j
+j t
+j t
+j
+j t
+j
+j t
+Ω
+,
+,
+2
+,
+,
+,
+2
+,
+,
+,
+cwp
+(4)
+It should be mentioned that the water and power generation capa-
+cities of the CWP producers are limited by minimum and maximum
+values, as inequality constraints (5) and (6). The binary decision vari-
+able uj t, is used to ﬁnd the on and oﬀstates of the CWP units at each
+hour. If
+=
+u
+0
+j t,
+, the lower and upper bounds of the constraints (5) and
+(6) will be zero. Hence, the co-generation unit j will be oﬀin time t. Else
+if
+=
+u
+1
+j t,
+, the CWP producer j will be on at hour t. Then, its water and
+power products will be greater than minimum and less than maximum
+values. where, W j
+min/W j
+max and Pj
+min/Pj
+max are the minimum/maximum
+values of the water and power produced by the CWP unit j. Based on
+(7), each co-generator can be operated at a feasible region, which is
+limited by its minimum and maximum power-water ratio limits [58].
+Moreover, the power to water ratio should be restricted within a pre-
+deﬁned interval. For example, if minimum power to water ratio is
+considered 4, as reported in Table 1, the power production of the CWP
+units is 4 times greater than their water outputs. This proves that the
+fresh water is selected as a byproduct. Obviously, the power and water
+generation capacities of the CWP units are limited, which results in a
+maximum power to water ratio.
+×
+≤
+≤
+×
+∀
+∈
+∀
+∈
+u
+W
+W
+u
+W
+j
+t
+T
+;
+Ω
+,
+j t
+j
+min
+j t
+j t
+j
+max
+cwp
+,
+,
+,
+(5)
+×
+≤
+≤
+×
+∀
+∈
+∀
+∈
+u
+P
+P
+u
+P
+j
+t
+T
+;
+Ω
+,
+j t
+j
+min
+j t
+j t
+j
+max
+cwp
+,
+,
+,
+(6)
+≤
+≤
+∀
+∈
+∀
+∈
+R
+P
+W
+R
+j
+t
+T
+;
+Ω
+,
+j
+min
+j t
+j t
+j
+max
+cwp
+,
+,
+(7)
+The fuel cost, start-up cost, and the shut-down cost of the thermal
+power only units over the study horizon are deﬁned as FCp, STCp, and
+SDCp, respectively. The piecewise linear model of the fuel cost function
+for the thermal unit i is illustrated in Fig. 2. It is assumed that the
+variable fuel cost function of the thermal unit i is divided into n pie-
+cewise linear sections. The initial and ﬁnal values of the power gen-
+eration of this unit in block k are deﬁned as Pi ini
+k
+,
+and Pi fin
+k
+,
+, respectively.
+where, k changes from 1 to n. For generating these amounts of electrical
+power, the generation company i pays Ci ini
+k
+,
+, and Ci fin
+k
+,
+to purchase fuel.
+Therefore, the slope of the kth block, si
+k, is obtained by dividing the
+Fig. 2. The linearized model of the fuel cost function for the power only unit i.
+F. Jabari, et al.
+Applied Thermal Engineering 162 (2019) 114258
+4
+
+diﬀerence of the fuel costs into the power changes from initial to ﬁnal
+point, as computed in (8). As obvious from Fig. 2 and stated in (9),
+P
+Δ i
+k
+is the length of the linear section k, which represents the power changes
+from initial to ﬁnal point of the block k. As expressed by (10), the
+maximum value of the power procured at time t in block k equals to
+P
+Δ i
+k
+and depends on its on/oﬀstatus.
+=
+−
+∀
+=
+∀
+∈
+s
+C
+C
+P
+k
+n
+i
+Δ
+;
+1:
+and
+Ω
+i
+k
+i fin
+k
+i ini
+k
+i
+k
+p
+,
+,
+(8)
+=
+−
+∀
+=
+∀
+∈
+P
+P
+P
+n
+k
+n
+i
+Δ
+;
+1:
+and
+Ω
+i
+k
+i fin
+k
+i ini
+k
+p
+,
+,
+(9)
+≤
+≤
+×
+∀
+=
+∀
+∈
+P
+P
+u
+k
+n
+i
+0
+Δ
+;
+1:
+and
+Ω
+i t
+k
+i
+k
+i t
+p
+,
+,
+(10)
+The initial and ﬁnal values of the power in block k are determined
+using the lower generation capacity of unit i and the section length, as
+formulated in (11) and (12), respectively. Constraint (12) demonstrates
+that the power production of the thermal unit i at the end of the linear
+section k is equal to its product at initial point of the piecewise linear
+section k plus the horizontal length of the block k.
+=
+×
+−
++
+∀
+=
+∀
+∈
+P
+P
+k
+P
+k
+n
+i
+Δ
+(
+1)
+;
+1:
+and
+Ω
+i ini
+k
+i
+k
+i
+min
+p
+,
+(11)
+=
++
+∀
+=
+∀
+∈
+P
+P
+P
+k
+n
+i
+Δ
+;
+1:
+and
+Ω
+i fin
+k
+i
+k
+i ini
+k
+p
+,
+,
+(12)
+Hence, the thermal power plant i generates the electrical power Pi t,
+at hour t, which is obtained from Eq. (13). It depends on minimum
+power generation capacity of unit i and sum of power generated in k
+linear blocks.
+∑
+=
+×
++
+∀
+∈
+=
+P
+P
+u
+P
+i
+;
+Ω
+i t
+i
+min
+i
+min
+k
+n
+i t
+k
+p
+,
+1
+,
+(13)
+The fuel cost of the power only unit i at the beginning and end of the
+block k depends on its constant indices ai, bi, ci and generated power, as
+modeled by Eqs. (14) and (15), respectively. As expected from Fig. 2,
+the total fuel cost of the thermal generation stations at T hours, FCp, is
+calculated using (16). It is obvious that the operation cost of the
+thermal unit i is a quadratic function versus its power product at each
+time interval t. Hence, if the hourly fuel cost is calculated based on the
+power product of this unit, a complex nonlinear optimization problem
+should be solved to ﬁnd the decision variables ui t, and Pi t, . Therefore,
+constraint (16) is used to calculate the operation cost of the thermal
+power plants in a linear manner. The parameters Pi
+min and si
+k are con-
+stant and calculated, respectively, while the term ∑
+×
+=
+s
+P
+(
+)
+k
+n
+i
+k
+i t
+k
+1
+,
+changes linearly with respect to Pi t
+k
+, .
+=
++
++
+∀
+=
+∀
+∈
+C
+a P
+b P
+c
+k
+n
+i
+(
+)
+;
+1:
+and
+Ω
+i ini
+k
+i
+i ini
+k
+i
+i ini
+k
+i
+p
+,
+,
+2
+,
+(14)
+=
++
++
+∀
+=
+∀
+∈
+C
+a P
+b P
+c
+k
+n
+i
+(
+)
+;
+1:
+and
+Ω
+i fin
+k
+i
+i fin
+k
+i
+i fin
+k
+i
+p
+,
+,
+2
+,
+(15)
+∑
+∑
+=
+⎧
+⎨⎩
++
++
++
+×
+⎫
+⎬⎭
+∈
+∈
+=
+FC
+a P
+b P
+c
+s
+P
+(
+)
+(
+)
+p
+i
+t
+T
+i
+i
+min
+i
+i
+min
+i
+k
+n
+i
+k
+i t
+k
+Ω ,
+2
+1
+,
+p
+(16)
+Each thermal unit i at hour t generates a limited power between its
+lower (P
+i t
+_
+,
+) and upper (Pi t, ) bounds, as (17). According to (18), when
+this power only unit shuts down at time
++
+t
+1 (
+=
++
+z
+1)
+i t,
+1
+, its maximum
+power generation capability at hour t will be restricted by its shut-down
+ramp rate as term
+≤
+×
++
+P
+SD
+z
+i t
+i
+i t
+,
+,
+1. If this unit is on in time
+−
+t
+1
+(
+=
+−
+u
+1
+i t,
+1
+) and remains on at hour t, the power generation increase will
+be less than its ramp up rate RUi, as expected from (19). Moreover, if it
+is oﬀat time period
+−
+t
+1 (
+−
+ui t,
+1) and starts up at hour t (
+=
+y
+1
+i t,
+), the
+value of the power generation increase will be smaller than its start-up
+index, SUi. The binary decision variables
++
+zi t,
+1 and yi t, are used for
+modeling the start-up and shut-down of the power only unit i. Ac-
+cording to (18), the upper time-dependent operating limit of the
+thermal unit i should be smaller than its power generation capacity,
+which means that
+≤
+P
+P
+i t
+i
+max
+,
+. Additionally, if the thermal unit i is on at
+hour t (
+=
+u
+1
+i t,
+) and shuts down at the next hour (
+=
+=
++
++
+z
+P
+1,
+0
+i t
+i t
+,
+1
+,
+1
+),
+its upper operating limit at hour t cannot be more than the shut-down
+index RUi and hence
+≤
+P
+SD
+i t
+i
+,
+. Constraint (19) proves that when the
+thermal unit i has been started up at hour
+−
+t
+1 (
+=
+−
+u
+1
+i t,
+1
+) and is going
+to remain on a time t, its power output (Pi t, ) cannot be increased more
+than RUi, that causes
+≤
++
+×
+−
+−
+P
+P
+RU
+u
+i t
+i t
+i
+i t
+_
+,
+,
+1
+,
+1. Similarly, if the unit i is
+oﬀat the previous hour (
+=
+−
+u
+0
+i t,
+1
+) and is started up at time t (
+=
+y
+1
+i t,
+),
+Pi t, cannot be more than its start-up value and
+≤
+P
+SU
+i t
+i
+_
+,
+.
+≤
+≤
+∀
+∈
+∀
+∈
+P
+P
+P
+i
+t
+T
+;
+Ω and
+i t
+i t
+i t
+p
+_
+,
+,
+,
+(17)
+≤
+−
++
+×
++
++
+P
+P
+u
+z
+SD
+z
+(
+)
+i t
+i
+max
+i t
+i t
+i
+i t
+,
+,
+,
+1
+,
+1
+(18)
+≤
++
+×
++
+×
+−
+−
+P
+P
+RU
+u
+SU
+y
+i t
+i t
+i
+i t
+i
+i t
+_
+,
+,
+1
+,
+1
+,
+(19)
+As given by constraint (20), the electrical power output of the
+thermal unit i is equal to or greater than its minimum production ca-
+pacity,
+×
+P
+u
+i
+min
+i t, . This means that if the unit i is on in time t, its power
+generation will be greater than Pi
+min. In addition, while this generating
+unit is on at hours
+−
+t
+1 and t, its output power will be larger than
+−
+×
+−
+−
+P
+RD
+u
+i t
+i
+i t
+,
+1
+,
+1. Note that RDi represents its ramp down rate in MW
+per hour. Similarly, if this generation station is on in time −
+t 1 and shuts
+down at time interval t (
+=
+z
+1
+i t,
+),
+−
+Pi t,
+1 will be smaller than its shut-down
+limit, RUi.
+≥
+×
+∀
+∈
+∀
+∈
+P
+P
+u
+i
+t
+T
+;
+Ω and
+i t
+i
+min
+i t
+p
+_
+,
+,
+(20)
+≥
+−
+×
+−
+×
+∀
+∈
+∀
+∈
+−
+−
+P
+P
+RD
+u
+SD
+z
+i
+t
+T
+;
+Ω and
+i t
+i t
+i
+i t
+i
+i t
+p
+_
+,
+,
+1
+,
+1
+,
+(21)
+In fact, the auxiliary binary decision variables yi t, and zi t, are used
+for modeling the start-up and shut-down status of the power only unit i
+in time t, as stated in constraint (22). Based on inequality constraint
+(23), the start-up and shut-down operations of the generating units
+don’t occur simultaneously.
+−
+=
+−
+∀
+∈
+∀
+∈
+−
+y
+z
+u
+u
+i
+t
+T
+;
+Ω
+and
+i t
+i t
+i t
+i t
+p
+,
+,
+,
+,
+1
+(22)
++
+≤
+∀
+∈
+∀
+∈
+y
+z
+i
+t
+T
+1;
+Ω
+and
+i t
+i t
+p
+,
+,
+(23)
+Constraints (24)–(26) are applied on the optimization problem to
+consider the minimum up time (UTi) of the thermal generation station i.
+It is assumed that Ui
+0 refers to the duration of the period, which the
+power plant i has been on at the end of
+=
+t
+0. If the power only unit i has
+been on in time
+=
+t
+0, Eq. (24) can be considered for fewer hours than
+its minimum up time UTi. According to (25), minimum up time limit is
+implemented to all subintervals with length UTi. As shown in (26), for
+the last UTi hours, the unit i should be committed until the last hour,
+while it is started at each hour of the mentioned set.
+∑
+−
+=
+=
+−
+=
+=
+u
+ζ
+T UT
+U
+u
+1
+0;
+where
+min{ ,(
+)
+}
+t
+ζ
+i t
+i
+i
+i
+i t
+1
+,
+0
+,
+0
+i
+(24)
+∑
+≥
+×
+∀
+=
++
+⋯
+−
++
+=
++
+−
+u
+UT
+y
+k
+ζ
+T
+UT
+;
+1,
+,
+1
+t
+k
+k
+UT
+i t
+i
+i k
+i
+i
+1
+,
+,
+i
+(25)
+∑
+−
+≥
+∀
+=
+−
++
+⋯
+=
+u
+y
+k
+T
+UT
+T
+(
+)
+0;
+2,
+,
+t
+k
+T
+i t
+i t
+i
+,
+,
+(26)
+If the ith producer has been oﬀin time
+=
+t
+0, constraint (27) will be
+imposed on the optimization problem for fewer hours than its minimum
+down time, DTi. It is supposed that Si
+0 shows the duration of period,
+which the power plant i has been oﬀat the end of
+=
+t
+0. Inequality
+constraint (28) is used for all subintervals with DTi hours. As obvious
+from (29), for the last
+−
+DT
+1
+i
+hours, the thermal power generator i will
+be decommitted until the last hour, while it is turned oﬀwithin the
+mentioned period.
+F. Jabari, et al.
+Applied Thermal Engineering 162 (2019) 114258
+5
+
+∑
+=
+=
+−
+−
+=
+=
+u
+ψ
+T DT
+S
+u
+0;
+where
+min{ ,(
+)(1
+)}
+t
+ψ
+i t
+i
+i
+i
+i t
+1
+,
+0
+,
+0
+i
+(27)
+∑
+−
+≥
+×
+∀
+=
++
+⋯
+−
++
+=
++
+−
+u
+DT
+z
+k
+ψ
+T
+DT
+(1
+)
+;
+1,
+,
+1
+t
+k
+k
+DT
+i t
+i
+i k
+i
+i
+1
+,
+,
+i
+(28)
+∑
+−
+−
+≥
+∀
+=
+−
++
+⋯
+=
+u
+y
+k
+T
+DT
+T
+(1
+)
+0;
+2,
+,
+t
+k
+T
+i t
+i t
+i
+,
+,
+(29)
+The start-up cost (STCp) and shut-down cost (SDCp) of the thermal
+generating units over the T-hour study horizon are computed as (30)
+and (31), respectively. In which, sti and sdi are the start-up cost and
+shut-down cost of the power only unit i at hour t in terms of $/hour. It
+should be mentioned that yi t, and zi t, are the binary decision variables
+representing the start-up and shut-down of the power generation unit i
+in time t.
+∑
+=
+×
+∈
+∈
+STC
+st
+y
+(
+)
+p
+i
+t
+T
+i
+i t
+Ω ,
+,
+p
+(30)
+∑
+=
+×
+∈
+∈
+SDC
+sd
+z
+(
+)
+p
+i
+t
+T
+i
+i t
+Ω ,
+,
+p
+(31)
+3. Robust optimization of water-power nexus model
+The robust optimization approach, which was proposed by Soyster
+[59], models the uncertainty without knowing any information on the
+uncertain variable. In this method, it is assumed that the function
+=
+w
+f α β
+( , ) changes non-linearly for known values β and linearly for
+uncertain variable α. Moreover, its value is calculated as inequality
+constraint (32) supposing that the probability density and membership
+functions of the uncertain variable α are not available. where, α is its
+forecasted value. In addition, the maximum change of the uncertain
+variable α from the forecasted one is shown witĥ α. The maximization
+of the objective function w is formulated as (33), while it is subjected to
+(32). It is assumed that the objective proﬁt function w should be
+maximized consideing the inequality constraint (32) for uncertain
+parameter α, which varies from̂
+−
+α
+α tô
++
+α
+α. In addition, the ob-
+jective function w changes linearly with the uncertain parameter α,
+while it varies non-linrarly for another known or pre-deﬁned variable β.̂
+−
+≤
+α
+α
+α
+|
+|
+(32)
+=
+w
+f α β
+max
+( , )
+β
+(33)
+Because of the linear variations of the objective function w with
+respect to uncertain variable α, the non-linear optimization problem
+can be given by (32)–(35). The matrix A β
+( ) represents the coeﬃcients
+of the uncertain variable α with component a β
+( )
+t
+. Moreover, the matrix
+B β
+( ) consists of the known variables β. If the linear function f α β
+( , ) is
+maximized as high as possible, the objective function w will be max-
+imized, signiﬁcantly.
+≤
+w
+f α β
+( , )
+(34)
+=
+×
++
+f α β
+A β
+α
+B β
+( , )
+( )
+( )
+(35)
+Constraint (36) is formulated to maximize the auxilary function
+f α β
+( , ) and then the main objective w. The risk-constrained strategy
+should be able to ﬁnd a good solution vector with the maximum value
+of objective function w and guarantee its global optimality for a given
+prediction error. If there is a forecast error about parameter α, this
+scenario will be optimum with great probability by adding γi as a robust
+counter term to (35).̂
+∑
+=
+×
++
+−
+×
+×
+f α β
+A β
+α
+B β
+a β
+α
+γ
+( , )
+( )
+( )
+max
+( )
+γ
+t
+t
+t
+t
+(36)
+∑
+≤
+γ
+Γ
+t
+t
+(37)
+≤
+≤
+γ
+0
+1
+t
+(38)
+Therefore, the objective function (33) and the constraints (36)–(38)
+can be considered as (39) and (40). where, the tth forecasted decision
+variable is introduced as αt. The 3rd term of the relation (36),̂
+∑
+×
+×
+a β
+α
+γ
+max
+( )
+γ
+t
+t
+t
+t
+, is expanded as the matrix form (39). The in-
+equality constraints (37) and (38) are satisﬁed by (40).
+×
+×
+⋯
+×
+⎛
+⎝
+⎜
+⎜⋮
+⎞
+⎠
+⎟
+⎟
+a β
+α
+a β
+α
+a
+β
+α
+γ
+γ
+γ
+max[
+( )
+( )
+( )
+]
+γ
+n
+n
+n
+1
+1
+2
+2
+1
+2
+t
+(39)
+⎛
+⎝
+⎜
+⎜
+⎜⎜
+⋯
+⋯
+⋯
+⋮⋮⋱⋮
+⋯
+⎞
+⎠
+⎟
+⎟
+⎟⎟
+⎛
+⎝
+⎜
+⎜⋮
+⎞
+⎠
+⎟
+⎟
+=
+⎛
+⎝
+⎜
+⎜⋮
+⎞
+⎠
+⎟
+⎟
+γ
+γ
+γ
+Γ
+1 1
+1
+1 0
+0
+0 1
+0
+0 0
+1
+1
+1
+n
+1
+2
+(40)
+Hence, the dual form of the optimization problem (36)-(38) is for-
+mulated as follows:
+∑
++
+Γδ
+ξ
+min
+ξ δ
+t
+t
+,i
+(41)̂
++
+≥
+×
+δ
+ξ
+a β
+α
+( )
+t
+t
+t
+(42)
+By considering (41) in the base optimization problem, the maximum
+value of the objective function w is found in a way that minimum value
+of f α β
+( , ) is equal to w. As expected from (41), (44) and (45), f α β
+( , ) is
+maximized for minimizing
++ ∑
+Γδ
+ξ
+t
+t as low as possible. The mini-
+mization problem (41) is satisﬁed by adding the negative term
+−
+−∑
+Γδ
+ξ
+t
+t to constraint (35) and maximizing it by (43) and (44) as
+high as possible.
+w
+max
+β ξ δ
+, ,t
+(43)
+≤
+w
+f α β
+( , )
+(44)
+∑
+=
+×
++
+−
+−
+f α β
+A β
+α
+B β
+Γδ
+ξ
+( , )
+( )
+( )
+t
+t
+(45)̂
++
+≥
+×
+δ
+ξ
+A β
+α
+( )
+t
+t
+t
+(46)
+As given by (1), the aggregator of power only units and CWP gen-
+eration plants desires that the daily proﬁt, which is equal to the revenue
+obtained from selling electricity minus the operation cost, is maximum.
+If the uncertain value of the electricity market price at hour t is in-
+troduced as λt and it is assumed that the hourly energy prices at Γ% of
+the study horizon are unknown, the robust scheduling of the water-
+power hub system can be expressed as (48) and (49). The operational
+constraints (3)–(31), (48) and (49) have been considered as the opti-
+mization constraints. The proposed model can be implemented to each
+large-scale water-power nexus (not distribution-level grids), which the
+limits of the thermal generation stations and combined potable water
+and power generation units (constraints (3)–(31)) as well as the robust
+constraints (criteria (48) and (49)) are considered in the robust opti-
+mization problem.
+w
+max
+ξ δ P
+P
+W
+, ,
+,
+t
+i t
+j t
+j t
+,
+,
+,
+(47)
+Subject to:
+∑
+∑
+≤
+−
+−
+−
+−
+−
+−
+∈
+w
+λ P
+C
+FC
+STC
+SDC
+Γδ
+ξ
+¯
+t
+T
+t
+g
+t
+cwp
+p
+p
+p
+t
+t
+(48)̂
++
+≥
+×
+δ
+ξ
+P
+λ
+t
+g
+t
+t
+(49)
+and constraints (3)–(31).
+F. Jabari, et al.
+Applied Thermal Engineering 162 (2019) 114258
+6
+
+4. Case study and discussions
+In this section, a standard combined drinking water and power
+generation system is studied to prove the capability of the proposed
+method in modeling the uncertainty of the electricity market prices.
+This benchmark cogeneration network is linked with the local power
+system. It consists of ﬁve power only units and two CWP plants. The
+start-up, shut-down, ramp-up, and ramp-down characteristics of the
+thermal units as well as their power generation bounds are presented in
+Table 1 [58]. The constant factors, power and water generation capa-
+cities, and the power-water ratio of the CWP units are reported in
+Table 2 [58]. The presented robust optimization model can be im-
+plemented on each plant-level CWP and thermal units, while minimum
+and maximum levels of water and power generations, ramp up and
+down rates of thermal units, power-water ratio of CWP producers, and
+other constant factors reported in Tables 1 and 2 are available for these
+units.
+A mixed integer non-linear programming problem is coded under
+general algebraic mathematical modeling system (GAMS) and solved by
+convex over and under envelopes for nonlinear estimation (COUENNE)
+[60]. The forecasted electricity market prices are presented in Fig. 3
+[61]. These values are determined using the historical data and the
+price forecasting methods [62]. The lower and upper boundaries of the
+energy prices are estimated based on the predicted values and shown in
+Fig. 3. The maximum deviation of the actual energy price from the
+forecasted one at each hour t is reported in Table 3. Firstly, the budget
+of uncertainty, Γ, is considered to be equal to zero for solving the base
+optimization problem without modeling the market price uncertainty.
+The diverse values of the control parameter Γ are then intended for
+developing the risk-constrained self-scheduling problem. The numerical
+results of the mentioned cases are compared to show how the system
+operator makes the best decision on the performance of thermal units
+and CWP plants under the uncertainty of the energy market prices.
+In the robust optimization of the water-energy nexus model, it is
+assumed that the budget of uncertainty changes from 0 to 1. This means
+that the electricity market prices in 0–100% of the whole study horizon
+may be diﬀerent from the forecasted values. For example, if the budget
+of uncertainty, Γ, is equal to 0.5, the aggregator of the generating units
+desires the maximum daily proﬁt, while the energy prices at hours
+=
+t
+1
+to
+=
+t
+12 may change from the predicted ones. The proﬁt objective
+function is obtained from solving the robust optimization problem (47)
+subjecting to (3)–(31), (48) and (49) under diﬀerent risk-neutral and
+risk-seeker decision-making scenarios. Fig. 4 demonstrates how the
+degree of conservatism, Γ, aﬀects the daily proﬁt. For the ﬁrst iteration,
+the budget of uncertainty is equal to 0. Hence, the uncertainty of the
+electricity prices is not modeled in this deterministic or risk-neutral
+strategy. Hence, $1,018,335 beneﬁt is attained by solving the base
+optimization approach under the forecasted energy prices. By con-
+sidering 10 risk-aversion or robust scenarios with 0.1 step size from
+=
+Γ
+0.1 to
+=
+Γ
+1, it is proved that when the budget of uncertainty in-
+creases, lower proﬁt will be achieved from selling electricity and vice
+versa. Because, the aggregator of CWP plants and thermal units wants
+to hedge himself from the risk of the lower electricity prices. Therefore,
+the distance of the optimal solution from the best operating point
+(higher proﬁt) will increase. If the decision maker desires a higher
+proﬁt, the degree of conservatism or robustness will decrease. For in-
+stance, if the budget of uncertainty is equal to 0.7, the actual energy
+prices may change at 70% of 24-h time interval. At other remaining
+hours, the forecast error is equal to zero and the uncertain price value,
+λt, is equal to the predicted price, λ¯t. Additionally, the gained proﬁt will
+reduce from $1,018,335 in the deterministic model to $505,408 in the
+robust optimization problem with
+=
+Γ
+0.7. In other words, there is a
+tradeoﬀbetween the degree of conservatism and the optimality of so-
+lutions.
+The optimum generation schedules of the power only units 3 and 5
+at three selected levels of control parameter Γ are obtained as Fig. 5. It
+is obvious from this ﬁgure that
+=
+Γ
+0 models the risk-neutral or de-
+terministic approach, while
+=
+Γ
+0.5 and 1 are considered in two robust
+self-scheduling strategies. The sections (a) and (b) of Fig. 5 show the
+output electrical power of the thermal generating units 3 and 5 over the
+24-h study period, respectively. As expected from objective function,
+when the combined water and power generation company desires the
+higher proﬁt, the thermal power plants should generate more electricity
+and vice versa. In addition, when the Genco wants to be immune from
+the risk of the under-estimated energy market prices, he should con-
+sider the higher value for the budget of uncertainty. Therefore, it will be
+economic to generate lower electrical power by thermal power plants.
+As illustrated in Fig. 5, the blue and red curves of the sections (a) and
+(b) show the daily generation patterns of the power only units 1 and 2
+in the cases of
+=
+Γ
+0.5 and 1, respectively. It is demonstrated that by
+considering the uncertainty of the electricity prices in 50 and 100% of
+the whole study horizon, the value of the electrical power procured by
+the thermal units is equal to or less than that of obtained from solving
+the deterministic self-scheduling problem (1)–(31). Similar analyses can
+be provided for other power generating units. Therefore, the total proﬁt
+attained by selling energy to the local electricity grid decreases from
+$1,018,335 in the case of
+=
+Γ
+0 to $626,731 and $401,809 in the cases
+of
+=
+Γ
+0.5 and
+=
+Γ
+1, respectively.
+In Figs. 6 and 7, the best operating points of the CWP plants 1 and 2
+under diﬀerent budgets of uncertainty are displayed. This is an inter-
+esting result indicating that if it is desirable to make a robust or risk-
+aversion decision against the ﬂuctuations of the electricity market
+prices, the CWP generating units should produce less electricity than
+their deterministic production schedules. Moreover, the output elec-
+trical power of the co-producer 1 at some hours such as
+=
+t
+1 to
+=
+t
+6
+and
+=
+t
+19 overlap in deterministic (
+=
+Γ
+0) and robust (
+=
+Γ
+0.5) modes.
+But, they are diﬀerent at other hours. It is found that if the system
+operator desires to optimally schedule the water and power generating
+units under the variable energy prices (
+=
+Γ
+1), the CWP units 1 and 2
+should generate electricity according to the red dashed lines of the
+sections (a) and (b). These curves help the Genco to decide how the
+thermal and the CWP should be co-dispatched to minimize the risk of
+the lower energy prices and maximize the total proﬁt. Additionally, if
+the electricity market prices may be diﬀerent from the forecasted ones
+at the ﬁrst 12 h (
+=
+Γ
+0.5) and the entire time interval (
+=
+Γ
+1), the ag-
+gregator can determine the amount of the electricity, which should be
+generated by the power only units and the co-production facilities at
+each hour.
+As shown in Fig. 6, although the actual electricity rates diﬀer from
+the predicted ones at
+=
+t
+1 to
+=
+t
+12 in the case of
+=
+Γ
+0.5, the power
+production patterns of the combined cycles 1 and 2 are similar to their
+generation
+schedules
+obtained
+from
+solving
+the
+risk-neutral
+Table 1
+The operational indices of the thermal generating units [58].
+Constants
+=
+i
+1
+=
+i
+2
+=
+i
+3
+=
+i
+4
+=
+i
+5
+ai
+0.039
+0.028
+0.051
+0.032
+0.046
+bi
+15
+12.6
+14.3
+13.9
+13.5
+ci
+25
+49
+15
+105
+72
+sdi
+50.6
+50.6
+57.1
+47.1
+56.6
+sti
+50.6
+50.6
+57.1
+47.9
+56.9
+RUi
+16
+64
+12
+104
+56
+RDi
+16
+64
+12
+104
+56
+UTi
+0
+4
+0
+5
+4
+DTi
+0
+2
+0
+3
+2
+RUi
+35
+130
+30
+240
+110
+SUi
+145
+140
+140
+250
+130
+Pi
+min
+120
+120
+120
+250
+80
+Pi
+max
+480
+320
+260
+520
+280
+Ui
+0
+0
+2
+0
+1
+1
+Si
+0
+0
+0
+0
+0
+0
+F. Jabari, et al.
+Applied Thermal Engineering 162 (2019) 114258
+7
+
+optimization problem (
+=
+Γ
+0). In fact, there is no need to reduce the
+power generation of the combined water and electricity producers at
+these hours, while the electricity market prices change at
+=
+t
+1 to
+=
+t
+12.
+Fig. 7 proves that if the degree of conservatism increases, the total
+proﬁt and the electrical power produced by the CWP units will decrease
+to hedge the Genco against the smaller electricity tariﬀs. But, the vo-
+lume of the fresh water output of the cogeneration units may increase
+or decrease as appeared in parts (a) and (b) of Fig. 7, respectively.
+Depending on the power-water ratio of the CWP units, it will
+sometimes not be necessary to reduce the potable water production of
+all co-producers, when the budget of uncertainty increases. The total
+electricity and drinking water generated by the thermal units and CWP
+plants in three cases are represented in Fig. 8. It is revealed that while
+the aggregator considers the uncertainty of the electricity prices aiming
+to reduce the risk of the under-forecasted energy prices, the total
+electrical power and pure water produced by the generation stations
+will either decrease or not change. Therefore, the daily beneﬁt achieved
+from trading energy with the main electricity network will reduce.
+These curves enable the system operator to know how the generation
+patterns of the producers will change at each hour, when the actual
+energy prices may be diﬀerent from the forecasted values in 0–100% of
+the entire study period.
+In this research, the proﬁt objective function (1) was ﬁrstly
+Table 2
+The power and water generation factors of the CWP units.
+j
+aj
+bj
+cj
+dj
+ej
+fj
+Pj
+min
+Pj
+max
+W j
+min
+W j
+max
+Rj
+min
+Rj
+max
+1
+0.0434433
+0.043546
+0.037093
+−1.106
+−4.426
+937.4
+60
+800
+15
+200
+4
+15
+2
+0.0327881
+0.036305
+0.04261
+−1.475
+−5.901
+537.4
+20
+600
+13
+150
+4
+15
+Fig. 3. The forecasted values, upper bound and lower limit of the electricity prices.
+Table 3
+The maximum value of the price de-
+viation at each hour t,̂ λt.
+t̂
+λt
+1
+6.72
+2
+8.27
+3
+8.65
+4
+8.6
+5
+8.61
+6
+9.26
+7
+11.34
+8
+12.76
+9
+12.88
+10
+13.29
+11
+13.8
+12
+13.6
+13
+13.95
+14
+13.81
+15
+13.44
+16
+13.79
+17
+13.79
+18
+13.75
+19
+13.48
+20
+13.09
+21
+12.64
+22
+12.48
+23
+12.85
+24
+12.29
+Fig. 4. The expected proﬁt values versus the budget of uncertainty.
+F. Jabari, et al.
+Applied Thermal Engineering 162 (2019) 114258
+8
+
+maximized taking into account the operational limits (2)–(31) to ﬁnd
+the best generation schedules of the combined cycle units and thermal
+power plants during the sample day. In this case study, the uncertainty
+of the electricity market prices is not considered in the optimization
+process to determine the fresh water and power generation patterns of
+the producers before implementation of robust optimization algorithm.
+This scenario is called deterministic or risk-neutral because the ﬂuc-
+tuations of the energy rates are not considered and the budget of un-
+certainty is equal to zero (
+=
+Γ
+0). The forecasted values of the hourly
+electricity prices, shown in Fig. 3, are inserted in the deterministic
+proﬁt maximization problem (1)–(31). In the second case study, the
+uncertainty associated with energy market prices is modeled using the
+robust optimization approach. Therefore, the degree of conservatism,
+Γ, is changed to be more than 0 and less than 1, while solving the risk-
+constrained short-term optimization framework (47)–(49) and (3)–(31).
+The maximum deviation of the actual energy price from the forecasted
+one at hour t,̂ λt, is considered as shown in Fig. 3. Day-ahead generation
+schedules of thermal and CWP units are then compared and discussed in
+deterministic and robust decision making procedures.
+It is found that if the degree of conservatism increases, lower proﬁt
+will be obtained from selling energy to the local power system. Because,
+the system operator desires to hedge himself from the risk of the lower
+energy rates. Hence, the distance of the optimal operating points of the
+water-power hub system from the best solution (the highest proﬁt) will
+increase. If the aggregator of CWP and thermal units wants the greater
+proﬁt, the budget of uncertainty or robustness factor will reduce, as
+proved in Fig. 4. If the cogeneration company seeks the greater proﬁt,
+the power only units should generate more electricity and vice versa. If
+he wants to be immune against the risk of the under-estimated elec-
+tricity tariﬀs, he should intend the higher degrees of conservatism. In
+two robust cases with
+=
+Γ
+0.5 and
+=
+Γ
+1, the value of the electrical
+power procured by the thermal units is equal to or less than that found
+in deterministic or risk-neutral mode. In addition, when the decision
+maker optimally schedules the pure water and power production units
+under the severe-uncertain condition (
+=
+Γ
+1), the Genco will be able to
+decide how the co-generation units and power plants should be oper-
+ated to minimize the risk of the lower power market prices and max-
+imize the daily net proﬁt. When the energy rates are diﬀerent from the
+ 
+(a) Thermal unit 3 
+ 
+(b) Thermal unit 5 
+Fig. 5. The power generation of the thermal units 3
+and 5 for various levels of Γ.
+F. Jabari, et al.
+Applied Thermal Engineering 162 (2019) 114258
+9
+
+forecasted ones at the ﬁrst 12 h (
+=
+Γ
+0.5) and the whole study horizon
+(
+=
+Γ
+1), the system operator will be able to determine the hourly
+electricity and desalinated water generation schemes of the power
+plants and the CWP generating units under the worst cases. An increase
+in the degree of conservatism causes the daily proﬁt and the power
+output of the CWP producers decrease in order to hedge the cogen-
+eration company from the under-estimated energy prices. While con-
+sidering the uncertainty of the power market prices and minimizing the
+risk of their lower values, the power and potable water outputs of the
+generating units either decrease or not change, which causes the daily
+proﬁt gained from trading electrical power with upstream energy net-
+work decreases. If the real-time electricity prices diﬀer from the fore-
+casted ones in 0 to 100% of the whole time interval, the cogeneration
+company can ﬁnd how the power and drinkable water generation
+schemes of the generating units should be changed.
+5. Conclusion
+In this paper, the day-ahead robust self-scheduling of the conven-
+tional combined potable water and power generation system was pre-
+sented. It was assumed that the power only units and the CWP plants
+were co-dispatched to supply the freshwater and energy demands of the
+benchmark network. The main objective of the CWP units is to generate
+electricity, but the waste heat of the high-temperature ﬂue gases is
+recovered for seawater puriﬁcation. In other words, the freshwater was
+considered as a byproduct. An aggregator of thermal units and co-
+producers was responsible for maximization of daily proﬁt obtained
+from selling electricity. Meanwhile, the uncertain energy prices aﬀect
+the expected revenue and the total proﬁt gained over the study period.
+Therefore, a robust non-linear programming methodology was pro-
+posed to incorporate the variable nature of the electricity market prices
+in the water-energy nexus model. Firstly, a deterministic or risk-neutral
+optimization problem was solved to ﬁnd the optimal generation
+(a) Co-producer 1 
+(b) Co-generator 2 
+Fig. 6. Daily electricity production of CWP plants 1 and 2 in risk-neutral and risk-aversion optimization approaches.
+F. Jabari, et al.
+Applied Thermal Engineering 162 (2019) 114258
+10
+
+schedules and the greatest level of the daily proﬁt. Afterward, the
+budget of uncertainty was changed from 0 to 100% in order to in-
+vestigate the system performance under the ﬂuctuations of the elec-
+tricity rates. It is found that if the budget of uncertainty increases, the
+aggregator of CWP plants and thermal units will gain the lower proﬁt to
+hedge himself from the risk of the lower market prices. If the decision
+maker desires a higher proﬁt, the degree of conservatism or robustness
+will decrease. Moreover, the power and drinkable water production
+patterns are compared in risk-neutral and robustness iterations to know
+how these units should be operated when the actual electricity prices
+are diﬀerent from the forecasted values at
+≤
+≤
+Γ
+0
+1% of the whole
+study horizon. The proposed approach enables the system operator to
+make the robust decisions and schedule the potable water and power
+generation of the conventional thermal and CWP units against the un-
+desirable energy prices. As the future trends, the natural gas-water-
+power integrated networks should be studied using the optimal load
+ﬂow analysis and considering the interconnection between the gas-ﬁred
+Brayton power generation cycle, gas consumed by the gas load centers,
+gas transmitted via the pipelines, gas extracted from suppliers/gas
+ﬁelds or wells, and the natural gas consumption in thermally-driven
+desalination plants. In the natural gas-fresh water-power nexus model,
+the economic beneﬁt of the power to gas technology, that converts the
+electrical power to the gas fuel, should also be discussed. In addition,
+the risk-seeker decision making strategy can be implemented to the
+water-power nexus model as well as the gas, water, energy hybrid grids
+to beneﬁt from the overestimated electricity market prices and the
+under-estimated values of the gas/water/power demands.
+Acknowledgements
+This paper is supported by the Research Aﬀairs Oﬃce of University
+of Tabriz, Tabriz, Iran under Grant No. S-4583, as part of a post-doc-
+toral research project.
+(a) CWP unit 1 
+(b) CWP unit 2 
+Fig. 7. Robust fresh water generation pattern of
+CWP units in various levels of Γ.
+F. Jabari, et al.
+Applied Thermal Engineering 162 (2019) 114258
+11
+
+Appendix A. Supplementary material
+Supplementary data to this article can be found online at https://
+doi.org/10.1016/j.applthermaleng.2019.114258.
+References
+[1] M.A. Hanjra, M.E. Qureshi, Global water crisis and future food security in an era of
+climate change, Food Policy 35 (2010) 365–377.
+[2] A. Tavana, A.E. Javid, E. Houshfar, A.M. Andwari, M. Ashjaee, S. Shoaee,
+A. Maghmoomi, F. Marashi, Toward renewable and sustainable energies perspective
+in Iran, Renew. Energy (2019).
+[3] D.L. Bijl, P.W. Bogaart, T. Kram, B.J.M. de Vries, D.P. van Vuuren, Long-term water
+demand for electricity, industry and households, Environ. Sci. Policy 55 (2016)
+75–86.
+[4] C. Zhang, X. Chen, Y. Li, W. Ding, G. Fu, Water-energy-food nexus: concepts,
+questions and methodologies, J. Clean. Prod. 195 (2018) 625–639.
+[5] W.F. He, F. Wu, Y.P. Kong, T. Wen, J.J. Chen, D. Han, Parametric analysis of a
+power-water cogeneration system based on single-extraction organic Rankine cycle,
+Appl. Therm. Eng. 148 (2019) 382–390.
+[6] R. Connor, The United Nations world water development report 2015: water for a
+sustainable world, UNESCO Publishing, 2015.
+[7] M.W. Shahzad, M. Burhan, L. Ang, K.C. Ng, Energy-water-environment nexus un-
+derpinning future desalination sustainability, Desalination 413 (2017) 52–64.
+[8] T.B. Andersen, C.-J. Dalgaard, Power outages and economic growth in Africa,
+Energy Econ. 38 (2013) 19–23.
+[9] F. Jabari, H. Jabari, B. Mohammadi-ivatloo, J. Ghafouri, Optimal short-term co-
+ordination of water-heat-power nexus incorporating plug-in electric vehicles and
+real-time demand response programs, Energy (2019).
+[10] S.D. Tsolas, M.N. Karim, M.M.F. Hasan, Optimization of water-energy nexus: a
+network representation-based graphical approach, Appl. Energy 224 (2018)
+230–250.
+[11] M. Alipour, B. Mohammadi-Ivatloo, M. Moradi-Dalvand, K. Zare, Stochastic sche-
+duling of aggregators of plug-in electric vehicles for participation in energy and
+ancillary service markets, Energy 118 (2017) 1168–1179.
+[12] J. Yang, B. Chen, Energy–water nexus of wind power generation systems, Appl.
+Energy 169 (2016) 1–13.
+[13] A. Rajeswaran, S. Narasimhan, S. Narasimhan, A graph partitioning algorithm for
+leak detection in water distribution networks, Comput. Chem. Eng. 108 (2018)
+11–23.
+[14] N. Samir, R. Kansoh, W. Elbarki, A. Fleiﬂe, Pressure control for minimizing leakage
+in water distribution systems, Alexandria Eng. J. 56 (2017) 601–612.
+[15] Q. Xu, R. Liu, Q. Chen, R. Li, Review on water leakage control in distribution
+networks and the associated environmental beneﬁts, J. Environ. Sci. 26 (2014)
+955–961.
+[16] A.S. Kim, H.-J. Kim, H.-S. Lee, S. Cha, Dual-use open cycle ocean thermal energy
+conversion (OC-OTEC) using multiple condensers for adjustable power generation
+and seawater desalination, Renew. Energy 85 (2016) 344–358.
+[17] Z. Li, A. Siddiqi, L.D. Anadon, V. Narayanamurti, Towards sustainability in water-
+energy nexus: ocean energy for seawater desalination, Renew. Sustain. Energy Rev.
+82 (2018) 3833–3847.
+[18] D.C. Hicks, G.R. Mitcheson, C.M. Pleass, J.F. Salevan, Delbouy: Ocean wave-pow-
+ered seawater reverse osmosis desalination systems, Desalination 73 (1989) 81–94.
+[19] L. Fernández Prieto, G. Rodríguez Rodríguez, J. Schallenberg Rodríguez, Wave
+energy to power a desalination plant in the north of Gran Canaria Island: wave
+resource, socioeconomic and environmental assessment, J. Environ. Manage. 231
+(2019) 546–551.
+[20] R. Loisel, M. Sanchez-Angulo, F. Schoefs, A. Gaillard, Integration of tidal range
+energy with undersea pumped storage, Renew. Energy 126 (2018) 38–48.
+[21] B. Li, J.F. DeCarolis, A techno-economic assessment of oﬀshore wind coupled to
+oﬀshore compressed air energy storage, Appl. Energy 155 (2015) 315–322.
+[22] F. Jabari, B. Mohammadi-ivatloo, H. Ghaebi, M.-B. Bannae-shariﬁan, Biogas fueled
+combined cooling, desalinated water and power generation systems, J. Clean. Prod.
+219 (2019) 906–924.
+[23] Y. Ben-Haim, Info-Gap Decision Theory: Decisions under Severe Uncertainty,
+Elsevier, 2006.
+[24] J.D. Becerra-Ruiz, R.G. Gonzalez-Huerta, J. Gracida, A. Amaro-Reyes, G. Macias-
+Bobadilla, Using green-hydrogen and bioethanol fuels in internal combustion en-
+gines to reduce emissions, Int. J. Hydrogen Energy 44 (2019) 12324–12332.
+[25] A.S. Nejad, A.R. Zahedi, Optimization of biodiesel production as a clean fuel for
+thermal power plants using renewable energy source, Renew. Energy 119 (2018)
+365–374.
+[26] C. Ghenai, A. Merabet, T. Salameh, E.C. Pigem, Grid-tied and stand-alone hybrid
+solar power system for desalination plant, Desalination 435 (2018) 172–180.
+[27] O. Garbrecht, M. Bieber, R. Kneer, Increasing fossil power plant ﬂexibility by in-
+tegrating molten-salt thermal storage, Energy 118 (2017) 876–883.
+[28] M. Tajik Mansouri, M. Amidpour, J.M. Ponce-Ortega, Optimal integration of or-
+ganic Rankine cycle and desalination systems with industrial processes: Energy-
+water-environment nexus, Appl. Therm. Eng. 158 (2019) 113740.
+[29] M.d.A. Al-Nimr, K.S. Qananba, A solar hybrid system for power generation and
+water distillation, Solar Energy 171 (2018) 92–105.
+[30] A. Giwa, N. Akther, A.A. Housani, S. Haris, S.W. Hasan, Recent advances in hu-
+midiﬁcation dehumidiﬁcation (HDH) desalination processes: Improved designs and
+productivity, Renew. Sustain. Energy Rev. 57 (2016) 929–944.
+[31] A.M. Awad, R. Jalab, J. Minier-Matar, S. Adham, M.S. Nasser, S.J. Judd, The status
+of forward osmosis technology implementation, Desalination 461 (2019) 10–21.
+[32] S.R. Hosseini, M. Amidpour, A. Behbahaninia, Thermoeconomic analysis with re-
+liability consideration of a combined power and multi stage ﬂash desalination
+plant, Desalination 278 (2011) 424–433.
+[33] M. Moghimi, M. Emadi, A. Mirzazade Akbarpoor, M. Mollaei, Energy and exergy
+investigation of a combined cooling, heating, power generation, and seawater de-
+salination system, Appl. Therm. Eng. 140 (2018) 814–827.
+[34] C.P. Underwood, M. Royapoor, B. Sturm, Parametric modelling of domestic air-
+source heat pumps, Energy Build. 139 (2017) 578–589.
+[35] Y. Cai, D.-D. Zhang, D. Liu, F.-Y. Zhao, H.-Q. Wang, Air source thermoelectric heat
+pump for simultaneous cold air delivery and hot water supply: Full modeling and
+performance evaluation, Renew. Energy 130 (2019) 968–981.
+[36] W. Khiari, M. Turki, J. Belhadj, Power control strategy for PV/Wind reverse osmosis
+desalination without battery, Control Eng. Practice 89 (2019) 169–179.
+[37] H. Ishaq, I. Dincer, G.F. Naterer, Exergy-based thermal management of a steel-
+making process linked with a multi-generation power and desalination system,
+Energy 159 (2018) 1206–1217.
+[38] A.S.M.M. Hasan, M.T. Hoq, P. Thollander, Energy management practices in
+Bangladesh's iron and steel industries, Energy Strategy Rev. 22 (2018) 230–236.
+[39] L. Sun, I. Harjunkoski, P. Castro, Resource-task network based approach for in-
+dustrial demand side management of steel production, in: A. Kraslawski, I. Turunen
+(Eds.), Computer Aided Chemical Engineering, Vol. 32 Elsevier, 2013, pp. 259–264.
+[40] Y. Noorollahi, S. Taghipoor, B. Sajadi, Geothermal sea water desalination system
+(GSWDS) using abandoned oil/gas wells, Geothermics 67 (2017) 66–75.
+[41] Y. Noorollahi, M. Pourarshad, S. Jalilinasrabady, H. Youseﬁ, Numerical simulation
+of power production from abandoned oil wells in Ahwaz oil ﬁeld in southern Iran,
+Geothermics 55 (2015) 16–23.
+[42] K. Wang, Y.-L. He, Thermodynamic analysis and optimization of a molten salt solar
+power tower integrated with a recompression supercritical CO2 Brayton cycle based
+on integrated modeling, Energy Convers. Manage. 135 (2017) 336–350.
+(a) Electricity 
+(b) Potable water 
+Fig. 8. Total electricity and fresh water generated by CWP units and thermal
+power plants for deterministic and robust solutions.
+F. Jabari, et al.
+Applied Thermal Engineering 162 (2019) 114258
+12
+
+[43] A. Fouda, S.A. Nada, H.F. Elattar, S. Rubaiee, A. Al-Zahrani, Performance analysis of
+proposed solar HDH water desalination systems for hot and humid climate cities,
+Appl. Therm. Eng. 144 (2018) 81–95.
+[44] R. Segurado, J.F.A. Madeira, M. Costa, N. Duić, M.G. Carvalho, Optimization of a
+wind powered desalination and pumped hydro storage system, Appl. Energy 177
+(2016) 487–499.
+[45] U. Yaqub, A. Al-Nasser, T. Sheltami, Implementation of a hybrid wind-solar desa-
+lination plant from an Internet of Things (IoT) perspective on a network simulation
+tool, Appl. Comput. Inform. 15 (2019) 7–11.
+[46] Z. Dong, M. Liu, X. Huang, Y. Zhang, Z. Zhang, Y. Dong, Dynamical modeling and
+simulation analysis of a nuclear desalination plant based on the MED-TVC process,
+Desalination 456 (2019) 121–135.
+[47] W.W. Lee, S.J. Bae, Y.H. Jung, H.J. Yoon, Y.H. Jeong, J.I. Lee, Improving power and
+desalination capabilities of a large nuclear power plant with supercritical CO2
+power technology, Desalination 409 (2017) 136–145.
+[48] W.F. He, H.X. Yang, D. Han, Thermodynamic analysis of a power and water com-
+bined system with geothermal energy utilization, Geothermics 76 (2018) 106–115.
+[49] J. Tominaga, 3 - Steam turbine cycles and cycle design optimization: Advanced
+ultra-supercritical thermal power plants and nuclear power plants, in: T. Tanuma
+(Ed.), Advances in Steam Turbines for Modern Power Plants, Woodhead Publishing,
+2017, pp. 41–56.
+[50] R.L. Murray, K.E. Holbert, Chapter 18 – Nuclear Power Plants, in: R.L. Murray, K.E.
+Holbert (Eds.), Nuclear Energy, eighth ed., Butterworth-Heinemann, 2020, pp.
+325–348.
+[51] R.A. Jabr, Robust self-scheduling under price uncertainty using conditional value-
+at-risk, IEEE Trans. Power Syst. 20 (2005) 1852–1858.
+[52] S.J. Kazempour, A.J. Conejo, C. Ruiz, Strategic generation investment using a
+complementarity approach, IEEE Trans. Power Syst. 26 (2010) 940–948.
+[53] C. Sahin, Z. Li, M. Shahidehpour, I. Erkmen, Impact of natural gas system on risk-
+constrained midterm hydrothermal scheduling, IEEE Trans. Power Syst. 26 (2010)
+520–531.
+[54] S. Nojavan, K. Zare, Optimal energy pricing for consumers by electricity retailer,
+Int. J. Elect. Power Energy Syst. 102 (2018) 401–412.
+[55] H.Y. Yamin, Fuzzy self-scheduling for GenCos, IEEE Trans. Power Syst. 20 (2005)
+503–505.
+[56] T.A. Nakabi, P. Toivanen, An ANN-based model for learning individual customer
+behavior in response to electricity prices, Sustain. Energy, Grids Networks 18
+(2019) 100212.
+[57] T.C. Bora, V.C. Mariani, L.D.S. Coelho, Multi-objective optimization of the en-
+vironmental-economic dispatch with reinforcement learning based on non-domi-
+nated sorting genetic algorithm, Appl. Therm. Eng. 146 (2019) 688–700.
+[58] A. Soroudi, Power System Optimization Modeling in GAMS, Springer, 2017.
+[59] A.L. Soyster, Convex programming with set-inclusive constraints and applications
+to inexact linear programming, Operat. Res. 21 (1973) 1154–1157.
+[60] https://www.gams.com/.
+[61] A. Soroudi, Robust optimization based self scheduling of hydro-thermal Genco in
+smart grids, Energy 61 (2013) 262–271.
+[62] A.J. Conejo, J. Contreras, R. Espínola, M.A. Plazas, Forecasting electricity prices for
+a day-ahead pool-based electric energy market, Int. J. Forecast. 21 (2005) 435–462.
+F. Jabari, et al.
+Applied Thermal Engineering 162 (2019) 114258
+13

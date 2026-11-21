@@ -1,0 +1,2268 @@
+
+===== PAGE 1 =====
+Quantitative engineering systems modeling and analysis
+of the energy–water nexus
+William N. Lubega a, Amro M. Farid a,b,⇑
+a Masdar Institute, Engineering Systems & Management, P.O. Box 54224, Abu Dhabi, United Arab Emirates
+b MIT Mechanical Engineering Department, 77 Massachusetts Avenue, Cambridge, MA 02139, United States
+h i g h l i g h t s
+ A quantitative, engineering systems model of the energy–water nexus is developed.
+ System model built from bond graph representations of descriptive SysML functions.
+ Use of physics-based models and increased scope improves on existing approaches.
+ Model feasibility, advantages and application demonstrated in illustrative example.
+a r t i c l e
+i n f o
+Article history:
+Received 2 March 2014
+Received in revised form 25 July 2014
+Accepted 29 July 2014
+Available online 16 September 2014
+Keywords:
+Power systems
+Water resources
+Wastewater
+Sustainable development
+Bond graph modeling
+a b s t r a c t
+The energy–water nexus has been studied predominantly through discussions of policy options supported
+by data surveys and technology considerations. At a technology level, there have been attempts to
+optimize coupling points between the electricity and water systems to reduce the water-intensity of
+technologies in the former and the energy-intensity of technologies in the latter. To our knowledge, there
+has been little discussion of the energy–water nexus from an engineering systems perspective. A previous
+work presented a reference architecture of the energy–water nexus in the electricity supply, engineered
+water supply and wastewater management systems developed using the Systems Modeling Language
+(SysML). In this work, bond graphs are used to develop models that characterize the salient transmissions
+of matter and energy in and between the electricity, water and wastewater systems as identiﬁed in the
+reference architecture. These models, when combined, make it possible to relate a region’s energy and
+municipal water consumption to the required water withdrawals in an input–output model.
+ 2014 Published by Elsevier Ltd.
+1. Introduction
+1.1. Motivation
+The energy–water nexus can be deﬁned [1–4] as a system-of-
+systems composed of one infrastructure system with the artifacts
+necessary to describe a full energy value chain and another infra-
+structure system with the artifacts necessary to describe a full
+water value chain. Large volumes of water are withdrawn and
+consumed from water sources every day for electricity generation
+processes [5]. Simultaneously, extraction, treatment and convey-
+ance of municipal water and treatment of wastewater are depen-
+dent on signiﬁcant amounts of electrical energy [5].
+This energy–water nexus, which couples the critical systems
+upon which human civilization depends, has long existed but is
+becoming increasingly strained due to a number of global mega-
+trends [6]: (i) growth in total demand for both electricity and
+water driven by population growth (ii) growth in per capita
+demand for both electricity and water driven by economic growth
+(iii) distortion of availability of fresh water due to climate change
+(iv) multiple drivers for more electricity-intensive water and more
+water-intensive electricity such as enhanced water treatment stan-
+dards,water consuming ﬂue gas management processes at thermal
+power plants and aging infrastructure which incurs greater losses.
+1.2. Literature gap
+A number of discussions on the energy–water nexus have been
+published in recent years. Overviews of the various challenges
+related to the nexus, as well as discussions of various policy options
+for the amelioration of the risks can be found in [6–12]. Empirical
+http://dx.doi.org/10.1016/j.apenergy.2014.07.101
+0306-2619/ 2014 Published by Elsevier Ltd.
+⇑Corresponding author at: Masdar Institute, Engineering Systems & Manage-
+ment, P.O. Box 54224, Abu Dhabi, United Arab Emirates. Tel.: +971 2 810 9333.
+E-mail addresses: wlubega@masdar.ac.ae (W.N. Lubega), afarid@masdar.ac.ae,
+amfarid@mit.edu (A.M. Farid).
+Applied Energy 135 (2014) 142–157
+Contents lists available at ScienceDirect
+Applied Energy
+journal homepage: www.elsevier.com/locate/apenergy
+
+===== PAGE 2 =====
+evaluations of the electricity-intensity of water technologies and the
+water-intensity of electricity technologies have been reported and
+analyzed in [13–18]. Efforts have been made towards physics-based
+models in [19,20] in which formulations for estimating water use by
+thermal power plants based on the heat balance of the plant have
+been derived. An integrated operational view of the water and
+power networks has also been presented as a simultaneous co-opti-
+mization for the economic dispatch of power and water [21–27].
+Less literature is available on the development of tools for
+integrated management of electricity and water supply systems.
+A decision support system for the United States based on an under-
+lying system dynamics model is described in [28]. The model
+enables the exploration of various water and electricity policies
+and relies on statistical relationships between the independent
+variables of population and economic growth and the dependent
+variables of electricity and water demand. Recent work [29] has
+interfaced the well known Regional Energy Deployment System
+(ReEDS) and Water Evaluation and Planning (WEAP) tools to create
+a platform for determining the water resource implications of
+different electricity sector development pathways. The platform
+uses empirical consumption and withdrawal coefﬁcients reported
+in [16] for the interface.
+To the authors’ knowledge however, a transparent physics-
+based model that interfaces a model of the electricity system to
+models of the municipal water and wastewater systems enabling
+an input–output analysis of these three systems in unison has
+not been presented. This work attempts to present and apply this
+system-of-systems model.
+1.3. Scope
+This paper adopts, as it’s modeling scope, the engineered elec-
+tricity, water and wastewater infrastructure as well as critical
+energy and matter ﬂows across a system-of-systems boundary
+encompassing these three interconnected systems.
+1.4. Relevance
+The holistic, integrated modeling approach presented in this
+paper is of particular relevance to places with integrated electricity
+and water utilities (e.g. countries in the Gulf Cooperative Council
+(GCC)). The model enables the evaluation and comparison of differ-
+ent technology levers across the three systems of interest thus
+informing management and government policy around water,
+environment and energy. The modeling approach may also be
+applied to regions with separate electricity, water and wastewater
+utilities to demonstrate potential areas of coordination.
+1.5. Contribution
+In this paper, a quantitative, physics-based, engineering sys-
+tems model of the energy–water nexus is developed as a ﬁrst of
+its kind. This is in contrast to the existing literature which either
+has a smaller scope or uses empirical evaluations of water and
+energy intensity. The model uses ﬁrst-pass but often-cited engineer-
+ing models of various exchanges of mater and energy in and
+between the electricity, water and wastewater systems. Hence,
+the paper has a foundational nature in two regards. The ﬁrst-pass
+engineering models replace the various empirical data surveys on
+the water intensity of energy technologies and energy intensity
+of water technologies [13,15]. Also, the ﬁrst-pass models may be
+reﬁned in the future as per the needs of the analytical application.
+The presented model builds upon a reference architecture previ-
+ously provided in [2] and is thus a reference model that can: (i)
+provide a foundation for qualitative discussions in the general case,
+Nomenclature
+DTW
+permissible temperature increases of water sources
+CG
+induced photocurrents at locations of solar photovoltaic
+installations
+kG
+wind speed at locations of wind farms
+H flue
+G
+speciﬁc sensible heat content of generator ﬂue gas
+H G
+lower heating value of fuel used at generators
+pW
+osmotic pressure of water sources
+_MG
+process steam ﬂow rate in thermal generators
+_MG
+fuel consumption of generators
+IP
+RMS current drawn by pumps in water distribution
+network
+ID
+RMS current drawn by wastewater treatment facilities
+IF
+RMS current drawn by water treatment plants
+IG
+RMS current supplied by generators
+IL
+RMS current drawn by all electrical load nodes
+IN
+RMS current drawn by pipes and pumps in non-potable
+recycled wastewater distribution network
+IL0
+RMS current drawn by all electrical nodes excluding
+current for water system purposes
+PD
+pressures imposed by wastewater treatment plants on
+non-potable recycled wastewater distribution network
+PF
+pressures imposed by water treatment plants on water
+distribution network
+PJ
+pressures at non-potable recycled wastewater demand
+nodes
+PJ
+pressures at water demand nodes
+PW
+pressures of water sources
+Q P
+water ﬂow rate through pipes
+Q D
+throughput of wastewater treatment facilities
+Q disp
+D
+disposable efﬂuent production rate at wastewater treat-
+ment facilities
+Q rec
+D
+non-potable recycled wastewater production rate at
+wastewater treatment facilities
+Q E
+water demand rate at non-potable recycled wastewater
+demand nodes
+Q F
+water supplied by water treatment and desalination
+plants
+Q brine
+F
+brine produced by water treatment and desalination
+plants
+Q evap
+G
+water
+evaporation
+rate
+associated
+with
+electrical
+generation units
+Q in
+G
+water withdrawal rate by generators
+Q out
+G
+generator efﬂuent ﬂow rate
+Q J
+water demand rate at demand nodes
+Q S
+water withdrawal rate from water storage units
+Q evap
+S
+water evaporation rate from water storage units
+Q W
+water withdrawal rate from sources
+Q El
+water leakage rate at non-potable recycled wastewater
+demand nodes
+Q Jl
+water leakage rate at demand nodes
+VP
+RMS voltages applied to pumps in water distribution
+network
+VF
+RMS voltages applied to water treatment plants
+VG
+RMS voltage at generators
+VL
+RMS voltage at electrical loads
+VN
+RMS voltages applied to pumps in non-potable recycled
+wastewater distribution network
+patm
+atmospheric pressure
+W.N. Lubega, A.M. Farid / Applied Energy 135 (2014) 142–157
+143
+
+===== PAGE 3 =====
+and (ii) be instantiated for quantitative analysis of a particular case
+as in Section 7.
+1.6. Paper outline
+The remainder of this paper continues in four sections. The bulk
+of the paper is devoted to the development and presentation of
+models. This is achieved sequentially. First, a high level systems-
+of-system view is given in Section 2. Then each of three component
+infrastructure systems: electricity, water, and wastewater are
+addressed in Sections 3–5 respectively. Section 6 gives a recapitula-
+tion of the model in terms model outputs of interest. Section 7 then
+presents an illustrative example in which the developed models are
+used to analyze the exchanges of energy and water in a simple,
+hypothetical geographical region. Finally, Section 8 concludes.
+2. Systems-of-systems modeling
+This section delineates the system boundary and proceeds to
+describe the modeling strategy that is employed for the following
+three modeling sections.
+2.1. System boundary and context
+Fig. 1 chooses the system boundary around the three engineer-
+ing systems of electricity, water and wastewater [1–4]. It also
+depicts the high level ﬂows of matter and energy between them
+and the natural environment. The labels A through S represent
+key ﬂows of interest across the system boundary and between
+the three infrastructure systems. A subset of these are determined
+for the illustrative example in Section 7 and used to determine
+certain measures of interest.
+Electricity, potable water, and wastewater are all primarily sta-
+tionary within a region’s infrastructure. In contrast, the traditional
+fuels of natural gas, oil, and coal are open to trade. Consequently,
+the fuel processing function, though it has a signiﬁcant water foot-
+print, is left outside of the system boundary. An advantage of this
+choice of system boundary is that the three engineering systems
+all fall under the purview of grid operators; and in some nations,
+such as the United Arab Emirates, all three grid operations are
+united within a single semi-private organization. The system
+context diagram shown in Fig. 1 makes it possible to relate a
+region’s energy and municipal water use to the required water
+and energy withdrawals in a complex input–output model.
+2.2. Modeling strategy
+The model presented here is built upon the foundation of a previ-
+ously developed graphical model described in SysML [1–4]. This
+model showed that the energy–water nexus is not just composed
+of many component artifacts but also a large heterogeneity of func-
+tions; each with multiple input and output ﬂows of matter and
+energy. The model presented here is the quantiﬁcation of the
+previous work and thus develops a set of equations for each function
+found within the energy–water nexus. While the number of
+equations and variables for each function is modest, the shear heter-
+ogeneity of functions within the energy–water nexus necessitates
+that the full model be quite large to cover the full scope of interest.
+The modeling strategy for this work progresses in three steps as
+shown in Fig. 2. The system context diagram shown above allows
+for the mathematical modeling of each of the individual infrastruc-
+ture systems and their respective components. Each infrastructure
+system is taken in turn using the same modeling strategy. First, a
+SysML activity diagram [30] is presented for the full scope of the
+Electricity 
+Potable Recycled Wastewater
+Delivered Water
+Electrical energy for 
+wastewater treatment
+Electrical energy for 
+water supply
+Disposable eﬄuent
+Water withdrawal for 
+electricity generaon  
+& storage
+Withdrawal by water supply system
+Processed  
+fuel 
+Raw fuel 
+Fuel producon 
+Heat for
+ cogeneraon
+Boundary: Engineered Water, Electricity, Wastewater systems
+Engineered 
+water supply 
+system
+Wastewater 
+management 
+system
+Leaked water
+Evaporave
+losses
+Electrical losses
+Brine
+Solar 
+irradiaon 
+and wind 
+S 
+M 
+L1 
+C 
+A 
+K 
+R 
+F 
+E 
+B 
+Electricity 
+supply system
+D 
+J 
+N 
+P 
+Evaporave Losses 
+Water 
+Altered Water 
+Other Energy 
+Collectable 
+wastewater
+Q 
+Electrical energy for 
+non-water use
+G 
+H 
+Thermal losses
+Power Plant Eﬄuent 
+I 
+Non-potable              
+Recycled 
+Wastewater 
+T 
+L2 
+Leaked water
+Surface fresh 
+water
+Ground water
+Sea water
+Fig. 1. System context diagram for combined electricity, water and wastewater systems.
+144
+W.N. Lubega, A.M. Farid / Applied Energy 135 (2014) 142–157
+
+===== PAGE 4 =====
+engineered infrastructure system of concern. This allows for activ-
+ity blocks to be deﬁned for each of the component functions within
+the engineered system. Second, in order to transition from the
+graphical SysML language to a mathematical model each input
+and output associated with an activity block is represented as a
+ﬂow of power in its respective energy domain (e.g. electrical, ﬂu-
+idic, thermal). Each power ﬂow has two power associated variables
+that can be referred to as an effort and a ﬂow; the product of which
+is the power. Examples of the former are voltages and pressures,
+while examples of the latter are currents and volumetric ﬂow rates.
+The power variables associated with each power ﬂow on the SysML
+diagram can be distinguished as independent variables which are
+imposed on the function and dependent variables. Finally, mathe-
+matical models that express the dependent variables as functions
+of the independent variables are developed. As mentioned in Sec-
+tion 1.5, the chosen models for each function are ﬁrst-pass but
+often-cited engineering models. In the future, because the modeling
+strategy is very much modular, a practitioner may replace any of
+these functions with a more detailed physics-based model so long
+as it respects the high level functional interfaces. Alternatively, this
+modular modeling strategy can incorporate functional models
+developed through rigorous system identiﬁcation.
+The development of a transparent physics-based model for the
+energy–water nexus naturally brings about considerations of its
+practical implementation; both in physical modeling as well as
+numerical computation. In regards to physical modeling, there
+exist industrial grade multi-energy domain physical modeling soft-
+ware packages well-accepted by industry and academia alike.
+Dymola/Modelica [31], for example, has an active user community,
+lends itself to optimization problems [32] and has been demon-
+strated on models with over 100,000 equations [33]. Similarly,
+the General Algebraic Modeling System [34] provides an optimiza-
+tion-oriented modeling language. It’s in-built nonlinear solvers
+have also been demonstrated on systems with over 100,000 equa-
+tions [35].
+Grid equations of the electricity, water and wastewater grids
+are modeled by means of edge-node incidence matrices. The
+remaining identiﬁed functions are developed using the bond graph
+methodology. The interested reader is referred to [36,37] for an
+introduction to bond graph modeling. The bond graph methodol-
+ogy presents a number of practical advantages in this work. First,
+this methodology readily facilitates the inter-energy-domain mod-
+eling necessitated by the heterogeneous nature of the energy–
+water nexus. Next, it clearly distinguishes between the directional-
+ity found in the SysML activity diagrams and the causality of the
+associated quantitative models. As a result, it clariﬁes the depen-
+dence and independence of variables in the input–output model
+at the level of each individual function and thus ultimately for
+the full scope of the energy–water nexus model. This aspect is
+particularly necessary to address the potential for closed loops of
+matter and energy. The bond graph methodology also allows the
+reuse of mathematical models within multiple functions as will
+be seen repeatedly with components such as pumps. Finally, the
+bond graph methodology facilitates the development of more
+complex models of the system functions either to incorporate
+previously neglected functionality or introduce dynamic effects.
+2.3. Conventions of modeling notation
+A wide range of variables across the three systems of interest
+are modeled in this work. The reader is referred to the nomencla-
+ture section for a full description of variables used in the models in
+Sections 3–5. As a general guide however, the convention used for
+the power variables is that boldface upper case letters are used to
+represent vector quantities and lower case letters are used to rep-
+resent scalar quantities. For uniformity, this convention is followed
+even with variables for which it is common to represent scalar
+quantities with upper case letters; for example, lower case t is used
+to represent scalar temperatures rather than the more common
+upper case T. The letters used to represent the different power
+variables are as follows:
+ i 2 I – RMS current
+ v 2 V – RMS voltage
+ q 2 Q – Volumetric ﬂow rate
+ p 2 P – Pressure
+ h 2 H – Speciﬁc enthalpy
+ t 2 T – Temperature
+ m 2 M – Fuel consumption rate
+ m 2 M – Steam mass ﬂow rate
+Additionally, the subscripts of these variables are denoted by
+the set of facilities to which they belong. Lower case subscripts
+are used for scalar quantities while boldface upper case subscripts
+are used for vector quantities:
+ f 2 F – Node in the water distribution network with known
+pressure (water treatment plant)
+ j 2 J – Node in water distribution network with unknown
+pressure
+ e 2 E – Node in non-potable recycled wastewater distribution
+network with unknown pressure
+ p 2 P
+– Water distribution link (includes both pipes and
+distribution pumps)
+ n 2 N – Non-potable recycled wastewater distribution link
+(includes both pipes and distribution pumps)
+ g 2 G – Generator
+ l 2 L – Electrical load
+ t 2 T – Electrical transmission line
+ w 2 W – Water source i.e. river, lake, aquifer or the sea
+ s 2 S – Water storage units, both tanks and artiﬁcial reservoirs
+ d 2 D – Wastewater treatment plant
+3. Model of the electricity system
+Fig. 3 shows the electricity system as a value chain. The four
+most prominent electricity generation technologies of thermal,
+hydroelectric, wind and solar PV are shown. These technologies
+have varying water withdrawal and consumption footprints.
+Thermal generation requires large volumes of water for cooling
+purposes and this requirement is one of the chief concerns
+associated with the energy–water nexus. Hydroelectric power
+requires ﬂowing water to drive generating turbines. Solar panels
+and wind turbines have embedded water consumption due to their
+Presentation of SysML
+Activity Diagram
+Identiﬁcation of Independent
+and Dependent Power Variables
+Development of Function Model
+Fig. 2. Modeling strategy.
+W.N. Lubega, A.M. Farid / Applied Energy 135 (2014) 142–157
+145
+
+===== PAGE 5 =====
+manufacturing processes but do not have any signiﬁcant water
+requirements in operation. Bond graph models for each of these
+are developed below following the process in Fig. 2.
+3.1. Generate electricity-hydro
+Independent variables: pin
+w; pout
+w ; ig.
+Dependent variables: qin
+g ; qout
+g ;vg.
+Model function:
+qin
+g ¼ fhydroqin ð½pin
+w; pout
+w ; igÞ
+qout
+g
+¼ fhydroqout ð½pin
+w; pout
+w ; igÞ
+vg ¼ fhydrov ð½pin
+w; pout
+w ; igÞ
+Fig. 4 shows a bond graph model of a hydroelectric power genera-
+tion station maintaining the input and output interfaces of the asso-
+ciated activity in Fig. 3. Water drawn from a reservoir at a pressure
+pin
+w drives a turbine that converts the hydraulic energy of the falling
+water into mechanical energy and that is represented in Fig. 4 with
+an ideal gyrator of modulus k1 as in [38]. The turbine, in turn, drives
+an AC generator for which a simple model presented in [36] is a
+gyrator modulated by the displacement of the rotor. As the interest
+in this work is not in the dynamic behavior of this generator, this
+model is further simpliﬁed to an ideal gyrator with modulus k2 as
+shown in the ﬁgure. Elements Re; Rm and Rf represent resistances
+in the electrical, mechanical and ﬂuidic domains.
+Making the simplifying assumptions that the penstock resis-
+tance (Rf ) is linear, and that there is no spillage (qin
+g ¼ qout
+g
+¼ qg),
+the voltage vg generated by the power station and the water qg
+withdrawn from the water source to drive generation can be deter-
+mined as:
+vg ¼
+k1k2
+k
+2
+1 þ RmRf
+"
+#
+pw 
+k2Rf
+k
+2
+1 þ RmRf
+þ Re
+"
+#
+ig
+ð1Þ
+Rm
+k1 þ Rf Rm
+
+
+pw þ
+k2
+k1 þ Rf Rm
+
+
+ig
+ð2Þ
+where pw ¼ pin
+w  pout
+w . The model in Fig. 4 does not show the evap-
+orative losses associated with hydroelectric generation. There does
+not exist any causality between the power generation process and
+these losses as the rate of evaporation from a particular reservoir
+will not be altered if the dam is generating below or at its full capac-
+ity. Furthermore, the water stored in the reservoir is often used not
+only for power generation but for water supply and thus the evap-
+oration cannot be fully ascribed to electricity generation. The evap-
+orative consumption is therefore best allocated to the reservoir as in
+Section 4.4 and not to the power generation process.
+3.2. Generate electricity thermal
+Independent variables: ig; hg; tin
+w; tout
+w .
+Dependent variables: vg; _mg; qin
+g ; qout
+g .
+Model function:
+vg ¼ fthermalv ð½ig; hg; tin
+w; tout
+w Þ
+_mg ¼ fthermal _mð½ig; hg; tin
+w; tout
+w Þ
+qin
+g ¼ fthermalqin ð½ig; hg; tin
+w; tout
+w Þ:
+qout
+g
+¼ fthermalqout ð½ig; hg; tin
+w; tout
+w Þ
+Many types of thermal power generation facilities exist today.
+They may be classiﬁed by fuel type (e.g. natural gas, coal,
+heavy fuel oil), cooling system type (once-through, semi-closed,
+Fig. 3. Activity diagram of electricity system functions.
+Se : pin
+w
+1
+qin
+g
+1
+GY
+k1
+Se : pout
+w
+qout
+g
+Rf
+1
+Rm
+GY
+k2
+1
+Re
+Sf : ig
+vg
+Fig. 4. Bondgraph representation of hydroelectric power generation.
+146
+W.N. Lubega, A.M. Farid / Applied Energy 135 (2014) 142–157
+
+===== PAGE 6 =====
+closed-circuit), number of thermodynamic cycles (single, double,
+triple), and ﬁnally number of integrated products (e.g. electricity,
+steam, syngas) [39] Naturally, it is beyond the scope of this paper
+to present a model for all of these possible combinations. Rather,
+for the purposes of demonstrating the holistic nature of this work,
+a thermal generation facility is taken to be a single rankine cycle
+power plant with a once-through cooling system. Future work
+may introduce models for other types of thermal generation
+facilities as is deemed necessary.
+Fig. 5 shows a word bond graph for such a plant. The bonds
+internal to the cycle (shown in red) are convection bonds which
+have two effort variables and a single ﬂow variable [37]. The ﬂow
+variable is the mass ﬂow rate of the steam, while the effort
+variables can be any two intensive properties – in this work the
+pressure and enthalpy are used as in [37].
+T=G in Fig. 5 refers to the turbine and generator; i
+g is the total
+current generated by the power plant, which is the sum of the
+current required by the pump and the current ig drawn by the
+electrical network identiﬁed as an independent variable.
+In order to develop an input–output model for thermal genera-
+tion in the same manner as above for hydroelectric generation, it is
+helpful to develop individual input–output models for the different
+components of the rankine cycle and subsequently combine them.
+These models are presented in the following subsections. The
+models lean signiﬁcantly on the convection bond graph concepts
+developed in [37]. The subscripts 1 to 4 used in the following
+subsections to represent different states of the process steam/
+water as follows:
+(i) State 1 is the state of the process water at the condensor
+exit.
+(ii) State 2 is the state of the process water at the pump exit.
+(iii) State 3 is the state of the process steam at the boiler exit.
+(iv) State 4 is the state of the process steam at the turbine exit.
+It is assumed that there is a control system that ensures that the
+process water exiting the condensor is always saturated at a
+known temperature and pressure, that is to say that state 1 is a ref-
+erence point for the rankine cycle. All other states vary with elec-
+tric power demand. Each of the rankine cycle components is now
+discussed in turn taking into consideration that the dependent
+variables of an ‘‘upstream’’ component are the independent
+variables of the ‘‘downstream’’ component.
+3.2.1. Component 1: Pump
+Independent
+sub-variables:
+Inlet
+pressure
+and
+speciﬁc
+enthalpy, p1, h1; Voltage applied to pump vg.
+Dependent
+sub-variables:
+Outlet
+pressure
+and
+speciﬁc
+enthalpy, p2, h2; Current drawn by pump ipump.
+Component model: A bond graph representation of the boiler
+feed pump, assumed isentropic, is shown in Fig. 6. Typically a
+centrifugal pump is used [40], which is best represented by a
+modulated gyrator, (see Section 4.5), however a simple gyrator will
+be used here. The vertical bond from the 1-junction is a simple
+rather than convection bond with a single effort equal to the
+enthalpy difference between states 1 and 2; it allows connection
+of convection bond graphs to other parts of the system [37].
+From the model, h2 and the current ipump are readily determined
+as:
+h2 ¼ h1 þ k1
+k2 vg
+ipump ¼ k1
+k2 m1 _mg
+ð3Þ
+where m1 is the speciﬁc volume of the water (assumed saturated)
+entering the pump. Assuming incompressibility ðdm ¼ 0Þ and a
+negligible change in water temperature in the pump, it follows that
+dh ¼ mdP. The outlet pressure p2 is thus given by:
+p2 ¼ p1 þ ðh2  h1Þ
+m1
+ð4Þ
+3.2.2. Component 2: Boiler
+Independent
+sub-variables:
+Inlet
+pressure
+and
+speciﬁc
+enthalpy, p2; h2; Lower heating value of fuel hg.
+Dependent
+sub-variables:
+Outlet
+pressure
+and
+speciﬁc
+enthalpy, p3; h3; Fuel consumption rate _mg.
+Component model: A bond graph of a boiler is presented in
+Fig. 7. tg and tamb represent the boiler ﬂame and ambient tempera-
+tures respectively. Heat input to the boiler ð _mghgÞ is lost through
+the ﬂue gas and the boiler wall with the rest being usefully trans-
+ferred to the process steam. The heat lost in the ﬂue gas consists
+solely of sensible heat since the lower heating value of the fuel,
+hg is used and thus the latent heat of the water vapor content of
+the ﬂue gas has already been excluded. Mass of both the process
+steam and the fuel are conserved. The HS element represents a
+non-reversible heat exchanger [37] and is used here to represent
+the heat transfers from the fuel to the boiler wall, and from the
+boiler wall to the process steam. By conservation of energy, _mg is
+given by:
+_mg ¼ _mg
+ðh3  h2Þ þ k4ðtg  tambÞ
+hg  h
+flue
+g
+ð5Þ
+where k3 is the thermal conductivity of the boiler-ambient interface
+and h
+flue
+g
+is the speciﬁc sensible heat content of the ﬂue gas in J/kg
+which is a function of the speciﬁc heat capacity and temperature
+(approximately equal to tg) of the ﬂue gas. The right hand side of
+Eq. (5) includes the unknown h3 which can be determined with
+the aid of the turbine model below. There is no change in pressure
+in the boiler and thus the outlet pressure p3 ¼ p2.
+3.2.3. Component 3: Turbine
+Independent sub-variables: Pressure of the inlet steam p3;
+Current i
+g.
+Dependent sub-variables: Pressure and speciﬁc enthalpy at the
+outlet p4; h4; Speciﬁc enthalpy at the inlet, h3; Voltage vg.
+Fig. 5. Rankine cycle word bond graph.
+Fig. 6. Bondgraph representation of boiler feed pump.
+W.N. Lubega, A.M. Farid / Applied Energy 135 (2014) 142–157
+147
+
+===== PAGE 7 =====
+Component model: Fig. 8 shows a bond graph of the turbine
+assumed to be isentropic. As described above, the simple bond
+allows connection of convection bond graphs to other parts of
+the system [37], in this case a turbine, modeled as a displacement
+machine and thus represented by a transformer. The transformer
+modulus is a ratio m3=D where D is the volumetric displacement
+per radian of shaft rotation and m3 is the speciﬁc volume of the
+steam entering the machine [37]. The turbine shaft in turn drives
+a generator represented by a gyrator with modulus k4.
+From the transformer and gyrator, it follows that:
+h4 ¼ h3  m3k4
+D i
+
+g
+ð6Þ
+vg ¼ m3k4
+D
+_mg  Rei
+
+g
+ð7Þ
+Given that the expansion is assumed to be isentropic and that
+p4 ¼ p1 (there is no pressure drop in the condensor), the unknown
+h3 in Eq. (6) can be determined by simultaneously solving with the
+following equations:
+s3 ¼ s4
+s4 ¼ fs4ðp4; h4Þ ¼ fs4ðp1; h4Þ
+h3 ¼ fh3ðp3; s3Þ
+ð8Þ
+where fs4 and fh3 are polynomial regressions of appropriate portions
+of the superheated steam tables.
+3.2.4. Component 4: Condensor
+Independent
+sub-variables:
+Inlet
+pressure
+and
+speciﬁc
+enthalpy p4; h4; Cooling water inlet temperature tin
+w; Cooling water
+outlet temperature tout
+w .
+Dependent
+sub-variables:
+Outlet
+pressure
+and
+speciﬁc
+enthalpy, p1; h1; Cooling water withdrawal rate qin
+g ; Cooling water
+efﬂuent ﬂow rate qout
+g .
+Component model: Fig. 9 is a bond graph representation of a
+once-through condensor using the H; HS, and two port resistance
+R elements. The H element represents an ideal, reversible heat
+exchanger [37]. The R element represents the condensor wall, a
+thermal resistance, across which heat is conducted to the cooling
+water.
+The true effort variable associated with the cooling water volu-
+metric ﬂow rate is the speciﬁc enthalpy multiplied by the cooling
+water density, however since the cooling water is not subjected
+to a change of pressure or density in the condensor, changes in
+enthalpy are linearly related to changes in temperature. The use
+of temperature is particularly convenient because cooling water
+outlet temperature tout
+w is typically limited by regulation for ecosys-
+tem protection purposes, and tin
+w and tout
+w
+in Fig. 5 can be replaced
+with a single effort variable Dtw
+associated with the ﬂow
+qg ¼ qin
+g ¼ qout
+g . By conservation of energy:
+qg ¼ _mgðh4  h1Þ
+qwcwDtw
+ð9Þ
+3.2.5. Combined thermal generation model
+The combined model for the thermal generation plant is thus
+given by:
+vg ¼
+m3k4
+D
+ Re
+k1m1
+k2
+
+
+_mg  Reig
+ð10Þ
+qin
+g ¼ qout
+g
+¼ qg ¼
+_mg
+qwcwDtw
+h4  h1
+ð
+Þ
+ð11Þ
+_mg ¼ _mg
+ðh3  h2Þ þ k3ðtg  tambÞ
+hg  h
+flue
+g
+ð12Þ
+where the speciﬁc enthalpies h2; h3; h4 are determined by simulta-
+neously solving Eqs. 3, 4, 6 and 8, and where Eq. (10) is obtained
+by substituting for i
+g ¼ ig þ ipump in Eq. (7).
+3.3. Generate electricity – wind
+Independent variables: kg; ig.
+Dependent variables: vg. (The wind force corresponding to kg
+is not of interest and is thus not modeled.)
+Model function:
+vg ¼ fwindv ð½kg; igÞ
+Fig. 10 is a simpliﬁed bond graph representation of a wind turbine.
+A more detailed model can be found in [41]. The gyrator is modu-
+lated by the windspeed, that is to say, the torque s is a function
+of k2
+g [41]. The transformer is a combination of the generator and
+an inverter that effects change of causality from a current to a volt-
+age. The generator voltage vg is given by:
+vg ¼ k1
+k2
+k2
+g  igRe
+ð13Þ
+Fig. 7. Bondgraph representation of boiler.
+Fig. 8. Bondgraph representation of isentropic turbine.
+Fig. 9. Bondgraph representation of once-through condensor.
+148
+W.N. Lubega, A.M. Farid / Applied Energy 135 (2014) 142–157
+
+===== PAGE 8 =====
+3.4. Generate electricity – solar photovoltaic
+Independent variables: Cg; ig.
+Dependent variables: vg. (The voltage vg þ igRe imposed on the
+photocell is not of interest.)
+Model function:
+vg ¼ fsolarv ð½Cg; igÞ
+A simple bond graph model of solar photovoltaic installation
+previously presented in [4] is reproduced in Fig. 11. The solar PV
+installation is approximated as a current source, a linear resistance,
+and a gyrator. In this model, the gyrator represents both the inver-
+ter switching circuit and the DC-to-DC conversion circuit. The
+function of the former is approximated by the change of causality
+from ﬂow source to effort source effected by the gyrator while that
+of the latter is effected by the magnitude of the gyrator modulus.
+The resistance represents electrical losses in both processes.
+From the model, the voltage vg imposed on the electrical
+distribution network can be determined as:
+vg ¼ Cg
+k  igRe
+ð14Þ
+3.5. Transmit electricity
+Independent variables: VG; IL.
+Dependent variables: IG; VL.
+Model function:
+IG ¼ ftransmitIð½VG; ILÞ
+VL ¼ ftransmitVð½VG; ILÞ
+The transmission of electricity through an electricity distribu-
+tion network is typically modeled in the phasor domain. We deﬁne
+the following phasor voltages and currents:
+V G ¼ hVGVG
+I G ¼ hIGIG
+V L ¼ hVLVL
+I L ¼ hILIL
+ð15Þ
+where hVG; hVL; hIG; hIL are diagonal ½G  G matrices with entries of
+the form 1\hi; hi being the phase angle of the current or voltage
+at bus i. hVG; hIL are assumed known. Two edge node-incidence
+matrices and one impedance matrix are also deﬁned:
+ Electrical load node incidence matrix AL with dimensions
+½T  L.
+ Generator node incidence matrix AG with dimensions ½T  G.
+ Transmission line impedance matrix RT
+with dimensions
+½T  T .
+Kirchoff’s Current Law and Ohm’s law respectively provide the
+following equations:
+Ay
+LI T ¼ I L
+Ay
+GI T ¼ I G
+AGV G þ ALV L ¼ RT I T
+These can be rearranged to yield:
+V L ¼ A1I L þ A2V G
+I G ¼ A3I L þ A4V G
+ð16Þ
+where
+A1 ¼ ðAy
+LR1
+T ALÞ
+1
+A2 ¼ A1Ay
+LR1
+T AG
+A3 ¼ Ay
+GR1
+T ALA1
+A4 ¼ Ay
+GR1
+T AG  Ay
+GR1
+T ALA1Ay
+LR1
+T AG
+The  denotes the transpose of a matrix. IG and VL can then be
+determined as the RMS values of I G and V L respectively. The
+RMS load current IL can be decomposed into current drawn for
+water purposes and current drawn for all other purposes as in
+Fig. 3:
+IL ¼ IL0 þ CLPIP þ CLFIF þ CLDID
+ð17Þ
+where IL0; IP; IF; ID are as deﬁned in the nomenclature (expressions
+to be derived in Sections 4 and 5) and are assumed to all be in
+phase; and CLP; CLF; CLD are binary coupling matrices such that
+CLPðl; pÞ ¼ 1; CLFðl; fÞ ¼ 1 and CLDðl; dÞ ¼ 1 if pump p, water treat-
+ment plant f, and wastewater treatment plant d respectively are
+connected to electrical load node l.
+3.6. Summary of electricity system function models
+Writing the model functions deﬁned in Sections 3.1, 3.2, 3.3, 3.4
+and 3.5 in matrix form we have a combined model for the electric-
+ity system functions identiﬁed in Fig. 3:
+VG ¼ fhydroVð½PW; IGÞ þ fthermalV½IG; H G; DTW þ fwindVðkG; IGÞ
+þ fsolarVð½CG; IGÞ
+Q in
+G ¼ fhydroQin ð½PW; IGÞ þ fthermalQin ½IG; H G; DTW
+Q out
+G
+¼ Q in
+G  Q evap
+G
+_MG ¼ fthermal _M½IG; H G; DTW
+IG ¼ ftransmitIð½VG; ILÞ
+VL ¼ ftransmitVð½VG; ILÞ
+ð18Þ
+For the particular case of the models developed in each of the
+preceeding sections, Eq. (18) can be instantiated with Eqs. (1),
+(2), (10)–(13) and (14) written in matrix form:
+VG ¼ K1 þ K2CGWPW þ K3kG þ K4CG  K5IG
+Q in
+G ¼ F G1ðIG; CGWDTWÞ
+Q out
+G
+¼ Q in
+G  Q evap
+G
+_MG ¼ F G2ðIG; H GÞ
+VL ¼ RMSðA1hILIL  A2hVGVGÞ
+IG ¼ RMSðA3hILIL þ A4hVGVGÞ
+ð19Þ
+Sf : λg
+MGY
+k1
+TF
+k2
+1
+Re
+Sf : ig
+vg
+Fig. 10. Bondgraph model of wind turbine.
+Sf : Γg
+GY
+k
+1
+Re
+Sf : ig
+vg
+Fig. 11. Bond graph representation of solar PV installation.
+W.N. Lubega, A.M. Farid / Applied Energy 135 (2014) 142–157
+149
+
+===== PAGE 9 =====
+where CGW is a binary coupling matrix such that CGWðg; wÞ ¼ 1 if
+generator g is connected to water source w. K1 is a ½G  1 vector
+whose value K1ðgÞ is given by Eq. (10) for all thermal power gener-
+ators g. Similarly, K2; K3; K4 are ½G  G diagonal matrices with diag-
+onal elements K2ðg; gÞ; K3ðg; gÞ; K4ðg; gÞ, given by Eqs. (1), (13) and
+(14) for all hydroelectric, wind, and solar power plants respectively.
+K5ðg; gÞ represents the electrical losses of each power plant g and is
+given by Eqs. (1), (10), (13) and (14) depending on the type of plant.
+F G1 and F G2 are vector functions with f g1ðgÞ and f g2ðgÞ given by
+Eqs. (11) and (12) respectively for all thermal generators g.
+4. Model of the engineered water supply system
+An activity diagram for the engineered water supply system is
+shown in Fig. 12. All water grid functions are dependent on electri-
+cal or thermal energy input. Pumping, either for extraction or dis-
+tribution, is responsible for the bulk of electrical energy consumed
+by the water system. Thermal desalination, typically in the form of
+cogeneration plants that produce both water and electricity, is dri-
+ven by thermal energy input. Models of the four indicated water
+supply options are presented below. Electricity consumption for
+municipal water use is not modeled as it represents a plethora of
+different processes that are typically not under the purview of grid
+operators.
+4.1. Extract and treat ground water and surface water
+Independent variables: qf ; pw;vf .
+Dependent variables: pf ; qw; if .
+Model function:
+pf ¼ ftreatpð½qf; pw;vf Þ
+qw ¼ ftreatqð½qf ; pw;vfÞ
+if ¼ ftreatið½qf ; pw;vfÞ
+The extraction and treatment of surface and ground water can
+be effectively modeled as a pump as pumping consumes at least
+98% of the power at each treatment plant [15]. A bond graph
+representation of a treatment plant as a centrifugal pump driven
+by an electric motor is shown in Fig. 13. The following input–out-
+put equations are derived from the model:
+qw ¼ qf
+ð20Þ
+if ¼
+k1k2
+k
+2
+1 þ RmRe
+qf þ
+Rm
+k
+2
+1 þ RmRe vf
+ð21Þ
+pf ¼  k
+2
+1 þ ReRm þ k2Re
+k
+2
+1 þ ReRm
+"
+#
+qf þ
+k1k2
+k
+2
+1 þ ReRm vf þ pw
+ð22Þ
+4.2. Desalinate seawater (cogeneration)
+Independent variables: Distillate demand from water distribu-
+tion network qf , Temperature of feed water tw, Heating steam ﬂow
+rate _m.
+Dependent variables: Enthalpy drop Dh of heating steam, brine
+output qbrine
+f
+, Feed water withdrawal rate qw.
+Model function:
+Dh ¼ fdesalChð½qf; tw; _mÞ
+qbrine
+f
+¼ fdesalCqbrine ð½qf; tw; _mÞ
+qw ¼ fdesalCqð½qf; tw; _mÞ
+Multistage ﬂash (MSF) desalination, the dominant thermal
+desalination process is typically integrated with thermal genera-
+tion in cogeneration plants as shown in Fig. 14 with the desalina-
+tion process deriving its requisite thermal energy from steam
+extracted from a back pressure turbine at the appropriate speciﬁc
+enthalpy to drive the desalination process [42–44].
+Focusing on the ﬂash desalination unit in Fig. 14 - the models
+for the other units are unchanged from Section 3.2 as discussed
+below – a model of the desalination process can be developed fol-
+lowing the procedure in Fig. 2.
+Fig. 15 is a bond graph representation of a ﬂash desalination plant.
+Typically these plants consist of multiple stages of successively lower
+Fig. 12. Activity diagram of water system functions.
+150
+W.N. Lubega, A.M. Farid / Applied Energy 135 (2014) 142–157
+
+===== PAGE 10 =====
+pressures and temperatures, however, as a simpliﬁcation, a single
+stage ﬂash desalination plant is modeled in Fig. 15.
+It is of interest to determine the enthalpy drop Dh of the heating
+steam. From the bond graph, assuming that there is no accumula-
+tion of vapor or liquid in the ﬂashing stage, Dh can be determined
+as:
+Dh ¼ qf Z
+ð23Þ
+where
+Z ¼ q h
+stg
+v ðtstg  twÞ
+h
+i
+= _m Dtstg
+½
+.
+h
+stg
+v
+is
+the
+vaporization
+enthalpy at the stage temperature tstg;q is the distillate density,
+and Dtstg is the temperature drop across the ﬂashing stage.
+In order to determine the brine output, an average recovery
+ratio [43] will be used:
+qbrine
+f
+¼ 1  RR
+RR
+qf
+ð24Þ
+The feedwater withdrawal rate qw is therefore:
+qw ¼ qf
+RR
+ð25Þ
+As stated, thermal desalination is typically integrated with ther-
+mal power generation in a cogeneration plant. In this setup, the
+heating steam is taken from the exit of a back-pressure turbine
+and is superheated. It can be reasonably assumed that the enthalpy
+of the steam exiting the desalination unit is always greater than h1
+in Section 3.2, that is, it is a saturated mixture. A condenser is
+therefore still required and the desalination unit can be thought
+of as utilizing ‘waste heat’. There is therefore no increase in fuel
+consumption due to the addition of the desalination unit and fuel
+consumption is still given by Eq. (12). The voltage vg generated by
+the power generation cycle of the cogeneration plant as given by
+Eq. (7) is also unchanged. The cooling water requirement for the
+cogeneration plant is reduced as some of the waste heat is used
+for the desalination process instead of being injected into the
+cooling water. This cooling requirement qg is readily determined
+by comparison with Eq. (9) as:
+qg ¼ qw _mðh2  Zqf  h3Þ
+cwDtw
+ð26Þ
+where Z is the coefﬁcient identiﬁed in Eq. (23). Note that in the case
+of a cogeneration plant, this cooling water is abundantly available
+sea water. The primary concern from an energy water nexus per-
+spective of these withdrawals is therefore the long term effect of
+the returned water at an elevated temperature on marine ecosys-
+tems. Conversely, when the source is fresh water, there is an added
+concern of the vulnerability of power plant operations to fresh
+water scarcity. Ultimately, there is a trade-off between increased
+water temperatures Dtw and the freshwater requirement qg.
+4.3. Desalinate seawater (membrane)
+Independent variables: qf ; pw;vf .
+Dependent variables: pf ; qw; if ; qbrine
+f
+.
+Model function:
+pf ¼ fdesalMpð½qf ; pw;vfÞ
+qw ¼ fdesalMqð½qf; pw;vf Þ
+if ¼ fdesalMið½qf ; pw;vfÞ
+qbrine
+f
+¼ fdesalMqbrine ð½qf; pw;vf Þ
+A reverse osmosis plant is similar to surface and ground water
+treatment plants except that additional electrical energy is drawn
+to overcome the osmotic pressure pw, a parameter of the seawater.
+As a ﬁrst approximation if can be given by:
+if ¼
+k1k2
+k
+2
+1 þ RmRe
+qf þ
+Rm
+k
+2
+1 þ RmRe vf þ k5pw
+ð27Þ
+Including brine output in a bond graph model of a reverse
+osmosis desalination plant would have necessitated the develop-
+ment of chemical bond graphs, a level of detail considered unnec-
+essary for this work. Instead, as in Section 4.2 a typical recovery
+ratio, RR can be used to determine the brine output:
+qbrine
+f
+¼ 1  RR
+RR
+qf
+ð28Þ
+The feedwater withdrawal rate qw is therefore:
+qw ¼ qf
+RR
+ð29Þ
+4.4. Store water (tanks and artiﬁcial reservoirs)
+Independent variables: Q S(artiﬁcial reservoirs), Q evap
+S
+.
+Dependent variables: Q S(tanks), Q W.
+Se : vf
+1
+if
+Re
+GY
+k1
+1
+Rm
+GY
+k2
+1
+Rf
+Se : pw
+qw
+Sf : qf
+pf
+Fig. 13. Bondgraph representation of surfacewater/groundwater treatment plant.
+Fig. 14. Word bond graph of MSF plant integrated with rankine cycle.
+Fig. 15. Bondgraph representation of a thermal (ﬂash) desalination plant.
+W.N. Lubega, A.M. Farid / Applied Energy 135 (2014) 142–157
+151
+
+===== PAGE 11 =====
+The two water storage functions in Fig. 12 are treated together.
+For tanks it is desired to have a model of the form Q S ¼ fstore1ðQ evap
+S
+Þ
+and for artiﬁcial reservoirs it is desired to have a model of the form
+Q W ¼ fstore2ðQ SÞ. Let lSðtÞ be an ½S  1 vector of the quantities of
+water stored in a tank or artiﬁcial reservoir at a time t. Changes
+in this quantity of water are related to water injections into or
+out of the storage unit from the water distribution system in the
+case of tanks and from upstream users in the case of artiﬁcial res-
+ervoirs Q S, evaporation losses Q evap
+S
+and water withdrawals from a
+water source Q W as follows:
+lSðt þ DtÞ ¼ lSðtÞ þ DtðQ S  Q evap
+S
+þ CSWQ WÞ
+ð30Þ
+where CSW is a binary coupling matrix such that CSWðs; wÞ ¼ 1 if arti-
+ﬁcial reservoir s withdraws water from water source w. Eq. (30) can
+be recast for tanks as follows:
+Q S ¼ Q evap
+S
+þ ðlSðt þ DtÞ  lSðtÞÞ=Dt
+ð31Þ
+where Q S appears as a demand that can take on positive and nega-
+tive values in water distribution system as shown in Section 4.5.
+Similarly, Eq. (30) can be recast for artiﬁcial reservoirs as:
+Q W ¼ CWSðQ S þ Q evap
+S
+þ ðlSðt þ DtÞ  lSðtÞÞ=DtÞ
+ð32Þ
+In the case of the artiﬁcial reservoir, Q S is an independent var-
+iable determined by upstream uses such as water treatment plants
+or hydroelectric power plants.
+4.5. Distribute water
+Independent variables: PF; Q J; VP; patm; Q S; Q evap
+S
+.
+Dependent variables: Q F; PJ; IP; Q Jl.
+Model function:
+½Q F; PJ; IP; Q Jl ¼ fdistributeð½PF; Q J; VP; Q S; Q evap
+S
+Þ
+The distribution of water through a pipe network can be easily
+described with the aid of two edge node-incidence matrices and
+one resistance matrix:
+ Interior node incidence matrix BJ with dimensions ½P  J.
+ Fixed pressure node incidence matrix BF with dimensions
+½P  F.
+ Diagonal pipe and pump resistance matrix RP with dimensions
+½P  P.
+As the pressure loss due to the resistance of water pipes and
+pressure gain due to pumps are both non-linear functions of the
+ﬂow rate, in the equations below, the dependent variable Q F is
+replaced with the more computationally convenient pipe and
+pump ﬂow rates Q P as is customary in water distribution network
+analysis [45]. Q F is then given by By
+FQ P.
+Leakages occur in pipes but are typically allocated to nodes as
+pressure-dependent demands for modeling purposes [45,46]. A
+simple model, in which the node is treated as an oriﬁce through
+which the leakage Q jl is discharged [46] provides the relationship:
+qjl ¼ bjpaj
+j
+where bj and aj are nodal parameters. Therefore, in matrix form, the
+nodal leakages are determined as follows:
+Q Jl ¼ bJðPJÞPJ
+ð33Þ
+where bJ is a ½J  J diagonal matrix with entries bjPaj1
+j
+.
+By continuity of mass, the previously discussed allocation of
+node leakages and the integration of storage as discussed in
+Section 4.4, the interior nodes ðJÞ are described by:
+By
+JQ P þ Q J þ Q Jl þ CJSðQ S þ Q evap
+S
+Þ ¼ 0
+ð34Þ
+The constitutive equations for the pipes and pumps provide:
+RPðQ PÞQ P  BJPJ  BFPF ¼ 0
+ð35Þ
+Finally, in order to determine the current drawn by the pumps
+in the hydraulic network, a model of a centrifugal pump is required
+such as the one in Fig. 16. A centrifugal pump can be modeled as a
+modulated gyrator with modulus w1 þ w2q [47] driven by an
+electric motor. The current drawn therefore is given by:
+ip ¼ kpðw1 þ w2qpÞqp
+ð36Þ
+In matrix form, this can be written as:
+IP ¼ KPWPðQ PÞQ P
+ð37Þ
+where KP and WP are [P  P] diagonal matrices with entries KPðp; pÞ
+and WPðp; pÞ given by Eq. (36) for each pump p.
+4.6. Summary of engineered water supply system equations
+Writing the model functions deﬁned in Sections 4.1, 4.2, 4.3 and
+4.5 in matrix form we have a combined model for the water system
+functions identiﬁed in Fig. 12:
+ðQ F;PJ;IP;Q JlÞ ¼ fdistributeð½PF;Q J;VP;Q S;Q evap
+S
+Þ
+IF ¼ ftreatIð½Q F;PW;VFÞþfdesalMIð½Q F;PW;VFÞþfdesalCIð½Q F;PW;VFÞ
+PF ¼ ftreatPð½Q F;PW;VFÞþfdesalMPð½Q F;PW;VFÞþfdesalCPð½Q F;PW;VFÞ
+DHF ¼ fdesalCHð½Q F;TW; _MÞ
+Q brine
+F
+¼ fdesalCQbrine ð½Q F;TW; _MÞ
+Q W ¼ fdesalCqð½Q F;TW; _MÞ
+ð38Þ
+For the particular case of the models developed in each of the
+preceeding subsections, Eq. (38) can be instantiated with the scalar
+Eqs. (20)–(23), (27) written in matrix form and combined with Eqs.
+(33)–(35) and (37), to yield the system in Eq. (39), where 1J and 1P
+are ½J  J and ½P  P identity matrices respectively; CWF is a binary
+coupling matrix such that CWFðw; f Þ ¼ 1 if water from source w is
+withdrawn by treatment plant f; K6; K7 and K8 are [F  F] diagonal
+matrices with entries K6ðf ; fÞ; K7ðf; fÞ and K8ðf; f Þ given by the coef-
+ﬁcients derived in Eq. (27) for all surfacewater, groundwater and
+reverse osmosis plants f ; K9 and K10 are are [F  F] diagonal matri-
+ces with entries K9ðf; f Þ, and K10ðf; f Þ given by the coefﬁcients
+derived in Eq. (22) for all surfacewater, groundwater and reverse
+osmosis plants f; and where ZF is an [F  F] diagonal matrix with
+entries ZFðf ; fÞ given by the coefﬁcient derived in Eq. (23) for each
+cogeneration plant f.
+5. Model of the wastewater system
+Fig. 17 is an activity diagram of wastewater system functions.
+As in the previous sections, the strategy in Fig. 2 will be followed.
+5.1. Collect wastewater
+Independent variables: Q J.
+Dependent variables: Q D.
+Model function:
+Fig. 16. Bondgraph representation of centrifugal pump.
+152
+W.N. Lubega, A.M. Farid / Applied Energy 135 (2014) 142–157
+
+===== PAGE 12 =====
+Q D ¼ fcollectWWðQ JÞ
+Wastewater collection, as shown in Fig. 17, typically does not
+require electric power input. Wastewater is typically conveyed
+by gravity-ﬂow sewers [7] as wastewater treatment plants are
+built at low elevations, close to the water bodies into which efﬂu-
+ent is to be discharged. The sewer hydraulics will thus be ignored
+in this model and the collection represented by a simple mass
+balance:
+Q D ¼ CDJQ J
+ð40Þ
+where CDJ is a binary coupling matrix with CDJðd; jÞ ¼ 1 if wastewa-
+ter treatment plant d treats wastewater from water demand node j.
+5.2. Treat wastewater
+Independent variables: Q D; Q F; Q rec
+D .
+Dependent variables: ID; Q disp
+D .
+Model function:
+ID ¼ ftreatWWIð½Q D; Q F; Q rec
+D Þ
+Q disp
+D
+¼ ftreatWWQ ð½Q D; Q F; Q rec
+D Þ
+Electrical energy is required for the treatment of wastewater
+and distribution of recycled wastewater. Bond graphs can be used
+to model chemical reactions [48] such as biochemical processes
+found in wastewater
+bJðPJÞ
+0
+1J
+0
+0
+0
+1J
+By
+J
+BJ
+0
+0
+RPðQ PÞ
+0
+1P
+0
+KPWPðQ PÞ
+2
+6664
+3
+7775
+PJ
+IP
+Q Jl
+Q P
+2
+6664
+3
+7775
+þ
+0
+Q J þ CJSðQ S þ Q evap
+S
+Þ
+BFPF
+0
+2
+6664
+3
+7775 ¼
+0
+0
+0
+0
+2
+6664
+3
+7775
+Q F ¼ By
+FQ P
+IF ¼ K6Q F þ K7VF þ K8Cy
+WFPW
+PF ¼ K9Q F þ K10VF þ Cy
+WFPW
+DHF ¼ ZFQ F
+ð39Þ
+treatment facilities [49]. However, as ﬁrst-pass models are desirable
+to limit the complexity of this research, an approximation is made
+such that the current drawn by wastewater treatment linearly
+depends on the volume ﬂow rate of the water it treats. This is
+reasonable as power system voltages are typically maintained close
+to 1.0 per unit and thus often reported empirical measures of
+energy consumption per unit volume of treated water [49] can be
+related to electric current demand:
+ID ¼ KDQ D
+ð41Þ
+where KD is a ½D  D diagonal matrix consisting of the described
+linear factors. The treated wastewater may be recycled, as indicated
+in Fig. 17, through a dedicated non-potable recycled wastewater
+distribution network (Section 5.3), or blended into the potable
+water distribution network in which case the wastewater recycling
+plant doubles as a water supply plant in Section 4. The water that is
+not recycled and that is thus directly returned to a water source
+Q disp
+D
+is given by:
+Q disp
+D
+¼ Q D  CDFQ F  Q rec
+D
+ð42Þ
+where CDF
+is a binary coupling matrix with CDFðd; fÞ ¼ 1 if
+wastewater treatment plant d doubles as water supply plant
+f; Q rec
+D
+is the water recycled through a dedicated non-potable
+recycled wastewater distribution network (Section 5.3) and Q F is
+as previously determined in Section 4.5.
+5.3. Distribute non-potable recycled wastewater
+Independent variables: PD; Q E; VN; patm.
+Dependent variables: Q rec
+D ; PE; IN; Q El.
+Model function:
+½Q rec
+D ; PE; IN; Q El ¼ fdistributeRWWð½PD; Q EÞ
+The distribution of recycled wastewater can be described using
+the same equations as the Distribute Water function (Eqs. (33)–
+(37)) replacing Q F; PF; Q J; PJ; VP; IP, and Q Jl with Q rec
+D ; PD; Q E; PE;
+VN; IN and Q El respectively.
+5.4. Summary of wastewater management system equations
+Writing the model functions deﬁned in Sections 5.1, 5.2 and 5.3
+in matrix form we have a combined model for the wastewater
+system functions identiﬁed in Fig. 17:
+Q D ¼ fcollectWWðQ JÞ
+ID ¼ ftreatWWIð½Q D; Q F; Q rec
+D Þ
+Q disp
+D
+¼ ftreatWWQ ð½Q D; Q F; Q rec
+D Þ
+½Q rec
+D ; PE; IN; Q El ¼ fdistributeRWWð½PD; Q EÞ
+ð43Þ
+For the particular case of the models developed in each of the
+preceeding subsections, Eq. (43) can be instantiated by combining
+the equations in Sections 5.1, 5.2 and 5.3 providing the following
+system of equations:
+Fig. 17. Activity diagram of wastewater functions.
+W.N. Lubega, A.M. Farid / Applied Energy 135 (2014) 142–157
+153
+
+===== PAGE 13 =====
+bEðPEÞ
+0
+1E
+0
+0
+0
+1E
+By
+E
+BE
+0
+0
+RNðQ NÞ
+0
+1N
+0
+KNWNðQ NÞ
+2
+6664
+3
+7775
+PE
+IN
+Q El
+Q N
+2
+6664
+3
+7775 þ
+0
+Q E
+BDPD
+0
+2
+6664
+3
+7775 ¼
+0
+0
+0
+0
+2
+6664
+3
+7775
+Q rec
+D ¼ By
+DQ N
+Q D ¼ CDJQ J
+ID ¼ KDQ D
+Q disp
+D
+¼ Q D  CDFQ F  Q rec
+D
+ð44Þ
+where BD; BE; KN and WN are the equivalents of BF; BJ; KP and WP in
+Section 4.5.
+6. Model outputs of interest
+Once the quantitative engineering systems model has been
+developed, its independent and dependent variables may be used
+to extract model outputs of interest. Referring back to Fig. 1 the
+quantities A through T are given by the energy and matter ﬂows
+modeled in Sections 3–5 (Table 1).
+7. Illustrative example
+In this section, the developed model is applied to an illustrative
+example inspired by Egypt. The threefold purpose of the example is
+to (1) demonstrate the practical feasibility of the model, (2) discuss
+its advantages over existing work, nd (3) discuss how it may be
+practically applied by an industrial practitioner. Fig. 18 presents
+a conceptual illustration of a geographical region served by a
+number of different water and power sources. A complete descrip-
+tion of the hypothetical system is described in Section 7.1. Then,
+the models developed in Sections 3–5 are used to solve for
+measures of interest described in Section 6. These results are
+summarized and discussed in Section 7.2. Section 7.3 concludes
+with a brief discussion of potential industrial application.
+7.1. System description and model parameters
+The water distribution system is modeled as consisting of three
+water sources, as indicated, which are equidistant from an aggre-
+gated demand node of 6 m3/s or approximately 140 million gallons
+a day. The required hydraulic pressure for the distribution is pro-
+vided entirely by pumping to the clearwell at the treatment plants.
+In other words, there are no additional pumps in the distribution
+network. A pressure equivalent to 100 m head is assumed for all
+the plants. The resistance-coefﬁcients of the three pipes serving
+the demand node (RP in Eq. (39)) are determined using the
+Hazen–Williams formulation assuming a pipe diameter of 2 m, a
+C-factor of 100 and a length of 500 m. The leakage model parame-
+ters aj and bj in Eq. (33) are taken as 0.5 and 0.001 respectively.
+The electricity distribution network for this example is modeled
+with the standard IEEE14 bus system [50] with the following
+modiﬁcations:
+Table 1
+Energy–water nexus mode – outputs of interest.
+Identiﬁer
+Formulation
+Identiﬁer
+Formulation
+A
+1GQ in
+G
+K
+1FQ F
+B
+1G _MG
+L
+1JQ Jl þ 1EQ El
+C
+Vy
+P IP þ Vy
+FIF
+M
+1FQ brine
+F
+D
+_my
+GCGFDHF
+N
+1DCDFQ F
+E
+Vy
+LIL0
+P
+1JQ J
+F
+Vy
+GIG  ðC þ E þ JÞ
+Q
+1DQ D
+G
+_My
+GH flue
+G
+R
+1DQ disp
+D
+H
+1GQ evap
+G
+S
+1SQ evap
+S
+I
+1GQ out
+G
+T
+1EQ E
+J
+Vy
+DID
+Fig. 18. Illustration inspired by Egypt.
+154
+W.N. Lubega, A.M. Farid / Applied Energy 135 (2014) 142–157
+
+===== PAGE 14 =====
+1. The 40 MW generator at bus 2 is replaced with a 100 MW gen-
+erator representing a hydroelectric power plant.
+2. The synchronous compensators at buses 3, 6 and 8 are replaced
+with 10 MW generators representing a solar PV plant, a wind
+power power plant and a thermal power plant respectively.
+The generator at slack bus 1 is taken as a cogeneration power
+plant.
+3. The groundwater treatment plant, and surface water treatment
+plant are attached to the network at buses 5 and 14.
+Functions fs4 and fh3 in Eq. (8) were regressed with quartic poly-
+nomials using data from ASME superheated steam and saturated
+water tables over the pressure range 5–50 bar with the speciﬁc
+enthalpies in MJ/kg and the speciﬁc entropies in kJ/(kg K):
+s4
+¼ 15:7881  0:1049p4 þ 19:3438h4 þ 0:0039p2
+4
+6:1322h
+2
+4  0:0001p3
+4 þ 0:9316h
+3
+4  0:0547h
+4
+4
+ð45Þ
+h3
+¼ 61:3940 þ 0:0841p3 þ 33:4630s3  0:0032p2
+3
+6:7618s2
+3 þ 0:0001p3
+3 þ 0:6129s3
+3  0:0206s4
+3
+ð46Þ
+These model parameters and others necessary for the complete
+example are provided in Table 2.
+The
+model
+was
+implemented
+in
+the
+General
+Algebraic
+Modelling System (GAMS) [34] and solved with the built-in CON-
+OPT solver [35]. No special computational facilities were required.
+7.2. Results
+The goal of this work was to develop a transparent physics-
+based model of the energy–water nexus model capable calculating
+the ﬂows of matter and energy across and between the system
+boundaries of the engineered electricity, water, and wastewater
+systems. To this effect, this illustrative example calculates the
+values of A  T in Fig. 1 and summarizes the results in Table 3.
+Electricity system evaporative losses H are zero because only
+hydroelectric and once-through cooling plants have been modeled
+in this work. The wastewater system has not been modeled in
+this
+simple
+example
+and
+thus
+it
+can
+be
+assumed
+that
+R ¼ Q ¼ P ¼ 6 m3 s1 and that N ¼ 0 m3 s1.
+The strength of the developed energy–water nexus becomes
+apparent when considering the various ratios of values A  T as
+aggregate measures of interest. While the existing literature pro-
+vides empirical evaluations of the electricity-intensity of water
+technologies
+and
+water-intensity
+of
+electricity
+technologies
+[13–18], this model calculates these results a priori over a larger
+system boundary. Consider, for example, the following ratios:
+ A measure of the degree of coupling between the electricity and
+water systems given by ðC þ JÞ=ðC þ E þ F þ JÞ ¼ 3:2%.
+ Water supply required to sustain the electricity and water
+supply systems given by A þ K ¼ 91 m3=s.
+ Ratio of water displaced from its original source to total water
+withdrawn for water and electricity systems given by ðL þ HÞ=
+ðA þ KÞ ¼ 1:1%.
+ Proportion of water withdrawn that is returned with signiﬁ-
+cantly altered quality (a measure of environmental impact)
+given by ðM þ RÞ=ðA þ KÞ ¼ 9:3%.
+In a detailed analysis, the values of each these high-level aggre-
+gate measures can be functionally traced back to each of the power
+variables associated with the functions connected to values A  T.
+Thus, a change in exogenous variables like water and electricity
+demand growth will have subsequent and predictable changes in
+the water intensity of energy technologies and the energy intensity
+of water technologies. Furthermore, the resulting ﬂows across the
+system boundary such as leaked water, brine rejection, disposable
+efﬂuent, thermal and electrical and energy losses can all be
+calculated. In contrast, the empirically-based studies found in the
+literature would assume that the water and energy intensity values
+were constant irrespective of measurement or operating condi-
+tions. Similarly, the ﬂows across the system boundary would be
+based upon these measurement assumptions. Additional measure-
+ments would have to be conducted to provide values other than
+just water and energy intensities. The model also well addresses
+changes to endogenous variables. These include the prevalence,
+arrangement, and type of water and energy technologies. For exam-
+ple, the model can resolve the effect of a change in the penetration
+level, and placement of a new (potentially undeployed) renewable
+energy technology. In contrast, an empirical approach assumes
+existing technology and does not consider the effects of technology
+placement. The developed model can be utilized to conduct such
+detailed analyses for large changes to the structure of an energy–
+water nexus in a particular region. Alternatively, a sensitivity
+analysis approach based upon the jacobian of the energy–water
+nexus’ system of equation has already been reported [51].
+7.3. Opportunities for industrial application
+The advantages of a transparent physics-based energy–water
+nexus model described in the previous subsection can lead to a
+number of practical industrial applications. At the smallest scale,
+the merits of competing water and energy technologies can be
+Table 2
+Model parameters.
+Parameter
+Equation
+Units
+Value
+k2=k1
+(2)
+m3/As
+0.072
+p1
+(4)
+Pa
+2  106
+h1
+3, 4, 11
+MJ/kg
+0.909
+m1
+(3), (4)
+m3/kg
+0.001
+_mg
+(10)–(12)
+kg/s
+70
+hg
+(12)
+MJ/kg
+26
+hflue
+g
+(12)
+MJ/kg
+0.8
+qw
+(11)
+kg/m3
+1000
+cw
+(11)
+kJ/kg K
+4.1813
+Dtw
+(11)
+K
+10
+k1=k2
+(3), (10)
+A s/m3
+100
+k4=D
+(6), (10)
+V s/m3 or J/(A m3)
+1000
+k2=k1
+(21)
+A s /m3
+100
+Z
+(23)
+(kJ/kg)/(m3/s)
+720
+RR
+(24)
+–
+35 %
+qevap
+s
+8s
+(32)
+m3/s
+5
+qj8j
+(39)
+m3/s
+6
+aj8j
+(39)
+–
+0.5
+bj8j
+(39)
+(m3/s)/Pa
+0.001
+pf 8f
+(39)
+Pa
+9:8  105
+rp8p
+(39)
+Pa/(m3/s)
+1057
+Table 3
+Results.
+Quantity
+Value
+Quantity
+Value
+A
+81 m3 s1
+K
+9.4 m3 s1
+B
+11.9 kg s1
+L
+0.9 m3 s1
+C
+8.5 MWe
+M
+2.437 m3 s1
+D
+116 MWth
+N
+0 m3 s1
+E
+254.2 MWe
+P
+6 m3 s1
+F
+8 MWe
+Q
+6 m3 s1
+G
+9.5 MWth
+R
+6 m3 s1
+H
+0 m3 s1
+S
+5 m3 s1
+I
+81 m3 s1
+T
+0 m3 s1
+J
+0 MWe
+W.N. Lubega, A.M. Farid / Applied Energy 135 (2014) 142–157
+155
+
+===== PAGE 15 =====
+objectively assessed not just on cost, or their individual impacts
+but also their impacts within the energy–water nexus as a system.
+A governmental regulator can use this information in permitting of
+various types of facilities as it evaluates the net environmental
+impact. On a much larger scale and over a longer time horizon,
+governments can apply such a model to make planning decisions
+across the three networks. The derived aggregate measures can
+be assigned an economic value to conduct integrated energy–
+water planning studies. Finally, because the model is physics-
+based it can be operationalized by integrated energy–water
+utilities as is commonly found in the Gulf Cooperation Council
+countries. Such utilities can thus monitor energy and water inten-
+sities in real-time and perhaps make energy and water dispatching
+decisions accordingly. In regions with separate energy and water
+utilities, such a model can be used to highlight areas of potential
+cooperation. Further discussion of such opportunities for industrial
+application have been reported in [52,53].
+8. Conclusion
+This work has presented an integrated engineering systems
+model for the electricity, water and wastewater systems based
+on a previously presented reference architecture and developed
+with the aid of bond graphs. The model provides a set of algebraic
+equations that relate electricity and water demands to: (i) the
+requisite system inputs and concomitant system outputs for a sys-
+tem boundary encompassing all three grids, and (ii) the salient
+exchanges of matter and energy between the three systems. This
+modeling approach allows the deﬁnition and determination of
+aggregate system measures that can inform integrated planning
+processes. As an illustration, the presented model equations have
+been implemented in GAMS and used to determine a set of such
+aggregate measures for a hypothetical geographical region.
+Future work can apply the approach and models to both plan-
+ning and operations applications. The ﬁrst-pass models used here
+can be enhanced to the level of detail required for different appli-
+cations; critically however, in any such model reﬁnements, the
+inputs and outputs of the individual functions identiﬁed in Figs. 3,
+12 and 17 remain the same.
+References
+[1] Lubega WN, Farid AM. A reference system architecture for the energy–water
+nexus.
+IEEE
+Syst
+J
+2014(99):1–11.
+http://dx.doi.org/10.1109/
+JSYST.2014.2302031.
+[2] Lubega WN, Farid AM. A meta-system architecture for the energy-water nexus.
+In: 8th Annual IEEE systems of systems conference. Maui, Hawaii, USA; 2013a,
+p. 76–81. http://dx.doi.org/10.1109/SYSoSE.2013.6575246.
+[3] Farid AM, Lubega WN. Powering and watering agriculture: application of
+energy-water nexus planning. In: GHTC 2013: IEEE global humanitarian
+technology conference. Silicon Valley, CA, USA; 2013. p. 1–6.
+[4] Lubega W, Farid AM. An engineering systems model for the quantitative
+analysis
+of
+the
+energy–water
+nexus.
+In:
+Complex
+systems
+design
+&
+management. Paris, France; 2013b. p. 219–31.
+[5] Pate R, Hightower M, Cameron C, Einfeld W. Overview of energy-water
+interdependencies and the emerging energy demands on water resources.
+Tech. Rep.; Albuquerque, New Mexico; 2007.
+[6] United Nations,. Managing Water under Uncertainty and Risk. Tech. Rep.;
+2012.
+[7] Olsson G. Water and energy: threats and opportunities. London: IWA
+Publishing; 2012. ISBN 9781780400693.
+[8] US DoE,. Energy demands on water resources. Tech. Rep.; 2006.
+[9] World Economic Forum,. Energy Vision Update 2009 Thirsty Energy: Water
+and Energy in the 21st Century. Tech. Rep.; Geneva, Switzerland; 2009.
+[10] Siddiqi A, Anadon LD. The water energy nexus in Middle East and North Africa.
+Energy Policy 2011;39(8):4529–40.
+[11] Stillwell AS, King CW, Webber ME, Duncan IJ, Hardberger A. The energy–water
+nexus in texas. Ecol Soc 2011;16(1):2.
+[12] Park
+L,
+Croyle
+K.
+California’s
+water-energy
+nexus:
+pathways
+to
+implementation. Tech. Rep.; GEI Consultants, Inc.; 2012.
+[13] Goldstein R, Smith W. Water & sustainability, vol. 4. U.S. Electricity
+Consumption for Water Supply & Treatment - The Next Half Century. Tech.
+Rep. Volume 4; Electric Power Research Institute; Palo Alto, CA, USA; 2002.
+[14] Barcel J, Codina E, Casas J, Ferrer JL, Garca D. A review of operational water
+consumption and withdrawal factors for electricity generating technologies.
+Tech. Rep. NREL/TP-6A20-5090; Golden, CO; 2011.
+[15] Goldstein R, Smith W. Water & sustainability, vol. 3. U.S. Water Consumption
+for Power Production – The Next Half Century. Tech. Rep. Volume 3; Electric
+Power Research Institute; Palo Alto, CA, USA; 2002b.
+[16] Macknick J, Newmark R, Heath G, Hallett KC. Operational water consumption
+and withdrawal factors for electricity generating technologies: a review of
+existing literature. Environ Res Lett 2012;7(4):045802. http://dx.doi.org/
+10.1088/1748-9326/7/4/045802.
+<http://stacks.iop.org/1748-9326/7/i=4/a=
+045802?key=crossref.6f4ebd5836ab24141e19d95fd1e65709>.
+[17] Meldrum J, Nettles-Anderson S, Heath G, Macknick J. Life cycle water use for
+electricity generation: a review and harmonization of literature estimates.
+Environ Res Lett 2013;8(1):015031. http://dx.doi.org/10.1088/1748-9326/8/1/
+015031.
+<http://stacks.iop.org/1748-9326/8/i=1/a=015031?key=crossref.d67
+03318287e321cce2c6d55b9a8ab76>.
+[18] Averyt K, Macknick J, Rogers J, Madden N, Fisher J, Meldrum J, et al. Water use
+for electricity in the United States: an analysis of reported and calculated
+water use information for 2008. Environ Res Lett 2013;8(1):015001. http://
+dx.doi.org/10.1088/1748-9326/8/1/015001. <http://stacks.iop.org/1748-9326/
+8/i=1/a=015001?key=crossref.071108cb996cfa8a02f228101d846f86>.
+[19] Delgado A. Water footprint of electric power generation: modeling its use and
+analyzing options for a water-scarce future. Master’s thesis; 2012.
+[20] Rutberg MJ. Modeling water use at thermoelectric power plants. Master’s
+thesis; Massachussets Institute of Technology; 2012.
+[21] Santhosh A, Farid AM, Youcef-Toumi K. Real-time economic dispatch for the
+supply side of the energy–water nexus. Appl Energy 2014;122(1):42–52.
+<http://dx.doi.org/10.1016/j.apenergy.2014.01.062>.
+[22] Santhosh A, Farid AM, Adegbege A, Youcef-Toumi K. Simultaneous co-
+optimization for the economic dispatch of power and water networks. In:
+The 9th IET international conference on advances in power system control
+operation and management; 2012. p. 1–6.
+[23] Santhosh A, Farid AM, Youcef-Toumi K. The impact of storage facility capacity
+and ramping capabilities on the supply side of the energy–water nexus. Energy
+2014;66(1):1–10.
+<http://dx.doi.org.libproxy.mit.edu/10.1016/j.energy.2014.
+01.031>.
+[24] Santhosh A, Farid AM, Youcef-Toumi K. The impact of storage facilities on the
+simultaneous economic dispatch of power and water networks limited by
+ramping rates. In: IEEE international conference on industrial technology. Cape
+Town, South Africa; 2013. p. 1–6.
+[25] Santhosh A, Farid AM, Youcef-toumi K. Optimal network ﬂow for the supply
+side of the energy–water nexus. In: 2013 IEEE international workshop on
+intelligent energy systems. Vienna, Austria; 2013. p. 1–6.
+[26] Lubega WN, Santhosh A, Farid AM, Youcef-Toumi K. An integrated energy and
+water market for the supply side of the energy-water nexus in the engineered
+infrastructure. In: ASME 2014 power conference. Baltimore, MD; 2014a. p. 1–
+11.
+[27] Lubega WN, Santhosh A, Farid AM, Youcef-Toumi K. A unit commitment model
+for renewable energy integration study in the energy-water nexus. Renew
+Energy; 2014 [submitted for publication].
+[28] Tidwell VC, Kobos PH, Malczynski L, Klise G, Hart WE, Castillo C. Decision
+support for integrated water–energy planning. Tech. Rep. October; SANDIA
+National Lab; 2009.
+[29] Sattler S, Macknick J, Yates D, Flores-Lopez F, Lopez A, Rogers J. Linking
+electricity and water models to assess electricity choices at water-relevant
+scales. Environ Res Lett 2012;7(4):045804. http://dx.doi.org/10.1088/1748-
+9326/7/4/045804.
+<http://stacks.iop.org/1748-9326/7/i=4/a=045804?key=
+crossref.e1597dc96fe929476c24435da0dce544>.
+[30] Friedenthal S, Moore A, Steiner R. A practical guide to SysML: systems
+modeling language. San Francisco, CA, USA: Morgan Kaufmann Publishers Inc.;
+2008. ISBN 0123743796, 9780080558363, 9780123743794.
+[31] Otter M, Elmqvist H, Cellier FE. Modeling of multibody systems with the
+object-oriented
+modeling
+language
+Dymola.
+Nonlinear
+Dyn
+1996;9(1-
+2):91–112.
+[32] Akesson J, Arzen KE, Gaafvert M, Bergdahl T, Tummescheit H. Modeling and
+optimization with Optimica and JModelica.org—languages and tools for
+solving large-scale dynamic optimization problems. Comput Chem Eng
+2010;34(11):1737–49.
+http://dx.doi.org/10.1016/j.compchemeng.2009.11.011.
+<http://www.sciencedirect.com/science/article/pii/S009813540900283X>.
+[33] Frenkel J, Schubert C, Kunze G, Fritzson P, Sjölund M. Pop A. Towards a
+benchmark suite for Modelica compilers: large models. In: Modelica’2011: the
+8th international Modelica conference; 2011.
+[34] Rosenthal R, Rosenthal RE. GAMS Users Guide. Tech. Rep.; Washington; 2012.
+<http://www.gams.com/dd/docs/bigdocs/GAMSUsersGuide.pdf>.
+[35] Drud, A. Conopt. Tech. Rep.; ARKI Consulting and Development A/S; Bagsvaerd,
+Denmark; 2013. <http://www.gams.com/dd/docs/solvers/conopt.pdf>.
+[36] Karnopp D, Margolis DL, Rosenberg RC. System dynamics: a uniﬁed approach.
+2nd ed. New York: Wiley; 1990. ISBN 0471621714.
+[37] Brown FT. Eng Syst Dyn. 2nd ed. Taylor & Francis; 2007. ISBN 0-8493-9648-4.
+[38] Gonzalez G, Barriga O. A hydroelectric plant connected to an electric power
+system. In: Strangio M, editor. Recent advances in technologies. Intech Open
+Access
+Publisher;
+2009.
+p.
+181–98.
+ISBN
+978-953-307-017-9.
+<http://
+www.intechopen.com/books/recent-advances-in-technologies/> [chapter 11].
+[39] Kiameh P. Power generation handbook: fundamentals of low-emission, high-
+efﬁciency power plant operation. 2nd ed. New York: McGraw-Hill; 2012. ISBN
+9780071772273 (acid-free paper) 0071772278 (acid-free paper).
+156
+W.N. Lubega, A.M. Farid / Applied Energy 135 (2014) 142–157
+
+===== PAGE 16 =====
+[40] Leva A, Maffezzoni C. Modelling of power plants. In: Flynn D, editor. Thermal
+power
+plant
+simulation
+and
+control.
+London.
+2003,
+p.
+17–57.
+ISBN
+0852964196 [chapter 2].
+[41] Bakka T, Karimi H. Wind turbine modeling using the bond graph. In: IEEE
+international symposium on computer-aided control system design; 2011. p.
+1208–13.
+[42] Cipollina A, Micale G, Rizzuti L. Seawater desalination: conventional and
+renewable
+energy
+processes.
+Berlin;
+London:
+Springer;
+2009.
+ISBN
+9783642011498
+(hbk.)
+3642011497
+(hbk.)
+3642011500
+(ebook)
+9783642011504 (ebook).
+[43] Sommariva C. Desalination and advanced water treatment: economics and
+ﬁnancing. Massachussetts; USA: Balaban Desalination Publications; 2010.
+ISBN 0-86689-069-6.
+[44] Gebel J. An engineer’s guide to desalination. Vgb Powertech; 2008. ISBN
+9783868752212.
+[45] Giustolisi O, Savic D, Kapelan Z. Pressure-driven demand and leakage simulation
+for water distribution networks. J Hydraul Eng 2008;134(5):626–35.
+[46] Tabesh M, Jamasb M, Moeini R. Calibration of water distribution hydraulic
+models: a comparison between pressure dependent and demand driven
+analyses.
+Urban
+Water
+J
+2011;8(2):93–102.
+http://dx.doi.org/10.1080/
+1573062X.2010.548525.
+http://www.tandfonline.com/doi/abs/10.1080/1573
+062X.2010.548525.
+[47] Mosterman PJ. Hybrid dynamic systems: a hybrid bond graph modeling
+paradigm and its application in diagnosis. Ph.D. thesis; Vanderbilt University;
+1997. <http://msdl.cs.mcgill.ca/people/mosterman/papers/thesis/>.
+[48] Thoma J, Bouamama BO. Modelling and simulation in thermal and chemical
+engineering. Germany: Springer Verlag; 2010. ISBN 978-3-642-08566-6.
+[49] Tchobanoglous G, Burton FL, Stensel DH. Wastewater engineering: treatment
+and reuse. 4 ed. New York, NY: McGraw Hill; 2004. ISBN 007-124140-X.
+[50] Milano F. Power system modelling and scripting. Springer Verlag; 2010.
+[51] Lubega WN, Farid AM. An engineering systems sensitivity analysis model for
+holistic energy-water nexus planning. In: ASME 2014 power conference.
+Baltimore, MD; 2014, p. 1–10.
+[52] Lubega WN, Santhosh A, Farid AM, Youcef-Toumi K. Opportunities for
+integrated energy and water management in the GCC – a keynote paper. In:
+EU-GCC renewable energy policy experts’ workshop. December; Masdar
+Institute,
+Abu
+Dhabi,
+UAE;
+2013.
+p.
+1–33.
+<http://www.grc.net/data/
+contents/uploads/Opportunities_for_Integrated_Energy_and_Water_Manage
+ment_in_the_GCC_5874.pdf>.
+[53] Lubega WN, Farid AM. Opportunities for integrated energy-water nexus
+management in
+the gulf
+cooperation council. Energy Sust Dev;
+2014
+[submitted for publication].
+W.N. Lubega, A.M. Farid / Applied Energy 135 (2014) 142–157
+157

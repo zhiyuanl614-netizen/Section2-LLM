@@ -1,0 +1,2707 @@
+5874
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 36, NO. 6, NOVEMBER 2021
+Optimal Design of Water Tank Size for Power System
+Flexibility and Water Quality
+Yiming Yao
+, Chunyan Li
+, Member, IEEE, Kaigui Xie
+, Senior Member, IEEE,
+Heng-Ming Tai
+, Senior Member, IEEE, Bo Hu
+, Member, IEEE, and Tao Niu
+, Member, IEEE
+Abstract—The increasing penetration of renewable energy, such
+as wind power, has brought great challenges to the power system
+operation due to its uncertainty. Flexibility, which measures the
+ability of power system to deal with the uncertainties, is critical
+for power system to adapt to the new era of renewable energy. The
+rising electrical demand of the water distribution system (WDS)
+creates opportunities for power system to leverage the ﬂexibility
+provided by WDS. This paper investigates the water-energy re-
+lationship between these two systems and makes full use of the
+water pumps and tanks in the WDS to enhance the power system
+ﬂexibility. Current WDS designs did not consider well the role
+WDS plays in the power system. This hinders the WDS from being
+fully used by power system to provide ﬂexibility. An optimization
+model is proposed to determine the optimal tank size of WDS,
+which may provide the maximum available ﬂexibility of power
+system. The effect of tank size on water quality is also investigated
+to ensure that the supplied water quality is not compromised.
+Moreover, a Benders-based heuristic algorithm is proposed to ﬁnd
+the optimization solution more efﬁciently and to protect the data
+of each energy system. Results of case study highlight the merit of
+the proposed optimization design and the advantage of using WDS
+to provide ﬂexibility for power system.
+Index Terms—Wind power, power system, water distribution
+system, ﬂexibility, optimization.
+NOMENCLATURE
+Most of the symbols and notations used throughout this pa-
+per are deﬁned below. Others are deﬁned following their ﬁrst
+appearances, as needed.
+A. Sets
+X/U/Y
+Set
+of
+variables
+involved
+in
+the
+outer/middle/inner objective function
+of
+two-stage
+robust
+optimization:
+X
+= {Is,i,t, Us,i,t, Ds,i,t}
+,
+Manuscript received December 12, 2020; revised April 5, 2021; accepted
+May 16, 2021. Date of publication May 19, 2021; date of current version
+October 20, 2021. This work was supported by the National Natural Science
+FoundationofChinaunderGrant51861145406.Paperno.TPWRS-02032-2020.
+(Corresponding author: Chunyan Li.)
+Yiming Yao, Chunyan Li, Kaigui Xie, Bo Hu, and Tao Niu are
+with the State Key Laboratory of Power Transmission Equipment and
+System
+Security
+at
+Chongqing University,
+Chongqing 400030,
+China
+(e-mail: yao_cqu@163.com; lcycqu@cqu.edu.cn; kaiguixie@vip.163.com;
+hboy8361@163.com; niutthu@qq.com).
+Heng-Ming Tai is with the Department of Electrical and Computer Engineer-
+ing, University of Tulsa, Tulsa, OK 74104 USA (e-mail: tai@utulsa.edu).
+Color versions of one or more ﬁgures in this article are available at https:
+//doi.org/10.1109/TPWRS.2021.3081724.
+Digital Object Identiﬁer 10.1109/TPWRS.2021.3081724
+U
+= {RW N
+s,w,t, REL
+s,n,t},
+and
+Y =
+{P wc
+s,w,t, P ec
+s,n,t, P g
+s,i,t,l}
+Z
+Setofvariablesinvolvedintheobjective
+function of tank size optimization
+ΩT /ΩW
+Set
+of
+conventional
+generating
+units/wind farms
+ΩL
+Set of blocks in the piecewise function
+of the conventional generating unit
+ΛE/ΨE
+Set of electrical buses/lines
+ΩT
+n/ ΩW
+n /ΩW DS
+n
+Set of units/wind farms/WDSs that con-
+nected to bus n
+ΛE
+n
+Set of electrical buses connected to bus
+n
+Δ/ΔP /ΔV
+Set of water pipes/pumps/valves
+ϖ/ϖT /ΩW DS
+Set of water nodes/tanks/WDS
+Δ+
+Set of water pipes where the ﬂow direc-
+tion is from the starting node to the end
+node
+B. Parameters
+Nsc
+Number of seasonal scenarios
+ωs
+Scenario occurrence probability
+Ng
+Number of conventional units
+T
+Number of time steps
+ci, cu
+i , cd
+i
+Commitment/start-up/shut-down
+cost
+of unit i
+NW /NEB
+Number of wind farms/electrical loads
+λ/μ
+Penalty factor for wind power/electrical
+demand curtailment
+L
+Number of piecewise linear cost func-
+tion segments
+Ki,l
+Slope of block l of the piecewise func-
+tion of unit i
+TUi/TDi
+Minimum up/down times of unit i
+Rampi
+Ramp rate of unit i
+P gmin
+i
+/P gmax
+i
+Minimum/maximum output of unit i
+P pre
+s,w,t
+Output of wind farm w at time t in
+scenario s
+ds,n,t
+Demand of electrical load n at time t in
+scenario s
+Bn,m
+Susceptance of electrical line n-m
+RW N,down
+s,w,t
+/RW N,up
+s,w,t
+Lower/upper bound of the output ﬂuc-
+tuation range of wind farm w at time t
+in scenario s
+0885-8950 © 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:12:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+YAO et al.: OPTIMAL DESIGN OF WATER TANK SIZE FOR POWER SYSTEM FLEXIBILITY AND WATER QUALITY
+5875
+REL,down
+s,n,t
+/REL,up
+s,n,t
+Lower/upper bound of the demand ﬂuc-
+tuation range of electrical load n at time
+t in scenario s
+PFn,m
+Capacity limit of electrical transmission
+line n-m
+NW DS
+Number of WDS
+N W T
+h
+Number of tanks in WDS h
+ϖn
+h
+Unit construction cost of tank n in WDS
+h
+r
+Interest rate
+IY
+Project life of the water tank in years
+λpricet
+Electricity price at time t
+ξ
+Penalty factor
+P W DSO
+s,h,t
+Electricity used by WDS h at time t in
+scenario s without optimizing the tank
+size
+P F lex
+s,t
+Flexibility requirement of power sys-
+tem at time t in scenario s
+cmn
+Loss coefﬁcient of pipe m-n
+qmin
+mn /qmax
+mn
+Minimum/maximum volume of pipe m-
+n
+aPm, bPm, cPm
+Coefﬁcients of the head-ﬂow equation
+of pump m
+qmin
+Pm /qmax
+Pm
+Minimum/maximum value of the ﬂow
+when pump m on
+M
+A very large positive constant
+qvmin
+mn /qvmax
+mn
+Minimum/maximum pipe ﬂow when
+valve m-n on
+dwt
+s,Jk
+Demand of water node Jk at time t in
+scenario s
+hmin
+Jm
+Minimum head of water node Jm
+Atank
+Jm
+Surface area of tank m
+μW
+Water loss rate of tank
+W min
+Jm
+Required minimum water storage of
+tank m
+W guide
+Jm
+Required constructed size of tank m to
+meet guidelines
+WV max
+Jm
+Maximum construction volume of tank
+m obeying technical limitations
+κ1, κ2, κ3
+Weighting coefﬁcients
+N W P
+h
+Number of pumps in WDS h
+Smn
+Cross-sectional area of pipe m-n
+k, kb
+Coefﬁcient of pipe/tank reaction rate
+equation
+Lnm
+Length of pipe n-m
+Qt
+s,Jm,ex
+External ﬂow into node Jm at time t in
+scenario s
+CJm,ex(s, t)
+Concentration of the external ﬂow
+which comes into node Jm at time t in
+scenario s
+Δt
+Time step
+An,w
+Equal 1 when wind farm w is connected
+to electrical bus n, and 0 otherwise
+Bn,i
+Equal 1 when unit i is connected to
+electrical bus n, and 0 otherwise
+C. Variables
+Is,i,t/Us,i,t/Ds,i,t
+Binary
+variable
+for
+commit-
+ment/startup/shutdown status of unit i
+at time t in scenario s (equals to 1 when
+the unit is on/started up/shut down, and
+0 otherwise)
+P wc
+s,w,t/P ec
+s,n,t
+Amount of wind power curtailment in
+the wind farm w/electrical demand cur-
+tailment at node n at time t in scenario
+s
+P g
+s,i,t,l
+Power produced in block l of the piece-
+wise linear function of the unit i at time
+t in scenario s
+RW N
+s,w,t/REL
+s,n,t
+Uncertain proportion of output/demand
+in wind farm w/electrical load n at time
+t to the values of scenario s
+θs,n,t/θs,ref,t
+Phase
+angle
+of
+electrical
+node
+n/reference node at time t in scenario s
+WV n
+h
+Size of tank n in WDS h
+P W DS
+s,h,t
+Electricity consumption of WDS h at
+time t in scenario s with the optimized
+tank size
+ht
+s,Jm/ht
+s,Jn
+Head pressure of water node Jm/Jn at
+time t in scenario s
+qt
+s,mn/qt
+s,Pm
+Flow in pipe m-n/pump m at time t in
+scenario s
+ˆht
+s,Pm
+Pressure head gain of pump m at time t
+in scenario s
+zt
+s,mn
+Binary
+variable
+which
+equals
+to
+1
+if
+the
+valve
+m-n
+works
+at
+time
+t
+in
+scenario
+s
+and
+0
+otherwise
+Rt
+s,mn
+Head loss along the pipe m-n equipped
+with a valve at time t in scenario s
+qin
+s,Jm,t/qout
+s,Jm,t
+Water that ﬂows into/out of tank m at
+time t in scenario s
+Ws,Jm,t
+Volume of the stored water in tank m at
+time t in scenario s
+W wind
+Jm
+Excess volume for providing ﬂexibility
+in tank m
+P W P
+s,i,t
+Electricity consumption of pump i at
+time t in scenario s
+Cmn(s, x, t)
+Concentration of the residual chlorine
+at position x of pipe m-n at time t in
+scenario s
+vmn(s, t)
+Flow velocity in pipe m-n at time t in
+scenario s
+r[Cmn(s, x, t)]
+Reaction rate at position x of pipe m-n
+at time t in scenario s
+CJm(s, t)
+Nodal residual chlorine concentration
+of node Jm at time t in scenario s
+r[CJm(s, t)]
+Reaction rate of tank m at time t in
+scenario s
+P wca
+s,w,t/P eca
+s,n,t
+Amount of wind power curtailment
+in the wind farm w/electrical demand
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:12:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+5876
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 36, NO. 6, NOVEMBER 2021
+curtailment at node n at time t in sce-
+nario s with the optimized tank size
+θAJ
+s,n,t/θAJ
+s,m,t
+Adjusted phase angle of node n/m at
+time t in scenario s
+θAJ
+s,ref,t
+Phase angle of the reference bus at time
+t in scenario s
+ϑ(1)
+s,i,t/ϑ(2)
+s,i,t
+Non-negative KKT multipliers corre-
+sponding to the left side/right side of
+constraint (8)
+ϑ(3)
+s,i,t/ϑ(4)
+s,i,t
+Non-negative KKT multipliers corre-
+sponding to the left side/right side of
+constraint (9)
+ϑ(5)
+s,i,t,l
+Non-negative KKT multiplier corre-
+sponding to the constraint (10)
+ϑ(6)
+s,w,t/ϑ(7)
+s,w,t
+Non-negative KKT multipliers corre-
+sponding to the constraint (12)/(13)
+ϑ(8)
+s,n,t/ϑ(9)
+s,n,t
+Non-negative KKT multipliers corre-
+sponding to the constraint (14)/(15)
+τ (1)
+s,n,t
+KKT multiplier corresponding to the
+constraint (11)
+z(1)
+s,i,t, z(2)
+s,i,t, z(3)
+s,i,t
+Binary variables for handling bilinear
+constraints
+z(4)
+s,i,t, z(5)
+s,i,t,l, z(6)
+s,w,t
+Binary variables for handling bilinear
+constraints
+z(7)
+s,w,t, z(8)
+s,n,t, z(9)
+s,n,t
+Binary variables for handling bilinear
+constraints
+I. INTRODUCTION
+R
+ENEWABLE energy is estimated to meet 80% of global
+electricity demand growth during the next decade and is
+expected to overtake the coal by 2025 as the primary means
+of producing electricity [1]. Renewable energy such as wind
+power, however, is uncertain and highly volatile compared with
+the power generated by conventional thermal generating units.
+With the increasing penetration of wind power, great challenges
+on the imbalance of supply and demand have put forward high
+requirements for the ﬂexibility of power system.
+Flexibility is referred to as the capability of power system to
+cope with the uncertainty that arises from variable renewable
+generation [2]. Power system requires adequate ﬂexibility to
+cope with the changing wind power. If not, events of wind power
+curtailment or electrical demand curtailment will occur and
+the power system may face huge economic losses. Inadequate
+ﬂexibility is the main cause of the curtailment [3]. Thus, power
+system ﬂexibility has become a global priority, as stated by
+International Energy Agency in their 2018 report [4]. It is in
+urgent need of ﬁnding effective means to ensure the ﬂexible
+operation of power system.
+WDS has been used to regulate the electricity consumption
+curve and promote the accommodation of wind power by co-
+ordinating the operation of water pumps and tanks [5]. WDS
+accounts for 5% of the annual total electricity consumption in
+China, and more than 15% in California, USA [6]. Electrical
+demand associated with WDS is projected to increase. There
+are a few pilot programs utilizing WDS to provide ﬂexibility for
+power system [7]–[11]. WDS can provide frequency regulation
+services, reduce the peak load, and balance the wind power
+integration. In California, a water utility, which owns a WDS and
+a wastewater treatment plant, can provide 5.3 MW interruptible
+load capacity for up to 2 hours, resulting in more than $400000
+annual revenues for the utility [9]. Thus, it is of great beneﬁt to
+fully make use of the WDS to improve the ﬂexibility of power
+system and to enhance the wind power accommodation.
+Optimal operational strategies of integrating WDS into the
+power system have been studied [12]–[16]. As an essential
+component of the WDS, water tank plays an important role in
+the optimal schedule of electricity consumption. The WDS can
+pump water into the tank for storage when the wind is abundant
+and release the stored water to meet the demand. Water tank can
+be regarded as an auxiliary storage device for the power system.
+The optimal tank design scheme may provide the maximum
+available ﬂexibility of power system.
+The water tank design in WDS has been widely studied. For
+example, the pros and cons of various tank design models were
+analyzed [17]. The network reduction approach, hydraulic simu-
+lation, and mathematical optimization were combined to support
+the planning process for tanks [18]. The size and location of the
+watertankcouldbeoptimizedbyincorporatingtheEpanetsolver
+into the decision process [19]. The optimization model of WDS
+is formulated as a mixed-integer quadratically-constrained pro-
+gramming (MIQCP) problem, which can be solved efﬁciently by
+heuristic algorithms [20]. Multi-objective optimization methods
+have been applied to the tank design considering factors such
+as cost, greenhouse gas emissions and reliability [21]–[24]. The
+above tank design schemes mainly consider the characteristics
+of WDS, and the effect of WDS connected to power system has
+not been taken into account.
+To the best of our knowledge, not many researches on the
+WDS tank design incorporating wind power into the power sys-
+tem have been reported. Although larger tank size allows more
+water to be stored and more wind power can be accommodated,
+it may have adverse effect on water quality. Residual chlorine
+concentration is one of the most important indicators to evaluate
+the water quality. It should be maintained above the minimum
+threshold at each water node. If not, harmful microorganisms
+will breed and the water will not be safe anymore. Considering
+the interaction between WDS and power system, the optimal
+tank design scheme can be determined, which maximizes the
+deliverability of WDS energy ﬂexibility. The upgraded WDS
+is a promising solution to the power system in deﬁciency of
+ﬂexibility.
+This paper proposes an optimization model of water tank size
+design for power system ﬂexibility and water quality. The design
+model is a two-step process. The ﬁrst step generates the ﬂexibil-
+ity requirements considering wind power and electrical demand
+uncertainties. Then the optimal tank size and the operation of
+WDS are determined according to the ﬂexibility requirements
+and water quality criterion.
+In this study, power system ﬂexibility refers to the ability
+of a power system in response to the variations in electrical
+demand and supply due to the uncertainty of variable renewable
+energy. Inadequate ﬂexibility would force the power system to
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:12:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+YAO et al.: OPTIMAL DESIGN OF WATER TANK SIZE FOR POWER SYSTEM FLEXIBILITY AND WATER QUALITY
+5877
+Fig. 1.
+Two-step optimization framework.
+curtail wind power or electrical demand. If a power system
+lacks the upward ﬂexibility, then the event of electrical demand
+curtailment will occur. Wind power curtailment will occur for
+a lack of downward ﬂexibility. Flexibility requirement denotes
+the amount of ﬂexibility shortage.
+The water quality properties of the WDS bring nonlinear par-
+tial differential equation (NLPDE) to the model, which cannot be
+easily solved by the existing off-the-shelf software. To address
+this problem, a Benders-based heuristic algorithm is proposed
+to convert the NLPDE into a linear partial differential equation
+(LPDE). Then the WDS optimization problem is transformed
+into a mixed-integer programming (MIP) problem, which can
+be solved efﬁciently.
+The main contributions of this paper are
+a) Develop an electricity-water model to leverage the energy
+ﬂexibility provided by WDS and facilitate effective incor-
+poration of wind power to the power system;
+b) Propose a method for optimal water tank design con-
+sidering power system ﬂexibility and water quality. A
+Benders-based heuristic algorithm is developed to solve
+the optimization problem efﬁciently and to protect the data
+privacy of each energy system.
+In the remainder of this paper, the proposed optimization
+model is described in Section II. Section III presents the solution
+method using the Benders-based algorithm. Case studies are
+given in Section IV to verify the advantages of the proposed
+model. The paper is concluded in Section V.
+II. THE PROPOSED OPTIMIZATION MODEL
+This section presents the optimization model of water tank
+size design in the WDS for power system ﬂexibility and water
+quality. The ultimate goal is to minimize the annual investment
+and operating costs. Prior to the detailed description of the
+proposed optimization model, the structure of the optimization
+model is outlined.
+A. Optimization Structure
+1) Two-Step Model for Tank Size Optimization: The WDS
+optimization is a two-step model for water tank size optimiza-
+tion. The process is depicted in Fig. 1. In the ﬁrst step, ﬂexibility
+requirement scenarios are generated, which reﬂect the upward
+and downward ﬂexibility requirements of power system.
+Step 2 determines the optimal tank size of WDS under the
+ﬂexibility requirement scenarios, water demand scenarios, and
+the water quality requirement. The operation of pumps and tanks
+are coordinated in the WDS to adjust the electricity consumption
+so that the ﬂexibility requirements of power system can be met.
+Fig. 2.
+Typical daily value and uncertainty range.
+Fig. 3.
+Two-stage scenario-based optimization framework.
+The tank size should not be too large to guarantee good water
+quality.
+2) Generation of Scenarios: The seasonal impact is consid-
+ered by dividing the historical data of wind power, electrical
+demand and water demand into four seasons with a 24-hour
+proﬁle. Seasonal scenarios are then generated by using the
+GAMS SCENRED tool based on Backward/Forward algorithm
+[25]. The corresponding wind power, electrical demand and
+water demand can be found in each seasonal scenario.
+The variations of wind power and electrical demand in real-
+time operation are limited by the uncertainty range, as shown
+in Fig. 2. The study resolution is 15 minutes in this paper, and
+there are 96 time steps in each scenario.
+The volatility of water load is much lower than that of wind
+power and electrical load. The variation of water demand in
+real-time operation is neglected in many water tank planning
+researches [18]–[24]. To simplify calculations, this paper does
+not consider it either. In the future, research will be conducted
+to model the water demand variations.
+A two-stage robust optimization (TSRO) method is used to
+ﬁnd the scenarios where power system is in urgent need of ﬂexi-
+bility. The worst-case wind power output and electrical demand
+in the real-time operation that jeopardize the operation cost of
+power system are found by considering the typical seasonal
+value and uncertainty range as shown in Fig. 2. In the worst-case
+scenario, the ﬂexibility requirements during each time period
+can be determined by calculating the amount of wind power
+or electrical demand curtailments. Mathematical formulations
+of the TSRO method and detailed process of generating the
+ﬂexibility requirement scenarios are given in Section II-B below.
+3) Two-Stage Scenario-Based Tank Size Optimization: The
+optimal tank size is determined through a two-stage scenario-
+based optimization method, as seen in Fig. 3. The investment
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:12:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+5878
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 36, NO. 6, NOVEMBER 2021
+(planning) stage optimizes the tank size considering the con-
+struction cost and engineering limitations. Once the tank size
+is determined, the operation stage simulates the system’s daily
+(24-hour) operation to optimize the operation cost. In this way,
+planning and operation are integrated in a holistic model by
+taking detailed operation constraints into account in the planning
+stage. The two-stage scenario-based optimization ensures the
+investment decision to be effective and economical during the
+operation periods. This approach has been widely used in the
+ﬁeld of power system planning [25]–[29].
+B. Power System Optimization
+The ﬂexibility requirement is generated by feeding the typical
+seasonal scenarios into a power system optimization model. The
+objective function of the optimization model can be expressed
+as
+CE = min
+X
+
+CS (X) + max
+U
+min
+Y CA (U, Y)
+
+.
+(1)
+CE is involved with two objectives: CS and CA. CS denotes
+the sum of the commitment, startup and shutdown cost of the
+conventional generating unit. CA denotes the operation cost of
+power system, including the electricity production cost of the
+conventional unit and the penalty for curtailing wind power and
+electrical demands. The model intends to minimize the CS and
+the maximized minimum CA.
+The outer minimization problem aims at searching for the
+optimal status of the commitment (Is,i,t), startup (Us,i,t), and
+shutdown (Ds,i,t) for the conventional unit. The maximization
+operation ﬁnds the worst-case scenario that jeopardizes the
+operation cost of the power system. The inner minimization is
+to determine the amount of wind power curtailment (P wc
+s,w,t),
+electrical demand curtailment (P ec
+s,n,t), and the electricity output
+of conventional unit (P g
+s,i,t,l).
+The cost CS can be expressed as
+CS (X) =
+Nsc
+
+s=1
+Ng
+
+i=1
+T
+
+t=1
+ωs∗
+ ci ∗Is,i,t + cu
+i ∗Us,i,t
++cd
+i ∗Ds,i,t
+
+.
+(2)
+ci, cu
+i , cd
+i denote the commitment, start-up, and shut-down
+cost of unit i, respectively.
+The operation cost of the power system can be formulated as
+CA (U, Y) =
+Nsc
+
+s=1
+ωs∗
+⎛
+⎜
+⎜
+⎜
+⎜
+⎜
+⎜
+⎝
+NW
+
+w=1
+T
+t=1
+λ∗P wc
+s,w,t
++
+NEB
+
+n=1
+T
+t=1
+μ∗P ec
+s,n,t
++
+Ng
+
+i=1
+T
+t=1
+L
+
+l=1
+Ki,l∗P g
+s,i,t,l
+⎞
+⎟
+⎟
+⎟
+⎟
+⎟
+⎟
+⎠
+. (3)
+The production cost of the conventional unit is expressed as
+a linear function 
+Ng
+i=1
+
+T
+t = 1
+
+L
+l = 1 Ki,l ∗P g
+s,i,t,l using the
+piecewise linearization approximation [30].
+For any scenario s at time instant t, constraints of the power
+system are listed below.
+Is,i,t −Is,i,t−1 = Us,i,t −Ds,i,t ∀i ∈ΩT
+(4)
+Us,i,t + Ds,i,t ≤1 ∀i ∈ΩT
+(5)
+Us,i,t +
+T Ui−1
+
+l = 1
+Ds,i,t+l ≤1 ∀i ∈ΩT
+(6)
+Ds,i,t +
+T Di−1
+
+l = 1
+Us,i,t+l ≤1 ∀i ∈ΩT
+(7)
+
+L
+
+l = 1
+P g
+s,i,t,l −
+L
+
+l = 1
+P g
+s,i,t−1,l
+ ≤Rampi ∀i ∈ΩT
+(8)
+P gmin
+i
+∗Is,i,t ≤
+L
+
+l = 1
+P g
+s,i,t,l ≤P gmax
+i
+∗Is,i,t ∀i ∈ΩT
+(9)
+P g
+s,i,t,l ≥0 ∀i ∈ΩT , l ∈ΩL
+(10)
+
+i∈ΩT
+n
+L
+l=1 P g
+s,i,t,l+
+
+w∈ΩW
+n
+
+P pre
+s,w,t∗RW N
+s,w,t−P wc
+s,w,t
+
+=ds,n,t ∗REL
+s,n,t−P ec
+s,n,t+
+
+h∈ΩW DS
+n
+P W DSO
+s,h,t
++
+
+m∈ΛE
+n Bn,m (θs,n,t−θs,m,t) ∀n ∈ΛE
+(11)
+P pre
+s,w,t∗RW N
+s,w,t −P wc
+s,w,t ≥0 ∀w ∈ΩW
+(12)
+P wc
+s,w,t ≥0 ∀w ∈ΩW
+(13)
+ds,n,t∗REL
+s,n,t −P ec
+s,n,t ≥0 ∀n ∈ΛE
+(14)
+P ec
+s,n,t ≥0 ∀n ∈ΛE
+(15)
+RW N,down
+s,w,t
+≤RW N
+s,w,t ≤RW N,up
+s,w,t
+∀w ∈ΩW
+(16)
+REL,down
+s,n,t
+≤REL
+s,n,t ≤REL,up
+s,n,t
+∀n ∈ΛE
+(17)
+−PFn,m ≤Bn,m (θs,n,t −θs,m,t) ≤PFn,m ∀(n, m) ∈ΨE
+(18)
+θs,ref,t = 0.
+(19)
+Constraints (4) and (5) restrict the status of the generating unit.
+Operation limitations of the unit are described in constraints
+from (6) to (10). Constraint (11) is the nodal ﬂow equation.
+Constraints (12), (13), (14) and (15) give the value ranges
+of the wind power and load curtailment. (16) describes the
+ﬂuctuation range of the actual wind power, and (17) that of the
+actual electrical demand. The size of the uncertainty enlarges
+when RW N,down
+s,w,t
+/REL,down
+s,n,t
+falls and RW N,up
+s,w,t
+/REL,up
+s,n,t
+rises,
+indicating more conservative results. The direct current (DC)
+power ﬂow is used. Constraint (18) shows the power ﬂow limit
+of the line, and constraint (19) enforces the phase angle of the
+reference bus to zero.
+The worst-case scenario occurs where the power system is
+most likely to face a shortage of ﬂexible resources. The worst-
+case proﬁle most likely appears after solving the three-level min-
+max-min optimization problem using the column-and-constraint
+generation (C&CG) algorithm [31]. The wind power output and
+electrical demand in the worst-case scenario can be calculated
+as P pre
+s,w,t∗ˆRW N
+s,w,t and ds,n,t∗ˆREL
+s,n,t, respectively, where ˆRW N
+s,w,t,
+ˆREL
+s,n,t, ˆP wc
+s,w,t, ˆP ec
+s,n,t denote the values of variable RW N
+s,w,t,
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:12:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+YAO et al.: OPTIMAL DESIGN OF WATER TANK SIZE FOR POWER SYSTEM FLEXIBILITY AND WATER QUALITY
+5879
+Fig. 4.
+Example of the ﬂexibility requirement scenario.
+Fig. 5.
+Example of a WDS.
+REL
+s,n,t, P wc
+s,w,t and P ec
+s,n,t, respectively. The upward ﬂexibility re-
+quirement can be calculated by 
+NEB
+n = 1 ˆP ec
+s,n,t and the downward
+ﬂexibility requirement by 
+NW
+w = 1 ˆP wc
+s,w,t. Then the ﬂexibility
+requirement scenario can be generated as shown in Fig. 4. The
+positive MW and the negative MW denote the upward and
+downward ﬂexibility requirements, respectively. The solution
+procedure of C&CG will be described in Section III.
+The ﬂexibility requirement scenario is obtained based on the
+robust optimization method, which ﬁnds the situation where
+power system is most likely to face a shortage of ﬂexible
+resources. Traditional robust optimization method may result
+in the over-conservative solutions, whereas the TSRO method
+used in this paper can compromise between the robustness and
+the optimality [31].
+The unit status is optimized in the outer minimization problem
+of (1) (the ﬁrst stage) and is considered ﬁxed for the inner
+maximized minimal problem (the second stage). When the un-
+certainties are realized in the second stage, operation strategies
+of power system can be adjusted accordingly to minimize the
+system operation cost. Through the interaction between two
+stages, the TSRO method not only overcomes the overly con-
+servative characteristic of the traditional robust optimization but
+also ensures the constraints to be always fulﬁlled. Results of the
+TSRO tend to be less conservative when RW N,down
+s,w,t
+/REL,down
+s,n,t
+rises and RW N,up
+s,w,t
+/REL,up
+s,n,t
+falls. TSRO degrades to a stochastic
+optimization problem when RW N,down
+s,w,t
+, REL,down
+s,n,t
+, RW N,up
+s,w,t
+,
+and REL,up
+s,n,t
+equal 1.
+C. WDS Optimization
+1) Overview of WDS: The structure of a WDS is shown in
+Fig. 5. The reservoir serves as the source of water for WDS. The
+water ﬂowis transportedfromonenodetoanother inthepipedue
+to the head pressure difference between two nodes. The pump is
+used when the pressure difference is not enough. Valves control
+the pressure in a pipe or the amount of water ﬂowing through
+a pipe. The water tank can store water or supply water into the
+system.
+The water pump in a WDS consumes electricity to increase
+the pressure difference and transport the water ﬂow. More water
+can be conveyed when the electricity consumption is increased.
+The water can be stored in the tank to ensure the balance between
+supply and demand. Thus, WDS can be regarded as an adjustable
+electrical load from the perspective of power system. Optimal
+control of the water pump and tank enables WDS to deal with
+the ﬂexibility requirements of power system and to incorporate
+more wind power.
+2) Tank Size Optimization: Now we describe the two-stage
+scenario-based tank size optimization problem involved with
+WDS. The objective function can be formulated as (20) shown
+at bottom of the next page, where the ﬁrst stage of the objective
+function includes the tank construction cost. The second stage
+includes the electricity bill and the penalty for not satisfying
+the ﬂexibility requirements. The value of P F lex
+s,t
+depends on the
+ﬂexibility requirement scenario generated from power system
+optimization problem. The gap between electricity consumption
+adjustment of WDS and power system ﬂexibility requirement
+can be calculated by
+T
+
+t = 1
+ NW DS
+
+h = 1
+P W DS
+s,h,t
+−P W DSO
+s,h,t
+
++ P F lex
+s,t
+2
+.
+The penalty factor ξ ensures that the power system ﬂexibility
+requirement be satisﬁed as much as possible.
+For any scenario s and time t, the hydraulic constraints of
+WDS are given from (21) to (36).
+ht
+s,Jm −ht
+s,Jn = cmn ∗sign
+
+qt
+s,mn
+
+∗
+
+qt
+s,mn
+2
+∀(Jm, Jn) ∈Δ
+(21)
+qmin
+mn ≤qt
+s,mn ≤qmax
+mn ∀(Jm, Jn) ∈Δ
+(22)
+Pump on : ˆht
+s,Pm = aPm
+
+qt
+s,Pm
+2 + bPmqt
+s,Pm + cPm
+qmin
+Pm ≤qt
+s,Pm ≤qmax
+Pm
+∀Pm ∈ΔP
+(23)
+Pump off : qt
+s,Pm= 0 ∀Pm ∈ΔP
+(24)
+−M
+
+1−zt
+s,mn
+
+≤ht
+s,Jn−ht
+s,Jm+Rt
+s,mn ≤M
+
+1 −zt
+s,mn
+
+∀(Jm, Jn) ∈ΔV
+(25)
+Rt
+s,mn ≥0 ∀(Jm, Jn) ∈ΔV
+(26)
+qvmin
+mn ∗zt
+s,mn ≤qt
+s,mn ≤qvmax
+mn ∗zt
+s,mn ∀(Jm, Jn) ∈ΔV
+(27)
+dwt
+s,Jk =
+
+Jn:(Jn,Jk)∈Δ
+qt
+s,nk −
+
+Jm:(Jk,Jm)∈Δ
+qt
+s,km
+∀Jk ∈ϖ
+(28)
+ht
+s,Jm ≥hmin
+Jm ∀Jm ∈ϖ
+(29)
+qin
+s,Jm,t + qout
+s,Jm,t =
+
+ht+1
+s,Jm −ht
+s,Jm
+
+∗Atank
+Jm
+∀Jm ∈ϖT
+(30)
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:12:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+5880
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 36, NO. 6, NOVEMBER 2021
+Ws,Jm,t = (1 −μW ) Ws,Jm,t−1 + qin
+s,Jm,t−1 + qout
+s,Jm,t−1
+∀Jm ∈ϖT
+(31)
+W min
+Jm
+≤Ws,Jm,t ≤WV Jm
+h
+∀Jm ∈ϖT
+(32)
+WV Jm
+h
+= W guide
+Jm
++ W wind
+Jm
+∀Jm ∈ϖT
+(33)
+WV Jm
+h
+≤WV max
+Jm
+∀Jm ∈ϖT
+(34)
+P W P
+s,i,t = κ1 (qt
+s,Pi)3 + κ2(qt
+s,Pi)2 + κ3qt
+s,Pi ∀Pi ∈ΔP
+(35)
+P W DS
+s,h,t
+=
+N W P
+h
+i=1
+P W P
+s,i,t ∀h ∈ΩW DS
+(36)
+Constraint (21) describes the relationship between the head
+loss and the ﬂow in a pipe using the Darcy-Weisbach equation.
+Sign function sign(qt
+s,mn) ensures that the pressure is lowered
+in the ﬂow direction. Constraint (22) limits the water volume in
+the pipe. The ﬁxed-speed pump is used and modeled by (23) and
+(24). The pressure reducing valve is adopted, as formulated by
+(25), (26) and (27). Equation (28) describes the mass balance,
+and inequality (29) restricts the pressure head of each node.
+The water tank is modeled by constraints from (30) to (34).
+According to governmental guidelines, the tank size should
+satisfy several usage requirements such as the balancing storage
+and the reserve [17]. W guide
+Jm
+is the required constructed size to
+meet guidelines. The electricity consumption of the pump can
+be obtained by (35). The total electricity consumption of WDS
+is the sum of all the pumps, as seen in (36).
+Water quality can be described by the residual chlorine con-
+centration Cmn, which can be obtained by the water quality
+equations from (37) to (42). Cmn(s, x, t) is a function of the
+scenario s, segment x, and time t.
+∂Cmn (s, x, t)
+∂t
++ vmn (s, t) ∂Cmn (s, x, t)
+∂x
++ r [Cmn (s, x, t)] = 0
+∀(Jm, Jn) ∈Δ
+(37)
+vmn (s, t) = qt
+s,mn /Smn
+(38)
+r [Cmn (s, x, t)] = k∗Cmn (s, x, t)
+(39)
+CJm (s, t) =
+ 
+(Jn,Jm)∈Δ+ qt
+s,nm∗Cnm (s, Lnm, t)
++Qt
+s,Jm,ex ∗CJm,ex (s, t)
+
+
+(Jn,Jm)∈Δ+ qts,nm + Qt
+s,Jm,ex
+∀Jm ∈ϖ
+(40)
+Ws,Jm,t∗CJm (s, t) −Ws,Jm,t−Δt∗CJm (s, t −Δt) = Δt∗
+ 
+(Jn,Jm)∈Δ+ qt−Δt
+s,nm∗Cnm (s, Lnm, t−Δt)
+−
+(Jm,Jk)∈Δ+ qt−Δt
+s,mk∗CJm (s, t−Δt) −r [CJm (s, t−Δt)]
+
+∀Jm ∈ϖT
+(41)
+r [CJm (s, t)] = kb ∗CJm (s, t) .
+(42)
+The conservation of mass during transport along the pipe is
+described by the one-dimensional advection equation of (37).
+The ﬂow velocity is calculated by (38), and the reaction rate of
+pipe is calculated by (39). The balancing constraint for water
+nodes is described by (40). The tank is assumed to be mixed and
+(41) describes the balancing constraint. The tank reaction rate
+is calculated by (42). For pumps and valves in the WDS, the
+substance passes through instantaneously and the concentration
+remains unchanged.
+The electricity consumption scheme of the WDS considering
+tank size optimization should ensure that the power ﬂow limit of
+the transmission line in the power system is not violated. Thus
+the following constraints should be obeyed:
+
+i∈ΩT
+n
+
+L
+
+l = 1
+ˆP g
+s,i,t,l
+
++
+
+w∈ΩW
+n
+
+P pre
+s,w,t∗ˆRW N
+s,w,t −P wca
+s,w,t
+
+(43)
+= ds,n,t ∗ˆREL
+s,n,t −P eca
+s,n,t +
+
+h∈ΩW DS
+n
+P W DS
+s,h,t
++
+
+m∈ΛE
+n
+Bn,m
+
+θAJ
+s,n,t −θAJ
+s,m,t
+
+∀n ∈ΛE
+−PFn,m ≤Bn,m
+
+θAJ
+s,n,t −θAJ
+s,m,t
+
+≤PFn,m ∀(n, m) ∈ΨE
+(44)
+θAJ
+s,ref,t = 0
+(45)
+All the symbols in the form of 
+(·) denote the values of
+the corresponding variables (·) in Step 1 of the power system
+optimization problem. The optimal tank size can be determined
+by solving the optimization problem with the objective function
+(20) and constraints from (21) to (45).
+The ﬂexibility requirement after the tank size optimization
+can be calculated by
+P F lexa
+s,t
+=
+NEB
+
+n=1
+ˆP eca
+s,n,t −
+NW
+
+w = 1
+ˆP wca
+s,w,t
+(46)
+where ˆP eca
+s,n,t and ˆP wca
+s,w,t denote the values of P eca
+s,n,t and P wca
+s,w,t,
+respectively.
+CW DS (Z) = min
+⎛
+⎜
+⎜
+⎜
+⎜
+⎝
+
+NW DS
+h = 1
+
+N W T
+h
+n = 1 WV n
+h ∗ϖn
+h∗r(1+r)IY
+(1+r)IY −1
++ 
+Nsc
+s = 1 ωs∗
+⎛
+⎜
+⎝
+
+NW DS
+h = 1
+
+T
+t = 1 P W DS
+s,h,t ∗λpricet
++ξ ∗
+T
+t = 1
+ 
+NW DS
+h = 1 P W DS
+s,h,t
+−P W DSO
+s,h,t
+
++P F lex
+s,t
+2
+⎞
+⎟
+⎠
+⎞
+⎟
+⎟
+⎟
+⎟
+⎠
+(20)
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:12:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+YAO et al.: OPTIMAL DESIGN OF WATER TANK SIZE FOR POWER SYSTEM FLEXIBILITY AND WATER QUALITY
+5881
+D. Supplementary Remarks
+P W DSO
+s,h,t
+denotes the electrical demand used by WDS without
+optimizing the tank size. It serves as the input parameter in (11),
+(20). It can be determined as the value of variable P W DS
+s,h,t
+after
+solving the optimization problem
+⎧
+⎪
+⎪
+⎨
+⎪
+⎪
+⎩
+min
+ Nsc
+
+s = 1
+ωs∗
+NW DS
+
+h = 1
+T
+t = 1
+P W DS
+s,h,t ∗λpricet
+
+s.t. (21) −(31) , (35) −(36)
+W min
+Jm
+≤Ws,Jm,t ≤W guide
+Jm
+.
+(47)
+Note that the optimization aims at minimizing the electricity
+bill of WDS without providing ﬂexibility for power system.
+III. SOLUTION METHODOLOGY
+Many commercial solvers such as Gurobi are available for
+power system solutions. But they are not applicable to the min-
+max-min optimization problem of (1) and the nonlinear partial
+differential equation (NLPDE) in the water distribution system
+(WDS) model [32]. Thus, we apply the C&CG algorithm and
+propose a Benders-based heuristic algorithm to transform the
+min-max-min optimization problem of (1) and NLPDE into the
+MIP problems so that the commercially available solvers can be
+applied. Details are given below.
+A. Solution Procedure of C&CG Algorithm
+The min-max-min optimization problem of the power system
+can be expressed in the following form
+⎧
+⎪
+⎪
+⎨
+⎪
+⎪
+⎩
+CE = min
+X
+
+CS (X) + max
+U
+min
+Y CA (U, Y)
+
+s.t. F (X) ≤D
+G (X) + H (Y) + J (U) ≤R.
+(48)
+The C&CG exploits a master-slave framework formulated as
+⎧
+⎪
+⎪
+⎪
+⎨
+⎪
+⎪
+⎪
+⎩
+min
+X, λ CS (X) + λ
+s.t. F (X) ≤D
+λ ≥CA (U∗, Y )
+G (X) + H (Y) + J (U∗) ≤R ∀U∗∈Sl
+(49)
+and
+
+max
+U
+min
+Y CA (U, Y)
+s.t. G (X∗) + H (Y) + J (U) ≤R.
+(50)
+The master-slave problem framework of C&CG enables sys-
+tem operators to ﬁnd the amount of wind power curtailment
+(i.e., values of P wc
+s,w,t) and the amount of electrical demand
+curtailment (i.e., values of P ec
+s,n,t) under the worst-case wind
+power output and electrical demand.
+In the master problem (49), an optimal solution (X∗, λ∗) can
+be obtained with a set of the ﬁxed variables in U∗generated from
+the slave problem. The slave problem then solves (50) based on
+the obtained X∗. (50) can be considered as a bi-level problem,
+which is solved using the KKT conditions and Big-M approach
+[31]. Solution details of (50) are given in the Appendix A. The
+solution procedure of C&CG is summarized in Algorithm 1.
+The obtained optimal solution U∗in the last iteration collects the
+Algorithm 1: C&CG.
+Step 1 Initialize the lower bound LB as −∞and the
+upper bound UB as +∞, the slave solution set Sl
+as ∅and the iteration number i as 0.
+Step 2 Solve the master problem (49) and update X∗
+i+1,
+λ∗
+i+1, and lower bound
+LB = max{LB, CS(X∗
+i+1) + λ∗
+i+1 }.
+Step 3 Solve the slave problem (50) to obtain the optimal
+solution U∗, add to the set Sl. Update the upper
+bound UB =
+min{UB, CS(X∗
+i+1) + λ∗
+i+1 + CA(U∗
+i+1, Y ∗
+i+1)}.
+Step 4 If the convergence criterion (UB −LB) ≤ϵ1 is
+met, then Stop; otherwise, i = i + 1 and go to
+Step 2.
+worst-casewindpowerandelectricaldemandcurveofeachdaily
+scenario, which is used to generate the ﬂexibility requirement
+scenario in Section II.
+B. Benders Decomposition
+The WDS optimization problem is formulated as
+min CW DS (Z)
+s.t. (21) −(45) .
+(51)
+CW DS(Z) denotes the total cost of WDS with the optimized
+tanksize,asdescribedin(20).Itcanbedecomposedintoamaster
+problem and a slave problem by the Benders decomposition.
+1) Master problem:
+min CW DS (Z)
+s.t. (21) −(42) .
+(52)
+The master problem is solved with the data from WDS. The
+obtained values of P W DS
+s,h,t
+are then passed to the slave problem.
+1) Slave problem:
+The slave problem can be formulated as
+min
+ Nsc
+
+s = 1
+NEB
+
+n = 1
+T
+
+t = 1
+
+ξP 1
+s,n,t + ξP 2
+s,n,t
+
+
+s.t. (44) −(45) ;
+P W DS
+s,h,t
+= ˆP W DS
+s,h,t
+(γs,h,t) ;
+(53)
+
+i∈ΩT
+n
+ L
+
+l = 1
+ˆP g
+s,i,t,l
+
++
+
+w∈ΩW
+n
+
+P pre
+s,w,t ∗ˆRW N
+s,w,t−P wca
+s,w,t
+
++ξP 1
+s,n,t
+(54)
+= ξP 2
+s,n,t + ds,n,t∗ˆREL
+s,n,t −P eca
+s,n,t +
+
+h∈ΩW DS
+n
+P W DS
+s,h,t
++
+
+m∈ΛE
+n
+Bn,m
+
+θAJ
+s,n,t −θAJ
+s,m,t
+
+∀n ∈ΛE.
+The nodal power balancing constraint (43) is converted into
+equations (53) and (54), because the obtained values of P W DS
+s,h,t
+from the master problem may make it obsolete. Equation (53)
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:12:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+5882
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 36, NO. 6, NOVEMBER 2021
+receives the values of P W DS
+s,h,t
+(i.e., ˆP W DS
+s,h,t ) from the master
+problem, and equation (54) introduces non-negative slack vari-
+ables ξP 1
+s,n,t and ξP 2
+s,n,t to ensure the balance between supply and
+demand. γs,h,t is the dual variable for the constraint (53).
+If the objective function of the slave problem is equal to zero,
+the iterative process ends. Otherwise, an optimality cutting plane
+(55) is generated as a new constraint to the master problem. This
+constraint can be expressed as
+Nsc
+
+s = 1
+NEB
+
+n = 1
+T
+
+t = 1
+
+ˆξP 1
+s,n,t + ˆξP 2
+s,n,t
+
++
+Nsc
+
+s = 1
+NW DS
+
+h = 1
+T
+
+t = 1
+γk
+s,h,t
+
+P W DS
+s,h,t
+−ˆP W DS
+s,h,t
+
+≤0
+(55)
+where ˆξP 1
+s,n,t denotes the value of ξP 1
+s,n,t, ˆξP 2
+s,n,t the value of ξP 2
+s,n,t,
+and γk
+s,h,t the value of γs,h,t at the kth iteration.
+Note that the feasibility cutting plane is not required in the
+master problem because the slave problem is always feasible
+with the introduction of slack variables. This “trick” has proven
+to be computationally efﬁcient [33].
+Thus,theWDSoptimizationcanbesolvediterativelybetween
+the master problem and the slave problem till the termination
+criterion is met.
+C. Proposed Benders-Based Heuristic Algorithm
+The sign function in (21) and the “on/off” statement in (23)
+and (24) need to be further transformed, as shown in the Ap-
+pendix B. Then the master problem (52) is turned into:
+
+min CW DS (Z)
+s.t. (22) , (25) −(42) , (B1) −(B8)
+(56)
+A Benders-based heuristic algorithm (Algorithm 2) is pro-
+posed to make the water quality equations (37)-(42) more
+tractable. The master problem (56) can be solved after several
+iterations between Step 2 and Step 3. Small ϕ affects the
+optimality of the problem, whereas large ϕ may increase the
+number of iterations. The slave problem is a linear programming
+(LP) model, which ensures the convergence between master
+and slave problems in Benders decomposition [34]–[35]. Thus,
+convergence of the proposed Benders-based heuristic algorithm
+is guaranteed.
+A constraint on the tank size (57) is added to make solutions
+of the optimization problem (56) more feasible to the real world
+applications. The lower bound of the tank size is limited by the
+government guidelines and the upper bound is governed by (57)
+W guide
+Jn
+≤WV n
+h ≤ϕ
+WV
+n
+h.
+The purpose of the upper bound is to avoid the situation that
+the oversized tank may jeopardize the water quality.
+The NLPDE of (37) becomes a linear equation with the
+following process. Divide the pipe into multiple segments uni-
+formly and apply the backward difference of (58) and (59) with
+the values of qt
+s,mn and Ws,Jm,t obtained from (56). Equations
+(40) and (41) also become linear. The variable x in (58) and (59)
+Algorithm 2: Benders-Based Heuristic Algorithm.
+Step 1 Initialize the number of iteration k = 0.
+Step 2 Solve the master problem (56).
+Step 3 Apply the values of qt
+s,mn and Ws,Jm,t obtained
+from (56) to the water quality equations (37)-(42).
+If the water quality is acceptable, pass the values
+of P W DS
+s,h,t
+to the slave problem and go to Step 4;
+otherwise, add the constraint (57) to (56) and go
+to Step 2.
+WV n
+h ≤ϕ
+WV
+n
+h.
+(57)
+
+WV
+n
+h is the value of WV n
+h obtained from Step 2,
+and ϕ is a parameter with value in the range of
+[01].
+Step 4 Solve the slave problem. If the value of the
+objective function in the slave problem is equal to
+zero, the iterative process is terminated;
+otherwise, a cutting plane constraint (55) should
+be included in the master problem (56). Update k
+= k+1 and return to Step 2.
+refers to the xth segment of the pipe.
+∂Cmn (s, x, t)
+∂t
+= Cmn (s, x, t) −Cmn (s, x, t −1)
+Δt
+(58)
+∂Cmn (s, x, t)
+∂x
+= Cmn (s, x, t) −Cmn (s, x −1, t)
+Δx
+.
+(59)
+The ﬂowchart of the solution process is presented in Fig. 6.
+TheC&CGalgorithmisperformedbythepowersystemoperator
+(PSO). The ﬂexibility requirement scenarios generated from the
+C&CG algorithm serve as input parameters for the Benders-
+based heuristic algorithm.
+In the Benders-based algorithm, the master problem is solved
+by the water distribution system operator (WDSO) and the slave
+problem by PSO.
+The information interchange between two systems includes:
+1) WDSO passes the values of P W DS
+s,h,t
+to PSO; 2) PSO generates
+the cutting plane constraint (55) and passes it to WDSO. Limited
+information interchange in the solution process can protect the
+privacy of each energy system.
+IV. CASE STUDY
+The proposed approach for tank size design is evaluated in
+this section. The tests were carried out by a PC with Intel Core
+i7-9700 and Gurobi 9.0.1 on Python 3.7. The time horizon of
+each scenario is 24 hours and the study resolution is 15 minutes.
+This corresponds to 96 time steps.
+A. Illustrative Test System
+Firstly, a relatively small test system is used to illustrate the
+advantages of the tank design model and the proposed algorithm
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:12:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+YAO et al.: OPTIMAL DESIGN OF WATER TANK SIZE FOR POWER SYSTEM FLEXIBILITY AND WATER QUALITY
+5883
+Fig. 6.
+Flowchart of the solution process.
+TABLE I
+ELECTRICITY PRICE OF WDS
+in detail. The test system includes the IEEE-RTS 24 power
+system and the WDS with 40 pipes [5].
+The diagram of the IEEE-RTS 24 system is shown in Ap-
+pendix C. There are 17 load buses in the IEEE-RTS 24 system
+and each load bus is connected with a WDS. The wind farms
+are located at nodes 3, 5 and 20 of the power system. The tank
+size should be at least 3000 m3 according to the governmental
+requirements. The minimum required residual chlorine at all
+demand nodes is set to be 0.3 mg/L. The residual chlorine
+concentration at the reservoir is ﬁxed as 1.0 mg/L, and the initial
+concentrations at the water nodes equal 0.
+The electricity price for the WDS is given in Table I. Four
+typical scenarios (representing the four seasons, respectively)
+are generated based on the scaled data of the Irish grid [36] and
+the WDS from Cherry Hills, Connecticut [37]. The occurrence
+probability of each scenario equals to 0.25. Fig. 7 illustrates the
+daily wind power outputs of four seasonal scenarios for three
+different wind farms. Fig. 8 shows the daily electrical and water
+load demands of four seasonal scenarios. The ﬂuctuation range
+Fig. 7.
+Daily wind power outputs for various scenarios at three different wind
+farms.
+Fig. 8.
+Daily electrical and water load demands for various scenarios.
+TABLE II
+DEFINITION OF SITUATIONS AND SCENARIOS FOR EVALUATING THE PROPOSED
+TANK SIZE DESIGN
+of the wind power in real-time operation is set to be 75% to
+125% of the values in the scenario, and that of the electrical
+demand is set to be 95% to 105%.
+1) Power System Flexibility Improvement: In the case study,
+three situations are considered to demonstrate the beneﬁts of the
+proposed tank size design scheme and to show the improvement
+of power system ﬂexibility.
+Situation 1: Consider the power system alone.
+Situation 2: Consider power system and WDS without the pro-
+posed tank size design scheme.
+Situation 3: Consider power system and WDS with the proposed
+tank size design scheme.
+In each situation, four scenarios are considered for seasonal
+impact. Deﬁnitions of the situation and scenario are tabulated
+in Table II. Scenario a denotes the months from March to May,
+Scenario b from June to August, Scenario c from September to
+November, and Scenario d from December to February. Table III
+shows the upward and downward ﬂexibility requirements for
+each scenario under different situations. It is observed from
+Table III that the largest ﬂexibility requirement occurs at Sit-
+uation 1, whereas Situation 3 requires the least ﬂexibility. Since
+the wind power output generally is at a low level in the three
+months from September to November, there are no ﬂexibility
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:12:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+5884
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 36, NO. 6, NOVEMBER 2021
+TABLE III
+FLEXIBILITY REQUIREMENTS IN THE ILLUSTRATIVE TEST SYSTEM
+TABLE IV
+COMPARISON OF THE AS COST IN THE ILLUSTRATIVE TEST SYSTEM
+requirements of Scenario c in Situations 2 and 3. Thus, varia-
+tions in real-time operation can be compensated by regulating
+the electricity consumption of WDS. It also can be seen from
+Table III that, after integrating WDS into the power system,
+the lack of upward ﬂexibility only occurs in Scenarios a and b
+of Situation 2. The event of upward ﬂexibility shortage occurs
+because the electrical demand reaches its daily peak value. The
+sudden decrease of wind power forces the power system to
+curtail the demand. After applying the proposed tank size design
+scheme,thelackofupwardﬂexibilitycanbeavoided.Thisshows
+the merits of WDS and the proposed tank size design scheme in
+dealing with the wind power uncertainties.
+The quantitatively measured economic values provided by
+the WDS are summarized in Table IV. These measures satisfy
+the ﬂexibility requirements. The results show the auxiliary ser-
+vice (AS) purchased from the electricity market under various
+situations and scenarios. Fig. 9 displays the data used in the
+measurement, which are the CAISO’s day-ahead forecasted
+frequency regulation prices for March 8, 2021 [38]. Table IV
+compares the cost of buying AS in the illustrative system. It is
+seen that the AS cost can be reduced greatly with the optimized
+tank size and WDS operation. This demonstrates the economic
+value of the proposed model.
+Table V shows the tank sizes for various WDSs after WDS
+optimization. The tank sizes for all the WDSs equal 3000 m3
+in Situations 1 and 2, which satisfy the governmental require-
+ments. In Situation 3, the optimized tank size of each WDS
+Fig. 9.
+Regulation prices.
+TABLE V
+TANK SIZE IN DIFFERENT SITUATIONS
+may vary because WDSs have varied connection relationships
+with the power system and the electrical transmission limits are
+considered.
+In the test, 17 WDSs were divided into three categories
+according to the obtained optimal tank size. WDS 1-7 and 16-17
+require larger tank sizes, because these WDSs are closer to the
+wind farms. On the other hand, since the water tank is mainly
+used to satisfy the water demands, not providing ﬂexibility to
+the power system, additional volumes of water tank do not
+provide additional ﬂexibility for WDS 13-15. These tanks are
+far away from the wind farms so that the variations of their
+electricity consumption have little effect on the wind power
+accommodation due to the power ﬂow limit of the electrical
+transmission line.
+2) Water Quality: The water quality also can be maintained
+after optimization by incorporating the water quality constraints
+into the WDS model. This water quality effect can be illustrated
+using the WDS of 40 pipes [5]. Three representative water
+nodes are considered: Node 2 at the beginning, Node 12 in the
+middle, and Node 30 at the end of the WDS. Fig. 10 shows
+variations of the residual chlorine concentration at these three
+water nodes in WDS 1 under the four scenarios. The residual
+chlorine concentrations at these nodes satisfy the minimum
+requirement of 0.3 mg/L. It is observed that Node 30 exhibits
+the smallest concentration, because it is located at the end of
+WDS, at which the water demand is low.
+3) Algorithm Performance: The proposed Benders-based
+heuristic algorithm transforms the original model with NLPDE
+into a MIP master problem and a LP slave problem, which can be
+solved by PSO and WDSO, respectively. Table VI presents the
+performance of the convergence process of the proposed algo-
+rithm. The ﬁrst column indicates the number of runs between the
+master problem (MP) and the slave problem (SP). The second
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:12:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+YAO et al.: OPTIMAL DESIGN OF WATER TANK SIZE FOR POWER SYSTEM FLEXIBILITY AND WATER QUALITY
+5885
+Fig. 10.
+Residual chlorine concentrations at three water nodes of a illustrative
+WDS under different scenarios. Node 30 is at the end of WDS.
+TABLE VI
+PERFORMANCE OF THE PROPOSED BENDERS-BASED ALGORITHM IN THE
+ILLUSTRATIVE TEST SYSTEM
+TABLE VII
+THE INFLUENCE OF PENALTY FACTOR ON CONVERGENCE
+column displays the total iterations required in the MP by use
+of the added constraint (57) on the tank size.
+It is seen from Table VI that the proposed algorithm converges
+after 5 runs between the MP and SP. It takes no more than
+4 iterations for the convergence of MP at each run. The total
+computing time is 40.55 minutes. Since this paper aims at the
+year-ahead planning, this calculation time is short enough for
+practical use.
+According to the ﬁndings of extensive simulations, the set-
+tings of the penalty factor ϕ may inﬂuence the convergence efﬁ-
+ciency of the proposed algorithm. Table VII shows the variations
+of the optimization results with ϕ.
+It can be seen from Table VII that total iterations in MP and
+the computing time increase as ϕ increases. A small ϕ lowers
+the optimized tank size. Thus, the available ﬂexibility is limited,
+resulting in higher cost. This study suggests that a suitable value
+of ϕ is 0.95.
+TABLE VIII
+FLEXIBILITY REQUIREMENTS IN THE LARGER-SCALE TEST SYSTEM
+TABLE IX
+COMPARISON OF THE AS COST IN THE LARGER-SCALE TEST SYSTEM
+B. Larger-Scale Test System
+A realistic power system in a province of Northwest China is
+used to verify the superiority of the proposed tank size design.
+The power system has 93 load buses and 179 transmission lines.
+The installed wind power capacity is 3667.2 MW, accounting
+for 12% of the total generating capacity. The “D-Town” WDS
+with 443 pipes is used [39], which often serves as benchmarks
+for water network design methods. Each load bus in the power
+system is connected with a WDS. Four typical seasonal sce-
+narios are generated using the GAMS SCENRED tool, and the
+occurrence probability of each scenario equals to 0.25. The tank
+size should be at least 3500 m3 according to the governmental
+requirements. The water quality requirements, initial condi-
+tions of residual chlorine, and the ﬂuctuation ranges of wind
+power and electrical demand are the same as the test system in
+Section A.
+1) Power System Flexibility Improvement: The three situa-
+tions referred in Section A are considered again. Table VIII
+shows the ﬂexibility requirements in these three situations.
+Comparison of the AS cost is displayed in Table IX. It can
+be seen from Table VIII that both the upward and downward
+ﬂexibilityrequirementscanbereducedgreatlywiththeproposed
+tank size design scheme. The AS cost in each scenario is reduced
+by about 80% to 100% after the ﬂexible operation of WDS with
+the optimized tank size. This validates the economic merit of the
+proposed model.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:12:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+5886
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 36, NO. 6, NOVEMBER 2021
+Fig. 11.
+Residual chlorine concentration at Node 399, the end of a larger-scale
+WDS.
+TABLE X
+PERFORMANCE OF THE PROPOSED BENDERS-BASED ALGORITHM IN THE
+LARGER-SCALE TEST SYSTEM
+2) Water Quality: The water quality of Node 399, which is
+at the end of the WDS, is the worst. Fig. 11 shows variations
+of the residual chlorine concentration at Node 399 under the
+four scenarios. The ﬁndings demonstrate that the proposed WDS
+model can guarantee the required water quality.
+3) Algorithm Performance: The penalty factor ϕ is set as
+0.95. Table X shows the convergence process of the proposed
+algorithm. It can be seen from Table X that it only takes 243.51
+minutes for convergence. This length of time is acceptable for
+practical use.
+V. CONCLUSION
+This paper has presented an optimization model of WDS
+to enhance the power system ﬂexibility and incorporate more
+wind power. The proposed model generates the ﬂexibility re-
+quirements considering wind power and electrical demand un-
+certainties, then ﬁnds the optimal size of water tank based on
+the ﬂexibility and water quality requirements. A Benders-based
+heuristic algorithm is developed to facilitate the solutions with
+a master-slave framework. The master problem is solved in the
+WDS setting and the slave problem via the power system. Since
+only limited information needs to be shared, data privacy can be
+protected.
+Results from case studies have veriﬁed that the optimized tank
+size can enhance the ﬂexibility of the power system. Both the
+amount of wind power curtailment and that of the electrical
+demand curtailment are reduced signiﬁcantly. Moreover, the
+Fig. 12.
+Diagram of the IEEE-RTS 24 power system.
+proposed model maintains the required water quality at all water
+nodes of the WDS.
+APPENDIX
+A. Solution Details of (50)
+ByapplyingKKTconditions,themax-minoptimizationprob-
+lem (50) can be transformed into
+⎧
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎨
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎩
+max
+U
+CA (U, Y)
+s.t. (8) −(19)
+ωs∗λ −
+NEB
+n = 1 τ (1)
+s,n,t∗An,w + ϑ(6)
+s,w,t −ϑ(7)
+s,w,t = 0
+ωs∗μ + τ (1)
+s,n,t + ϑ(8)
+s,n,t −ϑ(9)
+s,n,t = 0
+ωs∗Ki,l + ϑ(1)
+s,i,t −ϑ(2)
+s,i,t −ϑ(1)
+s,i,t−1 + ϑ(2)
+s,i,t−1 −ϑ(3)
+s,i,t−1
++ϑ(4)
+s,i,t−1 −ϑ(5)
+s,i,t−1,l + 
+NEB
+n = 1 τ (1)
+s,n,t−1∗Bn,i = 0
+for t ≥3
+ωs∗Ki,l + ϑ(1)
+s,i,2 −ϑ(2)
+s,i,2 −ϑ(3)
+s,i,1 + ϑ(4)
+s,i,1 −ϑ(5)
+s,i,1,l
++ 
+NEB
+n = 1 τ (1)
+s,n,1∗Bn,i = 0
+ϑ(1)
+s,i,t∗
+
+L
+l = 1 P g
+s,i,t−1,l −
+l
+l = 1 P g
+s,i,t,l −Rampi
+
+= 0
+ϑ(2)
+s,i,t∗
+
+L
+l = 1 P g
+s,i,t,l −
+L
+l = 1 P g
+s,i,t−1,l −Rampi
+
+= 0
+ϑ(3)
+s,i,t∗
+
+P gmin
+i
+∗I∗
+s,i,t −
+L
+l = 1 P g
+s,i,t,l
+
+= 0
+ϑ(4)
+s,i,t∗
+
+L
+l = 1 P g
+s,i,t,l −P gmax
+i
+∗I∗
+s,i,t
+
+= 0
+ϑ(6)
+s,w,t∗
+
+P wc
+s,w,t −P pre
+s,w,t∗RW N
+s,w,t
+
+= 0
+ϑ(8)
+s,n,t∗
+
+P ec
+s,n,t −ds,n,t∗REL
+s,n,t
+
+= 0
+ϑ(5)
+s,i,t,l∗
+
+−P g
+s,i,t,l
+
+= 0 ϑ(7)
+s,w,t∗
+
+−P wc
+s,w,t
+
+= 0
+ϑ(9)
+s,n,t∗
+
+−P ec
+s,n,t
+
+= 0.
+(A1)
+where I∗
+s,i,t denotes the value of Is,i,t obtained from the master
+problem (49).
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:12:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+YAO et al.: OPTIMAL DESIGN OF WATER TANK SIZE FOR POWER SYSTEM FLEXIBILITY AND WATER QUALITY
+5887
+The bilinear constraints in (A1) can be transformed further
+through the Big-M approach:
+⎧
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎨
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎩
+ϑ(1)
+s,i,t ≤Mz(1)
+s,i,t
+
+Rampi −
+L
+l = 1 P g
+s,i,t−1,l + 
+L
+l = 1 P g
+s,i,t,l
+
+≤M
+
+1 −z(1)
+s,i,t
+
+ϑ(2)
+s,i,t ≤Mz(2)
+s,i,t
+
+Rampi −
+L
+l = 1 P g
+s,i,t,l + 
+L
+l = 1 P g
+s,i,t−1,l
+
+≤M
+
+1 −z(2)
+s,i,t
+
+ϑ(3)
+s,i,t ≤Mz(3)
+s,i,t
+
+L
+l = 1 P g
+s,i,t,l −P gmin
+i
+∗I∗
+s,i,t
+
+≤M
+
+1 −z(3)
+s,i,t
+
+ϑ(4)
+s,i,t ≤Mz(4)
+s,i,t
+
+P gmax
+i
+∗I∗
+s,i,t −
+L
+l = 1 P g
+s,i,t,l
+
+≤M
+
+1 −z(4)
+s,i,t
+
+ϑ(6)
+s,w,t ≤Mz(6)
+s,w,t
+
+P pre
+s,w,t∗RW N
+s,w,t −P wc
+s,w,t
+
+≤M
+
+1 −z(6)
+s,w,t
+
+ϑ(8)
+s,n,t ≤Mz(8)
+s,n,t
+
+ds,n,t∗REL
+s,n,t −P ec
+s,n,t
+
+≤M
+
+1 −z(8)
+s,n,t
+
+ϑ(5)
+s,i,t,l ≤Mz(5)
+s,i,t,l P g
+s,i,t,l ≤M
+
+1 −z(5)
+s,i,t,l
+
+ϑ(7)
+s,w,t ≤Mz(7)
+s,w,t P wc
+s,w,t ≤M
+
+1 −z(7)
+s,w,t
+
+ϑ(9)
+s,n,t ≤Mz(9)
+s,n,t P ec
+s,n,t ≤M
+
+1 −z(9)
+s,n,t
+
+(A2)
+Thus, the slave problem (50) becomes a mixed-integer linear
+programming (MILP) problem, which can be easily solved by
+commercially available solvers such as Gurobi.
+B. Transformation of (21), (23), and (24)
+The pressure drop equation (21) can be equivalently expressed
+as follows using the big-M method:
+−M
+
+1 −γt
+s,mn
+
+≤qt
+s,mn ≤Mγt
+s,mn
+(B1)
+−M
+
+1 −γt
+s,mn
+
+≤ht
+s,Jm −ht
+s,Jn −cmn
+
+qt
+s,mn
+2
+(B2)
+ht
+s,Jm −ht
+s,Jn −cmn
+
+qt
+s,mn
+2 ≤M
+
+1 −γt
+s,mn
+
+(B3)
+−Mγt
+s,mn ≤ht
+s,Jm −ht
+s,Jn + cmn
+
+qt
+s,mn
+2
+(B4)
+ht
+s,Jm −ht
+s,Jn + cmn
+
+qt
+s,mn
+2 ≤Mγt
+s,mn
+(B5)
+M is a very large positive constant and γt
+s,mn is a binary
+variable. If γt
+s,mn = 1, then (B1) guarantees qt
+s,mn ≥0, (B2)–
+(B3) ensure that ht
+s,Jm −ht
+s,Jn −cmn (qt
+s,mn)2 = 0, and (B4)–
+(B5)hold.Ifγt
+s,mn = 0,theﬂowchangesdirection(qt
+s,mn ≤0),
+(B4)–(B5) ensure that ht
+s,Jm −ht
+s,Jn + cmn (qt
+s,mn)2 = 0 and
+(B2)–(B3) hold.
+The same process can also be applied to the “on/off” statement
+in constraints (23) and (24):
+−M
+
+1−rt
+s,Pm
+
+≤ˆht
+s,Pm −
+
+aPm
+
+qt
+s,Pm
+2+bPmqt
+s,Pm+cPm
+
+(B6)
+ˆht
+s,Pm−
+
+aPm
+
+qt
+s,Pm
+2+bPmqt
+s,Pm+cPm
+
+≤M
+
+1−rt
+s,Pm
+
+(B7)
+qmin
+Pm rt
+s,Pm ≤qt
+s,Pm ≤qmax
+Pm rt
+s,Pm
+(B8)
+rt
+s,Pm
+is
+a
+binary
+variable.
+If
+rt
+s,Pm = 1,
+then
+the
+pump is on, (B6)–(B7) ensure ˆht
+s,Pm −(aPm(qt
+s,Pm)2 +
+bPmqt
+s,Pm + cPm) = 0 and (B8) holds. If rt
+s,Pm = 0, then the
+pump is off, (B8) ensures that qt
+s,Pm = 0 and (B6)–(B7) hold.
+C. Diagram of the IEEE-RTS 24 Power System
+REFERENCES
+[1] International Energy Agency, “World energy outlook 2020,” [Online].
+Available: https://www.iea.org/reports/world-energy-outlook-2020
+[2] Y. Wu et al., “Impact of generation ﬂexibility on the operating costs of
+the Taiwan power system under a high penetration of renewable power,”
+IEEE Trans. Sustain. Energy, vol. 56, no. 3, pp. 2348–2359, 2020.
+[3] T. Sun, T. Zhang, Z. Chen, and Y. Teng, “Optimal operation of ﬂexible heat-
+ing systems for reducing wind power curtailment,” Elect. Eng., vol. 102,
+pp. 869–880, 2020.
+[4] International Energy Agency, “World energy outlook 2018,” [Online].
+Available: https://www.iea.org/reports/world-energy-outlook-2018
+[5] C. Li et al., “Integrated electrical, heating, and water distribution system
+to accommodate wind power,” IEEE Trans. Sustain. Energy, vol. 12, no. 2,
+pp. 1100–1114, 2020.
+[6] K. Oikonomou and M. Parvania, “Optimal coordination of water distribu-
+tion energy ﬂexibility with power systems operation,” IEEE Trans. Smart
+Grid, vol. 10, no. 1, pp. 1101–1110, Jan. 2019.
+[7] Pennsylvania American water Connects to the Smart Grid, Enbala Power
+Networks, North Vancouver, BC, Canada, 2012. [Online]. Available: http:
+//enbala.com/wp-content/uploads/2015/07/Penn-CS.pdf
+[8] C. Ashley, L. Holmes, and G. Wikler, “Using more energy can be a
+good thing: C&I loads as a balancing resource for intermittent renewable
+energy,” EnerNOC Utility Solutions, White Paper, 2013.
+[9] “Honeywell helps water district shed 40 percent of load,” Honeywell
+Building Solutions, Golden Valley, MN, USA, 2012. [Online]. Available:
+http://buildingsolutions.honeywell.com/en-US/newsevents/resources/
+Publications/honeywell-hbs-smart
+[10] California Sustainability Alliance, “Eastern municipal water district: A
+case study of best-in-class water-energy programs and practices,” Tech.
+Rep., Oct. 2012.
+[11] C. Cherchi, M. Badruzzaman, J. Oppenheimer, M. Gordon, S. Bunn, and
+J. G. Jacangelo, “Optimization of energy and water quality management
+systems for drinking water utilities,” Proc. Water Environ. Federation, vol.
+2015, no. 2, pp. 1–9, vol. 2015.
+[12] W. N. Lubega and A. M. Farid, “Quantitative engineering systems mod-
+eling and analysis of the energy–water nexus,” Appl. Energy, vol. 135,
+pp. 142–157, Dec. 2014.
+[13] A. S. Zamzam et al., “Optimal water-power ﬂow problem: Formulation
+and distributed optimal solution,” IEEE Control Netw. Syst., vol. 6, no. 1,
+pp. 37–47, Mar. 2019.
+[14] K. Oikonomou, M. Parvania, and R. Khatami, “Optimal demand response
+scheduling for water distribution systems,” IEEE Trans. Ind. Inform.,
+vol. 14, no. 11, pp. 5112–5122, Nov. 2018.
+[15] R.Menke,E.Abraham,P.Parpas,andI.Stoianov,“Demonstratingdemand
+response from water distribution system through pump scheduling,” Appl.
+Energy, vol. 170, pp. 377–387, 2016.
+[16] C. Mkireba, A. Dembéléa, A. Jougletb, and T. Denoeuxb, “Robust op-
+timization of demand response power bids for drinking water systems,”
+Appl. Energy, vol. 238, pp. 1036–1047, Jan. 2019.
+[17] E. Batchabani and M. Fuamba, “Optimal tank design in water distribution
+networks: Review of literature and perspectives,” J. Water Resour. Plan.
+Manage., vol. 140, no. 2, pp. 136–145, Feb. 2014.
+[18] C. Hallmann and L. Suhl, “Optimizing water tanks in water distribution
+systems by combining network reduction, mathematical optimization and
+hydraulic simulation,” OR Spectr., vol. 38, pp. 577–595, 2016.
+[19] N. Basile, M. Fuamba, and B. Barbeau, “Optimization of water tank design
+and location in water distribution systems,” in Proc. 10th Water Distrib.
+Syst. Anal. Conf., South Africa, Aug. 2008, pp. 361–373.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:12:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+5888
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 36, NO. 6, NOVEMBER 2021
+[20] C.Hallmannetal.,“Heuristicsandsimulationforwatertankoptimization,”
+Simul. Sci., vol. 889, pp. 77–94, 2018.
+[21] W. Kurek and A. Ostfeld, “Multi-objective optimization of water quality,
+pumps operation, and storage sizing of water distribution systems,” J.
+Environ. Manage., vol. 115, pp. 189–197, 2013.
+[22] M. Shokoohi, M. Tabesh, S. Nazif, and M. Dini, “Water quality based
+multi-objective optimal design of water distribution systems,” Water Re-
+sour. Manage., vol. 31, pp. 93–108, 2017.
+[23] G. Güngör-Demirci, J. Lee, and J. Keck, “Optimizing pump operations
+in water distribution systems: Energy cost, greenhouse gas emissions and
+water quality,” Water Environ. J., vol. 34, pp. 1–8, 2020.
+[24] C. S. Stokes et al., “Effect of storage tank size on the minimization
+of water distribution system cost and greenhouse gas emissions while
+considering time-dependent emissions factors,” J. Water Resour. Plan.
+Manage., vol. 142, no. 2, pp. 1–11, 2016.
+[25] C. Li et al., “Optimal planning of islanded integrated energy system with
+solar-biogas energy supply,” IEEE Trans. Sustain. Energy, vol. 11, no. 4,
+pp. 2437–2448, 2020.
+[26] Y. Cao et al., “Capacity planning of energy hub in multi-carrier energy
+networks: A data-driven robust stochastic programming approach,” IEEE
+Trans. Sustain. Energy, vol. 11, no. 1, pp. 3–14, 2020.
+[27] L. Baringo and A. J. Conejo, “Correlated wind-power production and
+electric load scenarios for investment decisions,” Appl. Energy, vol. 101,
+pp. 475–482, Dec. 2013.
+[28] S. Dehghan and N. Amjady, “Robust transmission and energy storage
+expansion planning in wind farm-integrated power systems considering
+transmission switching,” IEEE Trans. Sustain. Energy, vol. 7, no. 2,
+pp. 765–774, 2016.
+[29] G. Pan et al., “Optimal planning for electricity-hydrogen integrated energy
+system considering power to hydrogen and heat and seasonal storage,”
+IEEE Trans. Sustain. Energy, vol. 11, no. 4, pp. 2662–2676, 2020.
+[30] M. Carrión and J. Arroyo, “A computationally efﬁcient mixed-integer
+linear formulation for the thermal unit commitment problem,” IEEE Trans.
+Power Syst., vol. 21, no. 3, pp. 1371–1378, 2006.
+[31] C. Zhang, Y. Xu, Z. Dong, and K. P. Wong, “Robust coordination of
+distributed generation and price-based demand response in microgrids,”
+IEEE Trans. Smart Grid, vol. 9, no. 5, pp. 4236–4247, Sep. 2018.
+[32] R. Anand, D. Aggarwal, and V. Kumar, “A comparative analysis of
+optimization solvers,” J. Statist. Manag. Syst., vol. 20, no. 4, pp. 623–635,
+2017.
+[33] A. Nasri, S. J. Kazempour, A. J. Conejo, and M. Ghandhari, “Network-
+constrained AC unit commitment under uncertainty: A benders’ decom-
+position approach,” IEEE Trans. Power Syst., vol. 31, no. 1, pp. 412–422,
+2016.
+[34] J. F. Benders, “Partitioning procedures for solving mixed-variables pro-
+gramming problems,” in Proc. 8th Int. Meeting Inst. Manage. Sci., Brus-
+sels, Belgium, Aug. 1961.
+[35] A. J. Conejo, E. Castillo, R. Mínguez, and R. García-Bertrand, Decom-
+position Techniques in Mathematical Programming, Berlin Heidelberg:
+Springer, 2006.
+[36] System Demand; Actual and Forecast Wind. [Online]. Available: http:
+//www.eirgridgroup.com/how-the-grid-works/system-information/
+[37] M. K. Singh and V. Kekatos, “Optimal scheduling of water distribution
+systems,” IEEE Control Netw. Syst., vol. 7, no. 2, pp. 711–723, Jun. 2020.
+[38] I. S. O. California, “Open access same-time information system,”
+Mar. 2021. [Online]. Available: http://oasis.caiso.com
+[39] G. Hajgató, G. Paál, and B. Gyires-Tóth, " Deep reinforcement learning for
+real-time optimization of pumps in water distribution systems," J. Water
+Resour. Plan. Manage., vol. 146, no. 11, pp. 1–11, 2020.
+Yiming
+Yao
+received
+the
+B.S.
+degree
+from
+Chongqing University, Chongqing, China, in 2019,
+where he is currently working toward the Ph.D. de-
+gree with the School of Electrical Engineering. His
+research interests include integrated energy system
+and wind power accommodation.
+Chunyan Li (Member, IEEE) received the Ph.D.
+degree in electrical engineering from Chongqing Uni-
+versity, Chongqing, China, in 2008. She is currently
+an Associated Professor with the School of Electri-
+cal Engineering, Chongqing University. Her research
+interests include power system analysis, renewable
+energy consumption, and smart grid dispatching.
+Kaigui Xie (Senior Member, IEEE) received the
+Ph.D. degree in power system and its automation
+from Chongqing University, Chongqing, China, in
+2001. He is currently a Full Professor with the School
+of Electrical Engineering, Chongqing University. He
+has authored and coauthored more than 200 academic
+papers and six books. His main research interests in-
+cludepowersystemreliability,planning,andanalysis.
+He was awarded the title of the National Science Fund
+for Outstanding Young Scholar. He is an IET Fellow.
+He was the Editor of the IEEE TRANSACTIONS ON
+POWER SYSTEMS and an Associate Editor for the IET Proceedings-Generation,
+Transmission, and Distribution.
+Heng-Ming Tai (Senior Member, IEEE) is currently
+a Professor with the Department of Electrical and
+Computer Engineering, University of Tulsa, Tulsa,
+OK, USA. His research interests include power sys-
+tem reliability and industrial electronics.
+Bo Hu (Member, IEEE) was born in Henan, China,
+in 1983. He received the Ph.D. degree in electrical
+engineering from Chongqing University, Chongqing,
+China, in 2010. He is currently a Professor with the
+School of Electrical Engineering, Chongqing Uni-
+versity. His research interests include power system
+reliabilityandparallelcomputingtechniquesinpower
+systems.
+Tao Niu (Member, IEEE) received the B.S. and Ph.D.
+degrees from the Department of Electrical Engineer-
+ing, Tsinghua University, Beijing, China, in 2014
+and 2019, respectively. He is currently an Assistant
+Professor with Chongqing University, Chongqing,
+China. His research interests include voltage secu-
+rity region, automatic reactive power voltage control,
+renewable generation integration, and reactive power
+analysis of hybrid AC/DC system.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:12:13 UTC from IEEE Xplore.  Restrictions apply. 

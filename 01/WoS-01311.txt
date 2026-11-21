@@ -1,0 +1,1296 @@
+
+===== PAGE 1 =====
+IEEE TRANSACTIONS ON SMART GRID, VOL. 10, NO. 1, JANUARY 2019
+1101
+Optimal Coordination of Water Distribution Energy
+Flexibility With Power Systems Operation
+Konstantinos Oikonomou, Student Member, IEEE, and Masood Parvania
+, Member, IEEE
+Abstract—This paper proposes a model for optimizing the
+energy ﬂexibility of water distribution systems (WDSs) in day-
+ahead power systems operation. The water distribution system
+operators (W-DSOs) are considered as energy-conscious entities,
+who run the proposed WDS operation model to optimize the
+operation of pumps and tanks for minimizing the operation cost
+of local WDSs, given the expected water demand and electric-
+ity prices of the next day. A WDS energy ﬂexibility model is
+proposed that is used by W-DSOs in order to calculate and offer
+the feasible ﬂexible energy capacity to the power system oper-
+ator. The proposed WDS operation model takes into account
+the hydraulic operating constraints of water networks, thus
+ensuring deliverability of the WDS energy ﬂexibility. Further,
+a network-constrained unit commitment model is proposed that
+integrates and optimizes the energy ﬂexibility of WDSs in the
+day-ahead operation of power systems. The proposed model is
+implemented on a 15-node WDS that is powered by a 6-bus
+power system and the results are presented to study the impacts
+of optimized WDS energy ﬂexibility on power and water systems
+operation.
+Index Terms—Water distribution systems, energy ﬂexibility,
+mixed-integer linear programming, unit commitment, demand
+response, water-energy nexus.
+I. INTRODUCTION
+W
+ATER distribution system (WDS) facilities, including
+water and wastewater treatment plants, are energy-
+intensive infrastructures that account for about 3-4% of the
+total electricity used in the United States [1]. Approximately
+80% of this total electricity is used for pumping and distribut-
+ing water and wastewater with the remaining to account for
+water treatment [2]. Further, drinking water and wastewater
+utilities are typically the largest energy consumers of munici-
+pal governments, accounting between 30-40% of total energy
+consumed [3]. In California, water facilities consume 20% of
+the state’s total electricity [4], out of which, urban water usage
+constitutes more than 70% of the electricity associated with
+water supply and treatment [5]. As population grows, elec-
+tricity demand associated with water supply and treatment is
+projected to increase.
+Manuscript received June 22, 2017; revised February 3, 2018; accepted
+March 27, 2018. Date of publication April 9, 2018; date of current ver-
+sion December 19, 2018. Paper no. TSG-00883-2017. (Corresponding author:
+Masood Parvania.)
+The authors are with the Department of Electrical and Computer
+Engineering, University of Utah, Salt Lake City, UT 84112 USA (e-mail:
+konstantinos.oikonomou@utah.edu; masood.parvania@utah.edu).
+Color versions of one or more of the ﬁgures in this paper are available
+online at http://ieeexplore.ieee.org.
+Digital Object Identiﬁer 10.1109/TSG.2018.2824308
+Traditionally, water and power systems have been designed
+and operated as two uncoupled systems. However, in reality
+these systems are mutually interdependent [6], [7]. Water is
+utilized, often in large amounts, in energy sector for mining,
+fuel production, hydropower, and power plant cooling. On the
+other hand, energy is an indispensable component of the water
+facilities as electricity is used for pumping, treatment and dis-
+tribution of water. This interrelationship is often referred to as
+water-energy nexus and couples these critical infrastructures
+upon which human civilization depends [8].
+A. Background on Water-Energy Nexus
+Predominantly, the water-energy nexus has been studied
+with respect to the policy and regulatory challenges and its
+interactions with the food supply, climate change, economic
+growth, and water rights [9]–[11]. Recent research has also
+investigated the impact of climate change on the operation of
+hydroplants and water reservoir management [12]. From the
+modeling perspective, the water-energy nexus has been stud-
+ied using multiple technical and economic approaches, mostly
+looking at the co-production facilities as the coupling com-
+ponents between the water and power networks [13]–[19].
+In [13], the coupling between the power and water systems
+is studied in terms of utilizing co-production facilities (e.g.,
+hydroelectric and thermal desalination plants) assuming that
+all the facilities are connected into a single node in the power
+system. Additional work has also investigated the role of bat-
+tery storage units in the optimal dispatch of co-production
+facilities [14]. In [15], the link between water and power
+systems is studied through the operation of desalination units.
+Robust optimization has been applied to hydrothermal genera-
+tion scheduling problem in [16], without modeling constraints
+of the power transmission networks. Ignoring power transmis-
+sion network constraints is widely observed in works where
+the primary scope is to schedule the operation of pumps in
+water system facilities [17], [18]. In a different approach, the
+water-energy nexus has been modeled as a physics-based inte-
+grated engineering system in [19] where a set of algebraic
+equations was derived to describe the energy input-output rela-
+tions between the electricity, water and wastewater systems
+using bond graph models. Although there has been a recent
+research focus in regards to investigating and modeling the
+water-energy nexus [9]–[19], less attention has been given
+to account for the energy ﬂexibility that water facilities can
+introduce to the operation of power systems.
+1949-3053 c⃝2018 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:45:44 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 2 =====
+1102
+IEEE TRANSACTIONS ON SMART GRID, VOL. 10, NO. 1, JANUARY 2019
+The large energy consumption of water facilities along
+with their ﬂexible components such as water pumps and
+tanks make them suitable candidates for energy efﬁciency
+and optimization applications. A joint effort between power
+system operators and the water facilities they serve would cre-
+ate a great opportunity for enhancing the ﬂexibility of power
+systems and increasing the energy efﬁciency of water indus-
+try [20]. A model is developed in [21] for optimizing the
+demand response and regulation capacity that a WDS can
+offer in power systems operation. The other efforts in techni-
+cal literature are mainly focused on passive energy efﬁciency
+and price-based load management strategies in water distri-
+bution facilities [22]–[24]. From the power system point of
+view, the energy efﬁciency programs could improve the system
+operations, reduce operation costs, and possibly reduce emis-
+sion from the electricity sector [25], [26]. Several pilot energy
+efﬁciency programs that include loads from water facilities
+are conducted and their economic impacts on power systems
+operation is studied [27].
+The water distribution system operators (W-DSOs) have a
+natural incentive to act energy-conscious, where the operation
+coordination with power systems could reduce their elec-
+tricity costs [8]. However, W-DSOs may be also concerned
+about the negative impacts of modifying the operation of their
+systems on the reliable delivery of water to the consumers.
+This would require a comprehensive model to optimize the
+dynamic energy ﬂexibility of WDSs considering their under-
+lying hydraulic constraints. However, the majority of technical
+literature models the water-energy optimization problem at
+supply side neglecting the power ﬂow limits of power trans-
+mission networks and the hydraulic constraints of WDSs.
+Therefore, the dispatch decisions of these models may not
+be supported by the constrained power and water network
+characteristics.
+B. Contribution and Paper Structure
+This paper investigates the water-energy nexus in the con-
+text of WDS operation, and elaborates WDS modeling as part
+of integrating the ﬂexibility of its energy-intensive compo-
+nents (pumps) and storage plants (tanks) in power systems
+operation. More speciﬁcally, this paper proposes a model,
+shown in Fig. 1, to integrate and optimize the energy ﬂexi-
+bility of WDSs in the day-ahead operation of power systems.
+In Fig. 1, a day-ahead WDS operation model is proposed
+that utilizes the expected water demand and electricity prices
+of the next day to optimize the operation of water pumps
+and tanks for minimizing the operation cost of WDSs. In
+order to ensure the deliverability of the scheduled energy
+ﬂexibility, the proposed day-ahead WDS operation model
+incorporates a detailed formulation of the water distribution
+network and its associated hydraulic constraints. However, the
+energy ﬂexibility scheduled by W-DSOs may not necessar-
+ily be optimal from the power system operator’s viewpoint.
+Therefore, a network-constrained unit commitment model is
+proposed to co-optimize the energy ﬂexibility of WDS with
+day-ahead schedule of generating units considering the power
+ﬂow constraints of the transmission network. The WDS energy
+Fig. 1.
+Model for integrating WDS energy ﬂexibility in power systems.
+ﬂexibility is quantiﬁed in terms of upper and lower WDS
+energy ﬂexibility limits by which the feasible capacity range
+of the WDS energy consumption ﬂexibility is determined. In
+summary, the main contributions of this paper are as follows:
+• This paper develops a model that integrates and optimizes
+the energy ﬂexibility of W-DSOs in day-ahead power
+systems operation and ensures the deliverability of the
+scheduled energy ﬂexibility by considering the hydraulic
+constraints of the water distribution networks.
+• A WDS energy ﬂexibility model is proposed that offers
+the feasible energy ﬂexibility capacity range of the WDSs
+to the power system operators. The proposed energy
+ﬂexibility model enables the power system operators
+to optimize decisions on utilization of WDS energy
+ﬂexibility in order to minimize the operation cost of
+network-constrained power systems.
+• In order to ensure the computational efﬁciency of the
+WDS operation model for large-scale WDSs, this paper
+proposes a technique to linearize the nonlinear terms
+that eventually converts the nonlinear model to a mixed-
+integer linear programming problem that improves the
+computational efﬁciency of the proposed model.
+The rest of this paper is organized as follows: the proposed
+WDS operation model is formulated in Section II as a nonlin-
+ear optimization problem. A linearization method is developed
+in Section III that casts the proposed nonlinear WDS opera-
+tion model into a mixed-integer linear programming problem.
+Section IV presents the proposed WDS energy ﬂexibility
+model, as well as the proposed network-constrained unit com-
+mitment model for integrating the WDS energy ﬂexibility in
+day-ahead power systems operation. The simulation results
+on a 6-bus power system and 15-node WDS are presented
+in Section V, and the conclusions are drawn in Section VI.
+II. WATER DISTRIBUTION SYSTEM OPERATION
+In this section, we present the proposed model to optimize
+the operation of W-DSOs. The proposed WDS operation
+optimization problem models the components of the water dis-
+tribution network (including pipes, water pumps, water tanks,
+reservoirs and water loads) and its associated hydraulic con-
+straints in detail. The schematic diagram of WDS and the
+associated hydraulic components are illustrated in Fig. 2. From
+a mathematical point of view, a WDS is represented by a
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:45:44 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 3 =====
+OIKONOMOU AND PARVANIA: OPTIMAL COORDINATION OF WATER DISTRIBUTION ENERGY FLEXIBILITY WITH POWER SYSTEMS OPERATION
+1103
+Fig. 2.
+Schematic diagram of water distribution system components.
+directed graph G = (N, J ), where N is the set of N nodes
+representing R reservoirs and T tanks, and J is the set of J
+arcs comprising S pipes and U water pumps. The pressure head
+of the nodes is represented by N × 1 decision variable vector
+Ht = [Ht,1, . . . , Ht,N]T, and the volumetric ﬂow rate of arcs
+(pipes and pumps) is shown by J × 1 decision variable vector
+Qt = [Qt,1, . . . , Qt,J]T, where N and J respectively represent
+the total number of nodes and arcs. Water ﬂow through the
+network is induced by different pressure levels at the nodes.
+This pressure head difference is described by ATHt, where A
+is the N ×J node-arc incidence matrix with rows and columns
+corresponding to nodes and arcs of the water network, respec-
+tively. The ﬂow rate in a pipe can be maintained either through
+sufﬁcient elevation difference between two nodes or by gen-
+erating a pressure head by pumping. For example, if a WDS
+is fed via a ground water supply system so that gravity does
+not sufﬁce, then a pumping station is required to raise certain
+pressure node potentials.
+A. Formulation of the Proposed WDS Operation Model
+The proposed WDS operation model is formulated here as
+a nonlinear optimization problem, where the objective is to
+minimize the total WDS operation cost (1), including the cost
+of purchasing water and the cost of energy [28], [29], over the
+scheduling horizon divided to NT intervals:
+min
+NT
+
+t=1
+
+KTWR
+t + 1T
+UPW
+t πb,t
+
+.
+(1)
+The ﬁrst term in (1) is the cost incurred by purchasing
+water fed into the network, where WR
+t is the N × 1 vector of
+water inﬂows at the reservoir nodes at time t,  is the R × N
+reservoir-node incidence matrix that maps the water reservoirs
+to nodes, and K is the R × 1 vector of reservoirs’ water price.
+The second term in (1) is the cost of energy needed to oper-
+ate the pumps, where πb,t is the forecasted electricity price at
+power transmission bus b that supplies the WDS’s energy, and
+PW
+t
+is the U ×1 decision variable vector of pumps’ electricity
+consumption at time t.
+The objective function (1) is constrained to the water dis-
+tribution ﬂow and water tank and pumps constraints (2)-(16),
+described in detail below.
+1) Water Conservation Constraint: The WDS delivers the
+water from reservoirs to the consumers through a network
+of pipes, water tanks and pumps. The water conservation
+constraint in the WDS is formulated as:
+WR
+t −WD
+t = AQt + T[Ct −Dt]
+∀t,
+(2)
+where WD
+t is N × 1 vector of nodes’ water demand parameter
+at time t; Ct and Dt are respectively the T × 1 vectors of
+the water inﬂow and outﬂow decision variables of tanks at
+time t; and  is T ×N tank-node incidence matrix. The water
+inﬂow and outﬂow of tanks are explicitly modeled in (2), so
+the W-DSO may utilize the water storage capacity of tanks to
+store water and serve water demand in future times.
+2) Water Tank Constraints: The dynamic operation con-
+straints of water tanks are formulated as:
+Vt+1 = Vt + Ct −Dt
+∀t,
+(3)
+V ≤Vt ≤V
+∀t,
+(4)
+V1 = Vinit,
+(5)
+Vt = Ht
+∀t,
+(6)
+0 ≤Ct ≤C
+∀t,
+(7)
+0 ≤Dt ≤D
+∀t,
+(8)
+where the dynamic operation of tanks is governed by the state
+equation (3). The water stored in tanks at time t is shown by
+T × 1 vector Vt, which is constrained to the minimum and
+maximum capacity limits V and V in (4). Constraint (5) sets
+the water volume stored in tanks at the start of scheduling
+horizon, where Vinit is the vector of initial stored water in
+tanks. The water stored in tanks drives the pressure head at
+the tank nodes in (6), where  is the T ×T diagonal matrix of
+tanks surface parameters. The water inﬂow and outﬂow rate
+of tanks is also limited in (7) and (8), where C and D are the
+maximum inﬂow and outﬂow rates, respectively.
+3) Pressure Head Loss Constraints: The nodal pressure
+head Ht is modiﬁed by pressure loss in pipes. The pressure
+loss in pipes due to friction is described by the empirical
+Hazen-Williams head loss constraint (9), [30], [31], where G
+is the S × S diagonal matrix of the pipe resistance parameters,
+and (·) is the unit sign function. The nodal pressure heads
+are constrained in (10) to the minimum and maximum pres-
+sure levels H and H at the nodes. These bounds are speciﬁc
+for each WDS and depend on pipes’ design speciﬁcations. The
+nodal pressure heads are ﬁxed at the reservoir nodes in (11),
+assuming that the water pressure is ﬁxed at source nodes by a
+ﬁxed geographical height, where Z is R×1 vector of reservoir
+nodes’ elevation. The volumetric ﬂow rate decision variable
+of arcs, Qt, is bounded in (12), where the bound Q depends
+on the pipes’ diameter and pumps’ size.
+−ATHt = G(Qt)|Qt|1.852
+∀t,
+(9)
+H ≤Ht ≤H
+∀t,
+(10)
+Ht = Z
+∀t,
+(11)
+−Q ≤Qt ≤Q
+∀t.
+(12)
+4) Water Pump Constraints: Water pumps are active com-
+ponents in WDS that control the pressure of water ﬂowing
+through them. The increase in water pressure produced by
+pumps, as well as the power consumption of pumps are for-
+mulated in (13) and (14) respectively, where t is the U × 1
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:45:44 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 4 =====
+1104
+IEEE TRANSACTIONS ON SMART GRID, VOL. 10, NO. 1, JANUARY 2019
+decision variable vector of pump speed at time t, B is U × J
+pump-arc incidence matrix, 1U is a U × 1 vector of ones,
+and a, b, c, d and e are pump-speciﬁc parameters [30], [31].1
+In (15), the pump power consumption is limited to its maxi-
+mum capacity, PW, and (16) ensures that the water ﬂow rate
+in pumps is always positive as pumps can only work in one
+direction.
+BATHt = 2
+t ⊙
+
+a1U −b
+
+1U ⊘t
+
+⊙BQt
+c
+∀t,
+(13)
+PW
+t
+= 3
+t ⊙
+
+d1U −e
+
+1U ⊘t
+
+⊙BQt
+
+∀t, (14)
+0 ≤PW
+t
+≤PW
+∀t,
+(15)
+BQt ≥0
+∀t.
+(16)
+In summary, (1)-(16) present the proposed operation model
+for W-DSOs, which minimizes the total WDS operation cost
+in (1) by optimizing the operation of tanks and pumps while
+ensuring the deliverability of water to the consumers consid-
+ering the water conservation and pressure head constraints.
+III. LINEARIZATION OF THE NONLINEAR FUNCTION
+The proposed WDS operation model (1)-(16) is a nonlinear
+programming (NLP) problem, with the nonlinearities repre-
+sented by the pressure head loss constraint (9), and the water
+pumps’ operation constraints (13) and (14). Solution of the
+NLP model, however, may be time-intensive and complex in
+large WDSs, and a feasible global optimal solution may not
+be always guaranteed. In order to address this issue, this sec-
+tion develops a model to approximate the nonlinear functions
+in (9), (13) and (14) with piecewise linear functions.
+A. Linearization of the Pressure Head Loss Function
+Let Ls,t(Qs,t) = Hn,t −Hn+1,t shows the time-dependent
+pressure head loss in pipe s connecting two nodes n and n+1
+in the water network, where Qs,t is the water ﬂow rate of the
+pipe at time t. Using (9), Ls,t(Qs,t) is a nonlinear function
+of Qs,t as Ls,t(Qs,t) = Gs(Qs,t)|Qs,t|1.852. A hypothetical
+nonlinear pressure head loss function is illustrated in Fig. 3.
+In order to develop the piecewise linear approximation of
+the univariate function Ls,t(Qs,t), let us divide the axis Qs,t
+over the range of the function to K −1 segments using
+k
+=
+1, 2,
+. . . , K sampling coordinates (breakpoints)
+q1
+s, q2
+s, . . . , qK
+s . The values q1
+s and qK
+s coincide with the lower
+and upper bounds of the Qs,t domain. As shown in Fig. 3,
+each breakpoint k is associated with a continuous variable
+λk
+s,t ∈[0, 1], and each kth interval [qk
+s, qk+1
+s
+] is associated with
+a binary variable ak
+s,t.
+Any given point qk
+s ≤Qs,t ≤qk+1
+s
+can be uniquely repre-
+sented by (17), as a linear combination of two consecutive
+breakpoints weighted by the associated variables λk
+s,t. The
+nonlinear function Ls,t(Qs,t) is then approximated by linear
+function ˆLs,t in (18) as convex combination of the function
+values evaluated at the breakpoints weighted by the associ-
+ated variables λk
+s,t. Constraint (19) ensures that only one binary
+1Signs ⊙and ⊘in (13) and (14) denote respectively the component-wise
+matrix multiplication and division.
+Fig. 3.
+Piecewise linear approximation of pressure head loss function.
+variable ak
+s,t can take the value 1, and thus only one line seg-
+ment is active at each time. Accordingly, constraints (20)-(24)
+ensure that only a pair of consecutive positive continuous
+variables, λk
+s,t and λk+1
+s,t
+take non-zero values.
+Qs,t =
+K
+
+k=1
+qk
+sλk
+s,t
+∀t, ∀s, (17)
+ˆLs,t =
+K
+
+k=1
+Ls,t(qk
+s)λk
+s,t
+∀t, ∀s, (18)
+K−1
+
+k=1
+αk
+s,t = 1
+∀t, ∀s, (19)
+K
+
+k=1
+λk
+s,t = 1
+∀t, ∀s, (20)
+λk
+s,t ≤αk−1
+s,t
++ αk
+s,t
+∀t, ∀s, k = 2, . . . , K −1, (21)
+λ1
+s,t ≤α1
+s,t
+∀t, ∀s, (22)
+λK
+s,t ≤αK−1
+s,t
+∀t, ∀s, (23)
+0 ≤λk
+s,t ≤1
+∀t, ∀s, ∀k. (24)
+B. Linearization of the Water Pump Constraints
+Let function hu,t(Qu,t, u,t) = Hn+1,t −Hn,t shows the
+time-dependent pressure head increase produced by pump u
+connected between the nodes n and n+1 in the water network,
+where Qu,t and u,t are respectively the water ﬂow rate and
+speed of the pump at time t. Using (13), hu,t(Qu,t, u,t) is
+a nonlinear function deﬁned as hu,t(Qu,t, u,t) = 2
+u,t(a −
+b( 1
+u,t Qu,t)c). In addition, the pump power consumption is
+a nonlinear function deﬁned in (14) as PW
+u,t(Qu,t, u,t) =
+3
+u,t(d −e( 1
+u,t Qu,t)).
+The linearization method described in Section III-A can be
+extended to linearize the bivariate functions hu,t(Qu,t, u,t)
+and PW
+u,t(Qu,t, u,t). Let us divide the axis Qu,t and u,t
+respectively to V −1 and M −1 segments using breakpoints
+q1
+u, q2
+u, . . . , qV
+u and ω1
+u, ω2
+u, . . . , ωM
+u . The values q1
+u and qV
+u as
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:45:44 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 5 =====
+OIKONOMOU AND PARVANIA: OPTIMAL COORDINATION OF WATER DISTRIBUTION ENERGY FLEXIBILITY WITH POWER SYSTEMS OPERATION
+1105
+well as ω1
+u and ωM
+u coincide with the lower and upper bounds
+of the Qu,t and u,t domains [32].
+The segments on the axes partition the bivariate function
+domain into several rectangles. Consider the rectangle deﬁned
+by vertices (qν
+u, ωm
+u ), (qν+1
+u
+, ωm
+u ), (qν+1
+u
+, ωm+1
+u
+), (qν
+u, ωm+1
+u
+)
+on the function domain (see Fig. 4). This rectangle is cov-
+ered by two triangles deﬁned by vertices (qν
+u, ωm
+u ), (qν
+u, ωm+1
+u
+),
+(qν+1
+u
+, ωm+1
+u
+), and (qν
+u, ωm
+u ), (qν+1
+u
+, ωm
+u ), (qν+1
+u
+, ωm+1
+u
+), and
+divided by the diagonal (qν
+u, ωm
+u ), (qν+1
+u
+, ωm+1
+u
+). A continuous
+variable γ ν,m
+u,t
+∈[0, 1] is associated with each vertice (ν,m),
+and binary variables h
+ν,m
+u,t (ν = 1, . . . , V −1; m = 2, . . . , M)
+and hν,m
+u,t (ν = 2, . . . , V; m = 1, . . . , M −1) are respectively
+associated with the upper left and lower right triangles.
+Any given pump operating point qν
+u ≤Qu,t ≤qν+1
+u
+and
+ωm
+u
+≤u,t ≤ωm+1
+u
+can be uniquely represented by (25)
+and (26), as linear combinations of the vertice coordinates
+weighted by the associated variables γ ν,m
+u,t . The bivariate
+nonlinear functions hu,t(Qu,t, u,t) and PW
+u,t(Qu,t, u,t) are
+then approximated by linear functions
+ˆ
+hu,t and ˆPW
+u,t in
+(27) and (28), as convex combination of the function values
+evaluated at the vertices of the triangle containing the oper-
+ating point (Qu,t, u,t), weighted by the associated variables
+γ ν,m
+u,t . Constraint (29) ensures that in any solution only one
+of the triangles is chosen. Constraints (30)-(32) ensure that in
+any solution at most three of continuous variables γ ν,m
+u,t
+can
+take non-zero values.
+Qu,t =
+V
+
+ν=1
+M
+
+m=1
+qν
+uγ ν,m
+u,t
+∀t, ∀u, (25)
+u,t =
+V
+
+ν=1
+M
+
+m=1
+ωm
+u γ ν,m
+u,t
+∀t, ∀u,
+(26)
+ˆ
+hu,t =
+V
+
+ν=1
+M
+
+m=1
+hu,t(qν
+u, ωm
+u )γ ν,m
+u,t
+∀t, ∀u,
+(27)
+ˆPW
+u,t =
+V
+
+ν=1
+M
+
+m=1
+PW
+u,t(qν
+u, ωm
+u )γ ν,m
+u,t
+∀t, ∀u,
+(28)
+V
+
+ν=1
+M
+
+m=1
+
+h
+ν,m
+u,t + hν,m
+u,t
+
+= 1
+∀t, ∀u,
+(29)
+V
+
+ν=1
+M
+
+m=1
+γ ν,m
+u,t
+= 1
+∀t, ∀u,
+(30)
+γ ν,m
+u,t
+≤h
+ν,m−1
+u,t
++ h
+ν+1,m
+u,t
++ h
+ν,m
+u,t
++ hν−1,m
+u,t
++ hν,m+1
+u,t
++ hν,m
+u,t
+∀t, ∀u, ∀ν, ∀m,
+(31)
+0 ≤γ ν,m
+u,t
+≤1
+∀t, ∀u, ∀ν, ∀m.
+(32)
+In summary, the linear model in Section III-A approxi-
+mates the nonlinear function in (9), and the linear models
+in Section III-B approximate the nonlinear functions in (13)
+and (14). Substituting the nonlinear functions with the asso-
+ciated linear approximations converts the proposed nonlinear
+WDS operation model (1)-(16) into a linear model. The
+proposed linear models in this section introduce new contin-
+uous and binary variables to the problem, so the linearized
+Fig. 4.
+Geometric representation of the convex combination triangulation
+method applied to the pump pressure head increase function.
+model is an instance of mixed-integer linear programming
+(MILP) problem.
+IV. WDS ENERGY FLEXIBILITY OPTIMIZATION
+The WDS operation model proposed in Section II would
+allow the W-DSOs to minimize the operation cost of their
+local WDSs, while supplying the water demand at all times.
+Consider a power system that supplies the power requirement
+of ND water distribution systems. Let PW,opt
+d,t
+and PW,nopt
+d,t
+be the total hourly power consumption of water distribution
+system d ∈ND, with and without optimizing the opera-
+tion of ﬂexible components using the proposed model. The
+optimized energy consumption of W-DSO d, PW,opt
+d,t
+, is cal-
+culated using the W-DSO operational model (1)-(16), where
+the nonlinear constraints could be substituted by the linear
+ones formulated in Section III. In addition, the non-optimized
+power consumption of W-DSO d, PW,nopt
+d,t
+, is calculated by
+removing the energy cost term from objective function of
+the proposed W-DSO operation problem, where the problem
+would only optimize the WDS operation to minimize the water
+procurement costs. The optimized and non-optimized WDS
+power consumption proﬁles would respectively provide the
+lower and upper bounds for the WDS power consumption
+and the associated costs. The upper and lower bounds of the
+WDS power consumption provide the feasible range of WDS
+energy ﬂexibility that could be offered to power systems. In
+this section, we develop a model to integrate and optimize
+the energy ﬂexibility of water distribution systems in power
+systems operation.
+A. WDS Energy Flexibility Model
+The proposed WDS energy ﬂexibility model is presented
+in (33)-(37). In (33), PW
+d,t is the total hourly power consump-
+tion of WDS d, which is equal to the non-optimized power
+consumption, PW,nopt
+d,t
+, plus the ﬂexible energy capacity of the
+WDS, PW,f
+d,t , utilized by the power system operator. The uti-
+lized ﬂexible energy PW,f
+d,t
+is a continuous variable that is
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:45:44 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 6 =====
+1106
+IEEE TRANSACTIONS ON SMART GRID, VOL. 10, NO. 1, JANUARY 2019
+limited in (34) to the ﬂexible energy capacity bounds. The
+bounds are deﬁned in (35) and (36), as the difference between
+the optimized and non-optimized power consumption of the
+WDSs. In (35), when the difference is negative, the mini-
+mum energy ﬂexibility bound is deﬁned by this negative value,
+otherwise it is zero. Similarly, in (36), when the difference
+is positive, the maximum energy ﬂexibility bound is deﬁned
+by this positive value, otherwise it is zero. A positive energy
+ﬂexibility value indicates the potential electricity consumption
+needed to pump and store water in tanks for serving the water
+demand in future times. On the contrary, a negative energy
+ﬂexibility indicates the opportunity to reduce the pumps’ load
+and instead using the water stored in the tanks. While the
+utilized energy ﬂexibility at each time is capped by the avail-
+able capacity at that time, intertemporal constraint (37) ensures
+that the pumps would operate earlier in the operating horizon
+before reducing their load in subsequent hours.
+PW
+d,t = PW,nopt
+d,t
++ PW,f
+d,t
+∀d, ∀t,
+(33)
+PW,f
+d,t ≤PW,f
+d,t ≤PW,f
+d,t
+∀d, ∀t,
+(34)
+PW,f
+d,t = min
+
+PW,opt
+d,t
+−PW,nopt
+d,t
+, 0
+
+∀d, ∀t,
+(35)
+PW,f
+d,t = max
+
+PW,opt
+d,t
+−PW,nopt
+d,t
+, 0
+
+∀d, ∀t,
+(36)
+NT
+
+t=1
+PW,f
+d,t = 0
+∀d.
+(37)
+B. Integration in Power System Operation
+As shown in Fig. 1, the power system operator co-optimizes
+the ﬁnal decisions on WDS energy consumption with the
+power system operation, integrating the WDS energy ﬂexi-
+bility model in (33)-(37). This is done through the proposed
+network-constrained unit commitment model formulated as:
+min
+NT
+
+t=1
+NG
+
+i=1
+
+C(Ii,t, Pi,t) + SUi,t + SDi,t
+
+,
+(38)
+NGb
+
+i=1
+Pi,t −PD
+b,t −
+NDb
+
+d=1
+PW
+d,t =
+NLb
+
+l=1
+Fl,t
+∀b, ∀t,
+(39)
+Fl,t = 1
+Xl
+
+θS
+l,t −θR
+l,t
+
+∀l, ∀t,
+(40)
+−Fl,t ≤Fl,t ≤Fl,t
+∀l, ∀t.
+(41)
+The objective of the proposed model is to minimize the total
+operation cost of power systems in (38), where C(Ii,t, Pi,t),
+SUi,t, SDi,t are respectively the generation cost function,
+startup and shutdown cost of generating unit i at time t,
+and NG is the number of generating units. The objective
+function (38) is subject to the power transmission network con-
+straints (39)-(41). The DC power ﬂow equation (39) integrates
+the power consumption of WDSs in the nodal power balance
+constraints, where PD
+b,t is power demand of bus b at time t
+excluding the power demand of WDSs in that bus, and Fl,t is
+the power ﬂow of transmission line l at time t that is deﬁned
+in (40). The power ﬂow of lines are limited to the line capacity
+bounds in (41). Note that the power consumption of W-DSO
+d, PW
+d,t in (39), is constrained to the proposed WDS energy
+Fig. 5.
+Online diagram of the 6-bus system.
+Fig. 6.
+Schematic representation of the test WDS.
+ﬂexibility model in (33)-(37). The power system operation
+problem is also constrained to the prevailing generating units
+constraints (i.e., capacity, ramping, minimum on/off time, and
+startup/shutdown cost). This paper does not intend to repeat the
+well-understood constraints of generating units, and refer the
+readers to the literature on detailed MILP formulation of the
+networked-constrained unit commitment problem [33]–[36].
+V. STUDY RESULTS
+The proposed model to integrate the energy ﬂexibility of
+WDSs in power systems operation is implemented on the 6-bus
+test power system shown in Fig. 5. The 6-bus system sup-
+plies the energy consumption of three identical test WDSs
+connected to the three load buses 3, 4 and 5. The test WDS,
+shown in Fig. 6, includes 15 nodes, 14 arcs (including 11 pipes
+and 3 pumps in arcs 1, 4, 8), 2 tanks in nodes 10, 13, three
+water load junctions (nodes 3, 11, 15) and one reservoir (node
+1) representing the only water source to the system. The data
+for the 6-bus power system and the test WDS are respectively
+available in [35] and [37]. The initial water volume of the
+tanks is set to zero.
+Three cases are studied here. In Case 1, the three WDSs
+are operated without optimizing their energy consumption. In
+this case, the energy cost term is excluded from (1), so the
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:45:44 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 7 =====
+OIKONOMOU AND PARVANIA: OPTIMAL COORDINATION OF WATER DISTRIBUTION ENERGY FLEXIBILITY WITH POWER SYSTEMS OPERATION
+1107
+Fig. 7.
+(a) Daily power consumption of W-DSOs, and (b) energy ﬂexibility
+schedule of W-DSOs.
+W-DSOs’ operation goal is to supply water demand while
+minimizing the cost of purchasing water from the reservoir.
+In Cases 2 and 3, the energy consumption of WDSs is opti-
+mized using the model proposed in Sections II and III. Case
+2 and 3 differ in terms of the method for integrating the avail-
+able WDS energy ﬂexibility in the power system operation.
+In Case 2, an uncoordinated WDS operation is considered in
+which the W-DSOs locally optimize their system operation and
+submit their adjusted ﬁxed energy consumption to the power
+system operator. In Case 3, the W-DSOs calculate and sub-
+mit their energy ﬂexibility to the power system operator, as
+proposed in Section IV, and the power system operator opti-
+mizes and coordinates the available WDS energy ﬂexibility
+with the power system operation. The numerical results for
+the three cases are discussed below.
+WDS Energy Flexibility and Consumption Schedule: The
+electricity consumption of the WDSs over the one day schedul-
+ing horizon in three cases is shown in Fig. 7.(a). In Fig. 7.(a),
+the WDS energy consumption in Cases 2 and 3 differs from
+that of Case 1 where the energy consumption is not optimized.
+In Case 2, the W-DSOs pump water to the storage tanks dur-
+ing off-peak hours 1-8 when the electricity price is lower, and
+release the water during the peak hours 9-19. The available
+WDSs energy ﬂexibility in Case 2 is calculated by subtracting
+the optimized energy consumption of WDSs from the non-
+optimized energy consumption in Case 1. In Case 2, where
+the energy ﬂexibility is not optimized by the power system
+operator, the total available WDS energy ﬂexibility, shown in
+Fig. 7.(b), is utilized by the W-DSOs.
+Fig. 8.
+Daily load proﬁle of the 6-Bus power system.
+TABLE I
+OPERATION COSTS OF THE 6-BUS POWER SYSTEM
+In Case 3, the power system operator optimizes the uti-
+lization of WDSs energy ﬂexibility, within the WDSs energy
+ﬂexibility bounds. As shown in Fig. 7.(b), the optimized
+energy ﬂexibility in Case 3 is not equal to the available ﬂexi-
+bility in Case 2, which means that the power system operator
+does not necessarily utilize the total available WDS energy
+ﬂexibility. As a result, the energy consumption of WDSs in
+Case 3 is different from Case 2 in Fig. 7.(a).
+Power System Load Proﬁle: The total load of the 6-bus
+system for the study cases is shown in Fig. 8. In Fig. 8,
+optimizing the energy consumption of WDSs in Cases 2 and
+3 has reduced the peak load of the 6-bus system, as com-
+pared to Case 1 where the energy consumption of WDSs is
+not optimized. In Case 1, all the three generating units of the
+6-bus system are committed to supply the daily load proﬁle.
+However, the more expensive unit G2 is only committed for
+two hours 17-19 in Cases 2 and 3 where the energy ﬂexibility
+of WDSs reduces the peak load of the system.
+Power System Operation Cost: The total operation cost of
+the 6-Bus system in the three study cases is shown in Table I.
+In Table I, the operation cost is reduced to $89, 228.1 in Case
+2 as compared to Case 1, which shows the operational cost
+beneﬁts to the power system in the presence of WDSs energy
+ﬂexibility. The operating cost in Case 3, where the WDS
+energy ﬂexibility is optimized by the power system operator,
+is further reduced to $88, 121.0, which demonstrates a higher
+cost saving than Case 2. This result emphasizes that the WDS
+energy ﬂexibility would deliver additional beneﬁts to power
+systems operation when it is optimized by the power system
+operator.
+Integrating the WDS energy ﬂexibility in the 6-bus system
+operation also modiﬁes the locational marginal prices (LMPs).
+The average LMPs of the 6-bus system buses are shown in
+Fig. 9. In Fig. 9, utilization of the WDS energy ﬂexibility in
+Cases 2 and 3 reduces the LMPs during the off-peak hours
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:45:44 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 8 =====
+1108
+IEEE TRANSACTIONS ON SMART GRID, VOL. 10, NO. 1, JANUARY 2019
+Fig. 9.
+Average LMPs of the 6-bus system buses.
+TABLE II
+W-DSOS ENERGY COST
+12-17. The reason for this is that the expensive unit G2 is
+not committed in these hours. The results in Fig. 9 show that
+the LMP curve is smoother in Case 3 where the WDS energy
+ﬂexibility is optimized by the power system operator.
+Water Distribution System Energy Cost: The proposed
+W-DSO optimization model applied in Cases 2 and 3 results
+in reducing the energy consumption cost for the WDSs in
+Table II. The W-DSOs’ energy cost in Table II are calcu-
+lated by multiplying the W-DSOs energy consumption in each
+case with the associated locational marginal prices (LPMs). In
+Table II, energy cost of all three W-DSOs is reduced in Case 3,
+which demonstrates a total of 37.1% cost savings as compared
+to Case 1. In Table II, more energy cost savings are observed
+for Case 3 than for Case 2. This result shows that the W-DSOs
+would beneﬁt more when their energy ﬂexibility is optimized
+by the power system operator. In Table II, more energy cost
+savings are achieved for W-DSO 2 and W-DSO 3 than for
+W-DSO 1, which shows that the energy optimization of WDSs
+is more attractive, ﬁnancially, in power system buses 4 and 5.
+This result also highlights the fact that the energy costs of
+WDSs are linked to the operational characteristics of power
+systems. The cost savings in Table II are based on a single-day
+operation which would be added up on an annual basis.
+A. Comparison of Linear and Nonlinear W-DSO Models
+The goal here is to compare the performance of the proposed
+linear W-DSO operation model in Section III with the non-
+linear counterpart presented in Section II. In this regard, the
+operation of the test WDS, shown in Fig. 6, is simulated using
+both the MILP and NLP models, which are respectively solved
+using CPLEX and COUENNE solvers in GAMS environment,
+on a desktop computer with a 4.0-GHz i7 processor and 32 GB
+Fig. 10.
+WDS power consumption using MILP and NLP models for Case 1.
+TABLE III
+W-DSOS ENERGY COST USING MILP AND NLP MODELS
+TABLE IV
+COMPUTATION TIME OF W-DSO OPERATION MODELS
+of RAM. The upper bound on the duality gap is set to be zero
+in the MILP model.
+Tables III and IV respecitvely show the operation cost and
+computation time of the MILP and NLP models for Cases 1
+and 2. In Table III, the original NLP model achieves lower
+operation costs for W-DSOs in both cases, than the approx-
+imated MILP model. More speciﬁcally, the additional cost
+savings achieved by the NLP model amounts for 1.217% and
+1.202% of the W-DSO operation cost in Cases 1 and 2 respec-
+tively. However, the NLP model takes more than 20 times
+longer to solve. In Table IV, the MILP model reaches optimal
+solutions in 28.5 and 21.6 seconds for Cases 1 and 2 respec-
+tively, as opposed to the computationally cumbersome NLP
+model which found a feasible solution after 449.6 and 418.1
+seconds for the same cases. Further, the WDS power consump-
+tion proﬁles using the NLP and MILP models are compared in
+Fig. 10, where the two proﬁles are very similar and marginally
+differ over the 24-hours scheduling period. These results indi-
+cate that the proposed MILP model provides fairly accurate
+results at a reasonable computational time.
+B. Impact of Additional WDS Energy Flexibility
+In this study, the number of W-DSOs that are willing to
+offer their energy ﬂexibility to the power system operator is
+doubled by adding one more W-DSO to each load bus of the
+6-bus system. The total operation cost and total load proﬁle
+of the 6-bus system in the three cases with more W-DSOs
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:45:44 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 9 =====
+OIKONOMOU AND PARVANIA: OPTIMAL COORDINATION OF WATER DISTRIBUTION ENERGY FLEXIBILITY WITH POWER SYSTEMS OPERATION
+1109
+TABLE V
+OPERATION COSTS OF THE 6-BUS POWER SYSTEM
+Fig. 11.
+Daily load proﬁle of the 6-Bus power system with additional WDS
+energy ﬂexibility.
+are shown in Table V and Fig. 11, respectively. In Table V,
+the total operation cost of the 6-bus system for Case 3 is
+signiﬁcantly decreased by $8,111.0 as compared to Case 1,
+demonstrating operation cost savings of 8.26% for the power
+system operator. As expected, when more (six) W-DSOs offer
+their WDS energy ﬂexibility to the power system operator, a
+greater peak load reduction is achieved in Fig. 11 for Cases
+2 and 3, as compared to the peak load reduction observed for
+the same Cases in Fig. 8, when only three W-DSOs offer their
+energy ﬂexibility to the power system. Further, in Fig. 11, the
+peak load of the 6-bus system experiences a total reduction of
+approximately 50MW at hour 15 for Cases 2 and 3 as com-
+pared to Case 1. However, the load proﬁle of the 6-bus system
+in Case 3 (where the WDS ﬂexibility is coordinated with the
+power system operator) is considerably smoother as compared
+to Cases 1 and 2, providing more cost savings for the power
+system operator as in Table V. These results demonstrate that
+the additional WDS energy ﬂexibility leads to much greater
+power system operation cost beneﬁts, especially when it is
+optimized by the power system operator.
+VI. CONCLUSION
+This paper proposed a model for integrating the energy
+ﬂexibility of water distribution systems in power systems day-
+ahead operation. An energy water distribution system operator
+(W-DSO) is considered who optimizes the operation of WDS
+ﬂexible components for minimizing its energy costs, while
+respecting the hydraulic operation constraints of the WDSs.
+A computationally efﬁcient mixed-integer linear programming
+(MILP) model is proposed that linearizes the inherent nonlin-
+earities of the WDS operation model, and efﬁciently solves the
+proposed problem. The W-DSOs, then, utilize the proposed
+WDS energy ﬂexibility model in order to calculate and offer
+the available energy ﬂexibility to the power system opera-
+tors, who optimize ﬁnal decisions on WDS energy ﬂexibility
+contribution in power systems operation.
+The proposed WDS optimization model is implemented on
+test 15-node WDSs that are supplied by a 6-bus power system.
+The simulation results indicate that implementing the proposed
+model signiﬁcantly reduces the energy cost of W-DSOs. In
+addition, integrating the WDS energy ﬂexibility reduces the
+operation cost of the power system, reduce the peak electricity
+demand, smooth out the load proﬁle, and reduce the electric-
+ity prices. These beneﬁts are maximized when the available
+WDS energy ﬂexibility is optimized by the power system oper-
+ator. The studies also show that the beneﬁts for power systems
+are more prominent when more W-DSOs agree to offer and
+coordinate their energy ﬂexibility with the power system oper-
+ator. The results indicate that the proposed MILP model has
+led to computationally efﬁcient solutions that are in accept-
+able range of the original NLP model solutions. Future works
+may include expanding the proposed model to a stochastic
+optimization model, which would account for the uncertain-
+ties in the wholesale energy prices, as well as the uncertainty
+of water demand forecast of WDSs.
+REFERENCES
+[1] B. Appelbaum, “Water & sustainability (volume 4): U.S. electricity con-
+sumption for water supply & treatment—The next half century,” Elect.
+Power Res. Inst., Palo Alto, CA, USA, Rep. 1006787, 2002.
+[2] V. M. Leiby and M. E. Burke, Energy Efﬁciency Best Practices for
+North American Drinking Water Utilities. Denver, CO, USA: Water Res.
+Found., 2011.
+[3] C. Copeland, “Energy-water nexus: The water sector’s energy use,”
+Congressional Res. Service, Washington, DC, USA, Rep. R43199,
+Jan. 2014.
+[4] G. Klein, M. Krebs, V. Hall, T. O’Brien, and B. Blevins, “California’s
+water-energy relationship,” California Energy Commission, Sacramento,
+CA, USA, Rep. CEC-700-2005-011-SF, 2005.
+[5] E. Elkind, “Drops of energy: Conserving urban water in California to
+reduce greenhouse gas emissions,” Center Law Energy Environ., UC
+Berkeley School Law, Berkeley, CA, USA, Rep., 2011.
+[6] R. Pate, M. Hightower, C. Cameron, and W. Einfeld, “Overview of
+energy-water interdependencies and the emerging energy demands on
+water resources,” Sandia Nat. Lab., Livermore, CA, USA, Rep. SAND
+2007-1349C, 2007.
+[7] S. Shin et al., “A systematic review of quantitative resilience measures
+for water infrastructure systems,” Water, vol. 10, no. 2, p. 164, 2018.
+[8] K. Oikonomou, M. Parvania, and S. Burian, “Integrating water distribu-
+tion energy ﬂexibility in power systems operation,” in Proc. IEEE Power
+Energy Soc. Gener. Meeting, Chicago, IL, USA, 2017, pp. 1–5.
+[9] C. A. Scott et al., “Policy and institutional dimensions of the water–
+energy nexus,” Energy Policy, vol. 39, no. 10, pp. 6622–6630, 2011.
+[10] C. Ringler, A. Bhaduri, and R. Lawford, “The nexus across water,
+energy, land and food (WELF): Potential for improved resource use
+efﬁciency?” Current Opin. Environ. Sustain., vol. 5, no. 6, pp. 617–624,
+2013.
+[11] U. Lele, M. Klousia-Marquis, and S. Goswami, “Good governance for
+food, water and energy security,” Aquatic Procedia, vol. 1, pp. 44–63,
+Aug. 2013.
+[12] S.-C. Kao et al., “Projecting changes in annual hydropower generation
+using regional runoff data: An assessment of the united states federal
+hydropower plants,” Energy, vol. 80, pp. 239–250, Feb. 2015.
+[13] A. Santhosh, A. M. Farid, and K. Youcef-Toumi, “Real-time economic
+dispatch for the supply side of the energy-water nexus,” Appl. Energy,
+vol. 122, pp. 42–52, Jun. 2014.
+[14] A. Santhosh, A. M. Farid, and K. Youcef-Toumi, “The impact of storage
+facility capacity and ramping capabilities on the supply side economic
+dispatch of the energy–water nexus,” Energy, vol. 66, pp. 363–377,
+Mar. 2014.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:45:44 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 10 =====
+1110
+IEEE TRANSACTIONS ON SMART GRID, VOL. 10, NO. 1, JANUARY 2019
+[15] A. Santhosh, A. M. Farid, and K. Youcef-Toumi, “Optimal network
+ﬂow for the supply side of the energy–water nexus,” in Proc. IEEE
+Int. Workshop Intell. Energy Syst. (IWIES), Vienna, Austria, 2013,
+pp. 155–160.
+[16] H. Zhang, J. Zhou, N. Fang, R. Zhang, and Y. Zhang, “Daily hydrother-
+mal scheduling with economic emission using simulated annealing
+technique based multi-objective cultural differential evolution approach,”
+Energy, vol. 50, pp. 24–37, Feb. 2013.
+[17] W. Kurek and A. Ostfeld, “Multi-objective optimization of water quality,
+pumps operation, and storage sizing of water distribution systems,” J.
+Environ. Manag., vol. 115, pp. 189–197, Jan. 2013.
+[18] C. Bragalli, C. D’Ambrosio, J. Lee, A. Lodi, and P. Toth, “On the
+optimal design of water distribution networks: A practical MINLP
+approach,” Optim. Eng., vol. 13, no. 2, pp. 219–246, 2012.
+[19] W. N. Lubega and A. M. Farid, “Quantitative engineering systems
+modeling and analysis of the energy–water nexus,” Appl. Energy,
+vol. 135, pp. 142–157, Dec. 2014.
+[20] L. House, “Water supply related electricity demand in California,”
+California Energy Commission, Sacramento, CA, USA, Rep. CEC-500-
+2007-114, p. 026, 2006.
+[21] K. Oikonomou, M. Parvania, and R. Khatami, “Optimal demand
+response scheduling for water distribution systems,” IEEE Trans. Ind.
+Electron., to be published.
+[22] L. Thompson, “Automated demand response opportunities in wastewater
+treatment facilities,” Lawrence Berkeley Nat. Lab., Berkeley, CA, USA,
+Rep. LBNL-1244E, 2008.
+[23] S. Pabi, A. Amarnath, R. Goldstein, and L. Reekie, “Electricity use and
+management in the municipal water supply and wastewater industries,”
+Elect. Power Res. Inst., Palo Alto, CA, USA, Rep. 3002001433, 2013.
+[24] B. Sparn and R. Hunsberger, “Opportunities and challenges for water and
+wastewater industries to provide exchangeable services,” Nat. Renew.
+Energy Lab., Golden, CO, USA, Rep. NREL/TP-5500-63931, 2015.
+[25] M. Parvania, M. Fotuhi-Firuzabad, and M. Shahidehpour, “Assessing
+impact of demand response in emission-constrained environments,” in
+Proc. IEEE Power Energy Soc. Gener. Meeting, Detroit, MI, USA, 2011,
+pp. 1–6.
+[26] M. Parvania, M. Fotuhi-Firuzabad, and M. Shahidehpour, “Demand
+response participation in wholesale energy markets,” in Proc. IEEE
+Power Energy Soc. Gener. Meeting, San Diego, CA, USA, 2012,
+pp. 1–4.
+[27] O. Siddiqui, “Assessment of achievable potential from energy efﬁciency
+and demand response programs in the U.S. (2010–2030),” Elect. Power
+Res. Inst., Palo Alto, CA, USA, Rep. 1018363, Jan. 2009.
+[28] A. M. Gleixner, H. Held, W. Huang, and S. Vigerske, “Towards globally
+optimal operation of water supply networks,” Numer. Algebra Control
+Optim., vol. 2, no. 4, pp. 695–711, 2012.
+[29] J. Burgschweiger, B. Gnädig, and M. C. Steinbach, “Optimization mod-
+els for operative planning in drinking water networks,” Optim. Eng.,
+vol. 10, no. 1, pp. 43–73, 2009.
+[30] L. W. Mays et al., Water Distribution Systems Handbook, vol. 17.
+New York, NY, USA: McGraw-Hill, 2000.
+[31] L. W. Mays, Water Resources Engineering. New York, NY, USA: Wiley,
+2010.
+[32] C. D’Ambrosio, A. Lodi, and S. Martello, “Piecewise linear approxima-
+tion of functions of two variables in MILP models,” Oper. Res. Lett.,
+vol. 38, no. 1, pp. 39–46, 2010.
+[33] M. Carrion and J. M. Arroyo, “A computationally efﬁcient mixed-integer
+linear formulation for the thermal unit commitment problem,” IEEE
+Trans. Power Syst., vol. 21, no. 3, pp. 1371–1378, Aug. 2006.
+[34] M. Parvania and M. Fotuhi-Firuzabad, “Integrating load reduction into
+wholesale energy market with application to wind power integration,”
+IEEE Syst. J., vol. 6, no. 1, pp. 35–45, Mar. 2012.
+[35] M. Parvania, M. Fotuhi-Firuzabad, and M. Shahidehpour, “ISO’s optimal
+strategies for scheduling the hourly demand response in day-ahead
+markets,” IEEE Trans. Power Syst., vol. 29, no. 6, pp. 2636–2645,
+Nov. 2014.
+[36] M. Parvania, M. Fotuhi-Firuzabad, F. Aminifar, and A. Abiri-Jahromi,
+“Reliability-constrained unit commitment using stochastic mixed-integer
+programming,” in Proc. 11th Int. Conf. Probabilistic Methods Appl.
+Power Syst. (PMAPS), Singapore, 2010, pp. 200–205.
+[37] 15 Node Test Water Distribution System. Accessed: Feb. 2018. [Online].
+Available: https://usmart.ece.utah.edu/datasets/
+Konstantinos Oikonomou (S’14) received the B.Sc.
+degree in physics from the University of Patras,
+Patras, Greece, in 2009, the ﬁrst M.Sc. degree in
+energy engineering from the University of Durham,
+U.K., in 2011, and the second M.Sc. degree
+in electrical engineering from George Washington
+University, USA, in 2014. He is currently pur-
+suing the Ph.D. degree in electrical engineering
+with the University of Utah, USA. His research
+interests include power system planning and relia-
+bility analysis as well as operation and planning of
+interdependent critical infrastructures, water-energy systems, and modeling
+and integration of distributed renewable energy resources.
+Masood Parvania (M’14) is currently an Assistant
+Professor of electrical and computer engineering
+and the Director of Utah Smart Energy Lab,
+University of Utah. His research interests include
+the operation and economics of power and energy
+systems, and interdependent critical infrastructures.
+He serves as an Associate Editor for the IEEE
+TRANSACTIONS ON SMART GRID and the IEEE
+POWER ENGINEERING LETTERS. He is the Chair of
+IEEE Power and Energy Society (PES) Utah Chapter
+and the IEEE PES Task Force on Reliability Impacts
+of Demand Response Integration and the Vice-Chair of the IEEE PES Bulk
+Power Systems Operation Subcommittee and the IEEE PES Reliability, Risk,
+and Probability Applications Subcommittee.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:45:44 UTC from IEEE Xplore.  Restrictions apply. 

@@ -1,0 +1,1007 @@
+Contents lists available at ScienceDirect
+Renewable and Sustainable Energy Reviews
+journal homepage: www.elsevier.com/locate/rser
+Quantiﬁcation of wind curtailment on a medium-sized power system and
+mitigation using municipal water pumping load
+R. Davison-Kernan∗, X. Liu, S. McLoone, B. Fox
+School of Electronics, Electrical Engineering and Computer Science, Queen's University Belfast, United Kingdom
+A R T I C L E I N F O
+Keywords:
+Demand side management
+Wind power
+Curtailment
+Real time pricing
+Optimisation
+Water pumping
+A B S T R A C T
+The issues of climate change and dependence on fuel imports as well as a good local wind resource have led to a
+signiﬁcant expansion of wind generation on the power system of Ireland in recent years, with further devel-
+opment planned. As it operates on a relatively small and isolated system, Irish wind generation must be carefully
+managed to mitigate its variable nature. This could lead to signiﬁcant curtailment of wind power for system
+stability reasons, undermining the economic case for wind generation and reducing its eﬀectiveness at displacing
+traditional, fossil-ﬁred generation. This work quantiﬁes the potential curtailment that might be seen on the
+future Irish and other power systems under several diﬀerent scenarios, and presents Demand Side Management
+(DSM) as a tool to reduce curtailment. DSM of a water supply system is investigated to this end, as well as the
+inputs that would be necessary for such a system in order to beneﬁt both the water system operator and the
+power system as a whole.
+1. Introduction
+Wind generation has seen signiﬁcant expansion in recent years [1].
+In 2018, 30% of all electricity on the island of Ireland was supplied by
+wind [2]. Both jurisdictions on the island of Ireland (Northern Ireland
+and the Republic of Ireland) have a target of 40% of electricity from
+renewable sources by 2020 [3], and although this is unlikely to be met
+in time, it is still the medium-term aspiration of the system.
+Ireland is a relatively small and isolated power system with a peak
+demand of approximately 6.8 GW and interconnection capacity of
+750 MW [4]. The variable and stochastic nature of wind generation
+poses challenges for Transmission System Operators (TSOs), as un-
+expected transients can lead to a shortfall or surplus in generation and
+issues with ramping conventional generators [6]. The non-synchronous
+nature of the wind generators used can lead to a shortfall in system
+inertia, meaning more severe transients during loss of load or loss of
+generation events. To ensure system stability it can be necessary to
+constrain the output from wind generators - whether for local network
+reasons (referred to as constrained wind) or for overall power system
+stability (referred to as curtailment) [7].
+In order to bolster system stability, both TSOs in Ireland (EirGrid
+and SONI [System Operator Northern Ireland]) have instituted a limit
+on System Non-Synchronous Pentration (SNSP). This currently stands at
+65%, with a hope that it may be increased in the future [3,8]. SNSP is
+deﬁned as follows:
+=
++
++
+=
++
++
+W
+I
+D
+E
+SNSP
+wind generation
+interconnector (HVDC) imports
+system demand
+interconnector (HVDC) exports
+(1)
+Wind power potential does occasionally exceed the SNSP limit, and
+4.1% of all potential wind power was dispatched-down in 2014, of
+which approximately 65% was curtailed, with the rest due to network
+constraints [9]. As the installed capacity of wind generation rises, the
+amount of wind energy curtailed will also almost certainly increase. In
+order to reach the target of 37% of all electricity from wind, it has been
+suggested that wind penetrations of up to 75% would have to be per-
+mitted to prevent unacceptable levels of curtailment [3].
+In the SEM, wind generators were paid for curtailed energy as if it
+were not curtailed. This is no longer the case in ISEM but wind gen-
+erators still receive subsidy payments for curtailed wind and are paid
+for wind constrained for network reasons. Ending these payments
+would reduce the attractiveness of wind generation as an investment for
+developers. Either scenario undermines the economic case for wind
+generation [10].
+A number of studies have been undertaken to estimate the magni-
+tude of curtailment on the 2020 Irish power system. Martin-Almenta
+et al. in Ref. [7] found that signiﬁcant reductions in curtailment could
+be achieved by increasing the SNSP limit to 75%. McGarrigle and Leahy
+https://doi.org/10.1016/j.rser.2019.06.004
+Received 11 January 2019; Received in revised form 3 June 2019; Accepted 3 June 2019
+∗Corresponding author.
+E-mail address: ronan.kernan@soni.ltd.uk (R. Davison-Kernan).
+Renewable and Sustainable Energy Reviews 112 (2019) 499–507
+Available online 12 June 2019
+1364-0321/ © 2019 Elsevier Ltd. All rights reserved.
+T
+
+in Ref. [10] investigated the eﬀect of relaxing various operational
+constraints on curtailment and system costs on a hypothetical Irish
+power system with a wind penetration of 32%. They found that wind
+curtailment of between 6% and 7% was achievable through increasing
+the SNSP limit to 75%, with levels as low as 4% possible through re-
+laxation of local system constraints.
+Total elimination of curtailment would be impractical - there might
+be times when wind penetrations could exceed 100% of the total system
+load, in which case curtailment could not be avoided. Interconnection
+between Ireland and Britain is asynchronous (HVDC), limiting the scope
+for export. Equation (1) reﬂects the need to provide suﬃcient inertia in
+the Irish system to limit post-outage rate of change of frequency. Taking
+the aspirational value for SNSP of 75%, the export limit of 750 MW
+would
+limit
+wind
+generation
+for
+a
+typical
+demand
+of
+4000 MW–3563 MW. The commercial factors militating against extra
+transmission investment are outlined in Section 5.3.3.1 of [17]. It fol-
+lows that there must be an acceptable level of curtailment. This has
+been set at 5% by EirGrid [11]. 5% of all wind energy curtailed does not
+necessarily represent a 5% loss of all wind energy in economic terms -
+wind curtailment usually occurs at times of low System Marginal Price
+(SMP), as can be seen in Fig. 1. This ﬁgure shows a heatmap of the
+frequency and magnitude of curtailment for all 30-min market intervals
+in 2014, when SNSP was set at 50%. Curtailment was most common at
+SMP values of below £50/MWh. Since the distribution of curtailment is
+skewed towards lower values of SMP, 5% curtailment by energy is
+likely to equate to less than 5% of the total economic value of all wind
+generation. This is discussed further in Section 2.
+The capacity factor of wind generation in Ireland is approximately
+30% [9]. Achieving wind penetrations greater than this capacity factor
+is likely to be diﬃcult without increased use of energy storage or de-
+mand-side participation [17]. Tuohy et al. in Ref. [18] found that sto-
+rage would not become economical from a system perspective until
+average wind penetrations of greater than 40% were achieved, and that
+storage was operated based mainly on the load proﬁle rather than on
+wind generation until high levels of wind were seen. Storage is also
+inherently ineﬃcient, with the most mature technologies (such as
+pumped storage hydroelectric schemes) oﬀering turn-around eﬃ-
+ciencies of no greater than 85% [18].
+Demand Side Management (DSM) oﬀers an opportunity to maximise
+the usage of existing assets by dispatching load not just on the basis of
+consumer demand but also to support the operation of the power
+system. Flexible demand can act as a form of reserve [20], and loads
+can be scheduled in order to minimise cost by following a Real Time
+Pricing (RTP) tariﬀbased on SMP or to provide ancillary services. By
+reducing the need for polluting generators at peak times, DSM can also
+be used to reduce greenhouse gas emissions [21]. A detailed summary
+of DSM and demand response schemes can be found in Refs. [22,23].
+Where DSM has been carried out based on energy cost, it has primarily
+been on the basis of time-variant Time of Use (ToU) pricing [12–14].
+ToU tariﬀs do not track the actual market price of electricity and thus
+do not provide an incentive for consumers to respond to speciﬁc events,
+such as generator outages or high-wind scenarios [15]. Increased pe-
+netrations of variable generation such as wind generation mean that
+price peaks do not always occur at the same time of day, as high pe-
+netrations of low marginal cost generation during peak times reduce the
+need for low merit generation, thus, in theory, reducing market prices
+[16]. An RTP tariﬀ, based on the wholesale cost of electricity, oﬀers a
+realistic means of tracking the non-routine variations in system price.
+One particular application of DSM of interest to power systems with
+high penetrations of variable generation is demand which can be
+scheduled to mitigate this variability [17]. Scheduling demand to co-
+incide as much as possible with wind generation would allow increased
+uptake of wind. By increasing demand during high wind scenarios, the
+amount of wind generation allowed below the SNSP limit would in-
+crease accordingly. DSM is frequently seen as ‘negative generation’,
+with ﬂexible load being dispatched by the TSO. This requires the ag-
+gregation of smaller loads into larger ‘units’ so that they are of suﬃcient
+size to merit inclusion in system scheduling. An alternative approach is
+a more passive, market-driven mode whereby ﬂexible loads would pay
+a tariﬀproportional to some variable of the power system. Such loads, if
+scheduled on the basis of a changing price, would then modify their
+loads to take advantage of the changes in price relating to this variable.
+This work provides an estimation of the potential curtailment that
+may be seen on the future Irish power system (Section 2) under a
+number of diﬀerent SNSP scenarios. Interconnection has been suggested
+as a means to reduce curtailment - however this work highlights HVDC
+interconnection as a potential source of increased curtailment rather
+than a means to mitigate it. The impact of DSM on curtailment has not
+been investigated before, and so the potential impact on wind curtail-
+ment of DSM using municipal water supply as a representative system is
+investigated in Section 3 under diﬀerent optimisation regimes. Section
+4 discusses a modiﬁed version of RTP in order to encourage curtailment
+mitigation by ﬂexible loads.
+2. Curtailment quantiﬁcation
+In order to assess the impact that DSM of a ﬂexible load could have
+on curtailment in a future Irish power system, it was ﬁrst necessary to
+quantify the level of curtailment that might be expected on such a
+system. In order to meet the 40% renewable energy target mentioned in
+Section 1, both jurisdictions in Ireland have a target of 37% penetration
+of wind generation on the power system, and so this was used as the
+basis for the study. Wind generation data were taken from 2013 to 2014
+(two years where wind speeds were broadly representative of the local
+average) and scaled up to 37% penetration, and curtailment analysed
+for both sets of data at diﬀerent SNSP levels. Average wind penetration
+was 17% in 2013, and 20% in 2014. It was important in this work to use
+data that represent wind power potential. Hence wind energy curtail-
+ment should be minimal. The years 2013 and 2014 provide a com-
+promise between realistic market price variation and modest curtail-
+ment - 1.4% in 2013 and 2.7% in 2014. All data were taken from
+EirGrid and SONI [4].
+Curtailment also occurs due to a number of factors other than the
+SNSP limit including reserve provision and voltage control require-
+ments. These were not included in this analysis, but frequently occur at
+the same time the SNSP limit would be in eﬀect [9].
+Local constraints were not included in this analysis. The scaled-up
+load curve for 2013 was applied to the interconnector and wind data
+from that year, and the curtailment quantiﬁed by applying a series of
+diﬀerent SNSP values, from 50% to 80% in 5% steps. Interconnector
+capacity was assumed to be 750 MW, as it is currently. The same
+Fig. 1. Relation of curtailment instances in 2014 to SMP and curtailment magni-
+tude. SNSP = 50%.
+R. Davison-Kernan, et al.
+Renewable and Sustainable Energy Reviews 112 (2019) 499–507
+500
+
+analysis was carried out on the 2014 data.
+System price was also taken from the year being analysed. While
+these prices (and interconnector ﬂows) would likely change in a future
+Irish power system with higher wind penetrations, price trends would
+be the same - lower prices during periods of very high wind, for ex-
+ample. Thus the changes seen in the value of curtailed energy should be
+broadly representative.
+When implemented on a large scale, DSM would most likely have an
+impact on the SMP itself. Work carried out in parallel to this study [5]
+showed that small changes in demand had negligible eﬀect on SMP and
+therefore such an eﬀect was not considered.
+The analysis of the scaled 2013 data can be seen in Table 1, and the
+2014 data in Table 2. The value (V) of curtailed energy seen in both
+tables was the sum of the amount of energy curtailed multiplied by the
+SMP during periods when curtailment was taking place, as described by
+Equation (2).
+∑
+=
+=
+V
+L
+SMP
+i
+i
+i
+1
+17520
+(2)
+SMPi is the SMP (£/MWh) during period i and Li is the energy lost to
+curtailment (MWh) during period i, for all 17520 30 min periods in a
+year.
+The overall magnitude of curtailment seen across both years was
+diﬀerent due to the higher demand in 2014 compared to 2013.
+However, the timing and relative spread of curtailment was very similar
+in both years, as can be seen in Fig. 2, with curtailment peaks roughly
+coinciding with periods of low demand, high import, and high wind
+generation. This echoes the results found by Devlin et al. in Ref. [6].
+Curtailment did not drop linearly as the SNSP limit was raised, but
+rather followed the principle of diminishing returns, as can be seen in
+Fig. 3, which shows the reduction in curtailment resulting from an in-
+crease in the SNSP limit compared to the 50% baseline. It would not be
+possible to totally eliminate curtailment, as wind penetration potential
+was occasionally seen to go above 100% of demand.
+As can be seen from both Tables 1 and 2, curtailment consistently
+dropped as the SNSP limit was increased, as might be expected. The
+value of curtailed energy as a proportion of the value of all wind energy
+was consistently lower than the magnitude of curtailed energy as a
+proportion of all wind energy. This is because curtailment peaks during
+times when the SMP is low, meaning that the ‘lost’ energy is worth less
+than it might otherwise be. If the 5% curtailment limit stated in Ref.
+[11] were taken to mean 5% curtailment by economic value (£) rather
+than by magnitude (MWh), then curtailment levels of 5–8% by mag-
+nitude might be considered acceptable without undermining the eco-
+nomic case for wind generation.
+Due to the fact that HVDC interconnection is non-synchronous, in-
+creased interconnection could actually increase curtailment on the Irish
+power system, particularly during periods of high import. This is due to
+the competition between import I and wind generation W, as may be
+seen from the numerator of eqn. (1) for a particular SNSP. Ireland tends
+to import more power than it exports due to the lower electricity prices
+on the larger British power system. Fig. 4 shows an approximation of
+curtailment by time of day using the scaled 2014 data. The dashed line
+shows the curve of curtailment with active interconnection while the
+solid line shows the curtailment curve for the same time period but with
+interconnection eliminated from the system. While this analysis does
+not take into account the eﬀect that the lack of interconnection would
+have on system operation, it does give an approximation of the amount
+of additional curtailment of wind that might be expected from im-
+porting energy along HVDC interconnectors. Without an increase in
+SNSP or limits on interconnector import during high-wind periods, in-
+terconnection could not be relied upon as a means to reduce curtail-
+ment.
+3. Mitigation with water DSM
+Without changing the SNSP limit on the Irish power system, it
+would be possible to increase the non-curtailed magnitude of wind
+generation by increasing the demand during periods of curtailment.
+Equation (1) indicates that, with an SNSP limit of 60%, every 1 MW of
+added load would allow 600 kW of otherwise curtailed wind power
+onto the power system (assuming no change in interconnector ﬂows).
+In the Irish Single Electricity Market (SEM), SMP was based on the
+operating cost of the single most expensive in-merit generator. Wind
+power was considered to have zero operating cost and is thus ‘price-
+taking’. In theory, high penetrations of wind generation displace low-
+merit generation, thus reducing system price. In a system with high
+penetrations of wind generation, optimising load based on an SMP RTP
+tariﬀshould encourage demand during high-wind periods and thus
+have an eﬀect on curtailment. The SEM was replaced in October 2018
+with the I-SEM (Integrated Single Electricity Market) which is com-
+posed of two ahead-of-time energy markets, a balancing market, two
+markets for ﬁnancial instruments, and a market for capacity, all of
+which operate independently [19]. However, use of data from the
+former SEM allows comparisons to be made with historical data.
+One ﬂexible load suited to DSM is municipal water supply, speci-
+ﬁcally clean water pumping. In a power system with high wind power
+penetration, curtailment mitigation could be regarded as a desirable
+ancillary service, and DSM of water supply has been shown to be a
+viable means of supplying ancillary services to power systems, parti-
+cularly reserve [20].
+In water supply systems, catchment areas (frequently lakes or re-
+servoirs in mountainous regions) supply water which is treated and
+then pumped to service reservoirs near population centres. These pro-
+vide consumers with water either via hydrostatic head or top-up pumps.
+Water supply systems employing service reservoirs have an inherent
+ﬂexibility in electricity demand as pumping is not time-critical: pro-
+vided that a minimum level of water is maintained in these service
+reservoirs, the operation of the supply pumps is otherwise ﬂexible
+(depending on supply from catchment areas and water treatment fa-
+cilities). By scheduling pumping to coincide as much as possible with
+periods of wind curtailment, it should be possible to reduce the amount
+of curtailment seen on the power system.
+3.1. Case study - Belfast
+Average clean water consumption per person in Northern Ireland
+(NI) is 360 l/day [24], and hence Belfast requires 180 Ml/day for the
+Table 1
+2013 wind data scaled to 37% average penetration.
+SNSP limit
+50%
+55%
+60%
+65%
+70%
+75%
+80%
+Hours of curt.
+3629
+3181
+2768
+2368
+1986
+1578
+1206
+Curt. energy (GWh)
+3264
+2607
+2034
+1540
+1123
+786
+529
+Value, curt. energy (£m)
+159
+124
+94
+68
+48
+31
+20
+Value, all wind (£m)
+712
+Magnitude, all wind (GWh)
+12658
+Curt. value as %
+22.3
+17.4
+13.1
+9.6
+6.7
+4.4
+2.8
+Curt. mag. as %
+25.8
+20.6
+16.1
+12.2
+8.9
+6.2
+4.2
+Table 2
+2014 wind data scaled to 37% average penetration.
+SNSP limit
+50%
+55%
+60%
+65%
+70%
+75%
+80%
+Hours of curt.
+3599
+3214
+2839
+2481
+2153
+1833
+1512
+Curt. energy (GWh)
+3931
+3204
+2556
+1985
+1487
+1058
+696
+Value, curt. energy (£m)
+150
+121
+95
+73
+54
+37
+24
+Value, all wind (£m)
+577.7
+Mag., all wind (GWh)
+13756.7
+Curt. value as %
+26.0
+20.9
+16.4
+12.6
+9.3
+6.4
+4.2
+Curt. mag. as %
+28.6
+23.3
+18.6
+14.4
+10.8
+7.7
+5.1
+R. Davison-Kernan, et al.
+Renewable and Sustainable Energy Reviews 112 (2019) 499–507
+501
+
+population of 500,000.
+Belfast's water supply system is outlined in Fig. 5. The main sources
+of supply are the Silent Valley reservoir in the Mourne Mountains to the
+south, and Lough Neagh to the west. The Silent Valley reservoir pro-
+vides a head of 90 m, while Lough Neagh has a head of −76 m. Hence
+more pumping capacity and energy is required to supply a given vo-
+lume from Lough Neagh compared with the Silent Valley. The favoured
+Silent Valley supply is conserved over time by limiting its output to
+130 Ml/day. The main parameters of the Belfast water supply system
+are given in Table 3. The average electrical load is 2.3 MW – not enough
+to have a signiﬁcant eﬀect on system marginal price, but large enough
+to reduce curtailment if applied in a timely fashion. With a peak de-
+mand of 4.3 MW, Belfast's water supply could represent up to 2.4% of
+total Belfast load, which can be as low as 180 MW at night. It is re-
+presentative of water supply systems on the island of Ireland and many
+other countries.
+The two large catchment areas supply service reservoirs closer to
+Belfast via treatment plants. These plants are best operated at constant
+load. The service reservoir capacities are generally suﬃcient for a day's
+supply, and pump capacity is such that it is possible to control water
+storage between 10% and 100% of capacity. Hence pump operation can
+be decoupled from water supply to a certain extent. The resulting
+ﬂexibility has encouraged Northern Ireland Water (NIW) to use cheap
+night-time electricity to ﬁll the service reservoirs, which then discharge
+the bulk of the stored water during the day. However, the emergence of
+signiﬁcant renewable generation has disrupted the economic basis for
+this simple regime, due to periods of cheap electricity occurring at
+various times when wind generation becomes available. The authors
+previously explored the potential to schedule water pumping more
+economically based on a real-time tariﬀ[26]. The focus here is related
+but diﬀerent: to minimise wind curtailment, again exploiting the ﬂex-
+ibility of water pumping load.
+EPANET, a program developed by the US Environmental Protection
+Agency [24], was used to model the Belfast water supply system [25].
+The water demand is represented by four interconnected nodes. Head
+loss in all pipework is modelled in EPANET by the Hazen-Williams
+formula:
+=
+h
+Q
+C
+d
+10.67
+f
+1.85
+1.85 4.87
+(3)
+d inside pipe diameter (m)
+hf head loss (m)
+C Hazen-Williams roughness coeﬃcient = 130
+L pipe length (m)
+Q volumetric ﬂow rate (m3/s)
+Pump power was calculated from pump ﬂow rates and head. The
+model assumed ﬁxed-speed pumps that were either on at full power, or
+oﬀ. These are being replaced by variable-speed pumps, which would
+tend to ease the pump scheduling task. Pump scheduling was optimised
+one day at a time. To avoid water shortages, service reservoir levels at
+the end of each day were restored to at least 90% of their levels at the
+start of the study period.
+Daily pump schedules were obtained using a genetic algorithm
+(GA). Each pump schedule was represented by a 48-bit string re-
+presenting pump ‘on’ or ‘oﬀ’ status over 48 half-hour periods. Each
+proposed schedule was simulated by EPANET, which returned a cost
+based on pump energies and related electricity costs. Hydraulically
+infeasible schedules were penalised; more than four ‘oﬀ/on’ pump
+Fig. 2. Annual energy curtailed by hour of day for (a) scaled 2013 data and (b) scaled 2014 data. Wind energy penetration = 37%, SNSP = 75%.
+Fig. 3. Change in curtailment with increasing SNSP relative to 50%.
+Fig. 4. Annual curtailment by hour of day with and without interconnection. Scaled
+2014 data for 37% wind energy penetration.
+R. Davison-Kernan, et al.
+Renewable and Sustainable Energy Reviews 112 (2019) 499–507
+502
+
+operations were also penalised. 50 generations were examined, with a
+population of 200.100% crossover was used, with a mutation rate of
+3%. These GA parameters were obtained by trial and error. The in-
+tegration of the GA with EPANET was facilitated by the Python pro-
+gramming language. The methodology used can be seen in Fig. 6.
+The best solution satisfying the constraints determined the initial
+state for the next day.
+The water supply system was ﬁrst optimised based on a traditional
+ToU multi-rate tariﬀ(T1), as is the case currently in Northern Ireland.
+This constituted the base case. The tariﬀis not directly related to
+market operation, but varies by time of day, giving lower rates at night
+and oﬀ-peak. The power consumption over the year of interest was then
+subtracted from the system load curve. The water system was then re-
+optimised on the basis of a number of scenarios (see Fig. 7) and the
+power consumption added back to the system load. It was then possible
+to re-calculate wind penetration ﬁgures and curtailment as shown in
+Section 2. This highlighted the changes that optimisation for the dif-
+ferent scenarios had on system-wide curtailment. All scenarios had
+average power consumptions within 2% of each other. The years 2013
+and 2014 were both analysed. Water demand data were supplied by
+NIW [29].
+The scenarios investigated can be seen in Table 4. Two scenarios
+(EP2 and Max Wind) used ‘perfect foresight’ data, which would in
+reality not be available until after the period in question. These were
+included as they represent best possible cases for minimising price or
+maximising wind power utilisation, respectively. In reality, optimisa-
+tion would have to be carried out based on a forecast of wind genera-
+tion or SMP. Forecasts of price (EA1) and wind power (Two Day Wind
+Forecast) were available to market participants in the SEM, and these
+were used as the basis of two further scenarios here as they represent a
+realistic means by which load could be scheduled ahead of time.
+3.2. Case study results
+The objective in the ﬁrst two scenarios, EP2 and EA1, was to
+minimise the cost of supplying the water pumping load. The ‘Max Wind’
+Fig. 5. EPANET diagram of the Belfast water supply system model.
+Table 3
+Belfast's main sources of water [27,28].
+Silent Valley
+Lough Neagh
+Pipe length
+56 km
+18 km
+Service reservoir
+150 Ml
+200 Ml
+capacity (approx.a)
+Total head gain
+−76 m
+90 m
+Max pumped ﬂow
+130 Ml/day
+180 Ml/day
+Pump powera
+1.2 MW
+3 MW
+a Approximated from available data.
+R. Davison-Kernan, et al.
+Renewable and Sustainable Energy Reviews 112 (2019) 499–507
+503
+
+and ‘Forecast Wind’ scenarios focussed on alignment of the pumping
+load with the actual wind proﬁle and the proﬁle forecast two days in
+advance. In all cases the values and magnitudes of curtailment are
+subtracted from the values obtained for the base case, which was a
+supply cost minimisation based on the traditional multi-rate T1 tariﬀ.
+The reductions in curtailment values for EP2 and EA1 are shown in
+Fig. 7, while the reductions in curtailment magnitudes are shown in
+Fig. 8, both for increasing SNSP. The reductions that might be achieved
+in reality lie between the two graphs, given that the pump schedules
+would beneﬁt from forecast updates that improve on EA1, while lacking
+the accuracy of EP2. Curtailment value and magnitude reductions tend
+to increase with SNSP, reﬂecting more generous allowances for wind
+power penetration.
+The corresponding results for ‘Max Wind’ and ‘Forecast Wind’ are
+also shown in Figs. 7 and 8. Again, realistic curtailment reductions are
+likely to lie between the two forecasting extremes. The reductions are
+largely constant over the realistic SNSP range, viz. 60%–75%.
+It is clear from Figs. 7 and 8 that greater curtailment reductions,
+whether by value or magnitude, are achievable with the wind forecast
+optimisations than with SMP-based EP2 and EA1. This is to be expected,
+as the pumping load is thereby aligned with wind generation directly.
+By contrast, SMP-based optimisation (EP2 and EA1) are successful only
+to the extent that SMP is reduced by wind generation. In reality, system
+demand is the main determinant of SMP.
+However, SMP-based optimisation minimises the cost of pumping
+load supply. This may be seen from the cost of pumping load supply
+over year 2014 with the base case and the four scenarios of interest
+(Table 5):
+It is seen that the savings relative to the base case are greatest for
+EP2, followed by EA1. The lower curtailment values achieved with Max
+Wind and Forecast Wind come at a cost. A compromise solution that
+retains the economic beneﬁts of SMP-based optimisation, while
+switching pumping load to forecast curtailment periods, is presented in
+Section 4 below.
+Fig. 9 shows the power consumption by time of day for selected
+scenarios of the 2014-based data across the full year. Also shown is
+curtailment at the 75% SNSP setting for the same year. The curtailment
+Fig. 6. Flowchart outlining methodology.
+Fig. 7. All 2014 scenarios, economic value of avoided curtailment v. SNSP
+(positive = reduction).
+Table 4
+Scenarios investigated.
+Scenario
+Description
+Base case (Multirate/T1)
+Minimise cost based on multirate tariﬀ(4 tier); lower at night and oﬀ-peak
+EP2
+Minimise cost based on Ex-Post 2 SMP (known 4 days after trading date in SEM)
+EA1
+Minimise cost based on Ex-Ante 1 SMP, forecast made publicly available 1 day before trading date
+Max Wind
+Demand scheduled to maximise uptake usage of wind power, based on perfect foresight of wind penetration
+Forecast Wind
+Demand scheduled to maximise uptake usage of wind power, based on two-day wind forecast provided by SEM-O
+Fig. 8. All 2014 scenarios, energy magnitude of avoided curtailment v. SNSP
+(positive = reduction).
+Table 5
+Cost of pumping. All costs are retrospective.
+Case
+Cost
+T1 (base case)
+£792k
+EP2
+£698k
+EA1
+£763k
+Max Wind
+£776k
+Forecast Wind
+£803k
+R. Davison-Kernan, et al.
+Renewable and Sustainable Energy Reviews 112 (2019) 499–507
+504
+
+curve, as previously mentioned, is heavily aﬀected by interconnector
+ﬂows for the year in question, accounting for the peak seen during the
+middle of the afternoon. Both wind-based optimisations gave an ag-
+gregated
+power
+consumption
+curve
+which
+closely
+followed
+the
+equivalent curve for curtailment. EP2- and EA1-based operation were
+very similar to each other. T1-based operation tracked curtailment
+more closely than EP2, despite having no connection with market op-
+eration. In the SEM, the EP2 price took into account network con-
+straints which are not considered at EA1. It is likely that these con-
+straints mask the eﬀect of wind generation on the electricity price.
+It should be noted that the results seen here are dependent on the
+multirate optimisation giving a valid approximation of how water
+pumping systems are currently run. In reality, formal optimisation such
+as this is not always carried out on pumping systems, as they frequently
+lack the capability of being programmed or controlled remotely. In the
+case where a system does not already follow a rigorous price-based
+optimisation, a switch to such a regime would likely give better results
+than those seen here. The forecast data used here were also those
+available one day in advance - in reality, more accurate forecasts would
+be available closer to the time, which could then be used to update the
+optimisation.
+The scenarios examined here consider a much greater wind pene-
+tration - 37% - than in the original data, e.g. 20% in 2014. It is to be
+expected that the higher levels of wind in the scenarios would depress
+SMP for given fuel (mainly gas) prices. On the other hand, SMP at times
+of light wind would remain much the same. The overall eﬀect would be
+to increase the incentive to shift load to periods of low SMP. Hence the
+results presented above probably understate the advantages of load
+scheduling based on SMP. It should also be noted that the development
+of oﬀ-shore wind on Ireland's east coast will redress the current pre-
+dominance of on-shore wind power in the west, aiding diversity and
+improving forecasts.
+4. Augmented SMP scheduling
+4.1. Incentive scheme to reduce curtailment
+The SMP based optimisations in Section 3 (EP2 and EA1) scheduled
+load purely on the basis of market price, without reference to curtail-
+ment of wind. As can be seen in the results found above, the relation-
+ship between SMP and curtailment is not strong enough for SMP-based
+load scheduling to minimise wind curtailment. SMP represents the cost
+of adding one additional megawatt of generation to the power system -
+this is what makes it a ‘marginal’ price.
+During period i, one additional MW of load would cost (Ci):
+=
+×
+C
+SMP
+(1 MW)
+i
+i
+(4)
+From Equation (1), when curtailment is occurring, for a given in-
+terconnector ﬂow, increasing demand by 1 MW allows more wind
+energy ( W
+Δ
+) onto the system:
+=
+×
+W
+Δ
+SNSP
+(1 MW)
+(5)
+Wind generation is ‘price-taking’, meaning that it does not set SMP
+as it has no intrinsic marginal cost. In a curtailment scenario, increasing
+demand will not cause a corresponding increase in ‘price-setting’ gen-
+eration due to the increase in wind generation seen in Equation (5).
+Therefore, under these circumstances, the true economic cost of one
+extra MW of load is not the SMP, but rather the SMP minus the value of
+the wind energy that would otherwise be lost due to curtailment:
+=
+−
+C
+SMP(1 SNSP)
+i
+i
+(6)
+The higher the SNSP value, the more that additional demand could
+actually oﬀset curtailment.
+Equation (6) could be used to produce an ‘augmented’ SMP curve.
+Fig. 10 shows the EP2 SMP curve for a day in the 2014-based data from
+Section 3 alongside the ‘augmented’ SMP curve from the same day. The
+divergence of the ‘augmented’ curve from the EP2 data represents
+periods during which curtailment is occurring. The area between the
+curves is the value of the curtailment that one additional MW of load
+would oﬀset.
+A version of the curve in Fig. 10 could be used as the price signal for
+optimisation of a ﬂexible load. During periods of no curtailment it
+would be the same as the SMP curve, but if curtailment were imminent,
+or actually occurring the price would be reduced, which would in-
+centivise an increase in load.
+4.2. Results for augmented SMP
+In order to investigate this, the EP2 SMP optimisation of water
+pumping in Section 3 was modiﬁed to schedule on the basis of this
+‘augmented’ SMP curve. The optimisation was carried out at a SNSP of
+75%. A summary of the results, along with a comparison with no op-
+timisation and EA1 and EP2 optimisation, can be seen in Table 6 below.
+Scheduling on the basis of the ‘augmented’ SMP resulted in a signiﬁcant
+increase in both the magnitude and value of curtailment avoided in
+both years. The 2014 data gave 1.3 GWh of avoided curtailment for an
+Fig. 9. Pump energy consumption and curtailment by hour of day. Scaled 2014
+data.
+Fig. 10. Augmented and EP2 SMP, 21 February 2014. SNSP = 75%.
+Table 6
+Augmented EP2 SMP v. standard SMP, 2013 and 2014 data, 75% SNSP.
+Scenario
+Change in Curtailment
+Magnitude (MWh)
+Change in Curtailment
+Value (£)
+2013
+EA1
+−228
+−6109
+EP2
+−445
+−10217
+Augmented EP2
+−909
+−44438
+2014
+EA1
+−369
+−10791
+EP2
+−741
+−18474
+Augmented EP2
+−1325
+−44245
+R. Davison-Kernan, et al.
+Renewable and Sustainable Energy Reviews 112 (2019) 499–507
+505
+
+average electrical demand of 2.3 MW and a peak demand of 4.3 MW.
+The water system modelled here represents approximately one twelfth
+of overall water demand. Scaling the results seen here accordingly
+suggest that reduction in curtailment in the region of 15 GWh per year
+could be realised with water pumping optimisation alone. This would
+probably be a little less due to the inherent diminishing returns and the
+varying levels of demand ﬂexibility within the water supply system.
+Fig. 11 shows the power consumption by time of day for both sce-
+narios, for both years. In both cases, the pump power consumption
+more closely followed curtailment when scheduled on the basis of the
+‘augmented’ SMP than on the basis of SMP alone. Pumping costs for
+2013 and 2014 were £611k and £685k respectively, lower than all
+other optimisations.
+Optimising on the basis of this ‘augmented’ SMP would allow a
+more economically justiﬁed cost to be applied to ﬂexible load. There
+are, however, some disadvantages to this approach - it is dependent on
+foresight of both market price and curtailment, and any inaccuracy in
+the forecasting of either would reduce the eﬀect on curtailment.
+However, if the price signal provided to the load were to be updated as
+new data on curtailment and price became available, these un-
+certainties would be largely overcome. This would, in eﬀect, be a
+mixture of the purely market-driven approach discussed in Section 3,
+and explicit system operator intervention in DSM. The operator would
+still not have direct control over load, but would be able to provide an
+up-to-date incentive for load to be increased during periods of curtail-
+ment.
+Tariﬀdesign would be critical with this approach - if the additional
+wind generation was rendered ‘free’, as seen here, then it may not be
+seen as beneﬁcial to suppliers as there is no cost diﬀerence between this
+approach and allowing curtailment to take place. A possible solution
+might be to drop use of system charges for ﬂexible loads at times of
+potential curtailment. It could be argued that, by helping to reduce or
+avoid curtailment, such loads are providing an ancillary service, and
+should be charged SMP only. Curtailment tends to occur at times when
+the system is lightly loaded, further justifying this approach. The use of
+system charges would be restored at other times. However, if a small
+cost were ascribed to the additional wind (some fraction of SMP per-
+haps), then customers would still pay for the additional wind being
+allowed on the system while also saving money compared to paying the
+full SMP. Since the increased load during periods of curtailment would
+in all probability result in load being reduced during other times, it is
+likely the overall reduced need for ‘price-setting’ generation would re-
+duce system costs.
+4.3. Signiﬁcance of augmented approach to water pumping
+Water pumping is an excellent candidate for early adoption of DSM
+aimed at reducing wind energy curtailment. The industry has sig-
+niﬁcant scale, comprising an estimated 28 MW of pumping plant in
+Ireland. Much of this capacity is remotely controlled already, typically
+taking advantage of traditional time-of-use tariﬀs. Hence the commu-
+nications infrastructure needed to eﬀect control based on real-time
+prices is largely in place. Extending this capability is cheap relative to
+the ratings of individual pumps. The water industry also has the op-
+erational expertise to implement pump scheduling based on the aug-
+mented SMP approach advocated here.
+An additional advantage of water pumping load is that it is well
+distributed, with service reservoirs near most towns. Hence there is
+scope to incentivise pumping load to alleviate network constraints
+arising from wind generation in the locality.
+There will be some emission (CO2) reductions from transfer of fossil-
+fuelled to wind generation during curtailment episodes. However, the
+real signiﬁcance is that, while augmented SMP scheduling of water
+pumping load can reduce present wind curtailment, it encourages fu-
+ture wind power development. The base case is the 2020 scenario with
+a 37% wind contribution and water pumping load scheduled to take
+advantage of the Time of Use (ToU) tariﬀ. Applying both the 2013 and
+2014 derived wind generation data, the resulting wind curtailment is
+922 GWh per annum. Water pump scheduling based on augmented SMP
+was applied to the same data, with increasing wind capacity. It was
+found that the same level of wind curtailment was reached when the
+wind capacity was 1.14 MW greater. Given that the Belfast system re-
+presents around one twelfth of the Irish system, it can be assumed that
+all-island application of augmented SMP to water pumping load would
+allow approximately an extra 13.7 MW of wind capacity to be deployed
+for the same curtailment as ToU-based scheduling. Note that the extra
+wind capacity is about half of the water pump rating. While we have
+focused here on water pumping load, similar arguments can be made
+for commercial refrigeration plant and other ﬂexible loads.
+5. Conclusions
+Wind power curtailment on the Irish SEM was signiﬁcant and is
+likely to remain so in ISEM, even with an increase of the SNSP limit. If
+the 5% of wind energy curtailed described in Ref. [11] is taken as a
+hard limit then it will almost certainly be necessary to implement DSM
+schemes (and possibly storage) when the power system is nearing its
+wind penetration targets. If the 5% limit is taken as an economic rather
+than a physical limit then this would give the system operator greater
+leeway, as 5% of wind energy curtailed by value corresponds to ap-
+proximately 8% curtailed by magnitude.
+HVDC interconnection cannot necessarily be relied on to reduce
+curtailment, as its non-synchronous nature means that it must compete
+with wind generation when both import and wind generation are sig-
+niﬁcant or face curtailment itself. Currently, Ireland only has inter-
+connection with the British system. The argument has been made that
+import is unlikely during high wind events due to electricity prices in
+Ireland being driven down by wind generation, thus making Irish
+Fig. 11. Augmented SMP v. EP2, pump energy consumption and curtailment (75% SNSP) by time of day, (a) 2013- and (b) 2014-based data.
+R. Davison-Kernan, et al.
+Renewable and Sustainable Energy Reviews 112 (2019) 499–507
+506
+
+electricity appealing to consumers in Britain. It is worth noting, how-
+ever, that high wind events that occur in Ireland usually occur con-
+currently in Britain, which also has signiﬁcant (and increasing) wind
+generation, reducing British electricity prices. The economies of scale
+inherent in the larger British system also make it less likely that elec-
+tricity export can be relied upon to mitigate curtailment.
+DSM has the potential to mitigate curtailment without explicit op-
+erator intervention, provided that the load in question is suﬃciently
+ﬂexible. One method of achieving this eﬀect is by scheduling load on
+the basis of the penetration of wind generation by providing a tariﬀ
+proportional to this variable. Since loads such as municipal water
+supply require scheduling in advance, giving suﬃcient and accurate
+notice of changes in price would result in the maximum possible miti-
+gating eﬀect on curtailment. Forecasting accuracy would be key, and a
+combination of rolling optimisation and price updates could improve
+the results from the power system perspective. In order to entice users
+to take part in such a scheme, it might be beneﬁcial for the customer to
+be oﬀered a ﬁrm price one day in advance, with the risk and un-
+certainty of forecasting being carried by the supplier.
+Optimising ﬂexible load on the basis of SMP did produce some
+mitigation of curtailment compared to multirate optimisation in this
+investigation, but this was entirely dependent on accurate pricing in-
+formation being available ahead of time. Such a regime may, however,
+be beneﬁcial compared to an unoptimised system, and is also likely to
+present the highest possible cost savings to the consumer [26]. The
+relationship between SMP and wind energy was not suﬃcient in the
+SEM to advocate SMP-based optimisation as an eﬀective means to mi-
+tigate curtailment compared to optimisation based on a multirate tariﬀ.
+This could be compensated for by providing an augmented version of an
+SMP-based tariﬀwhich takes into account the economic beneﬁt of
+avoided curtailment and thus provides a direct ﬁnancial incentive to
+consume during periods when curtailment is occurring. Such a tariﬀ
+would also serve to ﬂatten the load curve (especially when compared to
+the wind penetration-based tariﬀ) as it would penalise consumption
+during peak times.
+The augmented SMP approach applied to water pumping load
+proved to be a highly eﬀective way of reducing curtailment, while
+maintaining most of the economic beneﬁt of basic SMP scheduling.
+Curtailment was reduced by an additional (approximate) 500 MWh
+with augmented SMP scheduling. The main advantage of this is that it
+allows additional wind capacity to be installed for the same level of
+curtailment as in an un-optimised load scenario, which would replace
+fossil-fuelled generation. The extra wind capacity for augmented SMP
+optimisation compared to ToU-based optimisation of the entire Irish
+water supply system is estimated to reduce CO2 emissions on the Irish
+power system by 21,500 tonnes per annum. Other sectors provide si-
+milar DSM opportunities, such as refrigerated food storage facilities,
+However, as the magnitude of DSM increases to include these possibi-
+lities, the eﬀect of DSM on the system marginal price should be in-
+cluded in the analysis.
+Acknowledgement
+The authors would like to thank Northern Ireland Water for the
+provision of data and access to system information, and the NI
+Department of Employment and Learning for project funding.
+References
+[1]
+Brussels, Belgium EWEA. Wind in power: 2013 European statistics. 2014. Cited
+January 2019. [online]http://www.ewea.org/ﬁleadmin/ﬁles/library/publications/
+statistics/EWEA_Annual_Statistics_2013.pdf.
+[2] SEAI. Wind Energy. 2019https://www.seai.ie/sustainable-solutions/renewable-
+energy/wind-energy/, Accessed date: January 2019.
+[3] McGarrigle EV, Deane JP, Leahy PG. How much wind power will be curtailed on the
+2020 Irish power system? Renew Energy 2013;55:544–53.
+[4] Eirgrid Smart Grid Dashboard, Smartgriddashboard.eirgrid.com [Accessed January
+2019].
+[5] Kernan R, et al. The eﬀect of wind generation on wholesale electricity prices in
+Ireland. Proceedings of the 16th wind integration workshop. 2017. Berlin.
+[6] Devlin J, et al. System ﬂexibility provision using short term grid scale storage. IET
+Proc. Gener. Trans. Distr. 2016;10(3):697–703.
+[7] Martin-Almenta M, et al. Analysis of wind curtailment and constraint at a nodal
+level. IEEE Trans. Sus. Energy. 2017;8(2):488–95.
+[8] EirGrid. DS3 programme operational capability outlook 2016 Tech report 2016.
+[9] EirGrid and SONI. Annual renewable energy constraint and curtailment report 2015
+Tech. report 2016.
+[10] McGarrigle EV, Leahy PG. Cost savings from relaxation of operational constraints
+on a power system with high wind penetration. IEEE Trans. Sus. Energy.
+2015;6(3):881–8.
+[11] Eirgrid and SONI. Volume calculation methodology and portfolio scenarios Tech.
+report 2016.
+[12] Adika CO, Wang L. Autonomous appliance scheduling for household energy man-
+agement. IEEE Trans. Smart Grid 2014;5(2):673–82.
+[13] Pourmousavi SA, et al. Real-time demand response through aggregate electric water
+heaters for load shifting and balancing wind generation. IEEE Trans. Smart Grid
+2014;5(2):769–77.
+[14] Van Staden AJ, et al. A model predictive control strategy for load shifting in a water
+pumping scheme with maximum demand charges. Appl Energy 2011;88:4785–94.
+[15] Schweppe FC, et al. Homeostatic utility control. IEEE Trans Power Apparatus Syst
+1980;99(3):1151–63.
+[16] Kernan R. Flexible operation of municipal water supply system to facilitate variable
+generation potential Doctoral dissertation Queen’s University Belfast; 2017
+[17] Fox, B et al. Wind power integration: operational and connection aspects. second
+ed.. IET, London.
+[18] Touhy A, O'Malley M. Impact of pumped storage on power systems with increasing
+wind penetration. IEEE Power & Energy Society General Meeting 2009:1–8.
+[19] Single electricity market operator. Markets, https://www.sem-o.com/markets/
+[Accessed January 2019].
+[20] Menke R, et al. Demonstrating demand response from water distribution through
+pump scheduling. Appl Energy 2016;170:377–87.
+[21] Lau, et al. Carbon savings in the UK demand response programmes. Appl Energy
+2015;159:478–89.
+[22] Albadi MH, El-Saadany EF. A summary of demand response in electricity markets.
+Electr Power Syst Res 2008;78(11):1986–96.
+[23] Ma O, et al. Demand response for ancillary services. IEEE Trans. Smart Grid
+2013;4(4):1988–95.
+[24] reportNI water. Annual report 2014-15, https://www.niwater.com/siteﬁles/
+resources/pdf/reports/annualreport/niwannualreport2014-15.pdf [Accessed
+January 2019].
+[25] United States environmental protection agency. EPANET, https://www.epa.gov/
+water-research/epanet [Accessed January 2019].
+[26] Kernan R, et al. Demand side management of an urban water supply using
+wholesale electricity price. Appl Energy 2017;189:395–402.
+[27] UK water projects 2009. Project alpha, http://www.waterprojectsonline.com/case_
+studies/2009/NIW_Alpha_2009.pdf [Accessed January 2019].
+[28] NI Water. Silent Valley information leaﬂet,https://www.niwater.com/siteﬁles/
+resources/pdf/silent-valley-information-leaﬂet.pdf [Accessed January 2019].
+[29] Bingham I. Response to enquiry. NI Water ref. 1415272. 2014.
+R. Davison-Kernan, et al.
+Renewable and Sustainable Energy Reviews 112 (2019) 499–507
+507

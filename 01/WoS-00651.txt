@@ -1,0 +1,1123 @@
+
+===== PAGE 1 =====
+IEEE TRANSACTIONS ON INDUSTRIAL ELECTRONICS, VOL. 62, NO. 1, JANUARY 2015
+587
+A Data-Driven Process Controller for
+Energy-Efﬁcient Variable-Speed Pump
+Operation in the Central Cooling Water
+System of Marine Vessels
+Spyridon V. Giannoutsos, Student Member, IEEE, and Stefanos N. Manias, Fellow, IEEE
+Abstract—In this paper, a data-driven process controller
+is designed and implemented onboard a typical marine
+vessel for optimal variable-speed pump operation, leading
+to the energy efﬁciency optimization of its central cooling
+water system. To match variable ﬂow rate requirements
+due to changes in the vessel’s operational proﬁle with re-
+spect to plant limitations, real-time process measurements
+are used as feedback signals to adjust the parameters
+and set-points of a data-driven process controller with
+self-tuned proportional–integral–differential control loops,
+which is realized through a commercial programmable logic
+controller and regulates the speed of sea water cooling
+pumps in order to maximize power saving potential dur-
+ing sea-going and cargo unloading periods. Data-driven
+control establishes system dynamics according to process
+parameter variation and ensures system reliability through
+parameter monitoring, regardless of the controlled plant
+model. The plant power saving potential is initially exam-
+ined through a practical case study, whereas experimental
+results provided after the proposed control system retroﬁt
+installation onboard a tanker vessel show signiﬁcant power
+balance improvement and reduction of diesel generator fuel
+consumption compared to existing pump throttle control
+methods, verifying that marine industry can be greatly
+beneﬁted from this energy efﬁciency upgrade.
+Index Terms—Data-driven control, ﬂow control, indus-
+trial power system control, marine vehicle power systems,
+power conversion, process control, pumps, variable-speed
+drives.
+I. INTRODUCTION
+I
+N order to reduce fuel consumption, marine vessels nowa-
+days use slow steaming, operating main engine (M/E) at
+lower speeds [1]. This practice leads to variable ﬂow require-
+ments of auxiliary machinery associated with water cooling,
+Manuscript received August 30, 2013; revised December 14, 2013
+and January 28, 2014; accepted March 20, 2014. Date of publication
+April 14, 2014; date of current version December 19, 2014. This work
+was supported by Thenamaris Ships Management, Inc. as part of its
+strategic plan for optimization of energy management across its ﬂeet.
+S. V. Giannoutsos is with Thenamaris Ships Management, Inc.,
+16671 Athens, Greece, and also with the Department of Electrical and
+Computer Engineering, National Technical University of Athens, 15780
+Athens, Greece (e-mail: s.giannoutsos@thenamaris.com; sgiannou@
+central.ntua.gr).
+S. N. Manias is with the Department of Electrical and Computer
+Engineering, National Technical University of Athens, 15780 Athens,
+Greece (e-mail: manias@central.ntua.gr).
+Color versions of one or more of the ﬁgures in this paper are available
+online at http://ieeexplore.ieee.org.
+Digital Object Identiﬁer 10.1109/TIE.2014.2317456
+ventilation, and air conditioning systems due to the need for
+derated capacities [2], [3]. However, for pumps used in marine
+vessels, ﬂow regulation is currently achieved by throttling
+through valve operation in their discharge side, which is energy
+inefﬁcient since the power consumption of the pump motor is
+not affected. Previous economic studies suggest that applying
+variable-frequency drives (VFDs) for ﬂow regulation in pump-
+ing systems can lead to signiﬁcant energy savings, particularly
+in marine vessels [4], [5].
+While energy efﬁciency studies demonstrate the importance
+of using variable-frequency control in industrial applications in
+order to improve energy efﬁciency [6]–[11], effective induction
+motor drive control strategies focusing on current regulation
+and vector control have been proposed for pumping systems
+[12]–[14], and several options are presented for electric ships
+[15]. With regard to the performance of adjustable-speed cen-
+trifugal pumps, the effects of voltage variation and unbalance
+conditions are investigated in [16] and [17]. A hybrid estima-
+tion method for the centrifugal pump operational state when
+frequency converters are used is presented in [18], using ﬂow
+rate and head estimates from the process. However, the men-
+tioned model-based control approaches are based on sufﬁcient
+quantitative knowledge being available from the process and are
+limited to the frequency converter or motor itself, without con-
+sidering the effects on plant dynamics and constraints, which
+are important in complex industrial processes that combine
+hydraulic, mechanical, and electrical systems, as it is often the
+case, particularly in marine vessels.
+Data processing, on the other hand, can be used for fault
+detection and diagnosis in such complex industrial processes,
+as proposed in [19]. To this end, a real-time data-driven im-
+plementation of fault tolerant control system, which uses an
+observer/residual generator of fault diagnosis vectors, is pre-
+sented in [20] and [21]. To achieve robust control that is model
+free, a data-based state feedback control method using a state
+signal sampling technique is proposed in [22], whereas a dy-
+namic linearization-based data-driven controller is presented in
+[23]. In [24], the tuning of a ﬁxed-order data-driven controller
+for linear time-invariant plants is achieved through the use of
+input–output samples.
+In this paper, a data-driven process control method is in-
+troduced to optimize power consumption of adjustable-speed-
+driven centrifugal sea water (S.W.) cooling pumps in the
+vessel’s central cooling water system in relation to process
+0278-0046 © 2014 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 17,2026 at 23:23:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 2 =====
+588
+IEEE TRANSACTIONS ON INDUSTRIAL ELECTRONICS, VOL. 62, NO. 1, JANUARY 2015
+variable ﬂow rate requirements. The controller parameter ad-
+justment is based on measured process input and output tem-
+perature and pressure data, which are used as feedback signals
+in self-tuning proportional–integral–differential (PID) control
+loops, whereas the outputs are bounded accordingly in order
+to comply with varying process constraints, improving system
+stability. The controller dynamically changes the pump speed
+set-point in relation to the vessel’s operating proﬁle, corre-
+sponding to sea-going and cargo handling periods, respectively,
+in order to achieve plant energy efﬁciency through power bal-
+ance optimization with respect to real-time M/E and auxiliary
+machinery water ﬂow requirements.
+To examine the plant power saving potential and deter-
+mine the critical process parameters, case study results are
+presented from the modeling of the vessel’s central cooling
+water system according to derated M/E and auxiliary machinery
+ﬂow requirements, which are related to slow steaming prac-
+tice. The proposed pump control scheme is realized through
+a commercial programmable logic controller (PLC), whereas
+a human–machine interface (HMI) is implemented for plant
+parameter monitoring. Experimental results derived from sys-
+tem retroﬁt installation onboard a typical tanker vessel show
+that the controller dynamics are well established, leading to
+signiﬁcant energy savings as well as to diesel generator (D/G)
+fuel consumption and emission factor reduction in comparison
+to existing pump throttling control.
+II. OPTIMAL FLOW REGULATION FOR
+PUMPS AT SLOW STEAMING
+A ﬂuid ﬂow system is characterized by a system curve, where
+the system head h (in ft) is a function of the static head dh
+and where head losses hl depend on the ﬂow velocity q (in
+ft/min) on acceleration due to gravity g (in ft/min2) and on the
+constant k describing the friction caused by the piping system,
+as expressed in
+h = dh + hl = (h2 −h1) + kq
+2g
+2
+.
+(1)
+To service the ﬂuid ﬂow system, the operating point of the
+designed pump is the intersection of the system curve and
+the pump performance curve, with associated motor power
+consumption PkW (in kW), as expressed in
+PkW = 0.746 ×
+
+γ × v × h
+33 000 × η × ηe
+
+(2)
+where γ is the speciﬁc weight of the ﬂuid (in lb/ft3); v is the
+volumetric ﬂow rate (in ft3/min); and η and ηe are the overall
+pump efﬁciency and motor efﬁciency factors, respectively.
+Centrifugal pumps onboard vessels are always designed to
+provide the required ﬂow rate for M/E operation at the maxi-
+mum capacity ratio (MCR); therefore, the operating point of the
+system is originally A (hA, vA), where the pump motor is work-
+ing at nominal speed ωMCR in order to service the system de-
+scribed by curve sa, as shown in Fig. 1. Through the closing op-
+eration of valves in the piping system, the system curve moves
+upward to sa′; thus, the operating point moves along the same
+pump curve to A′ (hA′, vA′), achieving ﬂow reduction at higher
+Fig. 1.
+Dynamic power saving margin according to pump performance
+and system curve variation at different ﬂow rate requirements.
+impeller pressure, which is energy inefﬁcient, as pump power
+consumption remains almost nominal, i.e., PMCR, as before.
+Due to the vessel’s slow steaming operating practice, M/E
+often operates at lower speeds, resulting in less ﬂow rate
+requirements from the process. In that case, variable-frequency
+control can be used to adjust the speed of the pump motor to a
+lower value ωN by moving the whole pump curve downward so
+that the operating point moves from A to B (hB, vB) or from
+A′ to B′ (hB′, vB′) accordingly, resulting in signiﬁcant power
+savings as highlighted in the respective areas in Fig. 1, since the
+pump power consumption PN is reduced according to afﬁnity
+laws, as described in
+ωN
+ωMCR
+=
+νsw_in,N
+νsw_in,MCR
+=
+3
+
+PN
+PMCR
+.
+(3)
+However, since the pump operation is associated with a
+speciﬁc process whose parameters are varying according to the
+vessel’s operating proﬁle, M/E speed, auxiliary machinery con-
+dition, and physical constraints, adjustment of ωN simply based
+on process modeling is not adequate without the risk of jeopar-
+dizing integrity and reliability. To this end, the objective of the
+introduced data-driven controller is to self-tune via real-time
+process measurements in order to operate the pump at an op-
+timal speed, so that maximum power savings are achieved and
+the minimum speed limit ωmin is adapted in compliance with
+the minimum required ﬂow limits vmin, which vary according
+to the needs of M/E and auxiliary machinery at each time.
+The design and implementation of the data-driven controller
+is performed for energy efﬁciency optimization of the vessel’s
+central cooling water system. Therefore, the process model is
+obtained to examine the process constraints and investigate the
+requirements through a case study for the vessel where the
+controller will be implemented as a retroﬁt installation.
+III. MODELING OF THE VESSEL’S CENTRAL COOLING
+WATER SYSTEM CAPACITIES FOR M/E
+SLOW STEAMING OPERATION
+Since the process parameters considerably vary in relation
+to the M/E operating point, in order to develop the model
+and assess the capacities of the vessel’s central cooling water
+system, the M/E speed and load variations in the slow steaming
+condition have to be considered. For this reason, the engine
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 17,2026 at 23:23:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 3 =====
+GIANNOUTSOS AND MANIAS: DATA-DRIVEN PROCESS CONTROLLER FOR VARIABLE-SPEED PUMP OPERATION
+589
+Fig. 2.
+M/E load diagrams for the ship’s slow steaming operating point.
+layout and load diagrams for the vessel under investigation
+are presented in Fig. 2, along with the comparison between
+the corresponding MCR, continuous nominal (SP), and slow
+steaming operating points (N).
+Since a ﬁxed pitch propeller is used, engine power PM/E
+varies with propeller speed n according to
+PM/E = c × n3,
+where c = constant.
+(4)
+It is also known that the effective power of a marine diesel
+engine depends on mean effective pressure pe, as in
+PM/E = c × pe × n = c′ × n,
+for constant pe.
+(5)
+For the vessel under investigation, plotting the percentages
+of M/E power for a range of operating speeds according to
+(4) and (5) in logarithmic scale along with the two limiting
+constant pe lines, i.e., L1−L3 and L2−L4, and the two constant
+speed lines, i.e., L1−L2 and L3−L4, results in engine layout
+and load diagrams, as shown in Fig. 2. While the MCR point
+refers to nominal speed (nMCR = 100%), the engine contin-
+uous operating point SP is determined on the heavy running
+and fouled hull propeller curve after incorporating a 5% heavy
+running margin and a 15% rough sea margin. However, around
+90% of the vessel’s sea-going period, slow steaming is used to
+reduce M/E fuel consumption; thus, the operating point moves
+along the heavy running curve to point N, resulting in 84.4% of
+nominal speed. The M/E MCR point is originally used during
+the design stage of the vessel’s central water cooling system,
+which is modeled in Fig. 3, to dimension central cooler capacity
+Qcent,MCR (in kW).
+The central cooler in service is actually a heat exchanger,
+compensating for the MCR capacities required by major en-
+gine room consumers for heat dissipation purposes, involving
+capacities of M/E scavenge air cooler Qair,MCR, which is
+connected at the F.W. side in parallel with jacket water cooler
+Qjw,MCR and lubricating oil cooler Qlub,MCR, respectively. On
+the S.W. side of the central cooler, a S.W. cooling pump is
+designed to operate in constant speed and supply water with
+ﬂow vSW_in,MCR, considering a S.W. temperature of 32 ◦C.
+The S.W. ﬂow is also used during the sea-going period for
+condensating high-temperature M/E exhaust gases through an
+atmospheric condenser, whereas in the cargo discharging pe-
+Fig. 3.
+Simpliﬁed model of the vessel’s central water cooling system.
+riod, a vacuum condenser uses S.W. to expand steam to lower
+pressure in order to drive the steam turbines. The temperature
+on the heat exchanger F.W. outlet side is currently regulated
+to be 34 ◦C through a thermostatic three-way valve, which
+determines if F.W. ﬂow should bypass the central coolers, based
+on F.W. temperature measurement.
+However, for usual M/E operation at slow steaming point N,
+the heat dissipation requirements of the mentioned consumers
+are signiﬁcantly lower; thus, the corresponding heat dissipation
+reduction factors can be calculated according to
+Qair,N% = 100 × (PN/PMCR)1.68 × (nN/nMCR)−0.83
+(6)
+Qjw,N% = e(−0.0811×ln(nN%)+0.8072×ln(PN%)+1.2614)
+(7)
+Qlub,N% = 67.3 × ln(nN%) + 7.63 × ln(PN%) −245.1
+(8)
+where nN% and PN% are the percentages of M/E speed and
+load, respectively, at point N [25].
+The reduced consumer required capacities can be calculated
+(in kW) through the following equations for derated M/E oper-
+ation at point N:
+Qair,N = Qair,MCR × Qair,N%
+(9)
+Qjw,N = Qjw,MCR × Qjw,N%
+(10)
+Qlub,N = Qlub,MCR × Qlub,N%.
+(11)
+The variation of heat dissipation reduction factors at different
+operating points, including selected point N, is shown in Fig. 4.
+The required central cooler capacity at slow steaming M/E
+operating point N, i.e., Qcent,N, can be expressed as
+Qcent,N = Qair,N + Qjw,N + Qlub,N.
+(12)
+Therefore, the corresponding required water ﬂow from the S.W.
+pump at operating point N, i.e., vSW_in,N, is proportional to the
+required central cooler capacity, as shown in
+νSW_in,N = νSW_in,MCR ×
+Qcent,N
+Qcent,MCR
+(13)
+where vSW_in,MCR and Qcent,MCR are the designed S.W. ﬂow
+and central cooler capacities, respectively, at MCR. From (13),
+it is shown that the required water ﬂow from the S.W. pump
+signiﬁcantly varies with M/E load and speed.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 17,2026 at 23:23:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 4 =====
+590
+IEEE TRANSACTIONS ON INDUSTRIAL ELECTRONICS, VOL. 62, NO. 1, JANUARY 2015
+Fig. 4.
+Variation of heat dissipation reduction factors for major E/R consumers in the vessel’s central cooling water system at different M/E operating
+points. (a) Scavenge air cooler heat dissipation reduction factor at slow steaming point N, Qair,N%. (b) Jacket water cooler heat dissipation reduction
+factor at slow steaming point N, Qjw,N%. (c) Lubricating oil cooler heat dissipation reduction factor at slow steaming point N, Qlub,N%.
+TABLE I
+CENTRAL COOLING WATER SYSTEM DESIGNED CAPACITIES
+TABLE II
+REQUIRED SYSTEM CAPACITIES AT OPERATING POINT N
+For the tanker vessel under investigation, Table I shows
+the central cooling water system designed capacities for M/E
+operation at MCR, whereas the required system capacities
+for slow steaming operation at point N are calculated and
+presented in Table II, based on the developed model. As shown
+in Table II, although the ﬂow rate required to be provided by
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 17,2026 at 23:23:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 5 =====
+GIANNOUTSOS AND MANIAS: DATA-DRIVEN PROCESS CONTROLLER FOR VARIABLE-SPEED PUMP OPERATION
+591
+Fig. 5.
+Proposed data-driven controller interface with the process.
+the S.W. cooling pump at slow steaming operation at point
+N is reduced to vsw_in,N = 57.4% compared to MCR, the
+pump motor always consumes its nominal power of PSW =
+75 kW. If variable-frequency control was simply used to adjust
+the pump speed manually in order to reduce its ﬂow to that
+point, theoretically, its power consumption could be reduced
+to PSW = 14.2 kW according to (3). However, this practice
+alone may not satisfy several important process parameters and
+critical constraints, which vary among sea-going, anchorage,
+loading, and unloading vessel operating conditions.
+The changes in S.W. temperature, variations in S.W. pres-
+sure provided to the central coolers and to the atmospheric
+condenser for proper operation, minimum F.W. temperature
+and pressure limits for M/E and D/G jacket cooling, central
+cooler performance and piping system condition, as well as
+vacuum (C.O.P.T.) condenser outlet temperature variation must
+all be taken into account by the controller, which will provide
+the pump speed limit. The proposed data-driven controller
+minimizes pump power consumption while satisfying the above
+dynamically changing parameters without relying on the model
+of the process. Override functions in case of fault detection are
+also integrated into the controller.
+IV. DESIGN, CONTROL LOGIC, AND TUNING OF THE
+PROPOSED DATA-DRIVEN PROCESS CONTROLLER
+The proposed data-driven controller interface with the pro-
+cess is presented in Fig. 5 using sets of real-time measurements
+to regulate parameter set-points and set the pump motor speed
+accordingly.
+During the vessel’s sea-going, anchorage, and loading peri-
+ods, temperature measurements are obtained from the F.W. side
+of the central coolers after the thermostatic three-way valve,
+i.e., TF.W._out (∼◦C), and are provided as a control input to
+the proposed process controller. This variable is used to control
+and maintain a desired F.W. system temperature reference,
+i.e., T ∗
+F.W._out, which has a direct impact on the cooling of
+M/E, D/G, and auxiliary machinery. The three-way v/v posi-
+tion, i.e., v/vpos (∼%), is monitored and adjusted based on
+the T ∗
+F.W._out set-point in order to achieve a better system
+dynamic response. In addition, the level of S.W. pressure on
+the discharge side of the S.W. pump, i.e., PS.W._out (∼bar), is
+also provided as an input to the controller in order to maintain
+a desired pressure reference, i.e., P ∗
+S.W._out, considering the
+measurement of S.W. inlet temperature in the suction side of
+S.W. pumps, i.e., TS.W._in (∼◦C), in order to avoid creation
+of vacuum condition in the atmospheric condenser and comply
+with the required pressure limits in the S.W. and F.W. sys-
+tems. A minimum speed limit ωmin_sea is introduced based on
+measurements and physical constraints to avoid fouling in the
+piping system and central coolers.
+In the cargo unloading period, since steam-driven cargo
+pumps are in service, a C.O.P.T. condenser is installed in
+the rear of the turbine, using S.W. to decrease back pressure
+and retrieve steam for the purpose of recycling it into boiling
+water in order to increase turbine efﬁciency. During this mode,
+the controller objective is to maintain a constant temperature
+difference T ∗
+S.W._diﬀ, between the outlet and inlet sides of
+the condenser, according to measurements of the condenser
+S.W. outlet temperature TS.W._out (∼◦C) and the S.W. inlet
+temperature TS.W._in (∼◦C). Since M/E is not in use, cooling
+requirements are reduced, but at the same time, a different speed
+limit ωmin_cargo has to be introduced based on S.W. pressure,
+since water ﬂow must service both the cooling system of D/G’s
+and auxiliary machinery and ensure C.O.P.T. condenser proper
+operation.
+In Fig. 6, the layout of the proposed data-driven process
+control algorithm and the related pump variable-frequency con-
+trol topology are presented with reference to the vessel under
+investigation. The applied variable-frequency control topology
+consists of a standard six-pulse diode rectiﬁer and a two-level
+three-phase voltage source inverter (VSI). It includes 3% dc
+and ac chokes to maintain total voltage harmonic distortion
+(THDv%) within the limits speciﬁed by marine classiﬁcation
+societies.
+During sea-going, anchorage, and cargo loading periods,
+the desired T ∗
+F.W_out and P ∗
+S.W._out set-points are maintained
+through two independent PID control loops, which are used
+to regulate motor speed references ω∗
+T_F.W. and ω∗
+P_S.W.,
+respectively, according to
+ω∗
+T_F.W. = K∗
+P,T × eT_F.W.(t) + K∗
+I,T ×
+t
+
+0
+eT_F.W.(t) dt
++ K∗
+D,T × d
+dteT_F.W.(t)
+(14)
+ω∗
+P_S.W. = K∗
+P,P × eP_S.W.(t) + K∗
+I,P ×
+t
+
+0
+eP_S.W.(t) dt
++ K∗
+D,P × d
+dteP_S.W.(t)
+(15)
+where eT_F.W.(t) and eP_S.W.(t) are expressed by
+eT_F.W.(t) = T ∗
+F.W._out −TF.W._out(t)
+(16)
+eP_S.W.(t) = P ∗
+S.W._out −PS.W._out(t).
+(17)
+To comply with dynamic system changes and process con-
+straints, the output speed command signal from the above PID
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 17,2026 at 23:23:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 6 =====
+592
+IEEE TRANSACTIONS ON INDUSTRIAL ELECTRONICS, VOL. 62, NO. 1, JANUARY 2015
+Fig. 6.
+Design of the proposed data-driven process control topology.
+control loops, i.e., ω∗
+T_P , is the maximum value between the
+two references, whereas the ﬁnal speed command provided to
+the pump motor during this period, i.e., ω∗
+sea, is bounded by
+ωmin_sea, as in
+ω∗
+T_P = max
+
+ω∗
+T_F.W., ω∗
+P_S.W.
+
+, ωmin_sea ≤ω∗
+sea ≤95%.
+(18)
+Data-driven control is used to automatically adjust T ∗
+F.W._out
+and P ∗
+S.W._out set-points according to the TS.W._in range, as
+well as dynamically select ωmin_sea so that M/E and D/G jacket
+cooling water temperature and pressure remain below 85 ◦C and
+above 3.6 and 3.4 bars, respectively, whereas vacuum condition
+and temperature rise in atmospheric condenser are avoided by
+keeping its outlet S.W. pressure above 0.5 bar. The controller
+parameters, set-points, and minimum limits at the sea-going
+period are deﬁned in Table III.
+To improve control system response and further reduce
+ωmin_sea imposed by the controller, the temperature setting of
+the thermostatic three-way v/v, i.e., T ∗
+3-way, is adjusted 2 ◦C
+lower in comparison to T ∗
+F.W._out, for the three-way v/v to open
+and allow more water to ﬂow from central coolers, stabilizing
+the plant at pump reduced speeds, as in
+T ∗
+3-way = T ∗
+F.W._out −T ∗
+sett(t) = T ∗
+F.W._out −2 ◦C.
+(19)
+Based on T ∗
+3-way deﬁned above, the v/vpos% is also measured.
+During the cargo unloading period, the desired differential
+temperature set-point T ∗
+S.W._diﬀis maintained through a PID
+TABLE III
+DEFINITION OF CONTROLLER PARAMETERS
+AT SEA-GOING CONDITION
+control loop, which is used to regulate speed reference ω∗
+T_diﬀ,
+according to
+ω∗
+T_diﬀ= K∗
+P,diﬀ× eT_diﬀ(t) + K∗
+I,diﬀ×
+t
+
+0
+eT_diﬀ(t) dt
++ K∗
+D,diﬀ× d
+dt eT_diﬀ(t)
+(20)
+where eT_diﬀ(t) is expressed as in
+eT_diﬀ(t)=T ∗
+S.W._diﬀ−(TS.W._out(t)−TS.W._int(t)) .
+(21)
+To comply with system changes and process constraints, the
+ﬁnal speed reference in this mode, i.e., ω∗
+cargo, is bounded by
+minimum and maximum limits, as presented in
+ωmin_cargo ≤ω∗
+cargo ≤95%.
+(22)
+Data-driven control is used to automatically adjust the
+T ∗
+S.W._diﬀset-point according to the PS.W._out range, as well
+as dynamically select ωmin_cargo in order to compensate for
+the need to keep S.W. ﬂowing both for D/G and auxiliary
+machinery cooling and for vacuum condenser operation. In case
+pressure drops below a minimum limit of 0.6 bar, which is the
+existing S.W. pressure switch set-point, the variable-frequency
+controlled pump motor runs at a maximum of 95% of ωnom
+to avoid start of the standby pump. The controller dynamic
+parameters, set-points, and minimum limits during the cargo
+handling period are deﬁned and shown in Table IV.
+Regarding recently proposed PID controller tuning methods,
+a generalized transfer function process model consisting of
+analytical expressions of process parameters was used in [26],
+whereas in [27], a fuzzy saturation-based tuning method using
+sensitivity functions was proposed. Although the mentioned
+methods demonstrate effectiveness in response, they require a
+detailed plant model, increasing computational complexity. In
+this kind of application where the plant is subject to changes
+in its layout, operation, and parameters during the operating
+proﬁle, with slowly changing states such as water temperature
+and pressure, the gains of PID controllers incorporated in the
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 17,2026 at 23:23:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 7 =====
+GIANNOUTSOS AND MANIAS: DATA-DRIVEN PROCESS CONTROLLER FOR VARIABLE-SPEED PUMP OPERATION
+593
+TABLE IV
+DEFINITION OF CONTROLLER PARAMETERS AT CARGO TANK OPERATION
+control scheme are designed to be self-tuned according to
+values obtained through real-time process measurements.
+It was shown that ωmin was dynamically deﬁned according
+to plant requirements and process constraints for each operating
+period. In this case, the ωmin/ωmax ratio can be used to tune
+K∗
+P . Lower ωmin results in less water ﬂow rate and pressure in
+the system, requiring an increase in rise time and decrease in
+overshoot by lowering K∗
+p in order to protect the process from
+sudden peaks that may appear in S.W. pressure from a change
+in the speed set-point and vice versa. Moreover, the three-
+way thermostatic valve position v/vpos set by the automatically
+deﬁned T ∗
+F.W._out set-point is used to regulate K∗
+D. In case it
+opens to the central cooler side, v/vpos% is reduced, providing
+the opportunity to increase K∗
+D in order to decrease correspond-
+ing overshoot and settling time of the controller response. The
+mentioned self-tuning data-driven approach is expressed by
+K∗
+P = (0.60 × Ku) × ωmin
+ωmax
+(23)
+K∗
+I = 2 × K∗
+P
+Tu
+(24)
+K∗
+D =
+K∗
+P × Tu
+8
+
+×
+1
+10 × (ν/νpos%/100)
+(25)
+where Ku is the ultimate gain that the output oscillates at
+constant amplitude with period Tu. For the initial tuning, the
+pump operates at ωmax = 95%, whereas v/vpos% = 100%.
+A built-in fault detection mode is implemented in the
+controller, where in case there is a sensor, control unit, or
+communication failure, a system override function is activated,
+and the speed reference is ω∗
+fault = 95%. Safety checks are
+included, so that even if in this condition PS.W._out remains
+below 0.6 bar, VFD fails, or TS.W._diﬀis greater than 10 ◦C,
+the standby S.W. pump is activated. To illustrate the different
+control algorithms embedded in the controller, the ﬁrst cycle
+of the control system evolution is presented in Fig. 7 as a
+sequential function chart (SFC).
+V. ARRANGEMENT AND OPERATION OF THE PROPOSED
+DATA-DRIVEN PROCESS CONTROLLER
+The proposed process control topology for the optimization
+of the central cooling water system is built for a typical Afra-
+max size tanker vessel in order to control the speed of one
+Fig. 7.
+SFC showing the ﬁrst cycle of the proposed data-driven process
+control system evolution.
+Fig. 8.
+Arrangement and interface of the proposed control scheme.
+75-kW 440-V 60-Hz S.W. cooling pump motor, according to
+the proposed control algorithm. The arrangement of the process
+control unit as well as its interface with sensors, VFD, and HMI
+units are shown in Fig. 8.
+The control unit includes a Modicon M340 commercial PLC
+automation platform unit with its associated analog and digital
+input–output racks and communication modules, interfacing
+with an ATV61HD90N4 VFD unit. Process monitoring of the
+working plant is performed in a HMISTU855 graphic display
+unit, using Vijeo Designer HMI conﬁguration software. Analog
+input signals are received by 4–20 mA temperature and pressure
+transmitters, which are used to collect the required process data
+and provide them as real-time feedback signals to the controller.
+The range of PT100 temperature sensors is 0–100 ◦C, whereas
+the pressure sensor range that records the S.W. pump outlet
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 17,2026 at 23:23:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 8 =====
+594
+IEEE TRANSACTIONS ON INDUSTRIAL ELECTRONICS, VOL. 62, NO. 1, JANUARY 2015
+Fig. 9.
+Onboard implementation of the proposed process control topol-
+ogy. (a) Hardware arrangement of the proposed data-driven process
+controller. (b) Arrangement of the applied pump variable-frequency
+control topology.
+Fig. 10.
+Process monitoring functions of the controller HMI screen in
+various modes of operation. (a) Vessel sea-going/port mode operation
+and process monitoring. (b) Vessel cargo unloading mode operation and
+process monitoring.
+pressure is 0–6.0 bars, to compensate for the 4.0-bar nominal
+pump discharge pressure value. A pressure transmitter with a
+range of 0–1.5 bars is used to record three-way v/v position
+pneumatically from the existing actuating signal. An analog
+4–20 mA controller output signal is used to provide the speed
+reference to the VFD embedded microcontroller module. Mod-
+bus over TCP/IP is used to synchronize VFD operation with the
+control unit. The 24-Vdc digital output signals from the control
+unit are used to control the start/stop and auxiliary functions
+of the VFD, whereas the digital input signals from VFD inform
+the controller about the system status, including overload, phase
+failure, temperature rising, and VFD fail conditions.
+The hardware conﬁguration of the process control unit in-
+stalled onboard the vessel is shown in Fig. 9(a), whereas the
+arrangement of the VFD topology, which was built inside a
+panel in compliance with classiﬁcation society regulations, is
+presented in Fig. 9(b). HMI process monitoring functions are
+shown in Fig. 10 for various operating modes. Through the
+HMI, it is noted that the user can monitor and adjust important
+process parameters as well as apply different process control
+algorithms by selecting between sea-going/port and cargo tank
+operation modes at every time.
+In Fig. 10(a), it is shown that in the sea-going mode, while
+the vessel operates at near 70% of the nominal M/E load
+(∼10 000 kW), the controller operates the pump at 72.0% of
+its nominal speed, resulting in 28 kW power consumption
+or 47 kW power savings compared to the previous throttling
+operating practice, whereas TF.W_out is kept below 34 ◦C,
+PS.W_out is maintained at 1.19 bars, and TS.W._in is 20.4 ◦C.
+It is noted that since the C.O.P.T. condenser is not in service at
+Fig. 11.
+Dynamics of the sea-going/port mode process control.
+(a) Central cooler F.W. outlet temperature PID control (K∗
+P,T = 10,
+K∗
+I,T = 2, K∗
+D,T = 2.35). (b) S.W. outlet pressure PID control (K∗
+P,P =
+12, K∗
+I,P = 16, K∗
+D,P = 0.35).
+Fig. 12.
+Dynamics of the cargo unloading mode process control.
+(a) Central cooler F.W. outlet temperature PID control (ignored).
+(b) Differential temperature PID control (K∗
+P,diﬀ= 24.5,
+K∗
+I,diﬀ=
+2.5, K∗
+D,diﬀ= 1.6).
+that point, S.W. inlet and S.W. outlet temperatures are the same.
+The v/vpos% is adjusted to 83.0% at the central cooler bypass
+to achieve higher F.W. pressure since TF.W._out is below 34 ◦C.
+When the vessel is subject to cargo discharging operation,
+unloading mode control takes over, as shown in Fig. 10(b).
+In this mode, the pump motor operates at 80% of its nominal
+speed, leading to 38 kW power consumption or 37 kW power
+saving from the vessel’s D/G load. It is shown that the controller
+ignores the set-points of the previous mode and maintains a
+T ∗
+S.W._diﬀof 3.39 ◦C, due to use of the cargo condenser. It
+is noted that PS.W._out has dropped to 0.73 bar because the
+S.W. pump now services both the central cooling water system
+and the cargo condenser. This condition imposes 80% as the
+lower speed limit in this mode, due to the minimum S.W. outlet
+pressure requirement of 0.6 bar.
+VI. EXPERIMENTAL RESULTS FROM THE PROPOSED
+DATA-DRIVEN CONTROLLER RETROFIT
+INSTALLATION IN A TANKER VESSEL
+A. Controller Dynamics in Various Vessel
+Operating Conditions
+The performance of the proposed data-driven controller with
+regard to process parameter variations is examined and vali-
+dated through evaluation of its dynamic responses, as shown in
+Figs. 11 and 12 for sea-going/port and cargo unloading modes
+of operation. The controller override functions during the fault
+detection mode are presented in Fig. 13.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 17,2026 at 23:23:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 9 =====
+GIANNOUTSOS AND MANIAS: DATA-DRIVEN PROCESS CONTROLLER FOR VARIABLE-SPEED PUMP OPERATION
+595
+Fig. 13.
+Process controller override function dynamics (ω∗
+ref = 95%).
+(a) Sea-going mode control override due to Modbus communication
+failure. (b) Cargo unloading mode control override due to temperature
+sensor failure.
+In Fig. 11(a) and (b), for the sea-going mode, it is shown
+that since TS.W._in is 20.4 ◦C, ωmin_sea is adjusted to 65%,
+whereas T ∗
+F.W._out and P ∗
+S.W._out are automatically adjusted
+to 34 ◦C and 1.2 bars, respectively, according to Table III.
+Therefore, it is shown that during slow steaming M/E operation
+at nN = 86−88 r/min or PN = 7854−8568 kW load, the F.W.
+temperature PID control loop is tuned to provide a speed set-
+point ω∗
+T_F.W., which is equal to 70% of ωnom. At the same
+time, the S.W. pressure PID control loop provides a different
+speed set-point of ω∗
+P_S.W., which is equal to 72.2% of ωnom,
+to comply with the requirements mentioned in Table III. There-
+fore, according to (18), the ﬁnal speed reference provided to
+the pump, i.e., ω∗
+sea, is the maximum of the two set-points, i.e.,
+72.2% of ωnom. It is also shown that the three-way v/v position,
+i.e., v/vpos%, is dynamically changing according to the pump
+operating speed, assisting to the controller self-tuning, whose
+response displays minimum overshoot and rise time, as well as
+excellent steady-state characteristics.
+In Fig. 12(a), for the cargo handling operation mode, M/E is
+not working, and the C.O.P.T. condenser is in service since the
+steam turbines are in use; therefore, F.W. temperature and S.W.
+pressure PID control loop outputs are ignored. On the other
+hand, in Fig. 12(b), it is shown that since PS.W._out is equal
+to 0.73 bar, ωmin_cargo is adjusted to 80%, whereas T ∗
+S.W._diﬀ
+is automatically adjusted to 3.4 ◦C according to Table IV.
+Since one D/G and auxiliary machinery are working, the dif-
+ferential temperature PID control loop is tuned to provide a
+speed set-point ω∗
+T_diﬀequal to 86.2%, corresponding to ω∗
+cargo
+as in (22).
+As shown in Fig. 13(a) and (b), in case of sensor or commu-
+nication failure, the fault detection function is activated, and the
+control system ignores all set-points in order to drive the pump
+motor at ω∗
+fault, equal to 95% of ωnom to preserve the reliability
+of the system. It also noted that the minimum speed limit of the
+controller must be always above 50% of ωnom to protect the
+motor from overheating.
+B. Power Balance Optimization With the
+Proposed Controller
+Using the previous throttling practice, the pump motor was
+operating constantly at ﬁxed speed with maximum power
+consumption, since the Star/Delta starting method was used.
+With the proposed data-driven controller used to provide speed
+Fig. 14.
+Inverter output and grid-side voltage/current waveforms for
+pump motor operation at 45Hz. (a) VSI-side voltage vm,LL and current
+im,a waveforms. (b) Grid-side voltage vi,LL and current ii,a waveforms.
+reference to the drive, the VSI generates a reference voltage
+and current waveform to control the speed of the motor. At
+a typical pump motor operation at 75% of ωnom, or 45 Hz,
+the VSI-side voltage vm,LL and current im,a waveforms are
+presented in Fig. 14(a), as measured in the motor stator. The
+corresponding grid-side voltage vi,LL and current ii,a wave-
+forms are presented in Fig. 14(b). The power quality at the
+point of common coupling (PCC) remains in high level, due to
+harmonic ﬁltering considerations made during the design stage.
+The S.W. pump motor active power consumption variation
+with the use of the proposed data-driven controller is measured
+and presented in Fig. 15 for a typical vessel eight-day voyage
+in comparison with its original power consumption before the
+retroﬁt installation. It is shown that during the vessel loading
+period, where the heat dissipation requirements of engine room
+consumers are minimum since M/E is not working and only one
+D/G is in use, the pump power consumption PSW is equal to
+23 kW, which approaches the minimum PSW corresponding to
+the minimum allowed speed reference of 65%, as established by
+the controller according to Table III. This leads to 52 kW power
+saving over throttling control. During the sea-going period,
+controller performance was tested at the MCR point, where the
+M/E load PN is equal to 95%, at the nominal M/E operating
+point (SP), where PN is equal to 85%, and at the usual slow
+steaming condition, where PN is equal to 55%–60%. It is
+shown that the proposed control scheme dynamics are well
+established during the vessel’s operating proﬁle changes. In
+particular, at MCR, the controller operates the S.W. pump at
+95%, close to its nominal capacity to compensate for increased
+M/E heat dissipation requirements. For vessel operation at the
+M/E nominal service point, it is shown that the pump operates
+at 90% of ωnom, leading to PSW equal to 55 kW or to power
+saving equal to 20 kW. In the typical slow steaming condition,
+however, the advantage of the proposed approach is more
+evident, since PSW is just 25 kW, as compared to the pump
+nominal power consumption of 75 kW, meaning that the con-
+troller operates the pump at 70% of ωnom, to achieve the water
+ﬂow required by engine room consumers, which is very close
+to the minimum water ﬂow corresponding to ωmin (65%) as
+deﬁned in Table III. This scale of power saving highlights
+the effectiveness of the controller at this period. During cargo
+operation, the pump operates at 92%, resulting in PSW equal
+to 58 kW or power saving of 17 kW, in order to maintain the
+water ﬂow required by central cooling system consumers and
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 17,2026 at 23:23:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 10 =====
+596
+IEEE TRANSACTIONS ON INDUSTRIAL ELECTRONICS, VOL. 62, NO. 1, JANUARY 2015
+Fig. 15.
+Power saving from S.W. pump motor variable-frequency operation with the proposed data-driven control for a typical voyage.
+Fig. 16.
+Power balance optimization through the normalization of voltage spikes at PCC during transients using the proposed process control
+method.
+for C.O.P.T. condenser operation, keeping T ∗
+S.W._diﬀequal to
+3.4 ◦C and PS.W._out equal to 0.9 bar as well.
+The operation of the realized variable-frequency topology
+associated with the proposed controller leads to signiﬁcant
+power demand normalization during transients and, particu-
+larly, during motor start-up, as shown in Fig. 16. In comparison
+to the original pump throttling control and Star/Delta motor
+starting mode, with the proposed data-driven VFD control, the
+voltage spikes and sags that appeared at PCC during motor
+start-up are greatly minimized. The gradual starting current
+and improved transients lead to load leveling, since there is no
+need to start an additional D/G to compensate for the initial
+300-kW demand that was previously present at start-up, leading
+to D/G operation with improved speciﬁc fuel oil consumption
+(SFOCD/G) (in g/kWh).
+C. Ship’s Energy Saving Optimization From
+Proposed Control
+The contribution of the proposed control scheme to energy
+efﬁciency optimization of the vessel’s central cooling water
+system is discussed in this section by examining the impact
+on D/G power and fuel consumption as well as on emission
+factors (CO2, SO2, and NOx) over a typical year of operation
+through a comparative study. Considering that heavy fuel oil
+(HFO) is used as the standard D/G fuel, the relevant D/G fuel
+oil consumption (FOCD/G) induced from S.W. pump power
+consumption is based on SFOCD/G and running time (RT; in h),
+as shown in
+FOCD/G_HFO = PS.W. × RT × SFOCD/G.
+(26)
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 17,2026 at 23:23:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 11 =====
+GIANNOUTSOS AND MANIAS: DATA-DRIVEN PROCESS CONTROLLER FOR VARIABLE-SPEED PUMP OPERATION
+597
+Fig.
+17.
+Ship’s
+annual
+savings
+from
+the
+proposed
+data-driven
+controller.
+For the D/Gs used onboard, a SFOCD/G of 192.3 g/kWh is
+considered if one D/G is running alone at 70% of its capacity,
+whereas a SFOCD/G of 210 g/kWh is considered if two D/G’s
+are running in parallel at 40% of their capacities.
+The corresponding D/G emission factors due to fuel con-
+sumption are calculated based on the following equations:
+CO2 [tons] = FOCD/G [tons] × CFO
+= FOCD/G [tons] × 3.17
+(27)
+SO2 [tons] = FOCD/G [tons] × S% × 0.02
+(28)
+NOx [tons] = FOCD/G [tons] × 0.079
+(29)
+where CFO is the conversion coefﬁcient of fuel oil and carbon
+emission for marine heavy-duty diesel engines, and S% is the
+sulfur content included in fuel oil [28].
+The comparative study is based on the operating proﬁle of the
+speciﬁc vessel, where experimental results were obtained from
+the proposed controller application. The comparative results
+over the pump throttling control method for a year of operation
+are presented in Fig. 17, including vessel normally sea-going,
+port in/out, anchorage/loading, and unloading periods. The en-
+ergy savings (in kWh) are calculated based on the difference in
+S.W. pump power consumption between the throttling method
+and the proposed data-driven control for the speciﬁc RT at
+each period. The D/G fuel savings in tons of HFO are then
+calculated based on (26), whereas the calculation regarding the
+reduction in emission factors is based on (27)–(29), considering
+a 2% sulfur percentage in HFO. Considering that the average
+HFO price is $650/ton, the annual economic beneﬁts from the
+proposed control system application can be derived.
+It is shown that total annual beneﬁts include 78 tons/year
+reduction in HFO consumption, which means $50 700 eco-
+nomic beneﬁts only from reduction of fuel costs. Considering
+that CO2, SO2, and NOx emissions are also reduced by 247.3,
+3.12, and 5.7 tons/year, respectively, the beneﬁts for the marine
+industry are clearly signiﬁcant.
+VII. CONCLUSION
+In this paper, a data-driven process controller was designed
+for energy-efﬁcient variable-speed pump operation in the cen-
+tral cooling water system of marine vessels. The controller
+parameter adjustment was purely based on real-time process
+measurements, which were used as feedback signals to self-
+tune the controller and verify its compliance with process
+constraints. The controller was used to dynamically change the
+speed of the S.W. cooling pump motor to obtain the optimal
+pump performance curve, according to variable consumer wa-
+ter ﬂow requirements and vessel’s operating proﬁle in order
+to increase energy efﬁciency. The use of data-driven control
+contributed to improve system dynamics and fault diagnostics
+for the varying system requirements regardless of the model
+of the controlled plant. The proposed controller was realized
+using a commercial PLC, whereas an HMI was developed to
+monitor process parameters, ensuring safety and reliability. A
+theoretical case study was initially performed to examine the
+power saving potential from the process. Experimental results
+provided from the proposed control system retroﬁt installation
+onboard a typical tanker vessel validated that system dynamic
+responses were well established, achieving signiﬁcant energy
+and fuel savings, approaching 370 MWh and 80 tons HFO re-
+duction in consumption per year, respectively. Comparison re-
+sults over the throttling pump ﬂow control method showed that
+not only power balance was improved, thus leading to signiﬁ-
+cant economic and operational beneﬁts, but also emission factor
+reduction was achieved, verifying that the marine industry can
+be greatly beneﬁted by the proposed energy efﬁciency upgrade,
+which can be adapted for use in other processes as well.
+REFERENCES
+[1] J. Meyer, R. Stalbock, and S. Voss, “Slow steaming in container ship-
+ping,” in Proc. IEEE Int. Conf. Syst. Sci., Maui, HI, USA, Jan. 2012,
+pp. 1306–1314.
+[2] C. L. Su and K. T. Yu, “Evaluation of differential pressure setpoint of
+chilled water pumps in clean room HVAC systems for energy savings in
+high-tech industries,” IEEE Trans. Ind. Appl., vol. 49, no. 3, pp. 1015–
+1022, May/Jun. 2013.
+[3] Y. Durmusoglou, T. Satir, C. Deniz, and A. Kilic, “A novel energy saving
+and power production system performance analysis in marine power plant
+using waste heat,” in Proc. IEEE Int. Conf. Mach. Learn. Appl., Miami,
+FL, USA, Dec. 2009, pp. 751–754.
+[4] C. L. Su, W. L. Chung, and K. T. Yu, “An energy-savings evaluation
+method for variable-frequency drive applications on ship central cool-
+ing systems,” IEEE Trans. Ind. Appl., vol. 50, no. 2, pp. 1286–1294,
+Mar./Jan. 2014.
+[5] F. J. T. E. Ferreira, J. A. C. Fong, and A. T. de Almeida, “Eco-analysis
+of variable speed drives for ﬂow regulation in pumping systems,” IEEE
+Trans. Ind. Electron., vol. 58, no. 6, pp. 2117–2125, Jun. 2011.
+[6] J. A. Rooks and A. K. Wallace, “Energy efﬁciency of VSDs,” IEEE Ind.
+Appl. Mag., vol. 10, no. 3, pp. 57–61, May/Jun. 2004.
+[7] S. V. Giannoutsos and S. N. Manias, “Development of an integrated en-
+ergy efﬁciency control system for ship power balance and diesel generator
+fuel consumption optimization,” in Proc. IEEE Ind. Appl. Soc. Annual
+Meet., Lake Buena Vista, FL, USA, Oct. 2013, pp. 1–11.
+[8] A. T. de Almeida, F. J. T. E. Ferreira, and D. Both, “Technical and
+economical considerations in the application of variable-speed drives with
+electric motor systems,” IEEE Trans. Ind. Appl., vol. 41, no. 1, pp. 188–
+199, Jan./Feb. 2005.
+[9] C. L. Su, C. J. Chen, and C. C. Lee, “Fast evaluation methods for voltage
+sags in ship electrical power systems,” IEEE Trans. Ind. Appl., vol. 49,
+no. 1, pp. 233–241, Jan./Feb. 2013.
+[10] G. Dong and O. Ojo, “Efﬁciency optimizing control of induction mo-
+tor using natural variables,” IEEE Trans. Ind. Electron., vol. 53, no. 6,
+pp. 1791–1798, Dec. 2006.
+[11] E. P. Wiechmann, P. Aqueveque, R. Burgos, and J. Rodriguez, “On
+the efﬁciency of voltage source and current source inverters for high-
+power drives,” IEEE Trans. Ind. Electron., vol. 55, no. 4, pp. 1771–1782,
+Apr. 2008.
+[12] J. Arribas and C. Gonzalez, “Optimal vector control of pumping and
+ventilation induction motor drives,” IEEE Trans. Ind. Electron., vol. 49,
+no. 4, pp. 889–895, Aug. 2002.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 17,2026 at 23:23:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+===== PAGE 12 =====
+598
+IEEE TRANSACTIONS ON INDUSTRIAL ELECTRONICS, VOL. 62, NO. 1, JANUARY 2015
+[13] D. G. Holmes, B. P. McGrath, and S. G Parker, “Current regulation
+strategies for vector-controlled induction motor drives,” IEEE Trans. Ind.
+Electron., vol. 59, no. 10, pp. 3680–3689, Oct. 2012.
+[14] R. P. Vieira, C. C. Gastaldini, R. Z. Azzolin, and H. A. Grundling, “Sen-
+sorless sliding-mode rotor speed observer of induction machines based
+on magnetizing current estimation,” IEEE Trans. Ind. Electron., vol. 61,
+no. 9, pp. 4573–4582, Sep. 2014.
+[15] D. Gritter, S. S. Kalsi, and N. Henderson, “Variable speed electric drive
+options for electric ships,” in Proc. IEEE Elect. Ship Technol. Symp.,
+Philadelphia, PA, USA, Jul. 2005, pp. 347–354.
+[16] P. G. Kini, R. C. Bansal, and R. S. Aithal, “Performance analysis of
+centrifugal pumps subjected to voltage variation and unbalance,” IEEE
+Trans. Ind. Electron., vol. 55, no. 2, pp. 562–569, Feb. 2008.
+[17] K. Lee, G. Venkataramanan, and T. M. Jahns, “Modeling effects of
+voltage unbalances in industrial distribution systems with adjustable-
+speed drives,” IEEE Trans. Ind. Appl., vol. 44, no. 5, pp. 1322–1332,
+Sep./Oct. 2008.
+[18] T. Ahohen, J. Tamminen, J. Ahola, and J. Kestila, “Frequency-converter-
+based hybrid estimation method for the centrifugal pump operational
+state,” IEEE Trans. Ind. Electron., vol. 59, no. 12, pp. 4803–4809,
+Dec. 2012.
+[19] D. Xuewu and G. Zhivei, “From model, signal to knowledge: A data-
+driven perspective of fault detection and diagnosis,” IEEE Trans. Ind.
+Informat., vol. 9, no. 4, pp. 2226–2238, Nov. 2013.
+[20] S. Yin, H. Luo, and S. X. Ding, “Real time implementation of fault
+tolerant control systems with performance optimization,” IEEE Trans.
+Ind. Electron., vol. 61, no. 5, pp. 2402–2411, May 2014.
+[21] S. Yin, S. X. Ding, A. Haghani, H. Hao, and P. Zhang, “A comparison
+study of basic data-driven fault diagnosis and process monitoring meth-
+ods on the benchmark Tennessee Eastman process,” J. Process Control,
+vol. 22, no. 9, pp. 1567–1581, Oct. 2012.
+[22] W. Zhuo and L. Derong, “A data-based state feedback control method for
+a class of nonlinear systems,” IEEE Trans. Ind. Informat., vol. 9, no. 4,
+pp. 2284–2292, Nov. 2013.
+[23] H. Zhongsheng and Z. Yuanming, “Controller-dynamic-linearization-
+based model free adaptive control for discrete-time nonlinear systems,”
+IEEE Trans. Ind. Informat., vol. 9, no. 4, pp. 2301–2309, Nov. 2013.
+[24] S. Formentin and A. Karimi, “A data-driven approach to mixed-sensitivity
+control with application to an active suspension system,” IEEE Trans. Ind.
+Informat., vol. 9, no. 4, pp. 2293–2300, Nov. 2013.
+[25] MAN B&W Diesel and Turbo, “S60MC-C8 Project Guide Camshaft
+Controlled Two-Stroke Engines,” 1st ed., 2009, MANB&W. [Online].
+Available:
+http://www.mandieselturbo.com/download/project_guides_
+tier1/printed/s60mcc8.pdf
+[26] K. G. Papadopoulos, E. N. Papastefanaki, and N. I. Margaris, “Explicit
+analytical PID tuning rules for the design of type-III control loops,” IEEE
+Trans. Ind. Electron., vol. 60, no. 10, pp. 4650–4664, Oct. 2013.
+[27] D. Xiao-Gang, D. Hua, and L. Han-Xiong, “A saturation-based tuning
+method for fuzzy PID controller,” IEEE Trans. Ind. Electron., vol. 60,
+no. 11, pp. 5177–5185, Nov. 2013.
+[28] A. Sarvi, C. J. Fogelholm, and R. Zevenhoven, “Emissions from large-
+scale medium-speed diesel engines: 2. Inﬂuence of fuel type and operating
+mode,” J. Fuel Process. Technol., vol. 89, no. 5, pp. 520–527, May 2008.
+Spyridon V. Giannoutsos (S’12) was born
+in Athens, Greece, in 1988. He received the
+Diploma degree in electrical and computer en-
+gineering in 2010 from the National Technical
+University of Athens (NTUA), Athens, where he
+is currently working toward the Ph.D. degree in
+marine electrical engineering, power electron-
+ics, and process control.
+Since 2011, he has been a Research Asso-
+ciate with the Electrical Machines and Power
+Electronics Laboratory, NTUA. In 2012, he
+joined Thenamaris Ships Management, Inc, Athens, where he is holding
+the position of Fleet Support Electrical Engineer, focusing on design
+and implementation of energy and fuel saving solutions onboard. His
+research interests are in the ﬁelds of process control, power electronics,
+motor drive systems, and power quality.
+Mr. Giannoutsos is a member of the IEEE Industrial Electronics
+Society and a Registered Engineer in the Technical Chamber of Greece.
+Stefanos N. Manias (M’85–SM’92–F’05) re-
+ceived the B.Eng., M.Eng., and Ph.D. de-
+grees from Concordia University, Montreal, QC,
+Canada, in 1975, 1980, and 1984, respectively,
+all in electrical engineering.
+In 1975, he joined the Canadian Broadcasting
+Corporation (CBC), where he designed radio
+and television automation systems. From 1979
+to 1981, he was with Northern Telecom Canada,
+where he was responsible for the design of
+switching mode power supplies. In 1989, he
+joined the Department of Electrical and Computer Engineering, National
+Technical University of Athens, Athens, Greece, where he is currently a
+Full Professor teaching and conducting research in the area of power
+electronics and motor drive systems. He has authored more than 80
+IEEE and IEE publications in the areas of power electronics and motor
+drive systems.
+Dr. Manias is the Chapter Chairman and the Founder of the Greece
+Section of the IEEE Joint Industry Applications Society, Power Electron-
+ics Society, and Industrial Electronics Society and a member of the IEEE
+Motor Drives Committee. He is a Registered Professional Engineer in
+Canada and Europe.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 17,2026 at 23:23:39 UTC from IEEE Xplore.  Restrictions apply. 

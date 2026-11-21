@@ -1,0 +1,1755 @@
+3680
+IEEE TRANSACTIONS ON SMART GRID, VOL. 12, NO. 5, SEPTEMBER 2021
+Step Towards Energy-Water Smart Microgrids;
+Buildings Thermal Energy and Water Demand
+Management Embedded in Economic Dispatch
+Faegheh Moazeni, Javad Khazaei
+, Senior Member, IEEE, and Arash Asrari
+, Senior Member, IEEE
+Abstract—Energy, building, and water networks are three
+interlinked critical infrastructures that need to be operated coop-
+eratively to maximize the smart grid’s economic beneﬁts. In this
+paper, a mixed-integer linear programming (MILP) formulation
+is proposed to approach the economic dispatch (ED) problem
+for smart grids embedded with interdependent water and energy
+networks. Energy management of various building applications
+is considered by intelligently controlling the indoor temperature
+during occupied and unoccupied hours. To optimize the demand
+of water distribution system, pump’s nonlinear scheduling and
+hydraulic factors and daily water usage of buildings are added to
+the proposed model. Piecewise linear approximation of univariate
+and bivariate nonlinear functions is used to convert the nonlin-
+ear problem to an MILP formulation. Several case studies were
+conducted to examine the impact of indoor temperature settings
+of the buildings, speed of pumps, battery efﬁciency, and end of
+day (EoD) battery and tank constraints on economic dispatch of
+the microgrid system.
+Index
+Terms—Economic
+Dispatch,
+Mixed
+Integer
+Linear
+Programming
+(MILP),
+Piecewise
+Linearization,
+Thermal
+Equilibrium, Water Demand Management.
+NOMENCLATURE
+Pgrid
+Output grid power.
+f(PG), PG
+cost and power of conventional DGs.
+Cup, Cdn
+Startup and shutdown costs.
+CC, CP
+Cost functions of chillers and pumps.
+Sup, Sdn
+Startup and shutdown status of DGs.
+fpv, fwind, fbatt Cost functions of PV plant, wind farm, and
+battery energy storage units.
+PPV, Pwind,
+Pbatt
+Output power of PV plant, wind farm, and
+battery energy storage units.
+Pchil, Ppump
+Power of chillers and pumps.
+Manuscript
+received
+April
+10,
+2020;
+revised
+September
+15,
+2020
+and January 23, 2021; accepted March 15, 2021. Date of publication
+March 22, 2021; date of current version August 23, 2021. Paper no.
+TSG-00533-2020. (Corresponding author: Javad Khazaei.)
+Faegheh Moazeni is with the Civil and Environmental Engineering
+Department, Penn State Harrisburg, Middletown, PA 17057 USA (e-mail:
+fxm53@psu.edu).
+Javad Khazaei is with the Electrical Engineering Department, Penn State
+Harrisburg, Middletown, PA 17057 USA, and also with the Architectural
+Engineering Department, Penn State University, State College, PA 16801 USA
+(e-mail: jxk792@psu.edu).
+Arash Asrari is with the School of Electrical, Computer, and Biomedical
+Engineering, Southern Illinois University, Carbondale, IL 62901 USA (e-mail:
+arash.asrari@siu.edu).
+Color versions of one or more ﬁgures in this article are available at
+https://doi.org/10.1109/TSG.2021.3068053.
+Digital Object Identiﬁer 10.1109/TSG.2021.3068053
+UDG
+Status of DG unit
+Rmax
+up , Rmax
+down
+Maximum ramp up and down limits.
+Kwind, KPV,
+Kbatt
+Cost coefﬁcient of the wind, solar, and
+battery units, respectively.
+Ebatt
+Energy level of the battery storage.
+Qwall,Qwin
+Heat gains of walls and windows.
+Qchil
+Cooling power of chillers.
+Uwall, Uwin
+Heat transfer coefﬁcient of the walls and
+windows.
+Awall, Awin
+Area of the walls and windows.
+Tin, Tout
+Indoor and outdoor temperatures.
+Qm,n
+Flow rate between nodes m and n.
+S
+Status of the pump.
+h
+Head gain of the pump.
+QR
+Flow rate from the reservoir.
+QT
+Volume of water in the tank.
+QD
+Water demand.
+Hm, Hn
+Pressure head at nodes m and n.
+P
+Linearized function of pump’s power.
+H
+Linearized function of pump’s gain.
+r
+Variable speed of the pump.
+I. INTRODUCTION
+E
+NERGY and water systems are intertwined; 15% of
+global water is consumed for cooling purposes in thermal
+power plants and water distribution and treatment centers con-
+sume 8% of global energy [1]. Therefore, due to the scarcity of
+water and pollution issues resulted by thermal power plants,
+the performance of interlinked energy-water networks must
+be optimized in a cooperative manner. Several research works
+focused on minimizing the water demand and energy con-
+sumption of integrated energy-water systems [2]–[7]. These
+studies, however, did not focus on the fact that future energy
+generation will signiﬁcantly depend on renewable energy
+sources and storage units and merely rely on conventional
+fossil-fuel-based generation. In addition, these studies did not
+incorporate the building sector in the formulation nor opti-
+mized the water consumption. To account for future energy
+supplies and distribute energy in smart water-energy system,
+the concept of water-energy microgrid has recently been intro-
+duced [8]. Several studies focused on the application of
+microgrids for water-energy systems to address the future
+needs of interlinked energy-water systems [9]–[14]. For exam-
+ple, an approach was proposed in [9] to promote remote
+1949-3053 © 2021 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:17:15 UTC from IEEE Xplore.  Restrictions apply. 
+
+MOAZENI et al.: STEP TOWARDS ENERGY-WATER SMART MICROGRIDS; BUILDINGS THERMAL ENERGY
+3681
+communities in Alaska to use microgrids and increase the
+resiliency of integrated food-energy-water systems. A stochas-
+tic energy management program was supplemented to the
+distribution system operator (DSO) in [10] to maximize the
+reliability of water-energy systems by restoring disconnected
+loads during emergency. This work, however, mainly focused
+on the energy supply and did not consider the details of
+water distribution system or building sector. Control of a
+hybrid microgrid composed of a diesel generator and a wind
+turbine for a water treatment facility was studied in [11].
+The proposed method provided an energy-demand balance
+during wind speed changes or load change events. This
+work, however, did not consider dynamics of the load nor
+water distribution system. Potential of seawater desalination
+using energy surpluses of microgrids with renewable energy
+sources and thermosolar absorption cooling system for an
+isolated community in Mexico was demonstrated in [12].
+Similar to other works, the study did not consider water
+distribution systems nor thermal management of buildings.
+In the authors’ recent research, a mixed integer nonlin-
+ear programming (MINLP) formulation was proposed to
+optimize the water consumption in an energy-water microgrid
+with renewable energy sources and storage devices [13].
+However, it did not focus on thermal management of the
+buildings.
+Contributions: Existing studies have made reasonable con-
+tributions towards the economic dispatch of combined water-
+energy microgrids, there are still a few unanswered questions
+and gaps that require more research. While the theories
+and fundamentals applied in power system, hydraulic design
+(e.g., mass and energy continuity theorem), and transfer phe-
+nomenon (heat transfer equations) are well-studied, these
+theorems have been independently implemented for individ-
+ual systems, while the interlinks and interdependence between
+these systems and their impacts on the overall performance of
+the integrated system have not been considered before. For
+example, the relationship between heating/cooling demands
+of the buildings, customer’s temperature comfort range and
+impact of outdoor temperature on demand response has not
+been considered in integrated water-energy networks yet.
+Moreover, the nonlinear nature of pumps in water distribu-
+tion system does not guarantee a global optimum in resource
+allocation problem. In addition, operating conditions of pumps
+in water distribution systems signiﬁcantly affect the daily elec-
+tricity cost and have to be added to the formulation. In this
+research, it is shown how optimization of every component
+belonging to a subsystem can have a large impact on the
+overall cost, power consumption, and resource allocation of
+the entire system. The main contributions of this research are
+listed in the following:
+• A day-ahead economic dispatch model of an energy-
+water
+microgrid
+supplying
+electrical
+load
+of
+vari-
+ous building types and water distribution system is
+formulated.
+• Thermal equilibrium of buildings is added to the formu-
+lation to optimize the operation of cooling devices in
+the microgrid considering customer’s comfort range and
+outdoor temperature and solar radiation forecast.
+• The energy consumption of water distribution system is
+minimized by formulating the conservation of mass and
+Bernoulli’s energy equations.
+• The nonlinearities of the thermal equilibrium in build-
+ing sector, conservation of mass and energy theorem in
+water distribution networks, and cost functions of con-
+ventional generation plants are linearized using piecewise
+linear approximation method.
+• The effect of indoor temperature settings, pump’s speed,
+battery efﬁciency, and end-of-day (EoD) battery/tank lev-
+els on economic operation of energy-water microgrid is
+studied in various scenarios.
+The problem formulation is included in Section II and
+energy management of generation units is included in
+Section III. Section IV elaborates the buildings’ thermal man-
+agement, and water distribution management is included in
+Section V. Case studies are included in Section VI and
+Section VII concludes the paper.
+II. PROBLEM FORMULATION
+The system under investigation, as shown in Fig. 1, is a
+microgrid with energy resources including three distributed
+generation (DG) units, an aggregated battery energy storage
+system (BESS), an aggregated photovoltaic (PV) plant, and
+an aggregated wind farm. Both grid-connected and islanded
+modes of operation are considered to enable buying/selling
+electricity from/to the grid. Loads include three types of build-
+ings including a residential house, an ofﬁce, and an apartment
+complex. The water distribution system is a seven-node system
+with one reservoir, one tank, and one pump to support the
+water demand of the system. The economic dispatch problem
+is formulated as a mixed integer linear programming (MILP)
+formulation. The microgrid energy management system in
+Fig. 1 receives measurements from the energy sources and
+loads and runs the proposed economic dispatch formulation to
+minimize the overall cost of the system considering resource
+allocation in microgrid, control of chillers in the buildings,
+and control of pumps in water distribution network.
+1) Objective Function: The objective is to minimize the
+operation cost of an energy-water system by reducing the
+power consumption of the pumps in the water distribution
+network and electric chillers in the energy-water system.
+min
+
+t∈T
+⎧
+⎨
+⎩
+
+Ct
+buy + Ct
+sell
+2
+Pt
+grid +
+Ct
+buy −Ct
+sell
+2
+Pt
+grid
+
+
++
+⎛
+⎝
+i∈NDG
+fi
+
+Pt
+G,i
+
++ Cup,iSt
+up,i + Cdn,iSt
+dn,i
+⎞
+⎠
++
+
+i∈Nz
+
+fPV
+
+Pt
+PV,i
+
++ fwind
+
+Pt
+wind,i
+
++ fbatt
+
+Pt
+batt,i
+
++
+
+i∈NC
+CC,iPt
+chil,i +
+
+i∈NP
+CP,iPt
+pump,i
+⎫
+⎬
+⎭
+(1)
+The objective is formulated in (1), where Ct
+buy and Ct
+sell are
+purchased and sold electricity prices from/to the grid at time t,
+respectively (shown in Fig. 3), Pt
+grid is the grid power, fi(Pt
+G,i)
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:17:15 UTC from IEEE Xplore.  Restrictions apply. 
+
+3682
+IEEE TRANSACTIONS ON SMART GRID, VOL. 12, NO. 5, SEPTEMBER 2021
+Fig. 1.
+Structure of the proposed energy management system for an energy-water microgrid with buildings and water distribution system.
+are cost functions of conventional DG plants as a quadratic
+function of their generated power Pt
+G,i.
+The absolute value
+|Pt
+grid| will be expanded as Pt
+grid ≤y and −Pt
+grid ≤y to be
+linearized. The term |Pt
+grid| will be replaced with y in (1), and
+the two new inequalities will be added to the linear inequality
+constraints of the MILP problem [15]. Furthermore, Cup,i and
+Cdn,i are the startup and shutdown costs, St
+up,i and St
+dn,i are the
+startup and shutdown status of ith DG unit at time t, fPV, fwind,
+and fbatt are cost functions of PV plant, wind farm, and battery
+energy storage units in terms of their respected output power
+(e.g., Pt
+PV, Pt
+wind, and Pt
+batt, respectively). In addition, Nz is
+a set of buses, where z = {PV, wind, batt}. The last two com-
+ponents of the objective function (1) represent the operation
+and maintenance cost function of chillers (CC,i and CP,i) in
+terms of their consumed powers, Pt
+chil,i and Pt
+pump, respectively.
+Cost functions of DGs expressed in (1) are quadratic univariate
+functions in the form of ai(Pt
+G,i)2 + biPt
+G,i+ci, where ai, bi,
+and ci are cost coefﬁcients of the ith generation plant. Due to
+the nonlinear nature of DGs’ cost functions, piecewise linear
+approximation is used to linearize the objective function. This
+concept is well studied in the literature [16].
+2) Load Balance Constraint: The main constraint of the
+economic dispatch problem is the load balance which guar-
+antees that the optimal allocation of energy resources in (2)
+meets the demand.
+Pt
+grid +
+
+i∈NDG
+Pt
+G,i +
+
+i∈NPV
+Pt
+PV,i +
+
+i∈Nwind
+Pt
+wind,i
++
+
+i∈Nbatt
+Pt
+batt,i =
+
+i∈NC
+Pt
+chil,i +
+
+i∈NP
+Pt
+pump,i +
+
+i∈Nl
+Pt
+load,i
+(2)
+where summation of generated powers from the grid, DGs,
+PV, wind, and BESS should be equal to the consumed power.
+Here, T ∈{1, . . . , 24}, NDG, NPV, Nwind, and Nbatt represent
+the number of DG, PV, wind, and battery generation units. In
+this equation, Pt
+chil,i is the consumed power by the chiller in
+Fig. 2.
+Piecewise linear approximation of bivariate functions (H and P).
+building i to meet the thermal demand of the building, Pt
+pump
+is the power consumption of the pump in the water distribu-
+tion system shown in Fig. 1 during hour t, and Pt
+load,i is the
+electrical load of building i during hour t. In addition, NC is
+the number of chillers in the building, Np is the number of
+pumps in the water distribution system, and Nl is the number
+of loads in ith building.
+III. ENERGY MANAGEMENT OF GENERATION UNITS
+A. Constraints of DG Units
+A unit commitment formulation in (3)-(7) is used to repre-
+sent the constraints of DG units in order to minimize the total
+commitment cost [16]. In power limit constraint of DG units
+in (3), Ut
+DG,i ∈{0, 1} is a binary variable indicating on/off
+status of DG unit i. Equations (4) and (5) represent the ramp
+up and down limits of ith DG, respectively. Also, St
+up,i and
+St
+dn,i in (6) and (7) are two binary variables representing start
+up and shut down status of ith DG unit at time t, respectively.
+Ut
+DG,iPmin
+G,i ≤Pt
+G,i≤Ut
+DG,iPmax
+G,i
+(3)
+Pt
+G,i −Pt−1
+G,i ≤Rmax
+up Ut−1
+DG,i
+(4)
+Pt−1
+G,i −Pt
+G,i ≤Rmax
+downUt
+DG,i
+(5)
+St
+up,i = Max
+
+0, Ut
+DG,i −Ut−1
+DG,i
+
+,
+∀i ∈DG, ∀t ∈T
+(6)
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:17:15 UTC from IEEE Xplore.  Restrictions apply. 
+
+MOAZENI et al.: STEP TOWARDS ENERGY-WATER SMART MICROGRIDS; BUILDINGS THERMAL ENERGY
+3683
+St
+dn,i = Max
+
+0, Ut−1
+DG,i −Ut
+DG,i
+
+,
+∀i ∈DG, ∀t ∈T
+(7)
+It is noted that (6) and (7) are converted to standard linear
+form using the following formulation for x = Max(a, b) as
+min
+x
+x
+s.t. x ≥a, x ≥b
+x ≤a + Mux, x ≤b + M(1 −ux)
+(8)
+where ux ∈{0, 1} is a new binary variable introduced for
+variable x, and M is a big number.
+B. Constraints of Renewable Sources
+1) Wind Generation Constraints: Constraints of the wind
+generation plant are expressed in the following equations.
+fwind
+
+Pt
+wind,i
+
+= Kwind,iPt
+wind,i
+(9)
+Pmin
+wind,i ≤Pt
+wind,i ≤Pmax
+wind,i
+(10)
+Equation (9) represents the maintenance and operation cost of
+wind turbines as a function of their generated power, where
+Kwind is the cost coefﬁcient of the wind plant. Equation (10)
+bounds the wind energy generation to the maximum and
+minimum available wind power.
+2) Solar Generation Constraints: Solar generation output
+depends on weather conditions and is highly uncertain. The
+proposed microgrid model shown in Fig. 1 has an aggregated
+PV plant and the constraints related to the operation of PV
+plant are formulated as
+fPV
+
+Pt
+PV,i
+
+= KPV,iPt
+PV,i
+(11)
+Pmin
+PV,i ≤Pt
+PV,i ≤Pmax
+PV,i
+(12)
+where (11) represents the cost of PV generation plant at time
+t and KPV is the cost coefﬁcient of PV plant. The PV out-
+put power generation is also restricted to the maximum and
+minimum available power as enforced in (12).
+C. Battery Energy Storage System Constraints
+Battery energy storage system (BESS) in the economic
+dispatch model can provide both charging and discharging
+powers, therefore, the bi-directional nature of storage units
+should be considered. The following constraints represent the
+BESS constraints for the developed model
+fbatt
+
+Pt
+batt,i
+
+= Kbatt,iPt
+batt,i
+(13)
+−PMax
+chg,i ≤Pt
+batt,i ≤PMax
+dis,i
+(14)
+Et−1
+batt = Et
+batt,i + ηbatt,iPt
+batt,it
+(15)
+EMin
+batt,i ≤Et
+batt,i ≤EMax
+batt,i
+(16)
+where (13) relates the cost of operation of the BESS to its
+consumed/generated power, ηbatt is the charging/discharging
+efﬁciency of the BESS unit, which is η for charging and 1/η
+for discharging, assuming charging and discharging efﬁcien-
+cies are similar and equal to η [17], and Kbatt,i is the purchased
+power coefﬁcient of the BESS unit. Equation (14) limits the
+output power of the BESS unit to the maximum discharging
+(PMax
+dis,i) and maximum charging (PMax
+chg,i) limits. Equation (15)
+provides the relationship between the available energy of the
+BESS unit and its output power. The last constraint in (16)
+limits the energy of the BESS between its maximum and min-
+imum available energy levels. In this equation, t is the step
+size of the economic dispatch problem, which is considered as
+1 hour in this study. The start/end-of-day (EoD) energy limit
+of battery can be added to the optimization model to ensure
+the BESSs will have enough energy at the beginning of the
+next day. This constraint is enforced by [17], [18]
+Etend
+batt,i = Et0
+batt,i
+(17)
+where tend is the time at the EoD (i.e., at hour 24) and Et0
+batt,i
+is the initial energy level of BESS at the beginning of the day.
+IV. BUILDINGS THERMAL ENERGY MANAGEMENT
+In this paper, a summer cooling scenario is considered,
+which can easily be extended to other cooling/heating sce-
+narios. Therefore, a smart thermal management system con-
+sidering the thermal comfort level of occupants is considered
+to intelligently manage the cooling devices and reduce the
+operational costs. The cooling demand depends on the temper-
+ature forecast over a 24-hour period and customer temperature
+comfort range of buildings due to their heat storage capability.
+1) Nonlinear Thermal Management: The optimization
+model will include a thermal management subsystem, where
+a system of nonlinear equations associated with heat transfer
+processes are added to the economic dispatch.
+ρCVk
+dTt
+in,k
+dt
+=
+
+k∈NB
+
+Qt
+wall,k + Qt
+win,k + Qt
+in,k
++ Qt
+wall,solar,k + Qt
+win,solar,k −Qt
+chil,k
+
+(18)
+Qt
+wall,k =
+
+j∈Nwall
+Uwall,jAwall,j
+
+Tt
+out −Tt
+in,k
+
+(19)
+Qt
+win,k =
+
+j∈Nwin
+Uwin,jAwin,j
+
+Tt
+out −Tt
+in,k
+
+(20)
+Qt
+wall,solar,k =
+
+p∈D
+
+j∈Nwall
+awall,jRwall,jUwall,jIt
+r,p
+(21)
+Qt
+win,solar,k =
+
+p∈D
+
+j∈Nwin
+αwin,jβwin,jIt
+r,p
+(22)
+The thermal management system in the economic dispatch
+problem will solve a ﬁrst order partial differential equation
+to keep the indoor temperature of the buildings within the
+comfort level of customers (20-25◦C referring to [19]) during
+the occupancy hours. A case is also considered, where ﬁxed
+temperature settings are used throughout a day regardless of
+occupancy. Thermal management constraints of the building
+sector in the proposed economic dispatch model are presented
+in equations (18)-(22). Building’s thermal equilibrium formula
+in (18) relates the indoor temperature and outdoor temperature
+forecast to the cooling demand identiﬁed by the chillers. In
+this equation, ρ, C, and Vk are the heat density in kg/m3,
+heat capacity in
+J
+kg◦C, and volume of air in m3 in the build-
+ing number k ∈NB = {1, 2, 3}. Moreover, Tt
+in is the indoor
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:17:15 UTC from IEEE Xplore.  Restrictions apply. 
+
+3684
+IEEE TRANSACTIONS ON SMART GRID, VOL. 12, NO. 5, SEPTEMBER 2021
+temperature, which is controlled by the chiller, and Tt
+out is
+the outdoor temperature, which is the result of temperature
+forecast for 24 hours.
+In equation (18), Qt
+wall,k and Qt
+win,k are overall heat gains
+of walls and windows in building k in kW, which are derived
+based on (19) and (20). In addition, Qt
+in,k in kW is the internal
+heat gain of building k due to occupancy or heat gains of appli-
+ances, Qt
+wall,solar,k and Qt
+win,solar,k are the heat gains of walls
+and windows in building k due to solar radiation, respectively,
+which are derived based on (21) and (22). Contributions from
+solar radiation on the surface of external walls (Qt
+wall,solar,k)
+and windows (Qt
+win,solar,k) in different directions, D ∈{north,
+east, west, and south} are considered. The negative sign of
+chiller’s cooling gain, Qt
+chil,k, in (18) denotes the cooling
+power of chillers to regulate the indoor temperature. On the
+right side of (18), Qt
+wall,k is the heat transfer (in kW) through
+the external walls in the building, which is the sum of contri-
+butions of individual external walls,
+Nwall is the number of
+walls in different orientation j in building number P, Awall,j is
+the area in m2 for the jth wall, Tt
+out is the output temperature at
+time t and Tt
+in is the indoor temperature at time t. In addition,
+in (19)-(22), Uwall,j and Uwin,j are the heat transfer coefﬁcients
+of the walls and windows, respectively, Awall,j and Awin,j are
+the wall and window areas in m2 for the jth wall and window,
+respectively. The heat contributions to the volume’s walls and
+windows through solar radiation is calculated according to the
+ISO 13790 standard [19], where αwall,j is the absorbance coef-
+ﬁcient of wall external surface, Rwall,j is the resistance of the
+external wall against radiation, It
+r,p is the solar radiation to the
+external wall in orientation p, αwin,j is the glass transmission
+coefﬁcient of windows and βwin,j is the shading coefﬁcient of
+the windows. The internal heat gain in each building is calcu-
+lated by adding the internal heat gains of people, appliances,
+and lighting referring to [20].
+2) Linearization of Nonlinear Heat Equilibrium Function:
+The thermal equilibrium formula in (18) is a nonlinear heat
+ﬂow due to the presence of the derivative term, therefore, to
+convert the equilibrium formula to a standard linear form, the
+differential equation is converted to a ﬁnite difference equation
+with a forward difference approximation on the time deriva-
+tive. More information on conversion of heat ﬂow equilibrium
+to a steady ﬂow using difference approximation can be found
+in [21].
+ρCVk
+
+Tt+1
+in,k −Tt
+in,k
+
+= t
+⎡
+⎣
+k∈NB
+
+Qt
+wall,k + Qt
+win,k + Qt
+in,k + Qt
+wall,solar,k
++ Qt
+win,solar,k −Qt
+chil,k
+
+⎤
+⎦
+(23)
+In (23), the variables to be solved by the economic dispatch
+problem are Tt+1
+in , which is the temperature setpoint (Tset) for
+the next hour of operation, and the power consumption of
+chiller for the current hour Pt
+chil,k =
+Qt
+chil,k
+ςk
+, where ςk is the
+energy efﬁciency coefﬁcient of the electric chiller.
+V. WATER DEMAND MANAGEMENT
+1) Constraints of Water Distribution System: The water
+demand management model minimizes the electricity con-
+sumption of pumps, as the most energy intensive elements in
+water distribution networks, while the hydraulic demands are
+met at all the nodes. Constraints of water distribution system
+are expressed in the following
+Equation (24) relates the water ﬂow of ith pump, which is
+installed between nodes m and n to the ﬂow of pipe, Qt
+m,n. In
+this equation, St
+i is a binary variable representing the status of
+the pump, hi is the head gain, and B is the speciﬁc weight
+of water at 20◦C.
+Equation (25) relates the head gain to the water ﬂow in
+the pipe associated to the pump (pipe connecting node m to
+node n) and normalized pump speed, ri, where ap, bp, and cp
+are coefﬁcients of the pump characteristics.
+Pt
+pump,i = St
+iBQt
+m,nht
+i, St
+i ∈{0, 1}
+(24)
+ht
+i = ap,i
+
+Qt
+m,n
+2 + bp,iQt
+m,nrt
+i + cp,i
+
+rt
+i
+2
+(25)
+⎧
+⎨
+⎩
+
+i,j∈Nw
+Aij.qjt
+⎫
+⎬
+⎭−Qt
+R + Qt
+T = −Qt
+D + Qt−1
+T
+(26)
+St
+i = 1 if Q0
+T + Qt
+T < Qmin
+T
+St
+i = 0 if Q0
+T + Qt
+T > Qmax
+T
+(27)
+Ht
+m −Ht
+n +
+
+Zt
+m −Zt
+n
+
++ ht
+i = Fm,n
+
+Qt
+m,n
+1.85
+(28)
+Equation (26) expresses the conservation of mass theorem such
+that at any hour, the amount of water supplied by the reservoir
+should be equal to water accumulated in the tank, consumed
+(by customers), and ﬂowed in the pipes. In (26), Qt
+R is the ﬂow
+injected to the pipe at time t from the reservoir in m3/h, Qt
+T
+is the ﬂow in the tank in m3/h at time t, Qt
+D is the total water
+demand in m3/h at time t which is equal to the summation of
+water usage at each node,
+and Aij is the incident matrix of
+the water network with nodes and pipes associated with the
+rows and columns of the matrix, respectively. Each element
+ai,j (corresponding to node i and ﬂow passing through pipe j)
+belongs to the subset {1, −1, 0}, where 1 or −1 are assigned
+to ai,j when ﬂow j enters or exits the node j, respectively,
+while ai,j is 0 if ﬂow j is irrelevant to the node i. Here, q is
+the vector of pipes’ ﬂow rates, where qj is associated with the
+ﬂow rate of pipe j [22].
+Equation (27) controls the status of the pump connected
+to the tank within the minimum amount required to supply
+the network for one day (Qmin
+T ) and the maximum amount
+allowed to avoid overﬂowing the tank (Qmax
+T
+) considering the
+initial water level in a tank, Q0
+T.
+Equation (28) is the Bernoulli’s theorem stating the differ-
+ence between the energy head of any two nodes is equal to
+the gained energy (dissipated by the pump) minus the amount
+lost in the form of head loss [22]. In equation (28), Hm and
+Hn represent the pressure head of nodes m and n, Zm and Zn
+are the elevations at nodes m and n in meters. In addition,
+Fm,n is the head loss of a pipe connecting node m to node n,
+and can be computed by Fm,n = Lm,n/(0.278CD2.63
+m,n )1.85, where Lm,n
+and Dm,n are the length and diameter of the pipe connecting
+nodes m and n, respectively, and C is the friction factor of the
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:17:15 UTC from IEEE Xplore.  Restrictions apply. 
+
+MOAZENI et al.: STEP TOWARDS ENERGY-WATER SMART MICROGRIDS; BUILDINGS THERMAL ENERGY
+3685
+Fig. 3.
+(a) PV and (b) wind forecast data and (c) electricity prices.
+pipe. The start/EoD water level of the tank can also be added
+to ensure the tank will have sufﬁcient amount of water at the
+beginning of the next day:
+Qtend
+T
+= Qt0
+T
+(29)
+where tend is the time at the EoD (hour 24) and Qt0
+T is the initial
+water level of the tank at the beginning hour of the day.
+2) Linear Approximation of Nonlinear Functions: Since the
+pump’s output power in (24) and Bernoulli’s equation in (28)
+are inherently bivariate nonlinear functions, they should be
+approximated by their linear approximate functions. Therefore,
+piecewise linear approximation of bivariate functions is used.
+Let us deﬁne P and H as two bivariate functions representing
+pump’s output power and head gain,
+P
+
+Qt
+m,n, rt
+i
+
+= BQt
+m,nht
+i
+(30)
+H
+
+Qt
+m,n, rt
+i
+
+= Fm,n
+
+Qt
+m,n
+1.85 −ht
+i
+(31)
+The piecewise linearization of P and H is illustrated in Fig. 2,
+where ξ sampling coordinates on Q-axis and τ sampling coor-
+dinates on r axis can be considered. The functions P and
+H are evaluated for each breakpoint (Qi, rj)(i = 1, . . . , ξ,
+j = 1, . . . , τ). For any given point ( ¯Q, ¯r) with Qi ≤¯Q ≤Qi+1
+and rj ≤¯r ≤rj+1, a rectangle of vertices (Qi, rj), (Qi+1, rj),
+(Qi, rj+1), and (Qi+1, rj+1) is considered (see Fig. 2). By draw-
+ing a diagonal of this rectangle, two triangles known as upper
+and lower triangles are formed (see the right-side plot on
+Figure 2).
+The lower triangle is differentiated by a binary variable η
+and the upper triangle is differentiated by ¯η. The function
+value at ( ¯Q, ¯r) is approximated using a convex combination
+of the function values evaluated at the vertices of the triangle
+containing ( ¯Q, ¯r). By replacing hk
+t from (25) in (30), the
+non-linear bivariate function of pump power is found
+P = BQt
+m,n
+
+ap,i
+
+Qt
+m,n
+2 + bp,iQt
+m,nrt
+i + cp,i(rt
+i)2
+(32)
+The pump’s output power can then be expressed by Pt
+pump,i =
+St
+iP, which is a non-linear combination of pump’s bivariate
+function P(Qt
+m,n, rt
+i) and binary variable Si, which is converted
+to a standard linear programming formulation using Big M
+method
+−MSt
+i ≤P ≤MSt
+i
+(33)
+Pt
+pump,i −M
+
+1 −St
+i
+
+≤P ≤Pt
+pump,i + M
+
+1 −St
+i
+
+(34)
+Next, referring to (28), deﬁne H(Qt
+m,n, rt
+i) = Ht
+m −Ht
+n +
+(Zt
+m −Zt
+n) as a bivariate function representing the Bernoulli’s
+equation, therefore,
+H
+
+Qt
+m,n, rt
+i
+
+= Fm,n
+
+Qt
+m,n
+1.85 −ht
+i
+(35)
+Substituting ht
+i from (25) in (35),
+H = Fm,n
+
+Qt
+m,n
+1.85 −ap,i
+
+Qt
+m,n
+2 −bp,iQt
+m,nrt
+i −cp,i
+
+rt
+i
+2
+(36)
+Equations (32) and (36) are two bivariate functions that are
+approximated by piecewise linearization technique by divid-
+ing the Q-axis into ξ segments and ﬁnding associated Qt
+m,n
+for the breakpoints (Qb,i), dividing the r-axis into τ segments
+and ﬁnding associated rt
+i for the breakpoints (rb,j), introduc-
+ing ξ × τ continuous variables αi,j ∈[0, 1], and extending the
+equations to a three-dimensional space such that
+Qt
+m,n =
+ξ
+
+i=1
+τ
+
+j=1
+αi,jQb,i
+(37)
+rt
+i =
+ξ
+
+i=1
+τ
+
+j=1
+αi,jrb,j,
+ξ
+
+i=1
+τ
+
+j=1
+αi,j = 1
+(38)
+H
+
+Qt
+m,n, rt
+i
+
+=
+ξ
+
+i=1
+τ
+
+j=1
+αi,jH
+
+Qb,i, rb,j
+
+(39)
+P
+
+Qt
+m,n, rt
+i
+
+=
+ξ
+
+i=1
+τ
+
+j=1
+αi,jP
+
+Qb,i, rb,j
+
+(40)
+ξ−1
+
+i=1
+τ−1
+
+j=1
+
+¯γi,j + γ ij
+
+= 1, ¯γi,j, γ ij ∈{0, 1}
+(41)
+αij ≤¯γi,j + γ i,j + ¯γi,j−1 + γ i−1,j−1
++ ¯γi−1,j−1 + γ i−1,j
+(42)
+Constraints (37) and (38) represent the liner approximation of
+ﬂows and pump speeds, respectively and there exists only two
+consecutive α with nonzero values. Constraints (39) and (40)
+denote the linear approximation of H and P, respectively.
+Constraint (41) enforces that any given solution will be located
+in only one triangle (upper or lower) for the convex com-
+bination. Furthermore, (42) imposes that only non-zero αij
+values are the ones associated with three vertices of the trian-
+gle chosen in (41). Therefore, Equations (37)-(42) are linear
+approximation of (24), (25), and (28). Finally, equation (27),
+which represented the non-linear behavior of tank level, can
+be linearized using the big M method as the following
+QT
+min −MSt
+i < QT
+0 + Qt
+T < QT
+max + M
+
+1 −St
+i
+
+(43)
+The above linear approximates will represent the water dis-
+tribution system constraints in the economic dispatch model.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:17:15 UTC from IEEE Xplore.  Restrictions apply. 
+
+3686
+IEEE TRANSACTIONS ON SMART GRID, VOL. 12, NO. 5, SEPTEMBER 2021
+Algorithm 1 Water-Energy-Building Economic Dispatch
+1: Input Data Electricity price, PV and wind forecast data
+2: Input Data 24-hour temperature, load, and solar radiation
+forecast, building occupancy hours, and water
+demand
+3: Procedure Economic Dispatch then
+4:
+for t ∈T do
+5:
+for ∀NDG, NPV, Nwind, Nbatt, NC, NP do
+6:
+Minimize total cost referring to (1)
+7:
+Ensure load balance is met referring to (2)
+8:
+Ensure targeted line ﬂow exceeds maximum
+ﬂow, Fmax
+k
+9:
+Run the unit-commitment problem, referring to
+(3)-(5) & (8)
+10:
+Ensure powers of all the DGs, renewables, and
+loads are bounded
+11:
+Run the energy management constraints of
+BESSs referring to (14)-(16)
+12:
+Run the energy management of buildings refer
+-ring to (19)-(22) & (23)
+13:
+Run the water management formulation referr
+-ing to (26)-(28) & (37)-(43)
+14:
+end for
+15:
+end for
+16:
+return 24-hour dispatch of generation units, pumps,
+and chillers
+Therefore, the proposed optimization model for the energy-
+water smart grid system is represented as a mixed integer
+linear programming problem and a global optimum can be
+guaranteed for this system.
+3) Algorithm of the Proposed Economic Dispatch Model:
+The algorithm of the proposed integrated economic dispatch is
+shown in Algorithm 1. As it can be seen, the proposed energy
+management formulation receives input data on electricity
+price, PV, and wind forecast data, temperature, and solar radia-
+tion data over 24 hours. In addition, the water demand, comfort
+level settings in the buildings, and load of the buildings will
+be supplemented to the program as inputs. The economic dis-
+patch problem will then be formulated to minimize the overall
+cost of the combined water-energy-building system consider-
+ing constraints of each sector (energy, water, and building).
+The outputs of the proposed energy management will be 24-
+hour dispatch of generation units in microgrid, optimal power
+consumption of pumps to meet the daily water demand, and
+optimal consumption of chillers to meet the thermal demand
+of the buildings.
+VI. CASE STUDIES
+The proposed MILP formulation is solved using “SCIP”
+linear solver of MATLAB in OPTI Toolbox, which is an open-
+source MATLAB toolbox [23]. The “SCIP” solver is reported
+as the fastest non-commercial mixed integer programming
+solver that also solves non-convex problems to global opti-
+mality [24]. All optimization models were run on a processor
+of Intel Core CPU i9-9900K at 3.6GHz and 32GB RAM.
+As the proposed formulation is a standard linear pro-
+gramming problem, it can be easily expanded for large-scale
+microgrids. However, for large-scale microgrids, the number
+of variables and constraints will signiﬁcantly increase due
+Fig. 4.
+The 24-hour proﬁle of (a) temperature forecast, (b) solar radiation
+forecast, (c) electrical load forecast, (d) internal heat gains of buildings, and
+(e) water demand.
+to piecewise linearization, which may reduce the computa-
+tional efﬁciency of the proposed solution. The system under
+investigation is illustrated in Fig. 1, where parameters of
+the microgrid model and water distribution system are listed
+in [13], and the DG and building parameters are adopted
+from [20]. The 24-hour forecasts for temperature and solar
+radiation on different directions adopted in the case studies are
+illustrated in Fig. 4(a) and Fig. 4(b), respectively. The diurnal
+wind and solar power generation forecasts for the case studies
+are also shown in Fig. 3(a) and Fig. 3(b), respectively. The
+maximum available wind and PV output powers are obtained
+based on the wind speed and weather forecast for 24 hours. In
+addition to the microgrid, three different types of building are
+considered in this study serving as the end-users of the water
+and energy sources, as depicted in Fig. 1. The occupancy hours
+of these buildings are listed in the following
+• Building 1 (Residential) is occupied from 7:00 p.m. till
+9:00 a.m.,
+• Building 2 (Ofﬁce) is occupied from 9:00 a.m. to 9:00
+p.m.,
+• Building 3 (Apartment) is occupied 24 hours.
+The electrical and water demand forecasts of the buildings,
+Pt
+load,i, for the 24 hours of operation are illustrated in Fig. 4(c)
+and 4(e), respectively. Moreover, the 24-hour internal heat
+gains of four buildings in the studied system during a summer
+day is illustrated in Fig. 4(d). The case studies are aimed to
+investigate the effects of thermal energy and water demand
+response management of the targeted buildings on the energy
+generation and economic dispatch of the microgrid system.
+It is noted that the start/EoD energy limit of battery is only
+considered for Case 1.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:17:15 UTC from IEEE Xplore.  Restrictions apply. 
+
+MOAZENI et al.: STEP TOWARDS ENERGY-WATER SMART MICROGRIDS; BUILDINGS THERMAL ENERGY
+3687
+Fig. 5.
+Indoor temperature settings during 24 hours for (a) building 1,
+(b) building 2, and (c) building 3, for cases 1 and 2.
+Fig. 6.
+Power consumption of chillers during 24 hours for cases 1 and 2 for
+(a) building 1, (b) building 2, and (c) building 3.
+1) Case 1:
+This case investigates the impact of thermal
+management system on the day-ahead economic dispatch of
+the system. Two scenarios are considered; (a) without EoD
+energy limit of battery in (17) and (b) with EoD energy con-
+straint of battery. The temperature settings of the buildings
+are set to 20-25◦C during the day regardless of occupancy.
+Therefore, the chillers in the buildings operate in order to keep
+the indoor temperature within the scheduled comfort level of
+occupants during the day. Results are illustrated in Fig. 5,
+where the temperature setpoints of individual buildings for
+case 1 are shown with green color. It is observed that the
+temperature setting for all the buildings is within 20 to 25◦C
+during the entire operation time.
+The power consumption of chillers for the three buildings in
+this case is illustrated by green color in Fig. 6. It is observed
+that chillers only operate if there is a signiﬁcant mismatch
+between the outdoor temperature and indoor temperature (e.g.,
+hours 13-24 referring to Fig. 5).
+Contribution of generation units to the overall load of the
+microgrid system is illustrated in Fig. 7, where Fig. 7(a) is
+the economic dispatch without EoD battery constraint, and
+Fig. 7.
+Economic dispatch of the system for case 1, (a) without EoD energy
+limit for storage, (b) with EoD energy limit for storage.
+Fig. 7(b) forces the EoD energy limit of the storage unit to
+be equal to the initial energy level. As it can be seen, a peak
+occurred during hour 24 in Fig. 7(b) to charge the battery.
+It is observed that the total electric power load consisting of
+the total demand of water distribution system, total demand of
+the chillers, and electricity demand of the buildings (red color
+line) is mainly covered by BESS and wind generation, while
+the surplus energy is used to charge the battery during hours 3-
+5 and 9-10. The DG units are shut down in the ﬁrst 16 hours
+of operation and they start up when the peak of electricity
+consumption occurs during hours 17-22.
+2) Case 2: In the second case, the impact of customer’s
+comfort level during occupancy hours on economic dispatch
+of the microgrid system is studied. In this scenario, the temper-
+ature settings of buildings are kept within the standard comfort
+level of 20-25◦C during occupancy for all the buildings. The
+temperature setting of building 3 during unoccupied hours is
+to 20-25◦C. The settings for the unoccupied hours of Building
+1 and 2, however, have been modiﬁed to stay within 15-30◦C.
+Temperature setpoint results are shown in Fig. 5 with blue
+color line. Compared to case 1, it is observed that the set-
+point of Building 1 has been set to 30◦C between hours 15-19
+(unoccupied hours) to reduce the power consumption of the
+chiller, while the setting was at 25◦C for case 1. Similar pat-
+tern can be observed for Building 2 in hours 3 and 22-24 to
+ensure the lowest cost.
+By taking a look at the chillers’ power consumption in case
+2 (shown by blue color line in Fig. 6), it is observed that power
+consumption of chillers between hours 13-17 and 21-24 has
+signiﬁcantly reduced for all buildings. It is also noted that
+in Case 2, the temperature setting of building 1 in hour 19
+is reduced by 5 degrees, compared to hour 18, (see Fig. 5),
+which resulted in a signiﬁcant peak on power consumption
+of chiller for building 1 during hour 18 (see ﬁrst subplot in
+Fig. 6). This justiﬁes the fact that chiller will be started ahead
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:17:15 UTC from IEEE Xplore.  Restrictions apply. 
+
+3688
+IEEE TRANSACTIONS ON SMART GRID, VOL. 12, NO. 5, SEPTEMBER 2021
+Fig. 8.
+Economic dispatch of the system for case 2.
+Fig. 9.
+Effect of pump’s speed on daily power consumption of water
+distribution network.
+Fig. 10.
+Effect of pump’s speed on economic dispatch, with constant
+temperature settings of 20-25◦C over 24 hours.
+of time to keep the temperature of the building 1 within the
+comfort level range for the next hour.
+By taking a look at the economic dispatch of the system
+for case 2 (shown in Fig. 8), it is observed that power con-
+sumption has been reduced during hours 13-17 and 21-24
+as expected due to the reduction of power consumption of
+chillers. However, large peak demand is enforced in this case
+during hour 18, which has increased the total demand to almost
+1.7MW, which is 200kW more compared to case 1.
+3) Case 3: In this case study, the effect of pump’s speed on
+the economic operation of the system is considered. Herein,
+a variable-speed for the pump’s motor drive is contemplated
+such that 0.9 ≤r ≤1, for buildings with 24-hour tempera-
+ture settings (similar to Case 1). The economic dispatch runs
+the optimization problem considering that the pump’s speed is
+adjustable depending on the hour-ahead water demand forecast
+and the water level in the tank during the 24-hour operation.
+The power consumption of the pump in the water distribution
+system during the 24-hour operation is illustrated in Fig. 9. It
+is observed that the power consumption of water distribution
+system is signiﬁcantly reduced when a variable-speed pump
+with ﬂexible speed settings is contemplated.
+The economic dispatch of the system is illustrated in Fig. 10.
+It is observed that, compared to the ﬁrst case study, the over-
+all power consumption and peak demands are lower when
+Fig. 11. Correlation between pump’s speed, tank’s level and outﬂow, demand,
+and pump’s power consumption in buildings with temperature settings of
+20-25◦C in (a) 0.5 < r < 1, (b) 0.7 < r < 1, and (c) 0.9 < r < 1.
+variable-speed pumps are incorporated into the economic
+dispatch problems.
+4) Case 4: The objective of this case study is to investigate
+the correlation between the hourly state of the tank (water level
+in the tank and its efﬂuent), water demand, the pump’s speed,
+and the power consumption by the pump. Also, it is curious
+to examine if the studied system in Case 3 can be optimized
+even further. As such, the system is optimized considering
+three scenarios, where the pump’s speed is varied within three
+different ranges. The lowest speed is considered to be 0.5p.u.,
+assuming the pump operates at a 50% or better efﬁciency [25].
+Results are demonstrated in Fig. 11, where subplot (a) asso-
+ciates with the range of [0.5−1], (b) corresponds to the range
+of [0.7 −1], and (c) is related to the to the range of [0.9 −1]
+within which the pump’s speed varies. Demand proﬁle is iden-
+tical for all ﬁgures, hence it is only shown in subplot (a).
+Speed of the pump affects the energy consumption of the pump
+via (24) and (25). Also, because the pump is installed on the
+upstream ﬂow of the tank, its operation is directly correlated
+with the water level in the tank, as well as the hourly demand
+of the network and the amount of water ﬂowing through the
+pipes in the water network, collectively driving the tank’s out-
+ﬂow at every hour. As can be seen in the ﬁgures, the larger
+the interval and the smaller the lower level of the speed are,
+the smoother the tank’s outﬂow and water level (red and cyan
+color lines, respectively) and power consumption (black color
+line) graphs are appeared. Such will offset the electric peak
+charges and optimize the water demand response. It is noted
+that the tank’s level at hour 24 is relaxed, not forced by an
+EoD constraint, and is decided by the optimization problem.
+As such, the water level in the tank at the beginning of each
+day can be different from the day before. In addition, the
+hourly power consumption of the pump varies with the pump’s
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:17:15 UTC from IEEE Xplore.  Restrictions apply. 
+
+MOAZENI et al.: STEP TOWARDS ENERGY-WATER SMART MICROGRIDS; BUILDINGS THERMAL ENERGY
+3689
+TABLE I
+DAILY COST INCLUDING PEAK DEMAND CHARGES AND TOTAL POWER
+CONSUMPTION OF CHILLERS AND WATER SYSTEMS
+speed, agreeing with (25), decreasing as the speed decreases
+and vice versa. Furthermore, the hourly trend of the pump’s
+speed emulates the water demand’s proﬁle, increasing dur-
+ing the peak demand and decreasing when water demand is
+decreased. When water usage rises, the water in the tank is
+consumed more rapidly and the pump must operate at a higher
+speed to compensate the low level of water in the tank, agree-
+ing with (26). This is also veriﬁed by the correlation between
+magenta and red graphs depicted in Fig. 11. For instance in
+Fig. 11(a) and (b), within the ﬁrst 3 hours that water demand
+is low, pump’s speed is set to its minimum of 0.5 and 0.7 p.u.,
+respectively, while water level in the tank slowly increases. As
+the water demand increases from hours 7 to 10 and the tank’s
+water level drops, which requires more water to be supplied
+by the reservoir to the tank, the pump’s speed increases. At
+hour 11, the ﬁrst peak demand occurs which increases the
+pump’s speed to 0.9 and 0.89 in (a) and (b), respectively. For
+the remaining hours, except at hour 18 which the second peak
+demand appears and that increases the pump’s speed again to
+0.82 (in (a)) and 0.88 (in (b)), the pump’s speed decreases and
+so does the pump’s power consumption. The same correlation
+exists in Fig. 11(c), but since the pump’s speed changes within
+a narrower interval, more ﬂuctuations are observed in both the
+tank’s efﬂuent and the pump’s speed. The tank’s outﬂow emu-
+lates the demand pattern more vividly when the pump’s speed
+changes in a narrower threshold (in (c)), but it is smoother in
+(a) and (b). This is due to the pseudo steady-state condition of
+the tank in (c), as its inﬂow is almost at a steady rate (courtesy
+to the pump operating at high speed 0.9-1 p.u.). Also, such
+steadiness results in ﬁlling the tank up to approximately its
+maximum capacity at hour 24 in (c) in response to the drop
+in water consumption at the ﬁnal hours of the day.
+5) Cost Analysis: A comparison between the daily electric-
+ity costs of four case studies are shown in Table I. Considering
+Case 2, where the pump’s actual speed is constant over the 24-
+hour period of operation, and equivalent to its nominal speed,
+the daily cost of energy generation is $33.82 more than the
+daily cost calculated for buildings with temperature settings
+ﬁxated at the comfort level of 20-25◦C over 24 hours (in
+Case 1(a)). Additionally, the total power consumption (Ptot)
+in Case 2 is 200kW more than that in Case 1(a). The higher
+cost and power consumption is due to the difference in temper-
+ature settings between the unoccupied hours and the comfort
+level, maintained during the occupied hours. Chillers in Case 2
+must operate at higher capacity starting an hour ahead of the
+occupied hours to close the gap between the current indoor
+temperatures and the comfort level temperature settings.
+The peaks occurring in Case 2 will incur additional
+charges to the original electric base, too. Also, the numerical
+results suggest that the optimization model contemplating an
+Fig. 12.
+Impact of contemplating EoD constraints for battery’s energy and
+tank’s level states on operational cost and total power demand of the system.
+adjustable speed for the pump based on the water demand and
+tank’s water level (in Case 3) reduced the daily cost more than
+$60 and the daily power consummation by 999kW compared
+to the same system with constant speed (in Case 1(a)). In Case
+4 with the optimal range of 0.5 to 1 for the pump’s speed, the
+total cost was $159 per day lower, and the total power con-
+sumption was 1.32MW lower compared to the Case 3 with
+the range of 0.9 to 1 for the pump’s speed. This signiﬁcant
+cost and power consumption offsetting highlights the consid-
+erable effect of optimizing pump’s scheduling and operations
+based on the hourly water demand of the buildings, which
+also optimizes the tank’s scheduling accordingly. By compar-
+ing Case 1(a) and Case 1(b), it is concluded that incorporation
+of EoD energy limit of battery storage resulted in almost $97
+more daily cost and 450 kW load increase. Case 1(c) shows
+the impact of contemplating EoD constraints for both battery
+storage system and tank’s level, exhibiting $0.39 and 0.51MW
+increase in the daily cost and power consumption over 1(b).
+In this scenario, states of the battery system and the tank by
+the end of the day are forced to be equal to their maximum
+capacity.
+6) Impact of EoD Constraints: In this subsection, the EoD
+constraint values for the tank’s level and battery storage system
+are optimized based on their impacts on the operational cost
+and total power consumption of the system. (To allow for a
+fair comparison, these scenarios are performed for the system
+described in Case 1 so that the results can be evaluated against
+those reported as 1(a), 1(b), and 1(c) in Table I.) As exhibited
+in Fig. 12, three scenarios are investigated: (a) battery stor-
+age is fully charged by the end of the day, while EoD value
+of the tank varies from 20% to 100% of Qmax
+T
+; (b) tank is
+ﬁlled up to maximum capacity, while EoD value of the bat-
+tery varies from 20% to 100% of Emax
+batt ; and (c) the EoD values
+for both battery and tank are varied within 20% to 100% of
+their maximum capacity. Results in Fig. 12(a) indicate that the
+EoD value of the tank had little effect on the total daily cost,
+ranging from $632.8 to $633.19 and total power consumption,
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:17:15 UTC from IEEE Xplore.  Restrictions apply. 
+
+3690
+IEEE TRANSACTIONS ON SMART GRID, VOL. 12, NO. 5, SEPTEMBER 2021
+Fig. 13.
+Impact of battery’s efﬁciency on the output power and energy of
+the battery storage system, as well as daily cost of operation.
+equal to 12.13 MW. This is a reasonable result because the
+pump operates at nominal speed in Case 1, and because the
+demand decreases after 9PM, the water in the tank reaches
+close to its maximum capacity by the end of the day. Thus,
+for EoD values below that level (e.g., EoD = 20%-70%), the
+tank will be forced to discharge at hour 24, which would not
+impose an additional cost or power to the system. Because of
+small changes on cost incurred by varied Qtend
+T , the graphs in
+Fig. 12(b) and (c) appear to be identical. However, total cost
+and power increased from $538.97 and 11.17MW to $633.19
+and 12.13MW, respectively, as the EoD value of the battery
+storage system was increased from 20% to 100% of its maxi-
+mum capacity. Especially, cost and power increased when EoD
+was set to more than 70% of its maximum capacity, which is
+due to the increasing utilization of fossil-fuel-based energy
+sources in order to charge the battery storage units, corre-
+sponding to a higher cost in the economic dispatch model.
+Accordingly, Etend
+batt = 0.7Emax
+batt and Qtend
+T
+= 0.9Qmax
+T
+are indi-
+cated as the optimal EoD values for the battery storage and
+tank, respectively.
+7) Impact of Battery’s Efﬁciency: In this scenario, the bat-
+tery’s efﬁciency is modiﬁed from 50% to 100% in Case 1 to
+analyze the impact of battery’s efﬁciency on power consump-
+tion and daily cost of the system. It can be seen in the Fig. 13
+(a)-(d) that as the efﬁciency increases from 50% to 100%, the
+cost of operation decreases. This is consistent with the hourly
+output power and energy of the battery presented with blue and
+green color lines, where the daily output power of the battery
+with lower efﬁciency (e.g., Fig. 13 (a)) is lower than that with
+higher efﬁciency (e.g., Fig. 13 (d)). This is damaging to the
+system especially during the peak demand at dark or dim hours
+of the day, where the combination of solar, wind, and battery
+energy are not enough to meet the required electrical demand
+of the system and thus conventional energy resources (which
+attribute to a higher cost in the economic dispatch model) are
+used to generate electricity.
+8) Discussion: The results also agree with the ﬁndings
+of previous studies demonstrating that pumps are the most
+energy intensive devices in water distribution networks, which
+also affect the energy source allocation of the economic dis-
+patch [13]. The ﬁndings demonstrated that the hourly power
+consumption of the chillers during the unoccupied hours in
+buildings with the ﬂexible temperature settings (Case 2) is
+smaller than that in buildings with a 24-hour constant indoor
+temperature settings of 20-25◦C (Case 1(a)). On the con-
+trary during the occupied hours, the power consumption of
+the chillers in buildings with the ﬂexible temperature settings
+(Case 2) is larger than of that with 24-hour constant tem-
+perature settings (Case 1(a)). However, the total daily power
+consumption and daily energy cost of Case 1(a) is lower than
+Case 2. In both Case 1 and Case 2, the pump in the water
+system is operated at its nominal speed over the course of the
+24-hour operation. The signiﬁcant contribution of the pump’s
+scheduling and operation in power consumption of the overall
+system is highlighted in Case 3 and Case 4, where the speed
+of the pump is varied and optimized based on the hour-ahead
+water demand and tank’s water level forecasting. The ﬁndings
+veriﬁed that the economic dispatch including pump’s speed
+varied within 0.5-1 p.u. results in the lowest power consump-
+tion and cost of operation per day. The pump’s optimal setting
+eliminated the peaks in the pump’s power consumption, and
+optimized the water demand response leading to less ﬂuctuated
+tank’s efﬂuent which will improve the lifespans of the pump
+and tank’s valves.
+By running the optimization model for
+EoD constraints of battery energy and tank’s level from 20%
+to 100% of their nominal values for constant pump speed,
+it was found that Etend
+batt = 0.7Emax
+batt and Qtend
+T
+= 0.9Qmax
+T
+are
+optimal EoD values. Finally, lower battery efﬁciencies result
+in less utilization of the battery in the economic dispatch and
+increase the daily cost of the operation.
+VII. CONCLUSION
+In this paper, a mixed integer linear programming formula-
+tion was used to optimize the water consumption and thermal
+energy balance of a microgrid with diesel distributed gener-
+ation, renewable energy sources, and storage units. Bivariate
+and univariate piecewise linearization were used to approx-
+imate the nonlinear optimization model to a linear program-
+ming formulation. It was concluded that daily cost of operation
+was signiﬁcantly reduced if the indoor temperature settings of
+the buildings were set to 20-25◦C the entire day. The daily
+cost increased when ﬂexible indoor temperature settings of
+15-30◦C were used for the buildings during unoccupied hours.
+Such extra operating cost is much greater than the energy
+savings achieved as the result of the low/high temperature set-
+tings during the unoccupied times. However, the lowest energy
+cost was achieved if variable speed pump with normalized
+speed of 0.5-1p.u. and daily indoor temperature settings of
+20-25◦C were utilized for all the buildings. The daily cost
+increased when the battery efﬁciency reduced. In addition,
+enforcing the end-of-day battery energy and tank level con-
+straints increase the daily cost of the system.
+Some of the
+limitations of the proposed model include: (i) the studied water
+distribution system is assumed to have no leakage, and in the
+case of a considerable leakage in the network, unforeseen tank
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:17:15 UTC from IEEE Xplore.  Restrictions apply. 
+
+MOAZENI et al.: STEP TOWARDS ENERGY-WATER SMART MICROGRIDS; BUILDINGS THERMAL ENERGY
+3691
+withdrawal can occur and (ii) the microgrid model does not
+account for electric vehicles. Future research will focus on
+optimal scheduling of energy-water networks considering the
+resilience against cyberattacks.
+ACKNOWLEDGEMENT
+The authors would like to acknowledge Penn State’s Center
+for Security Research and Education (CSRE) for supporting
+this research through 2020 Homeland Security Award.
+REFERENCES
+[1] R. Connor, The United Nations World Water Development Report 2015:
+Water for a Sustainable World, vol. 1. Paris, France: UNESCO Publ.,
+2015,
+[2] X. Zhang and V. V. Vesselinov, “Energy-water nexus: Balancing the
+tradeoffs between two-level decision makers,” Appl. Energy, vol. 183,
+pp. 77–87, Dec. 2016.
+[3] X. Zhang and V. V. Vesselinov, “Integrated modeling approach for
+optimal management of water, energy and food security nexus,” Adv.
+Water Resour., vol. 101, pp. 1–10, Mar. 2017.
+[4] K. Oikonomou, M. Parvania, and R. Khatami, “Optimal demand
+response scheduling for water distribution systems,” IEEE Trans. Ind.
+Informat., vol. 14, no. 11, pp. 5112–5122, Nov. 2018.
+[5] M. Li, Q. Fu, V. P. Singh, D. Liu, and T. Li, “Stochastic multi-objective
+modeling for optimization of water-food-energy nexus of irrigated
+agriculture,” Adv. Water Resour., vol. 127, pp. 209–224, May 2019.
+[6] Y. Si, X. Li, D. Yin, T. Li, X. Cai, J. Wei, and G. Wang, “Revealing
+the water-energy-food nexus in the upper yellow river basin through
+multi-objective optimization for reservoir system,” Sci. Total Environ.,
+vol. 682, pp. 1–18, Sep. 2019.
+[7] K. Oikonomou and M. Parvania, “Optimal coordination of water dis-
+tribution energy ﬂexibility with power systems operation,” IEEE Trans.
+Smart Grid, vol. 10, no. 1, pp. 1101–1110, Jan. 2019.
+[8] J. A. Daw et al., “Energy-water microgrid opportunity analysis at the
+university of arizona’s biosphere 2 facility,” Nat. Renew. Energy Lab.
+(NREL), Golden, CO, USA, Rep. NREL/TP-7A40-71294, 2018.
+[9] E. Whitney et al., “MicroFEWs: A food–energy–water systems approach
+to renewable energy decisions in islanded microgrid communities in
+rural Alaska,” Environ. Eng. Sci., vol. 36, no. 7, pp. 843–849, 2019.
+[10] J. Najaﬁ, A. Peiravi, A. Anvari-Moghaddam, and J. M. Guerrero, “An
+efﬁcient interactive framework for improving resilience of power-water
+distribution systems with multiple privately-owned microgrids,” Int. J.
+Electr. Power Energy Syst., vol. 116, Mar. 2020, Art. no. 105550.
+[11] F. Dubuisson, M. Rezkallah, A. Chandra, M. Saad, M. Tremblay, and
+H. Ibrahim, “Control of hybrid wind–diesel standalone microgrid for
+water treatment system application,” IEEE Trans. Ind Appl., vol. 55,
+no. 6, pp. 6499–6507, Nov./Dec. 2019.
+[12] J. A. Aguilar-Jiménez, N. Velázquez, R. Beltrán, L. Hernández-Callejo,
+R. López-Zavala, and E. González-San Pedro, “Potential for thermal
+water desalination using microgrid and solar thermal ﬁeld energy sur-
+pluses in an isolated community,” in Proc. Ibero-Amer. Congr. Inf.
+Manag. Big Data, 2019, pp. 162–175.
+[13] F. Moazeni, J. Khazaei, and J. P. P. Mendes, “Maximizing energy
+efﬁciency of islanded micro water-energy nexus using co-optimization
+of water demand and energy consumption,” Appl. Energy, vol. 266,
+pp. 1–11, May 2020.
+[14] M. Roustaei et al., “A scenario-based approach for the design of smart
+energy and water hub,” Energy, vol. 195, May 2020, Art. no. 116931.
+[15] P. Venkataraman, Applied Optimization with MATLAB Programming.
+New York, NY, USA: Wiley, Mar. 2009.
+[16] G. W. Chang, Y. D. Tsai, C. Y. Lai, and J. S. Chung, “A practical mixed
+integer linear programming based approach for unit commitment,” in
+Proc. IEEE Power Eng. Soc. Gen. Meeting, vol. 1, 2004, pp. 221–225.
+[17] P. Gautam, R. Karki, and P. Piya, “Probabilistic modeling of energy stor-
+age to quantify market constrained reliability value to active distribution
+systems,” IEEE Trans. Sustain. Energy, vol. 11, no. 2, pp. 1043–1053,
+Apr. 2020.
+[18] P. Mirhoseini and N. Ghaffarzadeh, “Economic battery sizing and power
+dispatch in a grid-connected charging station using convex method,” J.
+Energy Storage, vol. 31, Oct. 2020, Art. no. 101651.
+[19] “Energy performance of buildings—Calculation of energy use for space
+heating and cooling,” ISO Standard 13790: 2008, 2008.
+[20] X. Jin, Y. Mu, H. Jia, J. Wu, T. Jiang, and X. Yu, “Dynamic economic
+dispatch of a hybrid energy microgrid considering building based virtual
+energy storage system,” Appl. Energy, vol. 194, pp. 386–398, May 2017.
+[21] O. A. Zainal and R. Yumruta¸s, “Validation of periodic solution for com-
+puting CLTD (cooling load temperature difference) values for building
+walls and ﬂat roofs,” Energy, vol. 82, pp. 758–768, Mar. 2015.
+[22] R. J. Houghtalen, A. Osman, and N. H. Hwang, Fundamentals of
+Hydraulic Engineering Systems. New York, NY, USA: Prentice Hall,
+2016.
+[23] P. Bonami et al., “An algorithmic framework for convex mixed integer
+nonlinear programs,” Discr. Optim., vol. 5, no. 2, pp. 186–204, 2008.
+[24] T. Achterberg, “SCIP: Solving constraint integer programs,” Math.
+Program. Comput., vol. 1, no. 1, pp. 1–41, 2009.
+[25] T. M. Walski, D. V. Chase, D. A. Savic, W. Grayman, S. Beckwith,
+and E. Koelle, Advanced Water Distribution Modeling and Management.
+Waterbury, CT, USA: Haestad Press, 2003.
+Faegheh Moazeni received the Ph.D. degree in civil
+and environmental engineering from the University
+of Nevada Las Vegas (UNLV) in 2013. From 2013
+to 2016, she was with Menlo Energy, Florida. She
+is currently a Faculty with the School of Science,
+Engineering and Technology, Penn State Harrisburg.
+Her research interests include smart water systems,
+water-energy nexus, and water system security
+against cyberattacks. She is an Associate Member
+of ASCE.
+Javad Khazaei (Senior Member, IEEE) received
+the Ph.D. degree in electrical engineering from
+the University of South Florida in 2016. He is
+currently an Assistant Professor with the School
+of Science, Engineering and Technology, Penn
+State Harrisburg and is also afﬁliated with the
+Architectural Engineering Department, Penn State
+University. His research interests include cyber-
+physical
+power
+system
+modeling,
+control,
+and
+optimization, and smart grid security.
+Arash Asrari (Senior Member, IEEE) received
+the Ph.D. degree in electrical engineering from
+the
+University
+of
+Central
+Florida,
+Orlando,
+FL, USA, in 2015. From 2015 to 2017, he
+was a Senior Consulting Engineer with Phasor
+Engineering, LLC, Florida. He is currently an
+Assistant Professor with the School of Electrical,
+Computer, and Biomedical Engineering, Southern
+Illinois
+University
+Carbondale,
+IL,
+USA.
+His
+current research interests include power systems
+optimization and smart grid security. He is currently
+an Associate Editor of IEEE ACCESS.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:17:15 UTC from IEEE Xplore.  Restrictions apply. 

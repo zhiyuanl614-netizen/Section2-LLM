@@ -1,0 +1,1444 @@
+
+===== PAGE 1 =====
+international journal of critical infrastructure protection 23 (2018) 112–125 
+Available online at www.sciencedirect.com 
+journal homepage: www.elsevier.com/locate/IJCIP 
+Simulation based assessment of resilience of two 
+large-scale socio-technical IT networks 
+Finn Landegren a , ∗, Martin Höst b , Peter Möller b 
+a Division of Electrical Engineering and Automation, Lund University, postal address: IEA, LTH, Box 118, SE-221 00 
+Lund, Sweden 
+b Department of Computer Science, Lund University, postal address: Department of Computer Science, Box 118, 
+SE-221 00 Lund, Sweden 
+a r t i c l e i n f o 
+Article history: 
+Received 1 November 2017 
+Revised 30 April 2018 
+Accepted 3 August 2018 
+Available online 16 August 2018 
+Keywords: 
+Critical infrastructure 
+Resilience 
+Robustness 
+Rapidity 
+Simulation 
+Socio-technical system 
+IT network 
+SCADA system 
+a b s t r a c t 
+Most sectors of modern society are currently undergoing rapid digitalization. With the 
+progress of this development IT networks are becoming an ever more crucial asset whose 
+failure are prone to cause economic losses and risks to health and safety of the population. 
+Due to this development, it is increasingly important that IT networks are designed to be 
+resilient, meaning that they either maintain or quickly recover their functionality when ex- 
+posed to strains of various kinds. Simulation-based methods that consider supply network 
+topology as well as system for repairing the supply network have previously been applied 
+and found to be useful for assessment of resilience of electricity and water networks. A 
+method of this kind is here applied for IT networks. The method, however, considers only 
+hardware and operator fault modes, not software and dependency faults. The IT networks 
+are studied as socio-technical systems, here broadly understood as systems whose func- 
+tionality depend on technical as well as organizational sub-systems. The aim of the present 
+paper is to investigate if the method is applicable for assessment of resilience of large-scale 
+IT networks that are critical to society, meaning that (1) it is possible to apply for such sys- 
+tems based on available data, in this case gathered mainly through interviews with focus 
+groups, (2) the results are relevant for users/maintainers/owners of these systems and (3) 
+it captures all relevant factors. The method is tested in case studies on the IT network of 
+a municipality and the SCADA system of a wastewater network. Follow-up interviews were 
+conducted with system managers to assess the perceived relevance of the method and re- 
+sults. It is concluded that the method can be used to obtain the resilience metrics sought for 
+and that the method enables system owners to see if and for what levels of strain they are 
+presently reaching their desired targets concerning system resilience. Follow-up interviews 
+also indicate that the method is perceived by the system managers as being able to support 
+decision making concerning improvement in system resilience. 
+© 2018 Elsevier B.V. All rights reserved. 
+∗Corresponding author. 
+E-mail address: fila28432@gmail.com (F. Landegren). 
+https://doi.org/10.1016/j.ijcip.2018.08.003 
+1874-5482/© 2018 Elsevier B.V. All rights reserved. 
+
+===== PAGE 2 =====
+international journal of critical infrastructure protection 23 (2018) 112–125 
+113 
+1. 
+Introduction 
+Most sectors of modern society are developing an increasing 
+dependence on IT networks. As this development progresses 
+it becomes increasingly important that IT networks are de- 
+signed to be resilient, meaning that they can either maintain 
+or quickly recover functionality when exposed to strains of 
+various kinds. This calls for new and better means of assess- 
+ing IT network resilience. Simulation based methods in which 
+network topology and system responsible for network repair 
+are both explicitly considered have previously been used and 
+found to be advantageous for assessing resilience of elec- 
+tricity [1] and water distribution systems [2] . In these cases, 
+the infrastructure system is studied as a socio-technical sys- 
+tem, here broadly understood as a system whose functionality 
+depends on technical as well as organizational sub-systems. 
+The potential gain of such an approach is that both technical 
+and non-technical factors can be evaluated concerning their 
+impact on overall system resilience. In a preliminary study, 
+the approach has been applied for parts of the IT network 
+of a university [3] and it was found that it could be used to 
+assess resilience of such a small-scale IT network. The aim 
+of the present paper is to test if the method is applicable 
+for assessment of resilience of large-scale IT networks which 
+are critical to society, meaning that (1) it is possible to use 
+for such systems based on available data, in this case gath- 
+ered mainly through interviews with focus groups, (2) the re- 
+sults are relevant for users/maintainers/owners and (3) it cap- 
+tures all relevant factors. The method, however, considers only 
+hardware and operator fault modes, not software and depen- 
+dency faults. 
+Resilience is here broadly understood as the ability of a sys- 
+tem to withstand sudden chocks [4] . Many metrics have been 
+suggested for quantitative resilience assessment of engineer- 
+ing systems; see e.g. ( [5,6] ). McDaniels et al. [7] suggest that 
+resilient systems are robust and/or recover their functionality 
+quickly, which is also referred to as rapidity. Based on [8] , ro- 
+bustness ( X ) and rapidity ( T ) are formally defined as follows: 
+X = Q norm −Q( t 0 ) 
+(1) 
+T = t 1 −t 0 
+(2) 
+Where Q norm is the quality of the infrastructure service of the 
+undisrupted system, Q ( t ) denotes the quality of the infrastruc- 
+ture service at a given time t . Quality can potentially be mea- 
+sured in numerous ways. Here quality is measured as the ra- 
+tio of the customers in the network that are supplied with 
+the network service. t 0 is the time point of the disruption and 
+t 1 is the time point at which the system has recovered fully. 
+[9] suggest metrics which are similar to robustness and ra- 
+pidity although understood in a probabilistic sense. The ro- 
+bustness and rapidity metrics, proposed by McDaniels et al. 
+[7–9] provide a basic and rough understanding of system re- 
+silience. However, robustness and rapidity only consider the 
+initial and end states of the restoration process, while inter- 
+mediate states do not affect the result. This shows that other 
+metrics besides robustness and rapidity are needed for en- 
+abling a more precise assessment of actual system resilience. 
+Fig. 1 – Resilience curve showing level of functionality of a 
+disrupted system over time. 
+Bruneau et al. [10] have proposed such a metric, which they 
+term resilience loss. Resilience loss quantifies the total loss in 
+system quality due to a disturbance event and is expressed 
+with the following formula: 
+RL = 
+ t1 
+t0 
+[ Q norm −Q(t)] dt 
+(3) 
+Where t 0 and t 1 as before are the time points at which a dis- 
+turbance happens and the time point of recovery respectively, 
+and F(t) is the quality of the system at time t given as a ratio of 
+nominal quality. Fig. 1 shows how the robustness, rapidity and 
+resilience loss metrics are related to the so-called resilience 
+curve which shows functionality of a system through time 
+following a disruption. Other commonly used resilience met- 
+rics are the steady-state availability, time of response which is 
+the time between the detection of an incident or interruption 
+and the first remedial action taken in order to restore a de- 
+sired level of service and the number of incidents with impact 
+on the network [6] . Ouyang et al. [11] suggest the annual re- 
+silience (AR) metric. The principal difference between AR and 
+RL is that RL considers only one disturbance while AR instead 
+quantifies the overall resilience behaviour over a longer time 
+period which may include multiple disturbances. The main 
+advantage of the AR metric, compared to RL is that it does not 
+only consider the consequences once a disturbance occurs but 
+also considers the probability of disturbances. 
+In all decision making concerning what level of resilience 
+to strive for monetary considerations are likely to be decisive. 
+Vugrin et al. [12] suggest three metrics which can be of use 
+in this context. System impact (SI) is the cumulative conse- 
+quences resulting from an outage. The second metric is to- 
+tal recovery effort (TRE) which is the cumulative costs of re- 
+sources expended during the recovery process. Finally, the re- 
+covery dependent resilience (RDR) index is proposed for as- 
+sessing overall system resilience. It sums up SI an TRE and 
+normalizes through division with overall revenue. There are 
+also resilience metrics that are based on network theory met- 
+rics. Wang et al. [13] propose a metric based on the change 
+in ratio of the closeness centrality of the network before and 
+after disturbance. System resilience can also be categorized 
+into several sub-tasks that must be carried out. Wang et al. 
+[14] suggest a resilience metric which is based on the relative 
+completion times, demands for and weights of all such tasks. 
+Some metrics also assess which system components that are 
+
+===== PAGE 3 =====
+114 
+international journal of critical infrastructure protection 23 (2018) 112–125 
+having greatest impact on resilience. Barker et al. [15] have 
+suggested two such metrics, which they refer to as resilience 
+based component importance measures (CIMs). The here pro- 
+posed method is intended to enable assessment of three cru- 
+cial aspects of resilience: (1) robustness, (2) rapidity and (3) 
+resilience loss. These are selected since they together are be- 
+lieved to capture the most essential properties of resilient sys- 
+tems. However, by only considering these metrics many as- 
+pects are by necessity missed. The systems behaviour is cap- 
+tured once a disturbance occurs, but not the probability of dis- 
+turbances which is included in the AR metric [11] . Cost of out- 
+ages or of recovery efforts are not considered meaning that 
+no results can be obtained concerning what system design 
+that is optimal from a cost perspective, as can be obtained 
+when using metrics suggested by Vugrin et al. [12] . Further- 
+more, no analysis is performed concerning what network sub- 
+components that contribute most to lack in resilience along 
+the lines suggested by Barker et al. [15] . 
+2. 
+Related work 
+When it comes to IT systems and risk analysis it was found 
+that a majority of the methods are qualitative and evaluated 
+for IT systems in general, without considering any specific 
+field. Risk analysis is a general approach of evaluating an IT 
+system’s ability to function and provide and process infor- 
+mation in different situations. The application of risk anal- 
+ysis for analysis of resilience of communication systems is 
+investigated by Schöller et al. [16] who proposes a method 
+for collecting qualitative data e.g. from focus groups. The ap- 
+proach results in a list of challenges that engineers can use 
+when designing a network. However, quantitative approaches 
+have also been used for assessing IT system risks as is demon- 
+strated in a review by Stergiopoulos et al. [17] . There are also 
+a number of research attempts to investigate resilience on a 
+more technical and general level. In this paper graph models 
+are used for representing the IT network and this approach 
+is frequently used for resilience analysis of IT systems (e.g. 
+[18–23] ). Some research has been conducted on identifying 
+and solving resilience problems as they happen during us- 
+age of IT and computer networks (e.g. [24–28] ). [24] present 
+a cyber physical testbed for making assessments of the ef- 
+fects of cyber-attacks. The platform can be used to study a 
+wide range of disruptions such as host and link failures, dis- 
+tributed denial of service attacks, and integrity attacks. Sou- 
+pionis and Benoist [25] present a logic-based framework to 
+evaluate the resilience of computer networks in the face of 
+incidents, i.e., attacks from malicious intruders as well as ran- 
+dom faults. The model uses a two-layered presentation of de- 
+pendencies between files and services, and of timed games to 
+represent not just incidents, but also the dynamic responses 
+from administrators and their respective delays. Cetinkaya et 
+al. [26] present a framework to evaluate network dependabil- 
+ity and performability in the face of challenges. Simulation 
+is used for analysis of the effects of perturbations to normal 
+operation of the networks. The framework can simulate both 
+static and dynamic challenges, based on the failure of indi- 
+vidual components, as well as modelling geographically cor- 
+related failures. The framework is demonstrated for a real as 
+well as for synthetically generated topologies. It is shown how 
+packet delivery ratio drops with number of component fail- 
+ures, number of failures ranging from 1-10. Malicious and non- 
+malicious node perturbations are considered. [27] propose an 
+approach to proactively work with “resilience management”
+in computer networks in order, for example, to consider mali- 
+cious threats. Smith et al. [28] focus on network management 
+with respect to resilience to improve the network when nec- 
+essary. That is, there is available approaches and presented 
+research focusing on planning and monitoring of networks 
+with respect to resilience. To our knowledge there is not as 
+much research presented on analysing IT networks, which is 
+an example of a socio-technical system, with respect to re- 
+silience and time behaviour. In particular, we have found no 
+example of repair system resources being explicitly consid- 
+ered in IT network restoration simulations. Explicitly consid- 
+ering repair system resources is desirable since the method 
+can then be used to assess resilience performance given dif- 
+ferent hypothetical levels of resources. This type of analy- 
+sis may provide a basis for decision making concerning di- 
+mensioning of repair system resources. Also, there is little re- 
+search regarding high levels of network strain, Cetinkaya et 
+al. [26] being a noteworthy exception. In this research the net- 
+works, including their recovery times, are modelled in Monte 
+Carlo simulations. In distinction to many of the above men- 
+tioned approaches the here suggested framework does not 
+consider probabilities of failure events. The reason for this 
+is that the model is intended to be useful for assessment 
+of large disturbance events. For these events there is little 
+failure data on which component failure probabilities can be 
+based. 
+3. 
+Research methodology 
+The research is conducted through proposing a simulation 
+approach based on already an already available method pro- 
+posed by Landegren et al. [1] and using it in two cases. I.e. the 
+research can be classified as a multiple case study with two 
+cases in different contexts [29] . 
+The overall objectives of the research are to investigate if 
+the approach is possible to apply to the area of IT networks, 
+and to investigate to what extent the results are perceived as 
+relevant by experts in the area. These two objectives were in- 
+vestigated in the following steps. 
+First the two cases were decided based on previous con- 
+tacts with the areas. It was seen as positive with two differ- 
+ent cases since it provides opportunities for comparison, and 
+also gives more than one view on the applicability. During the 
+initial contacts with the cases it was described that a first at- 
+tempt was already conducted for a university IT network with 
+positive results [3] . 
+Representatives from each of the two cases were inter- 
+viewed in focus group settings in order to identify important 
+questions for the cases and to obtain information about the 
+IT infrastructures. In both cases a subset of the authors met 
+with 2,3 experts, where the objectives of the research were 
+presented and the simulation approach was described in more 
+detail. After that a set of questions about the infrastructure, 
+the organization, and their objectives were discussed. Based 
+
+===== PAGE 4 =====
+international journal of critical infrastructure protection 23 (2018) 112–125 
+115 
+on the data from the interviews, the infrastructures were 
+modelled. To some extent the general modelling approach was 
+refined based on the outcomes of the interviews. 
+When the modelling was carried out the results were pre- 
+sented to the experts in separate meetings for the two cases. 
+The objectives of these meetings were to present the results to 
+the experts, to get feedback on the results, and to understand 
+how relevant the results are to the participants. 
+There are a number of measures that can be taken in or- 
+der to improve the validity of a case study, e.g. [27] , which 
+are reflected upon here. First of all, triangulation can be ap- 
+plied in order to obtain more than one source of informa- 
+tion. In this study interview data was combined with docu- 
+ments provided by the participants, and the basic design as 
+a multiple case study instead of a single study with only one 
+case. Another approach is prolonged involvement which means 
+that the researcher has a long-going relation with the organi- 
+zation. In this study we identified the organizations through 
+mutual contacts, so there has been no long-term collabora- 
+tion before. However, the research lasted for several months 
+and we believe that we have been able to understand the 
+organizations’ IT infrastructures as well as their organiza- 
+tions goals and objectives. Peer debriefing means that the re- 
+sults are reviewed by fellow researchers. We believe that we 
+have achieved this through involving researchers from moth 
+the fields of IT management and infrastructure simulation, 
+as well as involving IT experts who are working in the area 
+in their day-to-day business. Member checking means that ex- 
+perts from the investigated cases are consulted in the re- 
+view of the data and the result. This was one of the rea- 
+sons that the second interview round was conducted. In ad- 
+dition to this an audit trail was achieved through electronic 
+recording of the interviews with text transcripts, and by study- 
+ing and discussing alternative cases, i.e. negative cases in the 
+analysis. 
+4. 
+Simulation model 
+A hybrid modelling approach is applied which considers the 
+technical network, represented with graph theory, as well as 
+the repair system, represented with a queuing model. The 
+model has previously been applied for electricity networks 
+[1] as well as a small-scale IT network [3] . Here the previously 
+developed hybrid-model is presented. The infrastructure net- 
+work is represented as a graph G ( V, E ) where V consists of N 
+nodes and E consists of M edges (see e.g. [30] ). 
+V = [ n 1 n 2 . . . n N ] 
+(4) 
+E = [ e 1 e 2 . . . e M ] 
+(5) 
+The complete set of components C consists of the two sub- 
+sets V and E , i.e.: 
+C = [ n 1 n 2 . . . n N e 1 e 2 . . . e M ] = [ c 1 c 2 . . . c N+ M ] 
+(6) 
+The connections in the network are represented using an 
+adjacency matrix A : 
+A = 
+⎡ 
+⎢ 
+⎢ 
+⎣ 
+a 11 
+· · ·
+a 1 N 
+. . . 
+. . . 
+. . . 
+a N1 
+· · ·
+a NN 
+⎤ 
+⎥ 
+⎥ 
+⎦ 
+(7) 
+Nodes are categorized into source, transfer and load nodes, 
+where the first are supplying a service to the network, the sec- 
+ond are transmitting the service and the third are consuming 
+the service. In the IT network context source nodes are of two 
+main types, servers and internet access points, transfer nodes 
+may be routers, firewalls or distribution switches and load 
+nodes are access switches. Using the network graph, the frac- 
+tion of load nodes that are connected to one or more source 
+nodes can be evaluated. The graph model is used for simulat- 
+ing component faults. Two kinds of node faults are simulated, 
+hardware and operator faults. Some components have redun- 
+dancy. Therefore, in case of a single hardware failure there will 
+be a failover so that component functionality is either main- 
+tained or only reduced to some extent. Remaining faults, i.e. 
+operator failure or two simultaneous hardware failures, mean 
+that the network component is effectively removed from the 
+network. Node faults are represented by means of two vectors, 
+V 1 and V 2. V 1 is a Boolean vector in which the i th element 
+is 1 if the i th node, specified in Eq. (4) , has had a failure. V 2 
+specifies the number of intact sub-components in the network 
+nodes. Some nodes have several sub-components, and may 
+then have one hardware fault without complete loss of func- 
+tion. A node i will be completely without function if the i th el- 
+ement in V 1 is 1 and the i th element in V 2 is either 0 (in which 
+case all sub-components have failed) or its original value (in 
+which case the component has had an operator failure). For 
+other cases, the component function will be either un-affected 
+or decreased only by some degree which varies depending on 
+the studied system. Concerning edges, a failure of edge e i con- 
+necting n j and n k is simulated by setting a jk and a kj to 0. Capac- 
+ity is not considered in the network model. A user is therefore 
+considered to be supplied with a given service (e.g. internet 
+access) if there is at least one unbroken path leading from the 
+access switch at which the customer is located to at least one 
+source node supplying the service. A breadth first search strat- 
+egy is used to find all supplied nodes. The prioritization of re- 
+pair jobs is done to maximize the number of demand nodes 
+that can be reached through one or more paths from a source 
+node. This can be illustrated by a simple example. If two re- 
+pair jobs, A and B, require the same amount of work time but 
+completion of job A will lead to 10 more nodes being reach- 
+able from source nodes and completion of job B will lead to 
+only 5 more nodes being reachable from source nodes, then 
+job A will have more utility and will be placed before job B in 
+the queue of repair jobs. To find out the utility of each repair 
+job all possible single repairs are tested, and the number of 
+connected nodes is calculated for each such repair scenario, 
+using a breadth first search strategy. The calculation of utility 
+of repair jobs is formally described in Eqs. (8) and ( 9 ). 
+The repair system is represented as a queueing system 
+(see Fig. 2 ) in which component faults are served by a spec- 
+ified number of repairers p , of i different types, [ p 1 p 2 . . . p i ] , us- 
+ing materiel m , of j different types, [ m 1 m 2 . . . m j ] . Each type of 
+team has a certain competence concerning what types of re- 
+pairs that they can perform. Failure modes and repair times of 
+
+===== PAGE 5 =====
+116 
+international journal of critical infrastructure protection 23 (2018) 112–125 
+Fig. 2 – Overview of repair system model, including repairers of i different types, [ p 1 p 2 . . . p i ] , two queues and materiel of j 
+different types, [ m 1 m 2 . . . m j ] . 
+components are stochastic variables. A further stochastic pa- 
+rameter is the time during the week and day that a failure oc- 
+curs. This is randomly generated at the start of each new sim- 
+ulation, the reason being that some types of repairers work 
+only during office hours, making the time during week and 
+day an important factor. 
+Model entities: The repair system model includes four 
+types of entities: jobs, queues, stock and repairers. Jobs have 
+a repair time, and a vector specifying resources needed for re- 
+pair. One queue holds unserved jobs and one holds completed 
+jobs, thereby simplifying post-simulation analysis. Repairers 
+serve the first job in queue that is serviceable by the given re- 
+pairer with the resources available in stock. The stock holds 
+materiel of various amounts (specified by a vector). 
+Process overview and scheduling: In each new time step, 
+it is checked if the stock inventory and the number of repair- 
+ers should be updated (a matrix specifies when and by how 
+much the resources will increase). If a repairer is not currently 
+working, it begins repair on the first job in queue that can be 
+serviced by the repairer with the available materiel. 
+Job prioritization: Order of repair tasks in an IT network is 
+likely to be decided to a high extent so that customer service 
+hours is maximized. This goal is reached by prioritizing jobs 
+that will bring back most network users per hour of work time. 
+Utility of repair jobs is thus calculated through Eq. (8) . 
+U i = C itot 
+T i 
+(8) 
+Where U i is the utility of repairing component i, C itot is the 
+number of customers that is brought back by repairing com- 
+ponent i and T i is the expected repair time of component i. C itot 
+is calculated through Eq. (9) . 
+C itot = ( C i + C I1 + C I2 + . . . + C IX ) ∗b s 
+(9) 
+Where C i denotes the number of customers connected to 
+component i, C Ij is the total number of customers in the j th 
+non-supplied network region with member components con- 
+nected to component i, b s is a Boolean being 1 if component 
+i is connected to a supplied region in the network, otherwise 
+0. A network region denotes a set of nodes and edges that are 
+directly or indirectly connected. The hybrid model was imple- 
+mented in Matlab®, version 2016a. 
+Outages are simulated using the network model. Sampled 
+scenarios are used to avoid the excessive simulation times 
+that would result if a complete sample set was used (including 
+all possible strain scenarios of size N-k). Sampled scenarios 
+can be represented as in Eq. (10) . 
+S M i = 
+⎡ 
+⎢ 
+⎢ 
+⎣ 
+c 11 
+· · ·
+c x 1 
+. . . 
+. . . 
+. . . 
+c 1 S 
+· · ·
+c xS 
+⎤ 
+⎥ 
+⎥ 
+⎦ 
+(10) 
+where x is the level of strain and S is the sample size. Each 
+row in the strain matrix thus represents one outage scenario. 
+
+===== PAGE 6 =====
+international journal of critical infrastructure protection 23 (2018) 112–125 
+117 
+To assure that the number of samples used is sufficiently large 
+to reach a convergent result convergence is determined based 
+on Eqs. (12) and ( 13 ). A vulnerability approach can be applied 
+meaning that all component faults are sampled with the same 
+probability. However, the method also allows components to 
+be divided into various sets for which failure probabilities can 
+be specified individually. Given that Y component sets are 
+specified we can define the probability of failure in these sets 
+as follows: 
+P = [ p 1 p 2 . . . p Y ] 
+(11) 
+p i denotes the probability that the next component failure will 
+be selected from the i th component sub-set. If, for instance, 
+edges are experienced as being more failure prone than nodes, 
+these can be included in different component sets with failure 
+probabilities adjusted accordingly. In this paper the main fo- 
+cus is on large disturbance events, involving many simultane- 
+ous component failures. There is generally little statistics for 
+these events and therefore there is a weak basis for assessing 
+probabilities for different component failures in this context. 
+A risk approach [30] which considers the probabilities of vari- 
+ous component failures is therefore deemed to be unsuitable. 
+Instead a vulnerability approach is selected [30] , meaning that 
+all components are represented as equally likely to fail in any 
+given scenario. 
+5. 
+Case studies 
+The method for studying resilience is tested in case studies on 
+a municipal IT network and the SCADA system of a wastewa- 
+ter network shown, respectively above and below, in Fig. 3 . In 
+the graphs I = internet access point, S = server, FW = firewall, 
+SW = switch, M = modem. In the upper graph, all nodes in the 
+access network are switches. Data was collected through in- 
+terviews with focus groups and through document analysis, 
+and the results were assessed for relevance through inter- 
+views. Below the two case study systems are described in more 
+detail under separate headings. The collected data and model 
+parameterization is then described. 
+5.1. 
+Municipal IT network 
+The municipal IT network (see Fig. 3 , upper) serves approxi- 
+mately 27 700 IP-addresses. In agreement with the system per- 
+sonnel, it was decided that only a minority of the access net- 
+work would be explicitly included in the network model. Five 
+networks in the access edge were selected for inclusion in the 
+network model: three schools, the city library and a nursing 
+home for disabled. In Fig. 3 , above, in the access, from left to 
+right, networks 1, 2 and 4 are schools, network 3 is a nursing 
+home for the disabled and network 5 is the city library. In total, 
+the network model then encompasses 58 nodes (servers, inter- 
+net access point and switches) and 64 edges (cables above and 
+below ground). Each of the 49 access switches in the model is 
+assumed to connect to 54 IP-addresses. In other words, 2646, 
+or 9.8%, of the IP-addresses are connected to access switches 
+included in the network model. Remaining IP-addresses are, 
+in the model, associated only with a core switch or connect 
+Fig. 3 – Municipal IT network and SCADA system of 
+wastewater network. Dashed line indicates boundary 
+between core and access network. 
+to the server through wifi. Among the five core switches IP- 
+addresses are distributed as follows, in accordance with num- 
+bering in Fig. 3: 5636, 5876, 298, 4892 and 5152. Additionally, 
+3200 are connected to the server through wifi. One of the net- 
+work nodes and two of the network edges represent the IP- 
+addresses connected through wifi and their connection to the 
+data centers respectively. The network is supplied with in- 
+ternet from one internet access point, and has two servers. 
+The servers are in practice not perfectly mirrored, meaning 
+that the servers cannot act as perfect backups in case of fail- 
+ure in the other server. However, the intention of the system 
+managers is to make the servers mirror each other, and it 
+was therefore decided that this should be the case also in the 
+model. 
+5.2. 
+SCADA system of wastewater network 
+The SCADA system (see Fig. 3 , lower) is connected to 200 
+sub-stations (pumping stations and treatment plants). Among 
+the 200 stations 8 are manned stations and connect to the 
+server through underground fiber while remaining stations 
+are connected to the server through the internet. In total, 
+the IT network encompasses 605 nodes (server, firewalls, 
+switches and modems) and 606 edges (cables above and be- 
+low ground). The server of the SCADA system is virtual, 
+
+===== PAGE 7 =====
+118 
+international journal of critical infrastructure protection 23 (2018) 112–125 
+Table 1 – Fault modes of network components. 
+System 
+Component 
+Failure mode 
+Relative 
+probability (%) 
+Repair 
+time (h) 
+Resources needed 
+Municipality 
+Internet access point 
+Hardware 
+10 
+[1,4] 
+Network technician 1 + hardware 
+Operator 
+90 
+1 
+Network technician 1 
+Datacenter 
+Hardware 
+10 
+[1,4] 
+Network technician 1 + hardware OR 
+platform technician + hardware 
+Operator 
+90 
+2 
+Network technician 1 OR platform technician 
+Core switch 
+Hardware 
+10 
+[1,4] 
+Network technician 1 + hardware 
+Operator 
+90 
+1 
+Network technician 1 
+Access switch 
+Hardware 
+10 
+1 
+Network technician 2 + hardware 
+Operator 
+90 
+1 
+Network technician 2 
+Cable above ground 
+Hardware 
+100 
+1 
+Cable welder + cable hauler + network 
+technician 1 + cable 
+Cable below ground 
+Hardware 
+100 
+[8,24] 
+Cable welder + cable hauler + network 
+technician 
+1 + cable + + excavator + surveyor + cable 
+planner 
+SCADA system 
+Switch (core or manned 
+sub-station) 
+Hardware 
+20 
+3 
+Support team core + hardware 
+Operator 
+80 
+[1,3] 
+Support team core 
+Switch (un-manned 
+sub-station) 
+Hardware 
+10 
+1 
+Automation technician + hardware 
+Operator 
+90 
+1 
+Automation technician 
+Core firewall 
+Hardware 
+10 
+2 
+Support team core + hardware 
+Operator 
+90 
+2 
+Support team core 
+Access firewall 
+Hardware 
+10 
+0.5 
+Automation technician + hardware 
+Operator 
+90 
+0.5 
+Automation technician 
+Modem 
+Hardware 
+100 
+0.5 
+Automation technician + hardware 
+Cable below ground 
+Hardware 
+100 
+[4,48] 
+Support team fiber 
+Cable in sub-station 
+Hardware 
+100 
+[1,2] 
+Automation technician 
+Cable in core network 
+Hardware 
+100 
+[0,2] 
+Support team core 
+meaning that it is based on multiple exchangeable hardware 
+units. 
+5.3. 
+Data collection and model parametrization 
+Interviews were carried out with system experts to collect in- 
+formation about fault modes, their relative probabilities, re- 
+pair times and resources needed for repair. 
+Fault modes 
+Four main fault categories were identified: hardware, operator, 
+software and dependency fault. The last category includes pri- 
+marily faults due to loss of power supply or cooling. It was de- 
+cided that the latter two fault categories would not be consid- 
+ered in the analysis. Software faults are not considered due to 
+the irregular consequences and repair times associated with 
+this fault category. Dependency faults are not considered since 
+this would require model development which is believed to 
+be too much outside the scope of the present work, e.g. sim- 
+ulation of power outage durations and geographical scale as 
+well as collection of data concerning heat resistance of var- 
+ious components and the speed of temperature increase in 
+absence of cooling. The software and dependency fault cat- 
+egories are not believed to be less relevant to consider than 
+hardware and operator faults, but they are believed to require 
+other methods for their analysis than the present approach. 
+Information about the identified fault modes are shown in 
+Table 1 . Failure in wifi connections in the municipal IT network 
+is not considered, also concerning the SCADA system failures 
+in the server are not considered, since the server is virtual. All 
+nodes in the core networks have fail-over, meaning that single 
+hardware failure will not cause complete loss of function. In 
+the municipal IT network such faults are, based on assump- 
+tions by the respondents, assumed to cause outage for 1/2 of 
+the users connected to the component, while in the SCADA- 
+network a single hardware fault will not bring about any 
+consequence whatsoever. Two simultaneous hardware faults 
+or operator faults will cause complete loss of component 
+function. 
+Repair system resources 
+For the systems 13 and 9 different personnel and materiel re- 
+sources can be distinguished for the municipal and the SCADA 
+system respectively. Available resources over time is shown in 
+Table 2 . If the amount of a certain resource is assessed to be 
+sufficient for any type of repair it is set to be infinite. As is in- 
+dicated in Table 2 concerning the SCADA system the amount 
+of support team internet is unknown to the system experts. 
+However, based on their experience internet is restored after 
+1-2 hours. This is simulated by setting the amount of sup- 
+port team internet so that it is not a limiting factor for the 
+repair, and setting the repair times of internet connection to 
+be in the specified interval. For the municipality repairs of un- 
+derground cables involve the cooperation of many different 
+
+===== PAGE 8 =====
+international journal of critical infrastructure protection 23 (2018) 112–125 
+119 
+Table 2 – Resources available over time. ∞ denotes resources sufficient for all required repairs. 
+System 
+Resource type 
+Immediately 
+After 1 hour 
+After 4 hours 
+After 24 hours 
+Municipality 
+Network technician 1 
+1 
+5 
+Network technician 2 
+1 
+2 
+Platform technician 
+3 
+10 
+Cable welder 
+0 
+2 
+∞ 
+Cable hauler 
+0 
+4 
+∞ 
+Cable planner 
+2 
+4 
+Surveyor 
+0 
+3 
+Excavator with driver 
+0 
+1 
+5 
+∞ 
+Cable 
+∞ 
+Access switch 
+5 
+10 
+∞ 
+Core switch 
+1 
+2 
+∞ 
+Hardware data center 
+0 
+∞ 
+Hardware internet access point 
+0 
+∞ 
+Resource type 
+Immediately 
+After 1 hour 
+After 4 hours 
+After 8 hours 
+After 16 hours 
+SCADA system 
+Automation technician 
+0 
+2 
+4 
+∞ 
+Support team internet 
+Unknown 
+Support team fiber 
+0 
+1 
+∞ 
+Support team core 
+1 
+∞ 
+Core switch 
+0 
+1 
+∞ 
+Access switch 
+0 
+1 
+2 
+∞ 
+Core firewall 
+2 
+3 
+∞ 
+Access firewall 
+0 
+1 
+2 
+∞ 
+Modem 
+0 
+∞ 
+repair personnel. From a modelling perspective, it was advan- 
+tageous to represent most of these personnel as resources in 
+stock rather than as servers. In the repair system model for the 
+municipality only network technicians 1 and 2 and platform 
+technicians are represented as servers while remaining per- 
+sonnel are represented as resources in stock. One of the repair 
+resources of the municipal IT network, cable planners, is de- 
+ployed only for one hour in each repair job, it then can take on 
+new tasks, all other repair personnel are deployed for the full 
+duration of the repair process. In the municipality, all repair 
+personnel are working based on a 24/7 agreement, i.e. being 
+available at any time of day and week. Concerning the SCADA 
+system support team core and support team fiber are work- 
+ing around the clock, while automation technicians and sup- 
+port team internet are working only during office hours. How- 
+ever, the respondents suggest that in practice some personnel 
+may work outside office hours, although this is not written in 
+the contract. Since this parameter is somewhat uncertain two 
+cases are explored for the SCADA system. In the first case re- 
+pairers work according to contract, meaning that automation 
+technicians and support team internet are working only dur- 
+ing office hours. In the second case, all repairers are working 
+according to a 24/7 agreement. 
+5.4. 
+Scenario selection and convergence 
+The analysis is performed for six levels of network strain: N-1, 
+N-2, N-3, N-6, N-9 and N-12, where N-k denotes the failure of 
+k out of the total N network components. For the municipal 
+IT network, the analysis was performed with respect to two 
+different network services, internet access and server access 
+while for the SCADA-network it was only performed with re- 
+spect to server access since the system is not connected to the 
+internet. In this paper, for reasons of brevity, only results con- 
+cerning server connectivity are presented. The system man- 
+agers of the municipal IT network assessed that probability of 
+failure in the core network is 1.5% and probability of failure in 
+the access network is 98.5%. This large difference mainly re- 
+flects the fact that the access network consists of many more 
+components than the core network. Consequently, in the sam- 
+pling of failure scenarios two component sets were distin- 
+guished, one containing all components in the core network, 
+and one containing all the access network components that 
+are explicitly included in the model. The probabilities spec- 
+ified in Eq. (11) of failure in core and access networks were 
+set in agreement with the expert assessment. Concerning the 
+SCADA system all component failures were sampled with the 
+same probability. This is in line with the vulnerability ap- 
+proach used here. Since fault scenarios as well as fault modes 
+and repair times are stochastic variables many samples must 
+be simulated to obtain a convergent result. 15 000 samples are 
+used for analysis of all levels of strain. To generate the results 
+in this paper then requires a total simulation time of about 
+10 hours (simulations were run on a computer with AMD Phe- 
+nom(tm) II X4 945 Processor with 4 cores, clock speed 3.00 GHz 
+and 4 GB memory). The so-called coefficient of variation, β, is 
+used to assess the convergence of the results [31] . The coeffi- 
+cient of variation is calculated through Eq. (12) . 
+β = 
+	 
+V ( F ) /NS 
+E ( F ) 
+(12) 
+Where V ( F ) is the variance in the result F, NS is the number of 
+samples and E ( F ) is the expected result. The expected result is 
+
+===== PAGE 9 =====
+120 
+international journal of critical infrastructure protection 23 (2018) 112–125 
+Fig. 4 – Robustness and rapidity of all simulated scenarios for a) municipality, b) SCADA-network given present work hours, 
+and c) SCADA-network given 24/7 service agreement. Vertical dashed lines indicate 8 h and 24 h time limits. 
+calculated through Eq. (13) . 
+E(F ) = 
+
+ NS 
+j=1 F ( X j ) 
+NS 
+(13) 
+F ( X j ) is here decided to be the resilience loss, which is calcu- 
+lated in accordance with Eq. (3) . In this way we get: 
+F ( X j ) = RL ( X j ) = 
+ t1 
+t0 
+[ Q norm −Q(t, X j )] dt 
+(14) 
+After 15 000 samples β varies in the range [0.44 1.66] for the 
+municipal IT network, in the range [0.58 0.95] for the SCADA- 
+network given normal work hours and in the range [0.68 3.6]% 
+for the SCADA-network given 24/7 agreement. β-values below 
+5 [32] and 6% [31] have previously been considered to indicate 
+good convergence. 
+6. 
+Result 
+In this section results from the case studies are first reported. 
+This is followed by a description of the response from the sys- 
+tem experts that was obtained in follow up interview sessions. 
+6.1. 
+Application of model 
+In the following three different systems are investigated, the 
+municipal IT network, the SCADA system given that repairers 
+are working according to the present contract and the SCADA 
+system given that all repairers are working based on a 24/7 
+agreement. These are respectively referred to as a), b) and c) 
+for brevity. In Fig. 4 robustness and rapidity of all simulated 
+scenarios are shown (in all there are 270 000 scenarios since 
+15 000 samples is used for each of the six levels of strain and 
+the three systems). Robustness, which is measured on the ver- 
+tical axis, is normalized by division with F norm to simplify com- 
+parisons between systems. We see that most of the scenarios 
+are associated with high robustness. This is so to a particularly 
+high extent for the SCADA system, cases b) and c), for which 
+most of the scenarios are associated with robustness values 
+above 0.9, meaning that less than 10% of the sub-stations are 
+affected by the outage. For the municipal IT network, case a), 
+most of the scenarios are associated with robustness values 
+above 0.7, meaning that less than 30% of the users are af- 
+fected by the outage. We can see that for the SCADA system 
+there is also a significant number of scenarios for which ro- 
+bustness is very low or zero, meaning that all, or almost all 
+sub-stations are affected by the outage. For the municipal IT 
+network such scenarios are on the other hand almost non- 
+existent. The main reason for this difference is that 96% of 
+the sub-stations in the SCADA system are connected to the 
+server through internet, and are dependent on the same fire- 
+wall. A single failure is therefore sufficient to cause an outage 
+for almost all sub-stations. Concerning the rapidity, measured 
+on the horizontal axis we see that for the municipal IT net- 
+work recovery occurs after about 30 h in the worst cases, while 
+for the SCADA system recovery occurs after about 50 h in the 
+worst cases. 
+In Fig. 5 we see the development of the median, mean, 
+5%- and 95%-percentiles of the system functionality over time 
+given three different levels of strain. The median and mean 
+values give an indication of the expected outcome in case of 
+a disruption while 5%- and 95%-percentiles show the variabil- 
+ity in the outcome. 90% of the scenarios are in the area be- 
+tween the two percentiles. We see that for cases a) and c) the 
+percentiles are very close together, showing that there is not 
+much variability in the result, while for case b) there is a high 
+degree of variability. Furthermore, we see that with increase in 
+strain level the initial level of functionality, indicating system 
+robustness, deteriorates, while the speed of recovery, or rapid- 
+ity, is not that much affected. We see that case b) is perform- 
+ing significantly worse than case a) and c) concerning median 
+and mean outcome. The median recovery time in case b) is 
+about twice of that in cases a) and c). Also, the 5%-percentile 
+is dramatically worse in case b) compared to cases a) and c). 
+For instance, at the N-6 level of strain the recovery time for the 
+5% percentile is about 5 hours in cases a) and c) while for case 
+b) it is instead 40 hours. 
+Fig. 6 shows the resilience loss, or user hours of non- 
+supplied service, as a function of level of strain. Resilience 
+loss is normalized through division with F norm to simplify 
+
+===== PAGE 10 =====
+international journal of critical infrastructure protection 23 (2018) 112–125 
+121 
+Fig. 5 – System functionality over time for a) municipality, b) SCADA-network given present work hours, and c) 
+SCADA-network given 24/7 service agreement. Dash-dot line = median, dotted line = mean value, dashed 
+lines = 5/95%-percentiles. 
+Fig. 6 – Resilience loss as a function of level of strain for a) municipality, b) SCADA-network given present work hours, and c) 
+SCADA-network given 24/7 service agreement. Dash-dot line = median, dotted line = mean value, dashed 
+lines = 5/95%-percentiles. 
+
+===== PAGE 11 =====
+122 
+international journal of critical infrastructure protection 23 (2018) 112–125 
+comparisons between systems. A resilience loss value of 1 is 
+equivalent to complete system outage during one hour, or to 
+50% system outage during two hours. As in Fig. 5 the median 
+and mean values give an indication of the expected outcome 
+in case of a disruption while the percentiles show the vari- 
+ability in the outcome. We can see that case b) is performing 
+worse than cases a) and c). In case b), at the N-6 level of strain 
+the 95%-percentile is 1, at the N-12 level of strain the 95% per- 
+centile is 2. This shows that 5% of the simulated scenarios re- 
+sult in resilience loss of more than 1 and 2, respectively, for 
+these two strain levels. The difference between cases b) and 
+c), illustrated in Figs. 5 and 6 , shows the big impact that a 24/7 
+agreement has on the resilience performance of the SCADA 
+system. 
+6.2. 
+Feedback from IT system personnel 
+Follow up interview sessions were held with system experts to 
+get feedback on the results. During these sessions results in- 
+cluded in this paper were presented along with additional re- 
+sults which, for reasons of brevity, have been omitted from the 
+paper. The latter results concerned the change in robustness 
+and rapidity with level of strain, the distribution of resilience 
+loss over simulated scenarios and the relative contribution to 
+overall resilience loss of components in the network. Follow- 
+ing the presentation questions were posed to the system ex- 
+perts concerning the following main topics: 
+1. are results experienced as being valid/trustworthy; 
+2. are results experienced as being useful; 
+3. to what extent can results contribute to improvement of 
+system resilience; 
+4. what are the possibilities for improving the method; 
+5. what are the possibilities for applying the method for other 
+types of systems. 
+Below the responses given by the system experts are re- 
+ported individually for each of these five topics. 
+6.2.1. 
+Trustworthiness 
+Municipality The respondents think that it is hard to tell to 
+what extent the results are trustworthy. They have experi- 
+enced some of the simple cases and they know that the model 
+agrees with their experience on this point. They can only sup- 
+pose that the results are correct also when many simultane- 
+ous failures are simulated. Both respondents agree that based 
+on their experience the results are reasonable. 
+SCADA system Results are experienced as trustworthy. The 
+respondents suggest that trustworthiness would be further 
+improved if a probability aspect was considered in the model. 
+In the results single component failures as well as large num- 
+ber of simultaneous component failures are investigated but 
+there are no results concerning the probabilities of scenarios. 
+6.2.2. 
+Usefulness 
+Municipality The respondents think that the model provides 
+information that is of interest but they think that the inter- 
+face by which this information is accessed could be improved. 
+One respondent suggests that it should be possible to click on 
+scenario points and thereby see which component faults that 
+are involved and other such scenario information. The respon- 
+dents think that results concerning single component failures 
+are most useful. In some cases when a risk assessment is to be 
+made, two or three simultaneous component failures should 
+be considered. Assessment of higher levels of strain is not ex- 
+perienced to be useful by the respondents. 
+The respondents think that it would be useful if the simu- 
+lation tool could be developed so that it could be used by the IT 
+managers or personnel themselves. They would then use it to 
+experiment with system parameters and see how the param- 
+eters influence system resilience. The respondents agree that 
+it would be of interest to use the simulation tool for assess- 
+ing how service level agreements as well as network topology 
+influence system resilience. However, to make the tool use- 
+ful it should be an add-in to an existing software used for IT 
+network design so that network schematics will not have to 
+be remade. The respondents see a use for the tool in demon- 
+strating the benefit of system investments. Such results can 
+also make it possible to get necessary increases in budget. 
+SCADA system The respondents experience that the results 
+are useful. They point to two uses of the presented results. 
+The results make the system owner aware that having a 24/7 
+contract concerning repair and maintenance with their inter- 
+net supplier would increase system resilience dramatically. At 
+present the organization is considering renegotiating the con- 
+tract with the internet supplier so that 24/7 service will be in- 
+cluded. This will bring additional cost on the organization and 
+the respondents say that they will use the presented results in 
+this context. Conversely, the respondents also pointed out that 
+the results will be useful for service suppliers. When a 24/7 
+service is set up it creates a large increase in cost. To make 
+such an investment profitable many 24/7 contracts should be 
+signed. The presented results could be useful from such a per- 
+spective since the results show the benefit that a 24/7 contract 
+can bring in terms of increases in system resilience. The re- 
+spondents also experience that the simulation model makes 
+it possible to find out what system improvement options that 
+are preferable. In particular, they become aware that a major 
+weakness, in terms of resilience is long response times. They 
+conclude that their weakness lies on the organizational rather 
+than on the technical side. 
+6.2.3. 
+Ability to increase system resilience 
+Municipality Both respondents think that the approach can 
+contribute to increased system resilience. 
+SCADA system The respondents experience that the results 
+have opened their eyes to an issue whose importance they 
+have not fully realized previously. They express that they are 
+now more aware of where to focus their resilience improve- 
+ment efforts. The most attractive possibility according to the 
+respondents is that the simulation tool can enable experimen- 
+tation with system parameters. 
+6.2.4. 
+Improvement possibilities 
+Municipality The respondents suggest that to get the full ben- 
+efit of the simulation tool it should tell them if they invest 
+too little in system resilience or too much and where money 
+
+===== PAGE 12 =====
+international journal of critical infrastructure protection 23 (2018) 112–125 
+123 
+should be invested? To answer these questions it will not be 
+enough to look at only a part of the infrastructure, as is the 
+case now. Other aspects will have to be included in the model 
+like power supply and access to cooling. 
+SCADA system The respondents suggest that a form describ- 
+ing input parameters and work procedure would improve the 
+usefulness of the simulation tool. This would then, the re- 
+spondents suggest, allow system managers and other person- 
+nel to experiment on their own with system parameters. 
+6.2.5. 
+Generalization possibilities 
+Municipality The respondents think that the simulation tool 
+is highly generalizable. 
+SCADA system The respondents think that the tool can be 
+develop towards increased focus on the technical system. For 
+instance, some of the sub-stations in the wastewater network 
+can be considered as complex IT networks. In this way, it will 
+be possible to expand the technical network that is considered 
+in the model. Another option is to focus more on the orga- 
+nizational side. The respondents see an applicability for the 
+tool within crisis management. The company is responsible 
+for crisis management relating to water. Here, as well as in 
+the already analysed case it is organizational issues, mainly 
+the possibility to get personnel to act in time, that is crucial, 
+and this, the respondents suggest, should make the simula- 
+tion tool relevant. 
+7. 
+Discussion 
+Simulation based methods that explicitly consider technical 
+network as well as repair system have previously been used 
+for assessing resilience of electricity and water distribution 
+systems. Such an approach has also been applied for a small- 
+scale IT network as a test case for the present study. The 
+objective of the present paper is to test if such a method 
+(1) is applicable for large-scale IT networks that are criti- 
+cal to society, (2) give results that are relevant to system 
+users/maintainers/owners, 3) captures all relevant factors. Be- 
+low these three questions are discussed. 
+7.1. 
+Applicability 
+Concerning objective (1) results indicate that the method 
+is applicable for the studied IT networks and that we 
+can obtain the resilience metrics sought for. Results show 
+that disturbance scenarios for which resilience is low can 
+be identified based on three crucial resilience indicators: 
+rapidity, robustness and resilience loss. Results of this 
+type may be useful in the process of increasing system 
+resilience. 
+Results showing system functionality over time enables 
+system operators to predict what the likely consequences will 
+be in case of disruptions of various magnitudes. Results show- 
+ing how resilience loss changes with level of strain make it 
+possible for system owners/operators to see if and for what 
+levels of strain that they are presently reaching their desired 
+targets concerning system resilience. 
+The fact that three systems were compared illustrates an 
+attractive possibility, namely that IT network operators can 
+benchmark IT networks against each other. The reasons for 
+possible differences in resilience performance can then be fur- 
+ther analysed which can create opportunity for learning and 
+development on all sides. In the studied case, we find that the 
+longest outages of the SCADA system are significantly longer 
+than those of the municipality, about 50 h compared to 30 h. 
+Also, for the SCADA system several scenarios are associated 
+with a robustness close to 0 while this is not the case for the 
+municipality. This indicates that there could be things to be 
+learnt from the municipal IT network on the side of the SCADA 
+system operators regarding how resilience performance can 
+be improved. The comparison that was made between the 
+SCADA system with and without 24/7 agreement for the au- 
+tomation technicians and support team internet illustrates 
+a further attractive possibility, namely that system operators 
+can experiment with system parameters to explore their im- 
+pact on overall system resilience. In this case a 24/7 agreement 
+was found to have a dramatic impact on system resilience per- 
+formance. 
+7.2. 
+Relevance 
+Concerning objective 2) feed-back from system experts 
+showed that the method is experienced as being able to help in 
+the improvement of resilience of the IT networks. The method 
+therefore is relevant. However, respondents of the municipal 
+IT network believe that only analysis of lower levels of strain, 
+N-1, N-2 and N-3 is practically useful. System experts of both 
+case study systems agree in desiring a probability aspect in 
+the result, i.e. not only what the consequences will be once 
+a scenario occurs but also how frequently it will occur. They 
+also agree in desiring to be able to use the tool on their own 
+to explore the impact on resilience of various system parame- 
+ters. It appears that the developed method can be potentially 
+useful in the wider context of risk management. Pinheiro et 
+al. [33] make a distinction between seven main ways in which 
+risks can be dealt with: 
+1. Avoiding the risk by deciding not to start or continue with 
+the activity that gives rise to the risk. 
+2. Accepting or increasing the risk in order to pursue an op- 
+portunity. 
+3. Removing the risk source. 
+4. Changing the likelihood. 
+5. Changing the consequences. 
+6. Sharing the risk with another party or parties (including 
+contracts and risk financing). 
+7. Retaining the risk by informed decision. 
+The method appears to be potentially useful for several of 
+these ways of dealing with risks. Concerning 3. and 4. The 
+method can show that certain types of faults correspond to 
+a large part of the overall degradation in resilience which may 
+lead to a decision to remove risk sources that can result in 
+these types of faults or at least change their likelihood of oc- 
+curring. Concerning 5. Change in consequences is likely to 
+result from the application of the method since the system 
+can be reworked so that resilience is improved meaning that 
+
+===== PAGE 13 =====
+124 
+international journal of critical infrastructure protection 23 (2018) 112–125 
+consequences of disruptions are overall smaller. The method 
+is likely to give contributions also concerning aspect 7. Since 
+many of the identified scenarios with large consequences may 
+be found to be too unlikely to be worth counteracting in any 
+way. The advantage of the method is in this case that a con- 
+scious decision to accept certain scenarios can be made. 
+7.3. 
+Model completeness 
+Concerning objective 3) software and dependency faults are 
+not considered in the model. In the follow up interview ses- 
+sion it became clear that an interest of the system experts is 
+to find out where the system requires further investments and 
+where, perhaps, too much investments have been made al- 
+ready. For the method to fully support such an assessment it 
+would have to include dependency faults in some form, and 
+possibly software faults as well. An alternative means of get- 
+ting the overview necessary for supporting decision making 
+concerning investments is to use the here presented method 
+in combination with methods which are suitable for consid- 
+ering software and dependency faults. A further interest of 
+the system experts is to explore if system investments are ap- 
+propriate, or if over/under investments have been made. To 
+fully support such an analysis, the model should be developed 
+so that cost of various resources is included as well. This in- 
+cludes cost of network components as well as repair system 
+resources. Once this is achieved it will be possible to design 
+systems in the computer environment and to get information 
+about their resilience performance as well as price. The two 
+topics of expanding the model to include other fault modes 
+and to consider price of network and repair resources should 
+be dealt with in future research. 
+8. 
+Conclusions 
+In this paper a previously developed simulation based method 
+is applied for assessing resilience of two large-scale IT net- 
+works. Based on the results from the study as well as feed 
+backs from the system operators it is concluded that the 
+method is applicable for resilience assessment of large-scale 
+IT networks. Resilience assessment is however only done with 
+respect to hardware and operator failures, not with respect to 
+software and dependency failures which are concluded to re- 
+quire other methods for their assessment. The method can 
+enable system owners to see if and for what levels of strain 
+that they are presently reaching their desired target concern- 
+ing three crucial resilience metrics: robustness, rapidity and 
+resilience loss. The method can support benchmarking of re- 
+silience between IT networks as well as experimentation with 
+system parameters to explore the impact of parameters on 
+system resilience. Interviews with system experts show that 
+the method is experienced as providing results that can en- 
+able improvement of system resilience. In future research, it 
+will be of interest to find ways of taking software and depen- 
+dency faults into account. Alternatively, the here presented 
+approach can be used in combination with methods which are 
+suitable for considering software and dependency faults. Also, 
+it can be of interest to consider cost of resource in the model, 
+which could enable optimization of the repair system given a 
+limited budget. 
+Acknowledgement 
+The Swedish civil contingencies agency and personnel at the 
+studied IT organizations are gratefully acknowledged for re- 
+spectively funding and participating in the research study. 
+references 
+[1] Landegren, F., Johansson, J., & Samuelsson, O., A method for 
+assessing margin and sensitivity of electricity networks with 
+respect to repair system resources, IEEE Transactions on Smart 
+Grid , vol. 7(6), pp. 2880–2889, 2016.
+[2] Tabucchi, T., Davidson, R., & Brink, S., Simulation of 
+post-earthquake water supply system restoration, Civil 
+Engineering and Environmental Systems , vol. 27(4), pp. 263–279, 
+2010.
+[3] Landegren, F., Sulaman, S.M., Möller, P., Höst, M., & 
+Johansson, J., A method for assessing resilience of 
+socio-technical IT systems. In: European Safety and 
+Reliability Conference (ESREL), 2016.
+[4] Boin, A., Comfort, L.K. & Demchak, C.C., The rise of resilience 
+in Comfort, L. K., Boin, A. & Demchak, C. C., (Ed.), Designing 
+Resilience, University of Pittsburgh Press, Pittsburgh, US, pp. 
+1–12, 2010.
+[5] Hosseini, S., Barker, K. & Ramirez-Marquez, J.E., A review of 
+definitions and measures of system resilience, Reliability 
+Engineering & System Safety , vol. 145, pp. 47–61, 2016.
+[6] Trimintzios, P., Measurement Frameworks and Metrics for 
+Resilient Networks and Services, Technical report, European 
+Network and Information Security Agency (ENISA). 2011.
+[7] McDaniels, T., Chang, S., Cole, D., Mikawoz, J., & Longstaff, H., 
+Fostering resilience to extreme events within infrastructure 
+systems: characterizing decision contexts for mitigation and 
+adaptation, Global Environmental Change , vol. 18(2), pp. 
+310–318, 2008.
+[8] Zobel, C.W., Representing perceived tradeoffs in defining 
+disaster resilience, Decision Support Systems , vol. 50(2), pp. 
+394–403, 2011.
+[9] Chang, S.E., & Shinozuka, M., Measuring improvements in 
+the disaster resilience of communities, Earthquake Spectra , 
+vol. 20(3), pp. 739–755, 2004.
+[10] Bruneau, M., Chang, S.E., Eguchi, R.T., Lee, G.C., O’Rourke, 
+T.D., Reinhorn, A.M., Shinozuka, M., Tierney, K., Wallace, 
+W.A., & Von Winterfeldt, D., A framework to quantitatively 
+assess and enhance the seismic resilience of communities, 
+Earthquake Spectra , vol. 19(4), pp. 733–752, 2003.
+[11] Ouyang, M., Dueñas-Osorio, L., & Min, X., A three-stage 
+resilience analysis framework for urban infrastructure 
+systems, Structural Safety , vol. 36, pp. 23–31, 2012.
+[12] Vugrin, E.D., Warren, D.E., & Ehlen, M.A., A resilience 
+assessment framework for infrastructure and economic 
+systems: quantitative and qualitative resilience analysis of 
+petrochemical supply chains to a hurricane, Process Safety 
+Progress , vol. 30, pp. 280–290, 2011.
+[13] Omer, M., Mostashari, A., & Lindemann, U., Resilience 
+analysis of soft infrastructure systems, Procedia Computer 
+Science, vol. 28, pp. 565–574, 2014.
+[14] Wang, J.W., Gao, F., & Ip, W.H., Measurement of resilience and 
+its application to enterprise information systems, Enterprise 
+Information Systems , vol. 4(2), pp. 215–223, 2010.
+
+===== PAGE 14 =====
+international journal of critical infrastructure protection 23 (2018) 112–125 
+125 
+[15] Barker, K., Ramirez-Marquez, J.E., & Rocco, C.M., 
+Resilience-based network component importance measures, 
+Reliability Engineering & System Safety , vol. 117, pp. 89–97, 2013.
+[16] Schöller, M., Smith, P., & Hutchison, D., Assessing risk for 
+network resilience, In: Proceedings of the 3rd International 
+Congress on Ultra Modern Telecommunications and Control 
+Systems and Workshops (ICUMT), pp. 1–7, 2011.
+[17] Stergiopoulos, G., Vasilellis, S., Lykou, G., Kotzanikolaou, P., & 
+Gritzalis, D., Critical infrastructure protection tools: 
+classification and comparison, In: Proceedings of the 10th 
+International Conference on Critical Infrastructure 
+Protection, 2016.
+[18] Chołda, P., Guzik, P., & Rusek, K., Risk-awareness in resilient 
+networks design: value-at-risk is enough, Proceedings of the 
+16th International Symposium on Telecom. Net. Strategy 
+and Planning, IEEE, pp. 1–6, 2014.
+[19] Doerr, C. and Martin-Hernandez, J., “A computational 
+approach to multi-level analysis of network resilience,” In: 
+Proceedings of the 3rd International Conference on 
+Dependability, 2010.
+[20] Jabbar, A., A framework to quantify network resilience and 
+survivability, Ph.D. thesis, University of Kansas, 2010.
+[21] Dikbiyik, F., Reaz, A.S., De Leenheer, M., & Mukherjee, B., 
+Minimizing the disaster risk in optical telecom networks. In: 
+Proceedings of the International Conference on Optical Fiber 
+Communication (pp. OTh4B-2). Optical Society of America, 
+2012.
+[22] Rohrer, J.P., Jabbar, A., & Sterbenz, J.P., Path diversification for 
+future internet end-to-end resilience and survivability, 
+Telecommunication Systems , 56(1), 49–67, 2014.
+[23] Vasconcelos, M.F. & Salles, R.M., Resilience in computer 
+network management, In: Proceedings of the Networking, 
+LNCS, pp. 109–120, 2012.
+[24] Soupionis, Y., & Benoist, T., Experimental Platform for 
+Internet Contingencies. In: Proceedings of the Workshop on 
+Security and Resilience of Cyber-Physical Infrastructures, 
+London, UK, (pp. 16–19), 2016.
+[25] Bursztein, E., & Goubault-Larrecq, J., A logical framework for 
+evaluating network resilience against faults and attacks. In: 
+Proceedings of the Annual Asian Computing Science 
+Conference (pp. 212-227). Springer, Berlin, Heidelberg, 2007.
+[26] Cetinkaya, E.K., Broyles, D., Dandekar, A., Srinivasan, S., & 
+Sterbenz, J.P., A comprehensive framework to simulate 
+network attacks and challenges. In: Proceedings of the 
+Congress. Ultra Modern Telecom. and Control Systems 
+(ICUMT), (pp. 538–544), IEEE, 2010.
+[27] Liu, M., Feng, T., Smith, P., & Hutchison, D., Situational 
+awareness for improving network resilience management, 
+In: Proceedings of the International Conference on 
+Information Security Practice and Experience, pp. 31–43, 
+2013.
+[28] Smith, P., Hutchison, D., Sterbenz, J.P.G., Schöller, M., Fessi, A., 
+Karaliopoulos, M., Lac, C., & Plattner, B., Network resilience: a 
+systematic approach, IEEE Communications Magazine , vol. 
+49(7), pp. 88–97, 2011.
+[29] Runeson, P., Höst, M., Rainer, A., & Regnell, B., Case Study 
+Research in Software Engineering, Wiley, 2012.
+[30] Johansson, J., Risk and vulnerability analysis of 
+interdependent technical infrastructures: addressing 
+socio-technical systems, Ph. D. thesis, Lund University, 2010.
+[31] Sankarakrishnan, A., & Billinton, R., Sequential Monte Carlo 
+simulation for composite power system reliability analysis 
+with time varying loads, IEEE Transactions on Power Systems , 
+vol. 10(3), pp. 1540–1545, 1995.
+[32] Pinheiro, J.M.S., Dornellas, C.R.R., Schilling, M.T., Melo, A.C.G., 
+& Mello, J.C.O., Probing the new IEEE reliability test system 
+(RTS-96): HL-II assessment, IEEE Transactions on Power 
+Systems , vol. 13(1), pp. 171–176, 1998.
+[33] ISO 31000:2009, Risk Management—Principles and 
+Guidelines. International Organization for Standardization, 
+Geneva, Switzerland, 2009. 

@@ -1,0 +1,3663 @@
+172
+© 2021 Society of Chemical Industry and John Wiley & Sons, Ltd
+Original Article
+Correspondence to: Farkhondeh Jabari, Power Systems Operation and Planning Research Department, Niroo Research 
+Institute (NRI), Tehran, Iran. E-mail: fjabbari@nri.ac.ir
+A biogas-steam combined cycle for 
+sustainable development of industrial-
+scale water-power hybrid microgrids: 
+design and optimal scheduling
+Farkhondeh Jabari , Hamidreza Arasteh, Alireza Sheikhi-Fini, Power Systems Operation and 
+Planning Research Department, Niroo Research Institute (NRI), Tehran, Iran
+Hadi Ghaebi, Department of Mechanical Engineering, University of Mohaghegh Ardabili, Ardabil, Iran
+Mohammad-Bagher Bannae-Sharifian, Behnam Mohammadi-Ivatloo, Faculty of Electrical and 
+Computer Engineering, University of Tabriz, Tabriz, Iran
+Mousa Mohammadpourfard, Faculty of Chemical and Petroleum Engineering, University of Tabriz, 
+Tabriz, Iran
+Received April 23 2021; Revised August 09 2021; Accepted September 16 2021;
+View online October 23, 2021 at Wiley Online Library (wileyonlinelibrary.com);
+DOI: 10.1002/bbb.2300; Biofuels, Bioprod. Bioref. 16:172–192 (2022)
+Abstract: Lack of sufficient pure water resources and energy crises are two important issues in summer, 
+especially for remote communities located in tropical zones. Electricity is used for seawater desalination, 
+and power generation units need freshwater for energy extraction, conversion, transportation, and 
+distribution. The design and operation of renewable energy sources based on water-energy hybrid grids 
+therefore reduce on-peak electricity demand, potable water scarcity, and pollutant emissions, significantly. 
+This paper proposes a combined cycle for water and power production and investigates its performance 
+under different ambient air temperatures and various load levels. First, biogas is employed to fuel a gas 
+turbine electricity generation process. Then, its waste heat is utilized in a steam turbine heat-and-power 
+extraction cycle. This heating flow is used in a water-heater air-cooler desalination process. A non-linear 
+optimization problem is developed under engineering equation solver (EES) and generalized algebraic 
+modeling system (GAMS) with the aim of finding the near-optimal operating points of the proposed 
+industrial-scale co-generation system, considering its technical constraints and changes of fresh water 
+and power demands during a 24 h operating period. This stand-alone microgrid is able to produce 
+2.8 L of drinking water per second and 5.8 MW of electricity for large industrial sectors with a minimum 
+efficiency of 37%. Replacing natural gas with biofuels in the water-power nexus contributes most to 
+emissions mitigation, peak electrical-demand reduction, and sustainable water treatment. © 2021 Society 
+of Chemical Industry and John Wiley & Sons, Ltd
+Key words: biogas-steam combined cycle; cogeneration; waste heat recovery; water-power nexus
+
+Original Article: Industrial-scale water-power hybrid microgrids
+F Jabari et al.
+© 2021 Society of Chemical Industry and John Wiley & Sons, Ltd  |  Biofuels, Bioprod. Bioref. 16:172–192 (2022); DOI: 10.1002/bbb.2300
+173
+Introduction
+I
+n summer, tropical regions face fresh water and energy 
+crises due to the large amount of electricity consumed 
+by the air conditioners and the seawater desalination 
+plants and inadequate natural water resources.1 Electrical 
+power is required for seawater desalination and pure water is 
+employed for cooling, heating, and energy production.2 To 
+solve the issues raised by the global water and energy crises, 
+the renewable energy resources based co-generation plants 
+are developed.3
+Cogeneration is an approach for improving energy 
+efficiency, reducing energy consumption, and controlling 
+environmental pollution.4 Some of the topics in this area that 
+have attracted interest worldwide recently are downsizing 
+the cogeneration systems, improving their efficiency, and 
+incorporating them to meet different objectives. Poly-
+generation systems are modified forms of cogeneration that 
+meet more than two objectives, including the provision of 
+heat, power, cooling, and the production of energy or fuels.5 
+This paper discusses recent studies and practical experiences 
+related to trigeneration and poly-generation systems.
+Motivation
+Due to the high penetration level of renewable energy sources 
+(RESs), and considering the possible fluctuations in their 
+energy production, sufficient operational flexibility should 
+be provided to mitigate concerns regarding the balance 
+of supply and demand.6–8 Technical problems related to 
+increasing the penetration level of RESs, as well as associated 
+market mechanism problems, could be solved by improving 
+energy system flexibility.9 It is therefore important to provide 
+a flexible system to overcome the challenges of production 
+fluctuations. To achieve this goal, one of the most important 
+solutions is to use combined heat and power (CHP) systems.6 
+The use of RESs as the prime movers for the cogeneration of 
+power and heat could be considered as progress towards a 
+zero-carbon society. Such an approach would considerably 
+enhance thermodynamic performance by improving the 
+overall efficiency of the system. Moreover, compared with a 
+stand-alone system, greater profitability could be achieved by 
+supplying a secondary product, providing greater revenue.10
+In brief, water deficit tension and energy crisis, especially 
+in tropical regions as the consequence of increased 
+utilization of heating, ventilation, and air conditioning 
+(HVAC) devices, are the issues considered in this paper. 
+Climate change and an increase in temperature cause an 
+increase in HVAC utilization periods and therefore increase 
+electricity consumption. Such phenomena negatively affect 
+the performance of the desalination units that consume 
+electricity (for electrolysis, for instance) and reduce their 
+potential to produce pure water throughout the summer. The 
+design and operation of active microgrids as ‘procumers’ that 
+could act as both the producers and consumers of water and 
+electric energy, by using the RESs for large industries, would 
+enable these systems to function independently from the local 
+electric and water distribution networks, and also reduce the 
+consumption at peak periods.11
+Literature survey
+Nowadays, satisfying the increasing demand for electricity 
+is a challenge in many countries.12,13 In this regard, 
+cogeneration is a compelling way to enhance the efficiency 
+of energy harvesting. By increasing the penetration level 
+of RESs, the simultaneous utilization of CHPs and RESs 
+could be considered as a promising strategy towards energy 
+transition.10,14
+Studies on RES-based poly-generation methods have 
+become more attractive.5,15 For example, a biomass-solar 
+driven building cooling and power (BCP) plant is studied 
+by Wang and Yang16 from the energy-exergy-emission 
+perspective, with uncertain loads and solar irradiation. They 
+demonstrated that the use of photovoltaic (PV) panels and 
+heat collectors produced 17.56% exergy and 62.23% energy 
+efficiency, respectively. In a study by,17 the solar Rankine cycle 
+was simulated and found to generate 62.1 MW electricity 
+and 20.7 MW cooling capacity using parabolic collectors, 
+heliostats, heat storage unit, and the water-cooled absorption 
+chiller. The maximum energy efficiency of this cogeneration 
+plant increases up to 64% and 70% using parabolic troughs 
+with an axis orientation and heliostats with central receivers, 
+respectively. Angrisani et al.18 found that the thermo‐economic 
+performance of the solar heating and cooling units is assessed 
+under 10–70° tilt angel, 30–60 m2 solar collection area, various 
+storage capacities, and variable prices. Fong et al.19 designed 
+and simulated a solar-geothermal hybrid air conditioning 
+system to save electricity by up to 44% in large-scale office 
+buildings. In this research, geothermal heat and solar irradiance 
+were used by radiant cooling equipment and a water heater, 
+respectively. Another study20 coupled solar PV cells with an 
+anaerobic digestion process to provide electricity for wastewater 
+treatment. The results showed that the bio-PV hybrid system 
+in Phoenix needed a solar collection area of 4032 m2, whereas 
+Lansing needed a wider solar collection area (5821 m2) because 
+of its cold climate.
+Many researchers have focused on combined systems 
+using Stirling engines and the thermochemical conversion of 
+biomass.21 In one study,22 a solar Stirling cycle was combined 
+ 19321031, 2022, 1, Downloaded from https://scijournals.onlinelibrary.wiley.com/doi/10.1002/bbb.2300 by Cas-Institute Of Urban Environment, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+F Jabari et al.
+Original Article: Industrial-scale water-power hybrid microgrids
+174
+© 2021 Society of Chemical Industry and John Wiley & Sons, Ltd  |  Biofuels, Bioprod. Bioref. 16:172–192 (2022); DOI: 10.1002/bbb.2300
+with a reverse osmosis seawater desalination process 
+and a CO2 transcritical power plant for the simultaneous 
+production of power, pure water, and hydrogen. If CO2 
+turbine inlet pressure and temperature respectively increase 
+and decrease, optimum quantities of outputs will be 
+increased. A review of the differentiation of Stirling engines23 
+considered modes of operation, cylinder configurations, 
+and piston coupling. Another study24 discussed important 
+technological challenges, as well as optimization aspects. 
+The economic performance of the PV integrated vapor 
+compression refrigeration process was compared in two 
+cases without and with the application of pumped hydro 
+storage (PHS).25 The PHS unit pumps water to the upper 
+reservoir, stores potential energy at low-price hours and uses 
+it within the high-price time intervals or on-peak cooling-
+load periods.26 The stability of the hydropower station could 
+also be studied using the non-linear mathematical model 
+of the Francis hydro-turbine governing system considering 
+both the fractional-order derivative and the time delay.28 
+Xu et al.29 proved that the integration of PHS units with the 
+wind-solar assisted power generation systems overcomes the 
+randomness, volatility, and intermittency of wind speed and 
+solar irradiance and improves reliability and stability.
+Many researchers have studied the optimal scheduling of 
+renewable and CHP–based systems, in which different types 
+of distributed generation (DGs) have been considered.10,30 
+A stochastic model and the Modified Firefly Algorithm 
+(MFA) have been proposed30 to solve a mixed-integer 
+non-linear programming problem. By taking the systems’ 
+reliability level into account, the uncertain parameters, e.g., 
+wind and irradiation data, as well as electricity prices were 
+modeled.30 The solution of an optimal scheduling problem 
+for CHP-based microgrid with reconfigurable capability 
+has been addressed. The same paper analyzed the economic 
+and environmental operation of CHP-based reconfigurable 
+microgrids. Mirzaei et al.31 proposed a two-stage hybrid 
+stochastic–information gap-decision theory based on the 
+network-constrained unit commitment framework. Their 
+paper investigated the influence of feasible operating regions 
+of the CHP units on the energy and flexible ramping reserve 
+market and operation cost of the system. The uncertainty of 
+renewable energy sources have also been considered.32 Li et al.33 
+argued that an iterative approach could be considered as an 
+effective way to solve a complex non-linear problem. Several 
+types of DGs have been modeled, such as wind turbines, 
+CHPs (in terms of prime mover technologies, i.e., gas 
+turbines, micro-turbines, diesel generators, and fuel cells), 
+photovoltaic units, and conventional power- and heat-only 
+units.34 The same paper provided a multi-objective function 
+in which operation costs, purchasing costs from the grid, 
+and emission rates and penalties were considered. Two 
+methods were considered in this paper to solve the proposed 
+problem. First, a single-objective optimization problem was 
+developed using the financial and emission aspects. Second, 
+two objective functions were optimized simultaneously. It 
+was found that the solutions of single and multi-objective 
+problems may be conflicting. On the basis of the decision 
+maker’s preferences or priorities, an approach was developed 
+to choose the best solution. By comparing these techniques, it 
+was shown that not only is the single-objective approach easy 
+to implement but that it is able to achieve better compromise 
+solutions.
+Misaghian et al.35 introduced an optimization model for 
+an industrial microgrid with the aim of minimizing the cost 
+terms through the optimization of a day-ahead scheduling 
+problem. Photovoltaic and CHP units, wind turbines, and 
+thermal and electrical energy storages are modeled in this 
+paper. Another paper36 shows that the implementation of 
+electrical boiler and heat storage could considerably decrease 
+the wind power curtailments. The electrical boiler could 
+mitigate wind curtailment, and thermal energy storage 
+could provide more savings by decreasing every kWh wind 
+curtailment. Other research37 has found that the exergy 
+efficiency of the optimal unit would be better than a stand-
+alone organic Rankine cycle (ORC) electrical unit.
+Different approaches have been proposed to optimize 
+the performance of cogeneration systems. Generally, the 
+operation of energy systems should be enhanced considering 
+thermodynamic performance, economic feasibility, and 
+environmental issues.10 Search-based methods38 and calculus 
+techniques39 are two types of optimization schemes that have 
+been addressed in the literature.40,41
+Martinez et al.42 studied the effectiveness of solar units for 
+cogeneration systems and the evaluation of prime movers 
+in CHPs. They investigated several micro-CHP models 
+for generating electricity and heat by using biomass, solar 
+energy, and fuel cells. Another work43 studied the current 
+gaps in this technology through the development of models 
+and economic analysis. Modi et al.44 provided an overview 
+of solar-based CHPs, pointing out fully renewable plants in 
+Denmark. This paper carried out comparative analyses among 
+the existing models in which PV modules, solar flat plates, 
+ground heat pumps, biomass burner, and ORC have been 
+utilized. Another study45 investigated various approaches to 
+waste heat recovery in solar and geothermal units.
+Hydropower plants, which are carbon-free and use 
+inexhaustible resources to produce energy and compensate 
+for wind and PV power output fluctuations, may cause 
+significant damage to the ecosystem. Despite some ecological 
+advantages, such as climate change mitigation, peak demand 
+ 19321031, 2022, 1, Downloaded from https://scijournals.onlinelibrary.wiley.com/doi/10.1002/bbb.2300 by Cas-Institute Of Urban Environment, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+Original Article: Industrial-scale water-power hybrid microgrids
+F Jabari et al.
+© 2021 Society of Chemical Industry and John Wiley & Sons, Ltd  |  Biofuels, Bioprod. Bioref. 16:172–192 (2022); DOI: 10.1002/bbb.2300
+175
+management and flooding risk reduction, hydropower units 
+may cause some environmental and social risks at the local 
+and regional level.46 Other environmental drawbacks of 
+hydropower units are the reduction and extinction of fish 
+populations due to the prevention of fish migration and 
+movement, loss of aquatic habitats, significant changes in 
+hydrological flow regimes, deterioration of landscapes, water 
+chemistry alteration, depletion of floodplain wetlands, the 
+presence of barriers to migration corridors, sedimentation, 
+and biodiversity loss, and loss of wildlife and habitats due 
+to the land clearance and removal of natural vegetation.47 
+Even if hydropower is a renewable energy source, some 
+greenhouse gases may be released during (a) the production 
+and transportation of materials needed for construction, 
+(b) heating and cooling systems in the operation stage, and 
+(c) transportation for maintenance.48 Solutions to these 
+problems include strengthening the biological diversity of the 
+benthic fauna (biotope adjustments), fish-friendly turbines, 
+controlling erosion in upstream watersheds, and careful 
+management of the water elevation, especially in summer.49 
+The minimum flow should also be released to ensure the 
+hydrologic continuity of the river and the consequent 
+conservation of natural habitat and ecological life.50 
+Moreover, the sedimentation problem should be mitigated 
+by constructing the small-scale weirs and mechanically 
+removing the sediments (dredging).51 It is important to 
+investigate the water/food/energy utilization patterns of the 
+local population living in such areas, the water requirements 
+of flora and fauna, the potential losses that can take place in 
+forests/pastures/lands under emergency situations, and the 
+geological/topographic/climactic conditions along with the 
+social and cultural effects of the hydropower projects.52
+Monte Carlo simulation-based reliability analysis should 
+be carried out on solar combined PHS systems using the loss 
+of load expectation (LOLE) and expected energy not served 
+(EENS) indices.53 In one study,54 a solar-fuel cell combined 
+heat and power system was designed and analyzed from the 
+energy and exergy points of view. In off-peak time intervals, the 
+surplus electrical power produced by the PVs was employed 
+for hydrogen production.55 During on-peak demand hours, the 
+stored hydrogen was used by the fuel cell for power generation. 
+An absorption chiller unit and a heat recovery steam generator 
+are integrated with a PV-fuel cell hybrid system and fed from 
+the flue gases of SOFC for cooling and heating of a residential 
+building. In all of the solar-assisted systems mentioned, 
+electrical energy storage, such as batteries,56 thermal systems 
+such as molten salt technology,57 and phase-change materials,58 
+could be used for the trigeneration of heat, distillate water, 
+and power when sunlight is insufficient and at night. The 
+uncertainties associated with solar irradiations under cloudy 
+and clear-sky conditions59 should also be modeled using 
+information-gap decision theory to maximize economic 
+benefits in robustness or risk aversion and opportunistic or 
+risk-seeker decision-making strategies, respectively.60
+In another study,61 the natural gas-fired Brayton cycle is 
+linked with cooling and heating modes of an air-to-air heat 
+pump to procure its power consumption, which releases 
+more ozone depletion substances. It recommends that 
+the electricity requirements of the air source heat pump 
+in summer cooling and winter heating modes should be 
+supplied by a biogas-fueled gas turbine power generation 
+cycle to reduce CO2 footprints and fossil fuel consumption. In 
+a further study,62 the energetic, economic and environmental 
+(3E) aspects of the biogas upgrading, biogas driven combined 
+heat and power plant, and the biogas integrated SOFC are 
+compared using the energy efficiency, payback period and 
+green production degree indices. Studies proved that the 
+biogas upgrading unit has the highest energy efficiency 
+(46.5%) and the shortest payback period (8.9 years) with 
+the lowest green production degree (9.29 gd.day−1). Despite 
+the highest green production degree (21.77 gd.day−1) in 
+the case of a biogas integrated SOFC system, the payback 
+period and energy efficiency are longer (14.5 years) and lower 
+(13.6%), respectively, than those reported for the biogas 
+upgrading system. In another study,63 a bi-level programming 
+approach is introduced to minimize the energy-generation 
+cost and the water treatment cost. The mass balance and 
+the availability of fossil fuels, electricity balance criterion, 
+power and water production capacities, energy demand for 
+water treatment, the water requirement of the electricity 
+generation process, availability of groundwater-surface-gray 
+water, and the permitted range of CO2 emission production 
+have been considered as optimization constraints. No 
+wastewater management is considered in this research, 
+while the treatment, disposal, or recycling of the wastewater 
+may affect the energy-water nexus optimization decisions 
+significantly.64 Finally, one study65 has classified several 
+existing cogeneration systems in terms of the combination of 
+prime movers (hybrid cogeneration), and has also explained 
+their main interests and findings.
+Based on existing research, as far as the authors are 
+aware, there have been no studies of the design and optimal 
+scheduling of the biofuel-steam combined cycle coupled 
+humidification-dehumidification (HDH) desalination 
+microgrid. Moreover, in this paper, the optimum operation 
+point of the cogeneration system has been found based 
+on both the electricity and the freshwater demands of an 
+industrial-scale end user – an aspect that is not usually 
+considered in the design and evaluation of a multi-generation 
+facility. Hence, not only is the thermodynamic design 
+ 19321031, 2022, 1, Downloaded from https://scijournals.onlinelibrary.wiley.com/doi/10.1002/bbb.2300 by Cas-Institute Of Urban Environment, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+F Jabari et al.
+Original Article: Industrial-scale water-power hybrid microgrids
+176
+© 2021 Society of Chemical Industry and John Wiley & Sons, Ltd  |  Biofuels, Bioprod. Bioref. 16:172–192 (2022); DOI: 10.1002/bbb.2300
+principle of the biogas-steam water-power nexus presented 
+but the load-generation balance criterion is also applied to 
+its performance optimization process. This has not been 
+investigated previously.
+Contributions
+As mentioned, the design and performance assessment of 
+the different multi-generation systems have recently been 
+discussed. However, the tropical regions of southern Iran 
+face annual on-peak electricity and freshwater demands and 
+severe air pollution in summer. A biofuel-steam combined 
+cycle power plant that produces both fresh water and power 
+has not been designed and investigated for large industrial 
+end-users. Moreover, the optimal operating points of the 
+reviewed systems have not been found considering the 
+pure water and electrical demands of the water-power hub 
+network. Hence, this paper presents the thermodynamic 
+design and evaluation of the biogas-steam combined 
+cycle for supplying a benchmark industrial consumer. In 
+addition, the sensitivity of the proposed system to potable 
+water and power demands and environmental conditions 
+such as the air temperature are analyzed over the 24 h time 
+horizon. Thermo-economic optimization of the bio-fueled 
+cogeneration plant is carried out under engineering equation 
+solver (EES) and the generalized algebraic mathematical 
+modeling system (GAMS). The daily electrical load-
+generation mismatch is minimized as the main objective 
+function. Moreover, the thermal restrictions of the bio-
+fueled desalination and electricity procurement method are 
+modeled as optimization constraints. The energy efficiency, 
+optimal values of the decision variables, and the objective 
+function (load-generation imbalance at each hour and 
+over the sample day) have been obtained and are discussed 
+comprehensively to reveal the best performance of the system 
+under peak demands and severe climatic conditions.
+The original aspects of the current paper are as follows:
+•• Design, verification and optimization of a bio-fueled 
+combined cycle power plant are presented under variable 
+ambient air temperature and different electrical and 
+potable water demands of industrial end users. In most 
+reviewed works, the operating points of the systems that 
+are presented are usually found without considering the 
+electricity and freshwater demands of the customer side. 
+In this paper, the impact of the demand fluctuations 
+and the environmental parameter variations in the 
+proposed microgrid are studied. Moreover, a non-linear 
+programming approach is developed to minimize 
+the total electrical load generation imbalance to find 
+the near-optimal operating point of the combined 
+desalinated water and power (CWP) production 
+facility during a 24 h horizon. In addition, the technical 
+concepts of the CWP plant are modeled as equality and 
+inequality constraints.
+•• There are two main reasons for insufficient drinking water 
+resources: Physical issues and techno-economic issues. 
+The physical water scarcity is a result of inadequate natural 
+water resources to supply a region’s consumption, while 
+the techno-economic issues refer to the poor management 
+of sufficient available water resources. In summer 2021, 
+water scarcity in southern Iran has attracted significant 
+attention because of frequent power outages and techno-
+economic issues. Hence, the operation of a renewable-
+energy-source-based seawater desalination system is 
+essential in such climates. A desalination unit is activated 
+by the condenser heat exchanger. In other words, the high-
+temperature waste heat is received from the working fluid 
+of the steam turbine power generation cycle and used for 
+seawater purification. This subsystem is used to mitigate 
+freshwater shortages in very hot and humid coastal areas.
+•• The fresh water and power utilized by an industrial 
+sector or a number of residential customers are procured 
+by the HDH process and the biogas-fueled combined 
+cycle power plant, respectively. The water and energy 
+produced by the proposed system can be used by large 
+consumers and can reduce the peak demands of the 
+regional water and power companies. In other words, 
+the stand-alone water-energy hub network introduced 
+reduces the number of people affected by the water-
+energy crises in summer and improves social welfare.
+•• Zero-emission production: The use of biogas and 
+recovered waste heat for cogeneration of power and 
+freshwater reduces daily greenhouse gas emissions 
+significantly. A secure and grid-independent combined 
+power and water generation system not only increases the 
+customers’ satisfaction from water and energy services 
+but also mitigates the pollutant greenhouse gases.
+Materials and methods
+The proposed combined fresh water and power production 
+grid is shown in Fig. 1. The ambient air is first compressed 
+and then combusted with biogas (60% CH4 + 40% CO2) 
+to produce power after passing a gas turbine. An electrical 
+generator is mechanically coupled to the gas turbine to 
+convert its net power into electricity and to supply the total 
+energy consumption of the industrial customer. A detailed 
+problem formulation can be presented for each stage.
+Compressor
+The compressor with the efficiency of ηcomp is employed for 
+raising the temperature and pressure of the ambient air from 
+T1 and P1 up to T2 and P2, respectively. By assuming the air as 
+ 19321031, 2022, 1, Downloaded from https://scijournals.onlinelibrary.wiley.com/doi/10.1002/bbb.2300 by Cas-Institute Of Urban Environment, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+Original Article: Industrial-scale water-power hybrid microgrids
+F Jabari et al.
+© 2021 Society of Chemical Industry and John Wiley & Sons, Ltd  |  Biofuels, Bioprod. Bioref. 16:172–192 (2022); DOI: 10.1002/bbb.2300
+177
+Figure 1. Schematic presentation of the proposed bio-steam combined cycle for cogeneration of power and pure water.
+an ideal gas, its temperature after compression is calculated 
+by Eqns (1)–(4), where, s1 is the entropy of the ambient air 
+entering the compressor. The entropy and temperature of the 
+compressed air under the isentropic compression process are 
+shown as s s
+2, and T s
+2, , respectively:
+s
+s s
+1
+2
+=
+, 
+(1)
+T
+T
+P
+P
+s
+k
+k
+2
+1
+2
+1
+1
+,  
+
+
+
+
+
+
+
+(2)
+comp
+s
+s
+h
+h
+h
+h
+T
+T
+T
+T
+
+
+
+
+
+
+2
+1
+2
+1
+2
+1
+2
+1
+,
+,
+
+(3)
+T
+T
+T
+T
+T
+P
+P
+T
+s
+comp
+comp
+k
+k
+2
+2
+1
+1
+1
+2
+1
+1
+1
+1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+,
+
+
+
+(4)
+Combustion stage
+According to Eqns (5)–(7), biogas and air are combusted 
+at the molar ratio, χ, where, na, nbg and ncp refer to the 
+molar flow rate of air, biogas and combustion products, 
+respectively. Based on balance Eqn (8), the biogas with a 
+mass flow rate of mbg, mole number of nbg and temperature 
+of T3 and the pressurized air with a mass flow rate of ma, 
+molar flow rate of na and temperature of T2 are combusted 
+together and result in combustion products with a mass flow 
+rate of mcp, the molar flow rate of ncp and temperature of T4
+. The mass balance constraints (9)–(12) are used to obtain 
+the unknown variables xi. Mackenzie et al.66 reported that 
+air contains 78.08% N2, 20.94% O2, 0.03% CO2, and small 
+volumes of other gases. Hence, the gaseous composition of 
+the air in constraint (8) is considered to be close to those 
+reported by Mackenzie et al.67
+
+
+n
+n
+bg
+a
+ 
+
+(5)
+ 19321031, 2022, 1, Downloaded from https://scijournals.onlinelibrary.wiley.com/doi/10.1002/bbb.2300 by Cas-Institute Of Urban Environment, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+F Jabari et al.
+Original Article: Industrial-scale water-power hybrid microgrids
+178
+© 2021 Society of Chemical Industry and John Wiley & Sons, Ltd  |  Biofuels, Bioprod. Bioref. 16:172–192 (2022); DOI: 10.1002/bbb.2300
+
+
+
+n
+n
+n
+cp
+a
+bg
+
+
+
+(6)
+
+
+n
+n
+cp
+a
+ 
+1
+
+
+(7)
+ 0 6
+0 4
+0 7748
+0 2059
+0 000
+4
+2
+2
+2
+.
+.
+[ .
+.
+.
+CH
+CO
+
+
+
+
+
+
+Biogas
+N
+O
+6
+7
+444
+8
+444
+3
+0 019
+1
+2
+2
+CO 
+
+
+
+
+.
+]
+H O
+Pressurized air
+6
+7
+444444444
+8
+444444444
+
+x
+x
+x
+x
+N
+O
+CO
+H O
+2
+2
+2
+2
+2
+2
+2
+2
+N
+O
+H O
+Combustion products
+
+
+
+
+
+CO
+6
+7
+444444444
+8
+444444444
+
+(8)
+xN2
+0 7748
+1
+
+
+.
+ 
+(9)
+xO2
+0 2059 1 2
+1
+0
+0 17158
+
+
+
+
+
+
+.
+.
+.
+
+
+
+
+(10)
+xCO2
+0 0003
+1
+
+
+
+.
+
+
+
+(11)
+xH O
+2
+0 019
+1 2
+1
+
+
+
+.
+. 
+
+
+(12)
+According to energy balance Eqns (13) and (14), the total 
+heat losses of the combustion chamber ( Qcc loss
+,
+) is equal to the 
+energy level of products (Hcp) minus the energy content of 
+reactants (Hcr).
+Q
+LHV
+cc loss
+cc
+,
+
+
+
+
+1 
+
+(13)
+LHV
+H
+H
+n
+h
+h
+h
+n
+cp
+cr
+cp
+f
+cp
+cr
+
+
+
+
+
+
+
+
+ 
+
+0
+0
+Energy level of products
+h
+h
+h
+f
+cr
+0
+0
+
+
+
+
+
+Energy level of reactants
+
+(14)
+Equation (15) is used to calculate the air pressure at the end 
+of the combustion process (P4). The constant ∆Pcc refers to 
+the percentage of the air pressure drop during the combustion 
+process. The mass flow rate of the states is obtained from the 
+fuel-air molar ratio (χ) as Eqns (16)–(18). Mbg and Ma are the 
+molar mass of biogas and air, respectively:
+P
+P
+Pcc
+4
+2 1
+
+
+
+
+
+
+(15)
+
+
+
+m
+m
+ma
+1
+2
+=
+=
+
+(16)
+
+
+
+m
+m
+m
+M
+M
+bg
+a
+bg
+a
+3 
+
+
+
+
+
+
+
+
+
+
+(17)
+
+
+
+m
+m
+ma
+4
+5
+1
+
+
+
+
+
+ 
+(18)
+Power generation of the gas turbine
+The combustion products with pressure of P4 and 
+temperature of T4 are expanded through the gas turbine. As 
+formulated by Eqns (19)–(22), the temperature and pressure 
+of the combustion products after passing the gas turbine are 
+decreased to T5 and P5, respectively. The net power output of 
+the gas turbine cycle (Egt net
+,
+) is calculated as Eqns (23)–(29). 
+Then, generator 1 converts it into electricity. Note that Cgas
+Tj 
+and Ca
+Ti refer to the heating capacity of the exhaust gases at 
+state j and the air entering and leaving the compressor at 
+state i, which can be calculated from (24)–(28) and (29), 
+respectively.
+s
+s s
+4
+5
+=
+, 
+(19)
+T
+T
+P
+P
+s
+k
+k
+5
+4
+5
+4
+1
+,  
+
+
+
+
+
+
+
+(20)
+gt
+s
+s
+h
+h
+h
+h
+T
+T
+T
+T
+
+
+
+
+
+
+5
+4
+5
+5
+5
+4
+5
+4
+,
+,
+
+(21)
+T
+T
+T
+T
+T
+P
+P
+T
+gt
+s
+gt
+k
+k
+5
+5
+4
+4
+4
+5
+4
+1
+4
+1
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+,
+
+(22)
+E
+E
+E
+C
+T
+C
+T
+C T
+C
+m
+m
+m
+m
+gt net
+gt
+Comp
+gas
+T
+gas
+T
+a
+T
+,
+
+
+
+
+
+
+
+
+
+
+
+
+4
+4
+5
+5
+2
+2
+1
+4
+5
+2
+a
+T T
+1 1
+
+
+(23)
+C
+x
+C
+x C
+x
+C
+x
+C
+j
+gas
+T
+N
+N
+T
+O
+O
+T
+CO
+CO
+T
+H O
+H O
+T
+j
+j
+j
+j
+j
+
+
+
+
+
+
+
+
+
+
+1
+4
+2
+2
+2
+2
+2
+2
+2
+2
+
+;
+, ,5 6
+
+(24)
+C
+C
+C
+T
+C
+T
+C
+T
+N
+T
+N
+N
+j
+N
+j
+N
+j
+j
+2
+2
+2
+2
+2
+0
+1
+2
+2
+3
+3
+
+
+
+
+,
+,
+,
+,
+
+(25)
+C
+C
+C
+T
+C
+T
+C
+T
+O
+T
+O
+O
+j
+O
+j
+O
+j
+j
+2
+2
+2
+2
+2
+0
+1
+2
+2
+3
+3
+
+
+
+
+,
+,
+,
+,
+
+(26)
+C
+C
+C
+T
+C
+T
+C
+T
+CO
+T
+CO
+CO
+j
+CO
+j
+CO
+j
+j
+2
+2
+2
+2
+2
+0
+1
+2
+2
+3
+3
+
+
+
+
+,
+,
+,
+,
+
+(27)
+C
+C
+C
+T
+C
+T
+C
+T
+H O
+T
+H O
+H O
+j
+H O
+j
+H O
+j
+j
+2
+2
+2
+2
+2
+0
+1
+2
+2
+3
+3
+
+
+
+
+,
+,
+,
+,
+
+(28)
+C
+C
+C T
+C
+T
+C
+T
+i
+a
+T
+a
+j
+a
+j
+a
+j
+i 
+
+
+
+
+0
+1
+2
+2
+3
+3
+1 2
+,
+,
+,
+,
+;
+,
+a
+
+(29)
+ 19321031, 2022, 1, Downloaded from https://scijournals.onlinelibrary.wiley.com/doi/10.1002/bbb.2300 by Cas-Institute Of Urban Environment, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+Original Article: Industrial-scale water-power hybrid microgrids
+F Jabari et al.
+© 2021 Society of Chemical Industry and John Wiley & Sons, Ltd  |  Biofuels, Bioprod. Bioref. 16:172–192 (2022); DOI: 10.1002/bbb.2300
+179
+Heat exchanger
+In this stage, the flue gases exchange heat with the working 
+fluid of the steam turbine cycle, as stated in Eqn (30). The 
+pressure at the end of the heat exchanging process is obtained 
+from Eqn (31). Then, s8 and h8 are found from T8 and P8, 
+where, ∆Phex is the percentage of the pressure drop in the heat 
+exchanger:
+
+
+
+m
+m
+m
+C
+T
+C
+T
+h
+h
+gas
+T
+gas
+T
+H O
+5
+5
+6
+6
+8
+7
+5
+6
+2
+
+
+
+
+
+(30)
+P
+P
+P
+i
+i
+i
+hex
+
+
+
+
+ 
+1 1
+6 8
+
+;
+, 
+(31)
+Steam turbine power generation
+As expressed in the previous subsection, the pressurized 
+liquid is exchanged into the superheated vapor after passing 
+the heat exchanger and absorbing the waste heat from the gas 
+turbine output gases. The superheated vapor is then expanded 
+by the steam turbine, while producing the net mechanical 
+power, Est net
+,
+, which can be obtained from Eqn (32). It 
+is then converted into electricity by generator 2. In other 
+words, Eqns (33) and (34) are used for finding h s
+9, and h9, 
+respectively. To calculate Est net
+,
+, the enthalpy of the saturated 
+vapor after expanding by the non-ideal steam turbine (h9) is 
+applied to Eqn (32), in which s8 and h8 are the entropy and 
+enthalpy of the superheated vapor entering the steam turbine, 
+respectively; s s
+9, and h s
+9, are the entropy and enthalpy of the 
+saturated vapor after the isentropic expansion process.
+E
+m
+h
+h
+m
+h
+h
+st net
+H O
+H O
+,
+
+
+
+
+
+
+
+
+
+2
+2
+8
+9
+7
+10 
+(32)
+s
+s s
+8
+9
+=
+, 
+(33)
+h
+h
+h
+h
+st
+s
+9
+8
+9
+8
+
+
+
+
+
+
+,
+
+(34)
+Condenser
+As formulated by (35) and (36), the saturated vapor changes 
+into the saturated liquid through the condenser coil. As in 
+Fig. 1, the salted water becomes warmer after passing through 
+the dehumidifier and heating by the warm and wet air. It 
+is then reheated by the working fluid of the steam turbine 
+power-generation cycle before entering the humidifier. The 
+hot saline water supplies the dry air, which is entering the 
+humidifier. Then, the remainder of the seawater is withdrawn 
+from the humidifier as brine. The hot and humid air becomes 
+the cooled dry air after exchanging heat with the initial 
+impure water. In the dehumidification stage, potable water 
+is generated by cooling the humid and hot air. The mass 
+and energy balance concepts at each component of the 
+desalination loop can be given by (37)–(44).67
+P
+P
+Pcond
+10
+9 1
+
+
+
+
+
+
+(35)
+
+
+Q
+m
+h
+h
+cond
+H O
+
+
+
+
+2
+9
+10 
+(36)
+•• Humidifier
+
+
+
+m
+m
+m
+w
+da
+a
+a
+b
+
+
+
+ 
+
+
+,
+,
+16
+15
+
+(37)
+
+
+
+m
+m
+m
+h
+h
+h
+h
+w w
+b b
+da
+a
+a
+,
+,
+,
+,
+13
+14
+16
+15
+
+
+
+
+ 
+(38)
+
+
+
+m
+m
+m
+s
+s
+s
+s
+b b
+w w
+da
+a
+a
+,
+,
+,
+,
+14
+13
+16
+15
+0
+
+
+
+
+  
+(39)
+•• Dehumidifier
+
+
+m
+m
+pw
+da
+a
+a
+
+
+
+
+
+
+,
+,
+16
+15 
+(40)
+
+
+
+m
+m
+m
+h
+h
+h
+h
+h
+w
+w
+w
+pw
+pw
+da
+a
+a
+,
+,
+,
+,
+,
+12
+11
+17
+16
+15
+
+
+
+
+
+
+
+(41)
+
+
+
+m
+m
+m
+s
+s
+s
+s
+s
+w
+w
+w
+da
+a
+a
+pw pw
+,
+,
+,
+,
+,
+12
+11
+15
+16
+17
+0
+
+
+
+
+
+
+
+
+(42)
+•• Heater
+
+
+m
+h
+h
+Q
+w
+w
+w
+cond
+,
+,
+13
+12
+
+
+ 
+
+(43)
+m
+s
+s
+w
+w
+w
+,
+,
+12
+11
+0
+
+
+  
+(44)
+where, ∆Pcond is the percentage pressure drop in the condenser; 
+Qcond is the heat flowing from the saturated vapor to the saline 
+water; mw, mda, mb and mpw are the mass flow rates of seawater, 
+dry air, brine, and potable water, respectively.
+Pump
+Based on P10 and T10, the enthalpy h10 and the specific volume 
+of the saturated liquid (vF,10) are determined and used for 
+calculation of h7 as Eqn (45). To compute mH O
+2 , h7 is applied 
+to Eqn (30). From mH O
+2 , the power consumption of the pump 
+(Epump) is determined from Eqn (46). These values are then 
+incorporated in Eqn (32).
+h
+h
+v
+P
+P
+F
+pump
+7
+10
+10
+7
+10
+
+
+
+
+
+,
+
+
+(45)
+ 19321031, 2022, 1, Downloaded from https://scijournals.onlinelibrary.wiley.com/doi/10.1002/bbb.2300 by Cas-Institute Of Urban Environment, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+F Jabari et al.
+Original Article: Industrial-scale water-power hybrid microgrids
+180
+© 2021 Society of Chemical Industry and John Wiley & Sons, Ltd  |  Biofuels, Bioprod. Bioref. 16:172–192 (2022); DOI: 10.1002/bbb.2300
+E
+m
+h
+h
+pump
+H O
+
+
+
+
+
+2
+7
+10 
+(46)
+Mixed-integer non-linear optimization 
+problem
+The hourly load-generation balance criterion is given by 
+Eqn (47). According to Eqn (48), the main objective of the 
+optimization problem is to minimize the total electrical 
+power mismatch between demand and generation sides 
+over the 24 h time period. If the value of the power 
+mismatch is not equal to zero and the energy demand is 
+greater than the generated power, the electricity load that 
+is not supplied should be satisfied by the main power grid. 
+The energy cost of the microgrid will then increase. In 
+other words, the amount of daily energy cost is indirectly 
+reduced by minimizing the power mismatch between load 
+and generation. Where, ηgen1 and ηgen2 are the electrical 
+efficiency of the generators 1 and 2, respectively. Moreover, 
+Eimb
+t
+ represents the electrical power imbalance at time t. 
+The energy demand of the industrial unit at operating time 
+interval t is shown with Eelec
+t .
+
+
+gen
+gt net
+t
+gen
+st net
+t
+elec
+t
+imb
+t
+E
+E
+E
+E
+1
+2
+
+
+
+
+
+,
+,
+
+(47)
+Objective function 
+
+
+
+Minimize
+Eimb
+t
+t
+T
+1
+24
+
+(48)
+Finally, the thermal efficiency of the combined cycle power 
+plant (ηth
+t ) is achieved as Eqn (49). The flowchart of the 
+proposed strategy is shown in Fig. 2.
+th
+t
+cc loss
+t
+cc loss
+t
+gt net
+t
+st net
+t
+Q
+Q
+E
+E
+ 
+
+
+1
+
+
+,
+,
+,
+,
+
+(49)
+Results and discussion
+To prove the feasibility and cost-effective capability of 
+the proposed CWP generation system, an industrial 
+unit located in southern Iran has been considered. The 
+generalized algebraic mathematical modeling system 
+(GAMS)68 and the engineering equation solver (EES)69 are 
+employed for simulations. In this research, the electricity 
+and potable water demands of the benchmark industrial 
+end user have been considered to ensure that the total 
+power/freshwater produced by the combined cycle can 
+meet the balance criterion. Hence, the optimum operating 
+point of the proposed system depends on the demand 
+value as formulated by the balance constraints (40) and 
+(47) and imported in the non-linear optimization problem. 
+As reported by Iran’s Meteorological Organization,70 the 
+ambient air temperature changes hourly. The electricity 
+and desalinated water demands of the industries have 
+been reported hour-by-hour. Hourly optimization of the 
+Start
+ Enter the daily proﬁles of                     .
+Set the constant coefﬁcients of the system components such as  
+Assign a value less than 0.17158 to biogas-air molar ratio as (10).
+Initialize the air mass ﬂow rate for each hour.
+Find the mass ﬂow rates of biogas and 
+combustion products using (16)-(18).
+Find the percentages of the gases in the combustion 
+products,                                 , as (9)-(12). 
+Calculate                              based on (1)-(4) and (19)-(22).
+Find the net power output of the 
+gas turbine cycle as (19)-(29).
+Calculate the total heat losses of the 
+combustion chamber and the lower heating 
+value of the biogas from (13) and (14).
+Find                         according to                      and            using (30).
+  Find             as (45) and (46).
+  Determine                   according to pressure drop in heat exchanger and condenser.
+  Find                 and     .
+Find thec net power output of the steam turbine using (32).
+Check (47) and (48): The electrical load-generation mismatch is minimum?
+Calculate the thermal efﬁciency of 
+the combined cycle as (49).
+Calculate             using (35) and (36). Then, insert it to (43).
+Input the freshwater demand of the benchmark 
+industrial sector in (40) and ﬁnd the feasible operating 
+point of the desalination cycle using (37)-(44).
+Yes
+No
+Display decision variables
+Figure 2. The optimization approach for the minimization of 
+load-generation mismatch in the proposed CWP generation 
+facility.
+ 19321031, 2022, 1, Downloaded from https://scijournals.onlinelibrary.wiley.com/doi/10.1002/bbb.2300 by Cas-Institute Of Urban Environment, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+Original Article: Industrial-scale water-power hybrid microgrids
+F Jabari et al.
+© 2021 Society of Chemical Industry and John Wiley & Sons, Ltd  |  Biofuels, Bioprod. Bioref. 16:172–192 (2022); DOI: 10.1002/bbb.2300
+181
+Figure 3. Ambient air temperature and the industrial-scale electrical demand.
+Table 1. Values of hf
+0, h, and h0 for different substances in kJ/kmol.74
+Substance
+hf
+0
+hT2
+h0
+hT3
+hT4
+CH4
+−74 850
+-
+-
+-
+-
+CO2
+−393 520
+20 916.7
+9364
+57 983.1
+41 469
+N2
+-
+16 692
+8669
+39 249.6
+29 346
+O2
+-
+17 002.9
+8682
+41 060.7
+30 553.2
+H2O
+−241 820
+19 354
+9904
+47 600.5
+47 912
+combined cycle has therefore been carried out to prove 
+its flexible, energy-efficient and robust performance in 
+supplying the industrial consumers. In severely hot and 
+humid summer days, the ambient air temperature changes 
+from 22 °C to 39 °C, as is obvious from Fig. 3.70 The hourly 
+variations in electrical demand are illustrated in this figure. 
+It is supposed that all combustion products and reactants 
+are ideal gases and Table 1 summarizes hf
+0, 
+h, and h 0 for different substances.71 Classification of 
+design parameters and decision variables is carried out as 
+in Table 2. The isentropic efficiency of the compressor/gas 
+turbine/pump is equal to 0.87.72–76 The electrical efficiency 
+of the generator is 0.9.72 The thermal efficiency of the 
+combustion chamber is 97%.77 The value of the pressure 
+drop through each component is 5%.78
+The biogas-air molar ratio is considered to be equal to 
+0.0178. The mass flow rates of biogas and combustion 
+products are obtained by substituting   0 0178
+.
+, ma, 
+Mbg = 27 228
+.
+/
+kg kmol, and Ma = 28 97
+.
+/
+kg kmol in 
+Eqns (16)–(18), as shown in Fig. 4. The percentage of CO2 in 
+biogas is considered to be 40%. After the combustion of air 
+and biogas, the percentages of the gases in the combustion 
+products are found as xN2
+0 7612
+= .
+, xO2
+0 1813
+= .
+, 
+xCO2
+0 0178
+= .
+, xH O
+2
+0 0397
+= .
+. In other words, the percentage 
+of CO2 in a certain volume of the combustion products is 
+1%, while N2 and O2 are 76% and 18% and close to those 
+presented for the air.66 These coefficients prove that the 
+volume of the carbon dioxide in the combustion products 
+is negligible in comparison with N2 and O2. The gaseous 
+composition of the combustion products is similar to the 
+air. Due to the similarity of the gaseous composition of 
+combustion products to the air, the emission production 
+of the proposed system is nearly zero. Based on the design 
+characteristics reported in Table 2, T s
+2, and T2 are achieved 
+as Fig. 5(a). T5 is also calculated from Eqns (19)–(22) and 
+equals to 591.6 K. In this study, it is assumed that T6 is equal 
+to 298.15 K. By inserting them in Eqn (24)–(29), Ca
+Ti and 
+Cgas
+Tj at states i =1 2, and j = 4 5 6
+, , are found as presented in 
+Table 3. A 5% pressure drop in the combustion chamber 
+and heat exchanger, reduces P4 and P6 to 9.23 and 1.064 bar, 
+respectively. According to specific capacity and air/
+combustion products flow rates reported in Table 3 and 
+shown in Figs 4 and 5(b), the temperature difference between 
+states 1 and 2, T
+T
+2
+1
+−, and gas turbine power, Egt net
+,
+, will 
+ 19321031, 2022, 1, Downloaded from https://scijournals.onlinelibrary.wiley.com/doi/10.1002/bbb.2300 by Cas-Institute Of Urban Environment, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+F Jabari et al.
+Original Article: Industrial-scale water-power hybrid microgrids
+182
+© 2021 Society of Chemical Industry and John Wiley & Sons, Ltd  |  Biofuels, Bioprod. Bioref. 16:172–192 (2022); DOI: 10.1002/bbb.2300
+change as Fig. 5(a) and 5(b), respectively. From Eqns (13) 
+and (14), the total heat losses of the combustion chamber 
+and the lower heating value of the biogas vary as in Fig. 6. 
+In Eqn (14), ncp and ncr are in kmol/s. For both combustion 
+reactants and products, h
+h h
+f
+0
+0
+, ,
+ are considered in kJ/kmol, 
+as reported in Table 1. Hence, Hcp and Hcr are obtained as 
+4619.2 and 144.7 kJ/s and are fixed. According to Figs 4(b) 
+and 6, it is obvious that LHV changes with the mass flow 
+rate of biofuel. In other words, decreasing mbg will cause an 
+increase in LHV and vice versa. In some recently published 
+works, the lower heating value is limited to 449 568 kJ/
+kg,74,75 50 010 kJ/kg,79 4–6 MJ/kg.80 According to Fig. 5, the 
+biofuel LHV values that are obtained change from 405 270 
+to 487 250 kJ/kg, which is a feasible range. According to the 
+Table 2. Design parameters and decision 
+variables of the cogeneration system.
+State
+Temperature K
+ 
+Pressure bar
+
+
+1
+Ambient temperature
+1.01
+2
+Decision variable
+9.72
+3
+298.15
+9.72
+4
+976
+Decision variable
+5
+Decision variable
+1.12
+6
+298.15
+Decision variable
+7
+Decision variable
+125
+8
+773.15
+Decision variable
+9
+Decision variable
+Decision variable
+10
+318.96
+0.1
+Figure 4. Mass flow rates at points 1–10. (a) ma at points 1 and 2, ma 1
+
+
+ at states 4–6, mH O
+2 at states 7–10. (b) mbg at state 3.
+ 19321031, 2022, 1, Downloaded from https://scijournals.onlinelibrary.wiley.com/doi/10.1002/bbb.2300 by Cas-Institute Of Urban Environment, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+Original Article: Industrial-scale water-power hybrid microgrids
+F Jabari et al.
+© 2021 Society of Chemical Industry and John Wiley & Sons, Ltd  |  Biofuels, Bioprod. Bioref. 16:172–192 (2022); DOI: 10.1002/bbb.2300
+183
+Figure 5. Temperature of compressed air (a), net mechanical power of gas turbine (b), and steam turbine (c) cycles, the 
+thermal efficiency of the combined cycle power plant (d).
+ 19321031, 2022, 1, Downloaded from https://scijournals.onlinelibrary.wiley.com/doi/10.1002/bbb.2300 by Cas-Institute Of Urban Environment, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+F Jabari et al.
+Original Article: Industrial-scale water-power hybrid microgrids
+184
+© 2021 Society of Chemical Industry and John Wiley & Sons, Ltd  |  Biofuels, Bioprod. Bioref. 16:172–192 (2022); DOI: 10.1002/bbb.2300
+sensitivity analysis presented in Fig. 5, it is found that the heat 
+losses during the combustion stage increase as the biogas 
+LHV increases and vice versa. In fact, the lower heating value 
+and the heat losses change similarly. When the mass flow rate 
+of the air entering the compressor increases, the mass flow 
+rate of the biofuel will increase. This leads to lower amounts 
+of LHV and heat losses, as expected from relation between 
+LHV and mbg
+kg/s mentioned above. Meanwhile, increasing 
+the mass flow rate of the air causes the higher values of the 
+gas turbine net power product (Egt net
+,
+)
+ and the total energy efficiency, as expected from (49) and 
+indicated in Fig. 5(c).
+According to P10 and T10, h10 and vF,10 are determined as 
+191.8 kJ kg
+/
+ and 0.00101 m3 / kg, respectively. Hence, h7 
+will be equal to 204.4 kJ kg
+/
+ and is substituted in Eqn (30) 
+to find mH O
+2 as Fig. 4(a). Based on the mH O
+2 that is obtained 
+and Eqns (45) and (46), Epump is equal to 12.62 kJ kg
+/
+. After 
+a 5% pressure drop in the heat exchanger and condenser, P8 
+and P9 are 118.75 and 0.105 bar, respectively. Therefore, s8 
+and h8 are 6.494 kJ kgK
+/
+ and 3350 kJ kg
+/
+, respectively. From 
+s9 and P9, h9 is determined as 2062 kJ kg
+/
+. Then, Est net
+,
+ and 
+the thermal efficiency of the combined cycle power plant are 
+calculated as sections (b) and (c) of Fig. 5. It is found that 
+the increasing rate of ma causes a rise in Egt net
+,
+ and Est net
+,
+, a 
+decrease in LHV and Qcc loss
+,
+, and also greater efficiency. As 
+demonstrated in Table 4, the total electrical power produced 
+by generators 1 and 2 is equal to the electricity demand at 
+each operating time interval. In other words, the hourly load-
+generation mismatch and the objective function are zero. In 
+the second column of Table 4, ηgen
+gt net
+t
+E
+1
+,
+ refers to the power 
+output of the electrical generator 1. Hence, the efficiency of 
+generator 1 is considered as ηgen1. Similarly, the efficiency 
+of generator 2, which is coupled with the steam turbine, is 
+considered in the power balance constraint (47). Table 4 
+presents the terms used in (47) to show the values of the 
+power produced by the electrical generators and consumed 
+by the industrial customer. As proved in Table 4, the electrical 
+power production of the proposed system is equal to the 
+power demanded at each hour. Hence, the load-generation 
+mismatch is equal to zero at each hour. It is revealed that the 
+minimum value of the objective function could be zero, which 
+is found by the branch-and-reduce optimization navigator 
+(BARON).68 The zero value of the objective function (load-
+generation imbalance) at each hour, and the decision variables 
+obtained from solving the optimization problem, therefore 
+reveal the global optimality of the reported solutions. By 
+incorporating mH O
+2 , h9 and h10 into Eqn (36), Qcond and the 
+decision variables of the desalination unit are obtained as 
+Figs 7 and 8 and Table 5. As stated in Eqn (36), and as is 
+obvious from Figs 4(a) and 7, Qcond reduces if mH O
+2 decreases 
+and vice versa. As expected from relation (43) and Table 5, 
+when hw,12 increases and hw,13 is constant, mw will increase 
+due to the lower value of enthalpy difference between states 
+12 and 13 h
+h
+w
+w
+,
+,
+13
+12
+
+
+. When the ambient air temperature 
+increases, more seawater with temperature Tw,13
+70
+
+C 
+enters the dehumidifier, condenser heat exchanger, and the 
+humidifier for humidifying the dry air. Meanwhile, the mass 
+flow rate of the dry air entering the humidifier is increased 
+to generate higher hot humid air, dehumidify it, and extract 
+more drinking water, as represented in Fig. 8.
+In this research, the freshwater and electrical power 
+demands of the industrial end user were included in 
+Table 3. Specific heat capacity of air and 
+combustion products in kJ/kgK.
+Substance
+T4
+T5
+T6
+CN
+Tj
+2
+1.1655
+1.0751
+1.0411
+CO
+Tj
+2
+1.0875
+1
+0.9192
+CCO
+Tj
+2
+1.2327
+1.0742
+0.8454
+CH O
+Tj
+2
+2.2667
+2.017
+1.8687
+Cgas
+T4
+1 2175
+= .
+, Cgas
+T5
+1 1185
+= .
+, Cgas
+T6
+1 067
+= .
+Hour
+Ca
+T1
+Ca
+T2
+1
+1.0065
+1.0447
+2
+1.0064
+1.0443
+3
+1.0064
+1.0441
+4
+1.0064
+1.0438
+5
+1.0064
+1.0435
+6
+1.0063
+1.0432
+7
+1.0063
+1.043
+8
+1.0063
+1.0429
+9
+1.0064
+1.0436
+10
+1.0064
+1.0441
+11
+1.0065
+1.0448
+12
+1.0066
+1.0457
+13
+1.0066
+1.0462
+14
+1.0067
+1.0467
+15
+1.0067
+1.0472
+16
+1.0068
+1.0479
+17
+1.0069
+1.0487
+18
+1.007
+1.0493
+19
+1.007
+1.0498
+20
+1.0067
+1.0474
+21
+1.0067
+1.0469
+22
+1.0067
+1.0466
+23
+1.0066
+1.0457
+24
+1.0065
+1.0452
+ 19321031, 2022, 1, Downloaded from https://scijournals.onlinelibrary.wiley.com/doi/10.1002/bbb.2300 by Cas-Institute Of Urban Environment, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+Original Article: Industrial-scale water-power hybrid microgrids
+F Jabari et al.
+© 2021 Society of Chemical Industry and John Wiley & Sons, Ltd  |  Biofuels, Bioprod. Bioref. 16:172–192 (2022); DOI: 10.1002/bbb.2300
+185
+the non-linear optimization problem. In other words, 
+not only the environmental conditions such as ambient 
+air temperature affect the near-optimal operating point 
+of the triple cycle, but the values of potable water and 
+energy consumption of the benchmark customer also 
+have significant impacts on decision variables of HDH 
+and biogas-steam combined cycles. Hence, the electricity 
+and pure water balance criteria are considered in the 
+energy-water nexus model to realize the zero-energy and 
+zero-emission stand-alone microgrid. The air mass flow 
+rate increases as the value of electricity demand increases. 
+Consequently, the mass flow rate of combustion products 
+and steam increases, which results in greater power output 
+and the greater efficiency of the bio-fueled combined cycle. 
+Meanwhile, the steam mass flow rate increase results in 
+higher heat extracted from the combined cycle. Therefore, 
+more seawater inlets the dehumidifier, condenser and 
+humidifier for humidifying the dry air. Therefore, the mass 
+flow rate of the dry air entering the humidifier will increase 
+to supply more hot humid air, dehumidify it, and procure 
+more drinkable water. In addition, the near-optimal 
+short-term co-scheduling of seawater desalination and the 
+bio-fuel combined cycle enables the microgrid owner to 
+determine the best operating point of the proposed system 
+in a way that minimizes the power and water mismatches 
+at each hour. If the air mass flow rate increases, the mass 
+flow rate of the biofuel will increase, resulting in lower 
+amounts of LHV and heat losses and greater values of 
+power production and energy efficiency. When the ambient 
+air temperature increases, more seawater enters the 
+dehumidifier, condenser heat exchanger, and humidifier 
+Figure 6. Qcc loss
+,
+ of the combustion chamber and LHV of biogas.
+Table 4. Electrical power balance between 
+industrial consumer and combined cycle power 
+plant.
+Hour
+Power (MW)
+ηgen
+gt net
+t
+E
+1
+,
+ηgen
+st net
+t
+E
+2
+,
+Eelec
+t
+1
+3.7056
+1.7694
+5.4750
+2
+3.6373
+1.728
+5.3653
+3
+3.6253
+1.7181
+5.3434
+4
+3.6058
+1.7028
+5.3086
+5
+3.5908
+1.6911
+5.2819
+6
+3.5706
+1.6749
+5.2455
+7
+3.5605
+1.6677
+5.2282
+8
+3.5162
+1.6443
+5.1605
+9
+3.5282
+1.6632
+5.1914
+10
+3.6257
+1.719
+5.3447
+11
+3.6664
+1.7523
+5.4187
+12
+3.6726
+1.7739
+5.4465
+13
+3.6771
+1.7865
+5.4636
+14
+3.6876
+1.8009
+5.4885
+15
+3.7908
+1.8621
+5.6529
+16
+3.8442
+1.9035
+5.7477
+17
+3.8585
+1.9296
+5.7881
+18
+3.8626
+1.9449
+5.8075
+19
+3.9056
+1.9764
+5.8820
+20
+3.8229
+1.8819
+5.7048
+21
+3.8206
+1.8693
+5.6899
+22
+3.7647
+1.8369
+5.6016
+23
+3.7221
+1.7955
+5.5176
+24
+3.699
+1.7748
+5.4738
+ 19321031, 2022, 1, Downloaded from https://scijournals.onlinelibrary.wiley.com/doi/10.1002/bbb.2300 by Cas-Institute Of Urban Environment, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+F Jabari et al.
+Original Article: Industrial-scale water-power hybrid microgrids
+186
+© 2021 Society of Chemical Industry and John Wiley & Sons, Ltd  |  Biofuels, Bioprod. Bioref. 16:172–192 (2022); DOI: 10.1002/bbb.2300
+for humidifying the dry air. The mass flow rate of the dry 
+air entering the humidifier is increased to extract more 
+fresh water. The proposed system can be operated with 
+minimum potable water and power imbalances at each 
+1-hour time interval. For a minimization problem in a non-
+linear programming problem, a global optimal solution can 
+only be guaranteed if the objective function and inequality 
+constraints are convex and the equality constraints are 
+linear. In the proposed problem formulation, some of the 
+equality constraints are non-linear. Hence, all obtained 
+solutions are near optimal.
+Conclusions
+The current work designed a cogeneration microgrid to 
+satisfy both the potable water demands and the power 
+demands of industrial end users. In this combined-cycle 
+power plant, natural gas is replaced with -biogas to reduce 
+Figure 7. Daily variations in Qcond
+Figure 8. The mass flow rates of the gross water, air, purified water, and brine.
+ 19321031, 2022, 1, Downloaded from https://scijournals.onlinelibrary.wiley.com/doi/10.1002/bbb.2300 by Cas-Institute Of Urban Environment, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+Original Article: Industrial-scale water-power hybrid microgrids
+F Jabari et al.
+© 2021 Society of Chemical Industry and John Wiley & Sons, Ltd  |  Biofuels, Bioprod. Bioref. 16:172–192 (2022); DOI: 10.1002/bbb.2300
+187
+Table 5. The enthalpy, entropy, and temperature at different points of the desalination cycle.
+t
+i = 11
+i = 12
+i = 14
+i = 15
+i = 16
+i = 17
+hi 
+(kJ/
+kg)
+si (kJ/
+kg-K)
+Ti (K)
+hi 
+(kJ/
+kg)
+si (kJ/
+kg-K)
+Ti (K)
+hi 
+(kJ/
+kg)
+si (kJ/
+kg-K)
+Ti (K)
+hi 
+(kJ/
+kg)
+si 
+(kJ/
+kg-K)
+Ti (K)
+ωi (kgw/
+kga)
+hi 
+(kJ/
+kg)
+si 
+(kJ/
+kg-K)
+Ti (K)
+ωi 
+(kgw/
+kga)
+hi 
+(kJ/
+kg)
+si (kJ/
+kg-K)
+Ti (K)
+1
+107.9
+0.3772
+300.2
+212.7
+0.712
+326.4
+174.1
+0.5913
+316.8
+145.2
+6.103
+312.1
+0.04118
+484.6
+7.154
+336.4
+0.1607
+209.1
+0.703
+323.1
+2
+104
+0.3639
+299.2
+210.4
+0.7049
+325.8
+172.3
+0.5858
+316.4
+141.7
+6.091
+311.6
+0.04001
+486.3
+7.159
+336.4
+0.1613
+208.2
+0.7001
+322.9
+3
+102
+0.3572
+298.7
+209.2
+0.7012
+325.5
+171.5
+0.5832
+316.2
+139.9
+6.086
+311.4
+0.03945
+487.1
+7.161
+336.5
+0.1617
+207.7
+0.6988
+322.8
+4
+98.77
+0.3465
+297.9
+207.3
+0.6954
+325
+170.2
+0.579
+315.8
+137.3
+6.077
+311
+0.03857
+488.5
+7.166
+336.5
+0.1622
+207
+0.6966
+322.6
+5
+96.37
+0.3384
+297.3
+205.9
+0.6909
+324.7
+169.2
+0.5759
+315.6
+135.3
+6.071
+310.7
+0.03794
+489.6
+7.169
+336.6
+0.1625
+206.5
+0.695
+322.5
+6
+93.18
+0.3277
+296.5
+203.9
+0.6849
+324.2
+167.9
+0.5718
+315.3
+132.9
+6.063
+310.3
+0.03713
+491
+7.173
+336.6
+0.163
+205.8
+0.6929
+322.3
+7
+91.59
+0.3223
+296.1
+202.9
+0.6818
+323.9
+167.3
+0.5698
+315.1
+131.6
+6.059
+310.1
+0.03674
+491.7
+7.175
+336.7
+0.1633
+205.5
+0.6919
+322.2
+8
+90.39
+0.3182
+295.8
+202.2
+0.6795
+323.7
+166.8
+0.5683
+315
+130.7
+6.056
+310
+0.03645
+492.2
+7.177
+336.7
+0.1635
+205.3
+0.6911
+322.2
+9
+97.17
+0.3411
+297.5
+206.4
+0.6924
+324.8
+169.5
+0.5769
+315.7
+136
+6.073
+310.8
+0.03815
+489.2
+7.168
+336.6
+0.1624
+206.7
+0.6955
+322.5
+10
+102
+0.3572
+298.7
+209.2
+0.7012
+325.5
+171.5
+0.5832
+316.2
+139.9
+6.086
+311.4
+0.03945
+487.1
+7.161
+336.5
+0.1617
+207.7
+0.6988
+322.8
+11
+108.7
+0.3799
+300.4
+213.2
+0.7134
+326.5
+174.4
+0.5924
+316.9
+145.9
+6.105
+312.2
+0.04142
+484.3
+7.153
+336.4
+0.1606
+209.3
+0.7036
+323.1
+12
+117.5
+0.4091
+302.6
+218.2
+0.7286
+327.7
+178.4
+0.6048
+317.9
+154.5
+6.133
+313.4
+0.04426
+480.7
+7.142
+336.2
+0.1593
+211.4
+0.7101
+323.6
+13
+122.3
+0.4249
+303.8
+220.8
+0.7365
+328.4
+180.6
+0.6119
+318.4
+159.6
+6.149
+314
+0.04594
+478.9
+7.136
+336.1
+0.1587
+212.6
+0.7139
+323.9
+14
+126.7
+0.4393
+304.9
+223.1
+0.7437
+328.9
+182.7
+0.6185
+319
+164.5
+6.165
+314.7
+0.04759
+477.3
+7.132
+336.1
+0.1581
+213.8
+0.7175
+324.2
+15
+131.5
+0.4551
+306.1
+225.6
+0.7512
+329.6
+185.1
+0.6259
+319.6
+170.2
+6.183
+315.4
+0.0495
+475.7
+7.127
+336
+0.1575
+215.1
+0.7216
+324.5
+16
+137.9
+0.4759
+307.7
+228.8
+0.761
+330.4
+188.3
+0.6361
+320.4
+178.3
+6.209
+316.3
+0.05225
+473.8
+7.121
+335.9
+0.1568
+217
+0.7272
+325
+17
+145.5
+0.5006
+309.6
+232.5
+0.7721
+331.3
+192.4
+0.6487
+321.4
+188.9
+6.243
+317.5
+0.05584
+471.9
+7.115
+335.9
+0.1561
+219.3
+0.7343
+325.5
+18
+151.1
+0.5186
+311
+235.1
+0.78
+331.9
+195.4
+0.6582
+322.1
+197.4
+6.27
+318.4
+0.05875
+470.8
+7.112
+335.8
+0.1557
+221.1
+0.7398
+326
+19
+155.1
+0.5315
+312
+236.3
+0.7836
+332.2
+198.3
+0.6671
+322.8
+205.7
+6.296
+319.2
+0.06158
+470.2
+7.11
+335.8
+0.1555
+222.8
+0.7451
+326.4
+20
+133.1
+0.4603
+306.5
+226.4
+0.7537
+329.8
+185.9
+0.6284
+319.8
+172.2
+6.189
+315.6
+0.05017
+475.2
+7.125
+336
+0.1573
+215.6
+0.723
+324.6
+21
+128.3
+0.4446
+305.3
+224
+0.7462
+329.2
+183.5
+0.6209
+319.2
+166.3
+6.171
+314.9
+0.04821
+476.8
+7.13
+336.1
+0.1579
+214.2
+0.7189
+324.3
+22
+125.9
+0.4367
+304.7
+222.7
+0.7424
+328.8
+182.3
+0.6173
+318.9
+163.6
+6.162
+314.5
+0.04728
+477.6
+7.133
+336.1
+0.1582
+213.6
+0.7169
+324.2
+23
+116.7
+0.4064
+302.4
+217.7
+0.7272
+327.6
+178
+0.6036
+317.8
+153.7
+6.13
+313.3
+0.04398
+481
+7.143
+336.2
+0.1594
+211.2
+0.7095
+323.6
+24
+111.9
+0.3905
+301.2
+215
+0.719
+326.9
+175.8
+0.5968
+317.2
+148.9
+6.115
+312.6
+0.04242
+482.9
+7.149
+336.3
+0.1601
+210
+0.7059
+323.3
+i = 13
+280.2
+0.9137
+343.2
+ 19321031, 2022, 1, Downloaded from https://scijournals.onlinelibrary.wiley.com/doi/10.1002/bbb.2300 by Cas-Institute Of Urban Environment, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+F Jabari et al.
+Original Article: Industrial-scale water-power hybrid microgrids
+188
+© 2021 Society of Chemical Industry and John Wiley & Sons, Ltd  |  Biofuels, Bioprod. Bioref. 16:172–192 (2022); DOI: 10.1002/bbb.2300
+greenhouse gases and increase energy saving. The waste 
+heat of the gas turbine exhaust gases is used to generate 
+the superheated vapor and drive the steam turbine heat 
+and power generation process. The heating flow extracted 
+from the condenser heat exchanger is employed for the 
+water-heater air-cooler desalination process. A non-linear 
+programming problem is solved using GAMS optimization 
+software and EES to minimize the total energy mismatch 
+and find the best generation schedules for the biogas-steam 
+combined cycle power plant. It is found that increasing 
+the mass flow rate of the ambient air causes an increase in 
+electricity production of the combined cycle microgrid, 
+lower heat losses of the combustion chamber, and higher 
+thermal efficiency. More heat is also transferred from 
+the saturated vapor to the seawater and more saline 
+water will be desalinated at each hour. In other words, 
+more potable water and electricity will be produced if 
+the air mass flow rate increases and vice versa. When the 
+electrical demand of the industrial unit increases from 5.16 
+(minimum) to 5.88 MW (maximum), the mass flow rates 
+of air and combustion products will increase. Hence, the 
+output electrical power of the gas turbine-generator set 
+increases from 3.52 (off-peak value) to 3.91 MW (at t =19
+). Meanwhile, the net electricity production of the steam 
+turbine cycle changes from 1.64 to 1.97 MW as a result of 
+increasing the steam mass flow rate. Increasing the air mass 
+flow rate reduces the heat losses of the combustion chamber 
+while increasing the gas turbine power. The thermal 
+efficiency of the combined cycle therefore improves from 
+37% to 44%. Increasing the steam mass flow rate also causes 
+the value of heat extracted from the saturated vapor to the 
+saline water to increase, which results in higher freshwater 
+production at the peak load hour (2.81 kg/s potable water at 
+t =19 ). If the air mass flow rate increases, the mass flow rate 
+of the biofuel will increase, resulting in lower amounts of 
+LHV and heat losses and greater values of power production 
+and energy efficiency. When the ambient air temperature 
+increases, more seawater enters the dehumidifier, condenser 
+heat exchanger, and humidifier to humidify the dry air. 
+Meanwhile, the mass flow rate of the dry air entering the 
+humidifier is increased to generate higher hot humid air, 
+dehumidify it, and extract more drinking water. As a result, 
+this cogeneration facility is able to satisfy both the electricity 
+and pure water demands of an industrial consumer in severe 
+hot summer days. In summary, a zero-emission zero-energy 
+water-power hybrid grid was designed and validated for 
+industrial applications.
+In future research, time of use and real-time demand-
+side management programs could be applied to this 
+non-linear optimization problem. These demand response 
+approaches make it possible to find how a part of the 
+peak loads shift to other off/mid-peak hours to maximize 
+the total revenue achieved by selling the surplus power/
+freshwater to other adjacent microgrids. In this study, 
+the exchange of water and energy products with other 
+hub networks has not been considered. The risk-aversion 
+and risk-taker optimization strategies can be addressed 
+by information gap decision theory to maximize the 
+gained output ratio of the HDH desalination cycle under 
+uncertain potable water demand. The robust optimization-
+based uncertainty modeling approach can be considered to 
+find the risk-aversion operating points of the cogeneration 
+microgrid against the temperature and load changes over a 
+1 year period. The sizing and siting of bio-fueled combined 
+cycles in active distribution networks should be studied 
+with the aim of minimizing the power losses of the power 
+distribution feeders and improving the voltage profile. The 
+integration of the biogas-steam combined cycle power 
+plants with the gravitricity energy storage technology 
+will be assessed to produce more power and save as much 
+energy as possible.
+ABBREVIATIONS
+C	
+Specific heat capacity (kJ/kgK)
+E	
+Power (kW)
+h	
+Enthalpy (kJ/kg)
+hf
+0 and h 0	Formation and sensible specific enthalpies at the 
+temperature of 25°C and pressure of 1 bar (kJ/kmol)
+H	
+Enthalpy (kJ/s)
+LHV	
+Lower heating value (kJ/s)
+m	
+Mass flow rate (kg/s)
+M	
+Molar mass (kg/kmol)
+n	
+Molar flow rate (kmol/s)
+P	
+Pressure (MPa)
+∆P	
+Pressure drop (%)
+Q	
+Heat (kJ/s)
+s	
+Entropy (kJ/kgK)
+T 	
+Temperature (K)
+v	
+Specific volume (m3/kg)
+Subscripts and superscripts
+a	
+air
+b	
+Brine
+bg	
+Biogas
+cc	
+Combustion chamber
+comp	
+Compressor
+cond	
+Condenser
+cp	
+Combustion products
+cr	
+Combustion reactants
+da 	
+Dry air
+ 19321031, 2022, 1, Downloaded from https://scijournals.onlinelibrary.wiley.com/doi/10.1002/bbb.2300 by Cas-Institute Of Urban Environment, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+Original Article: Industrial-scale water-power hybrid microgrids
+F Jabari et al.
+© 2021 Society of Chemical Industry and John Wiley & Sons, Ltd  |  Biofuels, Bioprod. Bioref. 16:172–192 (2022); DOI: 10.1002/bbb.2300
+189
+deh 	
+Dehumidifier
+elec 	
+Electrical demand
+F 	
+Saturated liquid
+hex 	
+Heat exchanger
+gen 	
+Generator
+gt 	
+Gas turbine
+h 	
+Heater
+hum 	
+Humidifier
+imb 	
+The electrical power mismatch between the load 
+and generation
+isen 	
+Isentropic process
+loss 	
+Heat losses
+net 	
+The net power output of the combined cycle
+pump 	
+Pump
+pw 	
+Potable water
+st 	
+Steam turbine
+t 	
+Hour
+th 	
+Thermal
+w 	
+Seawater
+Greek symbols
+η 	
+Efficiency
+χ 	
+Biogas-air molar ratio
+ω 	
+Absolute humidity
+Acknowledgements
+This work is supported by the Niroo Research Institute (NRI) 
+under contract no. 48510. The financial support granted by 
+the NRI is gratefully acknowledged.
+References
+1.	Moraes MM, Ringler C and Cai X, Policies and instruments 
+affecting water use for bioenergy production. Biofuels Bioprod 
+Biorefin 5(4):431–444 (2011).
+2.	Yeh S, Berndes G, Mishra GS, Wani SP, Elia Neto A, Suh S et 
+al., Evaluation of water use for bioenergy at different scales. 
+Biofuels Bioprod Biorefin 5(4):361–374 (2011).
+3.	Fulton LM, Lynd LR, Körner A, Greene N and Tonachel LR, 
+The need for biofuels as part of a low carbon energy future. 
+Biofuels Bioprod Biorefin 9(5):476–483 (2015).
+4.	Khani L, Jabari F, Mohammadpourfard M and Mohammadi-ivatloo 
+B, Design, evaluation, and optimization of an efficient solar-based 
+multi-generation system with an energy storage option for Iran’s 
+summer peak demand. Energ Conver Manage 242:114324 (2021).
+5.	Murugan S and Horák B, Tri and polygeneration systems-a 
+review. Renew Sustain Energy Rev 60:1032–1051 (2016).
+6.	Lund R and Mathiesen BV, Large combined heat and power plants 
+in sustainable energy systems. Appl Energy 142:389–395 (2015).
+7.	Kaheh Z, Arasteh H and Siano P, Social and economic factors 
+in demand-side flexibility, in Flexibility in Electric Power 
+Distribution Networks. CRC Press, Boca Raton pp. 1–19 (2021).
+8.	Arasteh H, Bahramara S, Kaheh Z, Hashemi S, Vahidinasab V, 
+Siano P et al., A system-of-systems planning platform for enabling 
+flexibility provision at distribution level, in Flexibility in Electric 
+Power Distribution Networks. CRC Press, Boca Raton pp. 41–65.
+9.	Lund PD, Lindgren J, Mikkola J and Salpakari J, Review of energy 
+system flexibility measures to enable high levels of variable 
+renewable electricity. Renew Sustain Energy Rev 45:785–807 (2015).
+10.	Bagherian MA and Mehranzamir K, A comprehensive review 
+on renewable energy integration for combined heat and power 
+production. Energ Conver Manage 224:113454 (2020).
+11.	Jabari F, Mohammadi-ivatloo B, Bannae-Sharifian M-B and 
+Ghaebi H, Design and performance investigation of a biogas 
+fueled combined cooling and power generation system. Energ 
+Conver Manage 169:371–382 (2018).
+12.	Al-Sumaiti AS, Salama M, El-Moursi M, Alsumaiti TS and 
+Marzband M, Enabling electricity access: a comprehensive 
+energy efficient approach mitigating climate/weather variability–
+part II. IET Gener Transm Distrib 13(12):2572–2583 (2019).
+13.	Al-Sumaiti AS, Salama M, El-Moursi M, Alsumaiti TS and 
+Marzband M, Enabling electricity access: revisiting load 
+models for AC-grid operation-part I. IET Gener Transm Distrib 
+13(12):2563–2571 (2019).
+14.	Zheng C, Yang G, Wang R and Zhai X, Integration of CCHP 
+with renewable energy, in Handbook of Energy Systems in 
+Green Buildings. Springer, Berlin, Heidelberg pp. 1–36 (2017).
+15.	Nazari-heris M, Jabari F, Mohammadi-ivatloo B, Asadi S and 
+Habibnezhad M, An updated review on multi-carrier energy 
+systems with electricity, gas, and water energy sources. J 
+Clean Prod 275:123136 (2020).
+16.	Wang J, Lu Y, Yang Y and Mao T, Thermodynamic 
+performance analysis and optimization of a solar-assisted 
+combined cooling, heating and power system. Energy 
+115:49–59 (2016).
+17.	Ravelli S, Franchini G and Perdichizzi A, Comparison of 
+different CSP technologies for combined power and cooling 
+production. Renew Energy 121:712–721 (2018).
+18.	Angrisani G, Entchev E, Roselli C, Sasso M, Tariello F and 
+Yaïci W, Dynamic simulation of a solar heating and cooling 
+system for an office building located in Southern Italy. Appl 
+Therm Eng 103:377–390 (2016).
+19.	Fong KF, Lee CK and Zhao TF, Effective design and operation 
+strategy of renewable cooling and heating system for building 
+application in hot-humid climate. Sol Energy 143:1–9 (2017).
+20.	Bustamante M and Liao W, A self-sustaining high-strength 
+wastewater treatment system using solar-bio-hybrid power 
+generation. Bioresour Technol 234:415–423 (2017).
+21.	Schneider T, Müller D and Karl J, A review of thermochemical 
+biomass conversion combined with Stirling engines for the 
+small-scale cogeneration of heat and power. Renew Sustain 
+Energy Rev 134:110288 (2020).
+22.	Naseri A, Bidi M, Ahmadi MH and Saidur R, Exergy analysis 
+of a hydrogen and water production process by a solar-driven 
+transcritical CO2 power cycle with Stirling engine. J Clean 
+Prod 158:165–181 (2017).
+23.	Thombare D and Verma S, Technological development in the 
+Stirling cycle engines. Renew Sustain Energy Rev 12(1):1–38 (2008).
+24.	Hachem H, Gheith R, Aloui F and Nasrallah SB, Technological 
+challenges and optimization efforts of the Stirling machine: a 
+review. Energ Conver Manage 171:1365–1387 (2018).
+25.	Ozcan H and Akyavuz UD, Thermodynamic and economic 
+assessment of off-grid portable cooling systems with energy 
+storage for emergency areas. Appl Therm Eng 119:108–118 
+(2017).
+26.	Slocum AH, Haji MN, Trimble AZ, Ferrara M and Ghaemsaidi 
+SJ, Integrated pumped hydro reverse osmosis systems. 
+Sustainable Energy Technol Assess 18:80–99 (2016).
+27.	Li H, Xu B, Riasi A, Szulc P, Chen D, M’zoughi F et al., 
+Performance evaluation in enabling safety for a hydropower 
+generation system. Renew Energy 143:1628–1642 (2019).
+ 19321031, 2022, 1, Downloaded from https://scijournals.onlinelibrary.wiley.com/doi/10.1002/bbb.2300 by Cas-Institute Of Urban Environment, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+F Jabari et al.
+Original Article: Industrial-scale water-power hybrid microgrids
+190
+© 2021 Society of Chemical Industry and John Wiley & Sons, Ltd  |  Biofuels, Bioprod. Bioref. 16:172–192 (2022); DOI: 10.1002/bbb.2300
+28.	Wang F, Chen D, Xu B and Zhang H, Nonlinear dynamics of a 
+novel fractional-order Francis hydro-turbine governing system 
+with time delay. Chaos Solitons Fractals 91:329–338 (2016).
+29.	Xu B, Chen D, Venkateshkumar M, Xiao Y, Yue Y, Xing Y et al., 
+Modeling a pumped storage hydropower integrated to a 
+hybrid power system with solar-wind power and its stability 
+analysis. Appl Energy 248:446–462 (2019).
+30.	Bornapour M, Hooshmand R-A, Khodabakhshian A and 
+Parastegari M, Optimal stochastic coordinated scheduling 
+of proton exchange membrane fuel cell-combined heat and 
+power, wind and photovoltaic units in micro grids considering 
+hydrogen storage. Appl Energy 202:308–322 (2017).
+31.	Mirzaei MA, Nazari-Heris M, Mohammadi-Ivatloo B, Zare 
+K, Marzband M, Shafie-Khah M et al., Network-constrained 
+joint energy and flexible ramping reserve market clearing of 
+power-and heat-based energy systems: a two-stage hybrid 
+IGDT–stochastic framework. IEEE Syst J 15(2):1547–1556 
+(2020).
+32.	Ghasemi A, Monfared HJ, Loni A and Marzband M, CVaR-
+based retail electricity pricing in day-ahead scheduling of 
+microgrids. Energy 227:120529 (2021).
+33.	Li Z, Wu W, Shahidehpour M, Wang J and Zhang B, Combined 
+heat and power dispatch considering pipeline energy storage 
+of district heating network. IEEE Trans Sustainable Energy 
+7(1):12–22 (2015).
+34.	Alomoush MI, Microgrid combined power-heat economic-
+emission dispatch considering stochastic renewable energy 
+resources, power purchase and emission tax. Energ Conver 
+Manage 200:112090 (2019).
+35.	Misaghian M, Saffari M, Kia M, Heidari A, Shafie-khah M 
+and Catalão JP, Tri-level optimization of industrial microgrids 
+considering renewable energy sources, combined heat and 
+power units, thermal and electrical storage systems. Energy 
+161:396–411 (2018).
+36.	Chen X, Kang C, O’Malley M, Xia Q, Bai J, Liu C et al., 
+Increasing the flexibility of combined heat and power for wind 
+power integration in China: modeling and implications. IEEE 
+Trans Power Syst 30(4):1848–1857 (2014).
+37.	Van Erdeweghe S, Van Bael J, Laenen B and D’haeseleer 
+W, Optimal combined heat-and-power plant for a low-
+temperature geothermal source. Energy 150:396–409 (2018).
+38.	Patwal RS and Narang N, Crisscross PSO algorithm for 
+multi-objective generation scheduling of pumped storage 
+hydrothermal system incorporating solar units. Energ Conver 
+Manage 169:238–254 (2018).
+39.	Kneiske T, Braun M and Hidalgo-Rodriguez D, A new 
+combined control algorithm for PV-CHP hybrid systems. Appl 
+Energy 210:964–973 (2018).
+40.	Rao SS, Engineering Optimization: Theory and Practice. John 
+Wiley & Sons, USA (2019).
+41.	Arora JS, Introduction to Optimum Design. Elsevier, Iowa, USA 
+(2004).
+42.	Martinez S, Michaux G, Salagnac P and Bouvier J-L, Micro-
+combined heat and power systems (micro-CHP) based on 
+renewable energy sources. Energ Conver Manage. 154:262–285 
+(2017).
+43.	Kasaeian A, Nouri G, Ranjbaran P and Wen D, Solar collectors 
+and photovoltaics as combined heat and power systems: a 
+critical review. Energ Conver Manage 156:688–705 (2018).
+44.	Modi A, Bühler F, Andreasen JG and Haglind F, A review of 
+solar energy based heat and power generation systems. 
+Renew Sustain Energy Rev 67:1047–1064 (2017).
+45.	DeLovato N, Sundarnath K, Cvijovic L, Kota K and Kuravi S, A 
+review of heat recovery applications for solar and geothermal 
+power plants. Renew Sustain Energy Rev 114:109329 (2019).
+46.	Johnsen BO, Arnekleiv JV, Asplin L, Barlaup BT, Næsje TF, 
+Rosseland BO et al., Hydropower development–ecological 
+effects. Atlantic Salmon Ecol 351–386 (2011).
+47.	Mari J, Mari A, Cabral A, Frigo E and Santos R, Advantages and 
+disadvantages of hydropower. Acta Iguazu 2(4):20–28 (2013).
+48.	Steinhurst W, Knight P and Schultz M, Hydropower 
+greenhouse gas emissions. Conserv Law Found 24:6 (2012).
+49.	Yu B and Xu L, Review of ecological compensation in hydropower 
+development. Renew Sustain Energy Rev 55:729–738 (2016).
+50.	Kaygusuz K, Sustainable development of hydroelectric power. 
+Energy Source 24(9):803–815 (2002).
+51.	Dewals B, Rulot F, Erpicum S, Archambeau P and Pirotton M, 
+Long-term sediment management for sustainable hydropower. 
+Comprehensive. Renew Energy 6:355–376 (2012).
+52.	Koç C, Problems and solutions related to hydroelectric power plants 
+constructed on the Buyuk Menderes and the West Mediterranean 
+Basin. Energy Sources Part A 34(15):1416–1425 (2012).
+53.	Rathore A and Patidar NP, Reliability assessment using 
+probabilistic modelling of pumped storage hydro plant with 
+PV-wind based standalone microgrid. Int J Electr Power 
+Energy Syst 106:17–32 (2019).
+54.	Hosseini M, Dincer I and Rosen MA, Hybrid solar–fuel 
+cell combined heat and power systems for residential 
+applications: energy and exergy analyses. J Power Sources 
+221:372–380 (2013).
+55.	Tebibel H, Khellaf A, Menia S and Nouicer I, Design, modelling 
+and optimal power and hydrogen management strategy of an 
+off grid PV system for hydrogen production using methanol 
+electrolysis. Int J Hydrogen Energy 42(22):14950–14967 (2017).
+56.	Delfino F, Ferro G, Minciardi R, Robba M, Rossi M and Rossi 
+M, Identification and optimal control of an electrical storage 
+system for microgrids with renewables. Sustainable Energy 
+Grids Netw 17:100183 (2019).
+57.	Li X, Wu S, Wang Y and Xie L, Experimental investigation 
+and thermodynamic modeling of an innovative molten salt for 
+thermal energy storage (TES). Appl Energy 212:516–526 (2018).
+58.	Ghorbani B, Shirmohammadi R and Mehrpooya M, Development 
+of an innovative cogeneration system for fresh water and power 
+production by renewable energy using thermal energy storage 
+system. Sustainable Energy Technol Assess 37:100572 (2020).
+59.	Wong L and Chow W, Solar radiation model. Appl Energy 
+69(3):191–224 (2001).
+60.	Ben-Haim Y, Info-Gap Decision Theory: Decisions under 
+Severe Uncertainty. Elsevier, UK (2006).
+61.	Wang Y, Cai L, Yu Y and Zhang X, Performance study of 
+parallel-type hybrid-power gas engine-driven heat pump 
+system. Energ Buildings 62:37–44 (2013).
+62.	Wu B, Zhang X, Shang D, Bao D, Zhang S and Zheng T, Energetic-
+environmental-economic assessment of the biogas system with 
+three utilization pathways: combined heat and power, biomethane 
+and fuel cell. Bioresour Technol 214:722–728 (2016).
+63.	Zhang X and Vesselinov VV, Energy-water nexus: balancing 
+the tradeoffs between two-level decision makers. Appl Energy 
+183:77–87 (2016).
+64.	Salgot M and Folch M, Wastewater treatment and water reuse. 
+Curr Opin Environ Sci Health 2:64–74 (2018).
+65.	Isa NM, Tan CW and Yatim A, A comprehensive review of 
+cogeneration system in a microgrid: a perspective from 
+architecture and operating system. Renew Sustain Energy Rev 
+81:2236–2263 (2018).
+66.	Mackenzie FT and Mackenzie JA, Our Changing Planet: An 
+Introduction to Earth System Science and Global Environmental 
+Change. Prentice Hall, Upper Saddle River, NJ (1998).
+67.	Jabari F, Nazari-heris M, Mohammadi-ivatloo B, Asadi 
+S and Abapour M, A solar dish Stirling engine combined 
+ 19321031, 2022, 1, Downloaded from https://scijournals.onlinelibrary.wiley.com/doi/10.1002/bbb.2300 by Cas-Institute Of Urban Environment, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+Original Article: Industrial-scale water-power hybrid microgrids
+F Jabari et al.
+© 2021 Society of Chemical Industry and John Wiley & Sons, Ltd  |  Biofuels, Bioprod. Bioref. 16:172–192 (2022); DOI: 10.1002/bbb.2300
+191
+humidification-dehumidification desalination cycle for cleaner 
+production of cool, pure water, and power in hot and humid 
+regions. Sustainable Energy Technol Assess 37:100642 (2020).
+68.	https://www.gams.com/latest/docs/S_BARON.html.
+69.	https://www.fchart.com/assets/downloads/ees_manual.pdf.
+70.	https://weather.com/weather/today/.
+71.	Sonntag RE, Borgnakke C, Van Wylen GJ and Van Wyk S, 
+Fundamentals of Thermodynamics. New York, Wiley (2003).
+72.	Mohammadi K and McGowan JG, Thermoeconomic analysis 
+of multi-stage recuperative Brayton cycles: part II–waste 
+energy recovery using CO2 and organic Rankine power 
+cycles. Energ Conver Manage 185:920–934 (2019).
+73.	Akbari AD and Mahmoudi SM, Thermoeconomic analysis 
+& optimization of the combined supercritical CO2 (carbon 
+dioxide) recompression Brayton/organic Rankine cycle. 
+Energy 78:501–512 (2014).
+74.	Moharamian A, Soltani S, Rosen MA, Mahmoudi S and 
+Morosuk T, A comparative thermoeconomic evaluation of three 
+biomass and biomass-natural gas fired combined cycles using 
+organic Rankine cycles. J Clean Prod 161:524–544 (2017).
+75.	Moharamian A, Soltani S, Rosen MA and Mahmoudi S, 
+Exergoeconomic and thermodynamic analyses of an externally 
+fired combined cycle with hydrogen production and injection to the 
+combustion chamber. Int J Hydrogen Energy 43(2):781–792 (2018).
+76.	Moharamian A, Soltani S, Rosen MA and Mahmoudi S, 
+Advanced exergy and advanced exergoeconomic analyses of 
+biomass and natural gas fired combined cycles with hydrogen 
+production. Appl Therm Eng 134:1–11 (2018).
+77.	Njoku IH, Oko C and Ofodu J, Performance analysis of a 
+combined cycle power plant with simultaneous cooling of 
+inlet air streams to the compressor and condenser. Int J Adv 
+Thermofluid Res 4(1):2–25 (2018).
+78.	Soltani S, Athari H, Rosen M, Mahmoudi S and Morosuk T, 
+Thermodynamic analyses of biomass gasification integrated 
+externally fired, post-firing and dual-fuel combined cycles. 
+Sustainability 7(2):1248–1262 (2015).
+79.	Athari H, Soltani S, Rosen M, Mahmoudi S and Morosuk 
+T, Comparative exergoeconomic analyses of gas turbine 
+steam injection cycles with and without fogging inlet cooling. 
+Sustainability 7(9):12236–12257 (2015).
+80.	Casas Ledón Y, González P, Concha S, Zaror CA and 
+Arteaga-Pérez LE, Exergoeconomic valuation of a waste-
+based integrated combined cycle (WICC) for heat and power 
+production. Energy 114:239–252 (2016).
+Farkhondeh Jabari
+Farkhondeh Jabari was born in 1989 
+in Tabriz, Iran. She received her BSc, 
+MSc, and PhD in electrical engineering 
+from the Faculty of Electrical and 
+Computer Engineering, University of 
+Tabriz, Iran, in 2012, 2014, and 2018, 
+respectively. She was a postdoctoral 
+researcher from December 2018 to 2019 at that university. 
+In October 2019, she was awarded a postdoctoral 
+fellowship from Iran’s National Elites Foundation (INEF). 
+She is currently an assistant professor at the Niroo 
+Research Institute. Her research interests include power 
+and energy systems, multi-generation facilities, demand-
+side management, smart grids, clean and sustainable 
+energy sources, and the monitoring, control and 
+protection of transmission and distribution systems.
+Hamidreza Arasteh
+Hamidreza Arasteh was born in Zanjan, 
+Iran, in 1988. He received his BSc from 
+Tabriz University, Tabriz, Iran, in 2010; 
+his MSc was from Tarbiat Modares 
+University (TMU), Tehran, Iran, in 2012, 
+and his PhD was from Shahid Beheshti 
+University (SBU), Tehran, Iran, in 2017 – 
+all in electrical engineering. He has been placed in the 
+top 1% of reviewers in engineering by Publons global 
+reviewer database (2017–2018). Since 2017, he has been 
+with the Power Systems Operation and Planning Research 
+Department, Niroo Research Institute (NRI). His research 
+interests include the smart grid, microgrids, demand 
+response, energy management, distributed generation, 
+distribution systems, power system reliability and security, 
+the Internet of Things (IoT), power systems operation and 
+planning, and electricity markets.
+Alireza Sheikhi-Fini
+Alireza Sheikhi-Fini received his BSc, 
+MSc, and PhD in electrical engineering 
+from the University of Tehran in 
+1994, the Iran University of Science 
+and Technology (IUST) in 1998, and 
+Tarbiat Modares University in 2013, 
+respectively. He is an assistant 
+professor at the Niroo Research Institute. His research 
+interests include demand-side management, customer 
+service, and smart grids.
+Hadi Ghaebi
+Hadi Ghaebi is an associate professor 
+in the Mechanical Engineering 
+Department of the University of 
+Mohaghegh Ardabili, Ardabil, Iran. He 
+received his PhD degree from Sharif 
+University of Technology, Tehran, Iran 
+in 2014. His research areas include 
+thermal system design and optimization, renewable 
+energy technologies, net zero energy buildings, and 
+hydrogen and fuel cells.
+ 19321031, 2022, 1, Downloaded from https://scijournals.onlinelibrary.wiley.com/doi/10.1002/bbb.2300 by Cas-Institute Of Urban Environment, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License
+
+F Jabari et al.
+Original Article: Industrial-scale water-power hybrid microgrids
+192
+© 2021 Society of Chemical Industry and John Wiley & Sons, Ltd  |  Biofuels, Bioprod. Bioref. 16:172–192 (2022); DOI: 10.1002/bbb.2300
+Mohammad-Bagher Bannae-
+Sharifian
+Mohammad-Bagher Bannae-Sharifian 
+studied electrical power engineering 
+at the University of Tabriz, Tabriz, Iran. 
+He received his BSc and MSc degrees 
+in 1989 and 1992, respectively, from 
+the University of Tabriz. In 1992 he 
+joined the Electrical Engineering Department of the 
+University of Tabriz as a lecturer. He received his PhD in 
+electrical engineering from the same university in 2000. 
+In 2000 he rejoined the Electrical Power Department 
+of the Faculty of Electrical and Computer Engineering 
+of the same university as assistant professor. He is 
+currently professor in this department. His research 
+interests are the modeling and the analysis of electrical 
+machines, electric drives, liner electric motors, and 
+electric and hybrid electric vehicle drives.
+Behnam Mohammadi-Ivatloo
+Behnam Mohammadi-Ivatloo, PhD, is 
+a professor at the University of Tabriz, 
+Tabriz, Iran, where he is the head 
+of the Smart Energy Systems Lab. 
+He is currently working as a senior 
+researcher at Aalborg University, 
+Aalborg, Denmark. Before joining 
+the University of Tabriz, he was a research associate at 
+the Institute for Sustainable Energy, Environment and 
+Economy, University of Calgary, Canada. He obtained 
+his MSc and PhD degrees in electrical engineering from 
+the Sharif University of Technology, Tehran, Iran. He has 
+a mix of high-level experience in research, teaching, 
+administration and voluntary jobs at the national and 
+international levels. He was principal investigator (PI) or 
+co-principal investigator (co-PI) in 20 externally funded 
+research projects. He has been a senior member of the 
+Institute of Electrical and Electronics Engineers (IEEE) 
+since 2017 and a member of the governing board of Iran 
+Energy Association since 2013, where he was elected 
+president in 2019. He is editor or associate editor for 
+journals such as IEEE Transactions on Power Systems, 
+IEEE Access, IET Smart Grid, and Sustainability. He is 
+included in 2018, 2019 and 2020 Thomson Reuters’ list 
+of the top 1% most cited researchers. His main areas 
+of interest are integrated energy systems, renewable 
+energy, microgrid systems, and smart grids.
+Mousa Mohammadpourfard
+Mousa Mohammadpourfard received 
+his PhD from the University of Tabriz, 
+Iran, in 2009. Dr Mohammadpourfard 
+is currently associate professor at the 
+Faculty of Chemical and Petroleum 
+Engineering, University of Tabriz, 
+Iran. His research interests include 
+multi-phase flows, heat and mass transfer, and thermal 
+engineering.
+ 19321031, 2022, 1, Downloaded from https://scijournals.onlinelibrary.wiley.com/doi/10.1002/bbb.2300 by Cas-Institute Of Urban Environment, Wiley Online Library on [17/11/2026]. See the Terms and Conditions (https://onlinelibrary.wiley.com/terms-and-conditions) on Wiley Online Library for rules of use; OA articles are governed by the applicable Creative Commons License

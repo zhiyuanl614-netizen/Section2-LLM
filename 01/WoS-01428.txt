@@ -1,0 +1,2487 @@
+Contents lists available at ScienceDirect 
+Journal of Hydrology 
+journal homepage: www.elsevier.com/locate/jhydrol 
+Research papers 
+An integrated state-estimation framework for interdependent water and 
+energy systems 
+Faegheh Moazenia,⁎, Javad Khazaeib,c, Prasenjit Mitrad 
+a Civil & Environmental Engineering Department, School of Science Engineering and Technology, Penn State Harrisburg, 777 W Harrisburg Pike, Middletown, PA 17057, 
+USA 
+b Electrical Engineering Department at Penn State Harrisburg 777 W Harrisburg Pike, Middletown, PA 17057, USA 
+c Architectural Engineering Department at Penn State University Park, State College, PA 16801, USA 
+d College of Information Science and Technology at Penn State University Park, State College, PA 16801 USA  
+A R T I C L E I N F O  
+This manuscript was handled by Emmanouil 
+Anagnostou, Editor-in-Chief, with the 
+assistance of Jesús Mateo Lázaro, Associate 
+Editor  
+Keywords: 
+Water-energy nexus 
+State-estimation 
+Bad data detection 
+False data injection 
+Newton-Raphson method 
+Water distribution system 
+Electric power grid 
+A B S T R A C T  
+Recent studies have shown indisputable evidence indicating water and energy networks are two interdependent 
+cyber-physical networks and should be operated cooperatively to maximize their efficiency and resiliency. 
+However, current state-estimation models of water and energy infrastructures are implemented independently in 
+their respective control centers. Such independent state-estimation in energy or water network might not be able 
+to detect false data injections in the other network. In this paper, an integrated state-estimation framework is 
+proposed to process the consistency of the data and estimate the parameters of a combined water and energy 
+network. Compared to standalone state-estimation, an integrated framework proposed in this work makes it 
+more difficult for the attackers to launch stealthy false data injections, as more parameters are involved in the 
+state-estimation that need to be modified for a successful attack. The findings of this research confirm that by 
+accounting for interlinks between hydrological and energy systems, the security of both systems will be im­
+proved. The interconnection between the state variables and measurements of the water-energy network is 
+reflected in the energy consuming components of the water system, and is achieved through the measurements 
+of pump’s active power consumption in the proposed integrated estimation framework. The framework includes 
+Newton’s iterative method for an alternating current (AC) state-estimation procedure for the energy network. 
+The state-estimation of the energy network includes the estimation of voltages using measured parameters of the 
+energy network such as active/reactive power flow/injection or voltages. Moreover, a three-tier state-estimation 
+process based on Newton’s iterative method for the water network is contemplated to attain nodal heads, nodal 
+demands, and the flow rate of the pipes without pumps. An integrated bad data detection algorithm is also 
+supplemented to the proposed framework to detect potential bad data in water distribution system or energy 
+network and enhance the resilience of the integrated water energy systems.   
+1. Introduction 
+It is a well-established fact that water and energy sources are each 
+indispensable to our modern economic systems. The water and energy 
+sectors are increasingly under rapid reform to meet the three essentials 
+of security of supply, sustainability, and economic efficiency. In con­
+ditions where water and energy systems rely on each other, the most 
+challenging problems are before engineers and policymakers (Endo 
+et al., 2017; Smajgl et al., 2016; Zeng et al., 2020). However, it will be 
+demonstrated in this paper that such interdependence can be used to­
+wards the advantage of the two systems, to improve the accuracy of the 
+state-estimation and bad data detection algorithms. 
+Cybersecurity has become one of the key challenges of the water 
+and energy supply infrastructures in the recent years. Security agents 
+have warned both water and energy sectors of potential false data in­
+jection (FDI), also known as cyber-physical attacks. For instance, in 
+March and April of 2018, the Department of Homeland Security (DHS) 
+and Federal Bureau of Investigation (FBI) apprised the water utilities of 
+Russian government’s efforts to manipulate critical infrastructure in­
+struments involved in the water utility operations (Koehler, 2018). In 
+2015, a power grid in Ukraine was taken down by an attacker, and a 
+year later, Russian hackers targeted a transmission level substation 
+resulting in a black out at some parts of Kiev (Knake, 2017). State- 
+estimation is a technique that is used to identify potential measurement 
+https://doi.org/10.1016/j.jhydrol.2020.125393 
+Received 24 May 2020; Received in revised form 8 July 2020; Accepted 6 August 2020    
+⁎ Corresponding author. 
+E-mail addresses: moazeni@psu.edu (F. Moazeni), khazaei@psu.edu (J. Khazaei), pum10@psu.edu (P. Mitra). 
+Journal of Hydrology 590 (2020) 125393
+Available online 12 August 2020
+0022-1694/ © 2020 Elsevier B.V. All rights reserved.
+T
+
+errors or FDIs in water or energy networks. Using the measured data 
+and information on the structure of the system, the parameters of en­
+ergy or water networks can be estimated. 
+In the water networks, the measurements often include the flow of 
+the pumps and main pipes, pressure measurements collected via tele­
+metry systems, the total water usage recorded by district meters, and 
+some less accurate predictions of water usage at random nodes, also 
+known as “pseudo-measurements” (Arsene and Gabrys, 2014). These 
+measurements are collected by smart meters installed only on the pipes, 
+nodes, and pumps of importance, since a typical size water distribution 
+system includes hundreds to thousands of pipes and nodes and it is 
+economically infeasible to measure the pressure head, demand, and 
+flow rate of every single node and pipe in the system. Accordingly, 
+state-estimation algorithms are developed to estimate the parameters 
+that are not recorded by smart meters yet essential to the decision 
+making in water distribution systems. As in water systems, state-esti­
+mation is a key tool in power systems, which incorporates real and 
+reactive power flows, bus power injections, and voltages phasor mea­
+surements to estimate voltage magnitudes and phase angles as state 
+variables (Primadianto and Lu, 2016). Due to the high importance of 
+state-estimation in both water and energy networks, and the challenges 
+they introduce to both systems, various state-estimation methods in 
+water and energy systems are discussed in the following subsection. 
+1.1. Literature review 
+Several studies have proposed state-estimation models for water 
+distribution networks or electrical power systems (EPS) individually. 
+Prior efforts in state-estimation in water distribution system (WDS) can 
+be summarized into three main techniques: least square, least absolute 
+value, and min–max methods, each of which provides some advantages 
+with particular errors. For instance, the least-square method is known 
+to be sensitive to large errors, whereas the least absolute value and 
+min–max methods can cause computational issues due to their non- 
+differentiable objective functions (Tshehla et al., 2017). For instance, 
+the weighted least square method was used as an implicit state-esti­
+mation method for water systems with very low measurement re­
+dundancy (Andersen and Powell, 2000). A study predicted nodal de­
+mands by solving an objective function with constrained weighted- 
+least-squares of the measured data (Tabesh et al., 2011). Others used 
+the squared summation of residuals between the measured and esti­
+mated data as the objective function (Rozos et al., 2010). Some studies 
+used Kalman filtering technique to enhance the water quality mon­
+itoring system (Krutys et al., 2019) or simulations (Arsene and Gabrys, 
+2014) to solve for the unknown parameters. In another study, the Di­
+vidon-Fletcher-Powell algorithm was used to estimate nodal demand in 
+a WDS (Zhang et al., 2018). One of the difficulties reported in devel­
+oping the state-estimation method for water systems was computational 
+issues in pipes with small flow rates, in which the Jacobian matrix 
+became singular (Bargiela, 1984; Arsene and Gabrys, 2014). To tackle 
+this problem, other methods such as simulations were combined with 
+iterative methods (Arsene and Gabrys, 2014). 
+Unlike in WDS where state-estimation is considered to be a modern 
+problem, in EPS, these studies date back to over forty years ago. One of 
+the pioneers, Schweppe (Schweppe, 1970) used a nonlinear weighted 
+least squares optimization method in their estimation. Other studies 
+incorporated non-iterative approaches that considered the data from 
+Supervisory Control and Data Acquisition (SCADA) systems (Jiang 
+et al., 2015; Dobakhshari et al., 2019). Other studies incorporated 
+phasor measurement unit (PMU) and remote terminal unit (RTU) 
+models into the state-estimations (Lavorato et al., 2007; Pandey et al., 
+2018; Jovicic et al., 2018). A recent study developed a linear model for 
+the power system state-estimation with PMU and RTU models (Wagner 
+et al., 2019). 
+Nevertheless, in all these studies, state-estimation has been con­
+sidered independently for water or energy systems, and the interlinked 
+nature of water-energy networks has been out-of-scope. The main 
+challenge of independent state-estimation for water or energy network 
+is that it treats the other counterpart as a black box and fails to fully 
+observe the interlinked system as a whole to protect it from interrup­
+tions or threats. For example, if FDIs occur in one infrastructure, they 
+may not be detected in the counterpart network, causing damage to the 
+core operation of the nexus. Several studies focused on modeling and 
+detection of FDIs in water or energy networks. For instance, the 
+Environmental Protection Agency Network (EPANET) (the name of a 
+hydraulic simulation software) and a machine-learning algorithm were 
+used to detect cyber-physical attacks in WDS in Ramotsoela et al., 2019. 
+In another study, EPANET and mixed integer linear programming 
+(MILP) were used to identify cyber attacks in a looped WDS (Housh and 
+Ohar, 2018). Some studies considered gravitational-based WDSs, which 
+cannot be implemented in the looped pressurized systems (Amin et al., 
+2012; Amin et al., 2012). One study developed a simulation toolbox, 
+i.e., epanetCPA, to emulate a physical- and cyber-components of WDSs 
+(Taormina et al., 2017). However, none of these studies considered the 
+energy network in the state-estimation or detection process. 
+In power systems, however, bad data detection has been well stu­
+died (Kosut et al., 2011; Teixeira et al., 2010; Eder-Neuhauser et al., 
+2017; Ganjkhani et al., 2019). Several studies have identified cyber 
+attacks with mathematical models (Liu et al., 2011; Hug and Giampapa, 
+2012; Giani et al., 2013), while others have developed detection algo­
+rithms by enumerating the attack vectors (Dan and Sandberg, 2010; 
+Teixeira et al., 2010). However, the studies on bad data detection of 
+energy systems consider WDSs as one of the loads, mixed with other 
+loads, and thereby treat it as a measurement unit. As such, any FDI on 
+the load terminal will be treated as false data readings on power con­
+sumption of the water distribution system. However, in reality, the false 
+data readings on the water distribution terminal could stem from FDIs 
+in a variety of readings such as nodal pressure, tank level, or the pump’s 
+speed. Accordingly, only an integrated state-estimation and bad data 
+detection system can precisely detect the origin of bad data in a com­
+bined water-energy network, and this motivates the contributions of 
+this research. 
+There has been a limited number of efforts in detecting bad data in 
+integrated water-energy systems. For example, optimization methods 
+were developed to enhance the resilience of an integrated water-energy 
+system in (Zuloaga et al., 2019). However, these models were specifi­
+cally developed for limited water and/or energy availability scenarios, 
+while other potential anomalies, such as FDIs in the pressure head of 
+the tank or possible attacks on flow of the pumps or reservoir, were not 
+considered. Moreover, state-estimation was not considered in energy 
+nor in water distribution network. Another study developed a sub­
+observer-based fusion filter to detect bad data in a combined water- 
+energy system inside a power plant (Khalid et al., 2019). In this system, 
+the interdependence of water and energy was defined within the power 
+plants in the form of cooling water basins, desalination unit, and con­
+densers. Hence, the energy system and the water distribution system 
+were disconnected, and water distribution system was not within the 
+scope of the study. Furthermore, the energy network was limited to a 
+power plant only, and the state-estimation of an energy network was 
+not considered. Therefore, to the best of the authors’ knowledge, prior 
+research did not focus on developing a comprehensive framework for 
+state-estimation and bad data detection of integrated water-energy 
+systems. 
+1.2. Contribution 
+To address the limitations of the existing research including detailed 
+mathematical state-estimation and bad data detection models that 
+contemplate both water and energy equations, as well as avoiding the 
+computational difficulties that prior research reported in terms of de­
+veloping the water state-estimation due to the existence of the non­
+linear equations, this paper proposes an integrated state-estimation and 
+F. Moazeni, et al.   
+Journal of Hydrology 590 (2020) 125393
+2
+
+bad data detection framework for a combined water-energy system 
+such that.  
+• The state-estimation of water distribution network is designed as a 
+three-tier state-estimation approach that improves computational 
+challenges due to nonlinearity of equations involved in estimating 
+the pressure head at the nodes and the flows in the pipes. 
+Specifically, the proposed three-tier iteration method is an alter­
+native to the iteration-simulation method developed previously 
+(Arsene and Gabrys, 2014), offering an expedited and more 
+straightforward state-estimation for the water system with similar 
+backbone to the energy state-estimation framework, which will fa­
+cilitate the convergence of the two models into a single conjunction,  
+• An energy state estimator is designed to provide the estimation of 
+parameters of the energy system (including bus voltages, power 
+injections and transmission flows) in parallel to the water state-es­
+timation,  
+• The interlink between water and energy state-estimation is modeled 
+by using the estimated parameters of the water distribution system 
+as measurements in the state-estimation process of the energy 
+system considering load dynamics,  
+• The outcomes of the integrated water-energy state estimator is sent 
+to an “Integrated Bad Data Detection Center” (IBDDC) to identify any 
+potential bad data and take corrective actions. 
+An integrated energy-water system composed of IEEE (stands for 
+Institute of Electrical and Electronics Engineers) 14-bus power dis­
+tribution network and a 12-node water distribution system is developed 
+for the case studies using MATLAB software. Several case studies are 
+run to analyze the performance of the proposed bad data detection 
+framework on detecting bad data on water distribution system or en­
+ergy network. The rest of the paper is organized in the following order. 
+The state-estimation model of the water sector is formulated in Section  
+2, the state-estimation of the energy network is modeled in Section 3. 
+Case studies are included in Section 4 and Section 5 concludes the 
+paper. 
+2. Problem formulation 
+Given the topology and parameters of the system, the state-esti­
+mation requires the readings from the measurement devices (including 
+phasor measurement units (PMUs), remote terminal units (RTUs), or 
+smart meters) in the integrated water-energy network and is started 
+once all the measurements have been received. The framework for in­
+tegrated state-estimation will be implemented in supervisory control 
+and data acquisition (SCADA) center of the integrated system and is one 
+of the main functions of the SCADA center. The structure of the system 
+(such as topology of the system, parameters of the lines, size of the 
+loads and generation units) is known and cannot change during the 
+estimation process. 
+An overview of the proposed framework is demonstrated in Fig. 1, 
+in which a 3-tier state-estimation of the water system and one-step 
+estimation of energy network parameters are designed to simulta­
+neously process measurement inconsistencies in the water-energy 
+system. One of the challenges in developing the state-estimation 
+method for water systems is the nonlinear correlations between the 
+nodal pressure head, head-loss of the pipe, and pump’s head gain with 
+the corresponding flow rate, expressed in Bernoulli, Hazen-Williams, 
+and pump’s characteristic equations, respectively. These nonlinear 
+equations generate singular Jacobian matrix, especially when flow rate 
+is small in some of the pipes. To resolve this issue, previous researchers 
+tried to obtain the nodal heads (associated with the nonlinear equa­
+tions) from other methods such as simulations (Arsene and Gabrys, 
+2014) and then combined them with iterative methods such as New­
+ton–Raphson to acquire other state variables like nodal demands, which 
+can be derived from the linear mass continuity theorem (14). In the 
+present work, a coherent state-estimation framework for both water 
+and energy systems is designed to facilitate the mergence of the water 
+and energy systems state-estimation algorithms. For this reason, the 
+water system state-estimation is designed in three steps of New­
+ton–Raphson, each step consisting of linear equations, to obtain all state 
+variables within one single consistent model without the need for 
+contemplating a simulation model. First, loop corrective flows are es­
+timated in the state-estimation 1 block by calculating the flow rates of 
+the pipes ( Q
+[
+]
+f p
+,
+) in the system. These in-pipe flows will serve as input 
+values for estimation of both the heads ( H
+[
+]
+k ) and the demands of the 
+nodes ( D
+[
+]
+k ) through state-estimation 2 and 3, respectively. The in-pipe 
+flows will also be used to estimate the power consumption of the 
+pumps. The power demands, associated with the pumps, will act as 
+input loads for the energy state estimator. The estimation outcomes of 
+both the water and energy state-estimation will be sent to the integrated 
+bad data center for false data injection processing. Details of each state- 
+estimation process will be elaborated in the next sections. 
+3. State-estimation of the water system 
+In the water sector, most of the water utility companies use tele­
+metry systems, as an alternative method to transmitting data, which are 
+employed for obtaining data on the present state of the network and 
+measuring flows and pressures (Tshehla et al., 2017; Shende and Chau, 
+2019). However, the large scale of WDSs does not allow for all the pipe 
+flows, nodal pressures, and nodal demands to be measured. Hence, a 
+mathematical model of the water system consisting of mass and energy 
+balance equations in the network’s nodes and links is used. Next, a 
+maximum likelihood estimation (MLE) technique in least square esti­
+mation (LSE) process is implemented to estimate the parameters of the 
+water network (Gould et al., 2006). The objective function is designed 
+to minimize the summation of measurement residuals 
+=
+J x
+Z
+g x
+min
+( )
+[
+( )]
+x
+i
+N
+i
+i
+i
+i
+2
+2
+i
+m
+(1) 
+Fig. 1. Water-energy state-estimation flowchart.  
+F. Moazeni, et al.   
+Journal of Hydrology 590 (2020) 125393
+3
+
+where Nm is the number of measurements, Zi are the measurements or 
+pseudo-measurements of the water system variables, including the flow 
+rate of the pumps, as well as the head and flow of the tank and re­
+servoir. In this equation, xi are the state variables (nodal heads and 
+demands), and g x( )
+i
+i
+are the hydraulic equations related to the state 
+variables of the water system. Through the Newton–Raphson technique, 
+which is a well-known method (Gould et al., 2006), the gradient of 
+measurement residuals ( J x( )) is forced to zero, as the minimum 
+amount of the function J x( ) is obtained when 
+= 0
+J
+xi
+. Hence 
+=
+…
+…
+=
+J x( )
+0
+,
+,
+,
+,
+0
+J
+x
+J
+x
+J
+x
+T
+N
+1
+2
+(2)  
+By substituting J x( ) from (1) into (2), the estimated value of x can 
+be iteratively solved until the convergence (very small threshold) is 
+achieved 
+=
++
++
+x
+x
+x
+[ ]
+[ ]
+[ ],
+i
+i
+1
+(3)  
+=
+x
+H
+R
+H
+R
+Z
+g x
+Z
+g
+x
+[ ]
+[[
+] [ ]
+[
+] ]
+[ ]
+( )
+( )
+T
+T
+1
+1
+1
+1
+1
+2
+2
+(4) 
+where i is the iteration number, 
+=
+x
+Q H
+D
+[ ]
+[
+,
+,
+]
+l
+k
+k
+is the estimated 
+state vector and H
+[
+] and R
+[ ] are the Jacobian and covariance matrices, 
+respectively, and are represented as 
+=
+…
+…
+…
+H
+[
+]
+g
+x
+g
+x
+g
+x
+g
+x
+g
+x
+g
+x
+N
+N
+N
+N
+N
+1
+1
+1
+2
+1
+2
+1
+(5) 
+and 
+=
+…
+…
+…
+R
+[ ]
+0
+0
+0
+0
+0
+0
+N
+1
+2
+2
+2
+2
+(6)  
+In (4), g x( )
+i
+is expressed in (7)–(9). 
+As shown in Fig. 2, three individual Newton–Raphson (N-R) itera­
+tive calculations are developed to obtain the state variables, which is 
+explained in detail in the next section. The g x( )
+i
+i for each of these N-R 
+calculations are represented as 
+=
+g
+Q
+M
+h
+[ (
+)]
+[
+][
+]
+l
+lp
+loss p
+,
+(7)  
+=
+g H
+H
+H
+[ (
+)]
+[
+]
+k
+k
+k
+1
+(8)  
+=
+g D
+D
+[ (
+)]
+[
+]
+k
+k
+(9) 
+where in (7), Ql is the loop corrective flow, hloss p
+, is the head loss of the 
+pipe p, expressed as (Houghtalen et al., 2016) 
+=
+×
+h
+F
+Q
+(
+)
+loss p
+p
+l
+,
+1.85
+(10) 
+where Fp is the Hazen-Williams coefficient calculated as 
+=
+F
+L
+C D
+(0.278
+)
+p
+p
+p
+p 1.85
+in which, L
+D
+,
+p
+p, and Cp are the length (m), diameter (m), and rough­
+ness coefficient of the pipe p, respectively. All the parameters used in 
+this study are provided in Table A1, in the appendix. 
+Matrix Mlp is the loop incidence matrix as below 
+=
+…
+…
+…
+M
+M
+M
+M
+M
+M
+M
+M
+M
+M
+lp
+p
+p
+l
+N
+lp
+11
+12
+1
+21
+22
+2
+1
+2
+(11) 
+such that 
+=
+M
+1
+direction of flow n and loop m are the same
+1 direction of flow n and loop m are opposite
+0
+flow of m does not belong to loop n
+m n
+,
+In (8), Hk
+1 and Hk are the heads at consecutive nodes k
+1 and k, 
+obtained from Bernoulli’s equation (Houghtalen et al., 2016) 
+=
+H
+H
+h
+h
+k
+k
+loss p
+j
+1
+,
+(12) 
+where hj is the head gain of the pump (Walski et al., 2003) 
+=
++
++
+h
+a q
+b q
+c
+j l
+j
+pj
+A
+j
+pj
+B
+j
+,
+(13) 
+where qpj is the flow measurement of pump j obtained from SCADA 
+readings, and a
+b c A
+,
+,
+,
+j
+j
+j
+, and B are parameters of the pump’s char­
+acteristics equation (provided in Table A1). 
+In (9), the nodal demands are calculated from mass balance equa­
+tion at each node (Houghtalen et al., 2016) 
+=
+D
+A
+Q
+[
+]
+[
+][
+]
+k
+kp
+p
+(14) 
+where matrix 
+×
+A
+[
+]
+kp k p is the network incidence matrix for k-node and p- 
+pipe obtained as 
+=
+…
+…
+…
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+p
+p
+k
+N
+kp
+11
+12
+1
+21
+22
+2
+1
+2
+(15) 
+and 
+=
+A
+1
+flow of pipe p entering node k
+1 flow of pipe p leaving node k
+0
+flow of pipe p is not related to node k
+i j,
+and Q
+[
+]
+p is the matrix of pipe flows which will be obtained from N-R1. 
+These functions will be used in the three N-R iterations of water esti­
+mation, explained in detail in the following subsections. 
+3.1. N-R1: Loop corrective flows as state variables 
+As demonstrated in Fig. 2, the first Newton–Raphson calculations 
+(N-R1) are developed to acquire loop corrective flows ( Ql), to be used 
+to calculate the flows of the pipes (Qf p
+, ). This is included because when 
+nonlinear Hazen-Williams equation for head-loss in nodal head esti­
+mation is applied, N-R method has been shown to have computational 
+issues (Bargiela, 1984). In that case, the inverse of the Jacobian matrix 
+approaches singularity when flows in the pipes are small. Hence, N-R1 
+is incorporated to solve for loop corrective flows, representing the flow 
+of each loop independent from the pipes, to compute total head loss of 
+the loop. This is based on the conservation of energy theorem, which 
+states that the difference between the energy head of any two points in 
+a WDS is equal to the energy gained (via pump) minus the energy lost 
+through head-loss between the two points (Houghtalen et al., 2016). As 
+such, in a loop where the initial and final node is the same, the sum­
+mation of the head-loss of the pipes belonging to the loop is equal to 
+zero, unless there exists a pump in which case the summation of the 
+head-losses is equal to the energy head of the pump, expressed in (17). 
+Loop corrective flows estimation is essential to obtaining state variables 
+of nodal heads and nodal demands because of the following. The water 
+system’s state variables are functions of pipes’ flow rates through 
+nonlinear Bernoulli’s Eq. (12) and linear mass continuity theorem (14), 
+respectively. However, flow rate measurements are only available for 
+the main arteries and the pipes with pumps, due to the economic bur­
+dens that installation of smart meters on every pipe can impose on 
+water systems. Herein, loop corrective flows will allow for a primary 
+estimation of nodal heads, in which flow rates are replaced with loop 
+corrective flows in calculations. The outcome of the N-R1 will be used 
+F. Moazeni, et al.   
+Journal of Hydrology 590 (2020) 125393
+4
+
+for nodal head calculations via linear equations (Arsene and Gabrys, 
+2014). 
+As shown in Fig. 3, the studied network consists of 7 loops, which 
+consequently generate seven corrective flows shown by vector 
+Ql, 
+where l is the loop identification in the Fig. 2, e.g. Q1 belongs to loop 
+1. 
+=
+Q
+Q
+Q
+Q
+Q
+Q
+Q
+Q
+[
+]
+l
+T
+1
+2
+3
+4
+5
+6
+7
+For any loop l and any pipe p connecting nodes k and k
+1, in­
+cluding a pump j, Bernoulli’s equation is defined as (12). Plugging in 
+Mlp, nodal heads, head losses of the pipes, and head gains of the pumps 
+into (12), the energy equation of the loops are provided as 
+=
+×
+×
+×
+H
+M
+h
+[
+]
+[
+]
+[
+]
+l l
+lp l p
+loss p p
+1
+,
+1
+(16) 
+where 
+=
+H
+h
+l
+pump j is in the loop
+0
+otherwise
+l
+l j,
+(17) 
+and hl j, is the head gain of the pump j in loop l, obtained from (13). 
+The maximum likelihood criterion, derived from (1), is used to obtain 
+=
+x
+Q
+[ ]
+[
+]
+i
+l . In (1), 
+=
+Z
+H
+[
+]
+[
+]
+i
+l , which consists of residual loop head 
+losses expressed in (16). Hence, the objective function in the N-R1 is 
+=
+J
+Q
+H
+g
+Q
+min
+[
+(
+)]
+Q
+l
+i
+N
+l
+i
+l
+i
+2
+2
+l
+l
+(18)  
+Through the Newton–Raphson technique (2), the gradient of mea­
+surement residuals (J
+Q
+(
+)
+l ) is forced to zero. By substituting J
+Q
+(
+)
+l
+from (18) into (2), the estimated value of the loop corrective flow at 
+step +
+i
+1 can be derived from (3) such that 
+=
+x
+Q
+[ ]
+[
+]
+l
+(19) 
+where 
+=
+x
+Q
+[ ]
+[
+]l is derived from (4), H
+[
+], and R
+[ ] are derived from  
+(5) and (6), respectively. Using the loop corrective flows derived from 
+the first Newton–Raphson loop, the final flows in each pipe, Qf p
+, , can be 
+found using 
+=
++
+Q
+Q
+M
+Q
+[
+]
+[
+]
+[
+] [
+]
+f p
+i p
+lp T
+l
+,
+,
+(20) 
+where Ql are the loop corrective flows, Qi p
+, are the initial flows in the 
+pipes, among which 
+=
+Q
+Q
+i
+i T
+,1
+,
+is the inflow from the tank, 
+=
+Q
+q
+i
+p
+,3
+2 is 
+the flow of pump 2, 
+=
+Q
+q
+i
+p
+,7
+3 is the flow of pump 3, and 
+=
+Q
+q
+i
+p
+,11
+1 is the 
+flow of pump 1 are measured and the rest are “guessed” based on these 
+given flows and simple splits among the branches of the network. These 
+initial guessed values will be corrected for each pipe once Ql are ap­
+plied in (20). Matrix M
+[
+]
+lp T is the transpose of matrix M
+[
+]
+lp in (11). Next, 
+the head loss of the pipes are adjusted by replacing Ql and qp j, (for the 
+Fig. 2. Water system’s state-estimation flowchart.  
+F. Moazeni, et al.   
+Journal of Hydrology 590 (2020) 125393
+5
+
+pipes including the pumps) with corresponding Qf p
+,
+in (10) and (13). 
+Hence 
+=
+×
+h
+F
+Q
+(
+)
+loss p
+p
+f p
+,
+,
+1.85
+(21)  
+=
++
++
+h
+a Q
+b Q
+c
+(
+)
+(
+)
+j
+j
+f pj
+A
+j
+f pj
+B
+,
+,
+(22)  
+As shown in Fig. 2, the results will be served as pseudo-measure­
+ments in the next N-R calculations. Additionally, qp j, and Qf pj
+,
+will be 
+used to calculate the “measured” and “estimated” power consumption 
+of the pumps, respectively, to be sent to the energy state-estimation, 
+expressed as (Walski et al., 2003) 
+=
+×
+×
+P
+h
+q
+m j
+j
+p j
+,
+,
+(23)  
+=
+×
+×
+P
+h
+Q
+es j
+j
+f pj
+,
+,
+(24) 
+where Pm j, and Pes j, are the measured and estimated power demand for 
+pump j,
+is the specific weight of water, which is 9.789 KN/m3 at 
+20°C, and 
+is the pump’s efficiency, assumed to be 80% for all pumps 
+(Ulanicki et al., 2008). 
+3.2. N-R2: Nodal heads as state variables 
+As illustrated in Fig. 2, the second iterative calculations, i.e., N-R2, 
+will take in Qf p
+,
+from N-R1 to calculate the nodal heads considering 
+function g H
+(
+)
+k as (8). From (12), the matrix of measurements for this 
+step, Z
+[ ], is derived as 
+=
+Z
+h
+h
+[ ]
+[
+]
+[
+]
+loss p
+j
+,
+(25)  
+Three remarks should be noted here: (1) As exhibited in Fig. 3, there 
+are 12 nodes and 19 head losses in the studied water network, meaning 
+that only 12 out of 19 should be selected to include in the measure­
+ments. As such, those pipes with actual SCADA measurements including 
+pipe 1 (connecting the water tank to node 1) and the pipes containing 
+q
+q
+,
+P
+P
+1
+2, and qP3 (i.e., the pumps’ flows) are contemplated, while the rest 
+are chosen in a way that the inverse of the Jacobian matrix will not 
+become singular; (2) for those pipes without a pump, hj is considered 
+zero in the matrix 
+h
+[
+]
+j ; and (3) the head of the tank, HT, is given as one 
+of the SCADA readings. 
+Hence, from (1), the objective function in the N-R2 is 
+=
+J
+H
+Z
+g H
+min
+[
+(
+)]
+H
+k
+i
+N
+i
+k
+i
+2
+2
+k
+k
+(26) 
+where Nk is the number of nodal head measurements. From N-R method 
+in (2), the gradient of measurement residuals (J H
+(
+)
+k ) from (2) is forced 
+to become zero. By substituting J
+H
+(
+)
+k
+from (26) into (2), nodal heads 
+can be estimated from (3) and (4) such that 
+=
+x
+H
+[ ]
+[
+]
+k
+(27) 
+where in (4), H
+[
+] is calculated from (5) and R
+[ ] is obtained from (6). The 
+Fig. 3. Studied water network.  
+F. Moazeni, et al.   
+Journal of Hydrology 590 (2020) 125393
+6
+
+outcome of N-R2 is a 
+×
+12
+1 matrix with row entries equal to the head of 
+the corresponding node. 
+3.3. N-R3: Nodal demands as state variables 
+As it is demonstrated in Fig. 2, in the third column from left, nodal 
+demands are calculated using the pipes’ flows estimation from N-R1  
+(20), while the flow of those pipes with pumps are entered from the 
+pumps’ flow measurements, i.e., q
+q
+,
+p
+p
+1
+2, and qp3, given by SCADA. 
+Hence, the matrix of measurements, Z
+[ ], is found by applying the Q
+[
+]
+f p
+,
+in (14), where 
+=
+Q
+Q
+q
+[
+]
+pipes without pump from (20)
+pipes with pump j from SCADA
+f p
+f p
+p j
+,
+,
+,
+(28)  
+Thus, 
+=
+Z
+A
+Q
+[ ]
+[
+][
+]
+kp
+f p
+,
+(29)  
+The water demand at each node can be calculated by solving the 
+objective function from (1), which is modified for nodal demands as 
+=
+J
+D
+Z
+g D
+min
+[
+(
+)]
+D
+k
+i
+N
+i
+k
+i
+2
+2
+k
+k
+(30) 
+where Nk is the number of nodal demand measurements and g D
+(
+)
+j
+k is 
+substituted from (9). By performing N-R3 method, the gradient of 
+measurement residuals (J D
+(
+)
+k ) from (2) is forced to become zero, in 
+which J
+D
+(
+)
+k
+is replaced from (30). The nodal demands at step +
+i
+1
+can be obtained from (3) and (4) such that 
+=
+x
+D
+[ ]
+[
+],
+k
+(31) 
+where in (4), the Jacobian matrix H
+[
+] is obtained from (5), and R
+[ ] is 
+from (6). The result of N-R3 is a 
+×
+12
+1 matrix with row entries equal to 
+demand at each node. 
+In the next section, state-estimation method of the energy sector is 
+explained. 
+4. State-estimation of energy network 
+The maximum likelihood criterion is also used in least square esti­
+mation process to estimate the parameters of the energy network. The 
+objective is to minimize the sum of measurement residuals from (1), in 
+which, Zi are energy system measurements at nodes (buses) including 
+voltage magnitude and angle ( Vi
+i), active power injection to the bus 
+(Pi), reactive power injection at nodes (Qi), active power flow from node 
+i to j (Pij) and reactive power flow from node i to j (Qij). In (1), xi is the 
+state variable to be estimated (voltage magnitudes and angles at dif­
+ferent nodes), g x( )
+i
+i are nonlinear functions relating the state variables 
+to measurement values, Nm is the size of measurement vector, i
+2 is the 
+measurement error for the ith measurement, and J x( ) is the measure­
+ment residual. The g x( )
+i
+i
+functions in an energy system can be re­
+presented by (Wood et al., 2013) 
+=
++
+=
+P
+V
+V
+G
+B
+|
+|
+|
+|[
+cos(
+)
+sin(
+)]
+k
+k
+n
+N
+n
+kn
+k
+n
+kn
+k
+n
+1
+(32)  
+=
+=
+Q
+V
+V
+G
+B
+|
+|
+|
+|[
+sin(
+)
+cos(
+)]
+k
+k
+n
+N
+n
+kn
+k
+n
+kn
+k
+n
+1
+(33)  
+=
++
+P
+G V
+V V
+G
+B
+|
+|
+|
+||
+|[
+cos(
+)
+sin(
+)]
+ij
+ij
+i
+i
+j
+ij
+i
+j
+ij
+i
+j
+2
+(34)  
+=
+Q
+B V
+V V
+G
+B
+|
+|
+|
+||
+|[
+sin(
+)
+cos(
+)]
+ij
+ij
+i
+i
+j
+ij
+i
+j
+ij
+i
+j
+2
+(35) 
+where Gij and Bij are real and imaginary components of the bus ad­
+mittance matrix ([Y
+]
+bus ), respectively. The bus admittance matrix is an 
+×
+N
+N matrix whose ijth element depends on the admittance of the 
+lines connected between nodes i and j in the energy system and is found 
+by 
+=
+=
+Y
+i j
+if i
+j
+if i
+j
+,
+admittances connected to bus i,
+admittances connected between bus iand j,
+bus
+It is also noted that if the measurements are voltage magnitudes or 
+angles, Eq. (1) can be simplified to 
+=
+=
+J
+V
+V
+V
+J
+min
+(
+)
+[
+]
+min
+( )
+[
+]
+V
+i
+N
+i
+m
+i
+V
+i
+N
+i
+m
+i
+2
+2
+2
+2
+i
+V
+i
+i
+i
+(36) 
+where NV is the number of voltage magnitude measurements, N is the 
+number of voltage angle measurements, i and Vi are estimated voltage 
+magnitude and angle at bus i, and Vi
+m and i
+m are measured voltage 
+magnitude and angle at bus i. Since the relationship between the state 
+variables ( V ,
+i
+i) and some measurements such as active and reactive 
+power injections/flows (Eqs. (32)–(35)) is not linear, an iterative 
+technique needs to be carried out to solve the state-estimation problem. 
+Through Newton–Raphson method in (2), the gradient of measurement 
+residuals (J x( )) are forced to zero. 
+=
+…
+…
+=
+J
+V ,
+0
+,
+,
+,
+,
+,
+0
+i
+i
+J
+J
+J
+V
+J
+V
+T
+N
+N
+1
+1
+(37) 
+By replacing J
+V
+(
+,
+)
+i
+i from (36) (if the measurement is voltage mag­
+nitude or angle) or (1) (if the measurement is not voltage magnitude 
+nor angle) in (37), the estimated value can be derived using Newton’s 
+iterative procedure in (3) and (4) such that 
+=
+=
+…
+…
+x
+V
+V
+[ ]
+[
+,
+,
+,
+,
+,
+]
+V
+T
+1
+2
+1
+2
+(38) 
+and depending on the measurement type, gi
+V
+can be to the form 
+of (32)–(35), or V ,
+i
+i as direct voltage measurements in (36). The 
+covariance matrix, R
+[ ], is calculated by (6) and the Jacobian matrices, 
+H
+[
+], is derived from (5) represented by 
+=
+…
+…
+…
+…
+…
+…
+H
+[
+]
+f
+f
+f
+V
+f
+V
+f
+f
+f
+V
+f
+V
+f
+f
+f
+V
+f
+V
+N
+N
+N
+N
+N
+N
+N
+N
+N
+N
+1
+1
+1
+1
+1
+1
+2
+1
+2
+2
+1
+2
+1
+1
+(39)  
+Derivation of Jacobean matrix elements ( H
+[
+]) is well studied in 
+power system textbooks and therefore, is skipped in this section. 
+Readers are encouraged to refer to (Wood et al., 2013) for detailed 
+derivation and procedure for the state-estimation of energy networks. 
+The flowchart of the proposed integrated state-estimation and bad data 
+detection method for water-energy systems is illustrated in Fig. 4. As it 
+can be seen, the energy network state-estimation is conducted on the 
+right side of the flowchart, where measurements from the energy net­
+work and readings of the pumps from water state-estimation will be 
+used to solve for the Newton–Raphson loop and calculate the estimated 
+values of voltages, power injections, and power flows. The Integrated 
+Bad Data Detection Center (IBDDC) receives estimated values from 
+integrated state-estimation procedure and compares the estimated va­
+lues with measurements to detect any bad data that exists in water or 
+energy network. 
+5. Case studies 
+Three case studies are included to investigate the impact of im­
+plementing an integrated bad data detection center on the operational 
+decision and security in a combined water-energy network, and com­
+pare those with independent traditional bad data detection systems. A 
+schematic description of the studied system is exhibited in Fig. 5, in 
+which a standard IEEE 14-bus benchmark system is combined with a 
+F. Moazeni, et al.   
+Journal of Hydrology 590 (2020) 125393
+7
+
+water distribution network benchmark known as “Battle of the Water 
+Sensor Networks”. The energy network resembles the U.S. power grid in 
+1962 and the water distribution network resembles an area in Ken­
+tucky, U.S. in 2014. The water network consists of one reservoir, one 
+water tank, 5 pumps, and 12 nodes. The entire model was developed in 
+MATLAB software, where the parameters of the IEEE 14-bus system 
+were 
+adopted 
+from 
+an 
+open-source 
+“MATPOWER” 
+toolbox 
+(Zimmerman et al., 2010) and parameters of the water distribution 
+benchmark are listed in Table A1, obtained from (Hernadez et al., 
+2016). While buses No. 2 and 3 supply electricity to the residential 
+buildings, bus No. 3 supplies power to the pumps P
+P
+,
+R
+2, and PE and bus 
+No. 2 provides power to the other two pumps of P1 and P3. The power of 
+the pumps are calculated from (23) and (24). As shown in Fig. 3, pump 
+PR transfers water from the reservoir to the tank, located at a higher 
+elevation, and is one of the most critical elements of the water system. 
+Pumps P
+P
+,
+1
+2, and P3 are located on the residential pipes to compensate 
+low pressure in the associated nodes, but are not considered vital to the 
+network, since the grid design of the water system allows the water 
+utility to send water from other branches if these pumps are shut off. 
+Finally, the pump PE is installed on a main pipe returning the excess 
+water from the residential network back to the reservoir. Four case 
+studies are included to validate the proposed model. The first case study 
+examines and discusses the integrated state-estimation model in the 
+absence of bad data, generating base-lines for the unknown parameters 
+and maximum estimation errors for the water and energy systems. In 
+the next three case studies, the performance of the standalone and in­
+tegrated models are discussed under various circumstances; (1) FDI in 
+the flow rate of pump 2, (2) FDI in the flow rate of pump R, and (3) FDI 
+in the level of the water in the tank. These scenarios represent failures 
+in less critical (e.g., pump 2’s flow rate), critical (e.g., reservoir ef­
+fluent), and overly critical (e.g., tank’s water level) components of the 
+water system, and are carefully designed to study the effect of these 
+fault events on the combined water-energy system state-estimation and 
+the integrated bad data detection algorithms. 
+5.1. State-estimation of integrated system with no bad data 
+The proposed integrated state-estimation was run for the system 
+illustrated in Fig. 5 to estimate the parameters of the integrated net­
+work. Table 1 presents the nodal heads (Hk ), nodal demands (Dk ), and 
+the pipes’ flows (Qf p
+, ) in the water distribution network, attained from 
+the proposed three-tier Netwon-Raphson estimation technique. Ad­
+ditionally, Table 1 includes the voltage magnitude ( Vi ) and angle ( i), 
+active and reactive power injections (Pi and Qi), and active and reactive 
+power flows (Pi j, and Qi j, ) of the studied electric power network. The 
+data associated with the fixed-head nodes, i.e. water tank and reservoir, 
+and pumps are not included as such information is provided in Table 
+A1. An error tolerance of 0.0001 is considered for all the estimated 
+values in the integrated water-energy network (Abur and Exposito, 
+2004). Results in Table 1 confirm that the state-estimation can suc­
+cessfully estimate the parameters of the integrated network. 
+5.2. False data injection on flow of pump 2 (qp2) 
+A random false data equal to 18% of the nominal value of pump 2 
+Fig. 4. Integrated water-energy state-estimation flowchart.  
+F. Moazeni, et al.   
+Journal of Hydrology 590 (2020) 125393
+8
+
+flow rate is injected to the measurements of pump 2 to examine how the 
+standalone energy state-estimation and the integrated state-estimation 
+detect potential bad data. The selected FDI is small to not be detected 
+by the SCADA system but large enough to cause failure in the system. 
+The left subplot in Fig. 6 demonstrates all the estimated data by the 
+energy state estimator, showing clean data by blue circles, while the 
+bad data detected are shown with red cross. The energy and water 
+tolerance thresholds are the maximum mean squared deviation 
+(MMSD) of the estimated parameters with their measurements asso­
+ciated with the energy and water systems in the absence of bad data, 
+respectively. In other words, the systems are calibrated such that if the 
+average squared difference between the estimation and measurement 
+values of a parameter is less than or equal to MMSD, that parameter is 
+considered to be “clean”. The MMSD of the studied energy and water 
+systems are evaluated to be 0.9% and 10%, respectively. In this case, 
+the error between the estimated and measured values of the active 
+power injection of bus No.3 (P3) and the active power flow (P2,3) were 
+calculated to be higher than the threshold, i.e., 0.9% in the energy 
+system, thus, were flagged as bad data by the energy state estimator. 
+However, the detection system cannot process the origin of the FDI in 
+the system. On the other hand, the integrated detection system, shown 
+in the right subplot in Fig. 6, presents the estimated data of the 
+integrated system, where the horizontal green line marks the water 
+system threshold as 10% error between the estimated and measured 
+data. The green circles denote the clean estimated measurements and 
+green rectangles represent the bad data in the water distribution net­
+work, meaning the green rectangles reveal the parameters for which the 
+mean squared deviation of the estimated and measured values are 
+higher than the calibrated error of 10% in the water system. In this 
+subplot, the water and energy data associate with the right and left y- 
+axes, respectively. As can be seen in the left subplot, the IBDDC flagged 
+4 data points as bad data, which indicates bus No.3 is compromised and 
+identifies the origin of this FDI to be pump 2 in the water distribution 
+system. This is a compelling finding as it crafts the systems management 
+in the time of crisis due to the following. Bus No.3 supplies power to 
+pump 2, which is why it is compromised by FDI in the pump, but it also 
+provides the electricity of the homes in this network. The operational 
+decision as an outcome of the standalone energy system estimation (the 
+left subplot) may result in disconnecting all the loads on bus No.3, and 
+thereby, a power outage will be experienced in parts of the neigh­
+bourhood. However, the proposed integrated state-estimation (the right 
+subplot) results in a shutdown for pump 2, while the rest of the system 
+will operate without any problem. This clearly demonstrates the ad­
+vantage of an integrated state estimation for water-energy networks, 
+Fig. 5. Modified IEEE 14-bus system combined with a 12-node water distribution system.  
+F. Moazeni, et al.   
+Journal of Hydrology 590 (2020) 125393
+9
+
+which prevents drastic measures taken by the energy system authorities 
+in response to a fault event in a nonessential element in the water 
+system. Table 2 provides the estimated and measured numerical values 
+of the associated parameters in both water and energy systems. Bad 
+data is pointed out with red checkmarks, where detected, and the as­
+sociated errors are determined with red color. 
+5.3. False data injection on the pump PR’s flow 
+In this case, an arbitrary FDI equal to 74% of the nominal value of qR
+is incorporated in the flow qPR, which is deliberately chosen to be large 
+to bring the flow beyond the capacity of the pump PR, causing multiple 
+failures in the system such as bursting the pipe connected to the pump, 
+damaging the pump, and flooding the downstream node (Shuang et al., 
+2014). The notion is to compare the performance of the standalone and 
+integrated bad data detection algorithms when a critical component is 
+injected with a large amount of false data. The left subplot in Fig. 7 
+shows that the standalone energy state estimator detected bad data 
+(shown with red crosses) in the active power injection on bus No.3 (P3) 
+and the active power flow from bus No.2 to bus No.3 (P2,3), which were 
+expected given that bus No.3 supplies power to pump R. Comparing the 
+Table 1 
+State Variables of the Water and Energy Network.          
+Node 
+Hk
+Dk
+from-to 
+Qf p
+,
+from-to 
+Qf p
+,
+No. 
+m 
+LPS 
+Node 
+× 102 LPS 
+Node 
+× 102 LPS   
+1 
+58.30 
+254.85 
+T-1 
+3.35 
+10-3 
+0.349  
+2 
+58.30 
+16.93 
+1-2 
+0.0007 
+9-5 
+0.353  
+3 
+44.18 
+22.85 
+3-2 
+0.536 
+8-6 
+0.349  
+4 
+34.92 
+0.00 
+4-3 
+0.300 
+12-11 
+0.349  
+5 
+27.24 
+0.85 
+5-4 
+0.298 
+2-4 
+0.351  
+6 
+25.61 
+30.44 
+6/5 
+0.308 
+8-1 
+0.350  
+7 
+108.78 
+8.71 
+7/6 
+0.271 
+5-7 
+0.200  
+8 
+38.30 
+20.07 
+3/9 
+0.349    
+9 
+11.42 
+0.00 
+11/10 
+0.353    
+10 
+43.56 
+0.00 
+2/11 
+0.353    
+11 
+43.24 
+35.00 
+1/12 
+0.352    
+12 
+101.95 
+64.92 
+4/8 
+1.00            
+Bus 
+Vi
+i
+Pi
+Qi
+from-to 
+Pi j,
+Qi j,
+NO. 
+p.u. 
+Degree 
+p.u. 
+p.u. 
+Bus NO. 
+p.u. 
+p.u. 
+1 
+0.972 
+0.00 
+2.35 
+-0.095 
+1-2 
+1.58 
+-0.171 
+2 
+0.955 
+-5.95 
+0.119 
+0.357 
+1-5 
+0.773 
+0.0754 
+3 
+0.924 
+-13.85 
+-0.692 
+0.074 
+2-3 
+0.623 
+0.0255 
+4 
+0.919 
+-12.55 
+-0.651 
+0.038 
+2-4 
+0.584 
+0.019 
+5 
+0.923 
+-10.735 
+-0.098 
+-0.044 
+2-5 
+0.439 
+0.034 
+6 
+0.983 
+-17.588 
+-0.109 
+0.220 
+3-4 
+-0.089 
+0.055 
+7 
+0.954 
+-16.14 
+0.0002 
+0.010 
+4-5 
+-0.601 
+0.117 
+8 
+0.993 
+-16.14 
+0.0002 
+0.218 
+4-7 
+0.27 
+-0.150 
+9 
+0.939 
+-18.033 
+-0.271 
+-0.148 
+4-9 
+0.15 
+-0.026 
+10 
+0.937 
+-18.41 
+-0.117 
+-0.058 
+5-6 
+0.461 
+-0.207 
+11 
+0.956 
+-18.12 
+-0.032 
+-0.017 
+6-11 
+0.087 
+0.090 
+12 
+0.964 
+-18.60 
+−0.061 
+-0.016 
+6-12 
+0.081 
+0.032 
+13 
+0.957 
+-18.64 
+-0.133 
+-0.055 
+6-13 
+0.184 
+0.010 
+14 
+0.926 
+-19.55 
+-0.150 
+-0.050 
+7-8 
+-0.0002 
+-0.210      
+7-9 
+0.269 
+0.142      
+9-10 
+0.064 
+-0.010      
+9-14 
+0.086 
+0.003      
+10-11 
+-0.053 
+-0.068      
+12-13 
+0.0189 
+0.0139 
+Fig. 6. Bad data detection by the energy state estimator (alone) on the left subplot, and the integrated water-energy state estimator on the right subplot when an FDI 
+of 10 LPS occurred in pump 2 of the water network. 
+Table 2 
+False Data Injection in Pump 2.   
+F. Moazeni, et al.   
+Journal of Hydrology 590 (2020) 125393
+10
+
+results with the previous case in Fig. 6, the standalone energy system 
+does not differentiate between these two inherently different FDIs, one 
+pertaining a small injection in a nonessential component whereas the 
+other corresponding to a very large injection in a critical element of the 
+water system. However, on the right subplot, two additional data points 
+shown by green squares are flagged as bad data by the integrated state 
+estimator, identifying pump R as the origin of the FDI and resulting in a 
+large error of 27% in the flow rate and power of the tampered pump 
+which indicates the large amount of the FDI in pump R’s measurement. 
+By looking at the left subplots in Figs. 6 and 7, the energy system’s 
+operator cannot distinguish between the bad data as the result of FDI in 
+pump 2, which was a minor issue, and of that in pump R, which can be 
+very serious with potentially damaging consequences. On the contrary, 
+in the proposed integrated system (if the right subplots in Figs. 6 and 7 
+are considered) the differences are indisputable and the origin of each 
+bad data is clearly identified, consequently the energy system’s opera­
+tors will be able to distinguish between an actual critical FDI event 
+requiring drastic measures with a trivial bad data occurrence that could 
+wrongfully be mistaken as critical and does not call for dire decisions. 
+The SCADA on the standalone energy system might bypass bus No.3 
+resulting in a blackout in loads connected to bus 3, but in the integrated 
+system, only pump R will be removed without affecting other loads.  
+Table 3 presents the estimated and measured values, as well as the 
+estimation errors of the relevant parameters in the system for this case, 
+where bad data are shown with red checkmarks. 
+5.4. False data injection in the tank’s water level 
+In this case, a drastic fault event in the water system is designed to 
+examine and compare the responses of the standalone energy state es­
+timator and the proposed integrated state-estimation framework. A 
+random false data equal to 18% of the nominal value of water level in 
+the tank (LT) is injected in the tank level measurements to increase its 
+volume. The goal is to test the efficiency of the standalone and in­
+tegrated systems in detecting a false data injection in a critical com­
+ponent (i.e., the water tank) of the system that is small enough to not be 
+detected by the SCADA but, if left undetected, it will have damaging 
+effects on the system’s operation, e.g., tank overflow. While the level of 
+water in the tank is not directly connected to a pump, it can indirectly 
+affect the flows in pumps PR and PE. The mass balance around the tank 
+requires 
+=
+=
+q
+Q
+V
+D
+L
+( /4)(
+) (
+)
+dV
+dt
+PR
+T
+T
+T
+T
+2
+T
+Hence 
+=
+dV
+dt
+D
+dL
+dt
+/4 (
+)
+T
+T
+T
+2
+where VT is the volume of water in the tank, DT is the diameter of the 
+tank, LT is the level of the water in the tank, dL
+dt
+T is the rate of change in 
+the level of the tank (which is compromised in this case), and QT is the 
+water leaving the tank to supply the network. On the other hand, 
+=
+=
+q
+Q
+D
+E
+T
+k
+k
+1
+12
+Fig. 7. Bad data detection by the energy state estimator (alone) on the left subplot, and the integrated water-energy state estimator on the right subplot when an FDI 
+of 249 LPS occurred in pump R in the water network. 
+Table 3 
+False Data Injection in Pump R.   
+F. Moazeni, et al.   
+Journal of Hydrology 590 (2020) 125393
+11
+
+where qE is the excess flow returned to the reservoir, which is equal to 
+the water injected by the tank to the network minus total usage 
+(
+= D
+k
+k
+1
+12
+). Hence, any change in the water level of the tank can affect 
+both the reservoir and excess flows, passing through PR and PE pumps, 
+respectively. 
+The injected false data is chosen to be large enough to be able to 
+overflow the tank, causing potential flooding in the downstream region 
+and serious damages to the water system infrastructure. The left subplot 
+in Fig. 8 presents the detected bad data by the standalone energy state 
+estimator in P3 and P2,3 as the result of compromised data in pumps R 
+and E, both of which, receive power from bus No.3. However, no fur­
+ther information to the extent of the danger and the origin of such 
+manipulation is provided. In fact, there is no difference between the 
+data observed in any of the left subplots in Figs. 6–8, since the WDS is 
+contemplated as a load like other loads connected on bus No.3. Hence, 
+the operational decision towards any of these FDIs, regardless of the 
+origin and degree of importance, would be the same (e.g., dis­
+connecting all loads on bus No.3). However, the results of the proposed 
+integrated state estimator in the right subplots can provide valuable 
+remarks to an operator on identifying the root cause of the event and 
+resolving it as soon as possible without having to shut down the entire 
+supply on bus No.3. While the left subplot exhibits results similar to 
+those reported in the previous case studies, the right subplot in Fig. 8 
+demonstrates very large errors in the flow and power of two essential 
+pumps in the water system (more than 1000%), as well as in the gen­
+erator providing the power, indicating an issue beyond one pump’s 
+malfunction. This outcome discloses the irrefutable impact of the in­
+tegrated bad data detection algorithm in managing a combined water- 
+energy system. Not only will it prevent unnecessary downtime and 
+power outage in the combined system, which will also offset the cost of 
+restarting operations in both water and energy systems, but also will 
+accurately ascertain critical events when a key element is manipulated 
+or is on the verge of failure. The values presented in Table 4 show the 
+large errors detected in these parameters. The table also provides all the 
+estimated and measured data of the relevant components of the studied 
+system, pointing out bad data and high errors were detected. 
+5.5. Remarks 
+This subsection summarizes some of the advantages of the proposed 
+integrated state-estimation framework for interdependent water and 
+energy systems. The main idea behind an integrated state-estimation 
+framework is to enhance the security of the system. Currently, water 
+and energy networks are treated separately. For example, assume an 
+energy network that is run independently. The loads in an energy 
+network are normally considered as constant power loads and smart 
+meters are dedicated to monitor loads in different buses (Nodes). An 
+attacker can directly inject false data into load measurements without 
+being detected by state-estimation. However, for a successful attack, the 
+attacker needs to manipulate measurements in vicinity of targeted node 
+as well (Yuan et al., 2011). In an integrated framework, an attacker 
+needs to manipulate more measurements in order to have a successful 
+attack. Fig. 9 has been added as an example to visualize this concept. 
+Consider the left-side plot, an attacker tries to cause harm on an in­
+dependent energy network by injecting false data on a load terminal. To 
+Fig. 8. Bad data detection by the energy state estimator (alone) on the left subplot, and the integrated water-energy state estimator on the right subplot when an FDI 
+of 3 m/s occurred in water level in the tank. 
+Table 4 
+False Data Injection in the Tank Level.   
+F. Moazeni, et al.   
+Journal of Hydrology 590 (2020) 125393
+12
+
+launch a successful attack, the attacker may need to inject false data on 
+both load terminals as they are physically connected. Now, assume an 
+integrated water-energy network in the right-side plot. In order to have 
+a successful attack, the attacker needs to inject false data on five 
+measurements. Compared to a standalone system, the attacker will have 
+a much harder time to launch a successful attack. Therefore, the in­
+tegrated framework inherently helps security of the system against false 
+data injection (FDI) attacks. 
+In addition, it was demonstrated through case studies that an in­
+tegrated state-estimation framework can improve the state-estimation 
+and bad data detection process in water and energy networks. Using 
+available measurements in water distribution networks and existing 
+Phasor Measurement Units (PMUs) in electricity distribution networks, 
+the proposed framework can easily be incorporated in Supervisory 
+Control and Data Acquisition (SCADA) centers to run in real-time, en­
+hance the resilience of water-energy networks, and detect anomalies. 
+6. Conclusion 
+An integrated framework was proposed in this paper to estimate the 
+parameters of a combined water-energy network and detect potential 
+false data injections. The main novelty of the proposed integrated state- 
+estimation framework is that a central control system is able to not only 
+detect bad data across the integrated water-energy system, but also 
+identify the exact location of the fault event occurrence. The findings of 
+the paper indicate that in the absence of such integrated detection 
+framework, the power of the entire water distribution, as well as other 
+residential loads, depending on the scale of the compromised bus, could 
+be disconnected due to bad data detection in the power network. 
+However, the proposed framework can identify the location of the 
+tampered data and the component responsible for the false data injec­
+tion. This hypothesis is tested with several case studies and the results 
+demonstrate that a standalone energy system fails to distinguish be­
+tween the false data injections on the tank’s water level and flow of 
+pumps in the system, and thus the operator may decide to disconnect 
+the power to the load entirely (water distribution in this case) resulting 
+in a blackout in a critical infrastructure. On the other hand, the pro­
+posed integrated system detects false data injections on pumps differ­
+ently from those on the tanks’ water levels such that the operator could 
+avoid blackouts by isolating the attacked equipment/readings, there­
+fore, the resilience of the integrated water-energy network will sig­
+nificantly increase using the proposed integrated framework. The out­
+come of this work will help developing the future research focusing on 
+various types of false data injections including cyberattacks and de­
+tection of threats in an integrated water-energy network. One of the 
+limitations of the proposed integrated model is that it may not be 
+computationally efficient for large systems, as it would involve nu­
+merous iterations. In future research, the models need to be scaled up 
+and adjusted to detect stealthy false data injections in large scale water- 
+energy system using big data analytic methods. 
+Funding 
+This research was under support from Penn State’s Center for 
+Security Research and Education (CSRE) under Homeland Security seed 
+grant award 2020–2021. 
+CRediT authorship contribution statement 
+Faegheh Moazeni: Conceptualization, Methodology, Software, 
+Writing - review & editing, Investigation, Visualization. Javad 
+Khazaei: Conceptualization, Methodology, Software, Writing - review 
+& editing, Investigation, Visualization. Prasenjit Mitra: Investigation, 
+Writing - review & editing. 
+Declaration of Competing Interest 
+The authors declare that they have no known competing financial 
+interests or personal relationships that could have appeared to influ­
+ence the work reported in this paper.   
+Appendix A 
+The variables in a water-energy network include measurements and constant parameters of the system that are adopted from the existing 
+benchmarks, and state-variables that should be solved by the state-estimation process. For instance, nodal heads and demands are considered to be 
+the state variables in water systems, while the voltage magnitude and angle, active and reactive power injections, and active and reactive power 
+flows are the state variables of the energy systems to be solved as the output of the state-estimation models. The set of data used as the given 
+measurements in the case studies are adopted from standard database of the referenced water and energy benchmarks as listed in Table A1 
+(Hernadez et al., 2016). Parameters of the energy network were adopted from MATPOWER toolbox of MATLAB (Zimmerman et al., 2010).  
+Fig. 9. Concept of false data injections in standalone energy network and integrated water-energy network.  
+F. Moazeni, et al.   
+Journal of Hydrology 590 (2020) 125393
+13
+
+References 
+Abur, A., Exposito, A.G., 2004. Power system state estimation: theory and implementa­
+tion. CRC Press. 
+Amin, S., Litrico, X., Sastry, S., Bayen, A.M., 2012. Cyber security of water scada sys­
+tems–part i: Analysis and experimentation of stealthy deception attacks. IEEE Trans. 
+Control Syst. Technol. 21 (5), 1963–1970. 
+Amin, S., Litrico, X., Sastry, S.S., Bayen, A.M., 2012. Cyber security of water scada sys­
+tems–part ii: Attack detection using enhanced hydrodynamic models. IEEE Trans. 
+Control Syst. Technol. 21 (5), 1679–1693. 
+Andersen, J.H., Powell, R.S., 2000. Implicit state-estimation technique for water network 
+monitoring. Urban Water 2 (2), 123–130. 
+Arsene, C.T., Gabrys, B., 2014. Mixed simulation-state estimation of water distribution 
+systems based on a least squares loop flows state estimator. Appl. Math. Model. 38 
+(2), 599–619. 
+Bargiela, A., 1984. On-line monitoring of water distribution networks. Ph.D. thesis, 
+Durham University. 
+Dan, G., Sandberg, H., 2010. Stealth attacks and protection schemes for state estimators in 
+power systems. In: 2010 first IEEE international conference on smart grid commu­
+nications. IEEE, pp. 214–219. 
+Dobakhshari, A.S., Azizi, S., Paolone, M., Terzija, V., 2019. Ultra fast linear state esti­
+mation utilizing scada measurements. IEEE Trans. Power Syst. 34 (4), 2622–2631. 
+Eder-Neuhauser, P., Zseby, T., Fabini, J., Vormayr, G., 2017. Cyber attack models for 
+smart grid environments. Sustainable Energy, Grids Networks 12, 10–29. 
+Endo, A., Tsurita, I., Burnett, K., Orencio, P.M., 2017. A review of the current state of 
+research on the water, energy, and food nexus. J. Hydrol.: Regional Stud. 11, 20–30. 
+Ganjkhani, M., Fallah, S.N., Badakhshan, S., Shamshirband, S., Chau, K.-W., 2019. A 
+novel detection algorithm to identify false data injection attacks on power system 
+state estimation. Energies 12 (11), 2209. 
+Giani, A., Bitar, E., Garcia, M., McQueen, M., Khargonekar, P., Poolla, K., 2013. Smart 
+grid data integrity attacks. IEEE Trans. Smart Grid 4 (3), 1244–1253. 
+Gould, W., Pitblado, J., Sribney, W., 2006. Maximum likelihood estimation with Stata. 
+Stata Press. 
+Hernadez, E., Hoagland, S., Ormsbee, L., 2016. Water distribution database for research 
+applications. World Environ. Water Resources Congress 2016, 465–474. 
+Houghtalen, R.J., Osman, A., Hwang, N.H., 2016. Fundamentals of hydraulic engineering 
+systems. Prentice Hall New York. 
+Housh, M., Ohar, Z., 2018. Model-based approach for cyber-physical attack detection in 
+water distribution systems. Water Res. 139, 132–143. 
+Hug, G., Giampapa, J.A., 2012. Vulnerability assessment of ac state estimation with re­
+spect to false data injection cyber-attacks. IEEE Trans. Smart Grid 3 (3), 1362–1370. 
+Jiang, X.T., Chow, J.H., Fardanesh, B., Maragal, D., Stefopoulos, G., Razanousky, M., 
+2015. Power system state estimation using a direct non-iterative method. Int. J. 
+Electr. Power Energy Syst. 73, 361–368. 
+Jovicic, A., Jereminov, M., Pileggi, L., Hug, G., 2018. An equivalent circuit formulation 
+for power system state estimation including pmus. In: 2018 North American Power 
+Symposium (NAPS). IEEE, pp. 1–6. 
+Khalid, H.M., Muyeen, S., Peng, J.C.-H., 2019. Cyber-attacks in a looped energy-water 
+nexus: an inoculated sub-observer-based approach. IEEE Syst. J. 
+Knake, R.K., 2017. A cyberattack on the US power grid. Council Foreign Relations. 
+Koehler, R.K., 2018. When the lights go out: vulnerabilities to us critical infrastructure, 
+the russian cyber threat, and a new way forward. Georgetown Secur. Stud. Rev. 7 (1), 
+27–36. 
+Kosut, O., Jia, L., Thomas, R.J., Tong, L., 2011. Malicious data attacks on the smart grid. 
+IEEE Trans. Smart Grid 2 (4), 645–658. 
+Krutys, P., Gomolka, Z., Twarog, B., Zeslawska, E., 2019. Synchronization of the vector 
+state estimation methods with unmeasurable coordinates for intelligent water quality 
+monitoring systems in the river. J. Hydrol. 572, 352–363. 
+Lavorato, M., Rider, M.J., Garcia, A.V., 2007. Power system state estimation: a new 
+method based on current equations. In: 2007 Large Engineering Systems Conference 
+on Power Engineering. IEEE, pp. 166–170. 
+Liu, Y., Ning, P., Reiter, M.K., 2011. False data injection attacks against state estimation in 
+electric power grids. ACM Trans. Inform. Syst. Security (TISSEC) 14 (1), 1–33. 
+Pandey, A., Jereminov, M., Wagner, M.R., Bromberg, D.M., Hug, G., Pileggi, L., 2018. 
+Robust power flow and three-phase power flow analyses. IEEE Trans. Power Syst. 34 
+(1), 616–626. 
+Primadianto, A., Lu, C.-N., 2016. A review on distribution system state estimation. IEEE 
+Trans. Power Syst. 32 (5), 3875–3883. 
+Ramotsoela, D.T., Hancke, G.P., Abu-Mahfouz, A.M., 2019. Attack detection in water 
+distribution systems using machine learning. Human-centric Comput. Inform. Sci. 9 
+(1), 13. 
+Rozos, E., Makropoulos, C., Butler, D., 2010. Design robustness of local water-recycling 
+schemes. J. Water Resour. Planning Manage. 136 (5), 531–538. 
+Schweppe, F., 1970. Power system state estimation, parts I, II and III. IEEE Trans. Power 
+Table A1 
+Parameters of the Water System (Bargiela, 1984; Hernadez et al., 2016).      
+Parameter 
+Values 
+Parameter 
+Values  
+QT
+335LPS 
+qE
+1.19LPS 
+HT
+59 m 
+qp1
+100 m 
+qR
+335LPS 
+qp2
+53.25LPS 
+HR
+20 m 
+qp3
+26.29LPS  
+Pumps’ characteristic equations 
+Pump No.  
+A 
+B 
+1  
+86.00
+q
+0.06286 p
+1.41
+2  
+111.00
+q
+0.01914 p
+2.05
+3  
+148.00
+q
+0.0001419 p
+2.05
+R  
+86.00
+q
+0.06286 p
+1.41
+E  
+86.00
+q
+0.06286 p
+1.41
+Pipe from/to 
+Diameter 
+Length 
+Roughness 
+Node 
+m 
+m  
+T/1 
+0.7 
+610 
+120 
+1/2 
+0.305 
+610 
+110 
+3/2 
+0.254 
+610 
+115 
+4/3 
+0.203 
+1219 
+100 
+5/4 
+0.203 
+1219 
+110 
+6/5 
+0.254 
+610 
+100 
+7/6 
+0.381 
+607 
+110 
+3/9 
+0.381 
+1097 
+135 
+11/10 
+0.457 
+1930 
+110 
+2/11 
+0.305 
+3151 
+100 
+1/12 
+0.457 
+762 
+110 
+4/8 
+0.229 
+914 
+125 
+10/3 
+0.305 
+823 
+140 
+9/5 
+0.154 
+411 
+100 
+8/6 
+0.229 
+701 
+110 
+12/11 
+0.152 
+1072 
+135 
+2/4 
+0.152 
+864 
+90 
+8/1 
+0.152 
+711 
+90 
+5/7 
+0.152 
+832 
+100 
+F. Moazeni, et al.   
+Journal of Hydrology 590 (2020) 125393
+14
+
+Apparatus Syst. 89, 120–135. 
+Shende, S., Chau, K., 2019. Design of water distribution systems using an intelligent 
+simple benchmarking algorithm with respect to cost optimization and computational 
+efficiency. Water Supply 19 (7), 1892–1898. 
+Shuang, Q., Zhang, M., Yuan, Y., 2014. Node vulnerability of water distribution networks 
+under cascading failures. Reliab. Eng. Syst. Saf. 124, 132–141. 
+Smajgl, A., Ward, J., Pluschke, L., 2016. The water–food–energy nexus–realising a new 
+paradigm. J. Hydrol. 533, 533–540. 
+Tabesh, M., Jamasb, M., Moeini, R., 2011. Calibration of water distribution hydraulic 
+models: a comparison between pressure dependent and demand driven analyses. 
+Urban Water J. 8 (2), 93–102. 
+Taormina, R., Galelli, S., Tippenhauer, N.O., Salomons, E., Ostfeld, A., 2017. 
+Characterizing cyber-physical attacks on water distribution systems. J. Water Resour. 
+Plann. Manage. 143 (5), 04017009. 
+Teixeira, A., Amin, S., Sandberg, H., Johansson, K.H., Sastry, S.S., 2010. Cyber security 
+analysis of state estimators in electric power systems. In: 49th IEEE conference on 
+decision and control (CDC). IEEE, pp. 5991–5998. 
+Tshehla, K.S., Hamam, Y., Abu-Mahfouz, A.M., 2017. State estimation in water dis­
+tribution network: A review. In: 2017 IEEE 15th International Conference on 
+Industrial Informatics (INDIN). IEEE, pp. 1247–1252. 
+Ulanicki, B., Kahler, J., Coulbeck, B., 2008. Modeling the efficiency and power char­
+acteristics of a pump group. J. Water Resour. Plann. Manage. 134 (1), 88–93. 
+Wagner, M.R., Jereminov, M., Pandey, A., Pileggi, L., 2019. A probabilistic approach to 
+power system state estimation using a linear algorithm. In: 2019 IEEE International 
+Conference on Environment and Electrical Engineering and 2019 IEEE Industrial and 
+Commercial Power Systems Europe (EEEIC/I&CPS Europe). IEEE, pp. 1–6. 
+Walski, T.M., Chase, D.V., Savic, D.A., Grayman, W., Beckwith, S., Koelle, E., 2003. 
+Advanced water distribution modeling and management. Haestad Press. 
+Wood, A.J., Wollenberg, B.F., Sheblé, G.B., 2013. Power generation, operation, and 
+control. John Wiley & Sons. 
+Yuan, Y., Li, Z., Ren, K., 2011. Modeling load redistribution attacks in power systems. 
+IEEE Trans. Smart Grid 2 (2), 382–390. 
+Zeng, S., Xia, J., Chen, X., Zou, L., Du, H., She, D., 2020. Integrated land-surface hy­
+drological and biogeochemical processes in simulating water, energy and carbon 
+fluxes over two different ecosystems. J. Hydrol. 582, 124390. 
+Zhang, H., Wang, K., Zhou, X., Wang, W., 2018. Using dfp algorithm for nodal demand 
+estimation of water distribution networks. KSCE J. Civil Eng. 22 (8), 2747–2754. 
+Zimmerman, R.D., Murillo-Sánchez, C.E., Thomas, R.J., 2010. MATPOWER: Steady-state 
+operations, planning, and analysis tools for power systems research and education. 
+IEEE Trans. Power Syst. 26 (1), 12–19. 
+Zuloaga, S., Khatavkar, P., Mays, L., Vittal, V., 2019. Resilience of cyber-enabled elec­
+trical energy and water distribution systems considering infrastructural robustness 
+under conditions of limited water and/or energy availability. IEEE Trans. Eng. 
+Manage.  
+F. Moazeni, et al.   
+Journal of Hydrology 590 (2020) 125393
+15

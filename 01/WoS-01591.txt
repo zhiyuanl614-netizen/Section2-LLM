@@ -1,0 +1,1531 @@
+Restoring Community Structures in Interdependent
+Infrastructure Networks
+Yasser Almoghathawi and Kash Barker
+, Member, IEEE
+Abstract—Community structures exist in many infrastructure
+networks (e.g., electric power, water distribution, and natural gas)
+where each network is partitioned into sets of densely connected
+components
+with
+sparse
+connections
+between
+them.
+Such
+community structures are formed in infrastructure networks based
+on physical connections within each network or their spatial
+characteristics, among others. However, infrastructure networks
+depend on one another for proper functionality. Though the
+interdependencies across infrastructure networks can improve
+their efﬁciency, they make them highly vulnerable to any
+disruption.
+This
+paper
+studies
+the
+restoration
+problem
+of
+community structures in a system of interdependent infrastructure
+networks following a disruptive event from the perspective of their
+resilience. Accordingly, we propose an optimization model using
+mixed-integer programming to restore community structures in
+each infrastructure network with the goal of enhancing the
+resilience of a system of interdependent infrastructure networks.
+Furthermore,
+we
+propose
+multiple
+community
+structures
+importance measures to prioritize their restoration process. Such
+measures could be used in solving the restoration model of
+community structures. The restoration model and importance
+measures
+are
+illustrated
+through
+a
+generated
+system
+of
+interdependent infrastructure networks.
+Index Terms—Interdependent networks, community structure,
+resilience, restoration, optimization.
+I. INTRODUCTION
+C
+RITICAL
+Infrastructure
+Networks
+such
+as
+electric
+power, water distribution, natural gas, transportation, and
+telecommunications, among others, are the backbone of modern
+societies, which depend on their continuous and proper function-
+ing. Such critical infrastructure networks provide the fundamen-
+tal services that support the economic productivity, security, and
+quality of life of citizens. The study of such networks under dis-
+ruption has matured considerably in the past 15 years, where
+emphasis has been given to identifying measures that enable the
+study of critical network components that lead to network vul-
+nerability [1]–[4]. Other studies provide methods and algorithms
+for restoring critical infrastructure networks following the occur-
+rence of a disruptive event [5]–[8]. However, infrastructure net-
+works are not isolated from each other, but rather they rely on
+one another in different ways for their proper functioning.
+Hence, they exhibit interdependency, where two infrastructure
+networks are said to be interdependent if there is a bidirectional
+relationship between them through which the state of each infra-
+structure network is dependent on the state of the other [9], [10].
+In general, interdependencies across critical infrastructure
+networks effectively enable operation of many infrastructures;
+hence, they play a signiﬁcant role in the continuous and reli-
+able operation of infrastructure networks [10]. However, the
+proliferation of interdependencies among infrastructure net-
+works may potentially cause them to be highly vulnerable to
+disruption. Consequently, if the operability of an infrastructure
+network is adversely affected by a disruptive event, this could
+lead to cascading inoperability in some or all dependent infra-
+structure networks due to their interdependencies; hence, a
+much more signiﬁcant impact on society and its economy
+[11]–[17]. Therefore, it is crucial for decision makers to
+account for interdependencies between infrastructure net-
+works when preparing the plans for their restoration to obtain
+a realistic analysis of their performance [18]. In addition, per-
+forming restoration activities for each infrastructure network
+independently could lead to improper utilization of available
+resources, wasted time, and may even cause further disrup-
+tions when improperly scheduled [19]. As a result, the restora-
+tion of such interdependent infrastructure networks following
+a disruption has become more challenging for decision makers
+as the increase in interdependency among infrastructure net-
+works magniﬁes the complexity associated with planning for
+their post-disruption recovery and operation.
+The problem of the restoration of interdependent infra-
+structure networks following a disruptive event has been
+addressed with different approaches in the literature [20]–
+[25]. However, in this paper, we address the restoration prob-
+lem of community structures in a system of interdependent
+infrastructure networks to enhance their resilience consider-
+ing the interdependencies among the infrastructure networks.
+Analyzing the resilience of community structures in a net-
+work has been recently addressed in the literature [26]–[28].
+Ramirez-Marquez et al. [26] study the resilience of commu-
+nity structures in a network considering the similarity of a
+network partition as a network performance by which the
+resilience is measured. They provide an approach to measure
+how community structures survive following the occurrence
+Manuscript received February 20, 2019; revised June 26, 2019; accepted
+July 6, 2019. Date of publication July 10, 2019; date of current version Sep-
+tember 2, 2020. This work was supported by the National Science Foundation,
+Division of Civil, Mechanical, and Manufacturing Innovation under Grant
+1541165. Recommended for acceptance by M. T. Thai. (Corresponding
+author: Kash Barker.)
+Y. Almoghathawi is with the Department of Systems Engineering, King
+Fahd University of Petroleum and Minerals, Dhahran 31261, Saudi Arabia
+(e-mail: moghathawi@kfupm.edu.sa).
+K. Barker is with the School of Industrial and Systems Engineering, Univer-
+sity of Oklahoma, Norman, OK 73019, USA (e-mail: kashbarker@ou.edu).
+Digital Object Identiﬁer 10.1109/TNSE.2019.2927883
+IEEE TRANSACTIONS ON NETWORK SCIENCE AND ENGINEERING, VOL. 7, NO. 3, JULY-SEPTEMBER 2020
+1355
+2327-4697  2019 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:03:28 UTC from IEEE Xplore.  Restrictions apply. 
+
+of a disruptive event as well as how they return back to their
+initial formation after restoration, which helps in choosing a
+restoration sequence for the disrupted components in a net-
+work. Rocco et al. [27] propose an approach to assess the
+resilience of community structures in a network after consid-
+ering the effect of disruptive events to communities or the
+total network. The approach helps in evaluating the vulnera-
+bility and recoverability of the network and suggesting differ-
+ent
+network
+restoration
+sequences
+accordingly
+for
+the
+disrupted components in a network. Though both approaches
+by Ramirez-Marquez et al. [26] and Rocco et al. [27] have
+not considered the availability of work crews during the res-
+toration process, and they consider a single network only and
+not a system of interdependent networks.
+In this paper, we propose a community structures restoration
+model (CSRM) using mixed-integer programming (MIP) with the
+objective of maximizing the resilience of the system of interde-
+pendent infrastructure networks. Moreover, the proposed CSRM
+takes into account the availability of time and infrastructure-spe-
+ciﬁc resources. Accordingly, it provides a set of prioritized resto-
+ration tasks for each infrastructure network, available work crews
+are allocated and scheduled considering the physical interdepen-
+dency among infrastructure networks such that the resilience of
+the system of interdependent infrastructure networks is enhanced.
+Furthermore, we propose multiple community structure impor-
+tance measures (CSIMs) that could be utilized to prioritize the
+recovery process of community structures in a system of interde-
+pendent infrastructure networks based on multiple perspectives.
+The remainder of the paper is organized as follows. Section II
+provides a brief background about network resilience, network
+interdependencies, and community structures. The proposed
+CSRM and CSIMs for a system of interdependent infrastructure
+networks are presented in Section III and Section IV, respec-
+tively. In Section V, a numerical experiment is presented with a
+generated system of interdependent power-water networks.
+Finally, concluding remarks with some possible future exten-
+sions are provided in Section 6.
+II. BACKGROUND
+A. Network Resilience
+Resilience is generally deﬁned as the ability of an entity or
+system to withstand, adapt to, and recover from a disruptive
+event to a desired level of performance in a timely manner
+[29]. Resilience has been quantiﬁed by several different
+approaches that exist in the literature [30], including: the nor-
+malized shaded area underneath the performance function
+curve of a system [31], topological measures [32], the ratio of
+the probability of failure and recovery [33], the ratio of the
+expected degradation and the maximum possible degradation
+in the performance of the system due to a disruption [34], the
+loss of the system caused by a disruption [35], among others.
+In this paper, we consider the paradigm proposed by Henry
+and Ramirez-Marquez [36] to describe and quantify the resil-
+ience of a system or a network based on its performance, as
+shown in Fig. 1, which is considered by several papers in the
+literature [37]–[40].
+Two primary dimensions of system (network) resilience
+are illustrated in Fig. 1: (i) vulnerability, or the magnitude
+of damage to a network caused by a disruptive event [41],
+and (ii) recoverability, or the speed at which a disrupted
+network recovers to a desired level of performance follow-
+ing the occurrence of a disruptive event [34]. Fig. 1 shows
+the performance of a network across different states over
+time, measured by function ’ðtÞ, which describes the
+behavior of the network before, during and after the
+occurrence of a disruptive event, ej. Accordingly, network
+resilience, a, can be deﬁned as the time dependent ratio
+of
+network
+recovery
+over
+its
+loss
+[36]
+ði:e:; aðtÞ ¼
+RecoveryðtÞ=LossðtÞÞ and can be mathematically repre-
+sented by Eq. (1).
+a’ tjej
+
+
+¼ ’ tjej
+ð
+Þ  ’ tdjej
+ð
+Þ
+’ to
+ð Þ  ’ tdjej
+ð
+Þ ; t 2 ts; tf
+ð
+Þ
+(1)
+The value of the network resilience, a’ðtjejÞ, at time t
+given the occurrence of a disruptive event, ej, is between 0
+and 1 where a’ðtjejÞ ¼ 1 indicates that the network is fully
+resilient. In this paper, the maximum ﬂow of an interdepen-
+dent infrastructure network from its multiple supply nodes to
+its multiple demand nodes is considered to be the function by
+which the network performance is measured, and its resilience
+is determined.
+B. Network Interdependencies
+There are multiple classiﬁcations for the interdependen-
+cies among infrastructure networks provided in the litera-
+ture [10], [20], [42], [43]. Rinaldi et al. [10] classiﬁed the
+interdependencies
+between
+infrastructure
+networks
+into
+four categories: (i) physical interdependency, an output
+from an infrastructure network is an input to another one
+and vice versa, (ii) cyber interdependency, if an infrastruc-
+ture network depends on information transmitted through
+an information infrastructure, (iii) geographical interdepen-
+dency, if two infrastructure networks are affected by the
+same local disruptive event, and (iv) logical interdepen-
+dency, which captures all other types of interdependency.
+Fig. 2 shows an example of the interdependencies between
+different infrastructure networks.
+Fig. 1.
+Network performance, ’ðtÞ, across state transitions before, during,
+and after the occurrence of a disruptive event, ej (adapted from Henry and
+Ramirez-Marquez et al. [36]).
+1356
+IEEE TRANSACTIONS ON NETWORK SCIENCE AND ENGINEERING, VOL. 7, NO. 3, JULY-SEPTEMBER 2020
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:03:28 UTC from IEEE Xplore.  Restrictions apply. 
+
+In this paper, we consider the physical interdependency
+among different critical infrastructure networks. This physical
+interdependence by Rinaldi et al. [10] is equivalent to func-
+tional or input interdependency in other interdependence clas-
+siﬁcations. However, the work in this paper could be extended
+to consider other types of interdependencies such as geograph-
+ical interdependency, which could be incorporated in this
+paper by considering the co-location of disrupted components
+from multiple interdependent infrastructure networks.
+C. Community Structures
+Community structures exist in many critical infrastructure
+networks (e.g., electric power, water distribution, transporta-
+tion), where each network is partitioned into sets of densely
+connected components with sparse connections between them
+[44]. Fig. 3 shows an example of a network with three commu-
+nity structures, which could be the result of geographical con-
+straints or other topological requirements of the network.
+Such community structures are formed in infrastructure net-
+works based on physical connections within each network or
+their spatial characteristics, among others. Several approaches
+are provided in the literature to identify community structures
+in networks [45]. In this paper, we consider the Fast Modular-
+ity algorithm [46], which is available in the igraph library in
+the R coding platform.
+III. COMMUNITY STRUCTURE RESTORATION MODEL
+In this paper, we extend the proposed restoration model by
+Almoghathawi et al. [25], using MIP, to account for the commu-
+nity structures of interdependent infrastructure networks. How-
+ever, the new proposed community structure restoration model
+(CSRM) deals with a single objective of maximizing the resil-
+ience of a system of interdependent infrastructure networks.
+A. Assumptions
+There are several assumptions and considerations for the
+proposed CSRM, which are stated as follows:
+ Each infrastructure network consists of a set of commu-
+nity structures, which could be of different sizes, identi-
+ﬁed according to the Fast Modularity algorithm.
+ Community structures exist only within infrastructure
+networks, not between or among infrastructure networks.
+ Each community structure in each infrastructure net-
+work consists of a set of components (nodes and links)
+that are subject to complete disruption.
+ Community structures within an infrastructure network
+are connected through different number of inter-com-
+munity links which have known capacities and are sub-
+ject to complete disruption.
+ Each disrupted component in each infrastructure net-
+work can be restored with different restoration durations
+(i.e., recovery durations are not ﬁxed for all disrupted
+components).
+ Each disrupted component in each infrastructure net-
+work cannot be operational until it is completely
+restored (i.e., this model does not consider partial
+functionality).
+ A single work crew can work on restoring a single dis-
+rupted network component at a time, where they cannot
+leave the disrupted component until it is completely
+restored (i.e., this model considers a non-preemptive
+recovery process)
+ Each supply node, demand node, and link in a commu-
+nity structure in each infrastructure network has a
+known supply capacity, demand requirement, and ﬂow
+capacity, respectively.
+ The ﬂow costs through each link, unmet demand penal-
+ties, and restoration costs for disrupted components in
+community structure in each infrastructure network are
+known and ﬁxed.
+ The physical interdependence among different infra-
+structure networks is considered. That is, for a node in a
+community structure in an infrastructure network to be
+operational, it requires a speciﬁc node in a community
+structure in another infrastructure network to also be
+operational.
+ The number of available work crews for each infrastruc-
+ture network (i.e., infrastructure-speciﬁc resources) for
+the restoration of its disrupted components is known
+and could be different from one infrastructure network
+to another.
+Fig. 3.
+An illustrative network with three communities.
+Fig. 2.
+An example of interdependences among different infrastructure
+networks (adapted from Rinaldi et al. [10]).
+ALMOGHATHAWI AND BARKER: RESTORING COMMUNITY STRUCTURES IN INTERDEPENDENT INFRASTRUCTURE NETWORKS
+1357
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:03:28 UTC from IEEE Xplore.  Restrictions apply. 
+
+B. Notation
+The sets, parameters, and decision variables of the proposed
+optimization model to solve the CSRM are shown in Tables I,
+II, and III, respectively.
+C. Objective
+The resilience of the community structures in a system of inter-
+dependent infrastructure networks is assumed to be a function of
+unmet demand (slack), qck
+it , which represents the extent to which
+the demand in community structure c in network k is not being
+met. Accordingly, the loss in the maximum ﬂow is represented in
+the CSRM by the slacks, and reducing the slacks to a desired
+level represents a means to measure the effectiveness of the pro-
+posed restoration process. Hence, the resilience of the system of
+interdependent infrastructure networks can be measured with Eq.
+(2). This represents the objective function of the CSRM.
+max
+X
+k2K
+X
+c2Ck
+vck X
+t
+t¼1
+Qck
+d  P
+i2Nck
+d qck
+it
+tðQck
+d  Qck
+o Þ
+"
+#
+(2)
+In Eq. (2), vck is the weight of community structure c 2 Ck in
+network k 2 K such that P
+k2K
+P
+c2Ck vck ¼ 1. That is, recov-
+ering the slack in certain community structures may be of greater
+importance than others (e.g., a particularly socially vulnerable
+location). Moreover, Qck
+o refers to the total original slacks at all
+demand nodes in community structure c 2 Ck in network k 2 K
+at time t0, and Qck
+d refers to the total slacks at all demand nodes
+in community structure c 2 Ck in network k 2 K at time td fol-
+lowing a disruptive event, as shown in Fig. 1. Furthermore,
+qck
+it determines the amount of slack after the recovery at demand
+node i 2 Nck
+d in community structure c 2 Ck in network k 2 K
+at time t 2 T. Hence, Qck
+d  P
+i2Nck
+d qck
+it represents the recovery
+in community structure c 2 Ck in network k 2 K at time t 2 T
+and ðQck
+d  Qck
+0 Þ represents the total loss in community structure
+c 2 Ck in network k 2 K following a disruptive event.
+D. Constraints
+Several sets of constraints are considered in the proposed
+CSRM: (i) network ﬂow constraints, (ii) restoration constraints,
+(iii) interdependence constraints, (iv) logical link constraints
+for the network ﬂow with restoration, and (v) constraints gov-
+erning the nature of the decision variables. All sets of con-
+straints are explained and formulated in the following sections.
+1) Network Flow Constraints: For each community struc-
+ture in each infrastructure network, the ﬂow conservation at any (i)
+supply
+node,
+i 2 Nck
+s ,
+(ii)
+transshipment
+node,
+i 2 Nckn
+fNck
+s ;Nck
+d g, and (iii) demand node, i 2 Nck
+d is represented by con-
+straints (3), (4), and (5), respectively. Constraints (6) ensure that
+the ﬂow through link ði;jÞ 2 Lck in community structure c 2 Ck
+in network k 2 K at time t 2 T does not exceed its capacity.
+X
+c2Ck
+X
+i;j
+ð
+Þ2Lck
+xck
+ijt 
+X
+c2Ck
+X
+j;i
+ð
+Þ2Lck
+xck
+jit  uck
+i ;
+8i 2 Nck
+s ;c 2 Ck; k 2 K;t 2 T
+(3)
+X
+c2Ck
+X
+i;j
+ð
+Þ2Lck
+xck
+ijt 
+X
+c2Ck
+X
+j;i
+ð
+Þ2Lck
+xck
+jit ¼ 0;
+8i 2 Nckn Nck
+s ; Nck
+d
+
+
+; c 2 Ck; k 2 K; t 2 T
+(4)
+X
+c2Ck
+X
+i;j
+ð
+Þ2Lck
+xck
+ijt 
+X
+c2Ck
+X
+j;i
+ð
+Þ2Lck
+xck
+jit þ qck
+it ¼ uck
+i ;
+8i 2 Nck
+d ; c 2 Ck; k 2 K; t 2 T
+(5)
+xck
+ijt  ock
+ij  0;
+8 i; j
+ð
+Þ 2 Lck; c 2 Ck; k 2 K; t 2 T
+(6)
+TABLE I
+SETS OF THE PROPOSED CSRM
+TABLE II
+PARAMETERS OF THE PROPOSED CSRM FOR COMMUNITY STRUCTURE c 2 Ck
+IN NETWORK K 2 K
+TABLE III
+DECISION VARIABLES OF THE PROPOSED CSRM FOR CMUNITY STRUCTURE
+c 2 Ck IN NETWORK K 2 K AT TIME T 2 T
+1358
+IEEE TRANSACTIONS ON NETWORK SCIENCE AND ENGINEERING, VOL. 7, NO. 3, JULY-SEPTEMBER 2020
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:03:28 UTC from IEEE Xplore.  Restrictions apply. 
+
+2) Restoration Constraints: Work crew r 2 Rk in infra-
+structure network k 2 K can work on the restoration of a single
+disrupted network component (i.e., node i 2 N0ck or link
+ði; jÞ 2 L0ck) at time t 2 T, as shown in constraints (7). Con-
+straints (8) and (9) ensure that node i 2 N0ck and link
+ði; jÞ 2 L0ck, respectively in community structure c 2 Ck in net-
+work k 2 K is operational at time t 2 T if it is restored by
+work crew r 2 Rk. Finally, work crew r 2 Rk cannot complete
+the restoration of node i 2 N0ck and link ði; jÞ 2 L0ck in commu-
+nity structure c 2 Ck in network k 2 K prior to its restoration
+duration, as shown in constraints (10) and (11), respectively.
+X
+c2Ck
+X
+i2N0ck
+X
+min t;tþck
+i 1
+f
+g
+l¼t
+gckr
+il þ
+X
+c2Ck
+X
+i;j
+ð
+Þ2L0ck
+X
+min
+t;tþpck
+ij 1
+n
+o
+l¼t
+dckr
+ijl  1; 8 k 2 K; r 2 Rk; t 2 T
+(7)
+yck
+it 
+X
+r2Rk
+X
+t
+l¼1
+gckr
+il ; 8i 2 N0k; c 2 Ck; k 2 K; t 2 T
+(8)
+zck
+ijt 
+X
+r2Rk
+X
+t
+l¼1
+dckr
+ijl ; 8 i; j
+ð
+Þ 2 L0k; c 2 Ck; k 2 K; t 2 T (9)
+X
+r2Rk
+X
+ck
+i 1
+t¼1
+gckr
+it
+¼ 0;
+8i 2 N0k; c 2 Ck; k 2 K
+(10)
+X
+r2Rk
+X
+pck
+ij 1
+t¼1
+dckr
+ijt ¼ 0;
+8 i; j
+ð
+Þ 2 L
+0ck; c 2 Ck; k 2 K
+(11)
+3) Interdependence Constraints: The physical interdepen-
+dence among the community structures of different infrastructure
+networks is captured by constraints (12). This set of constraints
+ensure that for a node i 2 Nck in community structure c 2 Ck in
+network k 2 K to be operational at time t 2 T, node i 2 Nck in
+community structure c 2 Ck in network k 2 K must be opera-
+tional at time t 2 T as well, where ðði; c; kÞ; ði; c; kÞÞ 2 C.
+yck
+it  yck
+it  0;
+8
+i; c; k
+ð
+Þ; i; c; k
+
+
+
+
+2 C; t 2 T
+(12)
+4) Logical Link Constraints of Network Flow to Restora-
+tion: The ﬂow through link ði; jÞ 2 Lck in community struc-
+ture c 2 Ck in network k 2 K is determined by the capacity
+of the link as well as the functionality status of the nodes at
+both ends on that link as shown in constraints (13) and (14).
+Furthermore, the capacity of link ði; jÞ 2 L
+0ck in community
+structure c 2 Ck in network k 2 K is determined by func-
+tionality status of the link itself which is captured by con-
+straints (15).
+xck
+ijt  ock
+ij yck
+it  0; 8 i; j
+ð
+Þ 2 Lck; i 2 Nck; c 2 Ck; k 2 K; t 2 T
+(13)
+xck
+ijt  ock
+ij yck
+jt  0; 8 i; j
+ð
+Þ 2 Lck; j 2 Nck; c 2 Ck; k 2 K; t 2 T
+(14)
+xck
+ijt  ock
+ij zck
+ijt  0; 8 i; j
+ð
+Þ 2 L0ck; c 2 Ck; k 2 K; t 2 T (15)
+5) Constraints on the Nature of Decision Variables: The
+amount of unmet demand (slack), qck
+it , at node i 2 Nck
+d
+and
+ﬂow through link ði; jÞ 2 Lck, xck
+ijt, in community structure
+c 2 Ck in network k 2 K must be non-negative at time t 2 T,
+as shown in constraints (16) and (17), respectively. The func-
+tionality status of node i 2 Nck and link ði; jÞ 2 L0ck in com-
+munity structure c 2 Ck in network k 2 K at time t 2 T is
+represented by constraints (18) and (19), respectively. Finally,
+constraints (20) and (21) represent the binary restoration varia-
+bles for node i 2 N0ck and link ði; jÞ 2 L0ck in community
+structure c 2 Ck in network k 2 K at time t 2 T, respectively.
+qck
+it  0;
+8i 2 Nck
+d ; c 2 Ck; k 2 K; t 2 T
+(16)
+xck
+ijt  0;
+8 i; j
+ð
+Þ 2 Lck; c 2 Ck; k 2 K; t 2 T
+(17)
+yck
+it 2 0; 1
+f
+g;
+8i 2 Nck; c 2 Ck; k 2 K; t 2 T
+(18)
+zck
+ijt 2 0; 1
+f
+g;
+8 i; j
+ð
+Þ 2 L0ck; c 2 Ck; k 2 K; t 2 T
+(19)
+gckr
+it
+2 0; 1
+f
+g; 8i 2 N0ck; c 2 Ck; k 2 K; t 2 T; r 2 Rk
+(20)
+dckr
+ijt 2 0; 1
+f
+g; 8 i; j
+ð
+Þ 2 L0ck; c 2 Ck; k 2 K; t 2 T; r 2 Rk
+(21)
+IV. COMMUNITY STRUCTURE IMPORTANCE MEASURES
+In this section, we propose multiple community structure
+importance measures (CSIMs) that could be utilized to prioritize
+the recovery process of community structures in a system of inter-
+dependent infrastructure networks according to multiple different
+perspectives. These CSIMs can be categorized into two main
+groups: (i) pre-disruption CSIMs, which prioritize community
+structures in a system of interdependent infrastructure networks
+without considering the effect of a disruptive event on them, and
+(ii) post-disruption CSIMs, which consider the effect of a disrup-
+tive event on community structures in a system of interdependent
+infrastructure network when prioritizing them for restoration. The
+two groups of CSIMs are presented in the following sections.
+A. Pre-Disruption CSIMs
+1) Inter-Community
+Links: The
+inter-community
+links
+(ICL) CSIM quantiﬁes the importance of a community struc-
+ture based on the number of links between that speciﬁc com-
+munity structure and other community structures within the
+ALMOGHATHAWI AND BARKER: RESTORING COMMUNITY STRUCTURES IN INTERDEPENDENT INFRASTRUCTURE NETWORKS
+1359
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:03:28 UTC from IEEE Xplore.  Restrictions apply. 
+
+same infrastructure network. This CSIM is inspired by Rocco
+and Ramirez-Marquez [47]. The higher value of ICL indicates
+the more critical the community structure is for its network.
+Deﬁnition 4.1.1. (ICL). The ICL of a community structure
+c 2 Ck in network k 2 K, denoted as IICL
+c
+, is deﬁned in
+Eq. (22), where V k
+c is the set of links between community
+structure c 2 Ck in network k 2 K and other community
+structures in the same network.
+IICL
+c
+¼
+1
+V k
+c
+
+ ;
+V k
+c 6¼ ;
+(22)
+2) Interdependency Links: The interdependency links (IL)
+CSIM measures the importance of a community structure
+based on the number of interdependency links between that
+community structure and other community structures in other
+infrastructure networks. Hence, IL can be deﬁned as the ratio
+of the number of interdependency links for a community struc-
+ture with other community structures in other infrastructure
+networks to the total number of interdependency links exists
+for all community structures within the same infrastructure
+networks. Accordingly, the higher value of IL indicates the
+more critical the community structure is for the entire system
+of interdependent networks.
+Deﬁnition 4.1.2. (IL). The IL of a community structure
+c 2 Ck in network k 2 K, denoted as IIL
+c , is deﬁned in Eq.
+(23), where Wc is the set of interdependency links between a
+community structure c 2 Ck in network k 2 K and other com-
+munity structures in network k 2 K, k 6¼ k.
+IIL
+c
+¼
+jWcj
+P
+c2Ck jWcj
+(23)
+3) Interdependency
+and
+Inter-Community
+Links: The
+interdependency and inter-community links (IICL) CSIM is
+simply the sum of the normalized scores for each community
+structure by ICL and IL CSIMs. Hence, the higher value of
+IICL indicates the more critical the community structure is for
+the system of interdependent networks.
+Deﬁnition 4.1.3. (IICL). The IICL of a community structure
+c 2 Ck in network k 2 K, denoted as IIICL
+c
+, is deﬁned in
+Eq. (24), where ^IICL
+c
+and ^IIL
+c
+are the normalized scores for
+community structure c 2 Ck in network k 2 K by ICL and IL,
+respectively.
+IIICL
+c
+¼ ^IICL
+c
+þ ^IIL
+c
+(24)
+4) Community Demand: The community demand (CD)
+CSIM prioritizes community structures of an infrastructure
+network based on the total amount of demands required by
+each community structure in each network. Hence, CD can
+be deﬁned as the ratio of the demand required by a commu-
+nity structure in an infrastructure network to the total amount
+of demand required by all community structures within the
+same infrastructure network. Accordingly, the higher value
+of CD indicates the more critical the community structure is
+for its network.
+Deﬁnition 4.1.4. (CD). The CD of a community structure
+c 2 Ck in network k 2 K, denoted as ICD
+c
+, is deﬁned in
+Eq. (25), where Dc is the demand units required by commu-
+nity structure c 2 Ck in network k 2 K.
+ICD
+c
+¼
+Dc
+P
+c2Ck Dc
+(25)
+5) Community Reduction Worth: The community reduction
+worth (CRW) CSIM measures the potential impact on the resil-
+ience of the system of interdependent infrastructure networks
+caused by a speciﬁc disrupted community structure (i.e., when
+disrupted network component in this community structure are
+not recovered during the recovery time horizon). Hence, CRW
+can be deﬁned as the ratio of the optimal system resilience at
+recovery time t to the optimal system resilience when dis-
+rupted network components in a community structure are not
+recovered at recovery time t. As this CSIM does not consider
+an actual disruption size or scenario, we consider a complete
+disruption of the system of interdependent infrastructure net-
+works and obtain the priorities of community structures accord-
+ingly. As such, a higher value of CRW indicates the more
+critical the community structure is for the system of interde-
+pendent networks. The CRW is motivated by the performance
+reduction worth [48] and reliability reduction worth [49]
+importance measures in the reliability engineering ﬁeld.
+Deﬁnition 4.1.5. (CRW). The CRW of a community struc-
+ture c 2 Ck in network k 2 K, denoted as ICRW
+c
+, is deﬁned in
+Eq. (26), where asysðtÞ is the optimal resilience of the system
+of
+interdependent
+infrastructure
+networks
+at
+time
+t,
+e 2 E0ck ¼ N0ck [ L0ck, and asysðtj P
+t2T
+P
+e2E0ck mk
+et ¼ 0Þ is
+the optimal resilience of the system of interdependent infra-
+structure networks at time t when all disrupted network com-
+ponents in community structure c 2 Ck. in network k 2 K are
+not restored.
+ICRW
+c
+¼
+asys t
+ð Þ
+asysðtj P
+t2T
+P
+e2E0ck mk
+et ¼ 0Þ
+(26)
+B. Post-Disruption CSIMs
+1) Community Slack: The community slack (CS) CSIM
+prioritizes community structures of an infrastructure network
+based on the total amount of slack (i.e., unmet demand units
+following a disruptive event) in each community structure in
+each network. Hence, CS is deﬁned as the ratio of the amount
+of slack at a community structure in an infrastructure network
+to the total amount of slack at all community structures within
+the same infrastructure network. Accoingly, a higher value of
+CS indicates the more critical the community structure is for
+its network.
+Deﬁnition 4.2.1. (CS). The CS of a community structure
+c 2 Ck in network k 2 K, denoted as ICS
+c , is deﬁned in
+Eq. (27), where Sc is the slacks (i.e., unmet demand) at com-
+munity structure c 2 Ck in network k 2 K.
+ICS
+c
+¼
+Sc
+P
+c2Ck Sc
+(27)
+1360
+IEEE TRANSACTIONS ON NETWORK SCIENCE AND ENGINEERING, VOL. 7, NO. 3, JULY-SEPTEMBER 2020
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:03:28 UTC from IEEE Xplore.  Restrictions apply. 
+
+2) Post Disruption Reduction Worth: The post disruption
+reduction worth (PDRW) CSIM is similar to CRW but with
+the main difference of accounting for the actual size and sce-
+nario of the disruptive event. The higher the value of PDRW
+indicates the more critical the community structure is for the
+system of interdependent networks.
+Deﬁnition 4.2.2.
+(PDRW). The PDRW of a community
+structure c 2 Ck in network k 2 K, denoted as IPDRW
+c
+, is
+deﬁned in Eq. (28), where asysðtÞ is the optimal resilience of
+the system of interdependent infrastructure networks at time t,
+e 2 E0ck ¼ N0ck [ L0ck, and asysðtj P
+t2T
+P
+e2E0ck mk
+et ¼ 0Þ is
+the optimal resilience of the system of interdependent infra-
+structure networks at time t when all disrupted network com-
+ponents in community structure c 2 Ck in network k 2 K are
+not recovered.
+IPDRW
+c
+¼
+asys t
+ð Þ
+asysðtj P
+t2T
+P
+e2E0ck mk
+et ¼ 0Þ
+(28)
+3) Weighted Resilience Improvement: The weighted resil-
+ience improvement (WRI) CSIM ranks the community struc-
+tures in an infrastructure network according to the ratio of
+their weighted improvement to the resilience of the system
+of interdependent infrastructure networks when their dis-
+rupted components are restored. That is, the proportional
+resilience enhancement by restoring the disrupted compo-
+nents in a community structure (i.e., having a fully resilient
+community structure) is divided by the sum of their recovery
+durations. Accordingly, a higher value of WRI indicates the
+more critical the community structure is for the system of
+interdependent networks.
+Deﬁnition 4.2.3. (WRI). The WRI of a community structure
+c 2 Ck in network k 2 K, denoted as IWRI
+c
+, is deﬁned in Eq.
+(29), where asysðtj P
+t2T
+P
+e2E0ck mk
+et ¼ 1Þ is the optimal
+resilience of the system of interdependent infrastructure net-
+works at time t when only disrupted components in commu-
+nity
+structure
+c 2 Ck
+in
+network
+k 2 K
+are
+restored,
+e 2 E0ck ¼ N0ck [ L0ck, asysð0Þ is the resilience of the system
+of interdependent networks after the disruption at time 0 (i.e.,
+when none of the disrupted network components are restored),
+and re is the recovery duration of disrupted component
+e 2 E
+0ck.
+IWRI
+c
+¼ asys tj P
+t2T
+P
+e2E0ck mk
+et ¼ 1
+
+
+ asys 0
+ð Þ
+P
+e2E0ck re
+(29)
+V. NUMERICAL EXPERIMENT
+In this section, we illustrate our proposed restoration model
+and restoration measures with a generated system of interde-
+pendent infrastructure networks.
+A. Network Data
+Since data for real infrastructure networks are hard to obtain
+[50], [51], we illustrate our proposed restoration model in this
+paper with ﬁctional system of interdependent infrastructure
+networks. We generate these networks using the R-project for
+Fig. 4.
+An example of simulated interdependent infrastructure networks.
+TABLE IV
+GENERAL PROPERTIES OF THE SYSTEM OF INTERDEPENDENT
+INFRASTRUCTURE NETWORKS
+Fig. 5.
+Community structures in the simulated (a) power network, and (b)
+water network.
+ALMOGHATHAWI AND BARKER: RESTORING COMMUNITY STRUCTURES IN INTERDEPENDENT INFRASTRUCTURE NETWORKS
+1361
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:03:28 UTC from IEEE Xplore.  Restrictions apply. 
+
+statistical computing based on the extended algorithm for
+proximal topology generator [52], [53]. The generation pro-
+cess is executed in two phases: (i) generation of individual net-
+works and (ii) building the interdependencies across them
+[25], [54]–[56].
+In this paper, we illustrate our proposed CSRM considering
+two infrastructure networks, namely simulated power and
+water networks, where the water network depends on the
+power network for operation and the power network depends
+on the water network for cooling and emission control [55],
+[57]. The details of the generation process are explained in
+Almoghathawi et al. [25]. Hence, the two interdependent
+infrastructure networks are generated as illustrated in Fig. 4.
+The general properties for each network are shown in
+Table IV which includes number of: nodes, undirected links,
+source nodes, and demand nodes, as well as the average node
+degree for each network.
+Fig. 5 shows the community structures in the system of
+interdependent infrastructure networks identiﬁed by the Fast
+Modularity algorithm using the igraph library in the R-project
+for statistical computing. There exist eight community struc-
+tures in the power network and seven community structures in
+water network, as illustrated in Fig. 5.
+The supply and demand in each community structure in the
+power and water networks are shown in Fig. 6. In some com-
+munity structures, the supply is more than the demand (e.g.,
+community structures 6 and 8 in the power network, commu-
+nity structures 2 and 3 in the water network). Such community
+structures could be less affected by a disruptive event than
+others. On the other hand, the demand in some community
+structures is more than their supply (e.g., community struc-
+tures 2 and 5 in the power network, community structures 1
+and 4 in the water network), such that they could be more
+affected by a disruption than others.
+B. Experimental Results
+For illustrative purposes, we consider a spatial disruption
+scenario, which affects the components of the interdependent
+networks according to their proximity from the location of
+the disruption. We consider three different disruption sizes
+(i.e., disrupted network components) : 10%, 20%, and 30%
+of the total number of components in the system of interde-
+pendent networks. Consequently, the unmet demand, follow-
+ing the occurrence of the simulated disruptions in each
+community structure in both power and water networks is
+shown in Fig. 7.
+According to Fig. 7, some community structures were not
+affected by any disruption scenario though they were in differ-
+ent sizes such as community structures 3 and 4 in power net-
+work and community structures 4 and 7 in water network.
+This could be due to their location, since we are considering
+spatial disruption scenarios (i.e., they might be far from the
+location where the disruptive event occurs). On the other
+hand, some community structures had the same effect after
+disruptions regardless of their size, such as community struc-
+ture 2 in the power network and community structures 2, 3,
+and 5 in the water network, as shown in Fig. 7. Other commu-
+nity structures were affected differently following different
+disruptive events due to their different sizes.
+Fig. 6.
+Supply and demand in each community structure in the simulated (a)
+power network, and (b) water network.
+Fig. 7.
+Unmet demand after disruption in each community structure in the
+simulated (a) power network, and (b) water network.
+1362
+IEEE TRANSACTIONS ON NETWORK SCIENCE AND ENGINEERING, VOL. 7, NO. 3, JULY-SEPTEMBER 2020
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:03:28 UTC from IEEE Xplore.  Restrictions apply. 
+
+1) CSRM: Fig. 8 depicts the trajectory of resilience
+improvement, obtained after solving the CSRM using Python
+2.7 with Gurobi 7.5, for both networks as well as the system
+of interdependent infrastructure networks. We consider differ-
+ent sizes of spatial disruptions (i.e., 10% spatial disruption,
+20% spatial disruption, and 30% spatial disruption, respec-
+tively) with the availability of six work crews during the resto-
+ration process. Naturally, as the disruption size increases, the
+time to reach to a fully resilient system of interdependent
+infrastructure network increases. In some cases, the power net-
+work reaches to a fully resilient network status before the
+water network, as shown in Fig. 8(a) and (b) considering 10%
+and 20% spatial disruption sizes. However, when considering
+a 30% spatial disruption size, the water network becomes fully
+resilient network before the power network which could be the
+result of two factors: (i) the nature of the interdependency
+between both networks, and (ii) the recovery durations of the
+disrupted components in both networks, given that the same
+number of work crews are considered to be available for all
+disruption scenarios. Note that weight vck was the same for all
+communities in all networks.
+To observe the effect of a disruptive event on each commu-
+nity structure in each network and how long it takes for each
+community structure to reach to a full resilience status, we
+consider a complete disruption of the whole system of interde-
+pendent network (i.e., 100% disruption). Accordingly, the tra-
+jectory of the resilience of each community structure in both
+power and water network is illustrated in Fig. 9, where com-
+munity structure 1 is represented by “C1”, and community
+structure 2 is represented by “C2”, and so on.
+As shown in Fig. 9, some community structures reach the sta-
+tus of being fully resilient earlier than others (e.g., community
+structure 6 in the power network and community structure 6 in
+the water network). And naturally some community structures
+take substantially longer than others to be fully resilient (e.g.,
+community structure 5 in the power network and community
+structure 7 in the water network). Hence, there are three factors
+that could affect the trajectory of the resilience enhancement for
+a community structure: (i) the size of the community structure
+(i.e., number of components in the community structure), as
+community structures might be in different sizes as shown ear-
+lier in Fig. 5, (ii) the nature of the interdependency between com-
+munity structures (i.e., within a single network or from different
+networks), and (iii) the recovery durations of the disrupted com-
+ponents in the community structure.
+2) CSIMs: The restoration priorities for all community
+structures in the system of interdependent infrastructure net-
+works were obtained by the multiple pre- and post-disruption
+Fig. 8.
+Network resilience considering (a) 10%, (b) 20%, and (c) 30%, spa-
+tial disruption.
+Fig. 9.
+Resilience of community structures in (a) power network, and (b)
+water network, considering 100% network disruption.
+ALMOGHATHAWI AND BARKER: RESTORING COMMUNITY STRUCTURES IN INTERDEPENDENT INFRASTRUCTURE NETWORKS
+1363
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:03:28 UTC from IEEE Xplore.  Restrictions apply. 
+
+CSIMs proposed in Section IV. Accordingly, Fig. 10 through
+Fig. 12 illustrate the various perspectives provided by the
+CSIMs for community structures in the power and water net-
+works considering different spatial disruption sizes (i.e., 10%,
+20%, and 30%, respectively).
+For each pre-disruption CSIM, the priorities of the commu-
+nity structures in the system of the interdependent infrastruc-
+ture networks are the same regardless of the disruption size or
+scenario (i.e., they are not affected by the disruption size or sce-
+nario) as they are not accounted for, as shown in Fig. 10 through
+Fig. 12. However, when prioritizing community structures in
+the system of the interdependent infrastructure networks with
+post disruption CSIMs, their restoration priorities could be dif-
+ferent since such CSIMs account for the disruption effects. For
+example, community structure 8 in power network was ranked
+8th (i.e., the least important community structure) by WRI
+when considering 10% spatial disruption, see Fig. 10(a). How-
+ever, it was ranked 1st (i.e., the most important community
+structure) and 4th by the same CSIM when considering 20%
+spatial disruption and 30% spatial disruption, respectively, see
+Fig. 11(a) and Fig. 12(a). Similarly, community structure 3 in
+the water network was ranked 5th by PDRW when considering
+10% spatial disruption, as shown in Fig. 10(b). On the other
+hand, it was ranked 2nd and 1st when considering 20% spatial
+disruption and 30% spatial disruption, respectively, as shown
+in Fig. 11(b) and Fig. 12(b).
+In general, both pre-disruption and post-disruption CRIMs
+could be considered as a heuristic solution approach to the
+proposed CSRM. Thus, community structures are restored
+according to their priorities obtained by the multiple CSIMs
+discussed earlier in Section IV. Accordingly, the most impor-
+tant community structure by a CSIM in each network in the
+system
+of
+the
+interdependent
+infrastructure
+networks
+is
+restored ﬁrst, then the second most important community
+structure by the same CSIM is restored second, and the
+recovery process continues until all the community structures
+are restored according to their priorities by the same CSIM.
+That is, the recovery process does not start in a community
+structure until the demands of all community structures with
+higher importance for the same CSIM are satisﬁed. Fig. 13
+shows the trajectory of the resilience of the system of inter-
+dependent infrastructure networks when restoring community
+structures in each infrastructure network according to their
+priorities by multiple CSIMs considering different spatial dis-
+ruption sizes. Different restoration priorities for community
+structures could lead to different trajectories of resilience
+enhancement for the system of interdependent infrastructure
+networks specially when the size of disruption increases, as
+shown in Fig. 13. Note that there is general agreement as to
+when full system resilience is achieved, but the trajectory dif-
+fers depending on the size of the disruption.
+The CSIMs could also be utilized to derive the weights vck
+in Eq. (2). Fig. 14 shows the trajectory of the resilience of
+Fig. 10.
+Restoration priorities of community structures in (a) power
+network, and (b) water network by multiple CSIMs considering 10% spa-
+tial disruption.
+Fig. 11.
+Restoration priorities of community structures in (a) power network,
+and (b) water network by multiple CSIMs considering 20% spatial disruption.
+1364
+IEEE TRANSACTIONS ON NETWORK SCIENCE AND ENGINEERING, VOL. 7, NO. 3, JULY-SEPTEMBER 2020
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:03:28 UTC from IEEE Xplore.  Restrictions apply. 
+
+the system of networks with CSIM-driven weights for a 30%
+spatial disruption scenario. Hence, the disrupted components
+in different community structures were restored according to
+the importance of their community structures by different
+CSIMs. The trajectory of the resilience of the system of net-
+works considering equal weights for community structures
+are also shown in Fig. 14. As discussed earlier in Section IV,
+different CSIMs measure the importance of community struc-
+tures from different perspectives. Consequently, different
+ranks are obtained for community structures and restoring
+them by which could result in different trajectory of resil-
+ience enhancement of the system of interdependent networks,
+as illustrated in Fig. 14. Though restoring community struc-
+tures according to their importance by pre-disruption CSIMs
+results in different trajectory of resilience enhancement of
+the system of interdependent network reaches to a full resil-
+ience status at the same time as when considering equal
+weights for community structures, as shown in Fig. 14(a). On
+the other hand, when restoring community structures based
+on their priorities obtained by post-disruption CSIMs, the
+system of interdependent networks reaches to a full resilience
+status faster than when considering equal weights for com-
+munity structures, as shown in Fig. 14(b), which indicates
+the importance of considering the effect of a disruptive event
+on community structures when prioritizing their restoration.
+In general, there could be multiple factors that affect the tra-
+jectory of the resilience enhancement for a community
+structure: (i) the set of disrupted components, (ii) the nature
+of the interdependency between community structures, (iii)
+the recovery durations of the disrupted components in the
+community structure, and (iv) the number of available work
+crews during the restoration process.
+Finally, since different CSIMs measure the importance of
+community structures from different perspectives, priorities
+obtained by them could be combined using a multi-criteria
+decision-making tool such as TOPSIS [58] to have a unique
+rank for the community structures that could be then used in
+the proposed CSRM.
+VI. CONCLUDING REMARKS
+The ubiquitous nature of infrastructure networks has (i)
+made them highly vulnerable due to the different types of
+interdependencies among them and (ii) increased the com-
+plexity associated with their recovery planning following a
+Fig. 12.
+Restoration priorities of community structures in (a) power network,
+and (b) water network by multiple CSIMs considering 30% spatial disruption.
+Fig. 13.
+Network resilience considering community structures priorities by
+multiple CSIMs with (a) 10%, (b) 20%, and (c) 30%, spatial disruption.
+ALMOGHATHAWI AND BARKER: RESTORING COMMUNITY STRUCTURES IN INTERDEPENDENT INFRASTRUCTURE NETWORKS
+1365
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:03:28 UTC from IEEE Xplore.  Restrictions apply. 
+
+disruptive event. Hence, in the paper, we address the restora-
+tion problem of community structures in a system of interde-
+pendent infrastructure networks following a disruptive event
+to enhance their resilience considering the interdependencies
+among the infrastructure networks. Accordingly, we develop
+a restoration model using mixed-integer programming to
+restore community structures in a system of interdependent
+infrastructure networks with the objective of maximizing the
+resilience of the system interdependent infrastructure net-
+works. Moreover, we propose multiple community structures
+importance measures to prioritize their restoration process.
+The proposed importance measures are categorized into two
+groups: (i) pre-disruption, and (ii) post-disruption. Such meas-
+ures could be used to provide a heuristic solution to the res-
+toration model of community structures either as weights for
+the community structure in the objective function or solving
+the model by restoring community structures according to
+their importance.
+In this paper, we consider the Fast Modularity algorithm to
+identify community structures in an infrastructure network.
+However, other methods based on different perspectives could
+be used (e.g., based on geographical location or social vulnera-
+bility index). Furthermore, the proposed model and importance
+measures consider the physical interdependency only among dif-
+ferent infrastructure networks. However, they could be extended
+to consider other interdependencies such as geographical inter-
+dependency by considering the co-location of disrupted compo-
+nents from multiple interdependent infrastructure networks.
+Finally, this work considers restoring community structures until
+they become fully resilient (i.e., they retain their performance
+prior to the occurrence of a disruptive event), but the work could
+be extended to consider the restoration of disrupted community
+structures up to a desired level of resilience (i.e., a speciﬁc level
+of performance).
+REFERENCES
+[1] A. Nagurney and Q. Qiang. Fragile Networks: Identifying Vulnerabilities
+and Synergies in an Uncertain World. New York, NY, USA: Wiley, 2009.
+[2] M. E. J. Newman, A.-L. Barabasi, and D. J. Watts, The Structure and
+Dynamics of Networks. Princeton, NJ, USA: Princeton Univ. Press,
+2006.
+[3] S. LaRocca, J. Johansson, H. Hassel, and S. Guikema, “Topological per-
+formance measures as surrogates for physical ﬂow models for risk and
+vulnerability analysis for electric power systems,” Risk Anal., vol. 35,
+no. 4, pp. 608–623, 2015.
+[4] C. D. Nicholson, K. Barker, and J. E. Ramirez-Marquez, “Flow-based vul-
+nerability measures for network component importance: Experimentation
+with preparedness planning,” Rel. Eng. Syst. Saf., vol. 145, pp. 62–73, 2016.
+[5] S. G. Nurre, B. Cavdaroglu, J. E. Mitchell, and T. C. Sharkey,
+“Restoring infrastructure systems: An integrated network design and
+scheduling (INDS) problem,” Eur. J. Oper. Res., vol. 223, no. 3,
+pp. 794–806, 2012.
+[6] D. T. Aksu and L. Ozdamar, “A mathematical model for post-disaster
+road restoration: Enabling accessibility and evacuation,” Transp. Res.
+Part E, Logist. Transp., vol. 61, no. 1, pp. 56–67, 2014.
+[7] S. Kamamura, D. Shimazaki, K. Genda, K. Sasayama, and Y. Uematsu,
+“Disaster recovery for transport network through multiple restoration
+stages,” IEICE Trans. Commun., vol. 98, no. 1, pp. 171–179, 2015.
+[8] E. D. Vugrin, M. A. Turnquist, and N. J. Brown, “Optimal recovery
+sequencing for enhanced resilience and service restoration in transporta-
+tion networks,” Int. J. Critical Infrastruct., vol. 10, no. 3-4, pp. 218–
+246, 2014.
+[9] J. P. Peerenboom, R. E. Fisher, S. M. Rinaldi, and T. K. Kelly,
+“Studying the chain reaction,” Elect. Perspectives, vol. 27, no. 1,
+pp. 22–35, 2002.
+[10] S. M. Rinaldi, J. P. Peerenboom, and T. K. Kelly, “Identifying, under-
+standing and analyzing critical infrastructure interdependencies,” IEEE
+Control Syst. Mag., vol. 21, no. 6, pp. 11–25, Dec. 2001.
+[11] S. V. Buldyrev, R. Parshani, G. Paul, H. E. Stanley, and S. Havlin,
+“Catastrophic cascade of failures in interdependent networks,” Nature,
+vol. 464, no. 7291, pp. 1025–1028, 2010.
+[12] R. G. Little, “Controlling cascading failure: Understanding the vulner-
+abilities of interconnected infrastructures,” J. Urban Technol., vol. 9,
+no. 1, pp. 109–123, 2002.
+[13] I. Eusgeld, C. Nan, and S. Dietz, ““System-of-systems” approach for
+interdependent critical infrastructures,” Rel. Eng. Syst. Saf., vol. 96,
+no. 6, pp. 679–686, 2011.
+[14] S. Wang, L. Hong, M. Ouyang, J. Zhang, and X. Chen, “Vulnerability
+analysis of interdependent infrastructure systems under edge attack strat-
+egies,” Saf. Sci., vol. 51, no. 1, pp. 328–337, 2013.
+[15] M. M. Danziger, L. M. Shekhtman, A. Bashan, Y. Berezin, and
+S. Havlin, “Vulnerability of interdependent networks and networks of
+networks,” in Interconnected Networks. Basel, Switzerland: Springer,
+2016, pp. 79–99.
+[16] M. Ouyang, “Review on modeling and simulation of interdependent crit-
+ical infrastructure systems,” Rel. Eng. Syst. Saf., vol. 121, pp. 43–60,
+2014.
+[17] B. Wu, A. Tang, and J. Wu, “Modeling cascading failures in interdepen-
+dent infrastructures under terrorist attacks,” Rel. Eng. Syst. Saf., vol. 147,
+pp. 1–8, 2016.
+[18] R. Holden, D. V. Val, R. Burkhard, and S. Nodwell, “A network ﬂow
+model for interdependent infrastructures at the local scale,” Saf. Sci.,
+vol. 53, no. 1, pp. 51–60, 2013.
+[19] P. M. Baidya and W. Sun, “Effective restoration strategies of interde-
+pendent power system and communication network,” J. Eng., vol. 2017,
+no. 1, pp. 1760–1764, 2017.
+[20] E. E. Lee, J. E. Mitchell, and W. A. Wallace, “Restoration of services in
+interdependent infrastructure systems: A network ﬂows approach,”
+IEEE Trans. Syst., Man, Cybern., Part C, Appl. Rev., vol. 37, no. 6,
+pp. 1303–1317, Nov. 2007.
+Fig. 14.
+Network resilience considering priorities by (a) pre-disruption
+CSIMs, and (b) post-disruption CSIMs as weights with 30% spatial disruption.
+1366
+IEEE TRANSACTIONS ON NETWORK SCIENCE AND ENGINEERING, VOL. 7, NO. 3, JULY-SEPTEMBER 2020
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:03:28 UTC from IEEE Xplore.  Restrictions apply. 
+
+[21] J. Gong, E. E. Lee, J. E. Mitchell, and W. A. Wallace, “Logic-based
+multiobjective optimization for restoration planning,” in Optimization
+and Logistics Challenges in the Enterprise. New York, NY, USA:
+Springer, 2009, pp. 305–324.
+[22] C. Coffrin, P. Van Hentenryck, and R. Bent, “Last-mile restoration for
+multiple interdependent infrastructures,” in Proc. 26th AAAI Conf. Artif.
+Intell., Jul. 22–26, 2012, vol. 12, pp. 455–463.
+[23] B. Cavdaroglu, E. Hammel, J. E. Mitchell, T. C. Sharkey, and
+W. A. Wallace, “Integrating restoration and scheduling decisions for
+disrupted interdependent infrastructure systems,” Anner. Oper. Res.,
+vol. 203, no. 1, pp. 279–294, 2013.
+[24] A. D. Gonzalez, L. Due~nas-Osorio, M. Sanchez-Silva, and
+A. L. Medaglia, “The interdependent network design problem for opti-
+mal infrastructure system restoration,” Comput.-Aided Civil Infrastruct.
+Eng., vol. 31, no. 5, pp. 334–350, 2016.
+[25] Y. Almoghathawi, K. Barker, and L. A. Albert, “Resilience-driven resto-
+ration model for interdependent infrastructure networks,” Rel. Eng. Syst.
+Saf., vol. 185, pp. 12–23, 2019.
+[26] J. E. Ramirez-Marquez, C. M. Rocco, K. Barker, and J. Moronta,
+“Quantifying the resilience of community structures in networks,” Rel.
+Eng. Syst. Saf., vol. 169, pp. 466–474, 2018.
+[27] C. M. Rocco, K. Barker, and J. E. Ramirez-Marquez, “Community
+detection and resilience in multi-source, multi-terminal networks,”
+J. Risk Rel., vol. 232, no. 6, pp. 616–626, 2018.
+[28] C. M. Rocco, J. Moronta, J. E. Ramirez-Marquez, and K. Barker,
+“Effects of multi-state links in network community detection,” Rel. Eng.
+Syst. Saf., vol. 163, pp. 46–56, 2017.
+[29] K. Barker et al., “Deﬁning resilience analytics for interdependent cyber
+physical-social networks,” Sustain. Resilient Infrastruct., vol. 2, no. 2,
+pp. 59–67, 2017.
+[30] S. Hosseini, K. Barker, and J. E. Ramirez-Marquez, “A review of deﬁni-
+tions and measures of system resilience,” Rel. Eng. Syst. Saf., vol. 145,
+pp. 47–61, 2016.
+[31] G. Cimellaro, A. Reinhorn, and M. Bruneau, “Seismic resilience of a
+hospital system,” Structure Infrastruct. Eng., vol. 6, no. 1, pp. 127–144,
+2010.
+[32] D. J. Rosenkrantz, S. Goel, S. S. Ravi, and J. Gangolly, “Resilience met-
+rics for service-oriented networks: A service allocation approach,” IEEE
+Trans. Services Comput., vol. 2, no. 3, pp. 183–196, Jul.–Sep., 2009.
+[33] Y. Li, and B. J. Lence, “Estimating resilience of water resources
+systems,” Water Resour. Res., vol. 43, no. 7, p. W07422, 2007.
+[34] A. Rose, “Economic resilience to natural and man-made disasters: multi-
+disciplinary origins and contextual dimensions,” Environ. Hazards,
+vol. 7, no. 4, pp. 383–398, 2007.
+[35] M. Bruneau et al., “A framework to quantitatively assess and enhance
+the seismic resilience of communities,” Earthquake Spectra, vol. 19,
+no. 4, pp. 733–752, 2003.
+[36] D. Henry and J. E. Ramirez-Marquez, “Generic metrics and quantitative
+approaches for system resilience as a function of time,” Rel. Eng. Syst.
+Saf., vol. 99, no. 1, pp. 114–122, 2012.
+[37] D. G. Dessavre, J. E. Ramirez-Marquez, and K. Barker, “Multidimensional
+approach to complex system resilience analysis,” Rel. Eng. Syst. Saf.,
+vol. 149, pp. 34–43, 2016.
+[38] H. Baroud, K. Barker, J. E. Ramirez-Marquez, and C. M. Rocco,
+“Inherent costs and interdependent impacts of infrastructure network
+resilience,” Risk Anal., vol. 35, no. 4, pp. 642–662, 2015.
+[39] R. Pant, K. Barker, J. E. Ramirez-Marquez, and C. M. Rocco,
+“Stochastic measures of resilience and their application to container ter-
+minals,” Comput. Ind. Eng., vol. 70, no. 1, pp. 183–194, 2014.
+[40] K. Barker, J. E. Ramirez-Marquez, and C. M. Rocco, “Resilience-based
+network component importance measures,” Rel. Eng. Syst. Saf.,
+vol. 117, no. 1, pp. 89–97, 2013.
+[41] H. J€onsson, J. Johansson, and H. Johansson, “Identifying critical compo-
+nents in technical infrastructure networks,” J. Risk Rel., vol. 222, no. 2,
+pp. 235–243, 2008.
+[42] D. D. Dudenhoeffer, M. R. Permann, and M. Manic, “CIMS: A frame-
+work for infrastructure interdependency modeling and analysis,” in
+Proc. 38th Conf. Winter Simul. Conf., Dec. 3–6, 2006, pp. 478–485.
+[43] P. Zhang and S. Peeta, “A generalized modeling framework to analyze
+interdependencies among infrastructure systems,” Transp. Res. Part B,
+Methodolog., vol. 45, no. 3, pp. 553–579, 2011.
+[44] M. A. Porter, J.-P. Onnela, and P. J. Mucha, “Communities in
+networks,” Notices Amer. Math. Soc., vol. 56, no. 9, pp. 1082–1097,
+2009.
+[45] S. Fortunato, “Community detection in graphs,” Phy. Rep., vol. 486,
+pp. 75–174, 2010.
+[46] A. Clauset, M. E. J. Newman, and C. Moore, “Finding community struc-
+ture in very large networks,” Phys. Rev. Part E, vol. 70, no. 6, 2004,
+Art. no. 066111.
+[47] C. M. Rocco and J. E. Ramirez-Marquez, “Vulnerability metrics and
+analysis for communities in complex networks,” Rel. Eng. Syst. Saf.,
+vol. 96, no. 10, pp. 1360–1366, 2011.
+[48] G. Levitin, L. Podoﬁllini, and E. Zio, “Generalized importance measures
+for multi-state elements based on performance level restrictions,” Rel.
+Eng. Syst. Saf., vol. 82, no. 3, pp. 287–298, 2003.
+[49] J. F. Espiritu, D. W. Coit, and U. Prakash, “Component criticality impor-
+tance measures for the power industry,” Elect. Power Syst. Res., vol. 77,
+no. 5, pp. 407–420, 2007.
+[50] J. Johansson and H. Hassel, “An approach for modelling interdependent
+infrastructures in the context of vulnerability analysis,” Rel. Eng. Syst.
+Saf., vol. 95, no. 12, pp. 1335–1344, 2010.
+[51] A. Bagchi, A. Sprintson, S. Guikema, E. Bristow, and K. Brumbelow,
+“Modeling performance of interdependent power and water networks
+during urban ﬁre events,” in 48th Annu. Allerton Conf. Commun., Con-
+trol, Comput., 2010, pp. 1637–1644.
+[52] X. Xin-Jian, X. Zhang, and J. F. F. Mendes, “Impacts of preference and
+geography on epidemic spreading,” Phys. Rev. E, vol. 76, no. 5,
+p. 056109, 2007.
+[53] M. J. Casey ‘‘Self-organization and Topology control of infrastructure
+sensor networks,” Ph.D. Dissertation, Univ. Maryland, College Park,
+MA, USA, 2005.
+[54] M. Ouyang, L. Hong, Z.-J. Mao, M.-H. Yu, and F. Qi, “A methodologi-
+cal approach to analyze vulnerability of interdependent infrastructures,”
+Simul. Model. Pract. Theory, vol. 17, no. 5, pp. 817–828, 2009.
+[55] Y. Zhang, N. Yang, and U. Lall, “Modeling and simulation of the vulner-
+ability of interdependent power-water infrastructure networks to cascading
+failures,” J. Syst. Sci. Syst. Eng., vol. 25, no. 1, pp. 102–118, 2016.
+[56] C. Zhang, J. Kong, and S. P. Simonovic, “Modeling joint restoration
+strategies for interdependent infrastructure systems,” PloS one, vol. 13,
+no. 4, 2018, Art. no. e0195727.
+[57] L. Due~nas-Osorio, J. I. Craig, and B. J. Goodno, “Seismic response of
+critical interdependent networks,” Earthquake Eng. Struct. Dyn.,
+vol. 36, no. 2, pp. 285–306, 2007.
+[58] Y. Almoghathawi, K. Barker, C. M. Rocco, and C. D. Nicholson, “A
+multi-criteria decision analysis approach for importance identiﬁcation
+and ranking of network components,” Rel. Eng. Syst. Saf., vol. 158,
+pp. 142–151, 2017.
+Yasser Almoghathawi received the B.S. and M.S.
+degrees in industrial and systems engineering from
+King Fahd University of Petroleum and Minerals
+(KFUPM), Dhahran, Saudi Arabia, and the Ph.D.
+degree from the School of Industrial and Systems
+Engineering, University of Oklahoma (OU), Norman,
+OK, USA. He is an Assistant Professor with the
+Department of Systems Engineering, KFUPM. Dur-
+ing his doctoral work within OU’s Risk-Based Sys-
+tems
+Analytics
+Laboratory,
+he
+developed
+optimization models and approaches for the restora-
+tion problem of interdependent networks to enhance their resilience. His
+research interests broadly deal with applications of operations research,
+including
+optimization,
+mathematical
+modeling,
+facility
+location,
+and
+sequencing and scheduling. He is a member of INFORMS and IAENG.
+Kash Barker (M’13) received the B.S. and M.S.
+degrees in industrial engineering from the University
+of Oklahoma, Norman, OK, USA, and the Ph.D.
+degree in systems engineering from the University of
+Virginia, Charlottesville, VA, USA. He is an Associ-
+ate Professor and Anadarko Petroleum Corporation
+Presidential Professor with the School of Industrial
+and Systems Engineering, University of Oklahoma..
+His work dealing with the reliability, resilience, and
+economic impacts of infrastructure and supply chain
+networks has been funded by the National Science
+Foundation, Department of Transportation, and Army Research Ofﬁce, among
+others, and has resulted in over 65 refereed journal publications. He is an
+Associate Editor for the IISE Transactions and is on the editorial board of
+Risk Analysis.
+ALMOGHATHAWI AND BARKER: RESTORING COMMUNITY STRUCTURES IN INTERDEPENDENT INFRASTRUCTURE NETWORKS
+1367
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:03:28 UTC from IEEE Xplore.  Restrictions apply. 

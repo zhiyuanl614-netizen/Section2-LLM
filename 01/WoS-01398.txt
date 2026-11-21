@@ -1,0 +1,1697 @@
+IEEE TRANSACTIONS ON CONTROL OF NETWORK SYSTEMS, VOL. 6, NO. 2, JUNE 2019
+763
+Utilization of Water Supply Networks for
+Harvesting Renewable Energy
+Dariush Fooladivanda
+, Alejandro D. Dom´ınguez-Garc´ıa
+, Member, IEEE,
+and Peter W. Sauer, Fellow, IEEE
+Abstract—Renewable surplus power is increasing due to
+the increasing penetration of these intermittent resources.
+In practice, electric grid operators either curtail the surplus
+energy resulting from renewable-based generations or uti-
+lize energy storage resources to absorb it. In this paper, we
+propose a framework for utilizing water pumps and tanks
+in water supply networks to absorb the surplus electrical
+energy resulting from renewable-based electricity genera-
+tion resources in the electrical grid. We model water supply
+networks analytically, and propose a two-step procedure
+that utilizes the water tanks in the water supply network to
+harvest the surplus energy from an electrical grid. In each
+step, the water network operator needs to solve an opti-
+mization problem that is nonconvex. To compute optimal
+pump schedules and water ﬂows, we develop a second-
+order cone relaxation and an approximation technique that
+enable us to transform the proposed problems into mixed-
+integer second-order cone programs. We then provide the
+conditions under which the proposed relaxation is exact,
+and present an algorithm for constructing an exact solu-
+tion to the original problem from a solution to the relaxed
+problem. We demonstrate the effectiveness of the proposed
+framework via numerical simulations.
+Index Terms—Energy harvesting, optimal water ﬂow,
+second-order cone relaxation, water-energy nexus, water
+networks.
+I. INTRODUCTION
+W
+ATER supply networks are one of the indispensable in-
+frastructures; the availability of drinking water as well
+as several industrial processes are highly dependent on the avail-
+ability of water, as well as the reliability of these networks. Water
+supply networks consume a substantial amount of electric power
+to ensure that water demands are delivered at the desired water
+pressures and qualities. Drinking water and waste water net-
+works use around 4% of all electricity consumed in the United
+States [1], and water demand is increasing continuously [2]. To
+Manuscript received March 30, 2018; revised July 31, 2018; accepted
+September 22, 2018. Date of publication October 4, 2018; date of current
+version May 28, 2019. This work was supported in part by the Advanced
+Research Projects Agency-Energy within the NODES Program under
+Award DE-AR0000695 and in part by the DOE within the Consortium
+for Electric Reliability Technology Solutions Program. Recommended by
+Associate Editor Dr. Shun-ichi Azuma. (Corresponding author: Dariush
+Fooladivanda.)
+The authors are with the Department of Electrical and Computer
+Engineering, University of Illinois at Urbana-Champaign, Urbana, IL
+61801 USA (e-mail:,dfooladi@ucsd.edu; aledan@illinois.edu; psauer@
+illinois.edu).
+Digital Object Identiﬁer 10.1109/TCNS.2018.2873946
+cope with increasing water demands, water network operators
+aim to minimize their operation costs, and hence they aim at
+scheduling their water pumps optimally [3], [4]. Note that wa-
+ter pumps are the major electrical energy consumers in water
+supply networks.
+The optimal pump scheduling and water ﬂow problem can be
+formulated as a mixed-integer nonlinear program. In this pro-
+gram, energy conservation constraints are nonconvex, and some
+of the decision variables, such as switching pumps ON and OFF,
+are binary. It is hard to solve this problem over several time
+periods with reasonable computational time. Due to the compu-
+tational complexity of this problem, several pump scheduling
+schemes have been investigated in the literature [5]–[9]. In [10],
+Fooladivanda and Taylor focus on the pump scheduling and
+water ﬂow optimization problem, and propose the ﬁrst convex
+relaxation for the feasibility set of this problem. The authors
+then reformulate the optimal pump scheduling and water ﬂow
+problem as a mixed-integer second-order cone program that
+can be solved with commercially available solvers. They prove
+that the proposed relaxation is exact for several water network
+topologies. The proposed convex relaxation and reformulation
+techniques form a tractable basis for further studies of the inter-
+action between water and energy in water supply networks. In
+[11], Zamzam et al. extend the pump scheduling and water ﬂow
+problem proposed in [10] by formulating a water-power ﬂow
+problem that optimizes the use of controllable assets across
+power and water systems. They propose a distributed solver that
+enables water and power operators to pursue individual objec-
+tives while respecting all the physical constraints.
+Wind and solar surplus power is increasing due to the increas-
+ing penetration of these intermittent resources [12]. Electric
+grid operators either curtail the surplus energy resulting from
+renewable-based generations or utilize energy storage resources
+to absorb it [13]. In this paper, we focus on the utilization of
+water pumps and tanks in water supply networks to absorb the
+surplus electrical energy from the electrical grid, and to har-
+vest the electrical energy in water tanks as potential energy. The
+beneﬁts of this scheme are twofold: 1) water network operators
+minimize their electricity costs, and 2) electrical grid operators
+use renewable energy resources more efﬁciently.
+The utilization of water supply networks for providing de-
+mand response services has been investigated in [14]–[16]. In
+[14], Boutin and Bergerand demonstrate how to use the ﬂexibil-
+ity of water distribution networks for offering energy modulation
+services. In [15], Takahashia et al. propose a linear optimization
+2325-5870 © 2018 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See http://www.ieee.org/publications standards/publications/rights/index.html for more information.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:53:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+764
+IEEE TRANSACTIONS ON CONTROL OF NETWORK SYSTEMS, VOL. 6, NO. 2, JUNE 2019
+problem for computing the pump schedules. In [16], Menke et al.
+use a piecewise linear approximation of the head loss formu-
+las given by either the Hazen–William or the Darcy–Weisbach,
+and propose an optimal pump scheduling problem. Although
+some approaches in the literature are addressing the demand
+response problem in water supply networks, the existing works
+do approximate the pump characteristic curves and the pump
+energy costs (e.g., see [15] and [16]). Hence, the existing frame-
+works and control schemes lack performance guarantees in
+practice.
+We consider a water supply network composed of pipes, junc-
+tions, pumps, reservoirs, valves, and tanks, and assume that the
+water network operator aims to provide demand response ser-
+vices to the grid by scheduling its pumps. More precisely, we
+focus on harvesting the surplus energy provided by the grid in
+the water network while ensuring that all the loads are delivered
+at the desired water pressures. The water network operator also
+aims at minimizing the operation cost of its water pumps while
+maintaining water pressures at the desired levels throughout the
+network. Therefore, the water network operator needs to opti-
+mize its pump schedules such that it minimizes its operation
+cost while utilizing the surplus energy provided by the grid. To
+achieve this goal, the water network operator needs to partici-
+pate in energy markets through demand response programs that
+aim to increase demand at times of high generations and low
+demand. To participate in a demand response program, the oper-
+ator needs to compute its offer for day-ahead or real-time energy
+markets, and submit this offer to the energy market through a
+demand response program. The computation of the offer for en-
+ergy markets is not the subject of this paper. Here, we assume
+that the operator submitted its offer to the market, and it has
+been cleared to participate; thus, receiving its cleared energy
+capacity from the market. Note that demand response programs
+for energy markets operate at time scales of 1 to 10 min. For
+more information on demand response programs, we refer the
+reader to [17], [18].
+In real time, the water network operator needs to compute
+the optimal set-points of its pumps such that the pumps can
+collectively respond to the demand response signal sent by the
+independent system operator (ISO), without violating any of
+the physical constraints of its network. To compute the optimal
+set-points, we propose a two-step procedure for harvesting the
+surplus energy provided by the grid in the water network. In
+the ﬁrst step, the water network operator computes the pump
+schedules and water ﬂows that minimize the operation costs,
+and then calculates the energy consumption of the pumps using
+the computed optimal schedule. If the surplus energy is less than
+or equal to the computed energy consumption, then the water
+network operator can use the computed schedule and optimize
+its operation costs; otherwise, the water network operator will
+need to recompute its pump schedules and water ﬂows in a
+second step. If the surplus energy is greater than the computed
+energy consumption, the operator will have access to some sur-
+plus energy in addition to its energy consumption. In the second
+step, the operator computes the pump schedules and water ﬂows
+that maximize the energy harvested in the tanks ensuring that all
+the loads are delivered at the desired water pressures. In each of
+these steps, the operator needs to solve an optimization problem
+that is nonconvex.
+Our goal is to optimize the pump schedules in a centralized
+fashion. To achieve this goal, we need to solve the proposed
+water ﬂow and pump scheduling optimization problems that
+are nonconvex. In order to obtain tractable optimization prob-
+lems, we develop a second-order cone relaxation and an ap-
+proximation technique that enable us to transform the proposed
+problems into mixed-integer second-order cone programs. Such
+problems can be solved efﬁciently with commercial solvers such
+as GUROBI or CPLEX. In addition, several powerful algo-
+rithms for solving mixed-integer second-order cone programs
+exist in the literature [19], [20]. We then provide the conditions
+under which the proposed relaxation is exact, and present an
+algorithm for constructing a solution to the original problems
+from the solutions to the relaxed problem. Finally, we numer-
+ically demonstrate the effectiveness of the proposed relaxation
+and approximation techniques in solving the energy harvesting
+problem.
+Our contributions are as follows. First, we propose a two-
+step procedure for harvesting the surplus energy provided by
+the grid in the water network. In each step, the water network
+operator needs to solve an optimization problem that is noncon-
+vex. Second, we develop a second-order cone relaxation and an
+approximation technique that enable us to transform the pro-
+posed problems into tractable programs. We then provide the
+conditions under which this relaxation is exact, and present an
+algorithm for constructing a solution to the original problem
+from a solution to the relaxed problem. Finally, we numerically
+demonstrate the effectiveness of the proposed solution tech-
+niques in solving the energy harvesting problem addressed in
+this paper.
+The reminder of this paper is organized as follows. The sys-
+tem model is introduced in Section II. We propose a two-step
+procedure for harvesting the surplus energy provided by the grid
+in Section III. Then, we present a second-order cone relaxation
+and an approximation technique to transform the proposed op-
+timization problems into mixed-integer second-order cone pro-
+grams in Section IV. Finally, we numerically demonstrate the
+effectiveness of our solution techniques in Section V. The proofs
+of all results presented are included in an Appendix.
+II. PRELIMINARIES
+In this section, we ﬁrst introduce the hydraulic model of a
+water supply network adopted in this paper; this model closely
+follows that used in [10]. Next, we present an energy audit
+of the aforementioned water network. Finally, we describe the
+demand response market setting and the separation between the
+time scales involved in the decision-making for control of water
+networks.
+A. Water Supply Network Model
+Consider a water supply network comprised of junctions,
+tanks, reservoirs, pumps, valves, and pipes, and assume that
+the water ﬂow through the water supply network is laminar. To
+differentiate the inlet and outlet of each water tank, we model
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:53:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+FOOLADIVANDA et al.: UTILIZATION OF WATER SUPPLY NETWORKS FOR HARVESTING RENEWABLE ENERGY
+765
+each tank as a two-node element, one node representing the in-
+let of the tank and the other node representing the outlet of the
+tank. More precisely, we introduce ﬁctitious nodes and edges.
+Fictitious nodes represent the inlets of the tanks, and ﬁctitious
+edges connect the inlets and outlets of the tanks. Then, the
+topology of the water network can be represented by a directed
+graph, G(N, E ∪E(f )), where N = J ∪T ∪T (f ) ∪R, with
+each i ∈J corresponding to a junction, each i ∈T correspond-
+ing to the outlet of a tank, each i ∈T (f ) corresponding to the
+inlet of a tank (i.e., T (f ) represents the set of ﬁctitious nodes),
+and each i ∈R corresponding to a reservoir; and where each en-
+try in the edge set E = {e1, . . . , e|E|} corresponds to a physical
+element connecting a pair of nodes, and each entry in the edge
+set E(f ) = {e(f )
+1 , . . . , e(f )
+|E( f ) |} corresponds to a ﬁctitious edge
+connecting the inlet and outlet of a tank. This physical element
+can potentially be a pipe, a pump, or a valve. The edge set E
+can be written as E = P ∪V ∪L where P, V, and L denote the
+sets of pumps, valves, and pipes, respectively. Let ea = (i, j)
+be an ordered pair of vertices indicating that edge ea = (i, j) is
+incident to vertices i and j, and that it carries a nonzero water
+ﬂow from node i to node j. Further, let N −
+i
+and N +
+i
+denote
+the in and out neighbors of node i, respectively, in graph G, i.e.,
+N −
+i = {j : (j, i) ∈E} N +
+i
+= {j : (i, j) ∈E}.
+1) Junctions: Let us assume that time is divided into slots
+of size δ. Further, let Di[k] and Qi,j[k] (in m3/s) denote
+the water demand at junction i ∈J , and the volumetric ﬂow
+rate through the element (i, j) ∈E at time slot k, respectively.
+We assume that the Di[k]s are constant over the duration of a
+time slot, and that at the beginning of each time slot k, the water
+network operator can perfectly estimate Di[k] for all i ∈J . At
+each junction i ∈J , the ﬂow conservation constraint must hold
+at each time slot k:
+
+m∈N −
+i
+Qm,i[k] −
+
+j∈N +
+i
+Qi,j[k] = Di[k].
+(1)
+We
+deﬁne
+Q[k] = [{Qi,j[k]}(i,j)∈E]⊤∈R|E|
+and
+D[k] =
+[{Di[k]}i∈J ]⊤∈R|J | for all k.
+Water pressure levels at different nodes enable water move-
+ment through the network. Typically, water pressure is assumed
+proportional to the elevation above a ﬁxed reference point since
+water is assumed to be incompressible. For each node i ∈N, let
+H0
+i and Hi[k], respectively, denote the elevation head of node i
+with respect to a ﬁxed reference point, and the pressure head of
+node i at time slot k. To maintain the pressure head through the
+network, the network operator has assigned a minimum pres-
+sure head Hi to each junction i ∈J . At each junction i ∈J ,
+pressure head Hi[k] should satisfy the minimum pressure head
+constraint at each time slot k, i.e.,
+Hi ≤Hi[k].
+(2)
+Here, we deﬁne H[k] = [{Hj[k]}j∈N ]⊤∈R|N|.
+2) Tanks: We model each water tank as a two-node element.
+Without loss of generality, we assume that the inlet of each water
+tank is located at the top of the tank. Let Vi[k] denote the volume
+of water in tank i ∈T at time slot k. Then, for each tank i ∈T ,
+the water tank balance constraint must hold at all time slots k:
+Vi[k] = Vi[k −1] + δ
+
+m∈N −
+i
+Qm,i[k] −δ
+
+j∈N +
+i
+Qi,j[k]
+(3)
+0 ≤Vi[k] ≤V i
+(4)
+where Vi[0] and V i denote the initial volume of water in tank
+i and the capacity of tank i, respectively. We further deﬁne
+V [k] = [{Vi[k]}i∈T ]⊤∈R|T | for all k.
+At each time slot k, the pressure head change at the outlet of
+water tank i ∈T can be approximated by1
+Hi[k] −Hi[k −1] = δ
+Ai
+⎛
+⎝
+m∈N −
+i
+Qm,i[k] −
+
+j∈N +
+i
+Qi,j[k]
+⎞
+⎠
+(5)
+where Hi[0] and Ai denote the initial pressure head of water
+tank i and the cross-sectional wetted area of tank i, respectively.
+From (3) and (5), we obtain that Hi[0] = Vi[0]/Ai. Since the
+tank inlet is located at the top of the tank, the pressure head
+at node i ∈T (f ) must be greater than or equal to the elevation
+head at node i, i.e.,
+Hi[k] ≥H0
+i .
+(6)
+Typically, the tank inlet is located at the top of the tank, and
+hence, the elevation head at the tank inlet is higher than the
+elevation head at the tank outlet. To differentiate the inlet and
+outlet of each water tank, we have deﬁned ﬁctitious nodes in
+this paper. For a more detailed discussion on tank models, we
+refer the reader to [21].
+3) Reservoirs: We consider reservoirs as inﬁnite sources
+of water, and assume that the pressure head on the surface of
+at each reservoir i ∈R is zero and the water velocity is also
+zero; therefore, the total head at the reservoir i is equal to the
+elevation head at node i.
+4) Pumps: The water network operator uses variable speed
+pumps to pump water through its network. When pump (i, j) ∈
+P is ON, it increases the pressure head between its inlet and
+outlet; otherwise, it does not allow water to ﬂow through the
+pump. Let Hi,j[k] denote the pressure head gain of the pump
+(i, j) at time slot k; then, Hi,j[k] can be computed as follows
+(e.g., see [4]):
+Hi,j[k] = ai,jQ2
+i,j[k] + bi,jQi,j[k]ωi,j[k] + ci,jω2
+i,j[k]
+(7)
+where ωi,j[k] denotes the normalized speed of the pump with
+respect to its nominal speed. The coefﬁcients ai,j < 0, bi,j > 0,
+and ci,j > 0 are the pump parameters evaluated at the nominal
+speed. We deﬁne ω[k] = [{ωi,j[k]}(i,j)∈P]⊤∈R|P| for all k.
+Let ηi,j denote the electrical-to-hydraulic energy conversion
+efﬁciency of pump (i, j) ∈P. To obtain ηi,j, we need to com-
+pute the motor and pump efﬁciencies. The motor efﬁciency de-
+pends on the control scheme, rotational speed, and load. In [22],
+Burt et al. show that commercially available variable frequency
+drives can maintain high motor efﬁciencies over practical ranges
+1In this paper, we ignore the kinetic energy and atmospheric pressure through
+the system as in most water supply network analyses (see, e.g., [30]).
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:53:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+766
+IEEE TRANSACTIONS ON CONTROL OF NETWORK SYSTEMS, VOL. 6, NO. 2, JUNE 2019
+of loads and frequencies. They show that for several types of
+variable frequency drives, the motor efﬁciency is higher than
+97% at full loads, and that at lower loads, the motor efﬁciency
+does not fall below 95%. Similar results were reported in [23].
+Based on these observations, in the reminder, we assume motor
+efﬁciencies to be constant.
+Centrifugal pumps are typically used in variable speed pump
+stations. For centrifugal pumps, the afﬁnity laws that relate ﬂow,
+pressure head gain, and power to the speed of the pump can
+provide a good approximation of the real pump behavior for
+a wide range of speeds. However, these laws cannot model
+the power and efﬁciency relationships accurately, especially for
+smaller pumps [24]–[26]. Several approximation methods have
+been investigated in the literature to model the impact of factors
+that do not scale with the pump speed and depend on the machine
+size (e.g., see [24], [26]). The impact of these parameters on
+the pump efﬁciency can be neglected if the changes in speed
+do not exceed the 33% of the nominal pump speed [26]. This
+approximation is justiﬁed for large pumps [25]–[26]. Based on
+this observation, we enforce pump (i, j) ∈P to operate within
+a certain range of speeds as follows:
+ωi,j ≤ωi,j[k] ≤ωi,j
+(8)
+where ωi,j and ωi,j denote, respectively, the maximum and
+minimum allowable speeds of pump (i, j).
+Let yi,j[k] be a binary variable that takes value one if the pump
+(i, j) is ON, and takes value zero, otherwise. To maintain the
+pump efﬁciency constant, we further enforce pump (i, j) ∈P
+to operate within a certain range of water ﬂows as follows:
+Qi,jyi,j[k] ≤Qi,j[k] ≤Qi,jyi,j[k]
+(9)
+where Qi,j and Qi,j denote the minimum and maximum al-
+lowable water ﬂow through pump (i, j) ∈P, respectively. Un-
+der the constraints in (8) and (9), the pump efﬁciency can be
+assumed to be constant, and hence ηi,j can be assumed to be
+constant. Note that the values of ωi,j, ωi,j, Qi,j, and Qi,j highly
+depend on the pump characteristics. The operator can calculate
+the values of these parameters beforehand.
+Energy must be conserved between the nodes i and j, where
+(i, j) ∈P, when the pump (i, j) carries a nonzero water ﬂow;
+otherwise, the pressure heads at junctions i and j are decoupled.
+Thus, the energy conservation constraint across pump (i, j) ∈P
+can be represented by
+−M1(1 −yi,j[k]) ≤(Hj[k] + H0
+j ) −(Hi[k] + H0
+i ) −Hi,j[k]
+≤M1(1 −yi,j[k])
+(10)
+where M1 and m1 are positive constants; M1 is sufﬁciently
+large, and m1 is sufﬁciently small. Let Ei,j[k] denote the energy
+consumption of pump (i, j) ∈P at time slot k, which can be
+computed as follows:
+Ei,j[k] = ρgδ
+ηi,j
+Hi,j[k]Qi,j[k]
+where ρ and g are the water density and gravity constant (in
+m/s2), respectively. Let λ[k] (in $/Wh) denote the electricity
+price at time slot k. Then, the total operation cost at time slot k
+equals 
+(i,j)∈P λ[k]Ei,j[k].
+5) Pressure Reducing Valves: To control pressure heads
+at different junctions through the network, the water network
+operator uses pressure reducing valves (PRV),2 the actuation of
+which controls the pressure head losses across the valves. Let
+Hi,j[k] denote the pressure head loss across the valve (i, j) ∈V
+at time slot k; Hi,j[k] allows the operator to adjust the head
+loss from junction i to j as needed. When the valve carries a
+nonzero water ﬂow, the pressure heads across the valve will be
+coupled by the energy conservation law; otherwise, the pressure
+heads across the valve will be decoupled. Let yi,j[k] be a binary
+variable that takes value one when valve (i, j) carries a nonzero
+water ﬂow, and zero, otherwise. At each time slot k, the energy
+conservation constraint can be represented by
+−M1(1 −yi,j[k]) ≤(Hj[k] + H0
+j ) −(Hi[k] + H0
+i ) + Hi,j[k]
+≤M1(1 −yi,j[k])
+(11)
+m1yi,j[k] ≤Qi,j[k] ≤M1yi,j[k].
+(12)
+Note that the head loss Hi,j[k] is a nonnegative variable. For
+more information on valves, we refer the reader to [27] and [28].
+6) Pipes: When a pipe (i, j) ∈L carries a nonzero water
+ﬂow, energy must be conserved between the two junctions i and
+j; otherwise, the pressure heads at junctions i and j are decou-
+pled. The energy conservation constraint across pipe (i, j) ∈L
+can be represented by
+−M1(1 −yi,j[k]) ≤(Hj[k] + H0
+j ) −(Hi[k] + H0
+i ) + Hi,j[k]
+≤M1(1 −yi,j[k])
+(13)
+m1yi,j[k] ≤Qi,j[k] ≤M1yi,j[k]
+(14)
+where yi,j[k] is a binary variable that is one if the pipe (i, j)
+carries a nonzero water ﬂow, and is zero, otherwise. Hi,j[k]
+denotes the pressure head loss of pipe (i, j) ∈L at time slot
+k. We deﬁne the vectors y[k] = [{yi,j[k]}(i,j)∈E]⊤∈R|E| and
+G[k] = [{Hi,j[k]}(i,j)∈V∪P∪L]⊤∈R|V∪P∪L| for all k.
+The Darcy–Weisbach and Hazen–Williams equations are two
+formulas widely used by researchers to model pressure head
+losses across pipes (e.g., see [29]). Using the Darcy–Weisbach
+equation, Hi,j[k] can be modeled as follows:
+Hi,j[k] = f d
+i,jQ2
+i,j[k]
+(15)
+with f d
+i,j = (ri,jℓi,j)/(2di,js2
+i,jg), where ℓi,j and di,j are the
+length and the hydraulic diameter of pipe (i, j) (in meters),
+respectively, and ri,j and si,j are the Darcy friction factor and the
+cross-sectional wetted area of pipe (i, j), respectively. Using the
+Hazen–Williams equation, Hi,j[k] = f h
+i,jQ1.852
+i,j
+[k] with f h
+i,j =
+(ri,jℓi,j)/(c4.871
+i,j
+d4.871
+i,j
+) where ri,j and ci,j are the head loss
+coefﬁcient factor and the roughness of pipe (i, j), respectively.
+In this paper, we use the Darcy–Weisbach equation to compute
+the Hi,j[k]s.
+B. Energy Audit of Water Networks
+We now present an energy audit of the water network for
+one single time slot of length δ. To do so, we select the water
+network except its pumps and reservoirs as a control volume,
+2We will use the term valve and PRV interchangeably in this paper.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:53:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+FOOLADIVANDA et al.: UTILIZATION OF WATER SUPPLY NETWORKS FOR HARVESTING RENEWABLE ENERGY
+767
+and consider the set of pumps and reservoirs as the boundaries
+of our control volume. These boundaries determine which ele-
+ments are externally contributing to the energy ﬂow or internally
+storing or dissipating energy. In addition, we make the following
+assumptions:
+A.1 The heat ﬂow through the boundaries is zero.
+A.2 The mechanical work is supplied by the pumps.
+Under the assumptions above, we can calculate the energy
+contribution of different water network elements to the control
+volume as follows:
+1) The external energy provided by the pumps is equal to
+Ep[k] = ρgδ
+(i,j)∈P Hi,j[k]Qi,j[k].
+2) The external energy supplied by the reservoirs is equal to
+Er[k] = ρgδ 
+i∈R
+
+j∈N +
+i Qi,j[k]H0
+i .
+3) The internal energy dissipated to overcome the eleva-
+tion head differences at different nodes and the fric-
+tion head losses of the pipes and PRVs equals El[k] =
+ρgδ 
+(i,j)∈E\P Qi,j[k](Hj[k] −Hi[k]).
+4) The energy supplied or absorbed by the tanks equals
+Et[k] = ρgδ 
+i∈T (Ai/2)
+
+H2
+i [k] −H2
+i [k −1]
+	
+.
+5) The energy delivered to the consumers is equal to Ed[k] =
+ρgδ 
+i∈J Di[k]Hi[k].
+We apply the energy conservation law to the control volume
+with known amounts of water and energy ﬂowing through the
+boundaries. At each time slot k, the energy conservation con-
+straint can be represented by
+Ep[k] + Er[k] = Et[k] + El[k] + Ed[k]
+i.e., the energy supplied to the water network through pumps
+and reservoirs equals the sum of
+1) the energy needed to overcome the elevation head differ-
+ences at different nodes and the friction head losses of
+the pipes;
+2) the energy supplied or absorbed by the tanks; and
+3) the energy delivered to the consumers.
+For more information on the energy audit of water networks,
+we refer the reader to [30].
+C. Demand Response Market Mechanism
+The water network operator participates in an energy market
+through a demand response program that is designed to balance
+the power generation and load by changing electricity demands.
+Demand response programs require their resources to submit
+their offers to energy markets before the contract period starts
+[17] and [18]. Therefore, the water network operator needs to
+compute its offer for day-ahead or real-time energy markets,
+and to submit the offer to the energy market through the demand
+response program. Note that the operator offer for the energy
+market will consist of the maximum power that can be absorbed
+by the water pumps at each time slot k. The duration of the time
+slot for demand response programs in energy markets ranges
+from 1 to 10 min [17], [18]. At such time scales, water pumps
+can follow the demand response signal sent by the ISO.
+In this paper, we assume that the water network operator com-
+puted its demand response capacity for day-ahead or real-time
+energy markets, and submitted the offer to the energy market
+through a demand response program. We further assume that
+the water network has been selected to provide a certain amount
+of demand response capacity. We denote this quantity by r.
+We assume that the water network operator’s offer is computed
+beforehand. Hence, the water network operator’s capacity r is
+ﬁxed and known. The computation of the water network opera-
+tor’s offer for day-ahead or real-time energy markets is not the
+subject of this paper.
+Let us assume that the contract duration is T = Kδ. During
+the contract, the ISO sends a new demand response signal to
+the water network operator at every time slot k ∈K where
+K = {1, . . . , K}. The water network operator and ISO have
+agreed on the capacity r (in W) for the contract duration T. The
+ISO has committed to send some demand response signal r[k]
+at time slot k that satisfy the following constraint:
+0 ≤r[k] ≤r.
+The water network operator has committed to draw constant
+power r[k] at time slot k from the grid.
+The water network operator will be rewarded for the amount
+of energy that it draws during the contract, and, hence, it will be
+penalized for any failure in responding to the demand response
+signals r[1], . . . , r[K]. The water network operator can maxi-
+mize its net revenue by minimizing the cost of failing to follow
+some demand response signals over the contract period T. With-
+out loss of generality, we take the cost of failing to follow some
+demand response signal to be linearly proportional to the im-
+balance |γ[k] −r[k]|, where γ[k] denotes the total power that is
+drawn from the grid by the water network operator at time slot
+k. Hence, the cost of failing to follow the demand response sig-
+nal over the contract duration T equals K
+k=1 λ[k]|γ[k] −r[k]|
+(in $), where λ[k] denotes the price of electricity at time slot k.
+Notice that λ[k] is a stochastic price parameter ($/W) modeling
+the price of electricity in the real-time market.
+D. Time-Scale Separation Principle
+The water network operator controls its resources at differ-
+ent time scales [31], [32]. First, at a slower time scale (e.g.,
+day-ahead), the operator computes the optimal set-points of its
+pumps, PRVs, and tanks (especially the values of binary vari-
+ables yi,j[k]s) given a set of historic loads and electricity prices.
+These set-points will determine the water network’s topology
+for the next 24 h, i.e., the computed set-points will determine
+which pipes and pumps will carry nonzero water ﬂows during
+the next 24 h. Then, at a faster time scale (e.g., real time), the
+operator computes the optimal schedules of its tanks, pumps,
+and valves at each time slot k given the values of water demand
+D[k], electricity price λ[k], and control variable y[k].
+In this paper, we focus on a single demand response contract
+in the energy market, and assume that the values of the binary
+variables, i.e., the yi,j[k]s, are ﬁxed and known to the water
+network operator. We further assume that the value of each
+binary variable yi,j[k] does not change over the contract period
+T, i.e., for each (i, j) ∈E, yi,j[k] is either zero or one for all
+k ∈K. Given the yi,j[k]s, we can now construct a subgraph of
+the directed graph G(N, E ∪E(f )) as follows. First, we remove
+all the edges ea = (i, j) with yi,j[k] = 0 from G(N, E ∪E(f )),
+and then remove all the isolated nodes from the resulting graph.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:53:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+768
+IEEE TRANSACTIONS ON CONTROL OF NETWORK SYSTEMS, VOL. 6, NO. 2, JUNE 2019
+We call the new graph Gy(Ny, Ey ∪E(f )
+y
+), where Ny ⊂N, Ey ⊂
+E, and E(f )
+y
+⊂E(f ). The graph Gy is ﬁxed over the contract
+period T and determines the set of water network elements that
+are online, as well as their connectivity. Let M and Ui denote
+the set of junctions with multiple incoming pipes and the set
+of upstream nodes of node i ∈Ny, respectively, in graph Gy.
+Further, let Ni,j denote the set of tanks, and junctions with
+multiple incoming pipes over all the paths between nodes i and
+j including j in graph Gy. Next, we formulate the problem of
+controlling the pumps, PRVs, and tanks in the water network at
+every time slot k.
+We now focus on an online setting in which at the beginning of
+each time slot k, the value of water demand D[k] and electricity
+price λ[k] are ﬁxed and known to the water network operator. At
+the beginning of each time slot k, the operator receives the value
+of a demand response signal r[k] from the ISO, and schedules
+its pumps and tanks so that they can collectively harvest the
+surplus energy provided by the power grid while minimizing
+the operation cost of the pumps at time slot k. Next, we formulate
+the problem of controlling the pumps, PRVs, and tanks in the
+water network at every time slot k.
+III. PROBLEM STATEMENT
+Consider a single demand response contract in the energy
+market. The water network operator aims at harvesting the sur-
+plus energy provided by the power grid in its water network
+while ensuring that all the loads are delivered at the desired
+pressure heads. In addition, the operator aims at minimizing the
+operation cost of its water pumps while maintaining the pres-
+sure heads at the desired levels through the network. Therefore,
+the operator needs to optimize its pump schedules such that it
+minimizes its operational cost while utilizing the surplus energy
+provided by the power grid. To achieve this goal, we focus on
+an online setting in which at the beginning of each time slot
+k, the values of D[k], λ[k], and r[k] are revealed to the water
+network operator, and propose a two-step procedure for com-
+puting the optimal schedules of pumps, tanks, and valves as
+follows:
+Step 1: The water network operator computes its minimum
+operation costs at time slot k by computing a solu-
+tion to the following problem. Let us deﬁne the vec-
+tor x[k] = [H[k]⊤, Q[k]⊤, G[k]⊤, V [k]⊤]⊤. Given the
+parameters V i, Hi, H0
+i , ωi,j, ηi,j, f d
+i,j, and D[k], the
+computation of x[k] and ω[k] can be accomplished
+by solving the following optimization problem:
+M1 :
+min
+x[k],ω[k]
+
+(i,j)∈P
+λ[k]ρgδ
+ηi,j
+Hi,j[k]Qi,j[k]
+subject to (1)–(15).
+Note that the coefﬁcient ρgδλ[k] can be removed from
+the objective function since it is ﬁxed and known.
+Let x∗[k] and ω∗[k] denote the optimal solution to
+M1 and let E∗
+p[k] denote the energy consumption
+of the pumps using the schedules x∗[k] and ω∗[k]. If
+E∗
+p[k] ≥r[k]δ, then the water network operator needs
+to purchase the energy imbalance (E∗
+p[k] −r[k]δ)
+from the electricity market to ensure that all the
+loads are delivered at the desired pressure heads. In
+this case, the water network operator can minimize
+its operation costs while following the demand re-
+sponse signal, by using the schedules x∗[k] and ω∗[k].
+However, if E∗
+p[k] < r[k]δ, the schedules x∗[k] and
+ω∗[k] may not efﬁciently harvest the surplus energy
+(r[k]δ −E∗
+p[k]) in the tanks since our objective in
+M1 is to minimize the operation cost at time slot k.
+As mentioned in Section II-B, the energy supplied
+to the water network through pumps and reservoirs
+equals the sum of the energy needed to overcome the
+elevation head differences at different nodes and the
+head losses of the pipes, the energy supplied or ab-
+sorbed by the tanks, and the energy delivered to the
+consumers. Therefore, the schedules x∗[k] and ω∗[k]
+do not necessarily maximize the energy harvested in
+the tanks at time slot k. Hence, if E∗
+p[k] < r[k]δ, the
+operator will need to compute the schedules x[k] and
+ω[k] that maximize the energy absorbed by the tanks
+at time slot k, in the second step.
+Step 2: Let us assume that the surplus energy is greater than
+the optimal energy consumption, i.e., E∗
+p[k] < r[k]δ.
+To maximize the energy harvested in the tanks, we
+select the energy supplied or absorbed by the tanks
+as our objective function, and maximize the energy
+harvested at time slot k by computing a solution as
+follows. Recall that the water tanks are the elements
+that can absorb the surplus energy provided by the
+grid. Given the parameters V i, Hi, H0
+i , ωi,j, ηi,j,
+f d
+i,j, and D[k], the computation of x[k] and ω[k] can
+be obtained by solving the following optimization
+problem:
+N1 :
+max
+x[k],ω[k] ρgδ
+
+i∈T
+Ai
+2
+
+H2
+i [k] −H2
+i [k −1]
+	
+subject to (1)–(15)
+
+(i,j)∈P
+ρgδ
+ηi,j
+Hi,j[k]Qi,j[k] ≤r[k]δ
+(16)
+where the Hi[k −1]s are given. The constraint in (16)
+ensures that the energy consumption of the pumps
+will be less than or equal to r[k]δ.
+Problems M1 and N1 are nonconvex due to the nonconvex
+objective functions and feasibility regions. Hence, it is hard to
+solve these problems exactly in their current forms. Our goal is
+to compute exact solutions to M1 and N1. To achieve this goal,
+we focus on the feasibility region and objective function of the
+energy harvesting maximization problem N1, and transform
+N1 into a mixed-integer second-order cone program that can
+be solved efﬁciently with commercial solvers. In addition, we
+propose a set of sufﬁcient conditions under which the proposed
+relaxation is exact. The proposed relaxation and reformulation
+techniques can be applied to the operation cost minimization
+problem M1 since problems M1 and N1 have similar structures.
+In what follows, we only present the results for the energy
+harvesting maximization problem N1.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:53:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+FOOLADIVANDA et al.: UTILIZATION OF WATER SUPPLY NETWORKS FOR HARVESTING RENEWABLE ENERGY
+769
+Fig. 1.
+Graphical depiction of pump (i, j) ∈P feasibility region: The
+dotted line and the dash-dot line represent the set of feasible values of
+pair (Qi,j [k], Hi,j [k]) for ωi,j [k] = ωi,j and ωi,j [k] = ωi,j , respectively.
+The dashed line represents the line di,j Qi,j [k] + ei,j . The region be-
+tween the dashed line and the dotted line above represents the convex
+feasible set determined by (17) and (18) while the area between the
+dotted line and the dash-dot line represents the original feasibility set of
+the pump constraints.
+IV. ENERGY HARVESTING MAXIMIZATION PROBLEM:
+REFORMULATION AND RELAXATION
+The energy harvesting problem N1 is nonconvex because its
+feasible set is nonconvex. We follow a three-step procedure to
+transform problem N1 into a mixed-integer second-order cone
+program that can be solved with commercial solvers. To do so,
+we start with the pump hydraulic constraints, and convexify the
+feasible set associated with pump variables. Using the proposed
+convex relaxation, we formulate a new optimal pump schedul-
+ing and water ﬂow problem referred to as N2. Second, we focus
+on the nonlinear equality constraint (15), and propose a convex
+relaxation for constraint (15) referred to as N3. Finally, we focus
+on the nonconvex quadratic constraint in (16), and propose an
+inner approximation for this constraint. In addition, we approxi-
+mate the quadratic terms H2
+i [k]s for all i ∈T , and transform the
+nonconvex program N3 into a mixed-integer second-order cone
+program referred to as N4. These steps enable us to transform
+problem N1 into a mixed-integer second-order cone program.
+The solution to N4 provides an approximation to an exact solu-
+tion to N1.
+A. Convexiﬁcation of the Pump Hydraulic Constraints
+We focus on the pump hydraulic constraints in (7)–(9),
+and represent the feasibility set of the pump constraints in
+the space of variables Qi,j[k] and Hi,j[k]. Note that, we
+can reduce the dimension of the pump feasibility set from
+(ωi,j[k], Qi,j[k], Hi,j[k]) to (Qi,j[k], Hi,j[k]) due to the struc-
+ture of constraints (7) and (8). The feasibility set of the pump
+constraints is nonconvex, as shown in Fig. 1. In particu-
+lar, the boundary of the feasibility set obtained by the equa-
+tion Hi,j[k] = ai,jQ2
+i,j[k] + bi,jωi,jQi,j[k] + ω2
+i,jci,j
+makes
+the feasibility set nonconvex. We approximate this constraint
+with a linear constraint, and propose an inner convex approxi-
+mation for the pump hydraulic constraints in (7)–(9) as follows:
+Hi,j[k] ≤ai,jQ2
+i,j[k] + bi,jQi,j[k] + ci,j
+∀(i, j) ∈P (17)
+Hi,j[k] ≥di,jQi,j[k] + ei,j
+∀(i, j) ∈P
+(18)
+where bi,j = bi,jωi,j and ci,j = ci,jω2
+i,j. di,j and ei,j are chosen
+so that the following inequality holds for all values of Qi,j[k]:
+di,jQi,j[k] + ei,j ≥ai,jQ2
+i,j[k] + bi,jωi,jQi,j[k] + ω2
+i,jci,j.
+The constraint (17) is convex since ai,j is negative. The dashed
+line in Fig. 1 represents the line di,jQi,j[k] + ei,j; the values
+of the parameters di,j and ei,j are highly dependent on the real
+pump behavior, and can be computed beforehand.
+We now formulate a new pump scheduling and water ﬂow
+problem as follows: Given the system parameters, x[k] can be
+obtained by solving the following optimization problem:
+N2 :
+max
+x[k]
+
+i∈T
+AiH2
+i [k]
+subject to (1)–(6), (9)–(15), (16), (17)–(18)
+Note that the coefﬁcient ρgδ and the quadratic terms Hi[k −1]s
+are removed from the objective function since they are ﬁxed and
+known at the beginning of time slot k. The solution to problem
+N2 provides a lower bound on the optimal value of the objective
+function in N1.
+We can compute the optimal values of ωi,j[k]s using the
+optimal solution to N2 and the relation in (7) as follows:
+ω∗
+i,j[k] = −bi,jQ∗
+i,j[k] +
+−
+√
+Δ
+2ci,j
+where Δ=b2
+i,j(Q∗
+i,j[k])2 −4ci,j(ai,j(Q∗
+i,j[k])2 −H∗
+i,j[k]), and
+Q∗
+i,j[k] and H∗
+i,j[k] denote the optimal solution to N2. Note
+that given Hi,j[k] and Qi,j[k], there exists only one nonnega-
+tive solution to the pump hydraulic constraint (7) [10]. In what
+follows, we work with N2.
+B. Second-Order Cone Relaxation
+We now propose a second-order cone relaxation for the
+quadratic equality constraint (15), and formulate a new prob-
+lem as follows: Given the system parameters, the computation
+of x[k] can be accomplished by solving the following optimiza-
+tion problem:
+N3 :
+max
+x[k],w[k]
+
+i∈T
+AiH2
+i [k]
+subject to (1)–(6), (9)–(14), (16), (17)–(18)
+Hi,j[k] = f d
+i,jWi,j[k] ∀(i, j) ∈L
+(19)
+Q2
+i,j[k] ≤Wi,j[k] ∀(i, j) ∈L
+(20)
+where w[k] = [{Wi,j[k]}(i,j)∈L]⊤∈R|L| for all k. The second-
+order cone relaxation of the friction head losses was originally
+proposed in [10].
+In this paper, we consider two problems equivalent if an
+optimal solution of one can be obtained from an optimal solution
+of the other. The following result provides a set of sufﬁcient
+conditions under which either N3 is exact or an exact solution
+to N2 can be constructed from an exact solution to N3 (i.e., the
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:53:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+770
+IEEE TRANSACTIONS ON CONTROL OF NETWORK SYSTEMS, VOL. 6, NO. 2, JUNE 2019
+conditions under which N2 and N3 are equivalent). The proof
+is provided in the Appendix.
+Theorem 1: Let Gy(Ny, Ey ∪E(f )
+y
+) denote the graph of a
+water network. Given the parameters V i, Hi, H0
+i , ωi,j, ηi,j, f d
+i,j,
+and D[k], N3 is equivalent to N2 if the following conditions
+are satisﬁed:
+1) Graph Gy(Ny, Ey ∪E(f )
+y
+) is loop-free.
+2) All the incoming pipes in each junction j ∈J with mul-
+tiple incoming pipes are equipped with PRVs.
+Under these conditions above, either N3 is exact or an exact
+solution to N2 can be constructed from an exact solution to
+N3. When N3 is not exact and the conditions of Theorem 1 are
+satisﬁed, the water network operator needs to construct an exact
+solution to N2 from a solution to N3 in order to control the
+tanks, pumps, and valves optimally; Corollary 1 enables us to
+construct such solutions. The proof of this result closely follows
+the proof of Theorem 1. Due to space limitations, we do not
+include it.
+Corollary 1: Given the parameters V i, Hi, H0
+i , ωi,j, ηi,j,
+f d
+i,j, and D[k], let x∗[k] and w∗[k] denote the optimal solution
+to N3. Consider vectors x(r)[k] and w(r)[k] with the following
+entries:
+V (r)[k] = V ∗[k], Q(r)[k] = Q∗[k]
+H(r)
+i
+[k] = H∗
+i [k] + ψi[k]
+∀i ∈Ny
+W (r)
+i,j [k] = (Q∗
+i,j[k])2
+∀(i, j) ∈L
+H(r)
+i,j [k] = f d
+i,j(Q∗
+i,j[k])2
+∀(i, j) ∈L
+H(r)
+i,j [k] = H∗
+i,j[k]
+∀(i, j) ∈P,
+H(r)
+i,j [k] =
+
+H∗
+i,j[k] + ψi[k], if j ∈M and (i, j) ∈V
+H∗
+i,j[k], if j /∈M and (i, j) ∈V
+with ψi[k] = 
+(i′,j ′)∈Ei ϵi′,j ′[k] where the scalar ϵi,j[k] and the
+set Ei,j are deﬁned as follows:
+ϵi,j[k] = f d
+i,j(W ∗
+i,j[k] −(Q∗
+i,j[k])2)
+∀(i, j) ∈L
+Ei = {(i′, j′)|(i′, j′) ∈L, i ∈Di′, Nj ′,i = ∅}
+∀i ∈Ny.
+Then, x(r)[k] and w(r)[k] form an exact solution to N3.
+The result above allows the water network operator to con-
+struct an exact solution to N2 from a solution to N3 by updat-
+ing the pressure head losses across the PRVs. This procedure
+requires the computation of the set Ei,j, deﬁned in Corollary 1,
+for all (i, j) ∈V. As mentioned earlier, we assume that graph
+Gy(Ny, Ey ∪E(f )
+y
+) is ﬁxed and known to the water network op-
+erator. Hence, the operator can easily compute the set Ei,j for
+all (i, j) ∈V in advance.
+C. Discretization and Approximation
+We now focus on the convex quadratic objective function and
+the nonconvex quadratic constraint in (16), and approximate the
+quadratic terms Hi,j[k]Qi,j[k]s for all (i, j) ∈P and H2
+i [k]s for
+all i ∈T in order to obtain a tractable optimization problem.
+To do so, we discretize the Hi,j[k]s for all (i, j) ∈P, and the
+Hi[k]s for all i ∈T . We further deﬁne a new set of auxiliary
+variables that enable us to represent the nonconvex quadratic
+constraint and the objective function with a set of mixed-integer
+linear constraints.
+Let Z = {ζ0, . . . , ζB } denote the set of values that the
+Hi,j[k], (i, j) ∈P, can take, and let B = {1, . . . , B} be the in-
+dex set of Z. For each b ∈B, let zi,j,b[k] denote a binary variable
+taking value one if ζb−1 ≤Hi,j[k] < ζb, and zero, otherwise.
+For each pump (i, j) ∈P, we discretize Hi,j[k] as follows:
+Hi,j[k] =
+
+b∈B
+zi,j,b[k]ζb
+(21)
+yi,j[k] =
+
+b∈B
+zi,j,b[k]
+(22)
+zi,j,b[k]ζb−1 ≤Hi,j[k]
+∀b ∈B,
+(23)
+Hi,j[k] ≤zi,j,b[k]ζb + (1 −zi,j,b[k])M1
+∀b ∈B.
+(24)
+Recall that M1 is sufﬁciently large, and yi,j[k] is a parameter
+which is one if the pump (i, j) is ON, and is zero, otherwise.
+Using the discretization technique in (21)–(24), we obtain
+
+(i,j)∈P
+Hi,j[k]Qi,j[k]
+ηi,j
+=
+
+(i,j)∈P
+1
+ηi,j
+
+b∈B
+Φi,j,b[k]ζb
+(25)
+Φi,j,b[k] = Qi,j[k]zi,j,b[k]
+∀b ∈B
+(26)
+where Φi,j,b[k] is an auxiliary variable. The result in the follow-
+ing proposition, established in [33], enables us to linearize the
+quadratic constraint (26), and represent the nonconvex quadratic
+constraint in (16) with a set of linear constraints.
+Proposition 1: Let Y ⊂R be a compact set. Given a binary
+variable x and a linear function g(y) in a continuous variable
+y ∈Y, z equals the quadratic function xg(y) if and only if
+gx ≤z ≤gx
+g(y) −g(1 −x) ≤z ≤g(y) −g(1 −x)
+where g = miny∈Y{g(y)} and g = maxy∈Y{g(y)}.
+Using Proposition 1, (26) can be represented by
+Qi,jzi,j,b[k] ≤Φi,j,b[k] ≤Qi,jzi,j,b[k]
+∀b ∈B
+(27)
+Qi,j[k] −(1 −zi,j,b[k])Qi,j ≤Φi,j,b[k]
+∀b ∈B
+(28)
+Φi,j,b[k] ≤Qi,j[k] −(1 −zi,j,b[k])Qi,j
+∀b ∈B.
+(29)
+Recall that Qi,j and Qi,j denote the minimum and maxi-
+mum allowable water ﬂow through pump (i, j) ∈P, respec-
+tively. We deﬁne z[k] = [{zi,j,b[k]}(i,j)∈P,b∈B]⊤∈RB |P| and
+Φ[k] = [{Φi,j,b[k]}(i,j)∈P,b∈B]⊤∈RB |P|.
+To discretize pressure heads, let S = {σ0, . . . , σC } denote the
+set of values that the pressure head Hi[k], where i ∈T , can take,
+and let C = {1, . . . , C} be the index set of S. For each c ∈C, let
+si,c[k] be a binary variable which is one if σc−1 ≤Hi[k] < σc,
+and let it be zero, otherwise. Let us deﬁne the vector s[k] =
+[{si,c[k]}i∈T ,c∈C]⊤∈RC |T |. For each tank i ∈T , we discretize
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:53:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+FOOLADIVANDA et al.: UTILIZATION OF WATER SUPPLY NETWORKS FOR HARVESTING RENEWABLE ENERGY
+771
+pressure head Hi[k] as follows:
+Hi[k] =
+
+c∈C
+si,c[k]σc
+(30)
+
+c∈C
+si,c[k] = 1
+(31)
+si,c[k]σc−1 ≤Hi[k]
+∀c ∈C
+(32)
+Hi[k] ≤si,c[k]σc + (1 −si,c[k])M1
+∀c ∈C.
+(33)
+We now reformulate N3 as follows:
+N4 :
+max
+x[k],w[k],ρ[k]
+
+i∈T
+Ai
+
+c∈C
+si,c[k]σ2
+c
+subject to (1)–(6), (9)–(14), (17)–(24), (27)–(33)
+
+(i,j)∈P
+ρgδ
+ηi,j
+
+b∈B
+Φi,j,b[k]ζc ≤r[k]δ
+where ρ[k] = [z[k]⊤, s[k]⊤, Φ[k]⊤]⊤. Problem N4 is a mixed-
+integer second-order cone program that can be solved efﬁciently
+with commercial solvers such as GUROBI. In addition, sev-
+eral efﬁcient algorithms for solving mixed-integer second-order
+cone programs exist (e.g., see [19] and [20]).
+The solution to N4 provides an approximation to an exact
+solution to N1. The quality of this approximation can be im-
+proved by increasing the number of discrete values that each
+continuous variable, Hi,j[k] (i, j) ∈P and Hi[k] for all i ∈T ,
+can take. In addition, if N2 and N3 are equivalent, the water
+network operator can use the solution to N4 to schedule its
+tanks, pumps, and valves in a centralized fashion. However, the
+water network operator needs to construct an exact solution to
+N2 from a solution to N4 in order to control the water network
+optimally. Corollary 2 enables the operator to construct an exact
+solution to N2 from an exact solution to N4 when the conditions
+of Theorem 1 are satisﬁed. The proof closely follows the proof
+of Theorem 1. Due to space limitations, we do not present the
+proof.
+Corollary 2: Given the parameters V i, Hi, H0
+i , ωi,j, ηi,j,
+f d
+i,j, and D[k], let x∗[k], ρ∗[k], and w∗[k] denote the optimal
+solution to N4. Consider vectors x(r)[k], ρ(r)[k], and w(r)[k]
+with the following entries:
+V (r)[k] = V ∗[k], Q(r)[k] = Q∗[k], ρ(r)[k] = ρ∗[k]
+H(r)
+i
+[k] = H∗
+i [k] + ψi[k]
+∀i ∈Ny
+W (r)
+i,j [k] = (Q∗
+i,j[k])2
+∀(i, j) ∈L
+H(r)
+i,j [k] = f d
+i,j(Q∗
+i,j[k])2
+∀(i, j) ∈L
+H(r)
+i,j [k] = H∗
+i,j[k]
+∀(i, j) ∈P
+H(r)
+i,j [k] =
+
+H∗
+i,j[k] + ψi[k], if j ∈M and (i, j) ∈V
+H∗
+i,j[k], if j /∈M and (i, j) ∈V
+.
+Then, vectors x(r)[k], ρ(r)[k], and w(r)[k] form an exact solution
+to N4.
+Recent demonstrations of PRVs have shown their beneﬁts in
+control capabilities [27] and [28], and have incentivized water
+Fig. 2.
+Water network comprising 21 nodes (circles), multiple pipes
+(arrows), and pumps (arrows with label P). The length of each pipe (in
+m) is shown on the arrow.
+TABLE I
+NETWORK NODES: TYPE AND DEMAND (M3/H)
+network operators to invest in PRVs. In the near future, we
+envision PRVs will be available at all junctions with multiple
+incoming–outgoing pipes. When the network topology does not
+satisfy the conditions of Theorem 1, N4 will not be necessarily
+exact. For such topologies, we can use a solution to N4 as an
+upper bound on the objective function in N1 to evaluate the
+performance of different energy harvesting heuristics.
+V. NUMERICAL RESULTS
+Consider a water supply network comprised of 15 junctions,
+4 reservoirs, 4 pumps, and 2 tanks, as shown in Fig. 2. The
+water network operator uses four variable speed pumps with the
+parameters ai,j = −1.0941 × 10−4, bi,j = 5.1516 × 10−2, and
+ci,j = 223.32 to pump water from the two reservoirs to different
+nodes in the system [4]. In addition, the operator has installed
+PRVs in each junction with multiple incoming pipes, and has
+selected the minimum allowable pressure head at each junction
+to be equal to 5 m. We assume that the elevation head of each
+node is zero except nodes 7, 8, 16, and 17 at which we have
+H0
+7 = H0
+8 = H0
+16 = H0
+17 = −10 m. We further assume that the
+diameter and the friction factor of each pipe (i, j) are equal
+to di,j = 0.3 (m) and f d
+i,j = 0.001, respectively. We select the
+cross-sectional wetted area, the capacity, and the initial vol-
+ume of water of each tank i to be equal to Ai = π × (25/2)2,
+V i = 30Ai, and Vi[0] = 0.2V i, respectively. A similar network
+topology is studied in [10] and [34].
+We focus on a period of length T = 1 h, and assume that the
+time is divided into slots of size δ = 5 minutes (i.e., the number
+of time slots is K = 12). As mentioned earlier, we consider wa-
+ter demands as stochastic parameters that are constant over the
+duration of a time slot, and assume that at the beginning of each
+time slot k, the water network operator can perfectly estimate
+the value of water demand vector D[k]. We select the values
+of the water demands randomly as shown in Table I. Note that
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:53:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+772
+IEEE TRANSACTIONS ON CONTROL OF NETWORK SYSTEMS, VOL. 6, NO. 2, JUNE 2019
+Fig. 3.
+Energy consumption of the water network as a function of time:
+The graph in red (dashed line with squares) shows the energy consump-
+tion of the water network without any energy harvesting mechanism while
+the graph in blue (dashed line with circles) shows the energy consump-
+tion of the system when the operator is harvesting the surplus energy.
+The graph in black represents the surplus energy provided by the power
+system.
+Fig. 4.
+Height of water in the tanks as a function of time.
+U[a, b] denotes a random variable that is uniformly distributed
+in the interval [a, b]. Here, we assume r = 200 kW. As men-
+tioned earlier, we assume that water demands are constant over
+the duration of a time slot. We select the values of the water de-
+mands randomly as shown in Table I. Note that U[a, b] denotes
+a random variable that is uniformly distributed in the interval
+[a, b]. Here, we assume r = 200 kW.
+To demonstrate the effectiveness of our energy harvesting
+scheme, we consider a sequence of demand response signal
+values generated randomly from the interval [0, r]. We use our
+solution techniques with the design parameters ζ0 = σ0 = 0,
+ζB = 40 m, σC = 30 m, B = 80, and C = 60 to compute the
+optimal set-points of the pumps and valves as well as the optimal
+water ﬂows through the network. Note that, in each junction
+with multiple incoming pipes, the incoming pipes are equipped
+with PRVs. Hence, the network topology satisﬁes the conditions
+of Theorem 1. To compute the optimal schedules of pumps,
+tanks, and valves, we solved M1 and N1 using the proposed
+solution techniques. We were able to compute exact solutions to
+M1 and N1 using GUROBI in few seconds. This demonstrates
+the effectiveness of our solution techniques against the original
+problem formulation.
+Our numerical results are shown in Figs. 3 and 4. The results
+in Fig. 3 show that the water network operator can signiﬁcantly
+reduce the amount of energy that it needs to purchase from
+the electricity market, by participating demand response pro-
+grams. The results in Fig. 4 show that the water level of the
+tank at node 4 is increasing in time. We observed the same
+behavior for the water level of the tank at node 18. Our results
+show that the water network operator can harvest the surplus en-
+ergy resulting from renewable-based generations in the tanks.
+Note that ISOs typically curtail the surplus renewable energy.
+Therefore, the proposed framework potentially enables ISOs to
+utilize their renewable energy resources more efﬁciently, and
+to reduce fossil-fuel-based generations. In summary, there are
+several beneﬁts with the proposed architecture in this paper: the
+water network operator can signiﬁcantly minimize its electric-
+ity costs, and the electrical grid operator can potentially use its
+renewable resources more efﬁciently.
+VI. CONCLUSION
+In this paper, we focused on the problem of energy harvesting
+in water supply networks, and formulated two joint optimal
+pump scheduling and water ﬂow problems that are NP-hard. We
+proposed a convex relaxation and an approximation technique
+that enable us to transform the proposed problems into mixed-
+integer second-order cone programs. We provided the conditions
+under which the proposed relaxation is exact, and provided an
+algorithm for constructing a solution to the original problem
+from a solution to the relaxed problem. Finally, using a real-
+world water supply network, we demonstrated the effectiveness
+of our relaxation and approximation techniques in solving the
+energy harvesting optimization problems.
+APPENDIX
+In this Appendix, we provide the proof of Theorem 1. We
+begin with introducing some notations and deﬁnitions.
+A. Preliminaries
+Consider graph Gy(Ny, Ey ∪E(f )
+y
+) where Ny ⊂N, Ey ⊂E,
+and E(f )
+y
+⊂E(f ). Given node i ∈Ny, the set of nodes Ny can
+be divided into ﬁve disjoint subsets as follows:
+Ny = Ui ∪Di ∪Uc
+i ∪Dc
+i ∪{i}
+where Ui and Di denote the sets of upstream and downstream
+nodes of node i, respectively, in graph Gy. Uc
+i (resp. Dc
+i ) de-
+notes the set of nodes that are connected to the upstream (resp.
+downstream) nodes of node i, but there does not exist any path
+between them and node i. However, for each node j1 ∈Uc
+i
+(resp. j1 ∈Dc
+i ), there exist a node j2 ∈Ui (resp. j2 ∈Di) and
+a path between nodes j1 and j2. Notice that directed graph Gy
+is connected, i.e., there exists a path between nodes j1 and j2 if
+j1 ∈Dj2 . We further deﬁne the operator degI(Gy) that returns
+the maximum indegree over all the vertices of graph Gy.
+B. Proof of Theorem 1
+We deﬁne an auxiliary variable ν[k] for k ∈K, and select
+ν[k] to be equal to 
+i∈T AiH2
+i [k], i.e., ν[k] equals the objective
+function in N3.
+Let the schedules ν∗[k], x∗[k], and w∗[k] denote the optimal
+solution to N3. It can be veriﬁed that the schedules Q∗[k] and
+V ∗[k] form a set of feasible water ﬂows for the water network.
+However, the set of pressure heads H∗[k] and G∗[k], and w∗[k]
+are not necessarily feasible for the system since in N3, constraint
+(15) is relaxed. Our goal is to show that under the conditions
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:53:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+FOOLADIVANDA et al.: UTILIZATION OF WATER SUPPLY NETWORKS FOR HARVESTING RENEWABLE ENERGY
+773
+of Theorem 1, we can always construct a new set of schedules
+ν(r)[k], x(r)[k], and w(r)[k] that is feasible to N3 with ν(r)[k] =
+ν∗[k]. To do so, let us assume that there exists a pipe (i′, j′) ∈L
+for which (Q∗
+i′,j ′[k])2 < W ∗
+i′,j ′[k] with Q∗
+i′,j ′[k]̸ = 0, i.e., assume
+that N3 is not exact. Since Gy(Ny, Ey ∪E(f )
+y
+) is loop-free, two
+cases can be considered here:
+Case 1: Let us assume that degI(Gy) = 1. Therefore, pipe
+(i′, j′) is not in a parallel path between two nodes. Using H∗[k],
+G∗[k], and w∗[k], we can construct a new set of pressure heads
+H(r)
+i
+[k] and H(r)
+i,j [k], and W (r)
+i,j [k] as follows:
+H(r)
+i
+[k] =
+⎧
+⎪
+⎪
+⎪
+⎪
+⎪
+⎨
+⎪
+⎪
+⎪
+⎪
+⎪
+⎩
+H∗
+i′[k], if i = i′
+H∗
+i [k] + ϵi′,j ′, if i ∈Di′ and Nj ′,i = ∅
+H∗
+i [k], if i ∈Di′ and Nj ′,i̸ = ∅
+H∗
+i [k], if i ∈Ui′ ∪Uc
+i′
+W (r)
+i,j [k] =
+
+(Q∗
+i,j[k])2, if i = i′ and j = j′
+W ∗
+i,j[k], otherwise
+∀(i, j) ∈L
+H(r)
+i,j [k] = f d
+i,jW (r)
+i,j [k]
+∀(i, j) ∈L
+H(r)
+i,j [k] = ∀(i, j) ∈P ∪V
+where ϵi′,j ′ = f d
+i′,j ′(W ∗
+i′,j ′[k] −(Q∗
+i′,j ′[k])2) > 0. Recall that
+Ni,j is the set of tanks, and junctions with multiple incom-
+ing pipes over all the paths between nodes i and j including
+j. Note that Dc
+i′ = ∅and there exists at most one path between
+nodes i and j since degI(Gy) = 1. It can be veriﬁed that the
+schedules Q∗[k], V ∗[k], H(r)[k], G(r)[k], and w(r)[k] form a
+feasible solution to N3.
+Case 2: Let us assume that degI(Gy) > 1, and that pipe (i′, j′)
+is not in a parallel path between two nodes. Using H∗[k], G∗[k],
+and w∗[k], we can construct a new set of pressure heads H(r)
+i
+[k]
+and H(r)
+i,j [k], and W (r)
+i,j [k] as follows:
+H(r)
+i
+[k] =
+⎧
+⎪
+⎪
+⎪
+⎪
+⎪
+⎨
+⎪
+⎪
+⎪
+⎪
+⎪
+⎩
+H∗
+i′[k], if i = i′
+H∗
+i [k] + ϵi′,j ′, if i ∈Di′ and Nj ′,i = ∅
+H∗
+i [k], if i ∈Di′ and Nj ′,i̸ = ∅
+H∗
+i [k], if i ∈Ui′ ∪Uc
+i′ ∪Dc
+i′
+W (r)
+i,j [k] =
+
+(Q∗
+i,j[k])2, if i = i′ and j = j′
+W ∗
+i,j[k], otherwise
+∀(i, j) ∈L
+H(r)
+i,j [k] = f d
+i,jW (r)
+i,j [k]
+∀(i, j) ∈L
+H(r)
+i,j [k] = H∗
+i,j[k]
+∀(i, j) ∈P
+where ϵi′,j ′ = f d
+i′,j ′(W ∗
+i′,j ′[k] −(Q∗
+i′,j ′[k])2) > 0. For each (i, j)
+∈V, H(r)
+i,j [k] is given by
+H(r)
+i,j [k] =
+
+H∗
+i,j[k] + ϵi′,j ′, if j ∈Di′ ∩M and Nj ′,i = ∅
+H∗
+i,j[k], otherwise
+.
+Recall that Ni,j is the set of tanks, and junctions with multi-
+ple incoming pipes over all the paths between nodes i and j
+including j, and M ⊂J is the set of junctions with multiple
+incoming pipes in graph Gy(Ny, Ey ∪E(f )
+y
+). Notice that we can
+select H(r)
+i
+[k] = H∗
+i [k] for all i ∈Dc
+i′ with Nj ′,i̸ = ∅since in
+each junction j with multiple incoming pipes, the incoming
+pipes are equipped with PRVs. It can be veriﬁed that the sched-
+ules Q∗[k], V ∗[k], H(r)[k], G(r)[k], and w(r)[k] form a feasible
+solution to N3.
+In graph Gy(Ny, Ey ∪E(f )
+y
+), we may have multiple par-
+allel paths between two arbitrary nodes i, j ∈Ny
+since
+degI(Gy) > 1. Let us assume that pipe (i′, j′) is in a path (we
+call it P1) from node i to node j, and that this path is paral-
+lel to another path (we call it P2) from i to j. To ensure that
+the new schedule x(r)[k] and w(r)[k] is a feasible solution to
+N3, we only need to show that this schedule preserves the en-
+ergy conservation constraint between the parallel paths P1 and
+P2. Let j′′ denote the ﬁrst downstream node of node j′ with
+multiple incoming pipes along path P1, and let (i′′, j′′) denote
+the PRV connected to node j′′. Such a node exists among the
+downstream nodes of node j′ in P1 since there are two parallel
+paths from i to j. We select H(r)
+i′′,j ′′[k] = H∗
+i′′,j ′′[k] + ϵi′,j ′ and
+H(r)
+j ′′ [k] = H∗
+j ′′[k] which imply that each downstream node of
+node j′′ will maintain the same pressure head as the one in x∗[k]
+and w∗[k]. Therefore, the new schedule x(r)[k] and w(r)[k] pre-
+serves the energy conservation constraint between the parallel
+paths P1 and P2, and hence it is a feasible solution to N3.
+In each of the cases above, we constructed a new feasible
+solution to N3. In this solution, we have Q(r)
+i,j [k] = Q∗
+i,j[k] for all
+(i, j) ∈E, and, hence, we obtain H(r)
+i
+[k] = H∗
+i [k] for all i ∈T .
+Since the objective function in N3 is only a function of pressure
+heads Hi[k]s where i ∈T , we have a feasible solution to N3
+with ν(r)[k] = ν∗[k]. Hence, the schedule x(r)[k] and w(r)[k]
+is an optimal solution to N3. Now, if there still exists another
+pipe (i′, j′) ∈L (in the new schedule x(r)[k] and w(r)[k]) for
+which (Q∗
+i′,j ′[k])2 < W (r)
+i′,j ′[k] with Q∗
+i′,j ′[k]̸ = 0, we can follow
+the same procedure to obtain a feasible solution that is exact
+for N3. Therefore, for water networks that satisfy one of the
+conditions of Theorem 1, either the computed solution is exact
+or a new feasible solution to N3 with the same optimal objective
+value can be constructed by using the computed solution. This
+completes the proof.
+□
+REFERENCES
+[1] D. Denig-Chakroff, “Reducing electricity used for water production:
+Questions state commissions should ask regulated utilities,” Tech. Rep.,
+Nat. Regulatory Res. Inst., Washington, DC, USA, 2008.
+[2] [Online].
+Available:
+http://news.nationalgeographic.com/news/energy/
+2013/01/130130-water-demand-for-energy-to-double-by-2035
+[3] H. D. Sherali, E. P. Smith, and S. I. Kim, “A pipe reliability and cost model
+for an integrated approach toward designing water distribution systems,”
+in Global Optimization in Engineering Design. New York, NY, USA:
+Springer, 1996, pp. 333–354.
+[4] B. Ulanicki, J. Kahler, and B. Coulbeck, “Modeling the efﬁciency and
+power characteristics of a pump group,” J. Water Resour. Planning Man-
+age., vol. 134, no. 1, pp. 88–93, 2008.
+[5] L. M. Brion and L. W. Mays, “Methodology for optimal operation
+of pumping stations in water distribution systems,” J. Hydraulic Eng.,
+vol. 117, no. 11, pp. 1551–1569, 1991.
+[6] P. W. Jowitt and G. Germanopoulos, “Optimal pump scheduling in wa-
+ter supply networks,” Water Resour. Planning Manage., vol. 118, no. 4,
+pp. 406–422, 1992.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:53:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+774
+IEEE TRANSACTIONS ON CONTROL OF NETWORK SYSTEMS, VOL. 6, NO. 2, JUNE 2019
+[7] C. Giacomello, Z. Kapelan, and M. Nicolini, “Fast hybrid optimization
+method for effective pump scheduling,” Water Resour. Planning Manage.,
+vol. 139, no. 2, pp. 175–183, 2012.
+[8] G. Bonvin, S. Demassey, C. L. Pape, N. Maizi, V. Mazauric, and A.
+Samperio, “A convex mathematical program for pump scheduling in a
+class of branched water networks,” Appl. Energy, vol. 185, pp. 1702–
+1711, 2017.
+[9] B. Ghaddar, J. Naoum-Sawaya, A. Kishimoto, N. Taheri, and B. Eck, “A
+Lagrangian decomposition approach for the pump scheduling problem in
+water networks,” Eur. J. Oper. Res., vol. 241, pp. 490–501, 2015.
+[10] D. Fooladivanda and J. A. Taylor, “Energy-optimal pump scheduling and
+water ﬂow,” IEEE Trans. Control Netw. Syst., vol. 5, no. 3, pp. 1016–1026,
+Sep. 2018.
+[11] A. S. Zamzam, E. Dall’Anese, C. Zhao, J. A. Taylor, and N. Sidiropoulos,
+“Optimal water-power ﬂow problem: Formulation and distributed optimal
+solution,” IEEE Trans. Control Netw. Syst., Jan. 2018.
+[12] J. Jorgenson, T. Mai, and G. Brinkman, “Reducing wind curtailment
+through transmission expansion in a wind vision future,” Tech. Rep.
+NREL/TP-6A20-67240, Nat. Renewable Energy Laboratory, Washington,
+DC, USA, Jan. 2017.
+[13] J. Cochran, P. Denholm, B. Speer, and M. Miller, “Grid Integration and
+the carrying capacity of the U.S. grid to incorporate variable renewable
+energy,” Tech. Rep. NREL/TP-6A20-62607, Nat. Renewable Energy Lab.,
+Washington, DC, USA, Apr. 2015.
+[14] V. Boutin and J. Bergerand, “Water networks contribution to demand
+response,” in Proc. IEEE Grenoble Conf., 2013, pp. 1–4.
+[15] S. Takahashia, H. Koibuchib, and S. Adachia, “Water supply operation
+and scheduling system with electric power demand response function,”
+Appl. Energy, vol. 186, pp. 327–332, 2017.
+[16] R. Menke, E. Abraham, P. Parpas, and I. Stoianov, “Demonstrating de-
+mand response from water distribution system through pump scheduling,”
+Appl. Energy, vol. 170, pp. 377–387, 2016.
+[17] Demand Response Strategy, “PJM Interconnection.” [Online]. Available:
+http://www.pjm.com/markets-and-operations/demand-response.aspx
+[18] FERC, “Energy primer: A handbook of energy market basics.” 2015.
+[Online]. Available: http://www.ferc.gov/market-oversight/guide/energy-
+primer.pdf
+[19] A. Atamturk and V. Narayanan, “Conic mixed-integer rounding cuts,”
+Math. Program., vol. 122, no. 1, pp. 1–20, 2010.
+[20] J. P. Vielma, S. Ahmed, and G. L. Nemhauser, “A lifted linear program-
+ming branch-and-bound algorithm for mixed-integer conic quadratic pro-
+grams,” INFORMS J. Comput., vol. 20, no. 3, pp. 438–450, 2008.
+[21] D. Verleye and E. H. Aghezzaf, “Optimising production and distribution
+operations in large water supply networks: A piecewise linear optimisation
+approach,” Int. J. Prod. Res., vol. 51, no. 23-24, pp. 7170–7189, 2013.
+[22] C. M. Burt, X. Piiao, F. Gaudi, B. Busch, and N. F. N. Tauﬁk, “Elec-
+tric motor efﬁciency under variable frequencies and loads,” J. Irrigation
+Drainage Eng., vol. 134, no. 2, pp. 129–136, 2008.
+[23] J. A. Rooks and A. K. Wallace, “Energy efﬁciency of variable speed
+drive systems,” in Proc. 2003 Annu. Pulp Paper Ind. Tech. Conf., 2003,
+pp. 160–163.
+[24] A. R. Simpson and A. Marchi, “Evaluating the approximation of the
+afﬁnity laws and improving the efﬁciency estimate for variable speed
+pumps,” J. Hydraulic Eng., vol. 139, no. 12, pp. 1314–1317, 2013.
+[25] A. Marchi, A. R. Simpson, and N. Ertugrul, “Assessing variable speed
+pump efﬁciency in water distribution systems,” Drinking Water Eng. Sci.,
+vol. 5, pp. 15–21, 2012.
+[26] I. Sarbu and I. Borza, “Energetic optimization of water pumping in dis-
+tribution systems,” Periodica Polytechnica Mech. Eng., vol. 42, no. 2,
+pp. 141–152, 1998.
+[27] B. Ulanicki, H. AbdelMeguid, P. Bounds, and R. Patel, “Pressure control
+in district metering areas with boundary and internal pressure reducing
+valves,” in Proc. 10th Int. Water Distrib. Syst. Anal. Conf., 2008, pp. 691–
+703.
+[28] P. Skworcow, D. Paluszczyszyn, and B. Ulanicki, “Pump schedules opti-
+misation with pressure aspects in complex large-scale water distribution
+systems,” Drinking Water Eng. Sci., vol. 7, pp. 53–62, 2014.
+[29] C. D’Ambrosioa, A. Lodi, S. Wieseb, and C. Bragallic, “Mathematical
+programming techniques in water network optimization,” Eur. J. Oper.
+Res., vol. 243, no. 3, pp. 774–788, 2015.
+[30] E. Cabrera, M. E. Pardo, R. Cobacho, and E. Cabrera, Jr,“ Energy audit
+of water networks,” J. Water Resour. Planning Manage., vol. 136, no. 6,
+pp. 669–677, 2010.
+[31] C. Ocampo-Martinez, V. Puig, G. Cembrano, and J. Quevedo, “Application
+of predictive control strategies to the management of complex networks
+in the urban water cycle [Applications of Control],” IEEE Control Syst.,
+vol. 33, no. 1, pp. 15–41, Feb. 2013.
+[32] B. Coulbeck, M. Brdys, C. H. Orr, and J. P. Rance, “A hierarchical ap-
+proach to optimized control of water distribution systems: Part I decom-
+position,” Optimal Control Appl. Methods, vol. 9, no. 1, pp. 51–61, 1988.
+[33] F. Glover, “Improved linear integer programming formulations of nonlin-
+ear integer problems,” Manage. Sci., vol. 22, no. 4, pp. 455–460, 1975.
+[34] D. Cohen, U. Shamir, and G. Sinai, “Optimal operation of multi-quality
+water supply systems II: The Q-H model,” Eng. Optim., vol. 32, pp. 687–
+719, 2000.
+Dariush Fooladivanda received the B.S. de-
+gree from the Isfahan University of Technology,
+Isfahan, Iran, in 2004, and the Ph.D. degree from
+the University of Waterloo, Waterloo, Canada, in
+2014, all in electrical engineering.
+He was a Postdoctoral Research Associate
+with the Department of Electrical and Computer
+Engineering, University of Illinois at Urbana-
+Champaign. His research interests include the-
+ory and applications of control and optimization
+in large scale networked systems.
+Alejandro D. Dom´ınguez-Garc´ıa (S’02–M’07)
+received the degree of electrical engineering
+from the University of Oviedo, Oviedo, Spain,
+in 2001 and the Ph.D. degree in electrical
+engineering and computer science from the
+Massachusetts Institute of Technology, Cam-
+bridge, MA, USA, in 2007.
+He is a Professor with the Department of Elec-
+trical and Computer Engineering (ECE), and a
+Research Professor with the Coordinated Sci-
+ence Laboratory and the Information Trust Insti-
+tute, all with the University of Illinois at Urbana-Champaign. He is with
+the ECE Power and Energy Systems area, and has been a Grainger
+Associate since August 2011. His research interests include the areas
+of system reliability theory and control, and their applications to elec-
+tric power systems, power electronics, and embedded electronic sys-
+tems for safety-critical/fault-tolerant aircraft, aerospace, and automotive
+applications.
+Dr. Dom´ınguez-Garc´ıa received the NSF CAREER Award in 2010,
+and the Young Engineer Award from the IEEE Power and Energy Society
+in 2012. In 2014, he was invited by the National Academy of Engineering
+to attend the US Frontiers of Engineering Symposium, and was selected
+by the University of Illinois at Urbana-Champaign Provost to receive a
+Distinguished Promotion Award. In 2015, he received the U of I College
+of Engineering Dean’s Award for Excellence in Research. He is currently
+an Editor for the IEEE TRANSACTIONS ON CONTROL OF NETWORK SYS-
+TEMS; he also served as an Editor for the IEEE TRANSACTIONS ON POWER
+SYSTEMS and IEEE POWER ENGINEERING LETTERS from 2011 to 2017.
+Peter W. Sauer (F’93) received the Bache-
+lor of Science degree in electrical engineering
+from the University of Missouri at Rolla, Rolla,
+MO, USA, in 1969. He received the Master of
+Science and Ph.D. degrees in electrical engi-
+neering from Purdue University, West Lafayette,
+IN, USA, in 1974 and 1977, respectively.
+From 1969 to 1973, he was an Electrical Engi-
+neer on a design assistance team for the Tactical
+Air Command, Langley Air Force Base, VA, USA.
+From August 1991 to August 1992, he served as
+the Program Director for Power Systems in the Electrical and Communi-
+cation Systems Division, National Science Foundation, Washington, DC,
+USA. He is a cofounder of the Power Systems Engineering Research
+Center and the PowerWorld Corporation.
+Dr. Sauer is a registered Professional Engineer in Virginia and
+Illinois and a member of the U.S. National Academy of Engineer-
+ing. He is currently the Grainger Chair Professor of Electrical Engi-
+neering at Illinois. Additional information can be found at: https://ece.
+illinois.edu/directory/proﬁle/psauer.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 00:53:39 UTC from IEEE Xplore.  Restrictions apply. 

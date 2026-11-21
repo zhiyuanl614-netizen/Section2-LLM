@@ -1,0 +1,2850 @@
+Contents lists available at ScienceDirect
+Electrical Power and Energy Systems
+journal homepage: www.elsevier.com/locate/ijepes
+An eﬃcient interactive framework for improving resilience of power-water
+distribution systems with multiple privately-owned microgrids
+Javad Najaﬁa, Ali Peiravia,⁎, Amjad Anvari-Moghaddamb, Josep.M. Guerrerob
+a Department of Electrical Engineering, Ferdowsi University of Mashhad, Mashhad, Iran
+b Department of Energy Technology, Aalborg University, Aalborg, Denmark
+A R T I C L E I N F O
+Keywords:
+Microgrids
+Natural disasters
+Resilience
+Stochastic linear programming
+Water network
+A B S T R A C T
+Resilience improvement of power distribution networks against natural disasters is an important problem. Water
+network similar to other important infrastructures depends on power networks. In this paper, resilience im-
+provement is deﬁned as increasing the users’ accessibility to water and power after natural disasters. Microgrids
+with appropriate operation can provide energy to restore disconnected loads in distribution networks. In the
+proposed interactive framework, a stochastic energy management program for microgrids is designed that not
+only determines the amount of energy can be delivered to distribution systems, but also considers the reliability
+of local loads during emergency conditions. Each microgrid provides a list of bid-quantity energy blocks to the
+distribution system operator (DSO) during the emergency period. Then, the DSO chooses the best plan to restore
+disconnected loads considering inaccessibility values to power and water and also the damage of power and
+water distribution networks. Demand response actions in microgrids are also considered as eﬀective tools for the
+energy management program, and their impact on the distribution system resilience is investigated. The pro-
+posed model is tested on the modiﬁed IEEE 33-bus distribution system with multiple microgrids, and the ef-
+fectiveness of the proposed method is validated accordingly.
+1. Introduction
+The use of energy is woven into the fabric of our cities and society.
+However, energy sector is vulnerable to natural disasters implying that
+a short time dysfunction in energy sector could result in subsequent
+worse events. The frequency of natural disasters occurrence has in-
+creased. In the U.S., between 2008 and 2012, power outages due to bad
+weather conditions cause the annual damage cost between $25 billion
+and $70 billion. For instance, the economic losses only from Hurricane
+Sandy in the U.S. were $14–26 billion. To mention another case, 82% of
+all buildings in Ha’apai Islands of Tonga were destroyed due to the
+2014 Tropical Cyclone with a wind gust of 287 km/h [1]. According to
+[2], during natural disasters, about 90% of the faults occur in electrical
+distribution networks. In that sense, a more resilient electrical network
+is strongly needed.
+Electricity and power networks have important role in the operation
+of other infrastructures such as water and telecommunication. Power
+network outages can interrupt or stop the operation of these networks.
+For example, power outages due to hurricane caused shortage of clean
+water in New York City [3]. Power outages due to Earthquake in
+Christchurch in 2011, caused interruption in telecommunication
+network operation [4].
+There are many deﬁnitions for resilience. One of the most acquisi-
+tive deﬁnitions according to the National Academy of Science, is that
+resilience is “the ability to prepare and plan for, absorb, recover from, and
+more successfully adapt to adverse events” [5]. A system is considered to
+be absorptive if it can automatically absorb the eﬀects of destructive
+events and minimize the consequences with minimal eﬀorts. On the
+other hand, reaction and recovery of the system in minimum time is
+called the recoverability of the system. Moreover, the adaptive capacity
+is refers to the ability of the system to organize its components in a
+targeted manner with self-organization and learning mechanism [6]. In
+this sense, a resilient power system must have a high ability to restore
+the network with a fast response against several line outages [7]. Low-
+probability but high-impact are the properties of these faults such as
+those due to the natural disasters.
+The resilience of electrical power systems can be increased with
+various strategies. For instance, hardening, deﬁned as physical changes
+in the network infrastructure to make it more resistant to extreme
+events, is one of the common but expensive strategies to increase re-
+silience [8]. Another solution to enhance the resilience of the electrical
+distribution system is automation. Distribution system operates rapidly
+https://doi.org/10.1016/j.ijepes.2019.105550
+Received 24 May 2018; Received in revised form 28 August 2019; Accepted 12 September 2019
+⁎ Corresponding author.
+E-mail address: peiravi@um.ac.ir (A. Peiravi).
+Electrical Power and Energy Systems 116 (2020) 105550
+Available online 05 October 2019
+0142-0615/ © 2019 Elsevier Ltd. All rights reserved.
+T
+
+Nomenclature
+Indices and sets
+c C
+,
+m
+index and number of curtailable loads in microgrid m
+d, D
+index and number of incentive steps
+g G
+,
+m
+index and number of generators in microgrid m
+i j
+,
+bus indexes in distribution system
+l N
+,
+index and number of loads in distribution system
+m, mg
+index and number of microgrids
+mgw
+number of microgrids which are implemented for re-
+storation in (islanded or main) network w
+N
+N
+N
+N
+,
+,
+,
+b
+w
+line
+w
+l
+w
+mg
+w
+number of buses, lines, loads and microgrids in
+(islanded or main) network w
+s S
+,
+index and number of scenarios
+′
+t t
+,
+time indices
+w, W
+index and number of networks (islanded or main)
+Parameters and constants
+A g m
+B g m
+( ,
+),
+( ,
+) cost-function coeﬃcients of dispatchable gen-
+erator g in microgrid m
+Bij
+line susceptance between bus i and j
+FAT s m
+( ,
+) fuel arrival time to microgrid m in scenario s
+Fuel
+m
+(
+)
+cap
+avial
+available fuel capacity in microgrid m
+CVLIPl t,
+cost value of inaccessibility of load l to power at time t
+CVLIWl t,
+cost value of inaccessibility of load l to water at time t
+Gij
+line conductance between bus i and j
+I|
+|
+ij
+max
+maximum allowable current of line between bus i and j
+inprc d
+( )
+incentive price at step d
+LIi
+importance coeﬃcient of load i
+lf t( )
+distribution system load variation coeﬃcients
+load t s m
+( , ,
+) active power demand of microgrid m at time t in sce-
+nario s
+load
+m
+(
+)
+shift
+max
+maximum amount of shiftable load of microgrid m
+load
+c m
+( ,
+)
+cur
+max
+maximum active power of curtailable load c in mi-
+crogrid m
+Pl t
+w
+,
+active power of load l at time t in (islanded or main)
+network w
+P
+g m
+P
+g m
+( ,
+),
+( ,
+)
+min
+max
+minimum/maximum active power of gen-
+erator g
+Pi t
+w
+,
+active power injected into bus i at time t in (islanded or
+main) network w
+pchr
+pdch
+,
+max
+max
+maximum rate of charging/discharging power of
+battery
+pr s( )
+probability of each scenario
+Qi
+resource
+capacity of reactive compensation which is installed at bus
+i
+Ql t
+w
+,
+reactive power of load l at time t in (islanded or main)
+network w
+Qi t
+w
+,
+reactive power injected into bus i at time t in (islanded or
+main) network w
+R
+g m
+R
+g m
+( ,
+),
+( ,
+)
+DN
+UP
+ramp down/up rate of generator g in micro-
+grid m
+Scap
+m
+(
+)
+max
+maximum point of common coupling (PCC) power ex-
+change of microgrid m to distribution network
+SOC
+m
+SOC
+m
+(
+),
+(
+)
+min
+max
+minimum/maximum active power of bat-
+tery in microgrid m
+SUC g m
+SDC g m
+( ,
+),
+( ,
+) start-up/shut-down cost of generator g in
+microgrid m
+Tload
+c m
+( ,
+)
+cur
+max
+maximum duration of curtailable load c in
+microgrid m
+t0
+the initial time of the emergency period
+Tc
+emergency time duration
+th
+the time within the emergency period that the load of
+distribution system is minimum
+V
+V
+|
+|, |
+|
+min
+max
+minimum/maximum allowable voltage of buses
+VOLL m
+(
+) value of lost load in microgrid m
+η m
+(
+)
+eﬃciency of battery charging or discharging in microgrid
+m
+ρ t( )
+market price at time t
+Functions and variables
+inprc
+m
+(
+)
+win
+incentive price which is accepted by DSO to purchase
+energy from microgrid m
+LSFl
+satisfaction function of load l
+lc c t s m
+( , , ,
+) curtailable load c identiﬁer at time t in scenario s in
+microgrid m
+PAl t,
+power access function of load l at time t
+p g t s m
+( , , ,
+) active power of generator g at time t in scenario s in
+microgrid m
+pcl c t s m
+( , , ,
+) amount of load c curtailment at time t in scenario s in
+microgrid m
+Plosst
+w
+active power losses of distribution network lines in (is-
+landed or main) network w
+pchr t s m
+( , ,
+) charging power of battery at time t in scenario s in
+microgrid m
+pdcr t s m
+( , ,
+) discharging power of battery at time t in scenario s in
+microgrid m
+prdg t s m
+( , ,
+) power output of renewables (wind and solar) at time t
+in scenario s in microgrid m
+psell t m
+( ,
+) amount of active power sold by microgrid m at time t to
+distribution system
+pshf t s m
+( , ,
+) total load which is shifted to or from time t in scenario
+s in microgrid m
+pshed t s m
+( , ,
+) amount of load shedding at time t in scenario s in
+microgrid m
+′
+pshift t t
+s m
+( ,
+, ,
+) amount of load which is shifted from time t to time
+t' in scenario s in microgrid m
+Qlosst
+w
+reactive power losses of distribution network lines in (is-
+landed or main) network w at time t
+SOC t s m
+( , ,
+) state of charge of battery at time t in scenario s in
+microgrid m
+u g t s
+( , , )
+commitment status identiﬁer of generator g at time t in
+scenario s
+WAl
+water access function of load l
+WPw
+a binary variable which represents one or more water
+pumps are restored by network w
+x l t
+( , )
+restoration status identiﬁer of load l at time t
+y g t s m
+( , , ,
+) start-up identiﬁer of generator g at time t in scenario s
+in microgrid m
+z g t s m
+( , , ,
+) shut-down identiﬁer of generator g at time t in scenario
+s in microgrid m
+I|
+|
+ij t
+w
+,
+current magnitude between bus i and j at time t in (is-
+landed or main) network w
+V
+V
+|
+|, |
+|
+i t
+w
+j t
+w
+,
+,
+voltage magnitude at bus i/j at time t in (islanded or main)
+network w
+θij t
+w
+,
+diﬀerence phase voltage angle between bus i and j at time t
+in (islanded or main) network w
+WA
+Δ
+l t
+WP
+,
+w water accessibility improvement of load l at time t due to
+water pump(s) restoration by network w
+J. Najaﬁ, et al.
+Electrical Power and Energy Systems 116 (2020) 105550
+2
+
+with utilization of diﬀerent devices, such as remote fault indicators to
+decrease the fault detection time and remote control switches to de-
+crease the open/close times of switches [9]. Distributed generations
+(DGs) are other options to increase the resilience of distribution systems
+after natural disasters. In [10], a microgrid is formed by a DG to restore
+critical loads. Unlike [10], in [11] multiple DGs can form a microgrid.
+Advanced monitoring, self-healing and demand response (DR) are other
+strategies that can enhance the resilience of power networks [12].
+Microgrids can also enhance the resilience of distribution networks.
+These small power networks which can be operated in islanded or grid-
+connected mode include renewable energies, dispatchable generators
+and energy storages. According to [13], the Sendai microgrid that is a
+real microgrid survived for two days in islanded mode during the 2011
+earthquake and tsunami in Japan. Li et al. [14] implemented microgrids
+with speciﬁed active and reactive power for load restoration in dis-
+tribution systems. In [15], a new concept as Continues Operating Time
+(COT) is introduced to determine the maximum time that a microgrid
+can supply electricity to critical loads. In [15], a two-stage heuristic
+approach is implemented to solve the problem. In the ﬁrst stage, a
+strategy table including the diﬀerent feasible restoration paths is built,
+and the best path is determined thereafter using integer linear pro-
+gramming. In [16], the stability of microgrids is also considered when
+they are utilized to restore the critical loads. According to [17], the
+availability of microgrids during and after natural disasters can be af-
+fected by the lifeline of DGs and local battery. Markov state space
+model and cut-set theory are used in [17] to calculate the continuous
+availability of microgrids. In addition to the information presented in
+[17], more parameters such as existing diesel generators, transportation
+time of fuel, microgrid architecture and power electronic interfaces are
+considered in [18] to quantify microgrid availability during natural
+disasters with Markov chains models.
+With rapid expansion of microgrids in distribution network, there is
+an opportunity to enhance the resilience of distribution network with
+an appropriate framework. This framework should be attractive for
+both microgrids and distribution system operators to interact actively
+toward making a more resilient network. However, there are a number
+of challenges in setting up such an interactive framework. The ﬁrst
+challenge is to implement a system-wide energy management system
+(EMS) for operation management of the network during diﬀerent
+working conditions. EMSs that are designed for microgrid operation in
+emergency situations only try to improve the resiliency of the microgrid
+regardless of the system condition. Examples of such systems can be
+found in [19–21] where EMSs are designed exclusively for microgrids
+operation in islanded mode.
+The second challenge is to provide robust communication between
+distribution network and microgrids. Natural disasters can damage the
+communication infrastructure, so it is essential that the number of
+communication links and the amount of data exchanged between the
+distribution network and the microgrids be in the minimum level.
+The third challenge is to make an elastic load-supply balance within
+the whole system. In case of natural disasters, forced outage rate of
+generating units or distribution lines increases which in turn decreases
+the total primary energy supply. To handle this, DR actions can be ef-
+fectively applied to change the normal electricity consumption through
+price-based or incentive-based mechanisms not only to meet the power
+balance, but also to achieve other goals [22]. These goals may include
+cost reduction in energy management of network microgrids [23,24],
+voltage control [25], frequency regulation [26] and reliability en-
+hancement [27]. Unlike ﬁxed loads, only shiftable and curtailable loads
+can participate in DR programs [28].
+In light of the reviewed literature, it can be clearly observed that
+although the number of research works in resilience improvement of
+power systems has been increased in recent years, there are still re-
+maining issues in this ﬁeld, especially when it comes to integrated
+energy systems. As an example, the research works in [14–16] are
+mainly focused on microgrids implementation to restore the loads only
+in power distribution network (PDN) from a distribution system op-
+erator’s (DSO’s) perspective. These approaches are not eﬃcient in an
+integrated framework where power-water networks coexist and pri-
+vately-owned entities (such as microgrids) should interact with DSO.
+Likewise, the proposed structures in [17–21] which mainly address the
+use of microgrids for service restoration during extreme events, suﬀer
+from lack of eﬃcient EMSs to determine how an interaction (in terms of
+energy exchange levels, pricing schemes and times of delivery) between
+the distribution network and microgrids can be formed. The important
+point is that how to design the mentioned EMS considering the owners
+of the microgrids? In other words, the interaction of microgrids and
+DSO will be diﬀerent when the microgrids are owned by private entities
+or DSO. In our previous work [29], the mentioned EMS is designed for
+the microgrids that are owned by the DSO. On the other hand, although
+the contribution of demand-side resources (such as DR actions) in ef-
+ﬁcient energy scheduling of distribution networks are investigated in
+[23–28], the inﬂuence of responsive loads on resilience improvement of
+distribution systems is not taken into account. Regarding an integrated
+framework, the research work in [30] only considers the dependency of
+water network on power network and the potentials for water network
+damages are neglected.
+This study proposes an eﬃcient framework to improve the resilience
+of power-water distribution networks with privately-owned microgrids
+where interaction among diﬀerent system operators are captured. The
+proposed framework is eﬃcient for natural disasters such as hurricanes
+and ﬂoods when both PDN and water distribution network (WDN) can
+be damaged.
+Compared to the existing literature, the novelty and contributions of
+this paper can be summarized as follow:
+• An eﬃcient interactive framework between distribution network
+and regional network of microgrids is proposed to enhance the re-
+silience of an integrated electricity and water system. With the
+proposed framework, the microgrids with private owners can ex-
+change energy with DSO during emergency period not only to make
+proﬁt, but also to contribute to resilience improvement of the entire
+system,
+• A ﬂexible resilience-oriented scheduling scheme is proposed to help
+DSOs to restore the loads including disconnected water pumps with
+considering diﬀerent parameters such as water consumption pattern
+and damages of WDN,
+• Local loads reliability together with uncertainty associated with fuel
+arrival times are considered in the energy management of micro-
+grids,
+• The impact of responsive load contributions, energy storage sizing
+and fuel availability in microgrids on the distribution system re-
+siliency is investigated.
+The rest of this paper is organized as follows: Section 2 explains the
+proposed interactive framework. The problem formulation and solution
+methodology are provided in Section 3. Section 4 presents the simula-
+tion results. Finally, Section 5 concludes this paper.
+2. Proposed interactive framework
+2.1. Natural disasters' impact on PDN and WDN
+When a natural disaster such as hurricane or ﬂood occurs, all ele-
+ments in PDN and WDN are exposed to damages. The most vulnerable
+components in PDN and WDN are power poles, conductors and water
+pipes. In case of hurricanes, unlike the ﬂoods, the undergrounded water
+pipes will not be damaged. So, the major reason of loads inaccessibility
+to water will be introduced by the dependency of water pumps on
+electricity. However, to understand the vulnerability of an element to
+ﬂood or hurricane, it is vital to identify the fragility function of each
+component. Fragility function is the probability of failure of a structure
+J. Najaﬁ, et al.
+Electrical Power and Energy Systems 116 (2020) 105550
+3
+
+vs. the severity of a hazard such as wind speed or accumulated rain
+intensity [31]. The fragility function of PDN poles (pfpole) and con-
+ductors (pfconductor) against hurricane can be considered as below
+[32,33]:
+=
+pf
+ws
+ws
+m
+ξ
+(
+)
+Φ[ln((
+)/
+)/
+]
+pole
+R
+R
+(1)
+where Φ[.] is lognormal cumulative distribution function with mean
+and standard deviation mR and ξR, respectively which they depend on
+the structure of the pole. ws is the wind speed.
+=
+⎧
+⎨
+⎩
+⩽
+⩽
+⩽
+⩾
+−
+−
+pf
+ws
+ws
+ws
+ws
+ws
+ws
+ws
+ws
+(
+)
+0,
+,
+1,
+ws
+ws
+ws
+ws
+conductor
+min
+min
+max
+max
+min
+max
+min
+(2)
+Regarding the ﬂood event and similar to [31], it is assumed that all
+power lines and water pipelines located in the ﬂooding path will be
+damaged with a probability which will be obtained based on Eq. (1). It
+should be noticed instead of wind speed in Eq. (1), the rain intensity
+will be used. Furthermore, the parameters of mR and ξR will be diﬀerent
+for a power pole when it is used against ﬂood or hurricane.
+2.2. Framework of the integrated energy system
+In Fig. 1, a power distribution system with a number of connected
+microgrids together with the water distribution network over the same
+geographical region is depicted. According to water network in Fig. 1, it
+is assumed that the water demand can be met through two pumps,
+which are fed electrically by the power distribution system. However,
+to understand the water pressure at diﬀerent nodes of the system in
+diﬀerent operation states of water pumps, it is essential to analyze the
+water network. In this regard, a water distribution system modeling
+software package (EPANET) is utilized to facilitate the process with a
+high precision.
+In case of a natural disaster in the examined integrated energy
+system, several faults may occur and subsequently an emergency con-
+dition could be triggered denoting a power failure or a blackout.
+According to the interactive framework depicted in Fig. 2, the dis-
+tribution system operator (DSO) initially asks the microgrids to support
+the network by restoring disconnected areas. To this end, it is necessary
+for DSO to send some information to the microgrids. One of the most
+important pieces of data is the estimated time required to locate and
+repair the faulty parts and to restore the distribution network to its
+normal state, i.e. the duration of emergency period. This duration is
+also deemed as the time interval in which microgrids switch from
+Fig. 1. Power distribution network with connected microgrids and related designed water network.
+J. Najaﬁ, et al.
+Electrical Power and Energy Systems 116 (2020) 105550
+4
+
+normal energy management strategy to the proposed strategy detailed
+in Section 2.3. In this paper, it is assumed that microgrids only provide
+active power for distribution network and required reactive power for
+loads restoration is locally generated by reactive compensations in the
+distribution network as Fig. 1. So the EMS for microgrids only schedules
+the active power. But, the restoration problem for DSO includes both
+active and reactive powers.
+The power provided by the microgrids to the distribution system
+must be available during the whole emergency period at the required
+quality. Moreover, the energy sold by the microgrid in diﬀerent hours
+of the emergency period must be proportional to the amount of restored
+load. However, as the aggregated load proﬁle often vary with a speciﬁc
+coeﬃcient at diﬀerent hours, microgrids must be informed about the
+demand load at each interval of the emergency period by the dis-
+tribution system operator. Having received such information, the mi-
+crogrids solve their stochastic energy management problem and de-
+termine the bids and the amount of energy blocks to be sold in each
+interval of the examined period. Subsequently, DSO solves the re-
+storation problem with the objective of maximizing the accessibility of
+loads to the power and the water and chooses the best option by con-
+sidering the value of disconnected loads.
+2.3. Proposed stochastic energy management system
+The proposed EMS for each microgrid is formulated as a stochastic
+problem in which decisions are made through a scenarios set. The de-
+cision variables include here-and-now (which are made before the rea-
+lization of the stochastic process) and wait-and-see (which are made
+after the realization of the stochastic process) [34]. In this paper, the
+amount of active power sold is here-and-now decision variables and the
+others, such as dispatchable generators power output are wait-and-see
+variables.
+Two major classes of uncertainties including demand/renewable
+generation prediction and fuel arrival time are addressed by the EMS.
+In the ﬁrst step, numerous scenarios are produced for the ﬁrst un-
+certainty category with the probability distribution function of each
+variable such as load proﬁle, wind speed, and solar irradiance. In order
+to reduce the number of available scenarios to a tractable set, a well-
+known algorithm called backward reduction technique is utilized. It
+reduces
+the
+scenarios
+into
+a
+predeﬁned
+number based
+on
+the
+Kantorovich distance [35]. The uncertainty of fuel arrival time is re-
+presented via an appropriate scenario set, which can be extracted from
+historical data. Thus, with a total number of N scenarios for re-
+presenting the uncertainties of consumption load and renewable gen-
+eration, and T scenarios for modeling the fuel arrival time, a total
+number of N × T scenarios should be considered for stochastic pro-
+gramming.
+3. Problem formulation
+In this section, the proposed interactive framework including sto-
+chastic EMS for microgrids and the restoration problem for distribution
+network are formulated.
+3.1. Stochastic EMS for microgrids
+Each microgrid is equipped with an EMS that manages the system
+performance considering the following goal:
+∑
+∑
+∑
+⎡
+⎣
+⎢
+⎢
+⎢
++
++
++
+⎤
+⎦
+⎥
+⎥
+⎥
++
+∑
+∑
+−∑
++
+∈
+∈
+=
+=
+=
++
+=
+=
++
+=
++
+pr s
+u g t s m A g m
+p g t s m B g m
+y g t s m SUC g m
+z g t s m SDC g m
+pr s pshed t s m VOLL m
+psell t m inprc d
+ρ t
+m
+mg
+d
+D
+Min
+( )
+( , , ,
+)
+( ,
+)
+( , , ,
+)
+( ,
+)
+( , , ,
+)
+( ,
+)
+( , , ,
+)
+( ,
+)
+( )
+( , ,
+)
+(
+)
+( ,
+)(
+( )
+( ))
+{1, 2, ...,
+},
+{1, 2, ..., }
+s
+S
+g
+G
+t
+t
+T
+t
+s
+S
+t
+t
+T
+t
+t
+t
+T
+t
+1
+1
+1
+c
+c
+c
+0
+0
+0
+0
+0
+0
+(3)
+In this objective function, the ﬁrst line (i.e., terms in square bracket)
+indicates the operation, start-up, and shut-down costs of dispatchable
+generators. The second scenario-dependent term includes the cost of
+load shedding in the microgrid. This term considers the reliability of
+local microgrid loads. The third term indicates the proﬁt made by
+selling energy to the distribution system. The incentive price is changed
+with an iterative algorithm in an allowable range (as stated in (4)) in
+each iteration.
+⩽
++
+<
+∈
++
+∈
+∈
+ρ
+inprc d
+ρ
+VOLL
+t
+t
+t
+T
+m
+mg
+d
+D
+(t)
+( )
+(t)
+[ ,
+],
+{1, 2, ...,
+},
+{1, 2, ..., }
+m
+c
+0
+0
+(4)
+The initial point for incentive price is the market price and in each
+iteration of the algorithm, a certain incentive step is added to the in-
+centive price. With the new incentive price, the EMS is solved again.
+This algorithm is continued until the incentive price is less than the
+VOLLm.
+The constraints that must be satisﬁed in the stochastic EMS for each
+microgrid are expressed as follows.
+∑
+=
+′
+−
+′
+∈
++
+∈
+∈
+≠′
+′=
++
+pshf t s m
+pshift t
+t s m
+pshift t t
+s m
+t
+t
+t
+T
+s
+S
+m
+mg
+t
+t
+( , ,
+)
+[
+( , , ,
+)
+( ,
+, ,
+)]
+[ ,
+],
+{1, 2, ..., },
+{1, 2, ...,
+},
+t
+t
+t
+T
+c
+0
+0
+c
+0
+0
+(5)
+DSO asks the MGs to provide energy for load
+restoration and it sends some information to MGs
+Yes
+No
+DSO solves the restoration problem with objective of
+maximizing accessibility of loads to power and water
+DSO send its decisions to the microgrids
+DSO chooses the best option for purchasing energy
+from each list
+MGs send the list including incentive price and powers
+pairs to DSO
+Each MG solves the stochastic energy management
+problem
+Each MG modifies the incentive price with a
+certain step
+Is the incentive price within
+the allowable interval?
+Fig. 2. The proposed interactive framework between distribution network and
+microgrids.
+J. Najaﬁ, et al.
+Electrical Power and Energy Systems 116 (2020) 105550
+5
+
+According to [28], Eq. (5) is related to the DR program, which de-
+termines the amount of load shifted from or to time t.
+Power balance is shown in the following expression:
+−∑
++
+−
+= ∑
+−
++
+−
++
+∈
++
+∈
+∈
+=
+=
+load t s m
+pcl c t s m
+pshf t s m
+pshed t s m
+p g t s m
+psell t m
+pdcr t s m
+pchr t s m
+prdg t s m
+t
+t
+t
+T
+s
+S
+m
+mg
+( , ,
+)
+( , , ,
+)
+( , ,
+)
+( , ,
+)
+( , , ,
+)
+( ,
+)
+( , ,
+)
+( , ,
+)
+( , ,
+)
+[ ,
+],
+{1, 2, ..., },
+{1, 2, ...,
+}
+c
+C
+g
+G
+c
+1
+1
+0
+0
+m
+m
+(6)
+There are three categories of loads in a microgrid: (1) shiftable
+(pshift), (2) curtailable (pcl) and (3) ﬁxed. If the generation is lower
+than the demand at some hours, and if the microgrid operator cannot
+solve this issue with shiftable and curtailable load, then some loads will
+be disconnected (pshed) to avoid system instability.
+According to [19], the operation of dispatchable generators have
+some constraints. Active power of each generator should be limited in a
+range.
+⩽
+⩽
+∈
+∈
++
+∈
+∈
+p
+g m u g t s m
+p g t s m
+p
+g m u g t s m
+g
+G
+t
+t
+t
+T
+s
+S
+m
+mg
+( ,
+) ( , , ,
+)
+( , , ,
+)
+( ,
+) ( , , ,
+)
+{1, 2, ...,
+},
+[ ,
+],
+{1, 2, ..., },
+{1, 2, ...,
+}
+m
+c
+min
+max
+0
+0
+(7)
+Ramp-up and ramp-down of each generator are limited by the fol-
+lowing expressions:
+−
+−
+⩽
+∈
+∈
++
+∈
+∈
+p g t s m
+p g t
+s m
+R
+g m
+g
+G
+t
+t
+t
+T
+s
+S
+m
+mg
+( , , ,
+)
+( ,
+1, ,
+)
+( ,
+)
+{1, 2, ...,
+},
+[ ,
+],
+{1, 2, ..., },
+{1, 2, ...,
+}
+DN
+m
+c
+0
+0
+(8)
+−
+−
+⩽
+∈
+∈
++
+∈
+∈
+p g t
+s m
+p g t s m
+R
+g m
+g
+G
+t
+t
+t
+T
+s
+S
+m
+mg
+( ,
+1, ,
+)
+( , , ,
+)
+( ,
+)
+{1, 2, ...,
+},
+[ ,
+],
+{1, 2, ..., },
+{1, 2, ...,
+}
+UP
+m
+c
+0
+0
+(9)
+The constraints related to the start-up and shut-down of each gen-
+erator are expressed as follows:
+−
+=
+−
+−
+∈
+∈
++
+∈
+∈
+y g t s m
+z g t s m
+u g t s m
+u g t
+s m
+g
+G
+t
+t
+t
+T
+s
+S
+m
+mg
+( , , ,
+)
+( , , ,
+)
+( , , ,
+)
+( ,
+1, ,
+)
+{1, 2, ...,
+},
+[ ,
+],
+{1, 2, ..., },
+{1, 2, ...,
+}
+m
+c
+0
+0
+(10)
++
+−
+⩽
+∈
+∈
++
+∈
+∈
+y g t s m
+z g t s m
+g
+G
+t
+t
+t
+T
+s
+S
+m
+mg
+( , , ,
+)
+( , , ,
+)
+1
+0
+{1, 2, ...,
+},
+[ ,
+],
+{1, 2, ..., },
+{1, 2, ...,
+}
+m
+c
+0
+0
+(11)
+The capacity of the connection link between the microgrid and the
+distribution system is expressed by the following:
+⩽
+∈
++
+∈
+psell t m
+Cap
+m
+t
+t
+t
+T
+m
+mg
+( ,
+)
+(
+)
+[ ,
+],
+{1, 2, ...,
+}
+c
+max
+0
+0
+(12)
+Battery operation constraints are determined by (13)–(16) [20,24].
+According to (13), the state of charge (SOC) of battery is limited in
+allowable range.
+⩽
+⩽
+∈
++
+∈
+∈
+SOC
+m
+SOC t s m
+SOC
+m
+t
+t
+t
+T
+s
+S
+m
+mg
+(
+)
+( , ,
+)
+(
+)
+[ ,
+],
+{1, 2, ..., },
+{1, 2, ...,
+}
+c
+min
+max
+0
+0
+(13)
+Constraint (14) indicates the relationship between the SOC and
+charging/discharging rates.
+=
+−
++
+−
+∈
++
+∈
+∈
+SOC t s m
+SOC t
+s m
+pchr t s m η m
+t
+t
+t
+T
+s
+S
+m
+mg
+( , ,
+)
+(
+1, ,
+)
+( , ,
+) (
+)
+[ ,
+],
+{1, 2, ..., },
+{1, 2, ...,
+}
+pdcr t s m
+η m
+c
+( , ,
+)
+(
+)
+0
+0
+(14)
+Charging/discharging rates of battery are expressed as constraints
+(15) and (16).
+⎧
+⎨⎩
+⩽
+⩽
+⩽
+∈
++
+∈
+∈
+−
+−
+pchr t s m
+pchr t s m
+pchr
+t
+t
+t
+T
+s
+S
+m
+mg
+0
+( , ,
+)
+( , ,
+)
+[ ,
+],
+{1, 2, ..., },
+{1, 2, ...,
+}
+SOC
+m
+SOC t
+s m
+η m
+c
+(
+(
+)
+(
+1, ,
+))
+(
+)
+max
+0
+0
+max
+(15)
+⎧
+⎨⎩
+⩽
+⩽
+−
+−
+⩽
+∈
++
+∈
+∈
+pdcr t s m
+SOC t
+s m
+SOC
+m
+η m
+pdcr t s m
+pdcr
+t
+t
+t
+T
+s
+S
+m
+mg
+0
+( , ,
+)
+(
+(
+1, ,
+)
+(
+)) (
+)
+( , ,
+)
+[ ,
+],
+{1, 2, ..., },
+{1, 2, ...,
+}
+c
+min
+max
+0
+0
+(16)
+According to [28], some loads in each microgrid are allowed to be
+curtailed in the DR program at certain hours as constraints (17) and
+(18).
+⩽
+∈
+∈
++
+∈
+∈
+pcl c t s m
+lc c t s m load
+c m
+c
+C
+t
+t
+t
+T
+s
+S
+m
+mg
+( , , ,
+)
+( , , ,
+)
+( ,
+)
+{1, 2, ...,
+},
+[ ,
+],
+{1, 2, ..., },
+{1, 2, ...,
+}
+cur
+m
+c
+max
+0
+0
+(17)
+∑
+⩽
+∈
+∈
++
+∈
+∈
+=
++
+lc c t s m
+Tload
+c m
+c
+C
+t
+t
+t
+T
+s
+S
+m
+mg
+( , , ,
+)
+( ,
+)
+{1, 2, ...,
+},
+[ ,
+],
+{1, 2, ..., },
+{1, 2, ...,
+}
+t
+t
+T
+t
+cur
+m
+c
+max
+0
+0
+0
+0
+(18)
+Constraint (19) indicates the maximum amount of loads that can be
+shifted from hour t to other hours.
+∑
+′
+⩽
+∈
++
+∈
+∈
+′=
++
+pshift t t
+s m
+load
+m
+t
+t
+t
+T
+s
+S
+m
+mg
+( ,
+, ,
+)
+(
+)
+[ ,
+],
+{1, 2, ..., },
+{1, 2, ...,
+}
+t
+t
+T
+t
+shift
+c
+max
+0
+0
+0
+0
+(19)
+Constraint (20) express the limitation of fuel capacity in each mi-
+crogrid. This constraint indicates that the available fuel capacity for a
+generator is considered as a determined amount of energy can produce.
+∑
+⩽
+∈
+∈
++
+∈
+∈
+=
++
+p g t s m
+Fuel
+m
+g
+G
+t
+t
+t
+T
+s
+S
+m
+mg
+( , , ,
+)
+(
+)
+{1, 2, ...,
+},
+[ ,
+],
+{1, 2, ..., },
+{1, 2, ...,
+}
+t
+t
+t
+FAT s m
+cap
+avial
+m
+c
+( ,
+)
+0
+0
+0
+0
+(20)
+According to (21) and as mentioned before, each microgrid should
+sell power to the DSO proportional to the load variation in the
+Fig. 3. Water pressure satisfaction function.
+Table 1
+Dispatchable generators parameters in microgrid.
+No.
+pg
+min (kW)
+pg
+max (kW)
+Ag ($)
+Bg ($/kWh)
+SUCg ($)
+SDCg ($)
+1
+0
+78
+2.552
+0.029
+0.09
+0.08
+2
+0
+84
+2.552
+0.028
+0.16
+0.09
+3
+0
+98
+0.851
+0.043
+0.12
+0.08
+J. Najaﬁ, et al.
+Electrical Power and Energy Systems 116 (2020) 105550
+6
+
+distribution network. In this paper, it is assumed that the restoration
+plan will be performed only for one time due to hard conditions after
+occurrence of natural disasters. According to this assumption, if a load
+is chosen to be restored, it must be fed in the entire emergency period.
+Therefore the energies sold to the DSO by the microgrids should be
+proportional to the load variation of the power distribution network. In
+other words, the goal is to restore the important loads such as water
+pumps in the whole emergency period. For example, if a microgrid sells
+energy as amount of 200 kWh at t1 and 5 kWh at t2 to the DSO, the DSO
+should restore a lot of loads ignoring their importance at t1 and maybe
+the DSO cannot restore any important load at t2. This condition is not
+eﬃcient in the resilience improvement of the networks. In other words,
+the proposed EMS not only consider the proﬁt of the microgrids but also
+consider the resilience improvement of distribution networks.
+=
+∈
++
+∈
+psell t m
+lf t psell t
+m
+t
+t
+t
+T
+m
+mg
+( ,
+)
+( )
+( ,
+)
+[ ,
+],
+{1, 2, ...,
+}
+h
+c
+0
+0
+(21)
+Table 2
+Battery characteristic.
+Capacity (kWh)
+Maximum rate of Charging/Discharging Power (kWh)
+Min-Max SOC (kWh)
+Initial SOC (kWh)
+η
+200
+70–100
+0–200
+50% = 100
+0.95
+(A) 
+(B) 
+0
+5
+10
+15
+20
+25
+30
+0
+50
+100
+150
+200
+250
+300
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24
+Renewale output power (kW)
+Demand (kW)
+Time (Hour)
+Demand
+Wind
+0
+10
+20
+30
+40
+50
+60
+70
+80
+0
+10
+20
+30
+40
+50
+60
+70
+80
+90
+100
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24
+Renewale output power (kW)
+Demand (kW)
+Time (Hour)
+Demand
+Wind
+Solar
+Fig. 4. Hourly demand, wind power and solar power proﬁles in microgrids. (A)
+Type-1 microgrid (B) Type-2 microgrid.
+Table 3
+Energy price based on TOU tariﬀ.
+Time
+Oﬀ-peak (1:00–7:00,
+23:00–24:00)
+Shoulder
+(8:00–14:00)
+Peak
+(15:00–22:00)
+Price ($/kWh)
+0.07
+0.09
+0.11
+Table 4
+Diﬀerent fuel time arrival scenarios.
+Scenario including time of fuel delivery
+4
+5
+6
+7
+⩾8
+Probability of each scenario
+0.4
+0.3
+0.15
+0.1
+0.05
+0
+20
+40
+60
+80
+100
+120
+140
+0
+0.5
+1
+1.5
+2
+2.5
+3
+3.5
+1
+3
+5
+7
+9
+11 13 15 17 19 21 23 25 27 29 31 33
+Power demand
+Water demand 
+(Liter per second)
+Node
+Water demand
+P (KW)
+Q (KVAR)
+Fig. 5. Active power, reactive power demands of distribution network.
+Fig. 6. Value of loss inaccessibility to power and water.
+Fig. 7. Load multiplier of the distribution system.
+J. Najaﬁ, et al.
+Electrical Power and Energy Systems 116 (2020) 105550
+7
+
+where lf t( ) is the load variation proﬁle in the emergency period which
+is normalized based on the lowest demand load at hour th in the ex-
+amined period and is reported by the DSO to the microgrid.
+The proposed EMS is a stochastic linear program that can be solved
+by any related solution algorithms or solvers such as CPLEX.
+3.2. Distribution network service restoration
+Having received the bids and the amount of energy blocks from the
+microgrids, DSO must restore the disconnected loads with the aid of
+microgrids through appropriate partitioning of the system. According to
+[30], a function (named as load satisfaction function (LSF)) is deﬁned
+for each load which indicates the accessibility of that load to power and
+water:
+=
++
+LSF
+γ PA
+μ WA
+l
+l
+l
+l
+l
+(22)
+γl and μl are weighting factors deﬁned for each load such that
++
+=
+γ
+μ
+1
+l
+l
+. PA is a binary variable that indicates the state of loads in the
+power distribution system.
+= {
+PA
+1
+if load is connected
+0
+if load is disconected
+(23)
+WA is the accessibility function of loads to water. In other words, WA
+indicates the satisfaction level of loads access to water after natural
+disasters. Accessibility of a load to water is proportional to the water
+pressure in the node which that load is located.
+According to Fig. 3, in this paper, three kinds of water satisfaction
+functions (WSF) is deﬁned for users. According to the low-ﬂexible
+curve, the minimum required water pressure head in nodes is 29 m
+which is reported in many researches. This value is given for the water
+Fig. 8. Schematic diagram of the distribution system with multiple microgrids during the faults.
+Fig. 9. Water accessibility of loads to water during emergency period before
+restoration.
+Fig. 10. Bid-quantity packages oﬀered by microgrids type 1.
+Fig. 11. Bid-quantity packages oﬀered by microgrids type 2.
+J. Najaﬁ, et al.
+Electrical Power and Energy Systems 116 (2020) 105550
+8
+
+network operation in normal conditions. But in emergency conditions
+due to natural disasters, the expected satisfaction level of accessibility
+of loads to water will be decreased. To this end, two other curves with
+less required minimum pressure are proposed. The impact of all of
+curves on the restoration of water pumps will be evaluated. The value
+of weighting factors in LSF for each load is in range of 0–1. For re-
+sidential and commercial loads γ and μ are assumed to be 0.5, 0.5 and
+0.9, 0.1, respectively. With this model, the objective function of re-
+storation is to maximize the accessibility of loads to both power and
+water:
+∑
+=
+Maximize
+LI LSF
+i
+N
+i
+i
+1
+l
+(24)
+The DSO can restore the disconnected loads with two possible ac-
+tions: (1) Reconﬁguration of the distribution network to reroute the
+power while the utility as a power source still supports the system, and
+(2) Intentional islanding of a microgrid or cluster of microgrids to
+support local loads.
+In each time interval and for each network (main or islanded), the
+following load ﬂow equations and constraints must also be satisﬁed.
+Real/reactive power balance at each bus, line current and bus voltage
+limitation are addressed by (25)–(28).
+∑
+=
++
+∈
+∈
++
+∈
+P
+V
+V
+G
+θ
+B
+θ
+i
+N
+t
+t
+t
+T
+w
+W
+|
+|
+|
+|(
+cos
+sin
+)
+{1, 2, ...,
+},
+[ ,
+],
+{1, 2, ...,
+}
+i t
+w
+i t
+w
+j
+j t
+w
+ij
+ij t
+w
+ij
+ij t
+w
+w
+c
+,
+,
+,
+,
+,
+0
+0
+(25)
+∑
+=
+−
+∈
+∈
++
+∈
+Q
+V
+V
+G
+θ
+B
+θ
+i
+N
+t
+t
+t
+T
+w
+W
+|
+|
+|
+|(
+sin
+cos
+)
+{1, 2, ...,
+},
+[ ,
+],
+{1, 2, ...,
+}
+i t
+w
+i t
+w
+j
+j t
+w
+ij
+ij t
+w
+ij
+ij t
+w
+w
+c
+,
+,
+,
+,
+,
+0
+0
+(26)
+⩽
+⩽
+∈
+∈
++
+∈
+V
+V
+V
+i
+N
+t
+t
+t
+T
+w
+W
+|
+|
+|
+|
+|
+|
+{1, 2, ...,
+},
+[ ,
+],
+{1, 2, ...,
+}
+i t
+w
+w
+c
+min
+,
+max
+0
+0
+(27)
+⩽
+∈
+∈
++
+∈
+I
+I
+i
+N
+t
+t
+t
+T
+w
+W
+|
+|
+|
+|
+{1, 2, ...,
+},
+[ ,
+],
+{1, 2, ...,
+}
+ij t
+w
+ij
+w
+c
+,
+max
+0
+0
+(28)
+Constraint (29) guaranties the radial topology of the main network
+or each islanded microgrid. It should be noticed, this constraint is
+checked for the networks which are connected graphs.
+=
++
+∈
+N
+N
+w
+W
+1
+{1, 2, ...,
+}
+b
+w
+line
+w
+(29)
+Table 5
+Results of restoration problem with diﬀerent WSF curves against hurricane.
+Items
+WSF curve
+Microgrid in node 3
+Microgrid in node 16
+Microgrid in node 22
+Microgrid in node 29
+Incentive price ($/kWh)
+Low ﬂexible
+2.4
+2.8
+2.8
+1.6
+Semi ﬂexible
+2.4
+2.8
+2.8
+1.6
+High ﬂexible
+2.4
+3.2
+2.8
+1.6
+Loads restored
+Low ﬂexible
+3, 4, 5
+16, 17, 18, 33
+20, 21, 22
+27, 28, 29
+Semi ﬂexible
+3, 4, 5
+16, 17, 18, 33
+20, 21, 22
+27, 28, 29
+High ﬂexible
+3, 4, 5
+14, 15, 16, 17
+20, 21, 22
+27, 28, 29
+Value of restored loads (both power and water) ($)
+Low ﬂexible
+21796
+7898.3
+3888
+2304
+Semi ﬂexible
+26,472
+3222
+3888
+2304
+High ﬂexible
+27514
+2880
+3888
+2304
+Cost of purchasing energy from microgrid ($)
+Low ﬂexible
+1422.9
+1656.8
+1657
+945
+Semi ﬂexible
+1422.6
+1656.8
+1657
+945
+High ﬂexible
+1422.6
+2140.2
+1657
+945
+Fig. 12. Water pressure in nodes when both water pumps are restored.
+Fig. 13. Water pressure in nodes when only water pump in node 5 is restored.
+Fig. 14. Expected load shedding of the microgrid based on incentive steps
+during the emergency period.
+J. Najaﬁ, et al.
+Electrical Power and Energy Systems 116 (2020) 105550
+9
+
+Fig. 15. Schematic diagram of the faulty sections in PDN and WDN during a ﬂood event.
+Table 6
+Results of restoration problem with diﬀerent WSF curves against ﬂood.
+Items
+WSF curve
+Microgrid in node 16
+Microgrid in node 29
+Incentive price ($/kWh)
+Low ﬂexible
+2.8
+3.2
+Semi ﬂexible
+2.8
+3.2
+High ﬂexible
+2.8
+3.2
+Loads restored
+Low ﬂexible
+16, 17, 18, 33
+26, 27, 28, 29
+Semi ﬂexible
+16, 17, 18, 33
+26, 27, 28, 29
+High ﬂexible
+16, 17, 18, 33
+26, 27, 28, 29
+Value of restored loads (both power and water) ($)
+Low ﬂexible
+10396.7
+2880
+Semi ﬂexible
+10,749
+2880
+High ﬂexible
+10907.2
+2880
+Cost of purchasing energy from microgrid ($)
+Low ﬂexible
+1656.8
+2133.2
+Semi ﬂexible
+1656.8
+2133.2
+High ﬂexible
+1656.8
+2133.2
+Fig. 16. Water pressure in nodes when water pump in node 33 is not restored.
+Fig. 17. Water pressure in nodes when water pump in node 33 is restored.
+J. Najaﬁ, et al.
+Electrical Power and Energy Systems 116 (2020) 105550
+10
+
+Furthermore, the following constraints must be satisﬁed for each
+islanded network which is supplied by one or more microgrids.
+According to (30), the total demanded active power of the loads plus
+the active power losses of distribution lines within each islanded net-
+work should not exceed the contracted power between the microgrid(s)
+(which supply the islanded network) and the DSO. The same should be
+satisﬁed for reactive power as shown in (31).
+∑
+∑
++
+⩽
+∈
++
+∈
+−
+=
+=
+P
+Ploss
+psell t m
+t
+t
+t
+T
+w
+W
+( ,
+)
+[ ,
+],
+{1, 2, ...,
+1}
+l
+N
+l t
+w
+t
+w
+m
+N
+c
+1
+,
+1
+0
+0
+lw
+mg
+w
+(30)
+∑
+∑
++
+⩽
+∈
++
+∈
+−
+=
+=
+Q
+Qloss
+Q
+t
+t
+t
+T
+w
+W
+[ ,
+],
+{1, 2, ...,
+1}
+l
+N
+l t
+w
+t
+w
+i
+N
+i
+resource
+c
+1
+,
+1
+0
+0
+lw
+bw
+(31)
+The DSO must purchase power from microgrids considering a
+budget limit as shown in (32). It is noteworthy that CVLIP, FVLIW of
+each load is related to the load type and demand level.
+∑
+∑
+∑
+∑∑
+⎡
+⎣
+⎢
+⎢
++
+⎤
+⎦
+⎥
+⎥
+⩾
++
+∈
+−
+=
++
+=
+=
+=
+=
++
+PA CVLIP
+WP
+WA
+FVLIW
+psell t m inprc
+m
+ρ t
+w
+W
+[
+]
+Δ
+( ,
+)(
+(
+)
+( ))
+{1, 2, ...,
+1}
+t
+t
+T
+t
+l
+N
+l t
+l t
+w
+l
+N
+l t
+WP
+l t
+m
+mg
+t
+t
+T
+t
+win
+1
+,
+,
+1
+,
+,
+1
+c
+l
+w
+w
+w
+c
+0
+0
+0
+0
+(32)
+After natural disasters and lines outage in the distribution network,
+there are two possible states for each microgrid in the new conﬁgura-
+tion of distribution network. In the ﬁrst state, it is still located in the
+main network that is supplied by the utility. In the second state, it is
+located in an isolated network such that the microgrid is responsible for
+load restoration. In this paper, Modiﬁed Viterbi algorithm is used for
+service restoration. This method is comprehensively explained and
+discussed in [30].
+In the ﬁrst state, DSO only purchases power from the microgrids if
+service restoration requires load shedding. Furthermore, note that load
+shedding may be needed to be performed in some intervals of the
+emergency period, so that the DSO requests power purchasing only in
+desired time intervals from the microgrids. In order to achieve this, it is
+only necessary to announce the load variation factor (lf t( )) in the de-
+sired interval to the microgrid. In other words, during other intervals of
+the emergency period, lf t( ) is zero.
+In the second state, the DSO must purchases power to restore the
+loads in the isolated network thorough the entire emergency period.
+This process is accomplished through two steps. At the ﬁrst step, all the
+network nodes (loads combinations) that can be fed by each microgrid
+and satisfy constraints (25)–(29) are sorted based on their related costs
+(i.e., objective function (24)). At the second step, the DSO can realize
+which of the oﬀered bid-quantity energy blocks by each microgrid is
+feasible and appropriate to purchase from both technical and economic
+perspective.
+4. Simulation results
+The modiﬁed IEEE 33 bus distribution network with connected
+microgrids and its related designed water network as shown in Fig. 1 is
+studied to illustrate the eﬀectiveness of the proposed method. Two
+diﬀerent types of microgrids are considered that each one has a speci-
+ﬁed generation mix and demand level. It is assumed that two micro-
+grids in nodes 16 and 22 are microgrids type 1 and the others (micro-
+grids in nodes 3 and 29) are microgrids type 2. The parameters of three
+dispatchable generators which are obtained from [20] are shown in
+Table 1. According to Table 1, microgrids of type 1 has three dis-
+patchable generators which are No. 1, No. 2 and No. 3 while in mi-
+crogrids of type 2, there is only one generator of type No.3. Dispatch-
+able generators can increase or decrease their full capacities in less than
+one minutes.
+The maximum fuel available for each generator is equal to the
+production of 400 kWh of energy. The required data for the battery
+which is available in both types of microgrids is summarized in Table 2.
+The hourly load proﬁle, wind power and solar power generation for
+diﬀerent types of microgrids are depicted in Fig. 4.
+In both types of microgrids, the loads are categorized into ﬁxed,
+shiftable and curtailable loads, while the value of lost load is considered
+Fig. 18. Impact of DR programs on resilience improvement with the proposed
+index.
+Fig. 19. Impact of fuel availability on resilience improvement.
+Fig. 20. Impact of initial SOC of battery on resilience improvement.
+J. Najaﬁ, et al.
+Electrical Power and Energy Systems 116 (2020) 105550
+11
+
+as 5 $/kWh. It is assumed that 80% of hourly loads are ﬁxed and 10%
+are shiftable. The remaining loads are divided into three groups of
+curtailable loads with amounts of 5%, 3%, and 2% of the hourly load.
+Each of these load groups can be curtailed for two hours during the
+emergency period. The maximum PCC power exchange of each mi-
+crogrid to distribution network is 200 kW. The market price is based on
+a time-of-use (TOU) scheme that is given in Table 3.
+The initial incentive price is equal to 0 $/kWh. The incentive step
+that is added to the incentive price in each iteration is 0.5 $/kWh. Two
+types of uncertainties in the proposed stochastic EMS for microgrids
+should be addressed. For the ﬁrst type of uncertainties including de-
+mand and renewable generation output, each microgrid produces 2000
+scenarios initially based on a normal distribution function with 3%, 5%
+and 5% error in demand, wind power and solar power predictions,
+respectively. Then, 10 scenarios are chosen with the backward reduc-
+tion algorithm. To address the second type of uncertainty including fuel
+arrival time, it is assumed that the minimum time of fuel delivery to
+both types of microgrid is 4 h and ﬁve scenarios with diﬀerent prob-
+abilities are shown in Table 4.
+Finally, 50 scenarios with diﬀerent probabilities are generated in
+order to solve the stochastic EMS by each microgrid.
+The active/reactive power in PDN and water demand in WDN are
+depicted in Fig. 5. It should be noticed loads in nodes 19–22 are com-
+mercial and the other are residential.
+Value of load inaccessibility to power and water is depicted in
+Fig. 6. For the nodes, which include water pumps, the value of load
+inaccessibility to power is considered as a dynamic value denoting the
+importance of each water pump for restoration phase. It should be
+noted that the importance of each water pump for restoration will be
+determined in the restoration problem by incorporating the WSF of
+loads resulted from EPANET. The 24-h load multipliers of the PDN and
+WDN are illustrated in Fig. 7. Other information about the IEEE 33-bus
+distribution system can be found in [36].
+Case 1:
+The proposed interaction framework is simulated with a harsh
+scenario due to hurricane which is depicted in Fig. 8. It is assumed that
+four faults have occurred at 9 A.M. in lines 12–13, 2–19, 26–27 and the
+one feeding from the transformer and the required time to repair the
+lines is 8 h. As mentioned before, the under grounded water pipes will
+not be damaged due to hurricane. According to Fig. 9, all the nodes will
+access to water only for the ﬁrst hour (9:00–10:00) of the emergency
+period due to water tanks in the water network (see Fig. 1) and there is
+no water access for the rest of emergency period (10:00–17:00). The
+only way to restore loads as much as possible is to enable the individual
+microgrids operation. Thus, the DSO asks microgrids for their con-
+tributions in system restoration and sends the required data as shown in
+Fig. 8 to the microgrids. Subsequently, the EMS in each microgrid
+provides the action plan.
+The action plans of microgrids type 1 (microgrids in nodes 16 and
+22) and microgrids type 2 (microgrids in nodes 3 and 29) are shown in
+Fig. 10 and Fig. 11, respectively. Each plan includes the amount of
+active power and incentive price. As can be seen in Figs. 10 and 11, the
+energy sold by the microgrids increases as the incentive step increases
+and it depends on each microgrid scheduling. It is worth-mentioning
+that the price of each option in each action plan is determined based on
+the incentive step price plus the market price. All tests are performed on
+a PC with 2.5-GHz CPU and 4 GB RAM. The required time for solving
+the stochastic EMS for microgrids type 1 and 2 is around 20–25 s.
+Having received the bid-quantity lists from the microgrids, DSO
+solves the restoration problem. To analysis the impact of WSF on water
+pumps restoration, the restoration problem is solved with all the pro-
+posed curves as in Fig. 3. The results of the restoration problem is ex-
+plained in Table 5. The restoration problem takes about 5 s to be solved.
+According to Table 5, DSO can restore many loads with the aid of
+microgrids. Note that the values of loads, which are restored by the
+microgrids, are more than the cost of the power purchased by the mi-
+crogrids. For example, DSO can restore loads 20–22 with microgrid in
+node 22. However, as load 19 is neighborhood to loads 20–22, but, this
+load is not restored. The reason is that the conditions in (30)–(32)
+cannot be met by any of the options in bid-quantity packages oﬀered by
+microgrid in node 22 if load 19 is also added to the list of restored
+loads.
+Regarding the water pump restoration, it can also be observed from
+Table 5 that pumps in nodes 5 and 33 are restored with microgrids in
+nodes 3 and 16, respectively considering low- and semi-ﬂexible WSF
+curves. According to Fig. 12, in this condition both pumps are restored
+and the water pressure of nodes is more than 29 m (minimum pressure
+required for normal operation).
+With high-ﬂexile WSF curve, the optimal plan is achieved only by
+restoration of the more important water pump (which is the one in node
+5). However, compared to the results obtained in cases with low- and
+semi- ﬂexible WSF curves, it is clearly understood that loads 14 and 15
+are restored (instead of loads in nodes 33 and 18) due to their higher
+load values. The water pressure in diﬀerent nodes with the operation of
+water pump in node 5 is illustrated in Fig. 13.
+According to Table 5, the value of the restored loads for microgrids
+that are not able to restore any water pumps in their electriﬁcation
+domain (e.g., microgrids in nodes 22 and 29), is only determined by the
+accessibility of nodes to power. On the other side, for the microgrids
+which can restore water pumps, the value of their restored loads would
+be determined by the accessibility of nodes to both power and water. It
+should be noticed, the value of loads accessibility to water will be
+diﬀerent when diﬀerent WSF curves are taken into account.
+As it can be seen in Table 5, moving from low to high-ﬂexible
+curves, the value of restored loads for microgrid in node 3 which re-
+stores the water pump in node 5 is increased. The opposite trend is
+observed for microgrid in node 16 which is responsible for restoration
+of water pump in node 33 with low and semi-ﬂexible curves. The reason
+is that, according to Fig. 13 and also the characteristics of low to high-
+ﬂexible curves (i.e., the required pressure head for normal operation of
+water network), the contribution of water pump in node 33 in pro-
+viding water is decreased as the other water pump could guarantee the
+adequacy of service. Such contribution could be even zero once high-
+ﬂexible curve is taken into account which denotes a situation where
+water pump in node 33 is not restored.
+To investigate the reliability of microgrids local loads in terms of
+expected energy not served (EENS), let’s consider microgrids of type 2.
+According to Fig. 10, by increasing the incentive steps, the microgrid
+sells more power to the distribution system during the emergency
+period. At the same time, according to Fig. 14, EENS of the microgrid
+during the emergency period is increased, meaning that the reliability
+of microgrid loads has decreased. However, with the increase of the
+incentive price, the EMS determines the sold power and the expect load
+shedding in such a way that the proﬁt of the microgrid is maximized.
+If the operator of a microgrid wants to operate the microgrid in a
+conservative approach. The operator can only report the options in the
+bid-quantity energy block which satisfy his/her desired reliability level
+of microgrid.
+Case 2:
+This case is investigating the eﬃciency of the proposed framework
+for enhancing the resilience of PDN and WDN vulnerable to ﬂooding.
+The diﬀerence between this case and the previous one is that the ﬂood,
+unlike the hurricane can also damage the pipes of the water network.
+According to Fig. 15, under a given ﬂood scenario it is assumed that
+several power distribution lines (i.e, 3–23, 6–26, 9–15, 12–22, 9–10,
+10–11, 11–12, 12–13) and also water network pipes (i.e., 3–23, 6–26,
+9–10, 10–11, 11–12, 12–13) will be damaged.
+Similar to Case 1, it is assumed that these faults have occurred at 9
+J. Najaﬁ, et al.
+Electrical Power and Energy Systems 116 (2020) 105550
+12
+
+A.M. due to ﬂood. The required time to repair the power distribution
+lines and water pipelines is assumed to be 8 and 10 h, respectively. As
+can be seen in Fig. 15, the ﬂood causes a power outage over a wide
+region which includes nodes (10–18) and (23–33) in distribution net-
+work. To restore the disconnected nodes in neighboring areas, micro-
+grids in nodes 16 and 29 could eﬀectively be engaged in doing so. Due
+to the similarity of fault occurrence time and the required repair time of
+this case with case 1, the action plans of microgrids 16 and 29 would be
+similar to those in case 1, which are depicted in Figs. 10 and 11. As can
+be seen in Fig. 15, due to the ﬂooding, the WDN is divided into two
+islanded networks. Water pumps in node 5 and 33 could deliver water
+to nodes (2–9), (19–22) and (13–18), (26–33), respectively. However,
+other loads in faulty areas will be lost.
+Having received the bid-quantity lists from the microgrids, DSO
+solves the restoration problem. The restoration plan is explained in
+Table 6. Unlike case 1, the DSO prefers to restore node 33, which also
+included the water pump, in all diﬀerent WSFs. The reason lies in a fact
+that the water pump in node 33 is responsible to deliver water to nodes
+(13–18) and (26–33), thus has a higher priority in restoration phase
+compared to other nodes in the network. This also indicates the eﬃ-
+ciency of the proposed framework that can consider the impact of faults
+on water network as well. Figs. 16 and 17 compare the pressure head at
+the nodes in diﬀerent state of water pump in node 33.
+In Comparison with case 1, the DSO can restore one more node (i.e.,
+node 26) due to the structure of the PDN. To do so, the DSO has to
+purchase more power with higher incentive prices compared to case 1
+from microgrid in node 29.
+Case 3:
+In this case, the impact of DR on resilience improvement of dis-
+tribution network is studied. During the emergency conditions, if the
+microgrids can provide more energy with lower prices, DSO will restore
+more loads which implies less EENS and increased resiliency. To this
+end, an index is proposed in (33) which indicates expected amount of
+provided energy per dollar for distribution network by microgrids. The
+higher this index, a microgrid can contribute more to the improvement
+of the distribution networks (i.e., selling more energy with lower
+prices).
+∑∑
+=
++
+=
+=
++
+EpD
+D
+psell d t
+inprc d
+ρ t
+1
+( , )
+(
+( )
+( ))
+d
+D
+t
+t
+t
+T
+1
+c
+0
+0
+(33)
+To investigate the impact of DR program on this index, let’s consider
+microgrids type 2. The EMS for microgrids type 2 for diﬀerent combi-
+nation of loads is run at 17 o’clock for 8 h and EpD index is shown in
+Fig. 18. With increasing the DR actions, the EpD index increases,
+meaning that responsive loads could enhance the distribution network
+resilience. In particular, the curtailable loads are more eﬃcient in
+providing energy with lower price for distribution network and can
+signiﬁcantly increase the EpD index.
+Case 4:
+In this case, the impact of the initial SOC of the battery and fuel
+availability in the microgrids on the resilience improvement of dis-
+tribution network are investigated. Similar to case 3, the microgrid type
+2 is considered. Fig. 19 shows the EpD index based on the fuel avail-
+ability of each generator. As mentioned earlier, the fuel availability in
+this paper is modeled to be equivalent to the amount of active power
+that each generator can produce.
+According to Fig. 19, with increasing fuel availability for each
+generator, the microgrid can improve the resilience of distribution
+network. Thus, fuel availability in the microgrid has an important role
+in EMS to purchase more and cheaper energy to distribution network.
+The initial SOC of the battery is another important parameter that
+has important impact on EMS. It is obvious that battery size is also very
+important for having higher initial available energy in the battery.
+Fig. 20 conﬁrms the resilience improvement of distribution network by
+higher initial SOC of battery.
+Therefore through well-planning of the needed infrastructures in
+microgrids (such as fuel tanks and energy storage options), both mi-
+crogrid and distribution network will be beneﬁted.
+5. Conclusion
+This paper proposed an eﬃcient interaction framework between
+distribution network and microgrids to enhance resilience against nat-
+ural disasters such as hurricane and ﬂood when both PDN and WDN can
+be damaged. The proposed framework includes two main parts: (1)
+stochastic energy management system for microgrids that considers
+local load reliability and stochastic parameters, such as loads, renew-
+able power generation and fuel arrival time, and (2) restoration pro-
+gram for distribution networks with the objective of maximizing the
+accessibility of loads to power and water. The proposed framework was
+applied to the modiﬁed IEEE 33-bus distribution system with connected
+microgrids and its designed water network. The results conﬁrmed that
+the proposed energy management system could enable the microgrids
+as backup energy sources with diﬀerent capacities, and accordingly
+help DSO to eﬀectively maximize the accessibility of loads to power and
+wate.Water satisfaction function has important role in water pumps
+restoration.
+Hence,
+this
+function
+should
+be
+deﬁned
+carefully.
+Simulation results also demonstrated that responsive loads could serve
+as an eﬃcient tool for improving the resilience of distribution network.
+Moreover, the amount of fuel availability and the battery placed in
+microgrids could more energy with cheaper incentive price for dis-
+tribution network.
+Declaration of Competing Interest
+There is no conﬂict of interest.
+Appendix A. Supplementary material
+Supplementary data to this article can be found online at https://
+doi.org/10.1016/j.ijepes.2019.105550.
+References
+[1] Brown R, Wang X, Page C. Are power utilities in tonga and New Zealand resilient?;
+2016.
+[2] Advisers EOotPCoE. Economic beneﬁts of increasing electric grid resilience to
+weather outages: The Council; 2013.
+[3] Zhang Y, Yang N, Lall U. Modeling and simulation of the vulnerability of inter-
+dependent power-water infrastructure networks to cascading failures. J Syst Sci Syst
+Eng 2016;25:102–18.
+[4] Krishnamurthy V, Kwasinski A, Duenas-Osorio L. Comparison of power and tele-
+communications dependencies and interdependencies in the 2011 tohoku and 2010
+maule earthquakes. J Infrastruct Syst 2016;22:04016013.
+[5] TNA of sciences. Disaster resilience: a national imperative. Washington, DC: The
+National Academies Press; 2012.
+[6] Tran HT, Balchanos M, Domerçant JC, Mavris DN. A framework for the quantitative
+assessment of performance-based system resilience. Reliab Eng Syst Saf
+2017;158:73–84.
+[7] Gholami A, Aminifar F, Shahidehpour M. Front lines against the darkness:
+Enhancing the resilience of the electricity grid through microgrid facilities. IEEE
+Electrif Mag 2016;4:18–24.
+[8] Bie Z, Lin Y, Li G, Li F. Battling the extreme: a study on the power system resilience.
+Proc IEEE 2017;105:1253–66.
+[9] Chen C, Wang J, Ton D. Modernizing distribution system restoration to achieve grid
+resiliency against extreme weather events: an integrated solution. Proc IEEE
+2017;105:1267–88.
+[10] Chen C, Wang J, Qiu F, Zhao D. Resilient distribution system by microgrids for-
+mation after natural disasters. IEEE Trans Smart Grid 2016;7:958–66.
+[11] Wang F, Chen C, Li C, Cao Y, Li Y, Zhou B, et al. A multi-stage restoration method
+for medium-voltage distribution system with DGs. IEEE Trans Smart Grid
+2017;8:2627–36.
+[12] Fotuhi-Friuzabad M, Safdarian A, Moeini-Aghtaie M, Ghorani R, Rastegar M, Farzin
+J. Najaﬁ, et al.
+Electrical Power and Energy Systems 116 (2020) 105550
+13
+
+H. Upcoming challenges of future electric power systems: sustainability and re-
+siliency. Scientia Iranica 2016;23:1565–77.
+[13] Che L, Khodayar M, Shahidehpour M. Only connect: Microgrids for distribution
+system restoration. IEEE Power Energ Mag 2014;12:70–81.
+[14] Li J, Ma X-Y, Liu C-C, Schneider KP. Distribution system restoration with microgrids
+using spanning tree search. IEEE Trans Power Syst 2014;29:3021–9.
+[15] Gao H, Chen Y, Xu Y, Liu C-C. Resilience-oriented critical load restoration using
+microgrids in distribution systems. IEEE Trans Smart Grid 2016;7:2837–48.
+[16] Xu Y, Liu C-C, Schneider KP, Tuﬀner FK, Ton DT. Microgrids for service restoration
+to critical load in a resilient distribution system. IEEE Trans Smart Grid
+2018;9:426–37.
+[17] Kwasinski A, Krishnamurthy V, Song J, Sharma R. Availability evaluation of micro-
+grids for resistant power supply during natural disasters. IEEE Trans Smart Grid
+2012;3:2007–18.
+[18] Krishnamurthy V, Kwasinski A. Eﬀects of power electronics, energy storage, power
+distribution architecture, and lifeline dependencies on microgrid resiliency during
+extreme events. IEEE J Emerg Select Top Power Electron 2016;4:1310–23.
+[19] Farzin H, Fotuhi-Firuzabad M, Moeini-Aghtaie M. Stochastic energy management of
+microgrids during unscheduled islanding period. IEEE Trans Ind Inf
+2017;13:1079–87.
+[20] Hussain A, Bui V-H, Kim H-M. Optimal operation of hybrid microgrids for enhan-
+cing resiliency considering feasible islanding and survivability. IET Renew Power
+Gener 2017;11:846–57.
+[21] Khodaei A. Resiliency-oriented microgrid optimal scheduling. IEEE Trans Smart
+Grid 2014;5:1584–91.
+[22] Dong J, Xue G, Li R. Demand response in China: regulations, pilot projects and
+recommendations–A review. Renew Sustain Energy Rev 2016;59:13–27.
+[23] Anvari-Moghaddam A, Guerrero JM, Vasquez JC, Monsef H, Rahimi-Kian A.
+Eﬃcient energy management for a grid-tied residential microgrid. IET Gener
+Transm Distrib 2017;11:2752–61.
+[24] Nikmehr N, Najaﬁ-Ravadanegh S, Khodaei A. Probabilistic optimal scheduling of
+networked microgrids considering time-based demand response programs under
+uncertainty. Appl Energy 2017;198:267–79.
+[25] Zakariazadeh A, Homaee O, Jadid S, Siano P. A new approach for real time voltage
+control using demand response in an automated distribution system. Appl Energy
+2014;117:157–66.
+[26] Malik A, Ravishankar J. A hybrid control approach for regulating frequency
+through demand response. Appl Energy 2018;210:1347–62.
+[27] Wang F, Xu H, Xu T, Li K, Shaﬁe-Khah M, Catalão JP. The values of market-based
+demand response on improving power system reliability under extreme circum-
+stances. Appl Energy 2017;193:220–31.
+[28] Hussain A, Bui V-H, Kim H-M. Impact analysis of demand response intensity and
+energy storage size on operation of networked microgrids. Energies 2017;10:882.
+[29] NajaﬁJ, Peiravi A, Anvari-Moghaddam A, Guerrero JM. Resilience improvement
+planning of power-water distribution systems with multiple microgrids against
+hurricanes using clean strategies. J Cleaner Prod 2019.
+[30] NajaﬁJ, Peiravi A, Guerrero JM. Power distribution system improvement planning
+under hurricanes based on a new resilience index. Sustain Cities Soc
+2018;39:592–604.
+[31] Panteli M, Mancarella P. The grid: Stronger bigger smarter?: presenting a con-
+ceptual framework of power system resilience. IEEE Power Energy Mag
+2015;13:58–66.
+[32] (30.04.2018). https://www.fema.gov/media-library-data/20130726-1820-25045-
+9850/hzmh2_1_hr_tm.pdf.
+[33] Ma S, Chen B, Wang Z. Resilience enhancement strategy for distribution systems
+under extreme weather events. IEEE Trans Smart Grid 2018;9:1442–51.
+[34] Conejo AJ, Carrión M, Morales JM. Decision making under uncertainty in electricity
+markets vol. 1. Springer; 2010.
+[35] Growe-Kuska N, Heitsch H, Romisch W. Scenario reduction and scenario tree
+construction for power management problems. In: Power tech conference pro-
+ceedings, 2003 IEEE Bologna, vol. 3; 2003, p. 7.
+[36] Baran ME, Wu FF. Network reconﬁguration in distribution systems for loss reduc-
+tion and load balancing. IEEE Trans Power Delivery 1989;4:1401–7.
+J. Najaﬁ, et al.
+Electrical Power and Energy Systems 116 (2020) 105550
+14

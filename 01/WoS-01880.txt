@@ -1,0 +1,1078 @@
+Computers and Chemical Engineering 155 (2021) 107542 
+Contents lists available at ScienceDirect 
+Computers and Chemical Engineering 
+journal homepage: www.elsevier.com/locate/compchemeng 
+Optimal robust scheduling of energy-water nexus system using robust 
+optimization technique 
+Qun Guo a , Tiantong Guo b , ∗∗, Qiannan Tian c , Sayyad Nojavan d , e , ∗
+a School of Business Administration, Hubei University of Economics, Wuhan, 430205, Hubei Province, PR China 
+b College of Chemistry and Molecular Sciences, Wuhan University 430072, China 
+c School of Business Administration, Hubei University of Economics, Wuhan, 430205, Hubei Province, PR China 
+d Department of Electrical Engineering, University of Bonab, Bonab, Iran 
+e Institute of Energy, IAMSET, Hong Kong, 999077, PR China 
+a r t i c l e 
+i n f o 
+Article history: 
+Received 1 May 2021 
+Revised 1 September 2021 
+Accepted 11 September 2021 
+Available online 13 September 2021 
+Keywords: 
+Nexus system 
+Robust optimization technique (ROT) 
+Water and power demands uncertainty 
+Deterministic approach 
+Combined water-power (CWP) units 
+a b s t r a c t 
+Clean energy and water are two crucial resources that must be delivered safely in every civilization. 
+Water distribution and electricity transmission networks, which provide these precious resources, have 
+traditionally been conceived of as independent, uncoupled systems. However, they are inextricably linked 
+in what is known as the energy-water nexus in reality. This paper considers a nexus system constructed 
+from combined water-power (CWP) and single water and power energy resources to satisfy the power 
+and water demands. Furthermore, a robust optimization technique (ROT) is proposed to model the un- 
+certainties of water and power demands. ROT models the worst realizations of the uncertain parameters. 
+The obtained results are proper strategy for the conservative system operators. The robust-based opti- 
+mization problem is solved using OQNLP solver under the GAMS software. Results state that by consid- 
+ering the proposed robust-based optimization model, the total operation cost will be increased by about 
+9.52% for the conservative operators. 
+© 2021 Elsevier Ltd. All rights reserved. 
+1. Introduction 
+1.1. motivation 
+Recently, lots of studies came to attention in the combined 
+energy resources section (Fanwei Meng et al., 2018 ). As a result, 
+strict and helpful policies have been adopted in several nations 
+( Peng et al., 2021 ). This combined energy nexus system involves 
+two energy resources like water and power energies ( Wang et al., 
+2019 ). Nexus system has some prerequisites for every speciﬁc 
+country, which differs from city to city according to the infrastruc- 
+ture and geographical locations. Using this technology, particularly 
+in the famine and drought regions, will be a promising way to ful- 
+ﬁll the water and power demands ( Duan et al., 2021 ). Energy re- 
+sources consumption soaring, various policies of nations, and as a 
+more critical factor world population ascending, made the politi- 
+cians come up with a solution to meet the food, water, and power 
+demands ( Kermani et al., 2017 ). On the other hand, the lack of wa- 
+ter resources made a culprit issue for electric energy generation. 
+∗Corresponding author. 
+∗∗Co-corresponding author. 
+E-mail addresses: sguoqun@126.com (Q. Guo), 873836824@qq.com (T. Guo), 
+1056686923@qq.com (Q. Tian), sayyad.nojavan@ubonab.ac.ir (S. Nojavan). 
+Therefore, cultural steps and strong policies should be taken to ac- 
+count in both national and international terms. 
+Moreover, energy systems optimization problems are faced with 
+uncertainties mainly in demands, prices, and renewable genera- 
+tions ( Jiang et al., 2021 ). The signiﬁcant effects of this uncertain 
+parameter on the optimization problems results have led to inves- 
+tigation by researches using different methods ( Zhang et al., 2021 ). 
+Also, the risk assessment is involved in the uncertainty manage- 
+ment methods for help to optimal decision making under uncer- 
+tainty. The robust optimization approach is one of the uncertainty 
+modeling methods that does not need to large number of historical 
+data. decision making with robust optimization only required to a 
+deviation bounds of uncertain parameters. Besides, due to signif- 
+icantly affecting the nexus systems in the agriculture and energy 
+sectors and changing the demands of this system during the oper- 
+ation horizon, the uncertainty modeling approach becomes neces- 
+sary. 
+However, based on the description represented above, the 
+nexus system may face uncertainties that change the decision- 
+making in these systems. The different arrangements of nexus sys- 
+tems are represented to introduce the various nexus systems and 
+the used modeling approaches. By introducing the different ar- 
+rangements of the nexus system and mathematical models, the dif- 
+ferent uncertainty modeling methods are reviewed to clarify the 
+https://doi.org/10.1016/j.compchemeng.2021.107542 
+0098-1354/© 2021 Elsevier Ltd. All rights reserved. 
+
+Q. Guo, T. Guo, Q. Tian et al. 
+Computers and Chemical Engineering 155 (2021) 107542 
+Nomenclature 
+Indices 
+g
+Thermal generators 
+w 
+Water desalination unit 
+c
+CWP plants 
+t
+Time 
+Parameters and variables 
+C p 
+Fuel cost of thermal generators ($/MW) 
+C w 
+Fuel cost of water desalination unit ($/MW) 
+C cwp 
+Fuel cost of CWP plants ($/MW) 
+P g,t 
+Generated power from thermal generators units 
+(MW) 
+W w,t 
+Produced clean water from water desalination 
+units ( m 3 /h ) 
+P c,t 
+Production power from CWP units (MW) 
+W c,t 
+Clean water generation of CWP units ( m 3 /h ) 
+a g b g c g 
+Fuel cost factors of thermal generators ($/MW 2 , 
+$/MW,$) 
+a w b w c w 
+Fuel cost factors of water desalination units 
+($/MW 2 , $/MW,$) 
+αc , βc , γc , λc 
+, ξc , ζc 
+Fuel cost factors of CWP plants ($/MW 2 , 
+$.h/MW.m 3 ,$.h 2 /m 6 , $/MW,$.h/m 3 ,$) 
+U g,t 
+A binary variable for thermal generators which 
+is one if generators are on otherwise 0 
+U w,t 
+A binary variable for desalination units which is 
+one if units are on otherwise 0 
+U c,t 
+A binary variable for CWP producers which is 
+one if units are on, otherwise 0 
+q, y, z
+Dual and auxiliary variables of the ROT 
+E t 
+Electrical power demand (MW) 
+W t 
+Clean water demand ( m 3 /h ) 
+P min 
+g 
+Minimum power production of thermal power 
+plants (MW) 
+P min 
+c 
+Minimum power production of CWP units 
+(MW) 
+P max 
+g 
+Maximum power production of thermal power 
+plants (MW) 
+P max 
+c 
+Maximum power production of CWP units 
+(MW) 
+W min 
+w 
+Minimum clean produced water of desalination 
+units ( m 3 /h ) 
+W min 
+c 
+Minimum clean produced water of CWP units 
+( m 3 /h ) 
+W max 
+w 
+Maximum clean produced water of desalination 
+units ( m 3 /h ) 
+W max 
+c 
+Maximum clean produced water of CWP units 
+( m 3 /h ) 
+R min 
+c 
+Minimum power-water ratio of CWP unit 
+( MW h/ m 3 ) 
+R max 
+c 
+Maximum power-water ratio of CWP unit 
+( MW h/ m 3 ) 
+D R g 
+Ramp down of thermal power plant 
+U R g 
+Ramp up of thermal power plant 
+
+Budget of uncertainty 
+disadvantages of these methods ti highlight the application of the 
+robust optimization method. 
+1.2. Literature review 
+In ( Chen et al., 2019 ), inter-regional trade is proposed for a city- 
+scale framework to investigate direct and embodied energies such 
+as water and power resources. A review paper researched the en- 
+ergy, water, and carbon dioxide nexus system and investigated it 
+from every aspect. Finally, it introduced hints for the nexus system 
+(Fanxin Meng et al., 2019 ). Possible ways of managing the nexus 
+system through three integrated management strategies (INRM, 
+IWRM, ISWM) are investigated in ( Roidt & Avellán, 2019 ). A de- 
+tailed understanding of the analysis of the nexus system is pro- 
+posed, and the main problems are investigated to obtain a bet- 
+ter result from these systems in ( Cabello et al., 2019 ). Accord- 
+ing to ( Namany et al., 2019b ), a multi-objective stochastic opti- 
+mization approach is used to realize the optimum way of satis- 
+fying water and power energies and obtain a sustainable system in 
+the trade-off market. In ( Guan et al., 2019 ), systematic research is 
+adopted to analyze the water and power demand energy resources 
+by considering land resources as a national project in China. To 
+achieve an inter-connected and robust approach in the nexus sys- 
+tem and considering agricultural aspects, computational scaffold- 
+ing of a framework is proposed in ( Govindan & Al-Ansari, 2019 ). 
+In ( Namany et al., 2019a ), agent-based modeling and game the- 
+ory methods are used for dynamic decision-making to attract the 
+attention of policymakers. In ( Xu et al., 2019 ), different types of 
+intertwined virtual water and power resources are investigated to 
+fulﬁll the missing knowledge by considering China as a case study. 
+In ( Tsolas et al., 2019 ), an organized approach is proposed to design 
+and optimize the nexus network using a graph-theoretic procedure 
+under the two different cases of minimum and maximum genera- 
+tion of both water and power energies. In ( Biggs et al., 2015 ), the 
+dependence of human life and nexus approaches and its relation 
+with the world’s population rise is analyzed. An integrated method 
+that identiﬁes the intertwined nexus systems with the food section 
+is investigated on a household scale, and as a result, parameters 
+such as family size, amount of income, the diet had a signiﬁcant 
+impact on these systems ( Hussien et al., 2017 ). In ( Obringer et al., 
+2019 ), a multi-response framework is proposed to the water-power 
+demand nexus system by considering climate change. 
+In ( Jabari et al., 2019 ), a day-ahead optimization procedure was 
+applied to a water-heat-power system by considering all techni- 
+cal constraints to minimize the fuel cost of the water desalina- 
+tion unit. A comprehensive review of desalination units integrated 
+with renewable energy resources alongside essential factors such 
+as base technology, cost of operation, and environmental issues 
+are investigated ( Alkaisi et al., 2017 ). In ( Hicks et al., 1989 ), all the 
+required principles of designing, operation, and citing of desalina- 
+tion units are reviewed. In ( Shahzad et al., 2017 ), a state of art re- 
+view under the intertwined energy resources is expressed to save 
+energy and investigate environmental issues. Cogeneration plants, 
+which produce both water and electricity at the same time, are 
+common in the Gulf Region. They’ve been shown to be more ther- 
+modynamically successful and economically viable than only one 
+power and water facilities ( Hamed et al., 2006 ). A water-power 
+nexus system combined with air-heated humidiﬁcation dehumidi- 
+ﬁcation (HDH) desalination unit is proposed in ( He et al., 2017 ), to 
+satisfy the water and power demands. In ( He et al., 2018 ), for spe- 
+ciﬁc values of water production and gained-output ratio, a system 
+is introduced to take advantage of the cost for water production 
+from the desalination unit. In ( Arani et al., 2017 ), a strategy for an- 
+alyzing the economic issues of thermal systems is proposed; other 
+units such as combined gas turbine and desalination units are in- 
+vestigated. Intertwined water and power energy resources are in- 
+vestigated for a city through a system-based framework in ( Chen 
+& Chen, 2016 ). In the stated research, consumed energy and water 
+consumption are merged into uniﬁed hybrid energy. These units 
+are compared separately to obtain effective results. 
+The water and power uncertainties have signiﬁcant effects on 
+the optimal operation of the nexus system. The impacts of the wa- 
+ter uncertainty are investigated in ( Guieysse et al., 2013 ). The wa- 
+2 
+
+Q. Guo, T. Guo, Q. Tian et al. 
+Computers and Chemical Engineering 155 (2021) 107542 
+ter and power demand uncertainty in the nexus systems is mod- 
+eled using the chance-constranted modeling approach based on 
+scenario method in ( Stuhlmacher & Mathieu, 2020 ) to determine 
+the optimial schedude of water pumps considering the forecasting 
+errors of demands. Furthermore, in terms of the uncertainty mod- 
+eling in the nexus systems, ref ( Ogbolumani & Nwulu, 2021 ) uses 
+the stochastic fuzzy-based approach, and ( Namany et al., 2018 ) 
+proposed a non-cooperative game. Moreover, in ( Tan et al., 2021 ) 
+a two-stage stochastic optimization is also is used in uncertainty 
+modeling in the water and power planning problem. To model the 
+uncertainties in a energy-water nexus, the uncertain parameters 
+are expresses via the interval values and fuzzy random variables in 
+( Lv et al., 2018 ). An energy-water nexus system planning problem, 
+for low-carbon system design, is investigated in ( Ji et al., 2020 ) 
+according to needs for a robust solutions against the uncertain- 
+ties considering a trade off between cost and risk. Moreover, the 
+importance of the water demand uncertainty modeling and used 
+methods is investigated in ( Tiwari & Adamowski, 2013 ), and an 
+ensemble wavelet-bootstrap-neural network model is proposed for 
+the forecasting process. 
+1.3. Novelty and contribution 
+Based on the reviewed papers, the modeling of the uncertainty 
+in the water and power nexus system has not been investigated 
+decently. Moreover, according to the reviewed papers, the water 
+and power demand’s uncertainties have considerable impacts on 
+the nexus systems. Thus, in this paper, the power and water de- 
+mand’s uncertainty is considered a big challenge of the nexus sys- 
+tems. Modeling the uncertainties using robus optimization is the 
+contribution of this paper. To deal with the uncertainty of nexus 
+systems, which has a great impact on the water and power de- 
+mands, using one of the optimization approaches will be a promis- 
+ing way to handle the uncertainty of these systems. In this paper, 
+the robust optimization technique (ROT) will be used for optimiz- 
+ing the water and power demands for the proposed nexus system. 
+Also, a deterministic approach will be applied to the nexus system 
+to point out the difference between the ROT and deterministic ap- 
+proaches. So, the arrangement of the proposed paper will be as 
+follows: 
+• Applying the robust optimization technique to model the uncer- 
+tainties of the water and power demands in the nexus system 
+• Proposing a robust strategy versus deterministic strategy 
+Furthermore, the conceptual illustration of the proposed system 
+is represented in Fig. 1 . 
+Section 1 presented the introduction and dealt with the 
+overview of the related surveys. Section 2 will be dedicated to 
+problem formulation and its explanation. The general formula- 
+tion of ROT and applied ROT to the base problem are presented 
+in section 3 . The case study is expressed in section 4 . Finally, 
+section 5 intended to point out the conclusion of the paper. 
+2. Deterministic based problem formulation 
+The proposed objective function aims to minimize the total cost 
+of all production units. To clarify the issue, production units are 
+composed of water, power, and CWP plants. The priority of the 
+proposed paper is to optimize the total cost of these production 
+units by using the ROT procedure. So, equation (1) expresses the 
+objective function as follows: 
+Objecti v e F unction = C p + C w + C cwp 
+(1) 
+To investigate the objective function in detail, three main parts 
+of the objective function are expressed through equations (2) –
+Fig. 1. Overview of the proposed system 
+(4) . Equation (2) expresses the cost of all power production ther- 
+mal units, which is a quadratic function of the generated power 
+by thermal units. Also, three fuel cost coeﬃcients of power gen- 
+eration are inﬂuenced by three indicated coeﬃcients. Similarly, 
+equations (3) and (4) present the cost of desalination units’ water 
+production and CWP plants’ water production, respectively. 
+C p = 
+ 
+g,t 
+( a g P 2 
+g,t + b g P g,t + c g U g,t ) 
+;
+∀ g ∈ 	p ∀ t ∈ T 
+(2) 
+C w = 
+ 
+w,t 
+( a w W 2 
+w,t + b w W w,t + c w U w,t ) ;
+∀ w ∈ 	w ∀ t ∈ T (3) 
+C cwp = 
+ 
+c,t 
+( αc P 2 
+c,t + βc P c,t W c,t + γc W 2 
+c,t + λc P c,t + ξc W c,t 
++ ζc U c,t ) 
+;
+∀ c ∈ 	cwp , ∀ t ∈ T 
+(4) 
+In (2)-(4), the cost function coeﬃcients are properly sized pos- 
+itive constant matrices based on their individual manufacturing 
+units’ heat rate characteristics. In addition, the cost functions Cp, 
+Cw, Ccwp are considered as quadratic functions with respect to 
+their production variables. For all three types of generation units, 
+this is a generally held notion in which details of these functions 
+are given in ( Wood et al., 2009 ). 
+Moreover, equations (5) and (6) are used to obtain plausible re- 
+sults to meet the balance constraint in the water and power pro- 
+duction units. These equations mean that all the generating units 
+both for water and power should meet the water and power de- 
+mands. 
+ 
+g∈ 	p 
+P g,t + 
+ 
+c∈ 	cwp 
+P c,t = E t ;
+∀ t = 1 , 2 , 3 , ..., T 
+(5) 
+ 
+c∈ 	cwp 
+W c,t + 
+ 
+w ∈ 	cwp 
+W w,t = W t ;
+∀ t = 1 , 2 , 3 , ..., T 
+(6) 
+In the following, the main boundaries of the proposed problem 
+are presented. Equation (7) – (8) pertains to the power production 
+limit generated from thermal and CWP units, respectively. There- 
+fore, power generation will have a speciﬁc value of production due 
+to the thermal and CWP plant limits. 
+P min 
+g 
+× U g,t ≤P g,t ≤P max 
+g 
+× U g,t ;
+∀ g ∈ 	p ∀ t ∈ T 
+(7) 
+P min 
+c 
+× U c,t ≤P c,t ≤P max 
+c 
+× U c,t ;
+∀ c ∈ 	cwp ∀ t ∈ T 
+(8) 
+Similar to the above equation’s concept, equations (9) – (10) are 
+related to the total water production of water desalination units 
+3 
+
+Q. Guo, T. Guo, Q. Tian et al. 
+Computers and Chemical Engineering 155 (2021) 107542 
+and CWP plants, respectively. 
+W min 
+w 
+× U w,t ≤W w,t ≤W max 
+w 
+× U w,t ;
+∀ w ∈ 	w ∀ t ∈ T 
+(9) 
+W min 
+c 
+× U c,t ≤W c,t ≤W max 
+c 
+× U c,t ;
+∀ c ∈ 	cwp ∀ t ∈ T (10) 
+According to equation (11) , the water and power generation ra- 
+tio is bounded through their minimum and maximum water-power 
+production, which relates to the conditions of the CWP plants. 
+R min 
+c 
+≤
+P c,t 
+W c,t 
+≤R max 
+c 
+;
+∀ g ∈ 	p ∀ t ∈ T 
+(11) 
+Equation (12) indicates the ramp-up and ramp-down values for 
+thermal power plants, which depend on previous power. 
+Max (P min 
+g 
+P t−1 
+g 
+−D R g ) ≤P g,t 
+≤Min (P max 
+g 
+P t−1 
+g 
++ U R g ) ;
+∀ g ∈ 	p ∀ t ∈ T 
+(12) 
+3. ROT based problem formulation 
+The robust optimization approach is a well-known uncer- 
+tainty modeling approach in optimization problems. Unlike the 
+stochastic-based methods, implementing this approach doesn’t 
+need historical data from uncertain parameters, which is advan- 
+tageous for the ROT. Hence, this approach can be modeled in the 
+optimization problems by deﬁning a deviation range for the un- 
+certain parameters. Thus, considering a proper deviation bound for 
+the uncertain parameter would be a disadvantage for the ROT. Ac- 
+cordingly, the results of the robust optimization give the conser- 
+vation results against the deviation of the uncertain parameters. 
+This section will introduce the general form of robust optimization 
+technique ( Dominguez et al., 2012 ) as follows: 
+Min 
+n 
+ 
+j=1 
+c j . x j 
+(13) 
+Subject to: 
+n 
+ 
+j=1 
+a ij . x j ≤b i 
+i = 1 , 2 , ..., m 
+(14) 
+x j ≥0 
+j = 1 , 2 , ..., n 
+(15) 
+x j ∈ { 0 , 1 } for some j = 1 , 2 , ..., n 
+(16) 
+In the above equations, x j stands for optimization variables, a ij 
+and b i are expressed for factors of the matrix constraints and co- 
+eﬃcient of right-hand-side vector, respectively. Values a ij are inde- 
+pendent, symmetrical, and have a random variable. It should be 
+noted that these values are limited with an unknown distribu- 
+tion function but with a speciﬁc domain [ a ij −ˆ 
+a ij a ij + ˆ 
+a ij ] . For 
+values ˆ 
+a ij ≥0 , deviation from the average values a ij will be ˆ 
+a ij . 
+Also, in the case that uncertainty exists, a control parameter i 
+will be used to formulate the speciﬁc problems to regulate the ro- 
+bustness of the considered technique versus the expected value of 
+conservatism in the solution. This control parameter i will be in 
+the boundary of [ 0 , | J i | ] where J i = { j| ˆ 
+a ij ≥0 } . It is noteworthy to 
+state that i can be a non-integer value between [0,1]. More de- 
+tails about the modeling of the robust optimization methodology 
+can be found in reference ( Nourollahi, Salyani, et al., 2021 ) and 
+( Nourollahi, Mohammadi-Ivatloo, et al., 2021 ). Moreover, the math- 
+ematical details of the ROT to understanding the auxiliary variables 
+and hyperparameters like Gamma are described in ( Bertsimas & 
+Sim, 2004 ). 
+If there is an uncertain parameter which includes b i in the pro- 
+posed problem, an ancillary component so-called x n +1 will partici- 
+pate in the above equations, and a new form of the equation will 
+be as follows: 
+Minimiz e x j ∀ j 
+n 
+ 
+j=1 
+c j . x j 
+(17) 
+Subject to: 
+n 
+ 
+j=1 
+a ij . x j −b i . x n +1 ≤0 
+i = 1 , 2 , ..., m 
+(18) 
+x j ≥0 
+j = 1 , 2 , ..., n 
+(19) 
+x n +1 = 1 
+(20) 
+x j ∈ { 0 , 1 } for some j = 1 , 2 , ..., n 
+(21) 
+In the updated formulas, b i stands as a random vari- 
+able and ˜ 
+b i can only take values that are in the region of 
+[ b i −ˆ 
+b i b i + ˆ 
+b i ] where ˆ 
+b i ≥0 , and deviation from the average val- 
+ues of b i coeﬃcients is ˆ 
+b i . Finally, the resultant and general form of 
+the ROT will be as follows: 
+Minimize 
+n 
+ 
+j=1 
+c j . x j 
+(22) 
+Subject to: 
+n 
+ 
+j=1 
+a ij . x j −b i + z i . i + q i,n +1 ≤0 
+i = 1 , 2 , ..., m 
+(23) 
+z i + q i,n +1 ≥ˆ 
+b i . y n +1 
+i = 1 , 2 , ..., m 
+(24) 
+q i,n +1 ≥0 
+i = 1 , 2 , ..., m 
+(25) 
+y n +1 ≥0 
+(26) 
+z i ≥0 
+i = 1 , ..., m 
+(27) 
+y n +1 ≥1 
+(28) 
+x j ≥0 
+j = 1 , ..., n 
+(29) 
+x j ∈ { 0 , 1 } for some j = 1 , ..., n 
+(30) 
+In the above equation, q i,n +1 , y n +1 and z i are dual variables of 
+the proposed problem, and there is another auxiliary component 
+y n +1 that is deﬁned to obtain linear terms. 
+3.1. Applied ROT to the base problem 
+According to the general procedure of ROT, which is expanded 
+in the previous section, objective function will remain constant to 
+apply ROT to the base problem. It should be noted that in this pro- 
+posed problem, equations (5) and (6) should be updated through 
+equations (33) – (38) and (39)– (44), respectively, to participate in 
+the ROT. 
+Objecti v e F unction = C p + C w + C cwp 
+(31) 
+const raint s : (2) −(4) and (7) −(12) 
+(32) 
+4 
+
+Q. Guo, T. Guo, Q. Tian et al. 
+Computers and Chemical Engineering 155 (2021) 107542 
+Table 1 
+Speciﬁcations of installed units 
+Power units 
+Coproduction units 
+water 
+unit #1 
+unit #2 
+unit #3 
+unit #4 
+unit #1 
+unit #2 
+unit #3 
+unit #1 
+Maximum power capacity (MW) 
+500 
+400 
+400 
+350 
+800 
+600 
+400 
+0 
+Maximum water capacity (m 3 /h) 
+0 
+0 
+0 
+0 
+200 
+150 
+100 
+250 
+Minimum power capacity (MW) 
+0 
+0 
+0 
+0 
+160 
+120 
+80 
+0 
+Minimum water capacity (m 3 /h) 
+0 
+0 
+0 
+0 
+30 
+23 
+15 
+0 
+Minimum product ration (MWh/m 3 ) 
+- 
+- 
+- 
+- 
+4 
+4 
+4 
+- 
+Maximum product ration (MWh/m 3 ) 
+- 
+- 
+- 
+- 
+9 
+9 
+9 
+- 
+ 
+g∈ 	p 
+P g,t + 
+ 
+c∈ 	cwp 
+P c,t = 
+∼
+E 
+t 
++ Z 1 (t) .Gama (t) + Q 1 (t) ;
+∀ t = 1 , 2 , 3 , ..., T 
+(33) 
+Z 1 (t) + Q 1 (t) ≥D E max (t) × Y 1 (t) 
+(34) 
+Q 1 (t) ≥0 
+(35) 
+Y 1 (t) ≥1 
+(36) 
+Z 1 (t) ≥0 
+(37) 
+Y 1 (t) ≥0 
+(38) 
+Similarly, the following equations will be applied to the second 
+uncertain parameter, which equation (6) has it already. 
+ 
+c∈ 	cwp 
+W c,t + 
+ 
+w ∈ 	cwp 
+W w,t = ˜ 
+W t 
++ Z 2 (t) .Gama (t) + Q 2 (t) ;
+∀ t = 1 , 2 , 3 , ..., T 
+(39) 
+Z 2 (t) + Q 2 (t) ≥D W max (t) × Y 2 (t) 
+(40) 
+Q 2 (t) ≥0 
+(41) 
+Y 2 (t) ≥1 
+(42) 
+Z 2 (t) ≥0 
+(43) 
+Y 2 (t) ≥0 
+(44) 
+In the above equations, the terms Z 1 (t) , Q 1 (t) , Y 1 (t) are the 
+auxiliary variables and ˜ 
+E t Gama, D E max (t) are parameters for the 
+electrical power demand, which are considered to perform the 
+ROT. Correspondingly, Z 2 (t) , Q 2 (t) , Y 2 (t) are the auxiliary variables 
+and ˜ 
+W t Gama, D W max (t) are the parameters for the water demand. 
+4. Case study 
+This study considers a multi-production unit such as water, 
+power, and CWP units to satisfy the water and power demands. 
+Therefore, one water desalination plant, four thermal plants, and 
+three CWP units are considered. To be precise, input data are de- 
+rived from ( Santhosh et al., 2014 ). However, the speciﬁcations of 
+the installed units are represented in Table 1 to clarify which re- 
+sources are considered in the proposed model. The cost coeﬃcients 
+of the installed units is represented in Table 2 . The represented 
+case study models is modeled a 24 hour operation of the proposed 
+Fig. 2. Power and water demands proﬁl 
+nexus system. Further, the water and power demands along with 
+the deviation bounds in RO are represented in Fig. 2 . 
+In this study, two cases are investigated to show how this 
+applied optimization approach is practical for uncertainty. These 
+cases are expressed as follows: 
+Case1: Without applying ROT which is known as the determin- 
+istic approach 
+Case2: With applying ROT 
+Before discussion on the obtained results, a summry of model 
+statistic would be useful. According to the solve report, the there 
+are 604 single variables and 192 integer variables inside 1,060 
+equations. Besides, there are 264 nonlinear equations in the pro- 
+posed model which is shown the high computational burden of 
+the proposd model. 
+From now on, obtained results for both of the cases will be pre- 
+sented. According to the important effects of the uncertain param- 
+eters on the optimal results of the optimization problem, the ob- 
+tained results of the problem will be differed by uncertainty mod- 
+eling. As mentioned, the robust optimization models the worst re- 
+alizations of the uncertain parameters that are the conservative 
+operators’ strategy. In addition, modeling the worst realization of 
+uncertain parameters will be guaranteed the adequacy of the re- 
+sources against the worst conditions in the power and water de- 
+mands. Thus the results are represented in two cased, including 
+the risk-averse and risk-neutral strategies. 
+The total robust operation cost of all production units is ex- 
+hibited in Fig. 3 . In this proposed problem, ten steps of 0.1 are 
+considered to fulﬁll the whole Gama in the magnitude of 1. It is 
+evident that, by the increase of Gama, total robust operation cost 
+5 
+
+Q. Guo, T. Guo, Q. Tian et al. 
+Computers and Chemical Engineering 155 (2021) 107542 
+Table 2 
+Cost coeﬃcients of units 
+Parameters 
+Unit 1 
+Unit 2 
+Unit 3 
+Unit 4 
+Power plants’ cost coeﬃcients 
+A p 
+2.069e-4 
+3.232e-4 
+1.065e-3 
+4.222e-4 
+B p 
+-1.483e-1 
+-1.854e-1 
+-6.026e-1 
+-2.119e-1 
+C p 
+5.711e + 1 
+5.711e + 1 
+1.268e + 2 
+5.711e + 1 
+Coproduction units’ costs coeﬃcients 
+A c11 
+7.881e-4 
+1.773e-3 
+A c12 
+6.305e-3 
+1.419e-2 
+A c22 
+1.261e-2 
+2.837e-2 
+B c1 
+-1.475 
+-2.213 
+B c2 
+-5.901 
+-8.851 
+C c 
+7.374e + 2 
+7.374e + 2 
+Water plants’ cost coeﬃcients 
+A w 
+1.82E-02 
+B w 
+-7.081 
+C w 
+7.374 
+Fig. 3. Operation costs of units versus variation of Gama 
+rises linearly. To be more precise, the deterministic approach can 
+be obtained by Gama = 0 , which can be read from the obtained 
+curve. Also, Gama = 1 indicates the ROT approach. For Gama = 0 , 
+the corresponding value of the total operation (the robust cost) is 
+$ 8,118.8. For Gama = 1 , this value is $ 8,891.9. By comparing these 
+ﬁrst and last iterations, it can be seen that there is a sharp in- 
+crease in the total operation robust cost, which is 9.52% in com- 
+parison with the deterministic approach. This result indicates that 
+the ROT’s impact on the proposed problem is signiﬁcant. 
+According to Fig. 3 , the linear function of the robust operation 
+cost of power production units can be seen easily. The more Gama 
+increases, the more robust operation cost of power production in- 
+creases. To investigate more accurately, for Gama = 0 , which refers 
+to the deterministic approach, the related value of power produc- 
+tion cost is $ 3,217.1. For Gama = 1 which stands for the ROT, this 
+value increased to $ 3,231.8. The deviation of power production 
+cost is not remarkable because the increased percentage is 0.46. 
+As illustrated in Fig. 3 , similarly, there is a linear increase in the 
+robust operation cost of the water desalination unit by the increase 
+of its correspondent Gama. To give a clear viewpoint, similarly to 
+the previous explanations, the corresponded value of water desali- 
+nation cost is $ 823.8 for Gama = 0 (deterministic), in which this 
+value rises to $ 1,368.9 for Gama = 1 (ROT). By sizing up the calcu- 
+lation, there is a 66% increase in the total operation robust cost of 
+water desalination, which has a signiﬁcant increase, and it is no- 
+table. 
+By the cost comparison of the 3 it can be concluded that the 
+water facility takes a considerable effect from the water and power 
+uncertainties. These high impacts are illustrated in the ﬁrst and 
+last Gamma’s of Fig. 3 , where the operation cost of the water facil- 
+ity is increased signiﬁcantly against the increasing Gamma. More- 
+over, as it is presented in Fig. 6 , the slope of the robust operation 
+cost of the coproduction units is positive and increases as corre- 
+spondent Gama increases. According to the obtained following val- 
+ues, there is a 5.23% increase in the total operation robust cost of 
+CWP production; for Gama = 0 obtained value is $ 4,077.9, and for 
+Gama = 1 this value is $ 4,291.2. 
+Power demand is fully satisﬁed in both deterministic and ro- 
+bust approaches, proving the correct implementation of the pro- 
+posed problem. In general, power demand and its production units 
+are increased totally in the ROT case compared to a deterministic 
+one, which is illustrated in Fig. 4 . To be more precise, the exact 
+values of power demand and power production of all facilities will 
+be discussed as follows. To point out signiﬁcant deviations in the 
+deterministic and the ROT approaches, just remarkable deviations 
+are expressed brieﬂy. The power production of thermal plants and 
+CWP units is considered ﬁrst. Power production of power plant one 
+is increased from 452.78 MW (in the deterministic case) to 50 0.0 0 
+MW in (the ROT case) in hour 13, representing a 10.43% increment. 
+Also, power plant two had some deviation in hour 13, from 347.25 
+MW (deterministic) to 380.41 MW (ROT). For power plant three, 
+despite previous power plants one and two, there are two devi- 
+ations in the power production of this unit, which are increased 
+from 301.25 MW to 311.32 MW in hour 13, and from 351.56 MW 
+to 397.88 MW in hour 14. Similar to power plants one and two, 
+the corresponded value for the deterministic model is 297.20 MW, 
+which increases to 322.60 MW in the ROT approach in hour 13. 
+From now on, the power production of CWP units will be dis- 
+cussed. There are both increments and decrements in the power 
+generation of coproduction units in these units, which we will ex- 
+press some of them. For cogeneration plant one, power production 
+decreased from 796.61 MW (in the deterministic case) to 623.90 
+MW (in the ROT case), which represents a decrement in hour 23. 
+On the contrary, in hour 14, power production is increased from 
+706.25 MW (deterministic) to 797.12 MW (ROT), which expresses a 
+12% increment. For the cogeneration plant two, power production 
+is increased from 468.28 MW (in the deterministic case) to 522.51 
+MW (in the ROT case) in hour 22, and also, it is decreased from 
+598.65 MW (deterministic) to 467.93 MW (ROT) in hour 24. For 
+the last cogeneration plant three of the power production, there 
+are minor deviations except for two major ones, which are risen 
+from 312.66 MW (in the deterministic case) to 40 0.0 0 MW (in the 
+ROT case) in hour 22 and decreased from 40 0.0 0 MW (determinis- 
+tic) to 312.66 MW (ROT) in hour 21. 
+6 
+
+Q. Guo, T. Guo, Q. Tian et al. 
+Computers and Chemical Engineering 155 (2021) 107542 
+Fig. 4. Applied deterministic and robust approaches in case of power demand balance 
+Fig. 5. Applied deterministic and robust approaches in case of water demand balance 
+According to Fig. 5 and similar to the power demand balance, 
+water demand is met entirely by the water and CWP units. Wa- 
+ter demand growth and, as a consequence, water production in- 
+crement in both the deterministic and robust cases cannot be ne- 
+glected. To straighten out the obtained ﬁgure’s main concept and 
+give a better overview as the previous explanation, some of the 
+speciﬁc values of water production units will be represented. Wa- 
+ter production of water plant one varies almost from hour 10 to 
+19. To be more accurate, for example, in hour 12, water produc- 
+tion increased from 150.96 (in the deterministic case) to 186.00 (in 
+the ROT case), which indicates the increment in water production 
+due to ROT application. Now cogeneration units of water produc- 
+tion will be analyzed in detail. For cogeneration plant one, both in- 
+crement and decrement water production can be seen clearly. Wa- 
+7 
+
+Q. Guo, T. Guo, Q. Tian et al. 
+Computers and Chemical Engineering 155 (2021) 107542 
+Fig. 6. Cost variation versus different demand coeﬃcients 
+ter production increased from 113.06 (in the deterministic case) to 
+155.98 (in the ROT case) in hour 3. Also, this water production de- 
+creased from 155.99 (in the deterministic case) to 119.23 (in the 
+ROT case) in hour 9. Furthermore, for cogeneration plant two, wa- 
+ter production again increased from 138.58 (in the deterministic 
+case) to 144.35 (in the ROT case) in hour 18. For cogeneration plant 
+three, the highest deviation is related to hour 1, which is increased 
+from 55.96 (in the deterministic case) to 77.95 (in the ROT case). 
+Water and power demands’ increasing and decreasing charac- 
+teristics are presented in Fig. 4 and Fig. 5 , respectively. For ex- 
+ample, in power demand due to ﬂuctuations of power produc- 
+tion units’ production and by considering power demand variation, 
+power demand increased from 2875.00 (in the deterministic case) 
+to 3047.50 (in the ROT case). Similar to the power demand con- 
+cept, here in hour 1 in the water demand, water production in- 
+creased from 272.97 (in the deterministic case) to 343.41 (in the 
+ROT case). 
+4.1. Sensitivity analysis of demands 
+In this section, a sensitivity analysis is carried on the demands 
+to show ta effectiveness of the proposed methodology. The results 
+of this analysis are represented in Fig. 6 . According to Fig. 6 , in- 
+creasing the power and water demands will lead to increasing the 
+system’s operation cost. Further, Fig. 6 shows that increasing the 
+demands from the nominal value increases the total cost compared 
+to the lower values. 
+5. Conclusion 
+This study deals with the uncertainty of water and power de- 
+mand in a nexus system. This uncertainty is met by taking ad- 
+vantage of the optimization approach, ROT. The proposed prob- 
+lem is solved through two cases, which were deterministic and the 
+ROT approaches. As a result, there is 9.52% increment in the total 
+operation robust cost due to implementing the ROT approach by 
+considering the following values; for Gama = 0 which stands for 
+deterministic approach, obtained total operation robust cost is $ 
+8,118.8 and for Gama = 1 which refers to the ROT approach, the 
+total correspondent operation robust cost is $ 8,891.9. Due to the 
+peak periods and conditions of the producing plants, main pro- 
+duced power, water, or cogeneration plants were taking place to 
+satisfy the power and water demands in both deterministic and 
+ROT cases. As a result, all the water and power demands have been 
+satisﬁed through water and power-producing units. 
+Declaration of Competing Interest 
+None. 
+CRediT authorship contribution statement 
+Qun Guo: Data curation, Methodology, Writing – original 
+draft. Tiantong Guo: Formal analysis, Software, Writing – origi- 
+nal draft. Qiannan Tian: Validation, Visualization, Writing – origi- 
+nal draft. Sayyad Nojavan: Conceptualization, Investigation, Super- 
+vision, Writing – review & editing. 
+Acknowledgment 
+Humanities and Social Science Fund of Ministry of Education 
+China (NO.20YJC630135); National Natural Science Foundation of 
+China (NO.72001072). 
+References 
+Alkaisi, A. , Mossad, R. , Shariﬁan-Barforoush, A. , 2017. A Review of the Water De- 
+salination Systems Integrated with Renewable Energy. Energy Procedia 110, 
+268–274 . 
+Arani, A .M.A . , Zamani, V. , Behbahaninia, A . , 2017. Economic analysis of a combined 
+power and desalination plant considering availability changes due to degrada- 
+tion. Desalination 414, 1–9 . 
+Bertsimas, D. , Sim, M. , 2004. The price of robustness. Operations Research 52 (1), 
+35–53 . 
+Biggs, E.M. , Bruce, E. , Boruff, B. , Duncan, J.M.A. , Horsley, J. , Pauli, N. , McNeill, K. , 
+Neef, A. , Van Ogtrop, F. , Curnow, J. , Haworth, B. , Duce, S. , Imanari, Y. , 2015. Sus- 
+tainable development and the water-energy-food nexus: A perspective on liveli- 
+hoods. Environmental Science and Policy 54, 389–397 . 
+Cabello, V. , Renner, A. , Giampietro, M. , 2019. Relational analysis of the resource 
+nexus in arid land crop production. Advances in Water Resources 130, 258–269 . 
+Chen, S. , Chen, B. , 2016. Urban energy–water nexus: A network perspective. Applied 
+Energy 184, 905–914 . 
+Chen, S. , Tan, Y. , Liu, Z. , 2019. Direct and embodied energy-water-carbon nexus at 
+an inter-regional scale. Applied Energy 251 . 
+Dominguez, R. , Baringo, L. , Conejo, A.J. , 2012. Optimal offering strategy for a con- 
+centrating solar power plant. Applied Energy 98, 316–325 . 
+Duan, X. , Xu, Z. , Sun, X. , Deng, B. , Liu, J. , 2021. Effects of injection timing and EGR 
+on combustion and emissions characteristics of the diesel engine fuelled with 
+acetone–butanol–ethanol/diesel blend fuels. Energy 231, 121069 . 
+Govindan, R. , Al-Ansari, T. , 2019. Computational decision framework for enhancing 
+resilience of the energy, water and food nexus in risky environments. In: Re- 
+newable and Sustainable Energy Reviews, 112. Elsevier Ltd, pp. 653–668 . 
+Guan, S. , Han, M. , Wu, X. , Guan, C.H. , Zhang, B. , 2019. Exploring energy-water-land 
+nexus in national supply chains: China 2012. Energy 185, 1225–1234 . 
+Guieysse, B. , Béchet, Q. , Shilton, A. , 2013. Variability and uncertainty in water de- 
+mand and water footprint assessments of fresh algae cultivation based on case 
+studies from ﬁve climatic regions. Bioresource Technology 128, 317–323 . 
+Hamed, O.A. , Al-Washmi, H.A. , Al-Otaibi, H.A. , 2006. Thermoeconomic analysis of a 
+power/water cogeneration plant. Energy 31 (14), 2699–2709 . 
+He, W.F. , Han, D. , Zhu, W.P. , Ji, C. , 2018. Thermo-economic analysis of a water-heated 
+humidiﬁcation-dehumidiﬁcation desalination system with waste heat recovery. 
+Energy Conversion and Management 160, 182–190 . 
+He, W.F. , Zhang, X.K. , Han, D. , Gao, L. , 2017. Performance analysis of a water-power 
+combined system with air-heated humidiﬁcation dehumidiﬁcation process. En- 
+ergy 130, 218–227 . 
+Hicks, D.C. , Mitcheson, G.R. , Pleass, C.M. , Salevan, J.F. , 1989. Delbouy: Ocean 
+wave-powered seawater reverse osmosis desalination systems. Desalination 73 
+(C), 81–94 . 
+Hussien, W.A. , Memon, F.A. , Savic, D.A. , 2017. An integrated model to evaluate wa- 
+ter-energy-food nexus at a household scale. Environmental Modelling and Soft- 
+ware 93, 366–380 . 
+Jabari, F. , Jabari, H. , Mohammadi-ivatloo, B. , Ghafouri, J. , 2019. Optimal short-term 
+coordination of water-heat-power nexus incorporating plug-in electric vehicles 
+and real-time demand response programs. Energy 174, 708–723 . 
+Ji, L. , Zhang, B. , Huang, G. , Cai, Y. , Yin, J. , 2020. Robust regional low-carbon electric- 
+ity system planning with energy-water nexus under uncertainties and complex 
+policy guidelines. Journal of Cleaner Production 252, 119800 . 
+Jiang, T. , Liu, Z. , Wang, G. , Chen, Z. , 2021. Comparative study of thermally stratiﬁed 
+tank using different heat transfer materials for concentrated solar power plant. 
+Energy Reports 7, 3678–3687 . 
+Kermani, M. , Périn-Levasseur, Z. , Benali, M. , Savulescu, L. , Maréchal, F. , 2017. A novel 
+MILP approach for simultaneous optimization of water and energy: Application 
+to a Canadian softwood Kraft pulping mill. Computers \ & Chemical Engineering 
+102, 238–257 . 
+8 
+
+Q. Guo, T. Guo, Q. Tian et al. 
+Computers and Chemical Engineering 155 (2021) 107542 
+Lv, J. , Li, Y.P. , Shan, B.G. , Jin, S.W. , Suo, C. , 2018. Planning energy-water nexus system 
+under multiple uncertainties – A case study of Hebei province. Applied Energy 
+229, 389–403 . 
+Meng, Fanwei , Pang, A. , Dong, X. , Han, C. , Sha, X. , 2018. H ∞ optimal performance 
+design of an unstable plant under BODE integral constraint. Complexity 2018 . 
+Meng, Fanxin , Liu, G. , Liang, S. , Su, M. , Yang, Z. , 2019. Critical review of the ener- 
+gy-water-carbon nexus in cities. Energy 171, 1017–1032 . 
+Namany, S. , Al-Ansari, T. , Govindan, R. , 2018. Integrated techno-economic optimiza- 
+tion for the design and operations of energy, water and food nexus systems 
+constrained as non-cooperative games. In: Computer Aided Chemical Engineer- 
+ing, 44. Elsevier B.V., pp. 1003–1008 . 
+Namany, S. , Al-Ansari, T. , Govindan, R. , 2019a. Sustainable energy, water and food 
+nexus systems: A focused review of decision-making tools for eﬃcient resource 
+management and governance. Journal of Cleaner Production 225, 610–626 Else- 
+vier Ltd . 
+Namany, S. , Al-Ansari, T. , Govindan, R. , 2019b. Optimisation of the energy, water, and 
+food nexus for food security scenarios. Computers and Chemical Engineering 
+129 . 
+Nourollahi, R. , Mohammadi-Ivatloo, B. , Zare, K. , 2021. Hybrid Stochastic/Robust Of- 
+fering Strategy for Coordinated Wind Power and Compressed Air Energy Storage 
+in Multielectricity Markets. IEEE Systems Journal 1–8 . 
+Nourollahi, R. , Salyani, P. , Zare, K. , Mohammadi-Ivatloo, B. , 2021. Resiliency-oriented 
+optimal scheduling of microgrids in the presence of demand response programs 
+using a hybrid stochastic-robust optimization approach. International Journal of 
+Electrical Power and Energy Systems 128, 106723 . 
+Obringer, R. , Kumar, R. , Nateghi, R. , 2019. Analyzing the climate sensitivity of the 
+coupled water-electricity demand nexus in the Midwestern United States. Ap- 
+plied Energy 252 . 
+Ogbolumani, O.A. , Nwulu, N.I. , 2021. Multi-objective optimisation of constrained 
+food-energy-water-nexus systems for sustainable resource allocation. Sustain- 
+able Energy Technologies and Assessments 44, 100967 . 
+Peng, X. , Liu, Z. , Jiang, D. , 2021. A review of multiphase energy conversion in wind 
+power generation. Renewable and Sustainable Energy Reviews 147, 111172 . 
+Roidt, M. , Avellán, T. , 2019. Learning from integrated management approaches to 
+implement the Nexus. Journal of Environmental Management 237, 609–616 Aca- 
+demic Press . 
+Santhosh, A. , Farid, A.M. , Youcef-Toumi, K. , 2014. Real-time economic dispatch for 
+the supply side of the energy-water nexus. Applied Energy 122, 42–52 . 
+Shahzad, M.W. , Burhan, M. , Ang, L. , Ng, K.C. , 2017. Energy-water-environment nexus 
+underpinning future desalination sustainability. Desalination 413, 52–64 Else- 
+vier B.V. . 
+Stuhlmacher, A. , Mathieu, J.L. , 2020. Chance-Constrained Water Pumping to Manage 
+Water and Power Demand Uncertainty in Distribution Networks. Proceedings of 
+the IEEE 108 (9), 1640–1655 . 
+Tan, Q. , Liu, Y. , Zhang, X. , 2021. Stochastic optimization framework of the ener- 
+gy-water-emissions nexus for regional power system planning considering mul- 
+tiple uncertainty. Journal of Cleaner Production 281, 124470 . 
+Tiwari, M.K. , Adamowski, J. , 2013. Urban water demand forecasting and uncertainty 
+assessment using ensemble wavelet-bootstrap-neural network models. Water 
+Resources Research 49 (10), 6486–6507 . 
+Tsolas, S.D. , Karim, M.N. , Hasan, M.M.F. , 2019. Systematic Design, Analysis and Op- 
+timization of Water-Energy Nexus. Computer Aided Chemical Engineering 47, 
+227–232 . 
+Wang, X. , van Dam, K.H. , Triantafyllidis, C. , Koppelaar, R.H.E.M. , Shah, N. , 2019. En- 
+ergy-water nexus design and operation towards the sustainable development 
+goals. Computers & Chemical Engineering 124, 162–171 . 
+Wood, A.J., Wollenberg, B.F., Sheblé, G.B., 2009. Power Generation, Operation, and 
+Control, 3rd Edition Wiley https://www.wiley.com/en-us/Power+Generation% 
+2C+Operation%2C+and+Control%2C+3rd+Edition- p- 9780471790556 . 
+Xu, Z. , Li, Y. , Herzberger, A. , Chen, X. , Gong, M. , Kapsar, K. , Hovis, C. , Whyte, J. , 
+Tang, Y. , Li, Y. , Liu, J. , 2019. Interactive national virtual water-energy nexus net- 
+works. Science of the Total Environment 673, 128–135 . 
+Zhang, L. , Zheng, H. , Wan, T. , Shi, D. , Lyu, L. , Cai, G. , 2021. An integrated control al- 
+gorithm of power distribution for islanded microgrid based on improved virtual 
+synchronous generator. IET Renewable Power Generation . 
+9 

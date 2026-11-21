@@ -1,0 +1,2965 @@
+
+===== PAGE 1 =====
+Contents lists available at ScienceDirect
+Computers & Industrial Engineering
+journal homepage: www.elsevier.com/locate/caie
+Component importance measures for interdependent infrastructure network
+resilience
+Yasser Almoghathawia, Kash Barkerb,⁎
+a Systems Engineering Department, King Fahd University of Petroleum and Minerals, Dhahran, Saudi Arabia
+b School of Industrial and Systems Engineering, University of Oklahoma, Norman, OK, USA
+A R T I C L E I N F O
+Keywords:
+Importance measures
+Interdependent networks
+Recoverability
+Resilience
+Vulnerability
+A B S T R A C T
+Critical infrastructure networks such as transportation, telecommunications, electric power, natural gas and oil,
+and water distribution rely on one another for their proper functionality. Hence, they are increasingly inter-
+dependent, making them highly vulnerable, where the occurrence of even a small disruption in one infra-
+structure network could propagate to affect other dependent infrastructure networks leading to a more sig-
+nificant adverse impact on society. Therefore, a key aspect of preparedness planning in infrastructure networks is
+identifying the critical network components that influence not only (i) the performance of their networks the
+most when disrupted and restored but also (ii) the performance of other networks due to their interdependent
+nature. This work offers a means to study the importance of interdependent network components with a resi-
+lience-focused performance measure in mind. We propose two component importance measures, (i) the first of
+which quantifies the effect of disrupted components on the resilience of the interdependent infrastructure net-
+works once they are recovered, while (ii) the second measures the potential impact on the resilience of the
+interdependent infrastructure networks caused by a specific disrupted network element. The proposed measures
+are illustrated through generated interdependent power-water networks and compared with two other common
+network centrality measures. The use of such measures could identify components that are candidates for the
+allocation of resources to reduce their vulnerability or to expedite their recovery.
+1. Introduction and motivation
+The fundamental services of a society depend on the continuous and
+proper functioning of critical infrastructure networks such as trans-
+portation, telecommunications, electric power, natural gas and oil, and
+water distribution, to support its economy, security, and quality of life.
+However, components of such infrastructure networks are subjected to
+disruptions (e.g., manmade accidents, malevolent attacks, or natural
+disasters) that could affect their performance differently and have di-
+rect consequences on people’s daily lives. Hence, a key component of
+analyzing such critical infrastructure networks is understanding which
+components of the infrastructure network affect the performance of the
+entire network when disrupted. For example, in electric power net-
+works, such an exercise would include identifying the key substations
+that, when disrupted, could result in large numbers of customers
+without power. In transportation networks, one may be concerned with
+the bridges that lead to heavy congestion or delays in travel time when
+inoperable. The field of reliability engineering has long sought to
+identify system components that can cause a degradation in system
+performance, where performance is often measured with reliability or
+availability (Gravette & Barker, 2014).
+Several component importance measures (CIMs) have been pro-
+posed in literature to identify the critical and influential components
+that affect the performance of their infrastructure networks the most
+when disrupted or restored following a disruptive event. CIMs could
+assist decision makers by identifying the critical components (nodes
+and links) in their infrastructure networks so they can be reinforced or
+protected prior to a disruptive event and prioritized or expedited during
+the recovery process after a disruptive event (Almoghathawi, Barker,
+Rocco, & Nicholson, 2017; Nicholson, Barker, & Ramirez-Marquez,
+2016). Most of the proposed CIMs are based on network vulnerability
+analysis, involving the identification of critical components that most
+affect network performance when disrupted. These CIMs include to-
+pological-based CIMs (e.g., average path length (Newman, 2003), net-
+work efficiency (Nagurney & Qiang, 2009), resilience-based CIMs (e.g.,
+resilience worth (Barker, Ramirez-Marquez, & Rocco, 2013), resilience
+(Whitson & Ramirez-Marquez, 2009), flow-based CIMs (e.g., flow vul-
+nerability (Ouyang, Zhao, Hong, & Pan, 2014), flow capacity rate
+https://doi.org/10.1016/j.cie.2019.05.001
+Received 9 August 2017; Received in revised form 26 September 2018; Accepted 2 May 2019
+⁎ Corresponding author at: School of Industrial and Systems Engineering, University of Oklahoma, 202 W. Boyd St., Room 124, Norman, OK 73019, USA.
+E-mail address: kashbarker@ou.edu (K. Barker).
+Computers & Industrial Engineering 133 (2019) 153–164
+Available online 08 May 2019
+0360-8352/ © 2019 Elsevier Ltd. All rights reserved.
+T
+
+===== PAGE 2 =====
+(Nicholson
+et
+al.,
+2016),
+reliability-based
+CIMs
+(e.g.,
+reliability
+achievement worth (Ramirez-Marquez & Coit, 2005), availability
+(Barabady & Kumar, 2007), travel time and distance (Erath, Birdsall,
+Axhausen, & Hajdin, 2009; Rodríguez-Núñez & García-Palomares,
+2014), cost of travel time (Jenelius, Petersen, & Mattsson, 2006;
+Sullivan, Novak, Aultman-Hall, & Scott, 2010), and accessibility (Chen,
+Yang, Kongsomsaksakul, & Lee, 2007; Sohn, 2006), among others. On
+the other hand, some other proposed CIMs are based on analyzing
+network recoverability following a disruptive event by assessing the
+effect of the disrupted networks components on the performance of
+their networks when they are restored, including optimal repair time
+and resilience reduction worth (Fang, Pedroni, & Zio, 2016). All these
+CIMs are proposed to identify critical components in a single infra-
+structure network. However, infrastructure networks do not work in-
+dependently from each other, but rather they are highly interconnected
+and mutually interdependent (Peerenboom, Fisher, Rinaldi, & Kelly,
+2002; Rinaldi, Peerenboom, & Kelly, 2001).
+Infrastructure networks often rely on each other in multiple ways
+for them to be functional, making them more interdependent. Two in-
+frastructure networks are said to be interdependent if there is “a bi-
+directional relationship between two infrastructures through which the
+state of each infrastructure influences or is correlated to the state of the
+other” (Rinaldi et al., 2001). There are multiple classifications for the
+interdependencies among infrastructure networks provided in the lit-
+erature (e.g., (Rinaldi et al., 2001; Zimmerman, 2001; Wallace,
+Mendonça, Lee, Mitchell, & Chow, 2003; Dudenhoeffer, Permann, &
+Manic, 2006; Lee, Mitchell, & Wallace, 2007; Zhang & Peeta, 2011).
+Rinaldi et al. (2001) categorized interdependencies between infra-
+structure networks into four types: physical, cyber, geographical and
+logical interdependencies. In this paper, we consider the physical in-
+terdependency among the critical infrastructure networks, which
+means that an output from an infrastructure network is considered an
+input to another and vice versa. This physical interdependence by
+Rinaldi et al. (2001) is equivalent to functional or input inter-
+dependency in other interdependence classifications.
+Though interdependencies across critical infrastructure networks
+can improve their efficiency, the increasing interdependencies among
+those interdependent infrastructure networks make them highly vul-
+nerable to any disruptive event. That is, the occurrence of a disruption
+in an infrastructure network could propagate to other dependent in-
+frastructure networks resulting in a much more significant impact on
+society and its economy (Buldyrev, Parshani, Paul, Stanley, & Havlin,
+2010; Danziger, Shekhtman, Bashan, Berezin, & Havlin, 2016; Eusgeld,
+Nan, & Dietz, 2011; Lee et al., 2007; Little, 2002; Loggins & Wallace,
+2015; Ouyang et al., 2014; Ouyang, 2016; Wallace et al., 2003; Wang,
+Hong, Ouyang, Zhang, & Chen, 2013; Wu, Tang, & Wu, 2016). More-
+over, recent worldwide events have shown the high vulnerability of the
+interdependent infrastructure networks due to their increased inter-
+dependencies, including the 1998 Canada ice storm (Chang, McDaniels,
+Mikawoz, & Peterson, 2007), the 2001 US World Trade Center attack
+(Mendonça & Wallace, 2006), the 2003 North American blackout (U.S.-
+Canada Power System Outage Task Force, 2004), and the 2010 Chile
+earthquake and tsunami (Wen, Sun, & Zhou, 2011), among others. The
+National Infrastructure Protection Plan (Department of Homeland
+Security, 2013) highlights the importance of understanding the risks
+due to interdependencies as being “essential to enhancing critical in-
+frastructure security and resilience.” That is, the importance of infra-
+structure system components should account for their interdependent
+nature. For example, an electric power substation may be more im-
+portant when its influence on not only the rest of the electric power
+network is considered, but also when its influence on other infra-
+structures, such as water distribution or telecommunications, are in-
+cluded. Hence, it is crucial to account for interdependencies between
+critical infrastructure networks when studying their vulnerability or
+recoverability for obtaining a realistic analysis of their performance
+(Holden, Val, Burkhard, & Nodwell, 2013).
+Multiple CIMs are proposed in the literature in which the inter-
+dependences between critical infrastructure networks are considered to
+identify their critical components. Dueñas‐Osorio et al. (Dueñas-Osorio,
+Craig, & Goodno, 2007) prioritized the restoration process for the nodes
+of interdependent infrastructure networks to reduce their fragility ac-
+cording to a proposed CIM, interdependent rank ordering (IRO), con-
+sidering physical interdependency among the infrastructure networks.
+IRO accounts for multiple criteria for each node (i.e., network con-
+nectivity, flow traversal, flow transfer at the interface with other in-
+frastructures, and network vulnerability), where each node has its own
+rank in each one of these criteria. The final prioritized list of nodes can
+be obtained by considering the rank of the nodes in each criterion along
+with a weighting factor for each criterion. Patterson and Apostolakis
+(2007) developed a new approach, geographic valued worth (GVW), to
+rank geographical locations that can affect multiple infrastructure
+networks the most when disrupted considering the geographical inter-
+dependency between the infrastructure networks. First, the worth of
+each network component in each infrastructure network is calculated.
+Then, a generic grid is developed and laid across the map of the in-
+terdependent infrastructure networks in order to determine the geo-
+graphical locations for the study. Finally, the GVW value is determined
+for each geographical location which consists of combined valued
+worth of the network components of all interdependent networks
+within that location then rank the geographical locations accordingly.
+However, the rank of the geographical locations is dependent of their
+size. Johansson and Hassel (2010) proposed a CIM measure that iden-
+tifies the critical components of interdependent networks by quanti-
+fying the contribution of their synergistic consequences to the total
+synergistic consequences for a specific size of the failure set (e.g., single
+failures, two simultaneous failures, three simultaneous failures, and so
+on) taking into account the physical interdependency between the in-
+frastructure networks. They also identified the critical locations within
+the interdependent infrastructure networks by evaluating the con-
+sequences on the interdependent networks performance when compo-
+nents in close proximity to each other and could be from different in-
+frastructure
+networks
+are
+removed
+considering
+physical
+and
+geographical interdependencies between infrastructure networks where
+two infrastructure networks are said to be geographically inter-
+dependent if they are affected by the same local disruption. Wang,
+Hong, and Chen (2012) suggested a new approach to identify the cri-
+tical components in an infrastructure network considering its physical
+interdependency with other infrastructure networks. They evaluated
+the importance of a network component through assessing the relative
+drop in the performance of the infrastructure network when this com-
+ponent is disrupted (i.e., not working). Hence, the global safety effi-
+ciency of the infrastructure network is obtained when each component
+is not working. Accordingly, the network components are ranked with
+respect to the proportion of degradation in the global safety efficiency
+of their network where the higher degradation indicates the most vul-
+nerable network component.
+Recognizing the inevitability of large-scale disruptions, emphasis
+shifted from reliability-driven perspective of protection (e.g., (Patterson
+& Apostolakis, 2007; Johansson & Hassel, 2010; Wang et al., 2012) to a
+perspective of resilience, or the ability to withstand, adapt to, and re-
+cover in a timely manner from the effects of a disruptive event
+(Turnquist & Vugrin, 2013). Therefore, it is important to have resilient
+infrastructure networks (i.e., infrastructure networks that would “pre-
+pare for, prevent, protect against, respond or mitigate any anticipated
+or unexpected significant threat or event” and “rapidly recover and
+reconstitute critical assets, operations, and services with minimum
+damage and disruption.” (Partnership, 2011), accounting for the in-
+terdependencies between them (Ouyang & Wang, 2015). In this paper,
+which builds upon Almoghathawi, Barker, and Ramirez-Marquez
+(2017), we propose two resilience-based CIMs that (i) quantify the ef-
+fect of the disrupted components on the resilience of the interdependent
+infrastructure networks once they are recovered, and (ii) measure the
+Y. Almoghathawi and K. Barker
+Computers & Industrial Engineering 133 (2019) 153–164
+154
+
+===== PAGE 3 =====
+potential impact on the resilience of the interdependent infrastructure
+networks caused by a specific disrupted network element, respectively.
+Hence, they provide a set of prioritized restoration tasks for the dis-
+rupted components (nodes and links) in the interdependent infra-
+structure networks aiming to enhance their resilience given their phy-
+sical interdependency. The two proposed CIMs are based on multiple
+interdependent networks resilience optimization models using mixed-
+integer programming (MIP) and considering complete or proportional
+disruptions for disrupted network components with a fixed or variable
+recovery times for each one of them. These MIP models are built upon
+the recent literature in network recovery (Cavdaroglu, Hammel,
+Mitchell, Sharkey, & Wallace, 2013; González, Dueñas-Osorio, Sánchez-
+Silva, & Medaglia, 2016; Nurre, Cavdaroglu, Mitchell, & Sharkey,
+2012). By studying the resilience of the interdependent infrastructure
+networks in this work, we comprehend the effect on their performance
+of both the magnitude of the disruptive event (i.e., network vulner-
+ability) and the recovery speed of their disrupted components (i.e.,
+network recoverability).
+The remainder of the paper is organized as follows. Section 2 pro-
+vides a brief methodological background about network definition as
+well as network resilience. Multiple interdependent network resilience
+optimization models are presented in Section 3. The proposed resi-
+lience-based component importance measures are discussed in Section
+4. In Section 5, an illustrative example is offered with generated in-
+terdependent power-water networks. Finally, concluding remarks are
+provided in Section 6.
+2. Methodological background
+In this section, we discuss the background required for our proposed
+resilience-based component importance measures for interdependent
+infrastructure networks.
+2.1. Network definition
+In this work, we consider networks that are classified as undirected
+graphs. Each network is denoted by
+=
+G
+N L
+(
+,
+) where N is a set of n
+nodes and L
+i j
+i j
+N i
+j
+{( , ): ,
+,
+} is a set of undirected links with a
+limited capacity on each link. The flow and capacity on link i j
+L
+( , )
+are denoted by xij and uij, respectively. Each network has one or mul-
+tiple supply nodes as well as one or multiple demand nodes, where
+supply and demand nodes are connected by finite directed paths. A path
+connects a supply node and a demand node through a set of internal
+nodes in Nand one or more links in L and the maximum capacity of the
+path equals the minimum capacity of all the links within that path (Ford
+& Fulkerson, 1956).
+The s
+d max flow problem can be formulated as a linear pro-
+graming (LP) model (Bazaraa, Jarvis, & Sherali, 2011), as shown in Eqs.
+(1)–(3). Eq. (1) represents the objective of the model which is max-
+imizing the flow from node s to node d, fsd, where s d
+N
+,
+and
+s
+d. Eq. (2) represents the flow conservation constraints, which
+ensure that the flow into and out of internal nodes are equal and the
+flow out of node s and into node d equal the maximum flow between
+them. Eq. (3) represents the capacity constraints of the links along with
+the non-negativity of the flow.
+f
+max
+sd
+(1)
+=
+=
+=
+x
+x
+f if
+i
+s
+if
+i
+N
+s d
+f if
+i
+d
+s. t.
+0
+{ ,
+}
+i j
+L
+ij
+j i
+L
+ji
+sd
+sd
+( , )
+( , )
+(2)
+x
+u
+i j
+N
+0
+,
+,
+ij
+ij
+(3)
+2.2. Network resilience
+Resilience is generally defined as the ability of an entity or system to
+withstand, adapt to, and recover from a disruptive event to a desired
+level of performance (Barker et al., 2017; Turnquist & Vugrin, 2013).
+There are several approaches to quantify the resilience of a system re-
+cently offered in the literature (Hosseini, Barker, & Ramirez-Marquez,
+2016) such as: the normalized shaded area underneath the curve of a
+system performance function (Cimellaro, Reinhorn, & Bruneau, 2010),
+topological measures (Rosenkrantz, Goel, Ravi, & Gangolly, 2009), the
+ratio of the expected degradation and the maximum possible degrada-
+tion in the performance of the system due to a disruption (Rose, 2007),
+the ratio of the probability of failure and recovery (Li & Lence, 2007),
+and the loss of the system caused by a disruption (Bruneau et al., 2003),
+among others. However, in this paper, we will consider the resilience
+paradigm
+based
+on
+network
+performance
+shown
+in
+Fig.
+1
+(Almoghathawi, Barker, & Albert, 2019; Barker et al., 2013; Baroud
+et al., 2014, 2015; Henry & Ramirez-Marquez, 2012; Pant, Barker,
+Ramirez-Marquez, & Rocco, 2014; Ramirez-Marquez, Rocco, Barker, &
+Moronta, 2018). Two primary dimensions of resilience are illustrated in
+Fig. 1: (i) vulnerability, the magnitude of damage to a network by a
+disruptive event (Jönsson, Johansson, & Johansson, 2008), or the lack
+of ability to withstand a disruption, and recoverability, the speed at
+which a disrupted network recovers to a desired level of performance
+(Rose, 2007).
+Fig. 1 shows three transition states with regards to the operation
+within a network. The first state is the original state, S0, which is the
+state of the network from time t0 until the occurrence of a disruptive
+event, e j at time te. the second state is the disrupted state, Sd, which is
+the state resulted following the maximum disruption that occurred
+during the period t
+t
+( ,
+)
+e
+d and will last until the recovery process starts at
+time ts. Finally, the third state is the recovered state, Sf, which is the
+Fig. 1. Illustration of network performance,
+t( ), across different transition states.
+Y. Almoghathawi and K. Barker
+Computers & Industrial Engineering 133 (2019) 153–164
+155
+
+===== PAGE 4 =====
+state of the network upon the completion of the recovery process at
+time tf. The performance of the network (e.g., flow, connectivity, or
+delay) across these different states over time is measured by the func-
+tion
+t( ), which describes the behavior of the network before the oc-
+currence of a disruptive event,
+t( )
+0 , after being disrupted,
+t( )
+d , and
+after being recovered to a desired level,
+t( )
+f . Accordingly, network
+resilience, denoted by
+, can be defined as the time dependent ratio of
+the network recovery over the loss in its performance following a dis-
+ruptive
+event
+(Henry
+&
+Ramirez-Marquez,
+2012)
+(i.e.,
+=
+t
+t
+t
+( )
+Recovery( ) Loss( )) and can be mathematically represented by
+Eq. (4).
+=
+t e
+t e
+t e
+t
+t e
+t
+t
+t
+(
+)
+(
+)
+(
+)
+( )
+(
+) ,
+( ,
+)
+j
+j
+d
+j
+o
+d
+j
+s
+f
+(4)
+The value of the network resilience,
+t e
+(
+)
+j , at time t given the
+occurrence of a disruptive event, e j, according to Eq. (4) is between 0
+and 1 (i.e.,
+t e
+(
+)
+[0, 1]
+j
+), where
+=
+t e
+(
+)
+1
+j
+indicates the network is
+fully resilient. In this work, the maximum flow of an interdependent
+infrastructure network from its multiple supply nodes to its multiple
+demand nodes is considered to be the function by which the network
+performance is measured, and its resilience is determined.
+3. Interdependent network resilience optimization model
+(INROM)
+In this paper, we propose different resilience optimization models
+for interdependent networks using mixed-integer programming (MIP)
+considering the disruption status for the disrupted network components
+as well as their recovery time. The objective of the optimization models
+is to maximize the resilience of the system of interdependent networks.
+All the different resilience optimization models are discussed as follows.
+3.1. Assumptions
+There are several assumptions and considerations for the proposed
+optimization models for the IINRP:
+– Each infrastructure network consists of a set of components (used
+generally to refer to nodes and/or links) that are subjected to dis-
+ruptions (e.g., manmade accidents, malevolent attacks, or natural
+disasters). However, cascading disruptions are not considered in this
+work.
+– Disrupted network components could be either: (i) completely dis-
+rupted with a binary status for each network component following a
+disruptive event (i.e., 0 if completely disrupted and 1 if un-
+disrupted), or (ii) partially disrupted, where a disrupted component
+is not completely disrupted but instead functioning partially.
+– Each disrupted component in each infrastructure network can be
+restored.
+– Recovery durations for disrupted network components are either: (i)
+fixed, where all disrupted components are assumed to have the same
+recovery duration (i.e., of one time unit for each disrupted compo-
+nent), or (ii) varying, where recovery durations are not fixed for all
+disrupted components.
+– Partially disrupted network components, with different recovery
+durations, could be recovered faster than completely disrupted
+network components due to their status (size) of disruption (i.e., the
+recovery durations for partially disrupted network components is
+proportional of the recovery durations of the completely disrupted
+network components).
+– Each supply node, demand node, and link in each infrastructure
+network has a known supply capacity, demand, and flow capacity,
+respectively.
+– The physical interdependence among different infrastructure net-
+works
+is
+considered.
+That
+is,
+for
+a
+dependent
+node
+in
+an
+infrastructure network to be operational, it requires a specific node
+from another infrastructure network to also be operational.
+– The models, in which partial disruptions are considered, allow for
+partial interdependencies considering the partial status of disruption
+(i.e., partial functioning of dependent nodes). That is, a node could
+be functioning partially if the other node upon which it depends is
+also functioning partially.
+3.2. Notation
+There is a set of available time periods
+=
+…
+T
+{1,
+, } and a set of
+interdependent networks K. There is a set of nodes, Nk, and a set of
+links, Lk, for each network k
+K. Each network k
+K has a set of
+supply nodes, N
+N
+s
+k
+k, and a set of demand nodes, N
+N
+d
+k
+k. The set of
+disrupted nodes is denoted by N k and the set of disrupted links is de-
+noted by L k for each network k
+K.
+Let fit
+k be the amount of flow supplied from node i
+Ns
+k in network
+k
+K that is the maximum flow from supply node i
+Ns
+k to all demand
+nodes in network k
+K after recovery at time period t
+T obtained by
+solving the maximum flow problem described earlier (i.e., Eqs. (1)–(3)).
+Hence, the total maximum flow supplied from all supply nodes and
+received by all demand nodes in network k
+K after recovery at time
+period t
+T equals
+f
+i
+N
+it
+k
+sk
+. The total maximum flow from all supply
+nodes to all demand nodes in network k
+K prior to and after a dis-
+ruptive event are represented by Fo
+k and Fd
+k, respectively (i.e., Fo
+k refers
+to the original maximum flow at time to, and Fd
+k refers to the maximum
+flow at time td following a disruptive event, e j, as shown in Fig. 1).
+Accordingly, the resilience of the system of interdependent networks,
+denoted by
+sys, can be represented mathematically by Eq. (5), where
+k is the weight of network k
+K such that
+= 1
+k
+K
+k
+. Hence,
+=
+f
+f
+t
+i
+N
+it
+k
+i
+N
+i t
+k
+1
+(
+1)
+sk
+sk
+represents the recovery of network
+k
+K over the restoration time horizon, where
+f
+i
+N
+i
+k
+0
+sk
+equals to Fd
+k,
+while its total loss is represented by F
+F
+(
+)
+o
+k
+d
+k .
+=
+=
+f
+f
+F
+F
+( )
+sys
+k
+K
+k
+t
+i
+N
+it
+k
+i
+N
+i t
+k
+o
+k
+d
+k
+1
+(
+1)
+sk
+sk
+(5)
+Each link i j
+L
+( , )
+k in network k
+K has a capacity of uij
+k. The re-
+covery time for disrupted components in network k
+K is denoted by
+rni
+k for node i
+N k and rlij
+k for link i j
+L
+( , )
+k. The interdependence
+between
+the
+infrastructure
+networks
+is
+captured
+by
+,
+where
+i k
+i k
+(( ,
+), (¯, ¯))
+denote that node i
+N
+¯
+k¯ in network k
+K
+¯
+depends
+physically on node i
+Nk in network k
+K in order to be operational.
+The flow through link i j
+L
+( , )
+kin network k
+K at time period t
+T is
+represented by a non-negative decision variable xijt
+k . The status of each
+component at time period t
+T is represented by two binary decision
+variables (i.e., zit
+k for nodes and yijt
+k for links). So, zit
+k equals 1 if node
+i
+Nk in network k
+K is operational at time period t
+T and 0
+otherwise. Likewise, yijt
+k equals 1 if link i j
+L
+( , )
+k in network k
+K is
+operational at time period t
+T and 0 otherwise.
+3.3. INROM I
+The first resilience optimization model considers binary status of
+each network component following a disruptive event (i.e., 0 if com-
+pletely disrupted and 1 if undisrupted). All disrupted components
+(nodes or links) are assumed to have the same recovery time. In other
+words, this model assumes a fixed time duration for recovery of one-
+time unit for each disrupted component. Accordingly, the INROM I can
+be mathematically formulated with (6)–(22).
+max
+( )
+sys
+(6)
+subject to
+Y. Almoghathawi and K. Barker
+Computers & Industrial Engineering 133 (2019) 153–164
+156
+
+===== PAGE 5 =====
+=
+x
+x
+f
+i
+N
+k
+K t
+T
+,
+,
+,
+i j
+L
+ijt
+k
+j i
+L
+jit
+k
+it
+k
+s
+k
+( , )
+( , )
+k
+k
+(7)
+=
+x
+x
+i
+N
+N
+N
+k
+K t
+T
+0,
+{
+,
+},
+,
+i j
+L
+ijt
+k
+j i
+L
+jit
+k
+k
+s
+k
+d
+k
+( , )
+( , )
+k
+k
+(8)
+=
+x
+x
+f
+i
+N
+k
+K t
+T
+,
+,
+,
+i j
+L
+ijt
+k
+j i
+L
+jit
+k
+it
+k
+d
+k
+( , )
+( , )
+k
+k
+(9)
+x
+u
+i j
+L
+k
+K t
+T
+0,
+( , )
+,
+,
+ijt
+k
+ij
+k
+k
+(10)
+x
+u z
+i j
+L
+i
+N
+k
+K t
+T
+0,
+( , )
+,
+,
+,
+ijt
+k
+ij
+k
+it
+k
+k
+k
+(11)
+x
+u z
+i j
+L
+j
+N
+k
+K t
+T
+0,
+( , )
+,
+,
+,
+ijt
+k
+ij
+k
+jt
+k
+k
+k
+(12)
+x
+u y
+i j
+L
+k
+K t
+T
+0,
+( , )
+,
+,
+ijt
+k
+ij
+k
+ijt
+k
+k
+(13)
+z
+z
+i k
+i k
+t
+T
+0,
+(( ,
+), (¯, ¯))
+,
+it
+k
+it
+k
+¯
+¯
+(14)
++
+y
+y
+i j
+L
+k
+K t
+T
+0,
+( , )
+,
+,
+ijt
+k
+ijt
+k
+k
+1
+(15)
++
+z
+z
+i
+N
+k
+K t
+T
+0,
+,
+,
+it
+k
+it
+k
+k
+1
+(16)
++
+z
+z
+y
+y
+k
+K t
+T
+[
+]
+[
+]
+1,
+,
+i N
+it
+k
+i t
+k
+i j
+L
+ijt
+k
+ij t
+k
+(
+1)
+( , )
+(
+1)
+k
+k
+(17)
+=
+y
+i j
+L
+k
+K t
+T
+0,
+( , )
+,
+,
+ij
+k
+k
+0
+(18)
+=
+z
+i
+N
+k
+K t
+T
+0,
+,
+,
+i
+k
+k
+0
+(19)
+x
+i j
+L
+k
+K t
+T
+0,
+( , )
+,
+,
+ijt
+k
+k
+(20)
+y
+i j
+L
+k
+K t
+T
+{0, 1},
+( , )
+,
+,
+ijt
+k
+k
+(21)
+z
+i
+N
+k
+K t
+T
+{0, 1},
+,
+,
+it
+k
+k
+(22)
+Objective (6) maximizes the resilience of the interdependent net-
+works over the recovery time horizon. Constraints (7)–(9) are flow
+conservation constraints at node i
+Nk in network k
+K at time t
+T.
+Constraints (10)–(13) are capacity constraints on link
+i j
+L
+( , )
+k in
+network k
+K at time t
+T considering undisrupted network compo-
+nents in (10), disrupted or non-operational nodes in (11) and (12), and
+disrupted links in constraints (13). The physical interdependence be-
+tween the networks is represented in (14), which ensure that node
+i
+N
+¯
+k¯ in network k
+K
+¯
+cannot be operational at time t
+T unless
+node i
+Nk in network k
+K is operational at time t
+T as well.
+Constraints (15) and (16) ensure that once a link or node, respectively,
+in network k
+K is recovered or operational at time t
+T, it will re-
+main operational thereafter. Constraints (17) ensure that at most one
+component (node or link) in network k
+K can be recovered during
+time t
+T. Constraints (18) and (19) reflect the initial status of the
+disrupted links and nodes, respectively, in network k
+K. Constraints
+(20)–(22) deal with the nature of the decision variables.
+3.4. INROM II
+Though this second resilience optimization model is similar to
+INROM I in assuming a fixed time duration for recovery of one time unit
+for each disrupted component, it considers proportional disruptions for
+the disrupted components, meaning that a disrupted node or link is not
+completely disrupted but instead functioning partially. Considering
+proportional disruption allows for partial functioning of dependent
+nodes. Accordingly, new parameters are introduced to account for the
+proportional disruption. As such, let the proportional disruption in node
+i
+N k and link i j
+L
+( , )
+k in network k
+K be denoted by vni
+k and vlij
+k,
+respectively. Hence, the INROM II can be mathematically formulated as
+INROM I but with constraints (11), (12), and (13) replaced by con-
+straints (23), (24), and (25), respectively, to account for the propor-
+tional disruptions.
+×
++
+x
+u
+z
+vn
+z
+i j
+L
+i
+N
+k
+K t
+T
+((1
+)
+)
+0,
+( , )
+,
+,
+,
+ijt
+k
+ij
+k
+it
+k
+i
+k
+it
+k
+k
+k
+(23)
+×
++
+x
+u
+z
+vn
+z
+i j
+L
+j
+N
+k
+K t
+T
+((1
+)
+)
+0,
+( , )
+,
+,
+,
+ijt
+k
+ij
+k
+jt
+k
+j
+k
+jt
+k
+k
+k
+(24)
+×
++
+x
+u
+y
+vl
+y
+i j
+L
+k
+K t
+T
+((1
+)
+)
+0,
+( , )
+,
+,
+ijt
+k
+ij
+k
+ijt
+k
+ij
+k
+ijt
+k
+k
+(25)
+3.5. INROM III
+The third resilience optimization model considers binary status of
+each network component following a disruptive event (i.e., 0 if com-
+pletely damaged and 1 if unaffected). However, the recovery time for
+disrupted nodes and links are different: the recovery time is not fixed
+for all disrupted components. Hence, two new binary decision variables
+are introduced. First,
+it
+k equals 1 if node i
+N kin network k
+K is
+recovered at time period t
+T and 0 otherwise. Similarly,
+ijt
+k equals 1 if
+link i j
+L
+( , )
+kin network k
+K is recovered at time period t
+T and 0
+otherwise. Accordingly, the INROM III can be mathematically for-
+mulated by objective (6), constraints (7)–(14) and (20)–(22), along
+with constraints (26)–(32).
+=
+=
+i
+N
+k
+K
+0,
+,
+t
+rn
+it
+k
+k
+1
+1
+ik
+(26)
+=
+=
+i j
+L
+k
+K
+0,
+( , )
+,
+t
+rl
+ijt
+k
+k
+1
+1
+ijk
+(27)
++
+=
++
+=
++
+k
+K t
+T
+1,
+,
+i N
+l
+t
+t
+rn
+il
+k
+i j
+L
+l
+t
+t
+rl
+ijl
+k
+min{ ,
+1}
+( , )
+min
+,
+1
+k
+ik
+k
+ijk
+(28)
+=
+z
+i
+N
+t
+T k
+K
+,
+,
+,
+it
+k
+l
+t
+il
+k
+k
+1
+(29)
+=
+y
+i j
+L
+t
+T k
+K
+,
+( , )
+,
+,
+ijt
+k
+l
+t
+ijl
+k
+k
+1
+(30)
+i
+N
+k
+K t
+T
+{0, 1},
+,
+,
+it
+k
+k
+(31)
+i j
+L
+k
+K t
+T
+{0, 1},
+( , )
+,
+,
+ijt
+k
+k
+(32)
+Similarly, constraints (26)–(27) ensure that no disrupted component
+(node or link) is recovered before its required recovery time (i.e., node i
+and link i j
+( , ) in network k
+K require rni
+k and rlij
+k time periods, re-
+spectively for them to be recovered and be operational; hence they
+cannot be recovered prior to these times). Constraints (28) ensure that
+at most one component (node or link) is recovered at time t
+T (i.e., if
+il
+k equals 1, it means that node i in network k
+K is recovered during
+the time period (
++
+l
+rn
+l
+1, )
+i
+k
+and if
+ijl
+k equals 1, it means that link i j
+( , )
+in network k
+K is recovered during the time period (
++
+l
+rl
+l
+1, )
+ij
+k
+).
+Constraints (29) and (30) ensure that if a node or link, respectively is
+operational at time t
+T, it must also be recovered at that time. Con-
+straints (31) and (32) are constraints on the nature of the decision
+variables.
+3.6. INROM IV
+The fourth resilience optimization model considers proportional
+disruptions for the disrupted components, where a disrupted compo-
+nent is not completely disrupted but functioning partially, thus al-
+lowing for partial functioning of dependent nodes. INROM IV also
+considers different recovery times for disrupted nodes and links.
+However, they could be recovered faster than their required recovery
+Y. Almoghathawi and K. Barker
+Computers & Industrial Engineering 133 (2019) 153–164
+157
+
+===== PAGE 6 =====
+time, as they are proportionally disrupted. As such, let the time to re-
+cover the proportional disruption in node i
+N k in network k
+K
+denoted by qni
+k (i.e.,
+=
+×
+qn
+vn
+rn
+i
+k
+i
+k
+i
+k). Likewise, let the time to recover
+the proportional disruption in link i j
+L
+( , )
+k in network k
+K denoted
+by qlij
+k (i.e.,
+=
+×
+ql
+vl
+rl
+ij
+k
+ij
+k
+ij
+k). INROM IV can be mathematically for-
+mulated as INROM III with constraints (11), (12), and (13) replaced by
+constraints (23), (24), and (25), respectively, to account for the pro-
+portional disruptions and constraint (28) replaced by constraints
+(33)–(37), respectively, to account for the recovery of the proportional
+disruptions. Note that constraints (33)–(37) are similar to constraint
+(28) but with the difference of the recovery duration of the disrupted
+networks components due to the consideration of a different disruption
+assumption (i.e., proportional disruptions).
+=
+=
+z
+i
+N
+k
+K
+0,
+,
+t
+qn
+it
+k
+k
+1
+1
+i
+k
+(33)
+=
+=
+y
+i j
+L
+k
+K
+0,
+( , )
+,
+t
+ql
+ijt
+k
+k
+1
+1
+ij
+k
+(34)
+=
+=
+i
+N
+k
+K
+0,
+,
+t
+qn
+it
+k
+k
+1
+1
+i
+k
+(35)
+=
+=
+i j
+L
+k
+K
+0,
+( , )
+,
+t
+ql
+ijt
+k
+k
+1
+1
+ij
+k
+(36)
++
+=
++
+=
++
+k
+K t
+T
+1,
+,
+i N
+l
+t
+t
+qn
+il
+k
+i j
+L
+l
+t
+t
+ql
+ijl
+k
+min{ ,
+1}
+( , )
+min
+,
+1
+k
+i
+k
+k
+ij
+k
+(37)
+Similar to INROM III but with the consideration of the proportional
+disruptions, constraints (33)–(34) ensure that no proportionally dis-
+rupted component (node or link) is operational prior to the required
+recovery time for its proportional disruption (i.e., node i and link i j
+( , )
+in network k
+K cannot be operational prior to qni
+k and qlij
+k time
+periods, respectively which are their required recovery times). Simi-
+larly, constraints (35)–(36) ensure that no proportionally disrupted
+component (node or link) is recovered before its required recovery time
+(i.e., node i and link i j
+( , ) in network k
+K require qni
+k and qlij
+k time
+periods, respectively for them to be recovered from their proportional
+disruption and be operational; hence they cannot be recovered prior to
+these times). Constraints (37) ensure that at most one component (node
+or link) is recovered at time t
+T (i.e., if
+il
+k equals 1, it means that
+node i
+in network k
+K
+is recovered during the time period
+(
++
+l
+qn
+l
+1, )
+i
+k
+and if
+ijl
+k equals 1, it means that link i j
+( , ) in network
+k
+K is recovered during the time period (
++
+l
+ql
+l
+1, )
+ij
+k
+).
+4. Resilience-Based component importance measures
+In this paper, we propose two resilience-based component im-
+portance
+measures,
+namely
+Optimal
+Recovery
+Time
+(ORT)
+and
+Resilience Reduction Worth (ЯRW). These measures will prioritize the
+disrupted components, be they nodes and/or links, according to their
+criticality and importance based on their effect on the resilience of the
+interdependent infrastructure networks. The two resilience-based CIM
+are defined as follows.
+The optimal recovery time CIM is defined as the optimal time to re-
+cover a disrupted network component (node or link) such that the re-
+silience of the interdependent infrastructure networks is maximized
+over the recovery time horizon. It quantifies the effect of the disrupted
+components on the resilience of the interdependent infrastructure net-
+works once they are recovered and prioritizes them accordingly where
+the lower value of the ORT indicates the extent to which the component
+is more important to the resilience of the interdependent networks. This
+CIM is similar to the importance measure proposed by Fang et al.
+(2016) but extended for interdependent infrastructure networks, as well
+as it is based on the multiple interdependent network resilience opti-
+mization formulations presented in Section 3. This CIM provides deci-
+sion makers with the restoration priorities of only the disrupted net-
+works components that have influence on the resilience of the
+interdependent networks, which satisfy the objective of the INROMs. As
+such, there could be some disrupted components that do not enhance
+the resilience of the interdependent networks when restored; hence,
+their restoration priorities are left to the preferences of decision makers.
+Definition
+4.1.
+The
+ORT
+of
+a
+disrupted
+network
+component
+=
+c
+C
+N
+L
+k
+k
+k in network k
+K, denoted as Ic
+ORT, is defined in
+Eq. (38), where µct
+k represents the status of each component at time
+period t
+T such that µct
+k equals 1 if component c
+C kin network
+k
+K is operational at time period t
+T and 0 otherwise.
+=
++
+=
+I
+µ
+1
+(1
+)
+c
+ORT
+t
+ct
+k
+1
+(38)
+where
+=
+=
+=
+µ
+z
+c
+c
+i
+y
+c
+c
+i j
+,
+if
+is a node,
+, if
+is a link,
+( , )
+ct
+k
+it
+k
+ijt
+k
+The resilience reduction worth CIM is defined as the ratio of the op-
+timal system resilience at recovery time
+to the optimal system resi-
+lience when a disrupted network component (node or link) is not re-
+covered at recovery time
+. It measures the potential impact on the
+resilience of the interdependent infrastructure networks caused by a
+specific disrupted network element (i.e., when this specific disrupted
+network element is not recovered during the recovery time horizon).
+The higher value of ЯRW indicates the more critical the component is to
+the resilience of the interdependent networks. This CIM is inspired by
+the
+performance
+reduction
+worth
+importance
+measure
+(Levitin,
+Podofillini, & Zio, 2003) and the reliability reduction worth importance
+measure (Espiritu, Coit, & Prakash, 2007), both of which are defined by
+the ratio of actual system performance to the system performance when
+a specific component is always considered to be failed or not working.
+Definition
+4.2.
+The
+ЯRW
+of
+a
+disrupted
+network
+component
+=
+c
+C
+N
+L
+k
+k
+k in network k
+K, denoted as Ic
+RW, is defined in
+Eq. (39), where
+( ) is the optimal resilience of the interdependent
+networks at time
+and
+=
+µ
+(
+0)
+t
+T
+ct
+k
+is the optimal resilience of the
+interdependent networks at time
+when network component c
+C k is
+not recovered.
+=
+=
+I
+µ
+( )
+(
+0)
+c
+RW
+sys
+sys
+t
+T
+ct
+k
+(39)
+5. Illustrative example
+In this section, we illustrate our proposed resilience-based CIMs
+considering the multiple interdependent network resilience optimiza-
+tion models with some generated interdependent infrastructure net-
+works.
+5.1. Data
+Due to the difficulty of obtaining real data for interdependent in-
+frastructure
+networks
+(Bagchi,
+Sprintson,
+Guikema,
+Bristow,
+&
+Brumbelow, 2010; Johansson & Hassel, 2010), the proposed CIMs are
+illustrated with realistic fictional interdependent networks. These fic-
+tional interdependent networks are generated using the extended al-
+gorithm for proximal topology generator proposed by Xin-Jian, Zhang,
+and Mendes (2007) which was initially introduced by Casey (2005).
+Y. Almoghathawi and K. Barker
+Computers & Industrial Engineering 133 (2019) 153–164
+158
+
+===== PAGE 7 =====
+Hence, we generate the fictional interdependent networks in two
+stages: (i) generating individual networks; and (ii) building the inter-
+dependencies between them (Almoghathawi et al., 2019; Zhang, Yang,
+& Lall, 2016).
+In this paper, we illustrate our restoration model considering two
+infrastructure networks, namely simulated power and water networks.
+Regarding the power network, power generators and substations re-
+present the supply and demand nodes, respectively and the lines be-
+tween the nodes within this network represent the links. Regarding the
+water network, water pumps and storage tanks represent the supply and
+demand nodes, respectively and the pipelines between the nodes within
+this network represent the links. These two networks are inter-
+dependent as the water network needs power for operation and the
+power network requires water for cooling and emission control
+(Dueñas-Osorio et al., 2007; Zhang et al., 2016).
+During the first stage of the fictional interdependent networks
+generation process, we start with independent and randomly dis-
+tributed supply nodes for each network. As such, these supply nodes are
+located randomly with no links between them. Next, we add randomly
+distributed nodes to the network one at a time and connect them with a
+new undirected link to the nearest existing node based on Euclidean
+distance. Finally, we add a sparse random graph to the generated net-
+work upon adding the required number of nodes.
+In this paper, we consider the physical interdependence between the
+infrastructure networks: for a node in one network to be functioning, it
+requires a node from another network to be functioning too. Hence, the
+two infrastructure networks considered in this illustrative example are
+interdependent as described earlier. Accordingly, we build the inter-
+dependencies between these two interdependent infrastructure net-
+works, representing the second stage of the fictional interdependent
+networks generation process. Hence, each water pump and storage tank
+in the water network will depend on the nearest power generator or
+substation in the power network, based on Euclidean distance, for their
+functionality. Likewise, each power generator in the power network
+will depend on the nearest water pump in the water network, based on
+Euclidean distance, for its functionality.
+After performing two stages for generating fictional interdependent
+networks, the two independent infrastructure networks are illustrated
+in Fig. 2. In addition, Table 1 depicts the general properties for the
+interdependent power and water networks, that includes number of
+nodes, number of undirected links, number of supply nodes, number of
+demand nodes, and the average node degree, respectively. Accordingly,
+INROM I and INROM II have 1416 decision variables with 9624 con-
+straints, and INROM III and INROM IV have 1896 decision variables
+with 9064 constraints.
+In this work, the two generated infrastructure networks, shown in
+Fig. 2, are utilized to illustrate our proposed resilience-based CIMs
+which aim to enhance the resilience of the system for interdependent
+infrastructure network based on the maximum flow from its multiple
+supple nodes to its multiple demand nodes. However, the two generated
+infrastructure networks could also be utilized with other topologies
+(e.g., shortest paths) and considering other type of interdependencies
+among
+the
+infrastructure
+networks
+(e.g.,
+geographical
+inter-
+dependence) that the authors are considering for a future work along
+with testing the two proposed CIMs with some real-life data.
+5.2. Experiment
+In this work, we measure the efficiency of an infrastructure network
+as the ratio of the current maximum flow from all its multiple supply
+nodes to all its demand nodes over the original maximum flow prior to
+a disruption or network components removals. Fig. 3 shows the drop in
+the efficiency of each of the two interdependent infrastructure networks
+associated with the fractional removal of some components (nodes and
+links) from both interdependent networks. Hence, the effect of these
+removed network components is shown in both interdependent
+networks due to their interdependencies. The drop in efficiency of each
+infrastructure network associated with the fractional removal of some
+components from each infrastructure network independently (i.e.,
+without considering the interdependence between the two infra-
+structure networks) is also illustrated in Fig. 3. Comparing the effect of
+the removal of fraction of components from the two infrastructure
+networks on each individual one independently and interdependently,
+it can be concluded as expected that the efficiency of both infra-
+structure
+networks
+decline
+faster
+when
+considering
+the
+inter-
+dependencies between the two infrastructure networks rather than
+when the interdependencies between them are not considered, as
+shown in Fig. 3.
+The two interdependent infrastructure networks were disrupted
+randomly, targeting the same number and type of disrupted compo-
+nents in both network, 10 network components in each network (i.e., 3
+nodes and 7 links). The set of disrupted components in power and water
+networks are shown in Tables 2 and 3, respectively. Tables 2 and 3
+show the importance of each disrupted component in power and water,
+respectively according to the two proposed resilience-based CIM, ORT
+and ЯRW, considering the multiple interdependent network resilience
+optimization formulations discussed in Section 3 which are solved using
+LINGO 16.0. Without loss of generality, we consider the parameters
+distributions and values shown in Table 2 for illustrative purposes of
+the proposed CIMs.
+In INROM IV, if the recovery time of a partially disrupted network
+component is not integer, it is rounded up to the nearest integer number
+since we are dealing with time periods. The disrupted network com-
+ponents for both infrastructure networks are considered completely
+disrupted in INROM I and INROM III whereas they are considered
+partially disrupted in INROM II and INROM IV with the same propor-
+tional disruptions.
+Fig. 2. An interdependent networks example with a power network (blue nodes
+and links), a water network (red nodes and links), and the interdependencies
+between them (green links).
+Table 1
+General properties of the interdependent networks.
+Network
+N
+L
+Ns
+Nd
+deg
+Power
+9
+15
+3
+3
+3.33
+Water
+9
+12
+3
+3
+2.67
+Y. Almoghathawi and K. Barker
+Computers & Industrial Engineering 133 (2019) 153–164
+159
+
+===== PAGE 8 =====
+According to the ORT importance measure, the disrupted compo-
+nents in the two networks have different ranks based on their im-
+portance and effect on the resilience of the interdependent networks
+when based on different INROMs, as shown in Tables 3 and 4. For ex-
+ample, node 4 in the power network is the most important component
+with the highest restoration priority when considering complete dis-
+ruption (based on INROM I and INROM III), and the most important
+component when considering proportional disruption (based on INROM
+II and INROM IV), as shown in Table 3. Similarly, link (12,17) in the
+water network is the most important component with the highest re-
+storation priority based on INROM I, while it is not the most important
+component when based on INROM II, INROM III, or INROM IV, as
+shown in Table 4.
+As for the ЯRW importance measure, the disrupted components in
+both interdependent infrastructure networks have different ranks ac-
+cording to their importance and influence on the resilience of the in-
+terdependent networks when considering complete or proportional
+disruptions, as shown in Tables 3 and 4. That is, when the ЯRW im-
+portance measure is based on INROM I and INROM II provides different
+restoration priorities than when it is based on INROM III and INROM
+IV. However, this CIM gives the same rank when fixed or different re-
+covery durations are considered for restoring the disrupted components
+in the interdependent networks as the recovery durations are not taken
+into account in this CIM, see Tables 3 and 4. Tables 3 and 4 show that
+the ЯRW importance measure provides the same restoration priorities
+when it is based on INROM I and INROM III and also the same re-
+storation priorities when it is based on INROM II and INROM IV, where
+the difference between each two models is the recovery durations of the
+disrupted network components. That is, the restoration priorities ac-
+cording to the ЯRW importance measure are different when considering
+different disruption assumptions (i.e., partial or complete disruption)
+regardless of the recovery durations of the disrupted network compo-
+nents.
+In general, CIMs produce useful information for decision makers.
+They assist infrastructure decision makers by identifying the critical
+and influential components in their respective networks that affect the
+performance of their infrastructure networks the most when disrupted
+or restored following a disruptive event. For example, in this work,
+CIMs identify the most important disrupted network components to be
+restored according to their effect on the resilience of the interdependent
+infrastructure networks once they are recovered, ORT importance
+measure, or by the potential impact on the resilience of the inter-
+dependent infrastructure networks caused by a specific disrupted net-
+work element, ЯRW importance measure, as discussed earlier in Section
+4. Such information could be useful for decision makers in enabling
+more effective restoration priorities of the disrupted networks compo-
+nents or expediting the recovery process for some of the critical and
+influential ones. However, different CIMs are generally defined based
+on different perspectives of network performance that produce different
+information for decision makers. Hence, they could provide different
+restoration priorities of the disrupted network components based on
+their influence on the resilience of the interdependent infrastructure
+networks as shown in Tables 3 and 4. Thus, decision makers might face
+Fig. 3. Efficiency with fractional removal of networks components for the (a)
+power network, and (b) water network.
+Table 2
+Parameter values for the illustrative example.
+k
+uijk
+rnik
+rlijk
+qni
+k
+qlij
+k
+K
+1
+U (20, 50)
+U (1, 3)
+U (1, 3)
+U (1, 3)
+U (1, 3)
+Table 3
+Restoration priorities for the disrupted components in the power network according to the two CIMS based on multiple INROM formulations.
+Disrupted component
+Restoration order
+ORT
+ЯRW
+INROM I
+INROM II
+INROM III
+INROM IV
+INROM I
+INROM II
+INROM III
+INROM IV
+Node
+4
+1
+8
+1
+8
+1
+8
+1
+8
+Node
+5
+4
+5
+4
+5
+2
+3
+2
+3
+Node
+6
+6
+4
+7
+4
+3
+4
+3
+4
+Link
+(1,8)
+5
+1
+5
+1
+5
+2
+5
+2
+Link
+(2,4)
+9
+9
+10
+9
+9
+9
+9
+9
+Link
+(3,9)
+2
+3
+2
+3
+6
+5
+6
+5
+Link
+(4,7)
+3
+7
+3
+7
+8
+7
+8
+7
+Link
+(5,6)
+8
+6
+8
+6
+7
+6
+7
+6
+Link
+(6,8)
+7
+2
+6
+2
+4
+1
+4
+1
+Link
+(8,9)
+10
+10
+9
+10
+10
+10
+10
+10
+Y. Almoghathawi and K. Barker
+Computers & Industrial Engineering 133 (2019) 153–164
+160
+
+===== PAGE 9 =====
+a challenge of combining such information from different CIMs to ob-
+tain a unique set of restoration priorities of the disrupted network
+components. One means to identify the most important disrupted net-
+work components to be restored through a unique set of restoration
+priorities based on multiple CIMs with different perspectives is with the
+use of a multi-criteria decision analysis tool (Almoghathawi et al.,
+2017).
+Moreover, the uncertain nature of disruptive events could lead to
+different prioritizations for the restoration of the disrupted network
+components when considering partial disruptions for the disrupted
+networks components (i.e., when the CIMs are based on INROM II and
+INROM IV). Such uncertainty in the nature of disruptive events is
+considered in Ref. (Freeman, Borgatti, & White, 1991). In addition, the
+authors are considering the uncertainty in the recovery durations of the
+disrupted networks components for a future work.
+Fig. 4 shows the improvement in the resilience of the each of the
+two considered interdependent infrastructure networks by restoring the
+disrupted components in both interdependent networks according to
+their importance (i.e. restoration priorities) by the ORT importance
+measure based on INORM I. Three restoration scenarios for restoring
+the disrupted components in the power and water networks are con-
+sidered in Fig. 4 which are: (i) restoring all the disrupted components in
+both network (“Both”), (ii) restoring the disrupted components in the
+power network only (“P only”), and (iii) restoring the disrupted com-
+ponents in the water network only (“W only”). Though there is a slight
+improvement in the resilience of the interdependent networks in-
+dividually when restoring the disrupted components in one network
+only, as in scenario (ii) or (iii), the resilience will only reach a certain
+level of improvement, as shown in Fig. 4, unless the components of one
+network do not depend on any of the disrupted components in the other
+one in order to be functional (e.g., we consider restoration scenario (ii)
+and all the components in the power network do not depend on any of
+the disrupted components of the water network). Fig. 4 serves to il-
+lustrate the importance of considering the interdependent nature of the
+two networks when making restoration decisions.
+5.3. Comparison with non-resilience-based measures
+In this section, we compare the rank of the disrupted components in
+the interdependent networks found from the two proposed resilience-
+based CIMs with two other network centrality measures, flow centrality
+(FC) (Nicholson et al., 2016) and betweenness centrality (BC) (Freeman
+et al., 1991; Girvan & Newman, 2002). The comparison is made based
+on INROM I. Furthermore, the trajectory of resilience is compared when
+restoration is guided by each of the four measures.
+The flow centrality CIM measures the contribution of a given net-
+work component to the maximum flow from all the supply nodes to all
+the demand nodes within the network. Accordingly, FC is defined as the
+ratio of the total volume of flow through a given network component to
+the maximum flow from all supply nodes to all demand nodes in the
+same network.
+Definition
+5.3.1.
+The
+FC
+of
+a
+disrupted
+network
+component
+=
+e
+E
+N
+L
+k
+k
+k in network k
+K, denoted as Ie
+FC, is defined in
+Eq. (40), where w
+e(
+sd
+) is the flow through component e
+E k when
+determining the maximum flow from supply node s
+Ns
+k to demand
+node d
+Nd
+k in network k
+K and wsd is the maximum flow from
+supply node s
+Ns
+k to demand node d
+Nd
+k in network k
+K.
+Table 4
+Restoration priorities for the disrupted components in the water network according to the two CIMS based on multiple INROM formulations.
+Disrupted component
+Restoration order
+ORT
+ЯRW
+INROM I
+INROM II
+INROM III
+INROM IV
+INROM I
+INROM II
+INROM III
+INROM IV
+Node
+13
+7
+6
+6
+5
+5
+4
+5
+4
+Node
+14
+5
+2
+7
+2
+1
+1
+1
+1
+Node
+15
+2
+9
+1
+8
+2
+8
+2
+8
+Link
+(10,13)
+10
+8
+10
+9
+10
+9
+10
+9
+Link
+(10,18)
+4
+5
+4
+4
+4
+7
+4
+7
+Link
+(11,14)
+9
+10
+9
+10
+9
+10
+9
+10
+Link
+(11,17)
+3
+1
+2
+1
+7
+2
+7
+2
+Link
+(12,17)
+1
+4
+3
+7
+3
+6
+3
+6
+Link
+(13,18)
+6
+7
+5
+6
+6
+5
+6
+5
+Link
+(14,16)
+8
+3
+8
+3
+8
+3
+8
+3
+Fig. 4. Network resilience considering different restoration scenarios based on
+the ORT with INROM I for the (a) power network, and (b) water network.
+Y. Almoghathawi and K. Barker
+Computers & Industrial Engineering 133 (2019) 153–164
+161
+
+===== PAGE 10 =====
+=
+I
+w
+e
+w
+( )
+e
+FC
+s
+N
+d
+N
+sd
+s
+N
+d
+N
+sd
+,
+,
+sk
+d
+k
+sk
+dk
+(40)
+The betweenness centrality CIM is similar to the flow centrality CIM,
+though it measures the contribution of a given network component to
+the number of geodesic paths, rather than maximum flow, from all the
+supply nodes to all the demand nodes within the network. Accordingly,
+BC is defined as the ratio of the total number of geodesic paths that go
+through a given network component to the total number of geodesic
+paths from all supply nodes to all demand nodes in the same network.
+Definition
+5.3.2.
+The
+BC
+of
+a
+disrupted
+network
+component
+=
+e
+E
+N
+L
+k
+k
+k in network k
+K, denoted as Ie
+BC, is defined in
+Eq. (41), where g
+e(
+sd
+) is the number of geodesic paths from supply node
+s
+Ns
+k to demand node d
+Nd
+k in network k
+K that go through
+component e
+Ek and gsd is the total number of geodesic paths from
+supply node s
+Ns
+k to demand node d
+Nd
+k in network k
+K.
+=
+I
+g
+e
+g
+( )
+e
+BC
+s
+N
+d
+N
+sd
+sd
+,
+sk
+dk
+(41)
+Tables 5 and 6 show the importance of each disrupted component in
+power and water, respectively, according to the two proposed resi-
+lience-based CIMs and the two network centrality measures, based on
+INROM I. Note from Tables 5 and 6 that each CIM has a different rank
+for prioritizing the restoration of the disrupted components for each
+infrastructure network. However, the more important aspect is the
+improvement in the resilience of the interdependent networks with the
+recovery of the disrupted components according to each priority rank.
+Fig. 5 shows the resilience of the two interdependent infrastructure
+networks individually with the restoration order for the disrupted
+components in each network according to different CIMs (i.e., ORT,
+ЯRW, FC, and BC) based on INROM I, considering a complete
+disruption for the disrupted network components with a fixed restora-
+tion time of one unit for each one of them. The resilience of the water
+network improves faster based on the FC restoration order for the dis-
+rupted components, as shown Fig. 5. However, the resilience of the
+system of the interdependent networks improves faster when con-
+sidering the restoration order by the two proposed resilience-based
+CIMs, ORT and ЯRW, as illustrated in Fig. 6. Fig. 6 shows the resilience
+of the system of the interdependent networks over the restoration time
+horizon according restoration priorities for the disrupted components
+according to different CIMs (i.e., ORT, ЯRW, FC, and BC) based on
+Table 5
+Restoration priorities for the disrupted components in the power network ac-
+cording to the two CIMs based on INROM 1.
+Disrupted component
+Restoration order
+ORT
+ЯRW
+FC
+BC
+Node
+4
+1
+1
+1
+1
+Node
+5
+4
+2
+2
+3
+Node
+6
+6
+3
+3
+10
+Link
+(1,8)
+5
+5
+6
+8
+Link
+(2,4)
+9
+9
+10
+4
+Link
+(3,9)
+2
+6
+7
+7
+Link
+(4,7)
+3
+8
+8
+6
+Link
+(5,6)
+8
+7
+4
+9
+Link
+(6,8)
+7
+4
+5
+2
+Link
+(8,9)
+10
+10
+9
+5
+Table 6
+Restoration priorities for the disrupted components in the water network ac-
+cording to the two CIMs based on INROM 1.
+Disrupted component
+Restoration order
+ORT
+ЯRW
+FC
+BC
+Node
+13
+7
+5
+3
+4
+Node
+14
+5
+1
+5
+1
+Node
+15
+2
+2
+10
+10
+Link
+(10,13)
+10
+10
+9
+7
+Link
+(10,18)
+4
+4
+2
+5
+Link
+(11,14)
+9
+9
+6
+2
+Link
+(11,17)
+3
+7
+7
+3
+Link
+(12,17)
+1
+3
+1
+9
+Link
+(13,18)
+6
+6
+4
+8
+Link
+(14,16)
+8
+8
+8
+6
+Fig. 5. Network resilience based on different CIM based on INROM I for the (a)
+power network, and (b) water network.
+Fig. 6. Resilience of the set of interdependent networks based on different CIM
+based on INROM I.
+Y. Almoghathawi and K. Barker
+Computers & Industrial Engineering 133 (2019) 153–164
+162
+
+===== PAGE 11 =====
+INROM I.
+The objective of this work is to enhance the resilience of the system
+of interdependent infrastructure networks given the physical inter-
+dependencies among them. As stated earlier, the maximum flow of an
+interdependent infrastructure network from its multiple supply nodes
+to its multiple demand nodes is considered to be the function by which
+the network performance is measured, and its resilience is determined.
+Accordingly, the two CIMs, ORT and ЯRW, are proposed to help deci-
+sion makers finding the best restoration priorities for the disrupted
+networks components that could achieve the highest level of resilience
+of the system of interdependent infrastructure networks. As a result,
+ORT and ЯRW should provide more effective restoration priorities that
+enhance the resilience of the system of interdependent infrastructure
+networks than when considering other CIMs, e.g., FC and BC, or a
+random restoration order.
+6. Concluding remarks
+Critical infrastructure networks are the backbone of modern socie-
+ties, providing the fundamental services that to support their con-
+tinuous operation. However, the ubiquitous nature of such infra-
+structure networks has made them highly vulnerable due to the
+different types of interdependencies among them. Therefore, a key
+element of analyzing the vulnerability and recoverability of such in-
+terdependent critical infrastructure networks is identifying the influ-
+ential components (nodes and links) that affect their performance the
+most when disrupted and restored considering the interdependencies
+among the infrastructure networks. Accordingly, important network
+components can then be reinforced and protected prior to any disrup-
+tion or prioritized and expedited during the restoration process fol-
+lowing a disruption.
+Recognizing the inevitability of large-scale disruptions, this work
+proposes two CIMs to prioritize the components of interdependent in-
+frastructure networks with the objective of enhancing their resilience,
+or the ability to withstand, adapt to, and recover in a timely manner
+from the effects of a disruptive event considering the interdependences
+between them. The purpose of the two proposed resilience-based CIMs
+is to (i) quantify the effect of the disrupted components on the resilience
+of the interdependent infrastructure networks once they are recovered,
+and (ii) measure the potential impact on the resilience of the inter-
+dependent infrastructure networks caused by a specific disrupted net-
+work element, respectively.
+The two resilience-based CIMs are based on multiple interdependent
+network resilience optimization models using MIP with the objective of
+maximizing the resilience of multiple interdependent networks over the
+restoration time horizon considering the disruption status for the dis-
+rupted network components as well as their recovery time (i.e., com-
+plete or proportional disruptions for disrupted network components
+with a fixed or variable recovery times for each one of them).
+Accordingly, the two CIMs prioritize the set of disrupted components in
+the interdependent infrastructure networks for recovery according to
+their impact on interdependent network resilience.
+The two proposed resilience-based CIMs are illustrated with gen-
+erated interdependent power-water networks considering four inter-
+dependent network resilience optimization models (INROMs) that in-
+corporate different assumptions about the nature of network disruption
+and recovery. A prioritized list is obtained for the disrupted component
+in
+both
+infrastructure
+networks
+considering
+the
+physical
+inter-
+dependence among them. The ranks of the disrupted components both
+power and water networks by the two CIMs based on one of the opti-
+mization models (i.e., INROM I) are compared with ranks of two other
+network centrality measures (i.e., FC and BC). Though the resilience of
+an individual infrastructure network might improve faster considering
+the restoration order of the disrupted component by one of the cen-
+trality measures (e.g., the resilience of the water network considering
+restoration order for the disrupted components by FC, see Fig. 5), the
+resilience of the system of the interdependent networks always im-
+proves faster when considering the restoration order by the two pro-
+posed resilience-based CIMs (i.e., ORT and ЯRW) as illustrated in Fig. 6.
+Thus, restoring the disrupted components in both networks accounting
+for the interdependent nature between them (e.g., considering a re-
+storation order by ORT or ЯRW) will improve the resilience of the
+system of the interdependent networks faster than restoring each net-
+work separately (e.g., considering a restoration order by FC or BC).
+The two proposed resilience-based CIMs could be used for prior-
+itizing the recovery of disrupted components in any set of a reasonable
+size of interdependent infrastructure networks considering the physical
+interdependence between them such that the resilience of the system of
+interdependent networks is improved. Managerial decisions guided by
+this exercise could involve the preplacement of restoration resources
+near important components, or perhaps investments in hardening or
+redundancy to reduce the vulnerability of those components prior to a
+disruption. As for large scale networks, new conditions could be added
+to the model to identify the most important disrupted components to be
+restored and prioritize them according to their importance. Then repeat
+the same procedures iteratively until all disrupted network components
+are prioritized instead of prioritizing all of them in one stage.
+Further work will consider restoration up to a specific desired level
+of performance or resilience, supplies and demands that are a function
+of time, and other adaptive capacity measures that could assist in
+meeting demand (e.g., alternate supply units). Moreover, the two pro-
+posed CIMs only consider the physical interdependency between in-
+frastructure networks, which could be extended in incorporate other
+interdependencies such as geographical interdependency. A limitation
+of the illustrative example is that the CIMs are illustrated on only one
+instance. Future work will explore several network configurations,
+particularly real network examples, along with the uncertainty that
+those networks and the restoration process represents.
+Acknowledgement
+This work was supported in part by the National Science Foundation
+through award 1541165.
+References
+Almoghathawi, Y., Barker, K., & Ramirez-Marquez, J. E. (2017). Resilience-based mea-
+sures for importance ranking of interdependent infrastructure networks components
+across uncertain disruption scenarios. Proceedings of the 12th international conference
+on structural safety and reliability (pp. 1133–1143). .
+Almoghathawi, Y., Barker, K., Rocco, C. M., & Nicholson, C. D. (2017). A multi-criteria
+decision analysis approach for importance identification and ranking of network
+components. Reliability Engineering and System Safety, 158, 142–151.
+Almoghathawi, Y., Barker, K., & Albert, L. A. (2019). Resilience-driven restoration model
+for interdependent infrastructure networks. Reliability Engineering and System Safety,
+185, 12–23.
+Bagchi, A., Sprintson, A., Guikema, S., Bristow, E., & Brumbelow, K. (2010). Modeling
+performance of interdependent power and water networks during urban fire events.
+48th Annual Allerton conference on communication, control, and computing (pp. 1637–
+1644). Monticello, IL: IEEE.
+Barabady, J., & Kumar, U. (2007). Availability allocation through importance measures.
+International Journal of Quality and Reliability Management, 24(6), 643–657.
+Barker, K., Lambert, J. H., Zobel, C. W., Tapia, A. H., Ramirez-Marquez, J. E., Albert, L. A.,
+... Caragea, C. (2017). Defining resilience analytics for interdependent cyber physical-
+social networks. Sustainable and Resilient Infrastructure, 2(2), 59–67.
+Barker, K., Ramirez-Marquez, J. E., & Rocco, C. M. (2013). Resilience-based network
+component importance measures. Reliability Engineering and System Safety, 117,
+89–97.
+Baroud, H., Barker, K., Ramirez-Marquez, J. E., & Rocco, C. M. (2015). Inherent costs and
+interdependent impacts of infrastructure network resilience. Risk Analysis, 35(4),
+642–662.
+Baroud, H., Ramirez-Marquez, J. E., Barker, K., & Rocco, C. M. (2014). Stochastic mea-
+sures of network resilience: Applications to waterway commodity flows. Risk Analysis,
+34(7), 1317–1335.
+Bazaraa, M. S., Jarvis, J. J., & Sherali, H. D. (2011). Linear programming and network flows.
+Hoboken, NJ: John Wiley & Sons, Inc.
+Bruneau, M., Chang, S. E., Eguchi, R. T., Lee, G. C., O'Rourke, T. D., Reinhorn, A. M., ...
+von Winterfeldt, D. (2003). A framework to quantitatively assess and enhance the
+seismic resilience of communities. Earthquake Spectra, 19(4), 733–752.
+Y. Almoghathawi and K. Barker
+Computers & Industrial Engineering 133 (2019) 153–164
+163
+
+===== PAGE 12 =====
+Buldyrev, S. V., Parshani, R., Paul, G., Stanley, H. E., & Havlin, S. (2010). Catastrophic
+cascade of failures in interdependent networks. Nature, 464(7291), 1025–1028.
+Casey, M. J. (2005). Self-organization and topology control of infrastructure sensor
+networksPh.D. Dissertation. College Park: University of Maryland.
+Cavdaroglu, B., Hammel, E., Mitchell, J. E., Sharkey, T. C., & Wallace, W. A. (2013).
+Integrating restoration and scheduling decisions for disrupted interdependent infra-
+structure systems. Annals of Operations Research, 203(1), 279–294.
+Chang, S. E., McDaniels, T. L., Mikawoz, J., & Peterson, K. (2007). Infrastructure failure
+interdependencies in extreme events: Power outage consequences in the 1998 Ice
+storm. Natural Hazards, 41(2), 337–358.
+Chen, A., Yang, C., Kongsomsaksakul, S., & Lee, M. (2007). Network-based accessibility
+measures for vulnerability analysis of degradable transportation networks. Networks
+and Spatial Economics, 7(3), 241–256.
+Cimellaro, G., Reinhorn, A., & Bruneau, M. (2010). Seismic resilience of a hospital system.
+Structure and Infrastructure Engineering, 6(1), 127–144.
+Danziger, M. M., Shekhtman, L. M., Bashan, A., Berezin, Y., & Havlin, S. (2016).
+Vulnerability of interdependent networks and networks of networks. Interconnected
+networks (pp. 79–99). Switzerland: Springer International Publishing.
+Department of Homeland Security. (2013). National preparedness report.
+Dudenhoeffer, D. D., Permann, M. R., & Manic, M. (2006). CIMS: A framework for in-
+frastructure interdependency modeling and analysis. Proceedings of the 38th con-
+ference on Winter Simulation Conference (pp. 478–485). .
+Dueñas-Osorio, L., Craig, J. I., & Goodno, B. J. (2007). Seismic response of critical in-
+terdependent networks. Earthquake engineering and structural dynamics, 36(2),
+285–306.
+Erath, A., Birdsall, J., Axhausen, K. W., & Hajdin, R. (2009). Vulnerability assessment
+methodology for swiss road network. Transportation Research Record, 2137(1),
+118–126.
+Espiritu, J. F., Coit, D. W., & Prakash, U. (2007). Component criticality importance
+measures for the power industry. Electric Power Systems Research, 77(5), 407–420.
+Eusgeld, I., Nan, C., & Dietz, S. (2011). “System-Of-Systems” approach for interdependent
+critical infrastructures. Reliability Engineering and System Safety, 96(6), 679–686.
+Fang, Y. P., Pedroni, N., & Zio, E. (2016). Resilience-based component importance
+measures for critical infrastructure network systems. IEEE Transactions on Reliability,
+65(2), 502–512.
+Ford, L. R., & Fulkerson, D. R. (1956). Maximal flow through a network. Canadian Journal
+of Mathematics, 8(3), 399–404.
+Freeman, L. C., Borgatti, S. P., & White, D. R. (1991). Centrality in valued graphs: A
+measure of betweenness based on network flow. Social Networks, 13(2), 141–154.
+Girvan, M., & Newman, M. E. (2002). Community structure in social and biological
+networks. Proceedings of the National Academy of Sciences of the United State of
+America, 99(12), 7821–7826.
+González, A. D., Dueñas-Osorio, L., Sánchez-Silva, M., & Medaglia, A. L. (2016). The
+interdependent network design problem for optimal infrastructure system restora-
+tion. Computer-Aided Civil and Infrastructure Engineering, 31(5), 334–350.
+Gravette, M. A., & Barker, K. (2014). Achieved availability importance measures for
+enhancing reliability centered maintenance decisions. Journal of Risk and Reliability,
+229(1), 62–72.
+Henry, D., & Ramirez-Marquez, J. E. (2012). Generic metrics and quantitative approaches
+for system resilience as a function of time. Reliability Engineering and System Safety,
+99(1), 114–122.
+Holden, R., Val, D. V., Burkhard, R., & Nodwell, S. (2013). A network flow model for
+interdependent infrastructures at the local scale. Safety Science, 53(1), 51–60.
+Hosseini, S., Barker, K., & Ramirez-Marquez, J. E. (2016). A review of definitions and
+measures of system resilience. Reliability Engineering and System Safety, 145, 47–61.
+Jenelius, E., Petersen, T., & Mattsson, L. G. (2006). Importance and exposure in road
+network vulnerability analysis. Transportation Research Part A, 40(7), 537–560.
+Johansson, J., & Hassel, H. (2010). An approach for modelling interdependent infra-
+structures in the context of vulnerability analysis. Reliability Engineering and System
+Safety, 95(12), 1335–1344.
+Jönsson, H., Johansson, J., & Johansson, H. (2008). Identifying critical components in
+technical infrastructure networks. Journal of Risk and Reliability, 222(2), 235–243.
+Lee, E. E., Mitchell, J. E., & Wallace, W. A. (2007). Restoration of services in inter-
+dependent infrastructure systems: A network flows approach. IEEE Transactions on
+Systems, Man, and Cybernetics, Part C: Applications and Reviews, 37(6), 1303–1317.
+Levitin, G., Podofillini, L., & Zio, E. (2003). Generalized importance measures for multi-
+state elements based on performance level restrictions. Reliability Engineering and
+System Safety, 82(3), 287–298.
+Li, Y., & Lence, B. J. (2007). Estimating resilience of water resources systems. Water
+Resources Research, 43(7), W07422.
+Little, R. G. (2002). Controlling cascading failure: Understanding the vulnerabilities of
+interconnected infrastructures. Journal of Urban Technology, 9(1), 109–123.
+Loggins, R. A., & Wallace, W. A. (2015). Rapid assessment of hurricane damage and
+disruption to interdependent civil infrastructure systems. Journal of Infrastructure
+Systems, 21(4), 04015005.
+Mendonça, D., & Wallace, W. A. (2006). Impacts of The 2001 world trade center attack
+On New York city critical infrastructures. Journal of Infrastructure Systems, 12(4),
+260–270.
+Nagurney, A., & Qiang, Q. (2009). Fragile networks: Identifying vulnerabilities and synergies
+in an uncertain world. New York, NY: Wiley.
+Newman, M. E. (2003). The structure and function of complex networks. SIAM Review,
+45(2), 167–256.
+Nicholson, C. D., Barker, K., & Ramirez-Marquez, J. E. (2016). Flow-based vulnerability
+measures for network component importance: Experimentation with preparedness
+planning. Reliability Engineering and System Safety, 145, 62–73.
+Nurre, S. G., Cavdaroglu, B., Mitchell, J. E., & Sharkey, T. C. (2012). Restoring infra-
+structure systems: An integrated network design and scheduling (INDS) problem.
+European Journal of Operational Research, 223(3), 794–806.
+Ouyang, M. (2016). Critical location identification and vulnerability analysis of inter-
+dependent infrastructure systems under spatially localized attacks. Reliability
+Engineering and System Safety, 154, 106–116.
+Ouyang, M., & Wang, Z. (2015). Resilience assessment of interdependent infrastructure
+systems: With a focus on joint restoration modeling and analysis. Reliability
+Engineering and System Safety, 141, 74–82.
+Ouyang, M., Zhao, L., Hong, L., & Pan, Z. (2014). Comparisons of complex network based
+models and real train flow model to analyze chinese railway vulnerability. Reliability
+Engineering and System Safety, 123, 38–46.
+Pant, R., Barker, K., Ramirez-Marquez, J. E., & Rocco, C. M. (2014). Stochastic measures
+of resilience and their application to container terminals. Computers and Industrial
+Engineering, 70(1), 183–194.
+Patterson, S. A., & Apostolakis, G. E. (2007). Identification of critical locations across
+multiple infrastructures for terrorist actions. Reliability Engineering and System Safety,
+92(9), 1183–1203.
+Peerenboom, J. P., Fisher, R. E., Rinaldi, S. M., & Kelly, T. K. (2002). Studying the chain
+reaction. Electric Perspectives, 27(1), 22–35.
+Ramirez-Marquez, J. E., & Coit, D. W. (2005). Composite importance measures for multi-
+state systems with multi-state components. IEEE Transactions on Reliability, 54(3),
+517–529.
+Ramirez-Marquez, J. E., Rocco, C. M., Barker, K., & Moronta, J. (2018). Quantifying the
+resilience of community structures in networks. Reliability Engineering and System
+Safety, 169, 466–474.
+Rinaldi, S. M., Peerenboom, J. P., & Kelly, T. K. (2001). Identifying, understanding and
+analyzing critical infrastructure interdependencies. IEEE Control Systems Magazine,
+21(6), 11–25.
+Rodríguez-Núñez, E., & García-Palomares, J. C. (2014). Measuring the vulnerability of
+public transport networks. Journal of Transport Geography, 35, 50–63.
+Rose, A. (2007). Economic resilience to natural and man-made disasters:
+Multidisciplinary origins and contextual dimensions. Environmental Hazards, 7(4),
+383–398.
+Rosenkrantz, D. J., Goel, S., Ravi, S. S., & Gangolly, J. (2009). Resilience metrics for
+service oriented networks: A service allocation approach. IEEE Transactions on
+Services Computing, 2(3), 183–196.
+Sohn, J. (2006). Evaluating the significance of highway network links under the flood
+damage: An accessibility approach. Transportation Research Part A, 40(6), 491–506.
+Sullivan, J. L., Novak, D. C., Aultman-Hall, L., & Scott, D. M. (2010). Identifying critical
+road segments and measuring system-wide robustness in transportation networks
+with isolating links: A link-based capacity-reduction approach. Transportation
+Research Part A, 44(5), 323–336.
+The Infrastructure Security Partnership (2011). Regional disaster resilience guide for
+developing an action plan. Technical report, American Society of Civil Engineers.
+Turnquist, M., & Vugrin, E. (2013). Design for resilience in infrastructure distribution
+networks. Environment Systems and Decisions, 33(1), 104–120.
+U.S.-Canada Power System Outage Task Force (2004). Final Report on The August 14,
+2003 Blackout in The United States and Canada: Causes and Recommendations.
+Wallace, W. A., Mendonça, D. M., Lee, E. E., Mitchell, J. E., & Chow, J. H. (2003).
+Managing disruptions to critical interdependent infrastructures in the context of the
+2001 world trade center attack. Beyond September 11th: An account of post-disaster
+research, special publication #39 (pp. 165–198). Boulder, CO: Natural Hazards
+Research and Applications Information Center, University of Colorado.
+Wang, S., Hong, L., & Chen, X. (2012). Vulnerability analysis of interdependent infra-
+structure systems: A methodological framework. Physica A: Statistical Mechanics and
+its Applications, 391(11), 3323–3335.
+Wang, S., Hong, L., Ouyang, M., Zhang, J., & Chen, X. (2013). Vulnerability analysis of
+interdependent infrastructure systems under edge attack strategies. Safety science,
+51(1), 328–337.
+Wen, R. Z., Sun, B. T., & Zhou, B. F. (2011). Field Survey of Mw8. 8 Feb. 27, 2010 Chile
+Earthquake and Tsunami. Advanced Materials Research, 250, 2102–2106.
+Whitson, J. C., & Ramirez-Marquez, J. E. (2009). Resiliency as a component importance
+measure in network reliability. Reliability Engineering and System Safety, 94(10),
+1685–1693.
+Wu, B., Tang, A., & Wu, J. (2016). Modeling cascading failures in interdependent infra-
+structures under terrorist attacks. Reliability Engineering and System Safety, 147, 1–8.
+Xin-Jian, X., Zhang, X., & Mendes, J. F. F. (2007). Impacts of preference and geography on
+epidemic spreading. Physical Review E, 76(5), 056109.
+Zhang, P., & Peeta, S. (2011). A generalized modeling framework to analyze inter-
+dependencies among infrastructure systems. Transportation Research Part B:
+Methodological, 45(3), 553–579.
+Zhang, Y., Yang, N., & Lall, U. (2016). Modeling and simulation of the vulnerability of
+interdependent power-water infrastructure networks to cascading failures. Journal of
+Systems Science and Systems Engineering, 25(1), 102–118.
+Zimmerman, R. (2001). Social implications of infrastructure network interactions. Journal
+of Urban Technology, 8(3), 97–119.
+Y. Almoghathawi and K. Barker
+Computers & Industrial Engineering 133 (2019) 153–164
+164

@@ -1,0 +1,1695 @@
+4784
+IEEE TRANSACTIONS ON SMART GRID, VOL. 11, NO. 6, NOVEMBER 2020
+Optimal Coordinated Operation of Interdependent
+Power and Water Distribution Systems
+Konstantinos Oikonomou
+, Member, IEEE, and Masood Parvania
+, Senior Member, IEEE
+Abstract—With the rising electricity demand for freshwater
+production, power and water sectors are becoming increasingly
+interdependent. This vital link could create new opportunities
+for power and water distribution system operators to coordi-
+nate the operation of their systems and achieve operational cost
+and energy efﬁciency beneﬁts. This paper proposes the ﬂexible
+power-water ﬂow (FlexPWF) model for co-optimizing the oper-
+ation of ﬂexible energy-intensive components in water systems
+with the operation of both power and water distribution systems.
+The FlexPWF model leverages the energy ﬂexibility provided
+by water treatment and desalination plants in conjunction with
+variable speed pumps and water storage tanks to minimize the
+operating costs of interdependent power and water distribution
+systems. The proposed model takes into account the operational
+constraints of both power and water distribution systems, thus
+coordinating their operation without endangering the reliable
+supply of power and water to customers. The paper highlights
+the merits of integrating water treatment and desalination plants,
+where a detailed model is proposed to capture their dynamic
+operation for producing variable amounts of freshwater and pro-
+viding energy ﬂexibility. Simulations, conducted on the 33-bus test
+distribution system and a 15-node test water distribution system,
+show that the FlexPWF model effectively coordinates the oper-
+ation, reduces the operating costs and improves the operational
+metrics of both power and water systems.
+Index Terms—Interdependent critical infrastructure, ﬂexibil-
+ity, power-water nexus, distribution systems, optimization.
+NOMENCLATURE
+Indices and Parameters
+t
+Index of time intervals.
+j
+Index of water distribution system arcs.
+n
+Index of water distribution system nodes.
+u
+Index of variable speed pumps.
+NT
+Number of scheduling hours.
+N
+Number of water distribution nodes.
+J
+Number of water distribution arcs.
+F
+Number of freshwater reservoirs.
+E
+Number of wastewater reservoirs.
+T
+Number of water storage tanks.
+U
+Number of variable speed pumps.
+Manuscript received December 23, 2019; revised April 21, 2020; accepted
+May 31, 2020. Date of publication June 5, 2020; date of current ver-
+sion October 21, 2020. Paper no. TSG-01911-2019. (Corresponding author:
+Masood Parvania.)
+The authors are with the Department of Electrical and Computer
+Engineering, University of Utah, Salt Lake City, UT 84112 USA (e-mail:
+konstantinos.oikonomou@utah.edu; masood.parvania@utah.edu).
+Color versions of one or more of the ﬁgures in this article are available
+online at http://ieeexplore.ieee.org.
+Digital Object Identiﬁer 10.1109/TSG.2020.3000173
+O
+Number of reverse osmosis membranes.
+A
+N × J node-arc incidence matrix.
+B
+U × J pump-arc incidence matrix.
+F
+F × N
+freshwater reservoir-node incidence
+matrix.
+E
+E × N wastewater reservoir-node incidence
+matrix.
+
+T × N tank-node incidence matrix.
+L
+O × J membrane-arc incidence matrix.
+K
+O × O diagonal matrix of membrane active
+surface area and permeability parameters.
+
+O × O diagonal matrix of osmotic pressure
+coefﬁcients and salinity parameters.
+
+T × T diagonal matrix of tanks surface.
+ZF
+F × 1 vector of freshwater reservoirs elevation.
+ZE
+E × 1 vector of seawater reservoirs elevation.
+C/D
+T × 1 vectors of tanks water inﬂow/outﬂow
+limits.
+V/V
+T × 1 vectors of tanks min/max volume.
+Q/Q
+J × 1 vectors of arcs min/max volumetric ﬂow
+rates.
+PU
+J×1 vector of variable speed pumps max power
+consumption.
+WF
+N × 1 vector of freshwater reservoirs max
+inﬂows.
+WE
+N × 1 vector of wastewater reservoirs max
+inﬂows.
+WD
+t
+N × 1 vector of freshwater demand at time t.
+Mt
+N × 1 vector of freshwater price at time t.
+t
+N × 1 vector of pretreatment wastewater price
+at time t.
+λe
+t
+Forecasted wholesale energy price at power
+substation bus at time t.
+α
+Freshwater unavailability index.
+a, b, c, d, e Pump-speciﬁc performance parameters.
+i, j, k
+Index of power distribution system nodes.
+gi
+Connected conductance at node i.
+bi
+Connected susceptance at node i.
+rji
+Resistance of line ji.
+xji
+Reactance of line ji.
+Isq
+ji
+Square magnitude of maximum current ﬂow
+limit in line ji.
+Vsq
+i
+/ Vsq
+i
+Square magnitude of min/max voltage threshold
+at node i.
+PD
+i,t
+Active power demand of node i at time t.
+QD
+i,t
+Reactive power demand of node i at time t.
+1949-3053 c⃝2020 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:02:29 UTC from IEEE Xplore.  Restrictions apply. 
+
+OIKONOMOU AND PARVANIA: OPTIMAL COORDINATED OPERATION OF INTERDEPENDENT POWER AND WATER DISTRIBUTION SYSTEMS
+4785
+Decision Variables
+Ht
+N × 1 vector of nodal pressure heads at time t.
+HC
+t
+N ×1 vector of pressure heads at the exit nodes
+of RO membranes at time t.
+HS
+t
+N × 1 vector of pressure heads at the entrance
+nodes of RO membranes at time t.
+Qt
+J × 1 vector of arcs’ volumetric ﬂow rates at
+time t.
+QC
+t
+J × 1 vector of permeate volumetric ﬂow rates
+at time t.
+QS
+t
+J × 1 vector of feed volumetric ﬂow rates at
+time t.
+WF
+t
+N × 1 vector of reservoirs freshwater inﬂows at
+time t.
+WE
+t
+N ×1 vector of reservoirs wastewater inﬂows at
+time t.
+Ct
+T×1 vector of tanks freshwater inﬂows at time t.
+Dt
+T × 1 vector of tanks freshwater outﬂows at
+time t.
+Vt
+T × 1 vector of tanks stored water at time t.
+PU
+t
+U × 1 vector of variable speed pumps power
+consumption at time t.
+t
+U × 1 vector of variable speed pumps relative
+speed at time t.
+Yt
+O × 1 vector of RO membranes’ freshwater
+recovery ratio at time t.
+Ht
+O × 1 vector of pressure difference across RO
+membranes at time t.
+πt
+O×1 vector of average osmotic pressure differ-
+ence across RO membranes at time t.
+ˆ
+πj,t
+Linearized function of the average osmotic pres-
+sure difference at time t.
+γ ν,m
+j,t
+Continuous decision variable associated with the
+sampling coordinates ν and m of the linearized
+function at time t.
+PG
+t /QG
+t
+Active/reactive
+power
+withdrawn
+from
+the
+upstream transmission network at time t.
+PL
+ji,t
+Active power ﬂow in line ji at time t.
+QL
+ji,t
+Reactive power ﬂow in line ji at time t.
+Vsq
+i,t
+Square magnitude of voltage in node i at time t.
+Isq
+ji,t
+Square magnitude of current ﬂow in line ji at
+time t.
+hν,m
+j,t
+Integer variable of lower right triangle of the
+linearized function at time t.
+h
+ν,m
+j,t
+Integer variable of upper left triangle of the
+linearized function at time t.
+I. INTRODUCTION
+A. Background and Problem Description
+T
+HE INTERDEPENDENCE between power and water
+systems has recently attracted the attention of both power
+and water system communities who seek to better under-
+stand how a synergistic operation between their systems could
+improve energy efﬁciency and reduce their operating costs [1].
+This synergy is commonly referred to as the power-water
+nexus in the sense that the efﬁcient use of one system depends
+on the availability and efﬁciency of the other [2]. Water is
+needed in all power generation stages, from thermal power
+plant cooling to fossil fuel extraction, while power is required
+to treat, desalinate and distribute large amounts of high-quality
+water over long distances. For instance, in water-stressed states
+like California, water facilities consume 20% of the state’s
+total electricity for their operations [3]. As increasing pressures
+of drought and population growth arise, the nexus between the
+power and water sector is intensiﬁed.
+Water treatment and desalination are energy-intensive
+processes in which salt, contaminants, and other minerals
+are extracted to produce potable water for urban consump-
+tion, industrial use, and agricultural irrigation [4]. In the U.S.,
+public drinking water systems supply potable water, which
+is ﬁrst puriﬁed in water treatment facilities to more than
+80% of the total population [5]. As of 2018, more than
+300 municipal-level seawater and brackish water desalination
+plants are identiﬁed with the ability to produce at least 25,000
+gallons of potable water per day in the U.S., with countless
+projects in the pipeline [6]. California, Florida, and Texas are
+the leading states in the desalination sector in U.S., both in
+terms of the installed capacity and the total number of operat-
+ing plants [7]. In California, in drought-prone counties like
+San Diego, the desalinated water serves up to 8% of the
+freshwater demand [8]. In Florida, Tampa Bay seawater desali-
+nation plant supplies about 10% of the region’s freshwater
+needs [9]. In Texas, there are 46 municipal brackish water
+desalination plants with capacities greater than 0.025 million
+gallons per day [10]. Desalination technologies have also been
+employed to process wastewater supplies. Currently, 7% of
+wastewater in the U.S. is reused, but only a small portion for
+potable uses [11].
+A coordinated operation between power and water systems
+could uncover signiﬁcant operational beneﬁts for both infras-
+tructures [12]. For example, electric water pumps with control-
+lable power consumption features could be utilized by local
+grid operators and power utilities in the form of ﬂexible loads
+to optimize the operation of both power and water distribu-
+tion systems. In this regard, controllable assets from the water
+sector (i.e., water desalination and treatment plants, variable
+speed pumps), if properly managed, could reduce operating
+costs of both power and water systems, improve the energy
+efﬁciency of electric water pumps, reduce power and water
+losses, as well as offer a range of services (i.e., ﬂexible energy,
+frequency regulation, congestion management) that can help
+grid operators counterbalance the variability and uncertainty
+of renewable generation resources [4], [13].
+Despite the operational beneﬁts that emerge from an inte-
+grated operation of power and water systems, yet these systems
+are managed, regulated, and operated independently from one
+another. One barrier is the concern that the optimal opera-
+tion decisions of one system may not always be supported by
+the operational constraints of the other, which may adversely
+impact the primary operation objective of the critical infras-
+tructures for reliable delivery of power and water services.
+For instance, although reducing the electricity consumption
+of pumps during periods of high energy prices would lower
+the operation cost of the power distribution system, it may
+pose a threat to reliably supply the water demand of the water
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:02:29 UTC from IEEE Xplore.  Restrictions apply. 
+
+4786
+IEEE TRANSACTIONS ON SMART GRID, VOL. 11, NO. 6, NOVEMBER 2020
+distribution system (WDS), due to insufﬁcient pressure head
+gain produced by the pumps. Thus, to fully grasp the potential
+beneﬁts from co-operating power and water systems, advanced
+operation optimization frameworks that consider both power
+and water operational constraints need to be developed. These
+frameworks should co-optimize the operation of power and
+water systems by leveraging the ﬂexibility of their controllable
+assets and coordinate the power and water ﬂow interactions
+while maintaining each system’s performance objectives.
+B. Literature Review
+The technical literature includes multiple recent frame-
+works aimed at co-optimizing the operation of power and
+water systems. A model is proposed in [14] that integrates
+and optimizes the energy ﬂexibility of WDSs’ variable speed
+pumps (VSPs) and water storage tanks in bulk power systems
+operation. The work in [14] is further expanded in [15] by
+proposing a comprehensive model to deﬁne and optimize
+the feasible energy ﬂexibility ranges of WDSs. In [16], a
+model is developed that co-optimizes the operation of power
+and water distribution systems by employing the ﬂexibil-
+ity of water storage tanks and ﬁxed-speed pumps, and a
+quasi-convex hull relaxation technique is proposed to yield
+computationally efﬁcient solutions. However, the use of ﬁxed-
+speed pumps restricts WDS energy ﬂexibility and limits the
+beneﬁts emerging from coordinating the operation of power
+and water distribution systems. A model that co-optimizes the
+operation of power and water distribution systems by tapping
+on the ﬂexible operation of water storage tanks and variable
+speed pumps is proposed in [17], where a feasible point pur-
+suit successive convex approximation algorithm is adopted to
+obtain near-optimal solutions. A model that co-optimizes the
+operation of hydroelectric and desalination plants is proposed
+in [18], however, without considering intertermporal operation
+constraints and network topology of power and water systems.
+A model is developed in [19] for deploying the energy ﬂex-
+ibility of water treatment plants to improve the operation of
+power distribution systems.
+More recently, there has been signiﬁcant progress in solv-
+ing WDS optimization problems of different objectives by
+developing models based on geometric programming (GP)
+approaches [20]–[22]. These models convert the non-convex
+water ﬂow constraints into a series of convex GP prob-
+lems that can be efﬁciently solved by commercial solvers
+without prior knowledge of water ﬂow directions or max-
+imum ﬂow rates. These models display several advantages
+in providing tractable and globally optimal solutions for
+large water networks, however, they are not yet implemented
+in power-water nexus applications. Technical literature also
+includes models that optimize the schedule of valves in WDSs,
+which could provide another degree of freedom to improve
+the coordinated operation of water and power distribution
+systems [22], [23].
+In a different approach, models are proposed to integrate the
+energy ﬂexibility of WDSs in power demand response (DR)
+programs and frequency regulation markets. These models aim
+at helping water distribution system operators (W-DSOs) off-
+set a portion of their electricity cost by providing services in
+power markets. A model is proposed in [24] that optimizes
+the schedules of VSPs to maximize W-DSO proﬁts in the
+day-ahead energy market, while considering water demand
+uncertainties. The works in [25]–[27] develop models that
+leverage the ﬂexible operation of water storage tanks, pumps,
+and desalination plants for maximizing W-DSO proﬁts in both
+DR programs and regulation markets.
+Although the technical literature includes models to co-
+optimize the operation of power and water systems, as well
+as to integrate the energy ﬂexibility of WDSs in electric-
+ity markets, less attention has been given to investigating
+and modeling the operational beneﬁts that water desalination
+and treatment plants could provide to the joint operation of
+power and water distribution systems. The models presented
+in [14]–[27] do not consider the ﬂexibility provided by the
+dynamic operation of the water desalination and treatment
+plants in their co-optimization processes. Water treatment and
+desalination plants are energy-intensive infrastructures that
+can ﬂexibly operate via controlling the amount of freshwa-
+ter produced by their ﬁltration systems. However, including
+the ﬂexible operation of water plants increases the level
+of complexity of the power-water ﬂow scheduling problem.
+Therefore, computationally-efﬁcient mathematical models are
+needed that capture and schedule the energy ﬂexibility of the
+water plants as part of co-optimizing the operation of power
+and water distribution systems.
+C. Contribution and Paper Structure
+This
+paper
+proposes
+the
+ﬂexible
+power-water
+ﬂow
+(FlexPWF) model for co-optimizing the operation of ﬂexi-
+ble energy-intensive components in water systems with the
+operation of both power and water distribution systems. More
+speciﬁcally, the proposed model aims to minimize the day-
+ahead operation costs of the interdependent power and water
+distribution system by leveraging the energy ﬂexibility pro-
+vided by water treatment and desalination plants, as well
+as by VSPs and water storage tanks. The FlexPWF model
+integrates the detailed operation and energy ﬂexibility con-
+straints of water treatment and desalination plants through
+a mixed-integer linear formulation that linearizes the com-
+plex nonlinear operation characteristics of water treatment and
+desalination plants, and takes into account their dynamic oper-
+ation for producing variable amounts of freshwater via their
+ﬁltration systems. In addition, the FlexPWF model enables
+coordinated operation of interdependent power and water dis-
+tribution systems by, at one side, integrating the ﬂexible energy
+consumption variables of water components in power ﬂow
+constraints of the power distribution network through branch
+ﬂow model, and at another side, by integrating the operational
+constraints of water components within hydraulic water ﬂow
+constraints of the water distribution network. Therefore, the
+FlexPWF model enables co-optimizing the available energy
+ﬂexibility without risking the reliable supply of power and
+water demand pertained to each system. The FlexPWF model
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:02:29 UTC from IEEE Xplore.  Restrictions apply. 
+
+OIKONOMOU AND PARVANIA: OPTIMAL COORDINATED OPERATION OF INTERDEPENDENT POWER AND WATER DISTRIBUTION SYSTEMS
+4787
+is formulated as a mixed-integer quadratically constrained pro-
+gramming (MIQCP) model, which can be efﬁciently solved
+for large-scale power and water distribution systems using
+commercial solvers.
+The rest of this paper is organized as follows: Section II
+presents the proposed FlexPWF model that co-optimizes
+the operation of power and water distribution systems. The
+solution approach of the proposed model is presented in
+Section III. The simulation results are shown in Section IV,
+and the conclusions are presented in Section V.
+D. Notation
+The notation used in the paper to describe the power and
+water distribution systems is deﬁned below. We represent the
+power distribution system by a directed graph G = (B, L),
+where B = {1, . . . , B} and L = {ji|j, i ∈B, j ≡j(i)} denote
+the set of buses and lines, and j(i) shows the buses connected
+to bus i. For radial systems, node i = 1 denotes the substa-
+tion bus where the feeder is connected to the transmission
+system, while the distribution buses are represented by set
+Bb = {2, . . . , B}. For each line ji ∈L, let zji = rji +ixji be the
+complex impedance, Isq
+ji,t be the squared current magnitude at
+time t, and (PL
+ji,t +iQL
+ji,t) be the complex power ﬂow at time t.
+For each bus i ∈B, let Vsq
+i,t be the squared voltage magnitude
+at time t, zi = ri + ixi be the complex shunt impedance, and
+yi = 1/zi = gi −ibi be the shunt admittance. For the substa-
+tion bus, let (PG
+t + iQG
+t ) be the complex power ﬂowing from
+the upstream transmission system to supply the distribution
+system at time t. For a distribution bus, let (PD,I
+i,t + iQD,I
+i,t ) be
+the complex power of inﬂexible loads at time t.
+Similarly, we represent the WDS by a directed graph
+G = (N, J ), where N is the set of N nodes representing
+T tanks, F freshwater reservoirs, and E wastewater (or sea-
+water) reservoirs; J is the set of J arcs comprising S pipes,
+U VSPs, and O reverse osmosis (RO) membranes. The pres-
+sure head of the nodes at time t is represented by the N × 1
+decision variable vector Ht = [Ht,1, . . . , Ht,N]T, and the vol-
+umetric ﬂow rate of arcs at time t is shown by the J × 1
+decision variable vector Qt = [Qt,1, . . . , Qt,J]T, where N and
+J respectively represent the total number of nodes and arcs.
+Water ﬂow through the network is induced by different pres-
+sure levels at the nodes and is described by ATHt, where A is
+the N × J node-arc incidence matrix with rows and columns
+corresponding to nodes and arcs of the WDS, respectively.
+II. FLEXIBLE POWER-WATER FLOW SCHEDULING MODEL
+This section presents the proposed ﬂexible power-water ﬂow
+(FlexPWF) model. In the proposed FlexPWF model, the power
+and water distribution system operators (P-DSO and W-DSO)
+coordinate the operation of their systems to minimize day-
+ahead operation costs by tapping on the ﬂexible operation
+of water treatment, desalination, and conveyance subsystems.
+These subsystems, shown in Fig. 1, consist of VSPs, water
+storage tanks, and ﬁltration membranes. VSPs can operate
+ﬂexibly via rapidly adjusting their speed (therefore their power
+consumption) to balance water load ﬂuctuations. In water con-
+veyance subsystems, VSPs consume electricity to generate
+Fig. 1.
+Representation of interconnected power and water distribution
+systems.
+sufﬁcient pressure in water pipes needed to convey water over
+long distances, in addition to storing freshwater in the stor-
+age tanks. As the pumping energy required to deliver water
+to storage tanks is ﬂexible via the utilization of VSPs, the
+water pumping schedule into tanks could be optimized to pro-
+vide ﬂexibility in power distribution systems. Water ﬁltration
+membranes are part of both water treatment and desalina-
+tion subsystems, which purify water for consumption [28].
+In order to ensure freshwater productivity, VSPs are utilized
+on the feed side of membranes to pressurize waste or saline
+water. Considering the ﬂexible operation of VSPs, water treat-
+ment and desalination plants are also candidates to provide
+ﬂexibility to power distribution systems.
+The proposed FlexPWF model coordinates the day-ahead
+ﬂexible operation of water treatment, desalination, and con-
+veyance subsystems in WDS with the operation of power
+distribution systems, assuming that both power and water
+ﬂows are in steady-state while all transient states (especially
+those associated with the slower water ﬂow dynamics) have
+damped out. In addition, we assume that appropriate intel-
+ligent metering, telecommunication, control, and automation
+systems at each facility and associated controllable equipment
+(e.g., VSPs) are in place that enable a two-way communication
+channel across the two systems.
+The objective function of the FlexPWF model is to mini-
+mize the operation cost for meeting the electricity and water
+demands over the scheduling horizon of NT time intervals:
+min
+NT
+
+t
+
+PG
+t λe
+t
+
++
+NT
+
+t
+
+1UTPU
+t πe
+t
+
++
+NT
+
+t
+
+MtFWF
+t + tEWE
+t
+
+.
+(1)
+The ﬁrst term in (1) represents the cost of purchasing power
+PG
+t in the power distribution system, where λe
+t is the forecasted
+wholesale energy price at distribution substation bus at time t.
+The second term in (1) is the cost the W-DSO pays to the
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:02:29 UTC from IEEE Xplore.  Restrictions apply. 
+
+4788
+IEEE TRANSACTIONS ON SMART GRID, VOL. 11, NO. 6, NOVEMBER 2020
+P-DSO to consume power, where PU
+t
+is the U × 1 decision
+variable vector of VSPs’ power consumption at time t, 1U is
+a U × 1 vector of ones, and πe
+t is the energy tariff at which
+the W-DSO purchases energy at time t. The third term in (1)
+represents the cost of purchasing water from freshwater reser-
+voirs, where Mt is 1 × F vector of freshwater price at time t;
+F is F × N freshwater reservoir-node incidence matrix; and
+WF
+t is N × 1 decision variable vector of freshwater inﬂows at
+freshwater reservoir nodes at time t. The fourth term in (1)
+represents costs related to the wastewater and seawater pre-
+treatment processes, where t is 1 × E vector of pretreatment
+wastewater price at time t; E is E × N wastewater reservoir-
+node incidence matrix; and WE
+t is N × 1 decision variable
+vector of wastewater inﬂows at wastewater reservoir nodes at
+time t. The objective function (1) is constrained to the oper-
+ation constraints of power and water distribution networks,
+which are presented next.
+A. Power Distribution System Model
+The power ﬂow in power distribution systems is modeled
+using the branch ﬂow formulation, which accounts for both
+active and reactive power ﬂows and integrates the active and
+reactive power of ﬂexible WDS pumping loads in the dis-
+tribution buses [29]. The active and reactive power ﬂows in
+the substation bus are formulated in (2) and (3). The active
+and reactive power balance constraints in distribution buses
+that integrate WDS ﬂexible pumping loads are formulated
+in (4) and (5), where (PU
+u,i,t + iQU
+u,i,t) is the complex power
+consumption of a variable speed pump u ∈U at time t. The
+voltage drop constraint is formulated in (6) in terms of the
+active and reactive power ﬂows of the lines. The bus voltage
+limits are enforced in (7). Constraint (8) limits the complex
+power ﬂows of the lines, while the current ﬂows are con-
+strained to the maximum current limit of lines in (9). The
+inequality constraint (8) represents a convex form of the orig-
+inal equality constraint Vsq
+i,tIsq
+i,t = P2
+i,j + Q2
+i,j which is relaxed
+as a rotated second order cone constraint.
+PG
+t =
+
+1k∈L
+PL
+1k,t + g1Vsq
+1,t,
+∀t,
+(2)
+QG
+t =
+
+1k∈L
+QL
+1k,t + b1Vsq
+1,t,
+∀t,
+(3)
+−PD,I
+i,t −
+
+u∈Ui
+PU
+u,i,t =
+
+ik∈L
+PL
+ik,t
+−
+
+ji∈L
+
+PL
+ji,t −rjiIsq
+ji,t
+
++ giVsq
+i,t, i ∈Bb, ∀t,
+(4)
+−QD,I
+i,t −
+
+u∈U
+QU
+u,i,t =
+
+ik∈L
+QL
+ik,t
+−
+
+ji∈L
+
+QL
+ji,t −xjiIsq
+ji,t
+
++ biVsq
+i,t,
+i ∈Bb, ∀t,
+(5)
+Vsq
+i,t −Vsq
+j,t = −2
+
+rjiPL
+ji,t + xjiQL
+ji,t
+
++
+
+r2
+ji + x2
+ji
+
+Isq
+ji , (ji) ∈L, ∀t,
+(6)
+Vsq
+i
+≤Vsq
+i,t ≤Vsq
+i ,
+i ∈Bb, ∀t,
+(7)
+Vsq
+i,tIsq
+ji,t ≥P2
+ji,t + Q2
+ji,t,
+(ji) ∈L, ∀t,
+(8)
+Isq
+ji,t ≤Iji
+2,
+(ji) ∈L, ∀t.
+(9)
+B. Water Distribution System Model
+The WDS delivers freshwater from the freshwater reservoirs
+to the water consumers, as well as seawater from the seawater
+reservoirs to the water treatment plants via a system of pipes,
+water storage tanks, and variable speed pumps.
+1) Mass Balance Constraint: The mass balance constraint
+for WDS nodes is given in (10), where WD
+t is N × 1 vector
+of nodes’ freshwater demand parameter at time t; Ct and Dt
+are respectively T × 1 vectors of freshwater inﬂow and out-
+ﬂow decision variables of water storage tanks at time t; and
+ is T ×N tank-node incidence matrix. The freshwater inﬂow
+and outﬂow variables of tanks are included in (10), allow-
+ing W-DSOs to leverage the water storage capacity of tanks
+to store freshwater and supply freshwater demand at a later
+time. The freshwater and wastewater inﬂows are respectively
+limited in (11) and (12), where WF and WE are the maxi-
+mum freshwater and wastewater inﬂow bounds. Note that the
+wastewater inﬂow ﬁrst passes through a RO ﬁltration system,
+which separates dissolved salts and other minerals before sup-
+plying the freshwater demand. Thus, only a portion of the
+wastewater inﬂow is eventually converted to freshwater, based
+on the design characteristics of the RO membrane. In addition,
+based on the availability of freshwater resources and the possi-
+bility of facing freshwater shortages, the W-DSO may choose
+to recover higher portions of freshwater from the water treat-
+ment or desalination plants. This is mathematically expressed
+in (13), where Yt ∈[0, 1] is O × 1 vector of the membranes’
+freshwater recovery ratio at time t; L is O × J membrane-arc
+incidence matrix; α ∈[0, 1] is the freshwater unavailability
+index that remains ﬁxed throughout the scheduling horizon;
+and 1N is a 1 × N row vector of ones; in (13), higher values
+for a indicate that a higher portion of the freshwater demand
+is supplied from the water treatment or desalination plants.
+WE
+t + WF
+t −WD
+t = AQt + T[Ct −Dt],
+∀t,
+(10)
+0 ≤WF
+t ≤WF,
+∀t,
+(11)
+0 ≤WE
+t ≤WE,
+∀t,
+(12)
+1NYT
+t LATWE
+t ≥α1NWD
+t ,
+∀t.
+(13)
+2) Water Pipes: The head loss in pipes is modeled by the
+empirical Hazen-Williams constraint (14), where G is J × J
+diagonal matrix of pipes’ resistance parameters, and (·) is
+the unit sign function [30]. The nodal pressure heads are con-
+ﬁned in (15) to the minimum and maximum pressure head
+bounds at the nodes. The nodal pressure heads are respec-
+tively ﬁxed at the freshwater and wastewater reservoir nodes
+in (16) and (17) by a ﬁxed elevation height, where ZF and ZE
+are respectively F×1 and E×1 vectors that contain freshwater
+and wastewater reservoir nodes’ elevation data; The volumetric
+ﬂow rate variable of arcs is limited in (18), where the bound
+Q depends on the pipes’ and pumps’ design characteristics.
+−ATHt = G
+
+Qt
+Qt
+1.852,
+∀t,
+(14)
+H ≤Ht ≤H,
+∀t,
+(15)
+FHt = ZF,
+∀t,
+(16)
+EHt = ZE,
+∀t,
+(17)
+−Q ≤Qt ≤Q,
+∀t.
+(18)
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:02:29 UTC from IEEE Xplore.  Restrictions apply. 
+
+OIKONOMOU AND PARVANIA: OPTIMAL COORDINATED OPERATION OF INTERDEPENDENT POWER AND WATER DISTRIBUTION SYSTEMS
+4789
+3) Water Treatment and Desalination Model: Water treat-
+ment and desalination plants provide an alternative to fresh-
+water reservoir sources for supplying freshwater. As shown in
+Fig. 1, water treatment and desalination plants consist of a
+high pressure pump and a RO membrane ﬁltration system.
+Reverse osmosis is the dominant technology for mid- and
+large-size water treatment and desalination plants as it provides
+a cost effective option of producing high quality freshwater
+from seawater or wastewater with lower electricity consump-
+tion requirements than other technologies [28]. In this process,
+the pressurized wastewater (or seawater) stream (feed) is split
+into a freshwater stream (permeate) and a concentrated brine
+stream (retentate) [31], [32].
+The pressures and ﬂow rates for the RO membrane are
+presented in (19)-(23). The permeate ﬂow rate QC
+t
+⊂Qt is
+modeled in (19), where Ht is O × 1 vector of pressure dif-
+ference across the membrane (transmembrane pressure); πt
+is O × 1 vector of the average osmotic pressure difference
+between the retentate and permeate streams along the mem-
+brane; K is O × O diagonal matrix of membranes’ active
+surface area and hydraulic permeability parameters; and 1O is
+a O × 1 vector of ones. In (20), the pressure difference across
+the membrane is equal to the difference between the pressure
+of the feed water at the entrance of the membrane HS
+t ⊂Ht
+and the pressure of the permeate water at the exit of the mem-
+brane HC
+t ⊂Ht. The average osmotic pressure difference is
+approximated in (21), where the membrane’s freshwater recov-
+ery ratio Yt is equal to the ratio of permeate water ﬂow rate to
+the feed water ﬂow rate QS
+t ⊂Qt in (22);  is O×O diagonal
+matrix of the osmotic pressure coefﬁcients of the feed water. In
+order to ensure permeate productivity along the membrane, the
+transmembrane pressure has to overcome the average osmotic
+pressure difference, as imposed in (23).
+From a modeling perspective, water treatment plants are
+modeled in the same way as water desalination plants based on
+the assumption that both plants use the same type of ﬁltration
+technology (i.e., reverse osmosis) to respectively ﬁlter seawa-
+ter and wastewater. However, the distinction between the two
+plants is made by considering different salinity coefﬁcients for
+seawater and wastewater which impact the amount of energy
+used to purify the water. The different levels of saline concen-
+tration associated with the feed water are represented by the
+parameter  in constraint (21).
+QC
+t = LTK(Ht −πt),
+∀t,
+(19)
+Ht = LAT
+HS
+t −HC
+t
+
+,
+∀t,
+(20)
+πt = 
+
+1O ⊘
+
+1O −Yt
+
+,
+∀t,
+(21)
+Yt = L
+
+QC
+t ⊘QS
+t
+
+,
+∀t,
+(22)
+Ht ≥πt,
+∀t.
+(23)
+4) Water Storage Tanks: Let Vt denote the T × 1 vector
+of water volume in tanks at time t. The state equation that
+describes the dynamic operation of water storage tanks is given
+in (24). The water volume of tanks is conﬁned to the minimum
+and maximum volume limits in (25). The water volume stored
+in tanks at the beginning of scheduling horizon is initialized
+in (26), where Vinit is the vector of initial water volume stored
+in tanks. In (27), the water volume varies based on the pressure
+head at the tank nodes, where  is T × T diagonal matrix of
+tanks’ surface values. Constraints (28) and (29) respectively
+limit tanks’ water inﬂow and outﬂow rates to the maximum
+inﬂow and outﬂow rate bounds.
+Vt+1 = Vt + (Ct −Dt)t,
+∀t,
+(24)
+V ≤Vt ≤V,
+∀t,
+(25)
+V1 = Vinit,
+(26)
+Vt = Ht,
+∀t,
+(27)
+0 ≤Ct ≤C,
+∀t,
+(28)
+0 ≤Dt ≤D,
+∀t.
+(29)
+5) Variable Speed Pumps: The pressure head increase in
+pipes generated by VSPs and their power consumption are
+respectively formulated in (30) and (31), where t is U × 1
+decision variable vector of VSPs relative speed at time t; B is
+U×J pump-arc incidence matrix; 1U is a U×1 vector of ones;
+and a, b, c, d and e are pump-speciﬁc parameters [33]. Signs
+⊙and ⊘in (30) and (31) refer respectively to component-wise
+matrix multiplication and division. In (32), U×1 decision vari-
+able vector of VSPs’ power consumption, PU
+t , is constrained
+to its maximum power capacity, PU, while the water ﬂow rate
+through a pump takes positive values in (33), denoting that
+VSPs can operate only in one direction.
+BATHt = 2
+t ⊙
+
+a1U −b
+
+1U ⊘t
+
+⊙BQt
+c
+,
+∀t, (30)
+PU
+t = 
+3
+t ⊙
+
+d1U −e
+
+1U ⊘t
+
+⊙BQt
+
+,
+∀t,
+(31)
+0 ≤PU
+t ≤PU,
+∀t,
+(32)
+BQt ≥0,
+∀t.
+(33)
+In summary, (1)-(33) presents the formulation of the
+proposed FlexPWF model, which is solved using a MIQCP
+reformulation next.
+III. SOLUTION APPROACH
+The proposed FlexPWF model is a non-convex and non-
+linear programming (NLP) problem with nonlinearities repre-
+sented by the pressure head loss constraint (14), the VSPs
+operation constraints (30) and (31), the water treatment or
+desalination plants operation constraints (21) and (22), as well
+as the complex power ﬂow quadratic constraint (8). NLP mod-
+els, however, can be computationally intensive for large WDSs,
+and a feasible global optimal solution may not always be
+guaranteed. In our previous works [15], [26], we developed
+models to approximate and replace the nonlinear functions
+of constraints (14), (30) and (31) with convex piecewise lin-
+ear alternatives, and showed that linear approximations lead
+to fairly accurate solutions in much lower computation times.
+The readers are referred to [15], [26] for linear models for
+constraints (14), (30) and (31). In this paper, we present a
+model that utilizes continuous and binary variables to linearize
+water treatment and desalination constraint (21), in which the
+freshwater recovery ratio Yt is substituted by (22).
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:02:29 UTC from IEEE Xplore.  Restrictions apply. 
+
+4790
+IEEE TRANSACTIONS ON SMART GRID, VOL. 11, NO. 6, NOVEMBER 2020
+A. Linear Water Treatment and Desalination Constraints
+Let function πj,t(QC
+j,t, QS
+j,t) = πn,t −πn+1,t be the time-
+dependent osmotic pressure difference across the RO mem-
+brane connecting two consecutive nodes n and n + 1, where
+QC
+j,t and QS
+j,t are the permeate and feed water ﬂow rates at
+time t, respectively. Using (20), πj,t(QC
+j,t, QS
+j,t) is a nonlinear
+function deﬁned as πj,t(QC
+j,t, QS
+j,t) = (1/(1 −(QC
+j,t/QS
+j,t))).
+In order to develop the piecewise linear approximation of
+the bivariate function πj,t(QC
+j,t, QS
+j,t), we divide the axis QC
+j,t
+and QS
+j,t respectively to V −1 and M −1 segments using
+breakpoints k1
+j , k2
+j , . . . , kV
+j
+and w1
+j , w2
+j , . . . , wM
+j . The values
+k1
+j and kV
+j
+as well as w1
+j and wM coincide with the lower
+and upper bounds of the QC
+j,t and QS
+j,t domains [34]. The
+segments on the axes partition the bivariate function domain
+into several rectangles. Consider the rectangle deﬁned by ver-
+tices (kν
+j , wm
+j ), (kν+1
+j
+, wm
+j ), (kν+1
+j
+, wm+1
+j
+), (kν
+j , wm+1
+j
+) on the
+function domain. This rectangle is covered by two triangles
+deﬁned by vertices (kν
+j , wm
+j ), (kν
+j , wm+1
+j
+), (kν+1
+j
+, wm+1
+j
+), and
+(kν
+j , wm
+j ), (kν+1
+j
+, wm
+j ), (kν+1
+j
+, wm+1
+j
+), and divided by the diag-
+onal (kν
+j , wm
+j ), (kν+1
+j
+, wm+1
+j
+). A continuous variable γ ν,m
+j,t
+∈
+[0, 1] is associated with each vertice (ν,m), and binary vari-
+ables h
+ν,m
+j,t
+(ν = 1, . . . , V −1; m = 2, . . . , M) and hν,m
+j,t
+(ν = 2, . . . , V; m = 1, . . . , M −1) are respectively associated
+with the upper left and lower right triangles.
+Any given operating point kν
+j ≤QC
+j,t ≤kν+1
+j
+and wm
+j
+≤
+QS
+j,t ≤wm+1
+j
+can be uniquely represented by (34) and (35),
+as linear combinations of the vertice coordinates weighted by
+the associated variables γ ν,m
+j,t . The bivariate nonlinear function
+πj,t(QC
+j,t, QS
+j,t) is then approximated by the linear function
+ˆ
+πj,t in (36), as convex combination of the function values
+evaluated at the vertices of the triangle containing the oper-
+ating point (QC
+j,t, QS
+j,t), weighted by the associated variables
+γ ν,m
+j,t . Constraint (37) ensures that in any solution only one
+of the triangles is chosen, while (38)-(40) ensure that in any
+solution at most three γ ν,m
+j,t
+can take non-zero values.
+QC
+j,t =
+V
+
+ν=1
+M
+
+m=1
+kν
+j γ ν,m
+j,t ,
+∀t, ∀j,
+(34)
+QS
+j,t =
+V
+
+ν=1
+M
+
+m=1
+wm
+j γ ν,m
+j,t ,
+∀t, ∀j,
+(35)
+ˆ
+πj,t =
+V
+
+ν=1
+M
+
+m=1
+πj,t
+
+kν
+j , wm
+j
+
+γ ν,m
+j,t ,
+∀t, ∀j,
+(36)
+V
+
+ν=1
+M
+
+m=1
+
+h
+ν,m
+j,t + hν,m
+j,t
+
+= 1,
+∀t, ∀j,
+(37)
+V
+
+ν=1
+M
+
+m=1
+γ ν,m
+j,t
+= 1,
+∀t, ∀j,
+(38)
+γ ν,m
+j,t
+≤h
+ν,m−1
+j,t
++ h
+ν+1,m
+j,t
++ h
+ν,m
+j,t ,
++ hν−1,m
+j,t
++ hν,m+1
+j,t
++ hν,m
+j,t ,
+∀t, ∀j, ∀ν, ∀m,
+(39)
+0 ≤γ ν,m
+j,t
+≤1,
+∀t, ∀j, ∀ν, ∀m.
+(40)
+The linear model in (34)-(40) approximates the non-
+linear functions in (21) and (22), and the linear models
+Fig. 2.
+Interdependent 33-bus test power distribution and 15-node water
+distribution systems [35].
+Fig. 3.
+Hourly forecasted energy price and water demand proﬁle.
+introduced in [15], [26] approximate the nonlinear func-
+tions in (14), (30) and (31). In addition, the relaxed branch
+ﬂow model is used to formulate the AC power ﬂow con-
+straints (2)-(9) consists of a set of linear and quadratic
+constraints. Substituting the nonlinear functions with the asso-
+ciated linear approximations render the proposed FlexPWF
+model into a convex MIQCP model, which is solvable as a
+whole using computationally tractable MIQCP solvers, e.g.,
+CPLEX.
+IV. SIMULATION RESULTS
+The proposed FlexPWF model is implemented on the 33-bus
+distribution test system that supplies the electricity of a 15-
+node WDS [35]. The topology of the interdependent power
+and water distribution systems is shown in Fig. 2. In Fig. 2,
+the WDS consists of 15 nodes, 14 arcs (including 10 pipes, 3
+variable speed pumps in arcs 1, 4, 6, and 1 RO membrane in
+arc 2), two water storage tanks (nodes 10, 13), three water load
+nodes (nodes 4, 11, 15), one freshwater reservoir (node 6) and
+one wastewater reservoir (node 1). The saline concentration
+associated with the wastewater is set to 30 kg/m2 (at 25 Co).
+The California’s forecasted residential water demand proﬁle,
+shown in Fig. 3, is used as water demand in the simulation [36].
+The full data for the test WDS can be found in [35].
+In addition, we assume that the freshwater unavailability
+index α is 0.5, implying that at least 50% of the hourly
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:02:29 UTC from IEEE Xplore.  Restrictions apply. 
+
+OIKONOMOU AND PARVANIA: OPTIMAL COORDINATED OPERATION OF INTERDEPENDENT POWER AND WATER DISTRIBUTION SYSTEMS
+4791
+TABLE I
+DAILY ENERGY COSTS
+freshwater demand is supplied from the water treatment
+plant. The hourly load data of California Independent System
+Operator (CAISO) for March 30, 2018 is scaled down to
+the 33-bus test system’s active and reactive peak loads of
+3,715kW and 2,300kVAr, and used in the simulations. In addi-
+tion, CAISO’s wholesale energy prices of the same day are
+used in the simulations [37]. The upper and lower limits of
+the voltage magnitude at each distribution bus are set to 0.9
+p.u. and 1.04 p.u. The three VSPs are supplied by buses 10,
+22, and 33, respectively. It is assumed that in buses with
+electric water pumps, the W-DSO pays a ﬁxed energy tariff
+of 0.11$/kWh to the power distribution system operator for
+consuming electricity.
+The numerical results are provided for three case studies.
+In Case 1, the W-DSO operates its WDS without coordi-
+nation with the power distribution network. In this case,
+the W-DSO solves an operation problem that minimizes the
+WDS operating costs subject only to the WDS hydraulic con-
+straints (10)-(33). The W-DSO operating costs consist of the
+pumping energy cost as well as wastewater pre-treatment and
+water purchasing costs. The pumping energy cost is related to
+the energy tariff that the W-DSO pays to the P-DSO to con-
+sume energy. The tariff could have any shape depending on
+the rate structure of the P-DSO. The W-DSO then passes the
+optimized WDS energy consumption schedules to the P-DSO
+who minimizes its energy costs subject to the power distribu-
+tion network constraints (2)-(9). In Case 2, the operation of
+power and water distribution systems is coordinated using the
+FlexPWF model proposed in Section II, and the freshwater
+recovery ratio Yt of the water desalination plant is ﬁxed to
+0.3. Case 3 is similar to Case 2, however, Case 3 can exploit
+the ﬂexible operation of desalination plant, where the freshwa-
+ter recovery ratio varies between 0.1 and 0.5. The simulation
+results are presented next.
+1) Daily Energy Costs: The daily energy costs of P-DSO
+and W-DSO to respectively operate the 33-bus power distribu-
+tion system and the 15-node water distribution system in the
+three case studies is shown in Table I. In Table I, the total
+energy cost of both systems is reduced to $4, 464.9 in Case 2
+as compared to Case 1, which demonstrates the operational
+cost beneﬁts of coordinating the operation of two systems.
+The total daily energy cost in Case 3, where the water desali-
+nation plant operates in varying freshwater recovery ratios, is
+further reduced to $4, 286.1, showing that the ﬂexible opera-
+tion of water desalination plant impacts the daily energy costs
+of both systems, meanwhile supplying power and water to the
+respective customers. Overall, Case 3 demonstrates a total of
+6.6% energy cost savings as compared to Case 1 based on a
+single-day operation.
+Fig. 4.
+Active power consumption schedules of (a) P-DSO, (b) W-DSO.
+2) Power Consumption Schedules: The hourly active power
+consumption schedules of the power and water distribution
+systems are shown in Figs. 4. In Fig. 4.(a), the active power
+consumption of the power distribution system in Cases 2 and 3
+drops during high energy price hours 6-10 and 17-21, and
+increases during low energy price hours 1-5 and 11-16, as
+compared to Case 1. This result shows that the coordinated
+operation of the two systems in Cases 2 and 3 has smoothed
+out the daily load proﬁle and reduced the peak load of the
+33-bus system as compared to Case 1. This is more salient
+in Case 3 where the ﬂexible operation of water desalination
+plant offers additional operational ﬂexibility to the P-DSO.
+In Fig. 4.(b), the W-DSO active power consumption proﬁle
+in Case 1 follows the same trend as the water demand proﬁle
+shown in Fig. 3. In Cases 2 and 3, however, coordinated oper-
+ation of the two systems modiﬁes the electricity consumption
+proﬁle of the W-DSO as compared to Case 1. More speciﬁ-
+cally, in Case 3, the W-DSO reduces the power consumption
+of the pumps during high energy price periods 6-10 and 17-21
+and shifts the reduced load to lower energy price periods 1-5
+and 11-16.
+This operational ﬂexibility emerges from coordinating the
+operation of VSPs with the ﬂexible operation of water desali-
+nation plant and water storage tanks in the WDS. In Fig. 5.(a),
+the seawater feed pump operates during hours 1-5 and 11-16
+in Case 3 to recover higher portions of freshwater from the
+water desalination plant to supply the freshwater demand of
+the WDS. During the same hours, the rest of the VSPs operate
+to ﬁll the water tanks with freshwater, as shown in Fig. 5.(b).
+On the other hand, during hours 6-10 and 17-21, power con-
+sumption of VSPs is reduced, as the freshwater demand is
+supplied by the water storage tanks and consequently less
+freshwater is produced from the desalination plant. In addi-
+tion, as shown Fig. 5.(b) in Cases 1 and 2, less water is stored
+in the tanks and subsequently released from them over the
+scheduling horizon as compared to Case 3. This result shows
+that the ﬂexible operation of the desalination plant allows the
+W-DSO to more effectively utilize the storage capacity of the
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:02:29 UTC from IEEE Xplore.  Restrictions apply. 
+
+4792
+IEEE TRANSACTIONS ON SMART GRID, VOL. 11, NO. 6, NOVEMBER 2020
+Fig. 5.
+(a) Desalination plant freshwater recovery ratio, (b) tank ﬂow rate.
+Fig. 6.
+Energy tariff applied to water distribution system.
+tanks via better coordinating the operation of VSPs with water
+tanks’ charge and discharge schedules.
+A. Sensitivity Analysis
+Three sensitivity analyses are conducted to evaluate the
+impacts of retail energy tariff, water demand proﬁle, and
+freshwater availability on the operational beneﬁts and energy
+ﬂexibility that controllable WDS assets can provide to the
+coupled power and water distribution system.
+1) Impact of WDS Energy Tariff: In this study, we aim at
+investigating the impacts of different energy tariff schemes
+on the WDS scheduling results. The energy tariff, πe
+t , used
+to minimize the W-DSO energy costs in Case 1 was consid-
+ered ﬂat over the scheduling horizon and equal to 0.11$/kWh.
+However, it is often common for the P-DSOs to offer time-
+varying energy tariffs to the W-DSOs for purchasing elec-
+tricity. In this regard, we repeat the simulations for Cases 1
+and 3 using two additional WDS energy tariff schemes, namely
+night and dynamic, shown in Fig. 6. In the night scheme,
+the W-DSO minimizes its energy costs by taking advantage
+of the low WDS energy tariffs during night hours. In the
+dynamic scheme, the WDS energy tariff follows the trend of
+the wholesale energy prices.
+The simulation results are provided in Fig. 7 and Table II. In
+Fig. 7, the ﬂat scheme provides little incentives to the W-DSO
+in Case 1 to alter the operation of its VSPs, resulting in a
+Fig. 7.
+W-DSO active power consumption under different tariff schemes.
+TABLE II
+DAILY W-DSO ENERGY COST
+TABLE III
+IMPACT OF FRESHWATER UNAVAILABILITY IN CASE 3
+power consumption schedule which simply follows the water
+demand proﬁle. In the night scheme, the W-DSO operates the
+VSPs in Case 1 to leverage the low energy tariffs during night
+hours 1-5 and 21-24 to recover higher portions of freshwater
+from the water treatment plant as well as store water in the
+tanks. In the dynamic scheme, the W-DSO in Case 1 takes
+advantage of the low energy tariffs during hours 12-16, which
+results in signiﬁcantly increasing its electricity consumption
+during these hours and decreasing it during the remaining
+ones. It is worth highlighting, that neither the night nor the
+dynamic energy tariff schemes can alter the WDS power con-
+sumption schedule in Case 1 to the extent it is optimized in
+Case 3. This is shown in Table II, where Case 3 records lower
+daily W-DSO energy costs as compared to Case 1 in all three
+different energy tariff schemes. This result shows that the coor-
+dinated operation of the two systems in Case 3 leads to larger
+cost savings for the W-DSO and increases WDS energy ﬂex-
+ibility as compared to the uncoordinated Case 1, even when
+incentive-based tariff schemes are present.
+2) Impact of Freshwater Unavailability: The goal of this
+study is to assess the impact of freshwater unavailability index
+α in (13) on the results. To this end, we repeat the simulations
+for Case 3 above (where α equals to 50%), using freshwater
+unavailability values of 30% and 70%. The simulation results
+are provided in Table III, where the total operation cost of
+both power and water distribution systems increases as the
+freshwater unavailability index increases. For high freshwater
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:02:29 UTC from IEEE Xplore.  Restrictions apply. 
+
+OIKONOMOU AND PARVANIA: OPTIMAL COORDINATED OPERATION OF INTERDEPENDENT POWER AND WATER DISTRIBUTION SYSTEMS
+4793
+Fig. 8.
+Water demand proﬁles for sensitivity analysis 3.
+Fig. 9.
+W-DSO power consumption under different water demand proﬁles.
+unavailability value of α = 70%, a higher portion of the fresh-
+water demand has to be supplied by the energy-intensive water
+desalination facility, leading to a 3.5% increase of the total
+operation cost as compared to the total operation cost for lower
+values of α. On the other hand, when there is a more diver-
+siﬁed freshwater water supply portfolio with α = 30%, the
+W-DSO more effectively coordinates the water desalination
+process with the power distribution system operation, lead-
+ing to 4.4% saving in the total operation cost. This result
+shows that the unavailability of freshwater, which in turn
+increases the W-DSO’s dependence on the desalination plant,
+limits the available ﬂexibility that is coordinated between the
+interconnected power and water systems.
+3) Impact of Water Demand Proﬁle: In this study, we assign
+different water demand proﬁles to nodes 4, 11, 15 of the WDS,
+in order to reﬂect different freshwater consumption sectors on
+the coordinated operation of the systems. The water demand
+proﬁles for node 4 (residential), node 11 (commercial), and
+node 15 (industrial), adopted from [38], are illustrated in
+Fig. 8. The simulation results performed to compute the P-
+DSO and W-DSO costs for the three cases in Table I, are
+repeated here using the water demand proﬁle information in
+Fig. 8. The daily energy costs for the two systems are summa-
+rized in Table IV, and the W-DSO active power consumption
+proﬁles for the three cases are shown in Fig. 9. The change in
+water demand proﬁle increases the operation cost of both water
+and power systems in uncoordinated Case 1. The operation
+costs are reduced in Table IV as the operation of the systems
+is coordinated in Cases 2 and 3. In Case 3, where the water
+desalination plant can produce varying amounts of freshwater
+during the scheduling horizon, a higher reduction of the total
+operation cost is observed in Table IV as compared to Case 2.
+In addition, as shown in Fig. 9, the energy intensive process
+TABLE IV
+DAILY ENERGY COSTS IN SENSITIVITY ANALYSIS 3
+of water desalination in Cases 2 and 3 are shifted to low elec-
+tricity price hours (11-17), demonstrating similar scheduling
+decisions as those displayed in Fig. 4.(b). This result shows
+that the nodal water demand proﬁles affect the operation of
+both power and water system, and the proposed model ﬂexibly
+coordinate the schedules of the WDS controllable assets with
+power distribution system operations given the time-varying
+water demand proﬁles.
+B. Computation Time
+The computation time for solving the FlexPWF model in
+Cases 2 and 3 is presented here. The two case studies are
+solved using CPLEX 12.6.2 on a computer with a 3.6 GHz
+i7 CPU and 64GB of RAM, where the optimality gap is set
+to zero. The optimal solutions for Cases 2 and 3 are respec-
+tively obtained after 4.15 and 5.93 seconds. As expected, in
+Case 3, the operational beneﬁts that emerge from the ﬂexible
+operation of the desalination plant come with a slight increase
+in computation time. Nevertheless, in both case studies the
+solution of the FlexPWF model is obtained fairly fast, demon-
+strating efﬁciency of the proposed formulation and promise of
+applicability to larger systems.
+V. CONCLUSION
+This paper proposed the FlexPWF model that co-optimizes
+the operation of power and water distribution systems by
+leveraging the energy ﬂexibility provided by water treatment
+and desalination plants as well as the variable speed pumps
+and water tanks in order to minimize the operation costs of
+both systems. The paper emphasizes on the additional opera-
+tional beneﬁts and energy ﬂexibility that water treatment and
+desalination plants could provide to interdependent power and
+water distribution systems and a mixed-integer linear model is
+proposed to capture its ﬂexible operation for providing variable
+amounts of freshwater.
+Simulation results of implementing the model on the 33-bus
+test power distribution system and a 15-node water distribution
+system show that the coordinated operation between power and
+water distribution systems reduces their operation costs, espe-
+cially in the case where water desalination plants operate at
+varying freshwater recovery ratios. Further, the ﬂexible oper-
+ation of water desalination plants allows W-DSOs to better
+utilize the water storage capacity of tanks as the additional
+energy ﬂexibility improves the coordination of electric water
+pumps with water storage tanks’ charge and discharge sched-
+ules. Multiple sensitivity analyses are conducted showing that
+dynamic energy tariff schemes lead to larger cost savings for
+the W-DSO as compared to traditional night tariff incentives.
+In addition, we showed that the proposed model co-optimizes
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:02:29 UTC from IEEE Xplore.  Restrictions apply. 
+
+4794
+IEEE TRANSACTIONS ON SMART GRID, VOL. 11, NO. 6, NOVEMBER 2020
+the operation of the two interdependent systems under differ-
+ent freshwater availability conditions, where energy ﬂexibility
+is balanced between securing the freshwater demand and min-
+imizing operation costs. Moreover, the proposed model can
+coordinate the ﬂexibility across the two systems considering
+different water demand proﬁles.
+Future work includes expanding the proposed model to a
+stochastic optimization framework, which would account for
+the uncertainty of water and power demand forecasts. In addi-
+tion, extension of the proposed model to integrate various
+types of valves in coordinated operation of water and power
+distribution systems is an important topic that may be stud-
+ied in future works. The development of cybersecurity tools
+and protocols to enable secure implementation of the proposed
+coordinated operation framework is also in order.
+REFERENCES
+[1] A. M. Hamiche, A. B. Stambouli, and S. Flazi, “A review of the
+water-energy nexus,” Renew. Sustain. Energy Rev., vol. 65, pp. 319–331,
+Nov. 2016.
+[2] D. Bauer et al., The Water-Energy Nexus: Challenges and Opportunities,
+U.S. Dept. Energy, Washington, DC, USA, 2014.
+[3] G. Klein, M. Krebs, V. Hall, T. O’Brien, and B. Blevins, California’s
+Water-Energy Relationship, California Energy Commission, Sacramento,
+CA, USA, 2005.
+[4] B. Sparn and R. Hunsberger, “Opportunities and challenges for water and
+wastewater industries to provide exchangeable services,” Nat. Renew.
+Energy Lab.(NREL), Golden, CO, USA, Rep. NREL/TP-5500-63931,
+2015.
+[5] “Water and wastewater systems sector-speciﬁc plan,” United States
+Environ. Protection Agency (EPA), Washington, DC, USA, Rep., 2015.
+[6] (Nov. 2018). Enviromental and Energy Study Institute. [Online].
+Available:
+https://www.eesi.org/articles/view/whats-the-deal-with-
+desalination
+[7] J. R. Ziolkowska and J. M. Peterson, Competition for Water Resources:
+Experiences and Management Approaches in the U.S. and Europe.
+San Diego, CA, USA: Elsevier, 2016.
+[8] (May 2018). San Diego County Water Authority. [Online]. Available:
+https://www.sdcwa.org/water-supplies
+[9] (Jun.
+2017).
+Tampa
+Bay
+Water.
+[Online].
+Available:
+https://www.tampabaywater.org/tampa-bay-seawater-desalination
+[10] (Apr. 2019). Texas Water Development Board. [Online]. Available:
+https://www.twdb.texas.gov/innovativewater/desal/facts.asp
+[11] (Sep. 2018). American Membrane Technology Association. [Online].
+Available: https://www.amtaorg.com/wp-content/uploads/11_Future_of_
+Desal.pdf
+[12] H. Han, K. Oikonomou, N. Chalapathi, M. Parvania, and B. Wang,
+“Interactive visualization of interdependent power and water infrastruc-
+ture operation,” in Proc. IEEE PES Innovat. Smart Grid Technol. Conf.
+(ISGT), Washington, DC, USA, 2020, pp. 1–5.
+[13] E. Dall’Anese, P. Mancarella, and A. Monti, “Unlocking ﬂexibility:
+Integrated optimization and control of multienergy systems,” IEEE
+Power Energy Mag., vol. 15, no. 1, pp. 43–52, Jan./Feb. 2017.
+[14] K. Oikonomou, M. Parvania, and S. Burian, “Integrating water distribu-
+tion energy ﬂexibility in power systems operation,” in Proc. IEEE Power
+Energy Soc. Gen. Meeting, Chicago, IL, USA, 2017, pp. 1–5.
+[15] K. Oikonomou and M. Parvania, “Optimal coordination of water dis-
+tribution energy ﬂexibility with power systems operation,” IEEE Trans.
+Smart Grid, vol. 10, no. 1, pp. 1101–1110, Jan. 2019.
+[16] Q. Li, S. Yu, A. Al-Sumaiti, and K. Turitsyn, “Micro water–
+energy nexus: Optimal demand-side management and quasi-convex
+hull relaxation,” IEEE Trans. Control Netw. Syst., vol. 6, no. 4,
+pp. 1313–1322, Dec. 2019.
+[17] A.
+S.
+Zamzam,
+E.
+Dall’Anese,
+C.
+Zhao,
+J.
+A.
+Taylor,
+and
+N. Sidiropoulos, “Optimal water–power ﬂow-problem: Formulation and
+distributed optimal solution,” IEEE Trans. Control Netw. Syst., vol. 6,
+no. 1, pp. 37–47, Mar. 2019.
+[18] A. Santhosh, A. M. Farid, and K. Youcef-Toumi, “Real-time economic
+dispatch for the supply side of the energy-water nexus,” Appl. Energy,
+vol. 122, pp. 42–52, Jun. 2014.
+[19] K. Oikonomou and M. Parvania, “Deploying water treatment energy
+ﬂexibility in power distribution systems operation,” in Proc. IEEE Power
+Energy Soc. Innovat. Smart Grid Technol. Conf. (ISGT), Washington,
+DC, USA, 2020, pp. 1–5.
+[20] S. Wang, A. Taha, N. Gatsis, and M. Giacomoni, “Receding hori-
+zon control for drinking water networks: The case for geometric
+programming,” IEEE Trans. Control Netw. Syst., early access, Jan. 6,
+2020, doi: 10.1109/TCNS.2020.2964139.
+[21] S. Wang, A. F. Taha, L. Sela, M. H. Giacomoni, and N. Gatsis, “A
+new derivative-free linear approximation for solving the network water
+ﬂow problem with convergence guarantees,” Water Resour. Res., vol. 56,
+no. 3, 2020, Art. no. e2019WR025694.
+[22] S. Wang, A. F. Taha, N. Gatsis, and M. Giacomoni, “Geometric
+programming-based control for nonlinear, DAE-constrained water dis-
+tribution networks,” in Proc. Amer. Control Conf. (ACC) Philadelphia,
+PA, USA, 2019, pp. 1470–1475.
+[23] S. Wang, A. F. Taha, N. Gatsis, M. H. Giacomoni, and L. Sela, “State
+estimation in water distribution networks through a new successive linear
+approximation,” in Proc. IEEE 58th Conf. Decis. Control (CDC), Nice,
+France, 2019, pp. 5474–5479.
+[24] C. Mkireb, A. Dembélé, A. Jouglet, and T. Denoeux, “Robust
+optimization of demand response power bids for drinking water
+systems,” Appl. Energy, vol. 238, pp. 1036–1047, Mar. 2019.
+[25] R. Menke, E. Abraham, P. Parpas, and I. Stoianov, “Demonstrating
+demand
+response
+from
+water
+distribution
+system
+through
+pump
+scheduling,” Appl. Energy, vol. 170, pp. 377–387, May 2016.
+[26] K. Oikonomou, M. Parvania, and R. Khatami, “Optimal demand
+response scheduling for water distribution systems,” IEEE Trans. Ind.
+Informat., vol. 14, no. 11, pp. 5112–5122, Nov. 2018.
+[27] K. Oikonomou and M. Parvania, “Optimal participation of water
+desalination
+plants
+in
+electricity
+demand
+response
+and
+regula-
+tion
+markets,”
+IEEE
+Syst.
+J.,
+early
+access,
+Oct.
+14,
+2019,
+doi: 10.1109/JSYST.2019.2943451.
+[28] H.-J. Oh, T.-M. Hwang, and S. Lee, “A simpliﬁed simulation model of
+RO systems for seawater desalination,” Desalination, vol. 238, nos. 1–3,
+pp. 128–139, 2009.
+[29] S. H. Low, “Convex relaxation of optimal power ﬂow—Part I:
+Formulations and equivalence,” IEEE Trans. Control Netw. Syst., vol. 1,
+no. 1, pp. 15–27, Mar. 2014.
+[30] L. W. Mays, Water Resources Engineering. Chichester, U.K.: Wiley,
+2010.
+[31] C. Koroneos, A. Dompros, and G. Roumbas, “Renewable energy
+driven desalination systems modelling,” J. Clean. Prod., vol. 15, no. 5,
+pp. 449–464, 2007.
+[32] J. Mulder, Basic Principles of Membrane Technology. Dordrecht, The
+Netherlands: Springer, 2012.
+[33] L. W. Mays et al., Water Distribution Systems Handbook, vol. 17.
+New York, NY, USA: McGraw-Hill, 2000.
+[34] C. D’Ambrosio, A. Lodi, and S. Martello, “Piecewise linear approxima-
+tion of functions of two variables in MILP models,” Oper. Res. Lett.,
+vol. 38, no. 1, pp. 39–46, 2010.
+[35] Interdependent
+33-Bus
+Power
+Distribution
+and
+15-Node
+Water
+Distribution Test Systems. Accessed: Jun. 2020. [Online]. Available:
+https://usmart.ece.utah.edu/datasets/
+[36] L. House, “Water supply related electricity demand in California,” Ph.D.
+Dissertation, Water Energy Consult., Oro Valley, AZ, USA, 2006.
+[37] (Feb. 2016). California ISO Operan Access Same-Time Information
+System. [Online]. Available: http://oasis.caiso.com
+[38] A. Funk and W. B. DeOreo, Embedded Energy in Water Studies Study 3:
+End-Use Water Demand Proﬁles, Prepared Aquacraft, Inc. California
+Public Utilities Commission Energy Division, Manag. California Inst.
+Energy Environ., San Francisco, CA, USA, 2011.
+Konstantinos Oikonomou (Member, IEEE) received the B.Sc. degree in
+physics from the University of Patras, Patras, Greece, in 2009, the ﬁrst M.Sc.
+degree in energy engineering from the University of Durham, U.K., in 2011,
+the second M.Sc. degree in electrical engineering from the George Washington
+University, USA, in 2014, and the Ph.D. degree in electrical engineering from
+the University of Utah, USA, in 2019. His research interests include power
+system planning and reliability analysis as well as operation and planning
+of interdependent critical infrastructures, water-energy systems, and modeling
+and integration of renewable energy resources.
+Masood Parvania (Senior Member, IEEE) is currently an Associate Professor
+and an Associate Chair of the Department of Electrical and Computer
+Engineering, and the Director of Utah Smart Energy Laboratory, University of
+Utah. His research interests include the operation, economics and resilience
+of power and energy systems, and modeling and operation of interdependent
+critical infrastructures. He serves as an Associate Editor of the IEEE
+TRANSACTIONS ON SMART GRID and the IEEE POWER ENGINEERING
+LETTERS, and is the Chair of IEEE Power and Energy Society (PES)
+Utah Chapter, the Chair of IEEE PES Bulk Power Systems Operation
+Subcommittee, and the Vice-Chair of IEEE PES Risk, Reliability, and
+Probability Applications Subcommittee.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:02:29 UTC from IEEE Xplore.  Restrictions apply. 

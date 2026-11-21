@@ -1,0 +1,1906 @@
+
+===== PAGE 1 =====
+A Stochastic Game Model for Evaluating the Impacts
+of Security Attacks Against Cyber-Physical Systems
+Hamed Orojloo1 • Mohammad Abdollahi Azgomi1
+Received: 4 May 2016 / Accepted: 7 February 2018 / Published online: 12 February 2018
+ Springer Science+Business Media, LLC, part of Springer Nature 2018
+Abstract A quantitative security evaluation in the domain of cyber-physical sys-
+tems (CPS), which operate under intentional disturbances, is an important open
+problem. In this paper, we propose a stochastic game model for quantifying the
+security of CPS. The proposed model divides the security modeling process of these
+systems into two phases: (1) intrusion process modeling and (2) disruption process
+modeling. In each phase, the game theory paradigm predicts the behaviors of the
+attackers and the system. By viewing the security states of the system as the ele-
+ments of a stochastic game, Nash equilibriums and best-response strategies for the
+players are computed. After parameterization, the proposed model is analytically
+solved to compute some quantitative security measures of CPS. Furthermore, the
+impact of some attack factors and defensive countermeasures on the system
+availability and mean time-to-shutdown is investigated. Finally, the proposed model
+is applied to a boiling water power plant as an illustrative example.
+Keywords Cyber-physical systems (CPS)  Security evaluation  System
+availability  Mean time-to-shutdown  Stochastic game model
+& Mohammad Abdollahi Azgomi
+azgomi@iust.ac.ir
+Hamed Orojloo
+orojloo@alumni.iust.ac.ir
+1
+Trustworthy Computing Laboratory (TwCL), School of Computer Engineering, Iran University
+of Science and Technology, Hengam St., Resalat Sq., Tehran 16846-13114, Iran
+123
+J Netw Syst Manage (2018) 26:929–965
+https://doi.org/10.1007/s10922-018-9449-0
+
+===== PAGE 2 =====
+1 Introduction
+Cyber-physical systems (CPS) are deﬁned as computing and communication
+elements that interact with physical processes [1]. These systems are known as the
+foundation of modern critical infrastructures, such as smart grids, power, chemical
+and water plants, transmission and distribution systems, and manufacturing to
+improve the quality of life. In these systems, cyber elements are used to monitor and
+control the physical processes.
+These systems are usually comprised of sensors, actuators, controllers, and
+communication networks. In these systems, each physical entity is monitored by a
+set of sensors. Sensors measure some physical phenomena, such as temperature,
+pressure, humidity, or the rotating speed from the physical world. The observed
+measurements are transferred through communication networks to the controllers,
+which control the computations [2]. Based on the received measurements, a
+controller issues the control signals to the actuators. Finally, the actuators apply the
+received control signal to the physical process under control.
+Due to the potentially severe consequences of the security disturbances on CPS,
+the security of these systems has a strategic signiﬁcance. Intentional and accidental
+disturbances in these systems may lead to equipment damage (e.g., overstress of
+equipment and violation of safety limits in general), production damage (e.g.,
+targeting product quality and production rate), and compliance violations, including
+safety hazards and environmental pollution [3].
+The fact is that providing secure systems is a challenging task. This is because
+adversaries only need to ﬁnd a single penetration path into the system, while the
+security professionals of the system must identify and confront all vulnerabilities
+and security breaches in the system. Moreover, the eradication of the deliberate and
+inadvertent human inaccuracies and mistakes in providing software and hardware
+systems is impossible. Furthermore, detecting and eliminating all the vulnerabilities
+of systems, especially in complex systems, is not feasible. Quantitative security
+evaluation can provide insight on the security level of systems. It is valuable for risk
+management activities and helps to make security decisions in designing, operating,
+and maintaining systems.
+In comparison with security violations in the information technology (IT)
+domain, the knowledge-level of attackers is the most important prerequisite for
+conducting a successful cyber-physical security attack [4]. Consequently, in order to
+carry out an attack aimed at disrupting a physical process, attackers need to know
+the failure conditions, signal processing and the control principles of the target
+system. However, without a suitable knowledge-level, adversarial actions against
+CPS may only have minor nuisance effects.
+The main goal of security enhancement actions in the IT domain is to protect the
+stored and transmitted information and maintain the availability of services as much
+as possible. Whereas the primary target of security hardening activities in CPS is to
+protect the operations [4].
+The primary focus of this paper is to provide a solvable security model for CPS
+representing how attackers are likely to carry out attacks against these systems and
+930
+J Netw Syst Manage (2018) 26:929–965
+123
+
+===== PAGE 3 =====
+estimating the likely consequences of the conducted attacks. To do so, a stochastic
+game model is presented. In the proposed model, each state represents the current
+position of the interaction between the system and the attacker. In each state, a two-
+player non-zero-sum game is formulated to investigate the dynamic interactions
+between the attacker and the system. We also discuss how to determine the value of
+the game parameters.
+One of the main characteristics of the security of CPS is that the penetration of
+the attacker into the system is not the same as disrupting the physical process under
+control [2]. The proposed model captures this important issue and divides the
+security modeling process of CPS into two phases of intrusion process modeling and
+disruption process modeling. The main target is to provide a comprehensive
+approach to quantitatively evaluate the security of CPS and capture the behavior of
+the system in response to the attacker actions. By solving the proposed game model
+in each state, we can measure the attack probabilities and the detection probability
+of the attacks.
+By investigating the dynamic behavior of the system under attack and using the
+obtained values from solving the game, the quantitative analysis can be performed
+in terms of some suitable metrics such as mean time-to-shutdown (MTTSD),
+availability, and attack probability. Finally, the proposed model is applied to a
+chemical plant as an illustrative example.
+In this paper, we extend the model proposed in our recent work [5] in several
+ways. First, the defender strategy is to decide whether to invest in security or not.
+Second, the attack cost is taken into account and the attacker’s payoff in each
+strategy is considered to be mainly dependent on the detection probability of attack.
+Third, the attacker’s and the system’s payoffs in the disruption phase are considered
+to be dependent on their payoffs in the penetration phase. Fourth, we have
+performed comprehensive experiments to quantify the security of CPS. As a result,
+the calculated payoffs and therefore, the game results, are more accurate.
+The rest of the paper is organized as follows. In Sect. 2, some related works are
+mentioned. In Sect. 3, the system model is provided. In Sect. 4, the proposed model
+is described. In Sect. 5, an illustrative example is given. Finally, in Sect. 6, some
+concluding remarks are mentioned.
+2 Related Work
+In this section, some previous works on modeling and evaluating the security of
+CPS are surveyed and compared with the model presented in the subsequent
+sections of this paper. Game theory has been widely employed for studying the
+security of computer and networked systems. For instance, Sallhammar et al. [6]
+modeled the security using continuous-time Markov chains (CTMCs) and used
+game theory to estimate the probabilities of the attacker’s behavior.
+Wang et al. [7] combined stochastic games with Petri nets to propose a
+probabilistic security modeling and evaluation paradigm for a security assessment
+of an enterprise network called stochastic games net. Spyridopoulos et al. [8]
+employed the game theory to present a defense framework against the denial of
+J Netw Syst Manage (2018) 26:929–965
+931
+123
+
+===== PAGE 4 =====
+service (DoS) attacks. Moayedi et al. [9] employed CTMCs to propose a security
+modeling approach. They considered the motivation and skill as two important
+features of attackers in stochastic security modeling. Then, they computed the
+transition rates of the proposed model using the deﬁned skill and the motivation
+distribution functions.
+Game theory was recently applied to analyze the security attacks against CPS.
+We now focus on the presented game-theoretical approaches. Zhu et al. [10]
+considered a linear dynamic system subjected to attacks conducted by correlated
+jammers. They primarily focused on proposing a game-theoretical approach to
+model the interdependency between adversaries and operators. To do so, they have
+proposed a receding-horizon Stackelberg control law for operators. Then, they have
+assessed the resulting closed-loop stability and performance of the system under
+attacks.
+The authors in [11] proposed a game-theoretical approach to capture the attack
+and defense in CPS. In their formulations, they considered different beneﬁt
+functions, such as linear, negative exponential and S-shaped. Then, they determined
+the outcome of each game.
+Backhaus et al. [12] proposed a game-theoretical model of human interactions in
+CPS. They modeled the interactions between a cyber adversary and an operator of
+the electrical grid supervisory control and data acquisition (SCADA) system as a
+game model. The outcome of the considered interactions and social welfare of these
+outcomes are estimated using the proposed model and subsequent analysis.
+A dynamic game-theoretical method to model the interactions between the cyber
+level policy making and physical level robust control design is presented in [13].
+The model captures the cascading failures in which one harmful event propagates
+failures in the system. Then, a set of coupled optimality conditions is provided to
+characterize the pure strategy equilibrium of robust control design and cyber
+defense policy.
+A game-theoretical approach to model the behavior of attackers in control
+systems is proposed in [14]. They considered jamming attackers whose target was
+the communication channel between sensor nodes and assessors. They presented a
+decision making process between an adversary and sensors with an energy
+limitation assumption. Finally, they obtained the optimal strategies of the adversary
+and the system.
+Sanjab et al. [15] proposed a game-theoretic approach to analyze the interactions
+between one attacker and one defender over a CPS. They assumed that the attacker
+conducted cyber attacks on a number of cyber components of the CPS to maximize
+the potential damage to the physical system. On the other hand, the system operator
+chose to defend a number of cyber components to minimize the potential harm to
+the physical side.
+Shan et al. [16] proposed a multi-period multi-target game. At each period, a
+limited amount of defensive resources over multiple targets was allocated by the
+defender, and some attack probabilities to those targets were assigned by the
+attackers. They considered four different scenarios. By solving the game in each
+scenario, we can identify the optimal allocations. Shan et al. [17] also proposed a
+novel hybrid model to study homeland security. In this model, a centralized
+932
+J Netw Syst Manage (2018) 26:929–965
+123
+
+===== PAGE 5 =====
+government assigned defensive resources among multiple potential targets to
+minimize the total expected loss, in the face of a terrorist being either strategic or
+non-strategic.
+Now, we review some other approaches for modeling the security of CPS. The
+authors in [18, 19] provided a survey of infrastructure security for smart grids and
+cyber security management in industrial control systems (ICS), respectively. In [20],
+the authors proposed an attack modeling approach for a smart grid using vulnerable
+information, communication, and electric grid networks. The attack graph structure
+is used to analyze the vulnerability of an electric grid with incomplete information.
+Also, the concepts of discovery, access, feasibility, communication speed, and
+detection threats are utilized to model the vulnerability of communication networks.
+A method for quantifying the resiliency of control systems in terms of the quality
+of control (QoC) is presented in [21]. An intelligent resilient control algorithm
+(RCA) is proposed for wireless networked control systems (WNCS) to maintain
+normal operations of the system in face of wireless interference incidents, such as
+radio frequency (RF) jamming, and signal blocking.
+The attack graph structure and the multiple-criteria decision making (MCDM)
+method are used in [22] to propose an approach for security assessment of
+communication networks in power grids. The attack graph is used to present a
+security analysis model and the MCDM method is used to assess the vulnerability
+factors obtained by the attack graph based model.
+The authors in [23] presented a language for describing the possible attacks
+against CPS and their consequences. The main concentration of the proposed
+language is to determine and describe the features that should be described, when
+describing the attacks and countermeasures against CPS. Although, they have not
+dealt with the security evaluation process, the authors believed that the proposed
+attack description language can be used for security assessment purposes.
+Krotoﬁl et al. [24] proposed a vulnerability analysis model based upon timing
+attacks. They showed that to drive a CPS to an undesirable situation, a cyber-
+physical attack aimed at jamming the communications to a device must be
+conducted at proper time. Otherwise, the conducted attack may have a limited
+impact on the physical process.
+Cardenas et al. [25] investigated the impacts of DoS attacks on sensor
+measurements. They also proposed a new anomaly detection mechanism for
+cyber-physical attacks. The authors in [26] studied the impacts of network
+parameters, such as communication delay, packet losses, control logic scheduling
+time, and the network background trafﬁc on the consequences of attacks conducted
+against CPS. Their experimental results demonstrate that the communications
+parameters (e.g., communication delay) have a limited impact on the result of an
+attack and the task scheduling parameter has signiﬁcant impacts on the resilience of
+physical processes.
+Hahn et al. [27] proposed a multi-layered security analysis framework for CPS.
+They investigated how various cyber attack phases can perturb the cyber, control,
+and physical layers of the system and eventually affect physical operations.
+Mitchell et al. [28] proposed an approach for modeling and evaluating attacks
+and defensive actions for CPS. Their model is based on stochastic Petri nets (SPNs).
+J Netw Syst Manage (2018) 26:929–965
+933
+123
+
+===== PAGE 6 =====
+In their approach, they considered three types of failures including attrition,
+pervasion, and exﬁltration failures. Determining the optimal design conditions in
+CPS, such as the redundancy level of the system components are the results of their
+study.
+Gollmann et al. [29] argued that in order to protect CPS, protecting their IT
+infrastructure is not sufﬁcient. Indeed, there is a need to design control algorithms in
+a way that they can manage and handle a certain amount of penetrations. In
+addition, the IT elements of a CPS should be treated as a control system, and
+trustworthiness of the inputs to that control systems should be analyzed. In addition,
+Tang et al. [30] focused on the trustworthiness analysis of sensor data and proposed
+an approach, which improves the capability of a CPS to recognize trustworthy
+alarms.
+Finally, Hu et al. [31] discussed the concept and strategies for building a robust
+and resilient CPS. They have deﬁned the resiliency as a 3S-oriented design; that is,
+stability, security, and systematicness. They also explained the CPS modeling
+issues.
+Rao et al. [32] proposed game-theoretical models considering both cyber and
+physical components to study the strategic interactions between an attacker and a
+defender. First, they have considered a Boolean attack-defense model in which the
+cyber and physical components may be attacked as individual units. Second, they
+considered a component attack-defense model in which the components may be
+attacked and defended. They assumed that the infrastructure requires minimum
+numbers of cyber and physical components to function. They demonstrated in their
+studies that the Nash equilibrium, under uniform costs in both cases, is
+computable in polynomial time, and it provides high-level deterministic conditions
+for infrastructure survival.
+Rao et al. [33] proposed a game theoretic method to formulate a resilience
+problem for infrastructures composed of discrete components. They considered an
+infrastructure survival probability term as the parameters of the utility functions and
+a cost term in terms of the number of components attacked. As case studies, they
+applied this approach to models of cloud computing infrastructures and energy grids
+at different levels of abstraction when both have a large number of components.
+Rao et al. [34] proposed a discrete product-form game by using a resilience
+measure characterized by the infrastructure’s survival probability. The considered
+correlations are between cyber and physical components using ﬁrst-order differ-
+ential condition, and between cyber and physical sub-infrastructures using the
+conditional probabilities. By solving of the game, they provided the sensitivity
+functions that clearly represent the dependence of the infrastructure resilience on
+cost terms, correlation function and sub-infrastructure survival probabilities.
+The authors in [35] proposed a game model for survivability analysis of cyber-
+physical infrastructures. In their approach, the interactions between the systems are
+considered between the systems, and between the components with the system.
+They solved the game and derived Nash Equilibrium conditions. Finally, they
+estimated the sensitivity functions to determine the infrastructure survival proba-
+bility according to the failure correlation functions, partial derivatives of cost terms,
+and survival probabilities of component systems and their partial derivatives.
+934
+J Netw Syst Manage (2018) 26:929–965
+123
+
+===== PAGE 7 =====
+This paper employs stochastic game theory to present a model for security
+evaluation of CPS. In comparison with the mentioned research, the proposed model
+and the employed game parameters are new and none of the mentioned models can
+do the same evaluation. The proposed model, not only captures the behavior of the
+attacker and the system in the intrusion phase, but it also considers their interactions
+when the attacker conducts an attack aimed at disrupting the physical process.
+Our ﬁrst objective is to quantitatively evaluate the security of CPS in terms of
+some system-based and adversary-based quantitative metrics such as MTTSD,
+availability, and attack probability. Our second objective is to show how different
+attack factors and defensive countermeasures inﬂuence the security of CPS. The
+quantitative results can provide insights on the security level of CPS and help to
+make security decisions.
+3 System Description
+3.1 The System Model
+This section presents the formal and informal deﬁnition of CPS. The behavior of a
+CPS must be based on timely data about the state of control parameters and the state
+of its physical environment [24]. The fact is that real-time information is temporally
+accurate but only for a limited duration. Generally, the dynamic behavior of a CPS
+can be described using a set of state (or process) variables. As an instance of state
+variables, we can refer to the position of a valve. The data received about the state of
+a physical entity for a state variable at a particular instant is referred to as an
+observation [36]. For instance, the measured information about the pressure inside a
+tank by a sensor is an observation.
+Process variables in CPS can be categorized into two groups of measured control
+variables for sensor and control signals, respectively. Every process variable has a
+set-point determined by system experts [36]. The primary goal of controllers is
+maintaining the state variable values closer to the determined set-points. This is
+done for reducing variability (for ensuring a consistent quality of product),
+increasing efﬁciency (accurate maintenance of optimal production conditions), and
+ensuring safety (ensuring safe operations) [24].
+The values of the measured variables (for instance, the temperature of a vessel),
+must be periodically sampled by a set of sensors and sent to the controlling system.
+We can refer to the constant duration between two successive sampling points as the
+sampling period. In fact, the controlling system compares the measured variable to
+the corresponding set-point and computes the error term. The produced error term
+forms the input of a control algorithm for calculating a new value of the control
+variable.
+Deﬁnition 1
+(Formal deﬁnition of CPS) Formally, a CPS can be deﬁned as a 7-
+tuple:
+J Netw Syst Manage (2018) 26:929–965
+935
+123
+
+===== PAGE 8 =====
+M ¼ \S; R; TR; X; L; G; PM [
+ð1Þ
+where S is a ﬁnite set of states that represent different operational modes of the
+system. R is a ﬁnite set of events. TR : S  R ! S is the ﬁnite set of the transition
+between states. X is a ﬁnite set of real-valued variables. Also, _X is a ﬁnite set of ﬁrst
+derivatives of the variables during continuous evolutions inside a state. X0 denotes a
+ﬁnite set of updates at the conclusion of discrete changes from one state to another.
+Consequently, the dynamic behavior of the process can be described in terms of
+simple differential equations. L is a ﬁnite set of labels that assigns to the transitions.
+G is a set of guard functions that assigns to the transitions and shows when the
+system can make the discrete change. PM is a set of process model equations.
+In the above deﬁnition, the states can move discretely between different modes,
+and in each mode, the system state evolves continuously according to the physical
+laws. The state changes can be divided into two kinds: (1) discrete jump transitions
+that occur instantaneously, and (2) continuous ﬂow transitions that occur when time
+elapses.
+In Sect. 5 (illustrative example), we provide a speciﬁc example to explain the
+model clearly.
+3.2 Attacks Against CPS
+The ﬁrst type of attacks on CSPs is the integrity attack on sensor measurements
+transferred to controllers and control signals transferred to actuators. Indeed, the
+secure functioning of CPS relies considerably on the correctness of the information
+transferred between system agents through communication networks [4].
+The second type of attacks is the availability attacks on sensor readings and
+control signals. In scan cycle architecture, programmable logic controllers (PLC)
+often use the sensor readings that were last saved in the input buffers. By conducting
+a jamming attack, the attacker deceives the controller about the state of the system.
+The next type of attacks on CPS is reprogramming the control logic. This attack is
+also considered as one of the most dangerous attacks on CPS.
+4 The Proposed Model
+This section describes the proposed method for modeling and evaluating the
+security of CPS, step by step. The proposed method captures both the intrusion
+phase and the disruption process of security attacks against CPS. Through modeling
+the intrusion process, we can predict how an attacker is likely to penetrate into the
+system while the intrusion has remained undetected. By modeling the disruption
+phase of attacks, we can estimate the probability of causing undesired effects on the
+physical process under control by an attacker with a given knowledge-level.
+The proposed stochastic model will be recognized to be a semi-Markov chain.
+The state-based nature of the semi-Markov model combined with the game theory
+936
+J Netw Syst Manage (2018) 26:929–965
+123
+
+===== PAGE 9 =====
+paradigm enable insight on how adversaries are likely to interact with the defender
+as they attempt attacks.
+The feasibility of obtaining closed-form analytical solutions is one of the
+considerable advantages of the semi-Markov model [37]. Another important
+advantage of the semi-Markov model is the possibility of assigning general
+distribution functions to its transitions. In fact, unlike some stochastic models (such
+as CTMCs) that have exponential time distribution functions, here, there is no such
+restriction.
+In short, the primary goal of this paper is to propose a comprehensive method for
+modeling the intrusion and disruption process of security attacks against CPS. In the
+next step, the proposed model is parameterized with suitable data obtained by
+solving the game and studying the dynamic behavior of CPS under attacks. Then,
+some suitable metrics are determined for quantifying the security of these systems.
+Finally, an approach for solving the proposed stochastic model and evaluating the
+deﬁned security metrics is presented.
+4.1 Model Description
+The proposed model is a stochastic game model comprising a set of states and
+transitions between them. In fact, a state represents the current situation of dynamic
+interactions between the system and adversary. A transition between two states
+indicates a system reaction or an attacker’s action. Stochastic games progress as a
+sequence of states [38].
+Deﬁnition 2
+(Stochastic game model) Formally, a stochastic game model can be
+deﬁned as a 13-tuple:
+MS ¼ ST; R; TR; T; X; L; G; STi; A1; A2; U1; U2; PM
+h
+i;
+ð2Þ
+where ST = {N, P, W, E, NE, S, R, F} is the set of system states. In this set, N
+denotes the initial normal state, P is the penetrated state, W denotes the warning
+state, E is the emergency states, NE is the not-emergency states, S is the stopped
+state, R is the recovery state and F is the failure state. A1 and A2 are the attacker and
+the system action sets, respectively. TR : S  A1  A2 ! S, is the transition func-
+tion. T represents the time. U1 and U2 are the payoff functions of the attacker and the
+system, respectively. P is a ﬁnite set of events. X is a ﬁnite set of real-valued
+variables. G is a set of guard functions. Guard functions are assigned to some of
+transitions. For instance, G(a, b) is the guard function for the transition from the
+state a [ S to the state b [ S. PM is a set of process model equations. L is a set of
+labels that must be assigned to transitions. STi is the mean sojourn time of the
+system in the state i [ S.
+Depending on the current state of the game, players take actions and receive
+payoffs. Then, the game will transfer into a new state with a probability, based upon
+the actions taken by the players and the current state of the model.
+Now, let us go into detail about two different phases of the proposed model.
+J Netw Syst Manage (2018) 26:929–965
+937
+123
+
+===== PAGE 10 =====
+4.1.1 The Intrusion (Penetration) Phase
+In order to model and evaluate the security of CPS, two issues should be captured.
+The ﬁrst important issue is to identify the source of attacks, and the attack surface of
+the system deﬁned as the set of ways in which an attacker can obtain the necessary
+privilege to potentially cause physical damages. This phase of the security modeling
+process has been referred to in different literatures as intrusion process modeling.
+This section describes intrusion process modeling. The second issue, which is the
+modeling of the physical disruption process (after the success penetrating into the
+system) will be discussed in the next section.
+Now, we give the detailed description for constructing the model in the intrusion
+phase. In the model, the intrusion process of attackers is considered as a dynamic
+interaction between the system and attackers. Indeed, due to the growing frequency
+of attacks conducted against CPS, it is reasonable to consider that these systems
+alternate between an initial secure state (N) and a penetrated state (P).
+It is assumed that initially the system is in the normal state N in which the attack
+has not been started. Once the attack is not initialized, the system will continue its
+operations in the normal state. If a conducted attack is detected and removed during
+the penetration and exploration phases, the system remains in the initial secure and
+normal state.
+In fact, if the weak points and vulnerabilities of the system are identiﬁed and
+removed during the attacker’s intrusion phase, the system can remain in the initial
+normal and secure state. Otherwise, the attacker will be able to successfully
+penetrate into the system.
+4.1.2 The Disruption Phase
+In this section, we describe and model the dynamic interactions between the system
+and the attacker in the disruption phase. Depending on their characteristics, CPS can
+be either fail-safe or fail-operational [36]. In the fail-safe case, the system can
+identify a safe state in the case of a failure and reach it. In most situations, the
+system is suspended until the problem is resolved. We can refer to a railway
+signaling system as an example of this type of CPS. Nevertheless, in the fail-
+operational case, the system must remain operational to avoid a hazardous event.
+We can refer to the ﬂight control system of airplanes as an example of the fail-
+operational case.
+It is assumed that in the penetrated state, the attacker successfully penetrates into
+the system. In this state, he/she will try to disrupt the physical process. Based upon
+his/her knowledge-level, the attacker may conduct attacks with various results. One
+possibility is that due to the insufﬁcient knowledge-level, the attacker may decide to
+withdraw the attack. Hence, if the attacker conducts an attack aimed at causing
+physical disruption, the system will enter into the warning state (W). Otherwise, the
+system returns to the initial normal state. The state transition diagram of the model
+is shown in Fig. 1.
+In the warning state, intrusion prevention systems (IPS) are responsible for
+detecting anomalies in the behavior of the physical process. In this case, based on
+938
+J Netw Syst Manage (2018) 26:929–965
+123
+
+===== PAGE 11 =====
+the nature of the attacks, two situations may occur. First, if an attack cannot have a
+deleterious effect on the system, the system will enter into a non-emergency (NE)
+state. In many situations, the system will return to the initial normal state after the
+termination of these types of attacks.
+The second case is that the attack may have disruptive effects on the physical
+process under control. As depicted in Fig. 1, the warning state has a self-transition.
+This transition represents that the attack is not detected in the determined detection
+interval and the IPS tries to detect the attack. In this situation, if the abnormal
+behavior of the physical process is detected by the IPS before the system failure, the
+system will enter into the emergency (E) state. Here, different strategies may be
+adopted depending on the characteristics of the system (fail-safe or fail-operational).
+One possibility is that the system is automatically recoverable. Since, in this case,
+a recovery action can bring the system from the recovery state (R) back to the
+normal state. The other possibility is that due to the probable devastating
+consequences of the attack, it is needed to force the system to stop functioning.
+In this case, the system will enter into the stopped (S) state.
+If the strategies for detecting and removing an attack fail, the system is brought
+from the warning state to the failure (F) state. As depicted in Fig. 1, all the
+represented states are considered as transient except the failure state, which is
+considered as the absorbing state.
+It is assumed that the stopped system will return to the normal state through
+recovery and reconﬁguration actions. The best case is when there is enough
+redundancy to mask the attack’s consequence and bring the system back to the
+N: Normal
+P: Penetrated
+R: Recovery
+W: Warning
+E: Emergency
+NE: Not-Emergency (Benign)
+S: Stopped
+F: Failure (Physical Damage)
+N
+P
+W
+F
+R
+NE
+E
+S
+Intrusion
+Carry out 
+disruptive actions
+Undetected-
+damaging effect
+Detected-
+nonrecoverable
+Recoverable
+Recovered
+Restored
+Withdraw
+Detected in the 
+disruption phase
+(unsafe)
+Undetected-safe
+Fig. 1 The state transition diagram of the proposed game model
+J Netw Syst Manage (2018) 26:929–965
+939
+123
+
+===== PAGE 12 =====
+normal state. The dotted line indicates that a stopped system can eventually return
+back to the initial state.
+4.2 Model Parameterization
+In order to evaluate the proposed model, we need to parameterize it with
+suitable data. For this purpose, two sets of parameters are required
+1.
+The transition probabilities (pab) between different states (from the state a to the
+state b).
+2.
+Mean sojourn time (Sa) in each state (a), which is deﬁned as the time duration
+from the instant of entering until the instant of leaving the state. This parameter
+is only considered for the transient states.
+Clearly, for the model to be accurate, the accurate estimation of the model
+parameters is very important. Here, we focus on computing the mean sojourn time
+in each state and the transition probabilities. We propose game-theoretical models to
+capture the interactions between the system and attacker in the intrusion and
+disruption phases. In the next phase, we use the game results to estimate the model
+parameters.
+4.2.1 The Intrusion Phase
+First of all, we consider the intrusion phase of the attacks and provide a game model
+to study the attacker and the system behaviors. In order to analyze the security, we
+need to consider the actions undertaken by an adversary as well as the system’s
+response to the conducted attack. The primary goal of this phase is to estimate the
+probability that an attacker may successfully penetrate into the system.
+The attacker’s strategy in the intrusion phase is considered as: to conduct an
+attack (A) on the CPS or not to conduct an attack (NA). Hence, we have A1 = {A,
+NA}. The system strategies in this phase are also deﬁned as: invest in security for
+preventing and detecting intrusions (I) or not to invest (NI). Therefore, we have
+A2 = {I, NI}. The system strategies to detect the attack may consist of investing in
+security, such as patching vulnerabilities, using intrusion prevention/detection
+systems (IPS/IDS), and system-wide monitoring and ﬁrewalling.
+The game parameters in the intrusion phase are as follows:
+•
+Ri denotes the attacker’s reward, resulting from successful intrusion into the
+system. This parameter also indicates the total losses for the system as a result of
+the successful intrusion.
+•
+Ei denotes the total expenses, resulting from investing in the security to detect
+and prevent intrusions.
+•
+Pi denotes the probability of conducting an attack aimed at penetrating into the
+system.
+•
+Ii denotes the probability of investing in security by the system in order to
+improve the attack detection and prevention probability.
+•
+di denotes the detection probability of intrusions by the system.
+940
+J Netw Syst Manage (2018) 26:929–965
+123
+
+===== PAGE 13 =====
+•
+i is the attacker’s penalty, resulting from getting detected while attempting to
+penetrate into the system.
+•
+Bi denotes the beneﬁt of the system, resulting from detecting an intrusion.
+•
+Ci is the attack cost in the intrusion phase.
+In the next section, we explain how to determine the value of the game
+parameters.
+Table 1 indicates the normal form representation of the game in the intrusion
+phase. The ﬁrst line in each block represents the attacker payoff and the second line
+shows the system payoff.
+The action taken by each player of the game called a strategy proﬁle and is
+represented by a pair (X, Y), where X [ A1 and Y [ A2. For instance, the strategy
+proﬁle (A, NI) denotes that the attacker conducts an attack against the system and
+the system does not invest in security. Let Uj(X, Y) be the payoff received by the
+player j, for the strategy proﬁle (X, Y). The payoffs are calculated as follows:
+If the players select the strategy proﬁle (A, NI), the attacker gets a reward Ri for
+successfully penetrating the system and incurs an attack cost Ci. In this strategy
+proﬁle, the system incurs a loss Ri, because of successful penetration of the attacker
+into the system. Hence, the attacker payoff in this strategy proﬁle can be represented
+as follows:
+Uattacker A; NI
+ð
+Þ ¼ Ri  Ci;
+ð3Þ
+and the system payoff can be given as follows:
+Usystem A; NI
+ð
+Þ ¼  Ri:
+ð4Þ
+If the players choose the strategy proﬁle (A, I), the attacker gets a reward
+(1 - di) 9 Ri for successfully penetrating the system, incurs a loss di 9 di for
+getting detected in the intrusion phase, and incurs an attack cost Ci. In this strategy
+proﬁle, the system gets a reward di 9 Bi for detecting the intrusion, incurs a loss
+(1 - di) 9 Ri as a result of the successful penetration of the attacker into the
+Table 1 The formulation of the game model
+The game model
+System
+Attacker
+NI
+I
+Intrusion phase
+A
+Ri  Ci
+ð1  diÞ  Ri  di  ki  Ci
+ Ri
+di  Bi  ð1  diÞ  Ri  Ei
+NA
+0
+0
+0
+ Ei
+Disruption phase
+A
+Ri þ K  Rd
+ð
+Þ  Ci  Ca
+Ri þ 1  dd
+ð
+Þ  K  Rd
+ð
+Þ  dd  kd  Ci  Ca
+ Ri  Ii  Ei  K  Rd
+ð
+Þ
+ Ri  Ii  Ei 
+1  dd
+ð
+Þ  K  Rd
+ð
+Þ  K  Ed
+ð
+Þ
+NA
+Ri  Ci
+Ri  Ci
+ Ri  Ii  Ei
+ Ri  Ii  Ei  K  Ed
+ð
+Þ
+J Netw Syst Manage (2018) 26:929–965
+941
+123
+
+===== PAGE 14 =====
+system, and a cost Ei for investing in security. Therefore, for the attacker payoff in
+the strategy proﬁle (A, I), we will have
+UattackerðA; IÞ ¼ ð1  diÞ  Ri  di  ki  Ci;
+ð5Þ
+and for the system payoff, we have
+UsystemðA; IÞ ¼ di  Bi  ð1  diÞ  Ri  Ei:
+ð6Þ
+For the strategy proﬁle (NA, NI) the payoffs of the players are equal to zero. In
+the strategy proﬁle (NA, I), the payoff of the attacker is zero and the system incurs a
+cost Ei for investing in security.
+4.2.1.1 The Equilibrium Analysis
+We ﬁrst provide the deﬁnition of the Nash
+equilibrium (NE). A strategy proﬁle in which no player can unilaterally change his
+strategy and obtain a better payoff is called the Nash equilibrium. Formally, the
+strategy proﬁle (X*, Y*) is a Nash equilibrium, if it satisﬁes [36]
+U1ðX; YÞ  U1ðX; YÞ;
+8 X 2 A1;
+and
+U2ðX; YÞ  U2ðX; YÞ;
+8 Y 2 A2:
+ð7Þ
+A deviation from the strategy proﬁle (X*, Y*), which is a Nash equilibrium, will
+mean that one player (or both of them) will have lower expected payoffs. Thus, the
+Nash equilibrium can help to predict the player’s behavior. Assuming all the players
+are rational, they choose the strategy vector Pi
+* that maximizes their total payoff.
+Now, it is the time to analyze the game and derive all possible Nash equilibria
+from
+the
+proposed
+game
+in
+the
+intrusion
+phase
+of
+attacks.
+If
+di  Ei=ðRi þ BiÞ and Ri  Ci, then the game has a Nash equilibrium in the strategy
+proﬁle (A, NI). Besides, if Ei=ðRi þ BiÞ  di  ðRi  CiÞ=ðRi þ kiÞ, then the strategy
+proﬁle (A, I) is a Nash equilibrium for the game. Finally, if Ri  Ci, then the strategy
+proﬁle (NA, NI) is a Nash equilibrium for the game. The investigation of the other
+strategy proﬁles in the game simply represents that they are not Nash equilibrium
+for the game.
+4.2.1.2 The Mixed Strategy Equilibrium Analysis
+To predict how rational players
+would choose their strategies and play the game, we need to provide a more general
+way of ﬁnding a solution to the game. Hence, we need to allow the players of the
+game to randomize their strategies and use mixed strategies. In the concept of
+equilibrium, a mixed strategy for the player j is a vector of probabilities pj = (pjk),
+such that player j chooses pure strategy k with probability pjk. For a set of mixed
+strategies ðp
+1; . . .; p
+nÞ; p
+j is a mixed strategies Nash equilibrium if player j gets a
+lower payoff by changing pj* to any other mixed strategy pj.
+The primary goal of the attackers is to ﬁnd the optimal values of pj, which will
+maximize their payoffs. On the other hand, the main goal of the system is to ﬁnd the
+optimal values of qj, which will maximize its payoff. Assuming the attack
+probability as Px and the probability of investing in security as Ix, the probability
+mixed strategy Nash Equilibrium [39, 40] of the attacker (ua) is given as:
+942
+J Netw Syst Manage (2018) 26:929–965
+123
+
+===== PAGE 15 =====
+ua ¼ Px  A þ ð1  PxÞ  NA:
+ð8Þ
+For the probability mixed strategy Nash Equilibrium of the system (us), we have
+uS ¼ Ix  I þ ð1  IxÞ  NI:
+ð9Þ
+From the basic principles of game theory at the mixed strategy Nash equilibrium,
+both players should have same expected payoffs from their two strategies and
+should be indifferent between their strategies. Therefore, for the attacker, we have
+UattackerðAÞ ¼ UattackerNA;
+ð10Þ
+and for the system, we have
+UsystemðIÞ ¼ UsystemðNIÞ:
+ð11Þ
+We ﬁrst take the attacker into consideration. If the attacker plays A, he/she will
+gain a payoff of Ri – Ci with probability 1 - Ii and ð1  diÞ  Ri  di  ki  Ci
+with the probability Ii. If the attacker plays NA, he/she will get a payoff 0.
+According to Eq. (10), we will have
+Uattacker A
+ð Þ ¼ Uattacker NA
+ð
+Þ
+! 1  Ii
+ð
+Þ  Ri  Ci
+ð
+Þ þ Ii
+ð Þ  ð1  diÞ  Ri  di  ki  Ci
+ð
+Þ ¼ 0
+! Ii ¼ ðRi  CiÞ= di  Ri þ ki
+ð
+Þ
+ð
+Þ
+ð12Þ
+and according to Eq. (11), we will have
+Usystem Ið Þ ¼ Usystem NI
+ð
+Þ ! Pi  Ri
+ð
+Þ
+¼ Pi  di  Bi  ð1  diÞ  Ri  Ei
+ð
+Þ þ 1  Pi
+ð
+Þ  Ei
+ð
+Þ ! Pi
+¼ Ei= di  Ri þ ki
+ð
+Þ
+ð
+Þ
+ð13Þ
+where Pi and Ii are the attack and investment probabilities in the intrusion phase,
+respectively. Consequently, the optimal attack strategy of the game in the intrusion
+phase is equivalent to the mixed Nash equilibrium solution of the game and can be
+obtained from Eqs. (12) and (13).
+We now provide some conditions for the mixed strategy equilibrium analysis so
+that the probabilities are between 0 and 1. By assuming that all the parameters have
+positive values, for the investment probability of the system in the intrusion phase
+(Ii), we must have 0  Ii  1. Therefore, we can write
+Ii  0 ! Ri  Ci and Ii  1 ! di  ðRi  CiÞ= Riþi
+ð
+Þ:
+ð14Þ
+Furthermore, for the attack probability in the intrusion phase (Pi), we have
+Pi  0 ! Ei  0 and Pi  1 ! di  Ei= Riþi
+ð
+Þ:
+ð15Þ
+J Netw Syst Manage (2018) 26:929–965
+943
+123
+
+===== PAGE 16 =====
+4.2.2 The Disruption Phase
+Now, it is the time to capture the disruption phase of the attack. The attacker’s
+strategy in the disruption phase is considered as: to either conduct an attack (A),
+targeting physical disruption, or not to conduct an attack (NA). Hence, the strategy
+set of the attacker can be deﬁned as A1 = {A, NA}. The system strategies in this
+phase are also deﬁned as: to either invest in security to detect the abnormal behavior
+of the physical process or not to invest (NI). Therefore, the action set of the system
+in the disruption phase can be deﬁned as: A2 = {I, NI}. The system strategies to
+detect the anomaly in the behavior of the physical process may consist of activities,
+such as using anomaly detection systems, and system-wide monitoring.
+We now deﬁne the parameters of the game for the disruption phase of attacks:
+•
+K (0  K  1) represents the attacker’s knowledge level about the target physical
+process under control and its failure conditions.
+•
+Rd represents the total costs that the physical disruption imposes to the system.
+This parameter also denotes the attacker’s reward obtained from disrupting the
+physical process under control.
+•
+Ed denotes the total security expenses in the disruption phase. It is assumed that
+the security improvement activities to prevent, detect, and react to the abnormal
+behavior of the physical process require a total expense.
+•
+Pa represents the probability of carrying out an attack by an attacker aimed at
+driving the physical process into an undesired state, assuming that he/she
+successfully penetrated into the system.
+•
+dd denotes the detection probability of the anomaly in the physical process in the
+disruption phase.
+•
+d represents the attacker’s penalty from getting detected in the disruption phase
+of the attack.
+•
+Bd is the beneﬁt of the system, resulting from detection of the abnormal behavior
+of the physical process under attacks.
+•
+Ca is the attack cost in the disruption phase of the attack.
+Table 1 also contains the normal form representation of the game in the
+disruption phase. Each block of the table consists of the attacker and the system
+payoffs in the ﬁrst and second lines, respectively.
+We now explain how the player’s payoff in the disruption phase is calculated. We
+ﬁrst calculate the attacker’s payoff when the attacker conducts an attack and the
+system does not invest in security (the strategy proﬁle (A, NI)). In this strategy
+proﬁle, the attacker gets a reward Ri for successfully penetrating the system, and a
+reward K  Rd for successfully disrupting the physical process and incurs an attack
+cost Ci for penetrating the system and an attack cost Ca for disrupting the physical
+process. We assume that the higher the knowledge-level of the attacker, the higher
+the outcome of the attack actions. In other words, it is assumed that the attack
+outcome relies heavily on the attacker’s knowledge-level about the system. Indeed,
+an attacker with respect to his/her knowledge-level may maliciously affect the
+944
+J Netw Syst Manage (2018) 26:929–965
+123
+
+===== PAGE 17 =====
+physical process under control. For example, an attacker with a full knowledge level
+(K = 1) about the system can reach the entire Rd outcome if successful.
+Consequently, the attacker payoff in this strategy proﬁle (Uattacker (A, NI)) is
+given by
+Uattacker A; NI
+ð
+Þ ¼ Ri þ K  Rd
+ð
+Þ  Ci  Ca:
+ð16Þ
+We now consider the system payoff in the strategy proﬁle (A, NI). In this strategy
+proﬁle, the system incurs a loss Ri for a successful penetration of the attacker into
+the system, a cost Ii  Ei for investing in security in the intrusion phase, and also a
+cost K  Rd for the physical disruption caused. Therefore, the system payoff in the
+strategy proﬁle (A, NI) is given by
+Usystem A; NI
+ð
+Þ ¼ Ri  Ii  Ei  K  Rd
+ð
+Þ::
+ð17Þ
+If the players choose the strategy proﬁle (A, I), the attacker gets a reward Ri for
+successfully penetrating the system, a reward 1  dd
+ð
+Þ  K  Rd
+ð
+Þ for driving the
+physical process into an undesired state, and also incurs a cost dd  kd for getting
+detected in the disruption phase, an attack cost Ci for penetrating the system, and an
+attack cost Ca for disrupting the physical process. In this strategy proﬁle, the system
+incurs a penalty Ri for successful penetration of the attacker into the system, a cost
+Ii  Ei for investing in the intrusion phase, a cost K 9 Ed for investing in security in
+the disruption phase, and also a loss 1  dd
+ð
+Þ  K  Rd for the physical disruption
+caused. Indeed, it is assumed that the caused physical disruption depends heavily on
+the attacker’s knowledge level. On the other hand, the higher the attacker’s
+knowledge, the higher the required expenses in security by the system. Therefore,
+for the attacker payoff in the strategy proﬁle (A, I), we have
+Uattacker A; I
+ð
+Þ ¼ Ri þ 1  dd
+ð
+Þ  K  Rd
+ð
+Þ  dd  kd  Ci  Ca;
+ð18Þ
+and the following is the system payoff in the strategy proﬁle (A, I):
+Usystem A; I
+ð
+Þ ¼  Ri  Ii  Ei 
+1  dd
+ð
+Þ  K  Rd
+ð
+Þ  K  Ed
+ð
+Þ:
+ð19Þ
+If the attacker decides not to conduct an attack in the disruption phase, he/she
+gets a reward Ri for successfully penetrating the system and incurs an attack cost Ci
+for penetrating the system. In the strategy proﬁle (NA, NI) the system payoff is as
+follows:
+Usystem NA; NI
+ð
+Þ ¼  Ri  Ii  Ei:
+ð20Þ
+In the strategy proﬁle (NA, I), the system incurs a cost Ri for successful
+penetration of the attacker into the system, a cost Ii  Ei for investing in security of
+the intrusion phase, and also a cost K 9 Ed for investing in security with the goal of
+prevention from physical disruptions. Hence, for the system payoff in the strategy
+proﬁle (NA, NI), we have
+Usystem NA; NI
+ð
+Þ ¼ Ri  Ii  Ei  K  Ed
+ð
+Þ:
+ð21Þ
+J Netw Syst Manage (2018) 26:929–965
+945
+123
+
+===== PAGE 18 =====
+4.2.2.1 The Equilibrium Analysis of the Game in the Disruption Phase
+If
+K  Ca=Rd and dd  Ed=Rd, then the strategy proﬁle (A, NI) is a Nash equilibrium of
+the game. On the other hand, if Ed=Rd  dd  K  Rd  Ca
+ð
+Þ= K  Rdþd
+ð
+Þ, then the
+strategy proﬁle (A, I) is a Nash equilibrium of the game. Also, if K  Ca=Rd, then
+the strategy proﬁle (NA, NI) is a Nash equilibrium of the game.
+The investigation of the other strategy proﬁles in the game simply represents that
+they are not Nash equilibria for the game.
+4.2.2.2 Mixed Strategy Equilibrium Analysis
+Assuming the probability mixed
+strategy, the Nash equilibrium of the attacker and the system, for the attacker, we
+will have
+Uattacker A
+ð Þ ¼ Uattacker NA
+ð
+Þ
+! 1  Id
+ð
+Þ  Ri þ K  Rd
+ð
+Þ  Ci  Ca
+ð
+Þ þ Id
+ð Þ
+ Ri þ 1  dd
+ð
+Þ  K  Rd
+ð
+Þ  dd  kd  Ci  Ca
+ð
+Þ
+¼ Ri  Ci ! Id ¼ K  Rd  Ca
+ð
+Þ= dd  K  Rd þ kd
+ð
+Þ
+ð
+Þ;
+ð22Þ
+and, for the system we must have
+Usystem NI
+ð
+Þ ¼ Usystem Ið Þ
+! Pa
+ð
+Þ  Ri  Ii  Ei 
+1  dd
+ð
+Þ  K  Rd
+ð
+Þ
+ð
+Þ þ 1  Pa
+ð
+Þ
+ Ri  Ii  Ei
+ð
+Þ
+¼ Pa
+ð
+Þ  Ri  Ii  Ei 
+1  dd
+ð
+Þ  K  Rd
+ð
+Þ  K  Ed
+ð
+Þ
+ð
+Þ
+þ 1  Pa
+ð
+Þ  Ri  Ii  Ei  K  Ed
+ð
+Þ
+ð
+Þ
+! Pa ¼ K  Ed
+ð
+Þ= dd  K  Rd þ kd
+ð
+Þ
+ð
+Þ;
+ð23Þ
+where Pa and Id are the attack and investment probabilities in the disruption phase,
+respectively. Consequently, the optimal attack strategy of the game in the disruption
+phase is equivalent to the mixed Nash equilibrium solution of the game and can be
+obtained from Eqs. (22) and (23).
+We now provide some conditions for the mixed strategy equilibrium analysis so
+that the probabilities are between 0 and 1. For the investment probability of the
+system in the disruption phase (Id), we have
+Id  0 ! K  Cd=Rd and Id  1 ! dd  K  Rd  Cd
+ð
+Þ= K  Rdþd
+ð
+Þ:
+ð24Þ
+Furthermore, for the attack probability in the disruption phase (Pd), we have
+Pd  0 ! K; Rd  0 and Pi  1 ! dd  K  Ed
+ð
+Þ= K  Rdþd
+ð
+Þ:
+ð25Þ
+It is worth mentioning that each attack may have different consequences on the
+system. Therefore, the total costs that the physical disruption imposes to the system
+may be different for each attack and the game should be resolved.
+4.2.3 Determining the Input Parameters of the Game Model
+As stated in Sect. 4.2.2, K is the attacker’s knowledge level and takes a value from
+[0, 1]. Furthermore, the intrusion detection probability (di) and the anomaly
+946
+J Netw Syst Manage (2018) 26:929–965
+123
+
+===== PAGE 19 =====
+detection probability (dd) are real values in the interval [0, 1]. The other parameters
+are the cost, loss, or beneﬁt parameters representing the system or attacker’s
+payoffs. The US Securities Exchange Commission [36] has issued a guidance to
+determine the cost parameters and relevant information such as insurance coverage
+in a cyber security incident. Utilizing the guidance of this report, we now explain
+how to obtain the game parameter values. Here, we consider the loss associated with
+a physical disruption as the base parameter and compute the other parameter values
+with respect to it.
+We ﬁrst determine the total losses associated with a successful disruptive attack
+against the system. These losses may be due to equipment or production damage.
+We then determine the value of the other costs, losses, or beneﬁt parameters that are
+system-speciﬁc and must be assigned by security experts. These parameters are the
+total losses associated with successfully penetrating the system, the attacker’s
+penalty from getting detected in the intrusion or disruption phases, and the total
+expenses, resulting from investing in security.
+After assigning values to these parameters, the next step is to normalize the
+parameter values. By considering the total losses associated with a successful
+disruptive attack against the system (Rd) as the base parameter, the normalized value
+of parameter p is computed by dividing p by Rd. By doing so, the value of the Rd
+parameter is initialized to one and the other parameters will have a value less than or
+equal to one.
+Here, we provide an example to clarify the normalization process. Let Ra = 200
+thousand dollars be the total losses associated with a successful disruptive attack
+against the system and Ei = 50 thousand dollars be the total expenses, resulting
+from investing in security for detecting and preventing intrusions. After the
+normalization process, we have Ra = 1 and Ei = 50/200 = 0.25. Consequently, all
+the game parameters will be real values in the interval [0, 1].
+4.2.4 Computing the Mean Sojourn Time in Each State and the Transition
+Probabilities
+In this section, we concentrate on computing the mean sojourn time in each state
+and the transition probabilities. The constructed model is a semi-Markov model that
+can beneﬁt from generally distributed transition times. Let Tx be the random
+variable assigned to transition T(a, b) and illustrating the required duration of time
+for accomplishing the corresponding action. Also, let Lab be the transition rate
+between the state a and the state b. We utilize the rates of the outgoing transitions
+from each state to estimate the mean sojourn time of that state and the probabilities
+of its outgoing transitions [37]. The mean sojourn time in the state a (Sa) can be
+computed using the formulation [37]:
+Sa ¼
+X
+k2M
+Lak
+ 
+!1
+;
+ð26Þ
+where M is the set of reachable states in the semi-Markov model from state a. Also,
+J Netw Syst Manage (2018) 26:929–965
+947
+123
+
+===== PAGE 20 =====
+the transition probability of the transition between state a and b (Pab) can be derived
+using the formulation [37]:
+Pab ¼ Lab  Sa:
+ð27Þ
+We now explain how to compute the transition rates. First, we focus on the
+normal state. Let Ti be the required duration of time for penetrating into the system
+by the attacker. Also, Pi and Qi are the attack and detection probabilities in the
+intrusion phase obtained by solving the game. The transition rate of the T(N, P)
+transition (LNP) can be derived using the formulation:
+LNP ¼ Pi  1  Qi
+ð
+Þ=Ti;
+ð28Þ
+The transition rate of the T(N, N) transition (LNN) can be derived using the
+formulation:
+LNN ¼ ð1  Pi
+ð
+Þ þ Pi  Qi
+ð
+ÞÞ=Ti;
+ð29Þ
+which is obtained by combining the two equations. The ﬁrst case is when the
+attacker does not penetrate into the system (with probability 1  Pi), and the second
+case is when the attacker’s intrusion is detected by the system (with probability Pi).
+We now take the outgoing transitions from the penetrated state into consider-
+ation. In the penetrated state, the attacker may decide to launch an attack aimed at
+disrupting the physical process with probability Pd and the conducted attack may be
+detected by the system with probability Qd. Let Tp be the required time for the
+attacker’s decision making process. The transition rate of the T(P, W) transition
+(LPW) can be computed using the formulation:
+LPW ¼ Pd=TP
+ð30Þ
+and the transition rate of the T(P, N) transition (LPN) can be estimated using the
+formulation:
+LPN ¼ ð1  PdÞ=TP:
+ð31Þ
+The next state is the warning state. Let Td be the ADS detection interval. The
+transition rate of the T(W, W) transition (LWW) can be derived using the formulation:
+LWW ¼ 1  Qd
+ð
+Þ=Td
+ð32Þ
+and for the transition rate of the T(W, E) transition (LWE), we will have
+LWW ¼ Qd=Td:
+ð33Þ
+Let Tf be the time that the process is able to operate after carrying out the attack,
+before causing a physical disruption. The transition rate of the T(W, F) transition
+(LWF) can be derived using the formulation:
+LWF ¼ 1  Qd
+ð
+Þ=Tf :
+ð34Þ
+Let Tr, be the required time for accomplishing the recovery actions, and Ts be the
+948
+J Netw Syst Manage (2018) 26:929–965
+123
+
+===== PAGE 21 =====
+required time for restoring the suspended system to the normal state. The transition
+rates of the T(R, N) and T(S, N) transitions can be derived using these equations,
+respectively:
+LRN ¼ 1=Tr; LSN ¼ 1=Ts:
+ð35Þ
+After providing the transition rates, the mean sojourn time in each state and the
+transition probabilities can be estimated using Eqs. (26) and (27), respectively.
+4.3 Deﬁning Quantitative Metrics
+In this section, we describe some security related metrics with respect to the
+proposed stochastic model. Clearly, the quantitative metrics must be deﬁned based
+on the underlying assumptions and the nature of the proposed model. The
+quantitative metrics are as follows:
+•
+MTTSD This metric can be deﬁned as the expected amount of time that attackers
+need to successfully disrupt the physical process. MTTSD is a metric
+representing the time units that the proposed model spends in intermediate
+states (describing the interactions between the attackers and the system) before
+reaching the failure state. This metric can be an important measure of the
+resilience level of CPS against security attacks.
+•
+Availability Availability denotes the proportion of time a system is in a
+functioning condition. The availability of a CPS can be estimated by the ratio of
+the total time the system is capable of being used during a given interval to the
+length of the interval. In fact, the availability is a metric representing the time
+units that the proposed model spends in intermediate states before reaching the
+failure and stopped states. In order to analyze the availability measure, all the
+states of the proposed model need to be considered as transient states.
+•
+Attack probability This metric reveals the probability that an attacker conducts
+an attack against the system. Here, we consider two attack probabilities
+including the probability of penetrating into the system, and the probability of
+disrupting the physical process after obtaining the required privilege level in the
+intrusion phase. The value of this metric can be estimated using the proposed
+game model according to Eqs. (13) and (23).
+4.4 Model Evaluation
+After constructing and parameterizing the model, it is the time to provide its
+solution approach to evaluate the quantitative metrics. In this section, we explain the
+approach for solving the proposed model, step by step. As stated in Sect. 4.2, the
+proposed model must be parameterized with the transition probabilities and mean
+sojourn time in each state.
+After assigning the transition probabilities and the mean sojourn time parameter,
+the constructed model has Markovian property and can be solved using its
+embedded discrete-time Markov chain (DTMC) [41, 42]. By deﬁnition, a Markov
+J Netw Syst Manage (2018) 26:929–965
+949
+123
+
+===== PAGE 22 =====
+chain consists of a set of states and a set of labeled transitions between the states.
+After a sojourn in a state, the Markov chain will make a transition to another state.
+Based on the deﬁnition of DTMC, the proposed model has the DTMC property. We
+now explain the solution method of the proposed model and quantifying each
+introduced metric.
+4.4.1 The MTTSD Measure
+As deﬁned in Sect. 4.3, MTTSD is the duration of time that the model stays in the
+transient states before it ultimately enters the absorbing state (here, disrupting a
+physical process). Therefore, for estimating this metric, we need to consider the
+failure state as the absorbing state. The MTTSD metric can be calculated using the
+following equation [41]:
+MTTSD ¼
+X
+a2S
+VaSa;
+ð36Þ
+where Va is the visit rate of state a and Sa is the mean sojourn time in state a. The
+average visit rate is deﬁned as the average number of times that a state is visited
+before the model reaches one of the absorbing states. For state Va, the visit rate can
+be calculated using this equation [42, 43]:
+Va ¼ qa þ
+X
+b
+Vbqba; a; b 2 S;
+ð37Þ
+where qba is the probability of the transition from state b to state a, and qa is the
+probability that the model starts in state a. Since it is assumed that the normal state
+is the initial state of the model, for the normal state we have qN = 1, and for the
+other states, we have qa = 0.
+4.4.2 The Availability Measure
+In order to estimate the availability of a system, we need to study its behavior in a
+steady state. Based on the proposed model, the availability of CPS represents the
+time units that the model spends in intermediate states before reaching the failure
+and stopped states. It is assumed that the failed system will return to the normal state
+through repair, recovery, and reconﬁguration actions. Indeed, in order to analyze the
+system availability, we assume that there is a transition from the failure state to the
+initial normal state.
+For computing the availability metric, the steady-state probabilities of the
+constructed model need to be compared. These probabilities can be calculated in
+terms of the mean sojourn times (sa’s) and the embedded DTMC steady-state
+probabilities (ma’s) as follows [42], [43]:
+pa ¼
+vasa
+,X
+b
+vbsb
+ 
+!
+;
+ð38Þ
+in which, the steady-state probabilities can be estimated using this equation:
+950
+J Netw Syst Manage (2018) 26:929–965
+123
+
+===== PAGE 23 =====
+v ¼ vP;
+ð39Þ
+where P is the transition probability matrix.
+After calculating the steady state probabilities of the structured model, the
+availability metric can be estimated using the following equation:
+A ¼ 1  pF  pS;
+ð40Þ
+where A is the system availability, pF and pS are the state probabilities of failed state
+F and stopped state S, respectively.
+4.4.3 The Attack Probability Measure
+As discussed in Sect. 4.3, the probability of penetrating into the system can be
+estimated using the proposed game theoretical model (Pi) according to Eq. (13), and
+the probability of conducting an attack aimed at causing disruptive effects (Pa) can
+be computed using Eq. (23).
+5 An Illustrative Example
+This section presents an illustrative example to demonstrate the application of the
+proposed model.
+5.1 System Description
+A chemical plant is considered as a case study. The investigated plant is a Boiling
+Water Power Plant (BWPP) modeled by Bell and Astrom as an oil-ﬁred electric
+power plant [44]. Graphical representation of the plant is shown in Fig. 2.
+Fig. 2 Graphical representation of the power plant
+J Netw Syst Manage (2018) 26:929–965
+951
+123
+
+===== PAGE 24 =====
+In order to obtain the necessary information about physical phenomena, the plant
+uses three sensors for measuring the steam pressure, water level, and generated
+electricity. It also uses three valves, including fuel, feed-water, and steam valves.
+The plant consists of three PLCs controlling the operation of the plant based on
+received measurements.
+The normal valve positions in the steady state behavior of the plant are
+considered as follows [44]: u1 = 0.34, u2 = 0.69 and u3 = 0.433. By holding the
+situations of these valves in the normal positions, the steam pressure inside the tank
+takes a constant value of 108 kg/cm2. The process model of the plant (PM) is
+deﬁned in terms of the following equations [44]:
+_x1 ¼  0:0018u2x
+9
+8
+1 þ 0:9u1  0:15u3;
+_x2 ¼ ð0:073u2  0:016Þx
+9
+8
+1  0:1x2;
+_x3 ¼ 141u3  1:1u2 ¼ 0:19
+ð
+Þx1
+ð
+Þ=85;
+y1 ¼ x1;
+y2 ¼ x2;
+y3 ¼ 0:05 0:1307yx3 þ 100sq þ er
+9  67:975
+
+
+;
+sq ¼ 1  0:001538x3
+ð
+Þ 0:8x1  25:6
+ð
+Þ
+x3 1:0394  0:0012304x1
+ð
+Þ
+;
+er ¼ 0:85u2  0:147
+ð
+Þx1 þ 45:59u1  2:514u3  2:096;
+0  ui  1 i ¼ 1; 2; 3
+ð
+Þ;
+ð41Þ
+where u1, u2, u3 are the fuel, steam and water valve positions, respectively. x1, x2, x3
+denote the drum pressure (kg/cm2), electric output (MW), and ﬂuid density (kg/
+cm3), respectively, and y3 is the drum water level (m). Finally, er and sq indicate the
+steam quality and evaporation rate. In this plant all the three valves have the speed
+limitations deﬁned as follows [44]:
+ 0:007  _u1  0:007=s;
+1:0  _u2  0:1=s;
+ 0:05  _u3  0:05=s:
+ð42Þ
+The speed limitations of all the valves affect an attacker’s action for disrupting
+the physical process. The task scheduling of the controllers is assumed to be
+100 ms. It should be noted that in order to prevent explosion, the pressure inside the
+tank should not exceed 250 kg/cm2.
+According to Eq. (2), for this plant we have
+•
+S = {N, P, W, E, NE, S, R, F},
+•
+A1 = {A, NA}, and A2 = {I, NI},
+•
+R ¼ fintrusion; intrusion detection; attack; anomaly detection; stopping;
+recovering; restoration; reconfiguration; physical disruptiong
+•
+TR: {(N, A, ND) ? P (N, A, D) ? N, (N, NA, D) ? N, (N, NA, ND) ? N, (P,
+A, ND) ? W, (P, NA, ND) ? N, (W, A, ND) ? F, (W, A, DS) ? S, (W, A,
+DR) ? R},
+•
+X = {x1, x2, x3, y1, y2, y3, u1, u2, u3, er, sq, dt},
+•
+t[ T represents the time instance,
+•
+G = {G(W, F) = x2 C 250 kg/cm2, G(W, E) = x2 \ 250 kg/cm2 and dt = 1,
+G(W, NE) = x2 \ 250 kg/cm2 and dt = 0 and t [ tattack},
+952
+J Netw Syst Manage (2018) 26:929–965
+123
+
+===== PAGE 25 =====
+•
+L and St are represented after computation of the transition probabilities and the
+mean sojourn time in each state.
+Also, dt is a Boolean variable representing the abnormal behavior of the system
+detected as (dt = 1) or not (dt = 0).
+The plant is comprised of three network zones, including a corporate network, a
+control network, and a demilitarized zone (DMZ). The corporate network
+containing workstations, employees, and application server is in charge of business
+management and customer interaction. It is assumed that all the data ﬂow between
+the control and corporate networks is allowed only through virtual private network
+(VPN) tunnels. A hugely popular approach for protecting the industrial control
+protocols are VPNs [45]. Servers, such as a data server, data historian, and web
+servers (for corporate-customer interactions) containing the data from the CPS that
+needs to be accessed from the corporate network are put on this separate segment for
+improved security [45]. A DMZ is deﬁned as a separate network segment that
+connects directly to the ﬁrewalls [46].
+5.2 Attack Scenarios
+This section focuses on presenting attack scenarios and investigating the behavior of
+the plant under integrity attacks against control signals issued by the controllers.
+The main goal is to estimate the sensitivity of the control signals to integrity attacks
+and calculate the determined security metrics. To do so, we study the impact of the
+conducted attacks against the control signals.
+By considering the deﬁned speed limitations of the valves, an attacker requires to
+focus on attacks at the control level to disrupt the physical process.
+The ﬁrst step is computing the transition probabilities for the model. We ﬁrst
+consider the intrusion phase of the attack against this plant. It is assumed that in the
+penetration phase, the attacker exploits the VPN vulnerabilities to carry out an
+attack against this plant. VPNs extend secure communications across insecure
+public networks. VPNs provide security services through the use of virtual tunnel-
+ing protocols, dedicated connections, or trafﬁc encryption.
+VPNs are often considered to be secure. The fact is, protocol ﬂaws and
+implementation vulnerabilities expose VPN weaknesses in many industrial deploy-
+ments [45]. VPNs are the primary means of securing communications in process
+control and are widely used by industrial control systems [47]. In order to protect
+industrial protocols, it is recommended to wrap them within VPN tunnels.
+In an industrial control system, VPNs are the means of securing sensitive data.
+Therefore, these networks are main targets of adversaries for breaking into a system.
+By successful breaking into a VPN tunnel and having a sufﬁcient level of
+knowledge about the target system, an attacker can remotely alter sensitive control
+signals or sensor readings [48].
+The process variables considered in this example are the control signals issued
+for feed-water, fuel and steam valves. The behavior of the plant (the impact of the
+attacks on the investigated parameters) before and after conducting an attack on the
+considered process variables is examined.
+J Netw Syst Manage (2018) 26:929–965
+953
+123
+
+===== PAGE 26 =====
+To achieve the desired disruption, the adversary needs to compromise devices
+used to monitor or control the plant. One alternative can be to install malware on a
+workstation located on a corporate network to inject false commands issued to the
+actuators (here, the valves). In fact, to disrupt the physical process, the adversary
+tries to change the control signals issued by the controllers. To do so, the attacker
+may decide to force the stream and water valves to completely close and force the
+fuel valve to completely open. Therefore, this attack can have catastrophic effects
+on the plant.
+Figure 3 depicts the stream pressure inside the tank by applying Gaussian noise
+to the control signals, and without any attack. It should be noted that we apply a
+disturbance with a variance of 0.05 and a mean of 0 to control signals and sensor
+readings. With this disturbance, the system cannot return to the steady state.
+We ﬁrst focus on the integrity attack against the control signal u1. Figure 4
+provides the stream pressure level in the attack situations. For this attack, the
+pressure inside the tank reaches 250 kg/cm2 at T = 424.6 (s). The next considered
+attack is the integrity attack against the control signal issued to the steam valve (u2).
+With respect to system features, the goal of the attackers is assumed to be closing
+the stream valve by sending false data to it. Figure 4 depicts how the attack
+increases the pressure inside the tank. The pressure reaches the unsafe level (250 kg/
+cm2) at T = 590.0 (s).
+We now consider the integrity attack against the water valve control signal (u3).
+In order to bring the plant into the unsafe state through this attack, the adversary
+must keep the feed-water valve in the closed position and must continuously send
+Modbus packets to this valve to close it.
+We now investigate the integrity attack on u1 combined with the integrity attack
+on u2. In this attack, the adversary tries to force the steam valve to close and the fuel
+valve to open. The goal is to bring the system into the unsafe state as soon as
+Fig. 3 The steam pressure inside the tank with noisy inputs
+954
+J Netw Syst Manage (2018) 26:929–965
+123
+
+===== PAGE 27 =====
+possible. As depicted in Fig. 4, this attack can force the system to the unsafe state.
+The steam pressure inside the tank at T = 203.9 (s) is equal to 250 kg/cm2.
+The next combined attack is the attack on the fuel valve (u1) and feed-water valve
+(u3). For conducting this attack, the adversary must discard the original control
+signal and send false Modbus packets continuously to these valves to force the fuel
+valve to open and the feed-water valve to close. As shown in Fig. 4, the steam
+pressure inside the tank reaches the unsafe state at T = 362.7 (s).
+We now experiment on the attack against the steam valve (u2) and feed-water
+valve (u3). To perform this attack, attackers must launch code injection attacks and
+inject false Modbus packets to force the steam valve and feed-water valve to close.
+As represented in Fig. 4, the steam pressure inside the tank reaches to 250.01 kg/
+cm2 at T = 465.1 (s).
+Finally, the last integrity attack against the control signal is a combined attack on
+the fuel valve (u1), steam valve (u2) and feed-water valve (u3) control signals. To
+perform this attack, by sending false packets, attackers force the fuel valve to open,
+and the feed-water and steam valves to close. On the effect of this attack, the steam
+pressure inside the tank reaches to 250.03 kg/cm2 at T = 189.6 (s).
+5.3 Determining the Input Parameters to the Model
+In Sect. 4.2.3, we explained how to determine the value of the game parameters.
+Table 2 contains the default values of the game parameters and their ranges for the
+intrusion and disruption phases, respectively. It is assumed that the attacker’s
+penalty from getting detected in the intrusion phase is equal to the beneﬁt of the
+Fig. 4 The steam pressure inside the tank as a result of integrity attacks
+J Netw Syst Manage (2018) 26:929–965
+955
+123
+
+===== PAGE 28 =====
+system, resulting from detection of the intrusion (ki ¼ Bi). Furthermore, it is
+assumed that the attacker’s penalty from getting detected in the disruption phase of
+attacks is equal to the beneﬁt of the system, resulting from detection of the abnormal
+behavior of the physical process under attacks (kd ¼ Bd).
+Due to the password complexity, we assume that breaking the VPN password
+will take approximately 1440 min [48]. Furthermore, to analyze the system
+availability, we assume that there is a transition from the failure state to the initial
+normal state. The required time for repairing and recovering the failed plant is
+assumed to be 2 days (Trepair = 2880 min). Table 2 also lists the transitions and the
+values of their corresponding time variables.
+In the conducted analysis, we consider the attacks which can lead to physical
+damages. Since the considered attacks against the plant can lead to the same
+consequence (explosion) with different durations of time, the total cost imposed on
+the system as a result of each attack is considered the same.
+By assigning the determined default values to the game parameters, we observe
+that there is no pure Nash equilibrium in the game. Figure 5 shows how the system
+and attacker behaviors change by changing the intrusion detection and anomaly
+detection probabilities. As Fig. 5a shows, if di  0:25, the strategy proﬁle (A, NI) is
+a pure Nash equilibrium for the game. Besides, if 0:25\di  0:5, the strategy proﬁle
+(A, I) is a pure Nash equilibrium for the game. Finally, if di [ 0:5, the players of the
+game randomize their strategies and use mixed strategies.
+As depicted in Fig. 5b, if dd  0:4, the strategy proﬁle (A, NI) is a pure Nash
+equilibrium for the game. Besides, if 0:4\dd  0:44, the strategy proﬁle (A, I) is a
+pure Nash equilibrium for the game. Finally, if dd [ 0:44, the players of the game
+randomize their strategies and use mixed strategies.
+Table 2 The game parameters
+The intrusion phase parameters
+The disruption phase parameters
+The time parameters
+Parameter
+Default
+value
+Ranges
+Parameter
+Default
+value
+Ranges
+Parameter
+Default
+value
+Ranges
+Ei
+0.1
+[0.01,
+0.2]
+Ed
+0.4
+[0.3,
+0.5]
+Ti
+1440
+[1400,
+3000]
+Bi
+0.15
+[0.05,
+0.2]
+Bd
+0.4
+[0.1,
+0.9]
+Tp
+120
+[120,
+500]
+ki
+0.15
+[0.05,
+0.2]
+kd
+0.4
+[0.05,
+0.9]
+Td
+1
+[0.4,4]
+di
+0.90
+[0, 1]
+dd
+0.85
+[0, 1]
+Ts
+45
+[20, 300]
+Ci
+0.05
+[0.01,
+0.2]
+Ca
+0.1
+[0.05,
+0.3]
+Tf
+3
+[3, 10]
+K
+0.5
+[0.2, 1]
+Trepair
+2880
+[2000,
+5760]
+956
+J Netw Syst Manage (2018) 26:929–965
+123
+
+===== PAGE 29 =====
+5.4 Evaluation Results
+We now present the evaluation results of the proposed model. The primary objective
+is to evaluate the model and analyze the impact of countermeasures and attack
+factors, such as anomaly detection interval, detection probability, attacker’s
+knowledge level and intrusion duration on the system MTTSD and availability.
+We assign values to some parameters to isolate out their effects while other
+parameters are changed. For all the investigations, Rd and Ri are considered equal to
+1 and 0.25, respectively. The analyses conducted in this section are supported by
+MATLAB simulations. In the following, the results are organized in 6 separate
+experimental scenarios.
+5.4.1 The Effect of Attacker’s Penalty
+For the ﬁrst scenario, we study how the attacker’s penalty, both in the intrusion and
+disruption phases may affect the system availability and MTTSD. Figure 6a
+illustrates the effect of ki on the attack and investment probabilities in the intrusion
+phase. Figure 6b also depicts the effect of kd on the attack and investment
+probabilities in the disruption phase. As can be concluded from these results, both
+the attack probability and the probability of investing in security decrease as the
+attacker’s penalty increases.
+Figure 6c, d show availability and MTTSD versus kd. The results demonstrate
+that the availability and MTTSD decrease as the attacker’s penalty increases. These
+results happen because, as kd increases, the security investment probability ﬁnds a
+signiﬁcant decline in comparison with the attack probability. We also observe that
+there is an optimal value for the attacker’s penalty in the disruption phase (kd) under
+which the system MTTSD and availability are maximized. Consequently, the
+optimal kd value for this example is 0.1.
+Fig. 5 Nash equilibrium analysis, a Pi and Ii versus di, b Pa and Id versus dd
+J Netw Syst Manage (2018) 26:929–965
+957
+123
+
+===== PAGE 30 =====
+5.4.2 The Effect of Detection Probability
+We now analyze the effect of detection probability in the intrusion and disruption
+phases of attacks. Figures 7a, b represent how the system availability and MTTSD
+may be affected by the intrusion detection and prevention probability, respectively.
+Also, Fig. 7c, d show the effect of the anomaly detection probability on the system
+availability and MTTSD, respectively.
+In this investigation, the detection probability varies over the range of [0.1, 0.99].
+The results depicted in Fig. 7 show the system availability and MTTSD in the
+situations in which the game has pure or mixed Nash Equilibrium. Investigation
+results demonstrate that the system availability and MTTSD increase as the
+intrusion and anomaly detection probabilities increase.
+Fig. 6 The effect of attacker’s penalty, a attacker’s penalty (ki) versus the intrusion and security
+investment probabilities (Pi, Ii) in the intrusion phase of attacks, b attacker’s penalty (kd) versus the attack
+and security investment probabilities (Pa, Id) in the disruption phase of attacks, c attacker’s penalty (kd)
+versus availability, and d attacker’s penalty (kd) versus MTTSD
+958
+J Netw Syst Manage (2018) 26:929–965
+123
+
+===== PAGE 31 =====
+Fig. 7 The effect of detection probability, a availability versus intrusion detection and prevention
+probability (di), b MTTSD vs. intrusion detection and prevention probability (di), c availability versus
+anomaly detection probability (dd), and d MTTSD vs. anomaly detection probability (dd)
+Fig. 8 The effect of detection interval, a availability versus anomaly detection interval, b MTTSD
+versus anomaly detection interval
+J Netw Syst Manage (2018) 26:929–965
+959
+123
+
+===== PAGE 32 =====
+5.4.3 The Effect of Detection Interval
+We now analyze the effect of the anomaly detection interval on the system
+availability and MTTSD. Figure 8 shows the system availability and MTTSD as the
+anomaly detection interval varies over the range of [0.2, 4]. Here, the false-positive
+probability is assumed to be low and close to zero. We observed that the system
+availability and MTTSD monotonically dropped when the detection interval
+increased. This happens because, when the false-positive probability is low, a small
+intrusion and anomaly detection can help to rapidly detect the conducted attack. As
+a consequence, there is a higher probability of the physical process under control
+being returned back to the normal state.
+5.4.4 The Effect of Time-to-Physical Disruption
+We now investigate how the time to the physical disruption parameter can affect the
+system availability and MTTSD. In this investigation, the time to the physical
+disruption varies over the range of [3, 10]. Figure 9 represents that the system
+availability and MTTSD increase as the time to physical disruption parameter
+increases. The reason for this increase in the system availability and MTTSD is due
+to the fact that as the disruption time increases, there are more opportunities for
+intrusion and anomaly detection systems to detect the carried out attack against the
+system. Consequently, the physical process may return back to the normal state with
+a higher probability.
+5.4.5 The Effect of the Knowledge Level of Attacker
+We now analyze the effect of the attacker’s knowledge-level on the attack
+probability and the probability of investing in security. In the investigation made,
+the knowledge level of the attacker’s varies over the range of [0.2, 1] in increments
+Fig. 9 Time to physical disruption versus, a availability, b MTTSD
+960
+J Netw Syst Manage (2018) 26:929–965
+123
+
+===== PAGE 33 =====
+of 0.1. Figure 10a shows that the attack and security investment probabilities
+drastically increase as the attacker’s knowledge level increases. The reason for the
+increase in these probabilities is due the fact that the knowledge-level of the
+attacker’s is the most important prerequisite for conducting a successful cyber-
+physical security attack. However, without a suitable knowledge-level, adversarial
+actions against CPS may only have minor nuisance effects. As depicted in Fig. 10b,
+c, when the attacker’s knowledge level increases, the system can beneﬁt from
+investing in security. We observe that with an increased probability of security
+investment, the system availability and MTTSD increase.
+5.4.6 The Effect of Attack Cost
+As the next investigation, we study how the attack cost inﬂuences the system
+availability and MTTSD. Figure 11 represents the effect of the attack cost on the
+system availability and MTTSD. Figure 11a, b depict the effect of the attack cost in
+the intrusion phase on the system availability and MTTSD, respectively. Also,
+Fig. 11c, d represent the effect of the attack cost in the disruption phase on the
+Fig. 10 The effect of attacker’s knowledge, a probability of attack (Pa) and probability of investing in
+security (Id) versus attacker’s knowledge level, b availability versus attacker’s knowledge level,
+c MTTSD vs. attacker’s knowledge level
+J Netw Syst Manage (2018) 26:929–965
+961
+123
+
+===== PAGE 34 =====
+system availability and MTTSD, respectively. We observe that the system
+availability and MTTSD decrease when the attack cost increases. This happens
+because, when the attack cost increases, the attack probability and the probability of
+investing in security decrease.
+6 Conclusions
+This paper proposes a stochastic game model for quantitative security evaluation in
+the domain of cyber-physical systems (CPS). By dividing the process of security
+modeling in CPS into an intrusion process modeling and disruption process
+modeling process, we can predict how an attacker is likely to penetrate into the
+system and disrupt the physical process. In the next step, the proposed model is
+parameterized according to suitable data obtained by solving the game models and
+investigating the dynamic behavior of the system under attacks to quantify the
+security metrics. Indeed, the game-theoretical approaches are used to predict the
+attacker and the system behavior and compute the probabilities of the expected
+attacker and system behaviors. The security of CPS is evaluated by solving the
+proposed game in each state and studying the dynamic behavior of the system under
+Fig. 11 The effect of attack cost, a intrusion cost (ci) versus availability, b intrusion cost (ci) versus
+MTTSD, c attack cost (cd) versus availability, d attack cost (cd) versus MTTSD
+962
+J Netw Syst Manage (2018) 26:929–965
+123
+
+===== PAGE 35 =====
+a conducted attack. The system-focused security analysis is performed in terms of
+quantitative metrics, such as MTTSD and availability. The adversary-focused
+security analysis is also performed in terms of attack probability. We showed how
+changes in the characterization of an attacker affect the security strength of the
+system.
+The evaluation results revealed that the attack factors and defensive counter-
+measures, such as the attacker’s knowledge-level about the failure conditions,
+mechanics, physics, signal processing and control principles of the system, timing
+aspects of attacks, e.g., intrusion duration and time to physical disruption, intrusion
+and anomaly detection probabilities, anomaly detection interval, and the attacker’s
+penalty from getting detected are very inﬂuential on the security and resiliency of
+the system to adversarial actions.
+There are other security concerns for CPS that are not addressed in our current
+research. For instance, we have not considered the effects of human–machine
+interfaces (HMIs). However, we know that in CPS the operators monitor the overall
+operation of the system from the HMI and most of the catastrophic events in these
+systems are the result of an incorrect operator’s decision making [49].
+For future work, we plan to provide separate game models for IDS/IPS and the
+HMI operators and measure the interaction of them with attackers. We also plan to
+take the attacks targeting information transferred into the HMI station into account.
+References
+1. Lee, E.A., Seshia, S.A.: Introduction to Embedded Systems—A Cyber-Physical Systems Approach,
+2nd edn. MIT Press, Cambridge (2017)
+2. Ashibani, Y., Mahmoud, Q.H.: Cyber physical systems security: analysis, challenges and solutions.
+Comput. Secur. 68, 81–97 (2017)
+3. Gollmann, D., Gurikov, P., Isakov, A., Krotoﬁl, M., Larsen, J., Winnicki, A.: Cyber-physical systems
+security: experimental analysis of a vinyl acetate monomer plant. In: Proceedings of the 1st ACM
+Workshop on Cyber-Physical System Security, pp. 1–12 (2015)
+4. Nguyen, P.H., Ali, S., Yue, T.: Model-based security engineering for cyber-physical systems: a
+systematic mapping study. Inf. Softw. Technol. 83, 116–135 (2017)
+5. Orojloo, H., Abdollahi Azgomi, M.: A game-theoretic approach to model and quantify the security of
+cyber-physical systems. Comput. Ind. 88, 44–57 (2017)
+6. Sallhammar, K.: Stochastic models for combined security and dependability evaluation. Ph.D.
+Thesis, Norwegian University of Science and Technology (2007)
+7. Wang, Y., Li, J., Meng, K., Lin, C., Cheng, X.: Modeling and security analysis of enterprise network
+using attack–defense stochastic game Petri nets. Secur. Commun. Netw. 6, 89–99 (2013)
+8. Spyridopoulos, T., Karanikas, G., Tryfonas, T., Oikonomou, G.: A game theoretic defence frame-
+work against DoS/DDoS cyber attacks. Comput. Secur. 38, 39–50 (2013)
+9. Moayedi, B.Z., Abdollahi Azgomi, M.: A game theoretic framework for evaluation of the impacts of
+hackers diversity on security measures. Reliab. Eng. Syst. Saf. 99, 45–54 (2012)
+10. Zhu, M., Martinez, S.: Stackelberg-game analysis of correlated attacks in cyber-physical systems. In:
+Proceedings of American control conference (ACC), pp. 4063–4068 (2011)
+11. Ma, C.Y., Rao, N.S., Yau, D.K.: A game theoretic study of attack and defense in cyber-physical
+systems. In: Proceedings of INFOCOM’s Computer Communications Workshops, pp. 708–713, April
+(2011)
+J Netw Syst Manage (2018) 26:929–965
+963
+123
+
+===== PAGE 36 =====
+12. Backhaus, S., Bent, R., Bono, J., Lee, R., Tracey, B., Wolpert, D., Xie, D., Yildiz, Y.: Cyber-physical
+security: a game theory model of humans interacting over control systems. IEEE Trans. Smart Grid
+4(4), 2320–2327 (2013)
+13. Zhu, Q., Bas¸ar, T.: A dynamic game-theoretic approach to resilient control system design for cas-
+cading failures. In: Proceedings of the 1st International Conference on High Conﬁdence Networked
+Systems, pp. 41–46, April (2012)
+14. Vigo, R., Bruni, A., Yuksel, E., Vigo, R., Bruni, A., Yuksel, E.: Security games for cyber-physical
+systems. Proc. Secur. IT Syst. 8208, 17–32 (2013)
+15. Sanjab, A., Saad, W.: On bounded rationality in cyber-physical systems security: game-theoretic
+analysis with application to smart grid protection. In: Proccedings of the Joint Workshop on Cyber-
+Physical Security and Resilience in Smart Grids (CPSR-SG), pp. 1–6 (2016)
+16. Shan, X., Zhuang, J.: Modeling cumulative defensive resource allocation against a strategic attacker
+in a multi-period multi-target sequential game. Reliab. Eng. Syst. Saf. (2017). https://doi.org/10.
+1016/j.ress.2017.03.022
+17. Shan, X., Zhuang, J.: Hybrid defensive resource allocations in the face of partially strategic attackers
+in a sequential defender–attacker game. Eur. J. Oper. Res. 228, 262–272 (2013)
+18. Pindoriya, N.M., Dasgupta, D., Srinivasan, D., Carvalho, M.: Infrastructure security for smart electric
+grids: a survey. In: Proceedings of Optimization and Security Challenges in Smart Power Grids,
+pp. 161–180 (2013)
+19. Knowles, W., Prince, D., Hutchison, D., Disso, J.F.P., Jones, K.: A survey of cyber security man-
+agement in industrial control systems. Int. J. Crit. Infrastruct. Prot. 9, 52–80 (2015)
+20. Srivastava, A., Morris, T., Ernster, T., Vellaithurai, C., Pan, S., Adhikari, U.: Modeling cyber-
+physical vulnerability of the smart grid with incomplete information. IEEE Trans. Smart Grid 4(1),
+235–244 (2013)
+21. Ji, K., Wei, D.: Resilient control for wireless networked control systems. Int. J. Control Autom. Syst.
+9(2), 285–293 (2011)
+22. Liu, N., Zhang, J., Zhang, H., Liu, W.: Security assessment for communication networks of power
+control systems using attack graph and MCDM. IEEE Trans. Power Deliv. 25(3), 1492–1500 (2010)
+23. Yampolskiy, M., Horva´th, P., Koutsoukos, X.D., Xue, Y., Sztipanovits, J.: A language for describing
+attacks on cyber-physical systems. Int. J. Crit. Infrastruct. Prot. 8, 40–52 (2014)
+24. Krotoﬁl, M., Ca´rdenas, A.A., Larsen, J., Gollmann, D.: Vulnerabilities of cyber-physical systems to
+stale data-determining the optimal time to launch attacks. Int. J. Crit. Infrastruct. Prot. 7, 213–232
+(2014)
+25. Cardenas, A.A., Amin, S., Lin, Z.S., Huang, Y.L., Huang, C.Y., Sastry, S.: Attacks against process
+control systems: risk assessment, detection, and response. In: Proceedings of the 6th ACM Sym-
+posium on Information, Computer and Communications Security (ASIACCS’11), Hong Kong,
+pp. 355–366 (2011)
+26. Genge, B., Siaterlis, C., Hohenadel, M.: Impact of network infrastructure parameters to the effec-
+tiveness of cyber attacks against industrial control systems. Int. J. Comput. Commun. Control 7(4),
+674–687 (2014)
+27. Hahn, A., Thomas, R.K., Lozano, I., Cardenas, A.: A multi-layered and kill-chain based security
+analysis framework for cyber-physical systems. Int. J. Crit. Infrastruct. Prot. 11, 39–50 (2015)
+28. Mitchell, R., Chen, I.R.: Modeling and analysis of attacks and counter defense mechanisms for cyber
+physical systems. IEEE Trans. Reliab. 65, 350–358 (2015)
+29. Gollmann, D., Krotoﬁl, M.: Cyber-physical systems security. In: The New Codebreakers, Springer,
+Berlin, pp. 195–204
+30. Tang, L.A., Yu, X., Kim, S., Gu, Q., Han, J., Leung, A., La Porta, T.: Trustworthiness analysis of
+sensor data in cyber-physical systems. J. Comput. Syst. Sci. 79(3), 383–401 (2013)
+31. Hu, F., Lu, Y., Vasilakos, A.V., Hao, Q., Ma, R., Patil, Y., Zhang, T., Lu, J., Li, X., Xiong, N.N.:
+Robust cyber-physical systems: concept, models, and implementation. Future Gener. Comput. Syst.
+56, 449–475 (2016)
+32. Rao, N., Poole, S., Ma, C., He, F., Zhuang, J., Yau, D.: Defense of cyber infrastructures against
+cyber-physical attacks using game-theoretic models. Risk Anal. 36(4), 694–710 (2016)
+33. Rao, N.S.V., Ma, C.Y.T., He, F., Zhuang, J., Yau, D.: Cyber-physical correlations for infrastructure
+resilience: a game-theoretic approach. In: IEEE International Conference on Information Fusion
+(FUSION), Salamanca, Spain, July 7–10, pp. 1–8 (2014)
+964
+J Netw Syst Manage (2018) 26:929–965
+123
+
+===== PAGE 37 =====
+34. Rao, N.S.V., Ma, C.Y.T., Shah, U., Zhuang, J., He, F., Yau, D.K.: On resilience of cyber-physical
+infrastructures using discrete product-form games. In: IEEE International Conference on Information
+Fusion (Fusion), Washington, DC, USA, July 6–9, pp. 1451–1458 (2015)
+35. Rao, N.S.V., Ma, C.Y.T., Hausken, K., He, F., Zhuang, J.: Game-theoretic strategies for systems of
+components using product-form utilities. In: IEEE International Conference on Multisensor Fusion
+and Integration for Intelligent Systems, Kongresshaus Baden-Baden, Germany, Sep 19–21,
+pp. 341–346 (2016)
+36. Kopetz, H.: Real-Time Systems: Design Principles for Distributed Embedded Applications, Real-
+Time Systems Series, 2 edn. Springer Science & Business Media (2011)
+37. Ciardo, G., Muppala, J., Trivedi, K.: SPNP: stochastic petri net package. In: Proceedings of the 3rd
+International Workshop Petri Nets and Performance Models, Washington, DC, USA, pp. 142–151
+(1989)
+38. Liang, X., Xiao, Y.: Game theory for network security. IEEE Commun. Surv. Tutor. 15(1), 472–486
+(2013)
+39. Lye, K.W., Wing, J.M.: Game strategies in network security. Int. J. Inf. Secur. 4(1), 71–86 (2005)
+40. Njilla, L.Y., Pissinou, N., Makki, K.: Game theoretic modeling of security and trust relationship in
+cyberspace. Int. J. Commun Syst 29, 1500–1512 (2016)
+41. United States Securities and Exchanges Commission: CF disclosure guidance: topic no. 2-Cyber-
+security. http://www.sec.gov/divisions/corpﬁn/guidance/cfguidance-topic2.htm, October 13 (2011)
+42. Trivedi, K.S.: Probability and statistics with reliability. In: Queuing, and Computer Science Appli-
+cations, 2nd ed. Wiley, New York (2001)
+43. Madan, B., Gosˇeva-Popstojanova, K., Vaidyanathan, K., Trivedi, K.S.: A method for modeling and
+quantifying the security attributes of intrusion tolerant systems. Perform. Eval. 56(1), 167–186 (2004)
+44. Tan, W., Marquez, H.J., Chen, T., Liu, J.: Analysis and control of a nonlinear boiler-turbine unit.
+J. Process Control 15(8), 883–891 (2005)
+45. Stouffer, K., Falco, J., Scarfone, K.: Guide to industrial control systems (ICS) security. In: NIST
+Special Publication, pp. 800–882 (2011)
+46. Hills, R.: Common VPN security ﬂaws, white paper, NTA Monitor, Rochester, United Kingdom.
+www.nta-monitor.com/posts/2005/01/VPN-Flaws-Whitepaper.pdf (2005)
+47. Alsiherov, F., Kim, T.: Research trend on secure SADA network technology and methods. WSEAS
+Trans. Syst. Control 8(5), 635–645 (2010)
+48. Rahimi, S., Zargham, M.: Analysis of the security of VPN conﬁgurations in industrial control
+environments. Int. J. Crit. Infrastruct. Prot. 5(1), 3–13 (2012)
+49. Krotoﬁl, M., Larsen, J.: Are you threatening my hazards?. In: Proceeding of 9th International
+Workshop on Security (IWSEC’14), Hirosaki, Japan, pp. 17–32, August (2014)
+Hamed Orojloo received the B.S. and M.S. degrees in computer engineering (2010 and 2012,
+respectively). He also received the Ph.D. degree in computer engineering from the School of Computer
+Engineering, Iran University of Science and Technology in 2017. His main research interests include,
+computer security, cyber-physical systems and stochastic modeling.
+Mohammad Abdollahi Azgomi received the B.S., M.S. and Ph.D. degrees in computer engineering
+(software) (1991, 1996 and 2005, respectively) from Department of Computer Engineering, Sharif
+University of Technology, Tehran, Iran. His research interests include modelling and evaluation of
+security, privacy and trust, and dependable and secure software development. Dr. Abdollahi Azgomi is
+currently an associate professor at School of Computer Engineering, Iran University of Science and
+Technology, Tehran, Iran.
+J Netw Syst Manage (2018) 26:929–965
+965
+123

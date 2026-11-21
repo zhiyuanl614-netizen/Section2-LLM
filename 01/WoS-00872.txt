@@ -1,0 +1,1355 @@
+
+===== PAGE 1 =====
+Future Generation Computer Systems 67 (2017) 57–71
+Contents lists available at ScienceDirect
+Future Generation Computer Systems
+journal homepage: www.elsevier.com/locate/fgcs
+A method for evaluating the consequence propagation of security
+attacks in cyber–physical systems
+Hamed Orojloo, Mohammad Abdollahi Azgomi ∗
+Trustworthy Computing Laboratory, School of Computer Engineering, Iran University of Science and Technology, Tehran, Iran
+h i g h l i g h t s
+• A method for evaluating the consequence propagation of security attacks in cyber–physical systems is proposed.
+• The method evaluates the direct and indirect impacts of attacks on control parameters of CPSs including sensor measurements and controller signals.
+• The first output is ranking the important assets of the system based on their sensitivity to the carried out attacks.
+• The next output is prioritizing the attacks based on their impacts on the behavior of the system.
+a r t i c l e
+i n f o
+Article history:
+Received 5 March 2016
+Received in revised form
+31 May 2016
+Accepted 19 July 2016
+Available online 30 August 2016
+Keywords:
+Cyber–physical systems (CPSs)
+Security evaluation
+Physical dynamics
+Consequence propagation
+a b s t r a c t
+Estimating the possible impacts of security attacks on physical processes can help to rank the critical assets
+based on their sensitivity to performed attacks and predict their attractiveness from the attacker’s point
+of view. To address this challenge, this paper proposes a new method for assessing the direct and indirect
+impacts of attacks on cyber–physical systems (CPSs). The proposed method studies the dynamic behavior
+of systems in normal situation and under security attacks and evaluates the consequence propagation of
+attacks. The inputs to the model are control parameters including sensor readings and controller signals.
+The output of the model is evaluating the consequence propagation of attacks, ranking the important
+assets of systems based on their sensitivity to conducted attacks, and prioritizing the attacks based on
+their impacts on the behavior of system. The validation phase of the proposed method is performed by
+modeling and evaluating the consequence propagation of attacks against a boiling water power plant
+(BWPP).
+© 2016 Elsevier B.V. All rights reserved.
+1. Introduction
+The risk of disruptive interventions against critical infrastruc-
+tures from various groups of adversaries has become increasingly
+high in recent years. Because attacks against critical infrastructure
+(CI) may have catastrophic impacts on the physical world and hu-
+man lives [1], the security of critical infrastructure has become
+an active research area in recent years. Smart grids, water plants,
+chemical plants, oil and natural gas distribution systems and trans-
+portation systems are examples of critical infrastructures, which
+many people depend on [2].
+Integrating computing and communication systems with
+physical world has led to the emergence of cyber–physical systems
+∗Correspondence to: School of Computer Engineering, Iran University of Science
+and Technology, Hengam St., Resalat Sq., Tehran, 16846-13114, Iran. Fax: +98 21
+73021480.
+E-mail addresses: orojloo@iust.ac.ir (H. Orojloo), azgomi@iust.ac.ir
+(M.A. Azgomi).
+(CPSs). CPSs are computer-controlled systems monitoring and
+controlling physical processes [2]. These systems use a number
+of controllers such as programmable logic controllers (PLCs),
+communication equipment, sensors and actuators to manage and
+monitor some entities in the physical world [2].
+As mentioned in [3], the modernization of critical infrastruc-
+tures and emergence of CPSs are crucial to improve efficiency and
+flexibility, but, on the other hand, this integration and progress
+have subjected them to cyber threats. The security failures in CPSs
+can impact human lives and safety in general, and cause damage
+to industrial products and facilities [1]. According to the report
+released by the industrial control systems computer emergency
+readiness team (ICS-CERT) [4], the number of incidents related to
+the security breaches involving CPSs in 2012 was more than five
+times their 2010 level [5]. Thus, addressing the security of these
+systems has become an important topic in recent years.
+One of the most important issues in addressing the security
+of CPSs is to study how the physical process is being controlled
+using control principles. The next important challenge is to
+http://dx.doi.org/10.1016/j.future.2016.07.016
+0167-739X/© 2016 Elsevier B.V. All rights reserved.
+
+===== PAGE 2 =====
+58
+H. Orojloo, M.A. Azgomi / Future Generation Computer Systems 67 (2017) 57–71
+Fig. 1. The architecture of cyber–physical systems.
+acquire sufficient understanding of the security requirements of
+the process under control. What puts the security of CPSs apart
+from the security of cyber systems is the concern for physical
+consequences of attacks [1]. It is desirable to determine the most
+vulnerable control parameters of these systems and analyze the
+sensitivity of their control loops.
+To achieve this goal, in this paper we propose a new method
+that captures the dynamic behavior of CPSs with / without attacks
+and models the impact propagation of attacks. Finally, using the
+decision-making trial and evaluation laboratory (DEMATEL) [6,7]
+method, the proposed method ranks the critical assets of CPSs
+based on their sensitivity to disturbances and measures the direct
+and indirect consequences of attacks against them.
+The DEMATEL method has been used for solving several groups
+of interdependent problems [8,9]. This method has been used
+in various contexts in recent years. For instance, it is applied to
+identify key success factors of hospital service quality [10], and to
+evaluate the causal relations among the criteria in auto spare parts
+industry [11].
+DEMATEL is a comprehensive method used for building and an-
+alyzing a structural model involving causal relationships between
+complex factors [6,7]. This feature of the DEMATEL method is em-
+ployed in this paper to evaluate and rank the impacts of intentional
+disturbances against the behavior of physical processes.
+It is noteworthy that although we use the DEMATEL method for
+sensitivity analysis of control loops, the input data of the model are
+the control parameter values representing the dynamic behavior
+of the underlying physical process. In fact, in contrast to the
+traditional DEMATEL method, where the values of the parameters
+are assigned by system experts, in the proposed method, the
+impact evaluation of control parameters is performed according to
+the system dynamics.
+In this paper, by considering sensor measurements and control
+signals as the primary target of disturbances, we study how an
+attack against system parameters can affect the values of other
+parameters. The normal behavior of the system without any
+disruptions and the abnormal behavior of the system under attacks
+are compared. The system parameters are divided into two classes
+of cause and effect parameters, which can be same as or different
+from each other. Finally, new metrics are proposed, which can be
+used for quantifying the importance level of each parameter in the
+underlying physical process. By using the resulting quantitative
+values, we can prioritize the sensor readings and control signals
+based on their sensitivity to conducted attacks. Besides, we can
+rank the performed attacks based on their direct and indirect
+consequences on physical dynamics of the system.
+The rest of this paper is organized as follows. In Section 2, some
+related works are reviewed. In Section 3, we discuss about the
+architecture of CPSs and some important security issues of them.
+In Section 4, we present the formal and informal definitions of
+the proposed modeling and evaluating approach. In Section 5, an
+illustrative example is given. In Section 6, the proposed method
+is compared with other methods, and finally in Section 7, some
+concluding remarks are mentioned.
+2. An overview of cyber–physical systems
+In this section, we discuss about the overall architecture of CPSs
+and the security issues of them.
+2.1. The architecture of cyber–physical systems
+The current state of CPSs can be described by capturing the
+values of its important process variables. Two kinds of important
+process or state variables in CPSs include (1) measured variables
+representing the sensor measurements and (2) control variables
+representing the control signals [12]. The normal value of a certain
+process parameter is referred to as the set point. For example, the
+desired value of the pressure inside a tank in a chemical plant is
+called the set point of that process parameter [12].
+In CPSs, the distance between the values of process variables
+and the corresponding set points is calculated by controllers.
+After calculating this offset, the controllers using a complex set
+of equations, elaborate a local actuation strategy, and calculate a
+new actuating or control variable. The resulting manipulated value
+is sent to the suitable actuator to keep the process closer to the
+determined set point [13]. The controllers also send the received
+measurements to main control servers and execute the issued
+commands from them.
+In CPSs, the operators of the system must be aware of the
+current state of the controlled objects. Thus, a graphical user
+interface (GUI) called human–machine interface (HMI) represents
+the current state of the controlled object to the human operators.
+Fig. 1 depicts an overall representation of CPSs architecture.
+The architecture of a CPS is often composed of two primary
+layers [3,14]:
+(1) The cyber layer, that consists of corporate network, control
+network and a demilitarized zone (DMZ), and
+(2) The physical layer, which consists of sensors, actuators and
+physical devices.
+The corporate network containing workstations, employees
+and application server is in charge of business management and
+customer interaction.
+The control network is composed of controllers like PLCs,
+control server and HMI. A DMZ is defined as a separate
+network segment that connects directly to firewalls [15,16].
+Servers such as data server, data historian and web servers (for
+corporate–customer interactions) containing the data from the CPS
+that needs to be accessed from the corporate network are put on
+this separate segment for improved security [16].
+The cyber layer often uses industrial protocols such as
+DNP3 [17], 61 850 [18] and Modbus [19] to communicate with the
+physical layer devices. A hugely popular approach for protecting
+the industrial control protocols are virtual private networks
+(VPNs) [16]. In order to protect these protocols from unauthorized
+
+===== PAGE 3 =====
+H. Orojloo, M.A. Azgomi / Future Generation Computer Systems 67 (2017) 57–71
+59
+access, it is recommended to wrap them within VPN tunnels.
+Indeed, all of the data flow between the control and corporate
+networks is allowed only through VPN tunnels.
+The communications between sensors and controllers in a CPS
+can be divided into three categories [20]: (1) sensor-to-sensor
+communications to collect sensed data, (2) sensor-to-controller
+communications to elaborate a correct set of commands for
+applying to the physical world, and (3) controller-to-controller
+communications to coordinate with other to elaborate a correct set
+of commands and make suitable decisions.
+2.2. The security of cyber–physical systems
+The main difference between the security plans in cyber do-
+mains and CPSs is that the target of security improvement tech-
+niques in cyber domain is protecting the stored and transmitted
+data and availability of services. But, in CPSs, protecting the op-
+erations is the primary target of the security improvement tech-
+niques [12].
+In cyber–physical domain penetrating to the system is not
+the same as breaking the system [21]. The required knowledge
+for conducting a successful attack against CPSs is considerably
+different from that of the cyber domains. In fact, one of the most
+important differences between attacks in cyber domains with
+cyber–physical domains is that in order to disrupt the physical
+process, attackers need to acquire some sufficient knowledge
+about the process behavior and its failure conditions, control
+principles and signal processing, and so on [21]. Without this
+knowledge, an adversary cannot bring the system to the unsafe
+state.
+There are two main data flows in CPSs [3]. The first flow is the
+measured information by sensors that are sent to the controller
+devices and the second data flow is the control commands, which
+are sent to the actuators. These two data flows are the significant
+targets of attacks in cyber–physical domain.
+By sending false data into the controller, it will decide based on
+these false measurement and issues incorrect commands that may
+bring the system into unsafe state. Also, by changing the issued
+command to the actuators, the system may enter into unsafe state.
+In fact, the correctness of these transited data plays an important
+role in secure functioning of CPSs [22]. Denial of service (DoS) is
+another possible attack on sensor readings and control signals. By
+performing this attack, the controller will decide according to the
+latest received measurement. It has been shown that this attack
+may not cause the system to move to a critical state when the
+system is in steady state [23]. Indeed, the consequences of DoS
+attacks against individual devices are usually restricted.
+Despite the similar meanings of attacks in the cyber domain
+to the cyber–physical domain, the primary goal of attacks in
+the cyber–physical domain is disrupting physical processes.
+In summary, attacks in cyber–physical domain have different
+consequences and targets [1]:
+– Some of attacks may only violate some security attributes and
+cannot disrupt physical processes.
+– Some of attacks may cause catastrophic damage to system
+equipment and assets (as a result of overstress of equipment
+and violation of safety limits).
+– Some of attacks may target products and lead to production
+damages (e.g., the attacks that target product quality, produc-
+tion rate and operating costs).
+– Some of attacks may endanger human life and safety.
+– Some of attacks may cause environmental damage, for instance,
+environmental pollution.
+It is desirable to evaluate the possible impacts of integrity
+attacks against CPSs to rank the system assets based on their
+sensitivity to specific attacks. For the purpose of evaluating
+and ranking the consequences of attacks against CPSs, a system
+dynamic approach will be proposed in Section 4.
+3. Related work
+In this section, we review some related works on concepts and
+approaches for security assessment of CPSs. The authors in [23]
+have proposed a method for developing threat models for denial
+of service (DoS) and integrity attacks against control systems.
+The primary focus of the authors is evaluating the economic and
+physical impacts of attacks against these systems. They apply their
+method on a chemical reactor system and examine the behavior of
+the physical process under min, max, scaling and additive attacks.
+Exceeding the shut-down limits is considered as the basis of the
+impact evaluation of conducted attacks.
+The impact of identifying the optimal time for conducting
+attacks against CPSs is investigated in [21]. They primarily focus
+on the impacts of DoS attacks on physical processes, when they
+are performed at proper time. Their experiments show that to
+disrupt a physical process, attackers need to conduct attacks at
+proper moment of time. Otherwise, attacks will have limited
+consequences on the process. The impacts evaluation of attacks is
+performed based on reaching the considered shut-down limits.
+Genge et al. [24] address the challenge that how network pa-
+rameters such as packet losses, communication delay, control logic
+scheduling time and the network background traffic can affect the
+consequences of attacks. The main contribution of this article is to
+determine the most important network parameters that can affect
+the resilience of physical processes. The experimental results have
+indicated that the communications parameters (e.g., communica-
+tion delay) have a limited impact on the result of the conducted
+attacks and the task scheduling parameter can affect the resilience
+of physical processes.
+The authors in [25] have proposed a method for estimating
+the effects of cyber attacks on physical processes. The proposed
+method in this paper is based on the behavioral assessment of
+physical processes and the sensitivity analysis. The evaluation
+method calculates the covariance of observed variables before and
+after performing individual attacks against control variables. One
+main feature of this method is its applicability in situations where
+the physical process is not available. This method has considered
+only individual attacks against control signals.
+The effect of network segmentation process on the resilience of
+CPSs is addressed in [26]. Separating the controllers that control
+free-valves from the controllers that control feed-valves is the
+primary outcome of this paper. An approach for assessing the
+results of attacks against CPSs is proposed by Gollmann et al. [27].
+The primary goal of this paper is to demonstrate the situations
+that the success of attacks relies on expert knowledge about the
+physical process under control. The proposed approach is applied
+to a vinyl acetate monomer plant as a case study.
+In [28], the authors have proposed a language for describing the
+possible attacks against CPSs and their consequences. The main
+goal of this language is determining and describing the features
+that should be described in expressing attacks and countermea-
+sures against CPSs. Although, they have not dealt with the security
+evaluation process, they believed that the proposed attack descrip-
+tion language can be employed for security assessment targets.
+Hu et al. [29] have discussed about the concept and strategies
+for building a robust and resilient CPS. They have defined the
+resiliency as a 3S-oriented design, that is, stability, security, and
+systematicness. They have also explained the CPS modeling issues.
+Yoo et al. [30] have also discussed about the vulnerabilities,
+security requirements and architecture of CPSs.
+Cardenas et al. [2] have investigated the attacks against
+control systems, risk assessment problem, detection and response
+mechanisms for these systems. The surge attacks, bias attacks and
+geometric attacks against control systems are modeled and the
+sequential and change detection strategies are used to propose a
+
+===== PAGE 4 =====
+60
+H. Orojloo, M.A. Azgomi / Future Generation Computer Systems 67 (2017) 57–71
+new detection mechanism for process control systems. The authors
+have assumed the same occurrence probabilities for all the attacks
+against sensors and have measured the potential losses and the risk
+level for each sensor.
+Mitchell et al. [31] have proposed an approach for modeling and
+evaluating attacks and defensive actions for CPSs. Their model is
+based on stochastic Petri nets (SPNs). In their approach, they have
+considered three types of failures including attrition, failure, and
+exfiltration failures. Determining the optimal design conditions in
+CPSs, such as the intrusion detection interval and the redundancy
+level are the results of their modeling study.
+Ahmed et al. [32] have introduced an easy to deploy water level
+sensor based irrigation controller. They have also discussed about
+the security system that provides security for pumps and other
+equipment.
+Liu et al. [33] have suggested the use of attack graph and
+multiple criteria decision making (MCDM) method for assessing
+the security of power control process. The attack graph is used for
+developing a security analysis model for power control systems
+and the MCDM approach is employed to assess the vulnerability
+factors derived by the security analysis model.
+Ramos et al. [34] have used generalized stochastic Petri
+nets (GSPNs) to propose a methodology to model the operating
+sequences of protections in power systems. They have primarily
+focused on modeling the uncertainty in the operation of protection
+devices using GSPNs and measuring its impacts on the security
+evaluation.
+Wei et al. [35] have discussed about potential cyber attacks,
+their consequences and defensive requirements for power grids.
+Furthermore, they have provided a survey for security challenges
+and strategies in power grids.
+Ashok et al. [36] have proposed a game-theoretic approach to
+evaluate the security of smart grid. They have primarily concen-
+trated on the cyber–physical security of wide-area monitoring,
+protection and control from a coordinated cyber attack perspec-
+tive.
+Srivastava et al. [37] have addressed the attack modeling using
+the vulnerability of information, communication and electric grid
+network. They have analyzed the vulnerability of electric grid
+with incomplete information using a graph-theoretic approach.
+Furthermore, they have introduced an integrated cyber–physical
+vulnerability index and utilized it for real-time modeling to
+demonstrate the impact of aurora attack.
+Finally, Varshney et al. [38] have proposed the use of parallel
+computing for fast and accurate analyzing of integrated security of
+power systems. They have applied the proposed method on IEEE
+30-bus system and a practical NREB 246-bus Indian power system
+as two case studies.
+Comparing to the above mentioned researches, in this paper
+we propose an approach to estimate direct and indirect impacts
+of attacks against CPSs in a more comprehensive manner. In
+fact, the primary focus of the reviewed studies is assessing the
+impacts of attacks that may bring systems into an unsafe state
+(by investigating the effects of attacks on determined parameters).
+In contrast, the proposed approach provides the possibility of
+investigating the impacts of considered control parameters to each
+other and determines the most significant parameters and assets in
+the system at a time. By using this information, we can gain a good
+insight about the most vulnerable control loops in CPSs.
+4. The proposed method
+This section describes the proposed method in detail. The
+primary goal of this method is providing a modeling approach
+for evaluating the impact propagation of attacks in cyber–physical
+domain. As described in [27], an attack against CPSs has several
+stages. The first stage is access. This stage is very similar to the
+traditional IT hacking. In this stage, an adversary by exploiting
+the system vulnerabilities and intrusion paths tries to obtain the
+required privilege level to disrupt the physical process.
+The second stage is discovery. The primary goal of this stage
+is discovering the required information about the system. In fact,
+in order to disrupt the physical process, attackers need to acquire
+some sufficient knowledge about the process behavior and its
+failure conditions, control principles and signal processing [21].
+Without detailed knowledge, an adversary cannot cause serious
+damage to the system, production, or environment.
+The third stage is control. Note that in dynamic systems, such
+as CPSs, the continuous changes are associated with the values of
+process variables according to the laws of physics. In this stage, the
+adversary tries to discover the physical dynamics of the system.
+By using this process model, an adversary can determine the most
+vulnerable areas of the system. It is noteworthy that in CPSs unlike
+IT domains, successful intrusion to the system is not same as
+disrupting the physical process under control. As stated earlier, in
+order to carry out an attack aimed at disrupting a physical process,
+attackers need to know the failure conditions and the control
+principles of the target system.
+The next stage is causing damage to the system. To disrupt
+the physical process, an adversary may be faced with several
+scenarios. Thus, in order to choose the attractive one, he/she needs
+to develop some suitable metrics. Our aim is to propose a metric to
+discover the most vulnerable process variables of the system. In the
+following, we first describe the formal description of the dynamic
+behavior of CPSs and attack process against them. Then, we present
+the detailed description of the proposed method.
+4.1. Formal description of the dynamic behavior of CPSs
+First, we give the required notations for formal description of
+the dynamic behavior of CPSs:
+• t ∈T represents an instant of time.
+• yi(t) denotes the measurement of the sensor i at the time
+instant t, where yi ∈Y = {y1, . . . , yp} and p is the number
+of sensors.
+• ui(t) represents the output of the controller i at the time instant
+t, where ui ∈
+U = {u1, . . . , um} and m is the number of
+controllers.
+• xi(t) represents the value of the state i at the time instant t,
+where xi ∈X = {x1, . . . , xn} is the state of the system.
+By using these notations, we use the following tuple for defining
+the dynamic behavior of CPSs:
+S = ⟨X, Y, U, T, A, B, C⟩,
+(1)
+where the matrices A, B and C are assumed to be known for the
+system and A = (aij)n×n models the physical dependence of the
+state i on the state j, B = (bij)n×m is the input matrix for the
+state i from the control input j, and C = (cij)p×n is the output
+matrix. Base on the defined parameters, the dynamic changes
+of the process variables of the system can be described as the
+following equation [2]:
+
+x (t + 1) = Ax (t) + Bu (t) ,
+y (t) = Cx (t) .
+(2)
+By using this definition, the dynamic changes of the process
+variables of the system can be described.
+It is assumed that each control signal or sensor measurement
+has a possible range [27]. In fact, for the sensor measurement i, we
+have:
+yi (t) ∈
+
+ymin
+i
+, ymax
+i
+
+.
+(3)
+
+===== PAGE 5 =====
+H. Orojloo, M.A. Azgomi / Future Generation Computer Systems 67 (2017) 57–71
+61
+For the control signal i, we have:
+ui (t) ∈
+
+umin
+i
+, umax
+i
+
+.
+(4)
+For instance, a valve can be completely opened or completely
+closed and has a value between 0 and 100, representing the
+complete close or complete open situations, respectively.
+4.2. Formal description of attacks against CPSs
+With respect to the above descriptions, two issues need to be
+considered when assessing the security of CPSs [2]: (1) modeling
+the intrusion process and estimating the probability of attacks
+against different security attributes of systems (i.e., predicting
+the attractiveness degree of attack scenarios form attacker’s view
+point), and (2) examining the dynamic behavior of systems under
+attacks and evaluating the consequences of cyber attacks against
+them. Our primary focus is the second one and our goal is
+proposing a metric suitable for studying the direct and indirect
+impacts of attacks against CPSs.
+As stated earlier, two of the most important attacks against CPSs
+are DoS and integrity attacks against sensor and control signals.
+Here, we provide the formal descriptions of these types of attacks
+presented in [23]. We first provide the required notations for
+formal descriptions of attacks against CPSs:
+• Ta denotes the attack duration.
+• ya
+i (t) represents the generated measurement by attacker for the
+sensor signal i at the time instant t.
+• ua
+i (t) denotes the generated signal by attacker for the control
+signal i at the time instant t.
+• αi(t) is the resulting disturbance imposed by attacker to the
+sensor or the control signal i.
+When the system is not under attack (t̸ ∈Ta), we will have:
+ya
+i (t) = yi (t) .
+(5)
+For scaling integrity attack at t ∈Ta, we have:
+ya
+i (t) = αi (t) .yi (t) .
+(6)
+For additive integrity attack at t ∈Ta, we have:
+ya
+i (t) = αi (t) + yi (t) .
+(7)
+It is assumed that each attack which results in a value out of
+the determined range can be easily detectable and considered as
+follows:
+ya
+i (t) = ymin
+i
+,
+if ya
+i (t) < ymin
+i
+,
+(8)
+and
+ya
+i (t) = ymax
+i
+,
+if ya
+i (t) > ymax
+i
+.
+(9)
+A similar definition can be presented for control signals. In
+addition, maximum and minimum attacks can be defined against
+sensor readings and control signals, similarly.
+As described earlier, controllers based on received measure-
+ments from sensors, elaborate a local actuation strategy and send
+suitable commands to actuators. It is assumed that commands gen-
+erated by controllers are based on the last received values of the
+corresponding variables (sensor measurements) or actuator reac-
+tions are based on the latest received control signal from con-
+trollers. Thus, in the case of DoS attacks against sensor readings
+at t ∈Ta, we will have:
+ya
+i (t) = yi (te) ,
+(10)
+where te is the time instant of conducting the DoS attack. Similarly,
+for DoS attacks against control signals, we have:
+ua
+i (t) = ui (te) .
+(11)
+After defining the formal models describing the dynamic behavior
+of the system and attacks against CPSs, it is the time to present the
+formal description of the proposed method to evaluate the impacts
+of attacks on the behavior of the system. In order to measure
+the losses and consequences associated with attacks, we must
+investigate the behavior of the system under all types of attacks.
+It is assumed that the change detection formulation is used as
+the attack detection method [29]. The goal of the change detection
+problem is to detect a possible change, at an unknown change
+point ks [2]. Cumulative sum (CUSUM) statistic is used for change
+detection problems. The goal of the CUSUM is to minimize the time
+N (where N ≥ks) for which the test decides that a change has
+occurred and stopped the experiment. The CUSUM for the control
+signal or the sensor reading i at the time instant k (Si (k)) is defined
+as follows [2]:
+Si (k) = (Si (k −1) + zi (k))+ ,
+Si (0) = 0,
+(12)
+where (a)+ = a if a ≥0 and zero, otherwise; and zi (k) is the kth
+observation of the sensor i or the controller i.
+For zi (k), we will have:
+zi (k) =
+yi (k) −ˆyi (k)
+−bi,
+(13)
+where bi is a small positive constant, yi (k) is the expected
+estimation and ˆyi (k) is the measured value. The stopping time is
+defined as follows:
+N = inf
+n {n : S(n) ≥τ},
+(14)
+where τ is the given threshold selected based on the false alarm
+constraint. The decision rule of the detection system is defined as
+follows:
+dτ (Si (k)) =
+
+attack
+if Si (k) > τi
+normal behavior
+otherwise.
+(15)
+With respect to the presented detection approach, there are two
+parameters (τi, bi) that must be determined for each sensor
+reading or control signal. In order to estimate the value of the
+parameter bi, we compute the distance between the expected
+values and the measured values without any attack. After several
+simulations, the most probable distance for sensor readings or
+control signals is selected. Clearly, the larger the number of
+experiments, the higher is the associated confidence.
+After the selection of bi, we need to compute the value of τi.
+After several simulations, we choose the values ofτi, bi in a manner
+that the number of false alarm with noisy input and without any
+attack be equal to zero.
+4.3. Formal description of the proposed method
+In this section, we provide the formal description of the
+proposed method. The control parameters in the proposed method
+are classified into two categories of cause and effect groups.
+The cause group has an impact on the effect group where such
+impact is used to estimate the rank of the parameters. The
+control parameters such as sensor readings and control signals
+are considered as the cause parameters group. For the effect
+parameters group, except the control parameters, other important
+parameters such as operating costs (based on the characteristics of
+the underlying physical process) can be taken into consideration.
+By using the proposed approach, we can assess the impacts of
+attacks against each parameter on other parameters, and as well,
+the impacts received from attacking other parameters. Based on
+the considered cause and effect parameters, the proposed method
+involves two different cases. The first case is when the cause and
+effect parameters are the same. In this case, the direct and indirect
+impacts of attacks will be estimated.
+
+===== PAGE 6 =====
+62
+H. Orojloo, M.A. Azgomi / Future Generation Computer Systems 67 (2017) 57–71
+We now provide the formal description of the proposed
+method. Let T = {0, 1, 2, . . . , n} be the set of discrete time instants
+and C = {c1, c2, . . . , cm} be the set of cause parameters and
+E = {e1, e2, . . . , ek} be the set of effect parameters. The main steps
+of the proposed method in the time instant t ∈T are as follows:
+Step 1. Creating the initial direct impact matrix. We use
+the values obtained from the dynamic behavior of the system
+before conducting attacks against the cause control parameters
+(the normal behavior of the system), and after performing attacks
+against the cause parameters to create the initial direct impact
+matrix. We denote the former relation matrix as Mt
+n = [nj]1×m and
+the latter as Mt
+a = [aij]m×k. When the cause and effect parameters
+are the same, we have m = k = p. The matrix Mt
+n expresses the
+normal values of the control parameters at a time instant t. The
+rows of it represent the cause control parameters and the columns
+represent the effect parameters.
+The matrix Mt
+a denotes the direct influence between any two
+control-parameters at the time instant t evaluated based on the
+dynamic behavior of the system under attacks. The rows of this
+matrix show the performed attacks against the cause control
+parameters and the columns of it show the effect parameters.
+The proposed method relies heavily on the matrix created in
+this step. The input data to the method can be obtained from
+the dynamic behavior of the underlying physical process or data
+historian that are already available.
+Step 2. Creating the initial deviation matrix (Mt
+d = [dij]p×p).
+Once the matrices Mt
+n and Mt
+a are established, it is the time to
+calculate the deviation of the control values at the time instant t
+from the values representing the normal operation of the system.
+By using the entries of these two matrices, the entries of the
+deviation matrix are calculated as follows:
+Mt
+d = [dij]p×p = |nt
+j −at
+ij|/nt
+j.
+(16)
+By using this equation, the deviations from the normal values are
+calculated.
+Step 3. Creating the normalized impact matrix. The normal-
+ized impact matrix is calculated using the following equation:
+Mt = w.Mt
+d,
+(17)
+where we have:
+w = 1/
+
+max
+1≤i≤p
+p
+
+j=1
+dij
+
+.
+(18)
+Step 4. Computing the total consequence matrix. The total
+consequence matrix R is calculated using the following equation:
+Rt = Mt(I −Mt)−1,
+(19)
+where I is the identity matrix.
+After the normalizing phase, each entry of the matrix Mt =
+[mij]p×p will satisfy the following conditions:
+0 ≤mij < 1,
+0 <
+
+i
+mij ≤1
+and
+0 <
+
+j
+mij ≤1.
+(20)
+In this situation, at least the sum of the one column or one row data
+of the matrix M is equal to 1, and we can guarantee:
+lim
+h→∞Mh = [0]p×p.
+(21)
+Thus, the total consequence matrix can be obtained as follows:
+R = M + M2 + · · · + Mh
+= M(I + M + · · · + Mh−1)(I −M)(I −M)−1
+= M(I −Mh)(I −M)−1.
+(22)
+When limh→∞Mh = [0]p×p , we will have:
+R = M(I −M)−1.
+(23)
+The rows of the resulted matrix R represent the total consequence
+of each attack against the control parameters on other control
+parameters.
+Step 5. Evaluating the total consequences. After creating the
+total consequence matrix R, in this step, two vectors (V t
+r = [rt
+j ]p×1
+and V t
+c = [ct
+i ]1×p) are defined representing the sum of rows and the
+sum of columns of the total consequence matrix Rt, respectively.
+Here, rj denotes both direct and indirect effects given by the control
+parameter j to the other control parameters and ci represents both
+direct and indirect effects by the control parameter j from other
+control parameters.
+The total consequences given and received by the control
+parameter i at a time instant t, can be calculated by the following
+equation:
+ut
+i = rt
+i + ct
+i .
+(24)
+This equation represents the degree of importance of the control
+parameter i at a time instant t in the system. On the other hand,
+the consequence that the control parameter i at a time instant t
+contributes to the system can be given by the following equation:
+lt
+i = rt
+i −ct
+i .
+(25)
+If the value of this equation is positive, then, the parameter i is
+affecting other parameters, and if the value is negative, then the
+parameter i is being influenced by other parameters.
+Step 6. Ranking the control parameters. In the first case, when
+the cause and effect parameters are the same, by using the values
+ui and li we can estimate the total consequences given and received
+by the control parameters and the degree that the parameter i
+being influenced by other parameters. For illustrative purposes, the
+values ui and li for each control parameter can be indicated on a
+two-dimensional coordinate’s diagram. Fig. 2 depicts an example
+for the coordinates of the two control parameters representing the
+importance of the parameters.
+In the second case, when the cause parameters differ from the
+effect parameters, the ranking phase of the method is done by using
+two vectors V t
+r and V t
+c obtained in the previous step.
+In general, in the second case, when the cause and effect
+parameters are not the same, we can only capture the direct
+impacts of the cause parameters on the effect parameters. The
+main steps of the proposed method for this case are steps 1, 2, 3, 5
+and 6, respectively, and step 4 must be ignored.
+It is worth-mentioning that these steps are iterated from the
+time instant t0 to tn and the sensitivity level of each control
+parameter to performed attacks, and the resulting consequences
+of the performed attacks against the control parameters at each
+time instant ti are estimated. The duration between these time
+instants should be assigned by system experts through several
+experiments.
+By using the quantitative results, the security administrator of
+the system can easily identify critical control parameters and their
+relative cause–effect relationships. Thus, to effectively implement
+defensive countermeasures, control parameters with higher values
+of ui should be placed in higher priority.
+5. An illustrative example
+This section provides an illustrative example to demonstrate
+how the proposed method can be applied on a CPS for the
+consequence evaluation process.
+
+===== PAGE 7 =====
+H. Orojloo, M.A. Azgomi / Future Generation Computer Systems 67 (2017) 57–71
+63
+5.1. System description
+For our purpose, we apply the proposed approach to a
+chemical plant as a CPS to illustrate the proposed method. The
+considered system is a Boiling Water Power Plant (BWPP) [39]. The
+architecture of this plant is depicted in Fig. 3.
+As shown in Fig. 3, this architecture consists of three
+primary networks: corporate network including workstations and
+application servers, control network comprised of controllers,
+control servers and HMI and physical network consisting physical
+device, sensors and actuators.
+The plant consists of three valves: fuel valve, steam valve,
+and feed-water valve. Besides, three sensors measure physical
+phenomena from this plant: a sensor for measuring the water level,
+a sensor for reading the steam pressure inside the tank, and a
+sensor for reading the generated electricity.
+The valve positions for steady state behavior of the system
+are defined as follows [39]: u1 = 0.34, u2 = 0.69 and u3 =
+0.433. Besides, the pressure in the tank in steady state is equal to
+108 kg/cm2.
+As stated before, one of the most important prerequisites for
+conducting an attack aimed at deriving the physical process to an
+undesired state is suitable knowledge about its control principles,
+physics, mechanics, and signal processing. It is assumed that the
+adversary to achieve this target tries to change the control signals
+issued by the controllers. In fact, attackers may decide to force the
+fuel valve to completely open and force the steam and water valves
+to completely close.
+In order to study the dynamic behavior of the plant under
+attacks, the following process model of the system is used [39]:
+˙x1 = −0.0018u2x
+9
+8
+1 + 0.9u1 −0.15u3,
+˙x2 = (0.073u2 −0.016)x
+9
+8
+1 −0.1x2,
+˙x3 = (141u3 −(1.1u2 = 0.19) x1)/85,
+y1 = x1,
+y2 = x2,
+y3 = 0.05
+
+0.1307yx3 + 100sq +
+er
+9 −67.975
+
+,
+sq = (1 −0.001538x3) (0.8x1 −25.6)
+x3 (1.0394 −0.0012304x1)
+,
+er = (0.85u2 −0.147) x1 + 45.59u1 −2.514u3 −2.096,
+0 ≤ui ≤1 (i = 1, 2, 3),
+(26)
+where u1, u2, u3 denote the fuel, steam and water valve positions,
+respectively. x1, x2, x3 represent drum pressure (kg/cm2), electric
+output (MW) and fluid density (kg/cm3), respectively, and y3 is
+the drum water level (m). Finally, er and sq are steam quality and
+evaporation rate. All three valves have the speed limitation. These
+limitations are defined as follows [39]:
+−0.007 ≤˙u1 ≤0.007/s,
+−1.0 ≤˙u2 ≤0.1/s,
+−0.05 ≤˙u3 ≤0.05/s.
+(27)
+Besides, the task scheduling of the controllers is assumed to be
+100 ms. A Gaussian noise with a variance of 0.05 and a mean of
+0 is applied to sensor and control signals to avoid of entering the
+system into the steady state.
+Fig. 2. An example of the influence diagram for control parameters.
+In this case study, the cause group parameters are as follows:
+– The signals controlling the fuel valve position,
+– The signals controlling the steam valve position, and
+– The signals controlling the feed-water valve position.
+The effect group parameters also are considered different from
+the cause group as follows:
+– The steam pressure inside the tank,
+– The generated electricity, and
+– The fluid density.
+The consequences of the attacks against cause group parame-
+ters will be investigated. It is assumed that attackers may conduct
+individual attacks against the control signals or may perform some
+combinations of them. First, the normal behavior of the system
+without any disruptions will be studied. Then, the abnormal be-
+havior of the system under attacks is investigated and compared
+with normal behavior. The output of the method is twofold:
+– Prioritizing the performed attacks against the cause parameters
+based on their consequences on the effect parameters of the
+plant.
+– Ranking the effect parameters based on their sensitivity to the
+conducted attacks against the cause group parameters.
+According to the described detection method, the values of τi
+and bi parameters for each sensor and controller signal of the
+considered plant are listed in Table 1.
+These values are obtained by performing experiments for five
+thousand times. This number of simulation runs is enough to
+gather statistics. By considering these parameters for the detection
+system, each of the conducted attacks against the plant is detected
+before the time instant t = T2 = 100 s. Fig. 4 depicts the normal
+behavior of the system without any attacks for the steam pressure
+inside the tank, the electric output and the fluid density.
+5.2. Applying the proposed model
+After studying the normal behavior of the system, it is time to
+investigate the behavior of the system under attacks for different
+instants of time.
+We consider two types of attacks against the plant, including
+DoS and deviation attacks. The conducted attacks against the
+control parameters of the plant are given in Table 2:
+The deviation attacks against u1, u2 and u3 are assumed as
+follows:
+u1 = u1 ∗1.05,
+u2 = u2 ∗1.05,
+and
+u3 = u3 ∗0.95.
+(28)
+
+===== PAGE 8 =====
+64
+H. Orojloo, M.A. Azgomi / Future Generation Computer Systems 67 (2017) 57–71
+Fig. 3. The architecture of the boiling water power plant.
+Fig. 4. The normal behavior of the system without any attacks, (a) the steam pressure inside the tank, (b) the electric output (MW) of the plant, and (c) the fluid density
+(kg/cm3) of the plant.
+
+===== PAGE 9 =====
+H. Orojloo, M.A. Azgomi / Future Generation Computer Systems 67 (2017) 57–71
+65
+Table 1
+The parameter values for the detection system.
+Element
+bi
+τi
+u1
+0.3
+600
+u2
+0.2
+600
+u3
+0.2
+1000
+x1
+0.1
+1500
+x2
+0.3
+1000
+x3
+1.5
+2000
+Table 2
+The conducted attacks against the parameters of the plant.
+Attack
+Parameter(s)
+DoS
+u1
+u2
+u3
+u1 and u2
+u1 and u3
+u2 and u3
+u1, u2 and u3
+Deviation
+u1
+u2
+u3
+u1 and u2
+u1 and u3
+u2 and u3
+u1, u2 and u3
+We now provide the detailed descriptions of the calculations for
+the conducted attacks in each time instant (one per 50 s). For
+illustrative purpose, the investigation results are shown in curve-
+based graphs.
+Step 1: The first step is calculating the initial matrix depicting
+the normal behavior of the system. The steam pressure inside the
+tank, the electric output and the fluid density of the plant in the
+normal behavior are depicted in Fig. 4.
+The next phase is creating the initial direct impact matrix based
+on the values achieved from the dynamic behavior of the system
+after conducting the attacks against the cause control parameters.
+The valve position as a result of the performed jamming attack
+against the control commands for fuel and feed water valve
+positions (considering the speed limitations) are shown in Fig. 5.
+Fig. 6 depicts the impact of the conducted attacks on the effect
+parameters in each time instant.
+Step 2: We must now create the deviation matrix (Md).
+Once the matrices Mn and Ma are established, it is the time to
+calculate the deviation of the control values from the initial normal
+situation according to Eq. (16). The relative deviation of the effect
+parameters as a result of the conducted attacks is shown in Fig. 7.
+Step 3: Now, it is the time to compute the normalized impact
+matrix using Eq. (18). The normalized impact of the carried out
+attacks in each time instant is depicted in Figs. 8 through 14.
+Step 4: Since the cause and effect parameters are not the same,
+this step is ignored.
+Step 5: In this step, the total consequences of the attacks are
+evaluated. The vectors Vr and Vc representing the sum of rows and
+sum of columns of the total consequence matrix are computed and
+shown in Figs. 15 and 16.
+Step 6: Since the cause parameters are different from the effect
+parameters, the ranking phase of the method is done by using two
+vectors V t
+r and V t
+c . Figs. 15 and 16 illustrate the quantitative results
+for all the time instants.
+Fig. 15 provides a comparison between the consequences of
+the conducted attacks against the cause group parameters. Fig. 16
+shows a comparison between the sensitivity of the effect group
+parameters to conducted attacks against cause group parameters.
+Based on the above analyses, and quantitative results, the following
+observations about the security and consequences of the attacks
+against the considered plant can also be deduced:
+– The steam and fuel valve control signals are the most critical
+control parameters.
+– In order to achieve different goals (e.g., targeting the generated
+electricity or the pressure inside the tank), attackers need to
+conduct attacks on different control parameters of the system.
+– Resulting from the consequences of the attacks on the effect
+parameters (as shown in Fig. 15), the combination attacks
+against the control signal u1 (fuel valve) and u2 (steam valve),
+and u1, u2 and u3(feed-water valve) are the most dangerous
+ones with the highest impact on the effect parameters. On the
+other hand, the deviation and DoS attacks against the control
+signal u3 has the lowest impact on the effect parameters.
+– As Fig. 15 shows, the impact level of the attacks may be diverse
+in different instants of time.
+– Based on the performed analyses shown in Fig. 15, the pressure
+inside the tank and the generated electricity are the most
+sensitive parameters to the conducted attacks.
+– As quantitative results indicate (see Fig. 16), the sensitivity level
+of the effect parameters to the performed attacks changes in
+different instants of time.
+By using these quantitative results, the defensive countermea-
+sures can be applied in more effective manner for CPSs.
+5.3. Defensive countermeasures
+1. Using intrusion detection and prevention systems and
+anomaly detection systems
+In order to identify the attacker’s intrusions, CPSs employ
+host-based and network-based IDSs. The former is often used on
+HMIs, and engineering workstations while the latter is often used
+between the control and corporate networks along with a firewall.
+It is needed that an intrusion detection system investigates
+continuously the presence of any security penetration in sensors,
+actuators and control devices [5]. The proposed approach can
+identify the most critical components for employing IDSs.
+In order to prevent physical disruptions caused by malicious
+attacks, anomaly detection systems should be used to identify the
+abnormal behavior of the physical process under control [40,41].
+ADSs concentrate on detecting the existing deviations from the
+normal behavior of the system. Recently, several researches have
+been conducted in this context (for instance, [42–44]).
+2. Applying network segmentation and implementing demilita-
+rized zone
+Network segmentation is a suitable technique for achieving a
+significant security improvement. The primary goal of applying
+network segmentation techniques is to provide a better system
+protection. To this end, servers such as data server, data historian
+and web servers containing the data from the CPS that needs to
+be accessed from the corporate network are put on a separate
+segment called demilitarized zone [14]. A DMZ is defined as a
+separate network segment that connects directly to the firewalls
+that offer three or more interfaces [15].
+Two firewalls are utilized in this configuration to establish
+a DMZ between the control and corporate networks. The first
+firewall is placed between the corporate network and the DMZ
+and the second one is located between the DMZ and the control
+network. The arbitrary packets originated from the corporate
+network to enter into the control network can be blocked by
+these firewalls. As a result of this configuration, no direct traffic
+is allowed between the control and corporate networks and the
+probability of successful external attacks is considerably reduced.
+3. Using virtual private networks
+Another important issue in CPSs is the remote access of
+network services. VPNs extend secure communications across
+insecure public networks. VPNs provide security services through
+the use of virtual tunneling protocols, dedicated connections,
+
+===== PAGE 10 =====
+66
+H. Orojloo, M.A. Azgomi / Future Generation Computer Systems 67 (2017) 57–71
+Fig. 5. The fuel valve and the water valve positions on the effect of jamming attack, (a) fuel valve position, and (b) the water valve position.
+Fig. 6. The effect of attacks on (a) the steam pressure, (b) generated electricity, and (c) fluid density.
+or traffic encryption. VPNs are the primary means of securing
+communications in process control and are widely used by
+industrial control systems [20]. In order to protect industrial
+protocols, it is recommended to wrap them within VPN tunnels.
+In an industrial control system, VPNs are means of securing
+sensitive data. It is recommended that, all the data flow between
+the control and corporate networks is allowed only through VPN
+tunnels [16]. In short, in order to connect to the corporate network,
+the employment of VPNs and a strong token-based authentication
+scheme is recommended. Furthermore, at the control network
+firewall, a second authentication is required [41].
+4. Applying defense-in-depth strategies
+In order to provide a more secure CPS, a multiple layer
+security strategy called defense-in-depth must be employed [16].
+Implementing an effective defense-in-depth strategy in one way
+requires a proper understanding of the source of attacks, the
+possible attack scenarios and their outcomes, and in the other way
+includes the use of DMZs and firewalls, security policies, intrusion
+and anomaly detection systems, attack response strategies, and
+people training.
+Another important strategy in the implementation of defense-
+in-depth strategies is deploying the redundant components
+(backup-in-depth [16]). By efficient employment of redundant lay-
+ers, the attacked system can return to the normal behavior by
+masking the attack’s consequence. Depending on the characteris-
+tics of their applications, CPSs can be categorized as fail-safe and
+fail-operational [13]. In the fail-safe case, the system must be made
+to stop functioning to limit the damage that may be caused by
+
+===== PAGE 11 =====
+H. Orojloo, M.A. Azgomi / Future Generation Computer Systems 67 (2017) 57–71
+67
+Fig. 7. The relative deviation of the effect parameters as a result of the conducted attacks, (a) steam pressure deviation, (b) generated electricity deviation, (c) fluid density
+deviation.
+Fig. 8. The normalized impact of attacks in the time instant T = t1.
+conducted attacks. In the fail-operational case, the system enters
+into the recovery state aimed at maintaining essential services. In
+this case, the best possible situation for a fail-operational system
+faced with security incidents is when there are enough redundant
+components to enable the delivery of correct service.
+6. Comparison with other methods
+Here, we discuss about some distinct features of the proposed
+method in comparison with the preceding approaches:
+– The proposed approach estimates the direct and indirect
+impacts of the attacks against CPSs in a more comprehensive
+manner. In fact, the proposed method provides the possibility
+of comparing the behavior of systems at the different time
+instants, and under different disturbances on different control
+parameters.
+– The proposed method not only can be used to rank individual
+control parameters, but can also be applied to some possible
+combinations of them, in contrast to the existing methods
+(e.g., [25]) that can only investigate the behavior of systems
+under an individual attack at a time. An adversary may conduct
+
+===== PAGE 12 =====
+68
+H. Orojloo, M.A. Azgomi / Future Generation Computer Systems 67 (2017) 57–71
+Fig. 9. The normalized impact of attacks in the time instant T = t2.
+Fig. 10. The normalized impact of attacks in the time instant T = t3.
+Fig. 11. The normalized impact of attacks in the time instant T = t4.
+a combination of DoS attacks against a sensor reading and the
+integrity attack against another sensor reading.
+– In contrast to most of the proposed methods, which only are
+applicable for attacks that force the physical process to shut-
+down (e.g., [23,21]), the proposed method can address attacks
+that do not necessarily lead to system shut-down.
+– The proposed method can be applied to either a system or
+its subsystems and can evaluate the consequences of attacks
+against systems in a hierarchical manner.
+– Another novelty of the proposed method is assessing the
+consequences of attacks on system dynamics at multiple time
+instants. In fact, the proposed method measures the sensitivity
+of the system parameters to performed attacks at duration
+of time. Besides, the impacts of different attacks against the
+system parameters are investigated over time. The fact is that
+the consequences of attacks and the sensitivity level of the
+system parameters to performed attacks may change over
+time.
+
+===== PAGE 13 =====
+H. Orojloo, M.A. Azgomi / Future Generation Computer Systems 67 (2017) 57–71
+69
+Fig. 12. The normalized impact of attacks in the time instant T = t5.
+Fig. 13. The normalized impact of attacks in the time instant T = t6.
+Fig. 14. The normalized impact of attacks in the time instant T = t7.
+– In summary, one of the most different aspects of the proposed
+method is that it can be used to evaluate and rank the attacks in
+the following scenarios:
+◦The impacts of the individual attacks against all the
+considered control parameters.
+◦The impacts of different attacks against an individual control
+parameter.
+◦The impacts of different attacks against different control
+parameters.
+– The proposed method can also be applied to evaluate and rank
+the system parameters based on their sensitivity to conducted
+attacks.
+7. Conclusions
+In this paper, we proposed a method for modeling and evaluat-
+ing the consequences of attacks against CPSs. By investigating the
+
+===== PAGE 14 =====
+70
+H. Orojloo, M.A. Azgomi / Future Generation Computer Systems 67 (2017) 57–71
+Fig. 15.
+The consequences of the attacks conducted against the cause group
+parameters on the effect parameters.
+Fig. 16.
+The sensitivity of the effect parameters to the conducted attacks against
+the cause parameters.
+dynamic behavior of the physical process over time, the proposed
+method ranks the important assets of the system based on their
+sensitivity to individual or combinations of attacks. The method
+exploits the results of attacks against each of control parameters
+including sensor and controller signals and computes the impacts
+of attacks against other control parameters in different instants
+of time. The proposed method is well suited for evaluating and
+ranking the impacts of individual attacks against all the control
+parameters, impacts of different attacks against an individual con-
+trol parameter, and impacts of different attacks against different
+control parameters. Compared with the preceding approaches, the
+proposed approach estimates the direct and indirect impacts of
+attacks against CPSs in a more comprehensive manner. The quan-
+titative results can help to identify the most vulnerable assets
+and control parameters of the system and also the most danger-
+ous attacks against the system. Experimental results showed that
+the sensitivity of the control parameters and the impacts of at-
+tacks on important parameters may change over time. The pro-
+posed method can be applied to either a system or its subsystems.
+Thus, we may be interested in some of the state variables that
+are important for our purpose. In future, we will try to make the
+method more accurate and analyze the applicability of the pro-
+posed method to other types of CPSs.
+References
+[1] M. Krotofil, J. Larsen, D. Gollmann, The process matters: Ensuring data veracity
+in cyber-physical systems, in: Proceedings of the 10th ACM Symposium on
+Information, Computer and Communications Security, ASIA CCS’15, Singapore,
+April 2015, pp. 133–144.
+[2] A.A. Cardenas, S. Amin, Z.S. Lin, Y.L. Huang, C.Y. Huang, S. Sastry, Attacks
+against process control systems: risk assessment, detection, and response,
+in: Proceedings of the 6th ACM Symposium on Information, Computer and
+Communications Security, ASIACCS’11, Hong Kong, March 2011, pp. 355–366.
+[3] M. Krotofil, J. Larsen, Are you threatening my hazards?, in: Proceeding of 9th
+International Workshop on Security, IWSEC’14, Hirosaki, Japan, August 2014,
+pp. 17–32.
+[4] US Department of Homeland Security, ICS-CERT Year in Review 2012,
+Washington, DC, 2012.
+[5] K. William, W. Knowles, D. Prince, D. Hutchison, J.F.P. Disso, K. Jones, A
+survey of cyber security management in industrial control systems, Int. J. Crit.
+Infrastruct. Prot. 9 (2015) 52–80.
+[6] A. Gabus, E. Fontela, World problems, an invitation to further thought
+within the framework of DEMATEL, Battelle Geneva Research Center, Geneva,
+Switzerland, 1972.
+[7] H.H. Wu, S.Y. Chang, A case study of using DEMATEL method to identify critical
+factors in green supply chain management, Appl. Math. Comput. 256 (2015)
+394–403.
+[8] G. Büyüközkan, G. Çifçi, A novel hybrid MCDM approach based on fuzzy
+DEMATEL, fuzzy ANP and fuzzy TOPSIS to evaluate green suppliers, Expert
+Syst. Appl. 39 (2012) 3000–3011.
+[9] H.K. Chen, S.P. Lin, T.D. Lin, H.H. Wu, Analysis of critical evaluation factors of
+the EWPS scale for boundary–spanners using DEMATEL, J. Qual. 21 (2014).
+[10] J.I. Shieh, H.H. Wu, K.K. Huang, A DEMATEL method in identifying key success
+factors of hospital service quality, Knowl.-Based Syst. 23 (2010) 277–282.
+[11] H.H. Wu, Y.N. Tsai, A DEMATEL method to evaluate the causal relations among
+the criteria in auto spare parts industry, Appl. Math. Comput. 218 (2011)
+2334–2342.
+[12] M. Krotofil, A. Cárdenas, Resilience of process control systems to cyber-
+physical attacks, in: Proceedings of the 18th Nordic Conference on Secure IT
+Systems, NordSec’13, Ilulissat, Greenland, 2013, pp. 166–182.
+[13] H. Kopetz, Real-Time Systems: Design Principles for Distributed Embedded
+Applications, second ed., in: Real-Time Systems Series, 2011.
+[14] A. Hahn, R.K. Thomas, I. Lozano, A. Cardenas, A multi-layered and kill-chain
+based security analysis framework for cyber-physical systems, Int. J. Crit.
+Infrastruct. Prot. 11 (2015) 39–50.
+[15] R. Hills, Common VPN security flaws, White Paper, NTA Monitor, Rochester,
+United Kingdom, 2005. www.nta-monitor.com/posts/2005/01/VPN-Flaws-
+Whitepaper.pdf.
+[16] K. Stouffer, J. Falco, K. Scarfone, Guide to Industrial Control Systems (ICS)
+Security, NIST Special Publication, 2011, pp. 800–882.
+[17] M. Majdalawieh, Security Framework for DNP3 and SCADA, VDM Verlag,
+Saarbruken, Germany, 2008.
+[18] International Electrotechnical Commission, IEC 61850 Standard, Technical
+Specification IEC TS 61850, Geneva, Switzerland, 2003.
+[19] Modbus-IDA, Modbus Application Protocol Specification V.1.1b, Hopkinton,
+Massachusetts, 2006. www.modbus.org/docs/Modbus_Application_Protocol_
+V1_1b.pdf.
+[20] H. Li, L. Lai, H.V. Poor, Multicast routing for decentralized control of cyber
+physical systems with an application in smart grid, IEEE J. Sel. Areas Commun.
+30 (2012) 1097–1107.
+[21] M. Krotofil, A.A. Cárdenas, J. Larsen, D. Gollmann, Vulnerabilities of cyber-
+physical systems to stale data-determining the optimal time to launch attacks,
+Int. J. Crit. Infrastruct. Prot. 7 (2014) 213–232.
+[22] D. Gollmann, Veracity, plausibility, and reputation, in: Proceeding of 6th IFIP
+WG 11.2 International Workshop Security Theory and Practice, WISTP’12,
+Egham, UK, 2012, pp. 20–28.
+[23] Y.L. Huang, A.A. Cárdenas, S. Amin, Z.S. Lin, H.Y. Tsai, S. Sastry, Understanding
+the physical and economic consequences of attacks on control systems, Int. J.
+Crit. Infrastruct. Prot. 2 (2009) 73–83.
+[24] B. Genge, C. Siaterlis, M. Hohenadel, Impact of network infrastructure
+parameters to the effectiveness of cyber attacks against industrial control
+systems, Int. J. Comput. Commun. Control 7 (2014) 674–687.
+[25] G. Béla, I. Kiss, P. Haller, A system dynamics approach for assessing the impact
+of cyber attacks on critical infrastructures, Int. J. Crit. Infrastruct. Prot. 10
+(2015) 3–17.
+[26] B. Genge, C. Siaterlis, An experimental study on the impact of network
+segmentation to the resilience of physical processes, in: Proceedings of the
+11th International IFIP TC 6 Networking Conference, May 2012, pp. 121–134.
+[27] D. Gollmann, P. Gurikov, A. Isakov, M. Krotofil, J. Larsen, A. Winnicki, Cyber-
+physical systems security: Experimental analysis of a vinyl acetate monomer
+plant, in: Proceedings of the 1st ACM Workshop on Cyber-Physical System
+Security, CPSS’15, Singapore, April 2015, pp. 1–12.
+[28] M. Yampolskiy, P. Horváth, X.D. Koutsoukos, Y. Xue, J. Sztipanovits, A language
+for describing attacks on cyber-physical systems, Int. J. Crit. Infrastruct. Prot. 8
+(2014) 40–52.
+[29] F. Hu, Y. Lu, A.V. Vasilakos, Q. Hao, R. Ma, Y. Patil, T. Zhang, J. Lu, X. Li, N.N. Xiong,
+Robust cyber–physical systems: Concept, models, and implementation, Future
+Gener. Comput. Syst. 56 (2016) 449–475.
+
+===== PAGE 15 =====
+H. Orojloo, M.A. Azgomi / Future Generation Computer Systems 67 (2017) 57–71
+71
+[30] H. Yoo, Taeshik Shon, Challenges and research directions for heterogeneous
+cyber–physical system based on IEC 61850: Vulnerabilities, security re-
+quirements, and security architecture, Future Gener. Comput. Syst. (2015)
+http://dx.doi.org/10.1016/j.future.2015.09.026.
+[31] R. Mitchell, I.R. Chen, Modeling and analysis of attacks and counter defense
+mechanisms for cyber physical systems, IEEE Trans. Reliab. 65 (2015) 350–358.
+[32] M.M. Ahmed, E. Ahmed, K.T. Ahmmed, Automated irrigation control and
+security system with wireless messaging, in: Proceedings of the International
+Conference on Informatics, Electronics & Vision, (ICIEV), IEEE, 2013, pp. 1–5.
+[33] N. Liu, J. Zhang, H. Zhang, W. Liu, Security assessment for communication
+networks of power control systems using attack graph and MCDM, IEEE Trans.
+Power Deliv. 25 (2010) 1492–1500.
+[34] G. Ramos, J.L. Sanchez, A. Torres, M.A. Rios, Power systems security evaluation
+using petri nets, IEEE Trans. Power Deliv. 25 (2010) 316–322.
+[35] D. Wei, Y. Lu, M. Jafari, P.M. Skare, K. Rohde, Protecting smart grid automation
+systems against cyber attacks, IEEE Trans. Smart Grid 2 (2011) 782–795.
+[36] A. Ashok, A. Hahn, M. Govindarasu, Cyber-physical security of wide-area
+monitoring, protection and control in a smart grid environment, J. Adv. Res.
+5 (2014) 481–489.
+[37] A. Srivastava, T.H. Morris, T. Ernster, C. Vellaithurai, S. Pan, U. Adhikari,
+Modeling cyber-physical vulnerability of the smart grid with incomplete
+information, IEEE Trans. Smart Grid 4 (2013) 235–245.
+[38] S. Varshney, L. Srivastava, M. Pandit, A parallel computing approach for
+integrated security assessment of power system, Int. J. Electr. Power Energy
+Syst. 78 (2016) 591–599.
+[39] T. Wen, H.J. Marquez, T. Chen, J. Liu, Analysis and control of a nonlinear boiler-
+turbine unit, J. Process Control 15 (2005) 883–891.
+[40] R. Mitchell, I.R. Chen, A survey of intrusion detection techniques for cyber-
+physical systems, ACM Comput. Surv. (CSUR) 46 (2014) 55.
+[41] W. Shen, L. Liu, X. Cao, Y. Hao, Y. Cheng, Cooperative message authentication in
+vehicular cyber-physical systems, IEEE Trans. Emerging Top. Comput. 1 (2013)
+84–97.
+[42] C.W. Ten, J. Hong, C.C. Liu, Anomaly detection for cybersecurity of the
+substations, IEEE Trans. Smart Grid 4 (2011) 865–873.
+[43] J. Zhao, K. Liu, W. Wang, Y. Liu, Adaptive fuzzy clustering based anomaly data
+detection in energy system of steel industry, Inform. Sci. 259 (2014) 335–345.
+[44] N. Goldenberg, A. Wool, Accurate modeling of Modbus/TCP for intrusion
+detection in SCADA systems, Int. J. Crit. Infrastruct. Prot. 6 (2013) 63–75.
+Hamed Orojloo received the B.S. and M.S. degrees in
+computer engineering (2010 and 2012, respectively).
+He is currently a Ph.D. candidate at the School of
+Computer Engineering, Iran University of Science and
+Technology, Tehran, Iran. His main research interests
+include, computer and network security, cyber–physical
+systems and stochastic modeling.
+Mohammad Abdollahi Azgomi received B.S., M.S. and
+Ph.D. degrees in computer engineering (software) (1991,
+1996 and 2005, respectively) from Department of Com-
+puter Engineering, Sharif University of Technology, Tehran,
+Iran. His research interests include modeling and evalu-
+ation of security, privacy and trust, and dependable and
+secure software development. Dr. Abdollahi Azgomi is
+currently an associate professor at School of Computer
+Engineering, Iran University of Science and Technology,
+Tehran, Iran.
