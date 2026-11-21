@@ -1,0 +1,1310 @@
+Journal of Cleaner Production 437 (2024) 140373
+Available online 27 December 2023
+0959-6526/© 2023 The Authors. Published by Elsevier Ltd. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-
+nc-nd/4.0/).
+Mitigating renewables curtailment and carbon emissions in California 
+through water sector demand flexibility 
+Amanda M. Rupiper a, Robert Good b, Gregory J. Miller c, Frank Loge b,* 
+a Department of Chemical and Environmental Engineering, University of California, Riverside, CA, USA 
+b Department of Civil and Environmental Engineering, University of California, Davis, CA, 95616, USA 
+c Energy Systems, Energy and Efficiency Institute, University of California, Davis, CA, 95616, USA   
+A R T I C L E I N F O  
+Handling Editor: Cecilia Maria Villas Bˆoas de 
+Almeida  
+Keywords: 
+Energy load shifting 
+Electric rate tariffs 
+Demand response 
+Renewables integration 
+Water distribution 
+A B S T R A C T  
+Increased renewable energy deployment in places like California have led to more frequent curtailment of these 
+resources when their generation exceeds simultaneous demand for electricity, resulting in wasted opportunities 
+for electric grid decarbonization. Public potable water distribution systems, which account for approximately 
+1.2% of statewide electricity demand, may be able to shift the timing of their operations by filling their storage 
+tanks when renewable energy is prevalent to help the California energy grid reduce renewables curtailment, grid 
+emissions, and peak energy demand. We simulate the water demand, pumping, and energy demands of 702 
+public water distribution systems serving 84% of Californian residents under eight different energy pricing and 
+emissions minimization scenarios. We find that the potable water distribution sector in California has the flex­
+ibility to shift its energy demands by up to 1071 GWh annually, reduce renewable energy curtailment by up to 
+68%, reduce the net demand peak by up to 321 MW, and avoid 330,627mTCO2e of emissions. The scenarios that 
+led to the greatest load shifting and emissions reductions included time-of-use energy rates that incentivize 
+consumption during the middle of the day without a demand charge. The findings of this work not only highlight 
+the potential of the water sector to help meet future energy and emissions goals, but also how the energy sector 
+can best incentivize this shift.   
+1. Introduction 
+To prevent the worst of global climate change impacts, the United 
+Nations have set goals to reduce carbon emissions by 45% by 2030 and 
+to zero net emissions by 2050. In spite of these ambitious goals, coun­
+tries around the world are falling short of their emissions targets (United 
+Nations, 2021). The United States is currently the second largest 
+greenhouse gas emitting country in the world, but states like California 
+have taken on aggressive targets to reduce their emissions and increase 
+their consumption of renewable resources (Ge et al., 2020). California 
+aims to reach 100 percent renewable zero carbon energy by 2045. 
+The ongoing transition from historically fossil fuel powered electric 
+grids toward increased integration of renewable and low carbon energy 
+sources has created new challenges for electric grid operation (Denholm 
+and Hand, 2011). Some renewable energy sources are variable and 
+intermittent, resulting in potential misalignment between the timing of 
+renewable energy generation and electricity demand. The addition of 
+more renewable energy sources in California each year have increased 
+the frequency of occasions where anticipated generation exceeds the 
+demand for electricity at that same time resulting in oversupply. To 
+prevent over generation, excess energy is frequently curtailed by 
+reducing output to match demand (USEIA, 2021). In 2020, California 
+curtailed more than 1500 Gigawatt-hours (GWh) of solar and wind 
+generation due to projected supply exceeding demand (CAISO, 2021a). 
+Increased deployment of renewable energy in the future is likely to 
+exacerbate this problem resulting in wasted opportunities for grid 
+decarbonization. Without massive investments in energy storage or 
+adjusting energy demands to match the renewable supply, California 
+will not be able to reach their 100 percent renewable energy goal. 
+As more countries world-wide strive to make aggressive carbon re­
+ductions by increasing their reliance on renewable energy, mismatched 
+generation and demand timing will likely limit the ability to integrate 
+sufficient renewable resources to meet emissions goals. In order to 
+minimize renewables curtailment, multiple solutions have been pro­
+posed including storing energy that would otherwise have been cur­
+tailed and demand response, which shifts demand to utilize renewable 
+* Corresponding author. 
+E-mail address: fjloge@ucdavis.edu (F. Loge).  
+Contents lists available at ScienceDirect 
+Journal of Cleaner Production 
+journal homepage: www.elsevier.com/locate/jclepro 
+https://doi.org/10.1016/j.jclepro.2023.140373 
+Received 14 July 2022; Received in revised form 18 December 2023; Accepted 22 December 2023   
+
+Journal of Cleaner Production 437 (2024) 140373
+2
+resources when they are available (Zohrabian et al., 2021). One form of 
+demand response, load shifting, moves energy load to alternate time 
+periods and has emerged as a method to increase grid reliability and 
+assimilation of renewable resources (Park et al., 2019; Wimmler et al., 
+2017). Sectors that have existing flexible production schedules, batch 
+processes or storage, such as plug-in electric vehicles and water pumping 
+and storage, have great potential to perform demand response in the 
+short term (Aghajanzadeh et al., 2015; Kernan et al., 2017; Park et al., 
+2019; Van Triel and Lipman, 2020; Amaral Lopes et al., 2020; Zohrabian 
+et al., 2021). 
+In spite of identifying the promise of the water sector as a load shift 
+resource, research in this space has been limited to single entity case 
+studies and there have not yet been any attempts to quantify the broader 
+scale of this opportunity or the challenges, such as in California as a 
+whole using historical energy rates (Kernan et al., 2017; Oikonomou 
+et al., 2018; Park et al., 2019; Amaral Lopes et al., 2020; Sowby, 2023). 
+Mobilizing the water sector to shift when it consumes energy may 
+require changing how energy utilities incentivize energy consumption 
+(Zohrabian et al., 2021). Historically, energy pricing structures have 
+been built for a fossil fuel based market. As alternative energy sources 
+enter the mix, old incentives may no longer be achieving their intended 
+goals. 
+Utilizing a mass-balance model of water distribution system opera­
+tions, paired with a pump scheduling algorithm, this study seeks to es­
+timate the statewide potential for load shifting resources from 
+California’s water distribution systems under different goals and pricing 
+scenarios. The objective of this research is to estimate how much energy 
+demand flexibility is realistically available from California’s water dis­
+tribution, the impacts of this flexibility on grid emissions and renewable 
+integration, and identify how the electricity sector could most effec­
+tively incentivize beneficial load shifting through their rate structures. 
+While using California as a large case study of many water utilities, 
+this research demonstrates the potential demand flexibility of any water 
+system that has water storage facilities and how the water sector in other 
+states or countries could play a sizable role toward greening the energy 
+sector and achieving global sustainable development goals. The findings 
+of this research are useful to water suppliers aiming to reduce their 
+energy costs and carbon footprints as well as to energy suppliers and 
+energy rate designers seeking to improve grid reliability and integrate 
+greater quantities of renewable resources on the grid. 
+2. Background 
+Water distribution systems are responsible for reliably delivering 
+safe water to end users at an adequate pressure, accomplished through a 
+combination of pumps, storage reservoirs, and gravity. Like an electrical 
+system, supply and demand must always be balanced to maintain system 
+pressure. Closed pressure zones, which do not contain any water storage, 
+may require variable speed pumps which ramp their flows up and down 
+to match the real-time water demands in that zone. Pumping too little 
+water will drop the pressure, and pumping too much can over pressurize 
+the system, leading to damage. For this reason, many parts of a water 
+system are in open pressure zones, which contain storage facilities. In 
+these open zones, pumping water at a rate greater than demand fills the 
+water reservoir. Turning pumps off or operating below demand causes 
+the water storage tanks to drain and provide pressure to the system. 
+From the standpoint of the flexibility of pump energy timing, closed 
+pressure zones have no flexibility; the only way to modify the load shape 
+of these pumps would be to modify the timing of when end users 
+consume water. In open pressure zones, the primary factor that de­
+termines flexibility is the amount of water storage available relative to 
+water demand and pumping capacity. With enough storage volume, 
+pumps could be run to fill the reservoirs at one time of day and turned off 
+at another time of day to meet demand using the water retained in the 
+storage reservoirs. 
+How well the flexibility within the water sector aligns with the needs 
+of the electric grid depends on the electric rate structure. Electricity can 
+be the single largest operating cost of a water distribution system and 
+pumps will be operated to minimize these costs to the extent that they 
+are still able to reliably supply safe water. Electric rates are often made 
+up of two primary factors: a consumption charge (per kWh), and a de­
+mand charge for peak consumption interval (per kW). Consumption 
+charges account for the actual energy used and demand charges account 
+for the generation capacity required to meet the peak demands of the 
+system (Sherwood et al., 2016). High demand charges may encourage 
+utilities to pump at constant rates to keep any one moment of demand at 
+a minimum. Time-of-use (TOU) consumption charges, with variable 
+pricing dependent on the time of the day, may encourage water utilities 
+to shift when they consume energy to take advantage of low energy 
+prices or avoid high costs at a different time (Faruqui and Sergici, 2013). 
+Many electric utilities offer several different rate structures for a con­
+sumer to select from, which may be comprised of different types of de­
+mand and consumption rates. 
+Due to the flexibility of water distribution systems and depending on 
+the energy rate structures available to them, the water sector may be 
+able to permanently change its electric load shape as well as perform 
+dynamic load shifting (Menke, et al., 2016; Kernan et al., 2017). Modern 
+fixed TOU energy rates provided by electric utilities typically encourage 
+energy consumption either when renewables are abundant in the middle 
+of the day and/or discourage consumption during peak energy demands 
+in the early evening. The energy rate motivates users to alter when they 
+use energy resulting in a permanent change to their energy load profile, 
+known as load shaping (Faruqui and Sergici, 2013). Water utilities may 
+also have the potential to participate in dynamic load shifting and 
+respond to the daily needs of the electric grid if given access to 
+real-time-pricing (RTP) (Kernan et al., 2017). RTP represents the actual 
+cost of energy supply operations at any given time of day due to the 
+combination of energy resources (fossil and renewable) on the grid at 
+that moment. Cheaper prices typically coincide with a high prevalence 
+of renewable resources on the grid and more expensive prices during 
+peak energy demand periods because of expensive peaking plants being 
+brought online to meet peak demand (Beck and Martinot, 2004). If there 
+is an oversupply of energy available, grid operators will curtail renew­
+able resources and sell energy at very low or even negative prices to 
+balance the grid (CAISO, 2017). Water system operation is often fore­
+casted and planned hours to days in advance, so unlocking the full po­
+tential of dynamic load shifting would likely require sophisticated 
+decision support software that could help operators co-optimize these 
+dynamic prices with the other operational needs of the system. 
+The water distribution sector is listed as one of the most promising 
+short-term opportunities for mitigating oversupply of renewable energy 
+for several reasons (Park et al., 2019). Water storage and pumping 
+infrastructure is already built and integrated with SCADA control sys­
+tems that could utilize software to make operational changes driven by 
+price signals. Additionally, operators are relatively indifferent to when 
+pumps operate as long as they are able to maintain system reliability, 
+which is not the case in other sectors such as residential, where 
+behavioral barriers can limit flexibility. However, risk aversion, hourly 
+and seasonal variability in water demand, complex energy rate tariffs, 
+and poor belief in the economic advantages are all challenges that have 
+been identified as preventing the water sector from more fully partici­
+pating in demand response programs (Sowby, 2021). 
+3. Methods 
+3.1. Approach 
+This study models 702 individual public agencies serving potable 
+water to 84% of Californian residents, responsible for water quality, 
+storage, and pressurization of water distribution systems. Simplified 
+hydraulic models were created for each individual utility based on 
+publicly reported data and assumptions from literature. The model was 
+A.M. Rupiper et al.                                                                                                                                                                                                                             
+
+Journal of Cleaner Production 437 (2024) 140373
+3
+optimized for each agency to determine the ideal water pumping stra­
+tegies for several scenarios and aggregated to the statewide scale to 
+demonstrate the flexibility of the water sector as a whole to shift demand 
+in response to pricing signals and aid in achieving statewide load- 
+shifting and GHG emission reduction goals. 
+3.2. Simplified hydraulic model 
+Typical hydraulic models are used to represent detailed water dis­
+tribution systems including pipe networks, pressure zones, storage fa­
+cilities, pumping stations, and demand nodes. These models can predict 
+hydraulic operation of a water system including pressures, energy con­
+sumption, pumping rates, and hydraulic head throughout the modeled 
+region (Robinson et al., 2012). In order to represent the potable water 
+distribution systems of all utilities throughout California it was neces­
+sary to make assumptions and simplifications to traditional hydraulic 
+models. These assumptions include: 1) water demand and distribution 
+are represented by a single demand center and single pressure zone, 2) 
+water storage is represented by a single aggregated tank volume within 
+the same pressure zone, 3) pipe networks are ignored, and 4) pumping is 
+represented by a single aggregated pump station, which can operate at 
+variable or continuous speeds. 
+The simplified model for each utility is shown in Fig. 1, which 
+highlights the primary components of the model as well as the static 
+characteristics applied to each component such as total storage volume 
+(Vmax) and maximum pump rate (Fmax). These characteristics were 
+estimated for each utility using data such as individual utility water sales 
+and water storage data extracted from multiple years of California 
+electronic annual reports (eAR) (CA SWRCB, 2023). Additional details 
+about the data used for each modeling component and the methods used 
+to generate them can be found in the supplemental information (SI) 
+section. 
+The model was used to conduct a mass balance on the water within 
+the storage tank such that volume in the tank at any time increment is 
+equal to the volume at the last time increment (Vh-1) minus the water 
+used to meet demand (Dh) plus the water pumped in (Fh) as shown in 
+Equation (1). A pump scheduling algorithm was used to optimize the 
+system such that costs were minimized, taking into account variable 
+energy prices throughout the day and different pricing schemes. The 
+algorithm allowed for changes in pump timing and rate to minimize the 
+cost while constraining the solutions to satisfy the mass balance in 
+Equation (1). 
+Vh = Vh−1 + Fh −Dh
+Equation 1  
+Where: 
+0 ≤Fh ≤Fmax (Pump flow must not exceed pump capacity). 
+Vmin ≤Vh ≤Vmax (Storage volume must not exceed capacity or fall 
+below minimum requirements). 
+Fh = pump flow (MG) during hour h. 
+Vh = Volume of water (MG) in storage tank at the end of hour h. 
+Dh = Water distribution demand (MG) during hour h. 
+3.3. Optimization process 
+We utilized dynamic programing optimization to determine the 
+optimal pump rate and timing to minimize costs while obeying con­
+straints. This approach solves for the optimum series of controls by 
+starting at the final time-step and evaluating all possible decisions in 
+reverse until the current time-step is met. An initial penalty is provided 
+for any scenario that would result in final storage levels less than the 
+initial storage level (assumed as the average of Vmax and Vmin). The total 
+performance of potential decisions was evaluated as the accumulation of 
+all future consumption costs, the maximum of all future demand 
+Fig. 1. Components of simplified single utility model with a single water demand, energy demand, and pumping and storage capacity.  
+A.M. Rupiper et al.                                                                                                                                                                                                                             
+
+Journal of Cleaner Production 437 (2024) 140373
+4
+charges, and the accumulation of any penalties from constraint viola­
+tions as shown in Equation (2). An indicator function was used to apply 
+a steep penalty charge if the potential pumping scenario exceeded one of 
+the constraints such as max or min storage volume and max or min pump 
+flows. The penalty cost variables in Equation (2) were used to exclude 
+any potential scenarios that did not adhere to the physical limits of the 
+water system and to ensure that the tank volumes at the end of the 
+optimization run were at or above the starting levels. For each time-step, 
+for each possible pump flow, the best future decision is found by 
+selecting the pumping rates and timings that resulted in the minimum 
+future total cost. This process is repeated recursively until the current 
+time-step, at which point the optimum pump rate and timings are known 
+deterministically. This approach will produce reliable, optimum de­
+cisions for an explicit analysis period when all inputs are known, 
+including the future water sales and energy price patterns. 
+Additionally, we ran a similar optimization to minimize total GHG 
+emissions instead of costs. This slightly changed the objective function 
+so that hourly emissions intensity (Eh) is substituted for consumption 
+cost (Ch) in Equation (2) while also applying a zero value demand 
+charge (DCh). This process is meant to show how water utilities may 
+change their operations given different objective functions outside of 
+existing pricing signals. The same optimization process and constraints 
+were applied to the GHG scenarios as were applied in the pricing 
+scenarios. 
+min
+[( ∑
+H
+h=1
+(Fh ∗EI ∗Ch) + (X ∗lA)
+)
++ maxH
+h=1⃒⃒⃒⃒⃒(Fh ∗EI ∗DCh) + (X ∗lB)
+]
+lA(Fh) =
+{
+0
+if 0 ≤Fh ≤Fmax
+1
+if Fh < 0 or Fh > Fmax  
+lA(Vh) =
+{
+0
+if Vmin ≤Vh ≤Vmax
+1
+if Vh < Vmin or Vh > Vmax  
+lB(Vh) =
+{
+0
+if Vh=H ≥Vh=1
+1
+if Vh=H < Vh=1
+Equation 2  
+Where: 
+EI = Pump energy intensity (MWh/MG). 
+Ch = Energy cost ($/MWh) during hour h. 
+Eh = Emission Intensity (mTCO2e/MWh) during hour h. 
+DCh = Peak energy demand charge ($/MW). 
+X = Penalty charge (~$Infinite-1). 
+Optimizations were generated for a two-week long simulation period 
+in each of the 12 months of the year 2020 in hourly intervals. The 
+optimization results were then scaled up to the full 2020 year for each 
+scenario and for each water utility. The two-week optimization time­
+frame was selected to be tractable from a modeling and computational 
+perspective while also allowing for the impact of weekend and weekday 
+rates and pumping and storage planning for future demands. Optimi­
+zation time periods longer than two weeks did not yield significantly 
+different results. 
+3.4. Scenarios 
+To understand the energy demand flexibility of the water sector and 
+evaluate optimum energy cost operations, multiple signals were 
+assessed as unique scenarios. A baseline, that has a flat consumption rate 
+and no demand charge will establish the flexibility of specific water 
+systems and the overall water sector when introduced to more complex 
+motivational price signals (scenarios 1–8). The potential for energy 
+flexibility was calculated as the difference between the simulated energy 
+demand in the baseline scenario and each of scenarios 1–8. Table 1 
+summaries the various rates under each scenario for reference. Addi­
+tional details about each scenario are available in the SI section. 
+For real-time pricing (wholesale electricity prices) and emissions 
+scenarios 7 and 8, which will vary for every hour of the year and by 
+location, we chose to represent the diversity of the signals without 
+substantially increasing the complexity of the input data by grouping the 
+water systems into Northern and Southern California. These regions 
+generally correspond to the service territories of Pacific Gas and Electric 
+(PG&E) in the North and Southern California Edison (SCE) and San 
+Diego Gas and Electric (SDG&E) in the South. Any water systems outside 
+of these service territories were assigned to one of these regions based on 
+their geographic proximity to the region. For RTP we utilized day-ahead 
+market locational marginal pricing (LMP) data from the California In­
+dependent System Operator in 2020. Prices for the northern region were 
+represented by PG&E Demand Load aggregation point (DLAP) and pri­
+ces for the southern region were represented by the average of SCE and 
+SDG&E DLAPs. For our emissions optimization scenario, we utilized 
+marginal operating emission rate data from California’s Self Generation 
+Incentive Program (SGIP). Similarly to the LMP data, we used the PG&E 
+SGIP data for our northern region, and an average of the SCE and SDG&E 
+SGIP data for our southern region. 
+The scenarios considered in this analysis represent pricing schedules 
+Table 1 
+Summary of the consumption and demand rates for eight electricity rate and 
+emissions structures.  
+Scenario 
+Consumption Rate 
+($/kWh) 
+Demand 
+Rate 
+($/kW) 
+Description 
+Baseline 
+Flat 
+None 
+Represents ‘baseline’, i.e. the 
+time and the rate at which a 
+utility consumes energy does not 
+affect the bill. Minimization of 
+costs is only applied to the 
+minimization of total energy 
+demand and not to the time of 
+energy use 
+1 
+Flat 
+Flat 
+Neither consumption nor 
+demand charge vary with time of 
+day. 
+2 
+Flat (Low) 
+TOU (High) 
+Very low constant consumption 
+rates with a relatively high 
+demand charge that increases 
+during the afternoon in the 
+summer and early evening in the 
+winter. 
+3 
+TOU (Legacy) 
+Flat 
+Legacy TOU peak consumption 
+hours are from 12pm to 6pm in 
+the summer. These TOU 
+structures are widely used, but 
+being phased out and replaced 
+with more modern TOU 
+schedules (such as scenario 5). 
+4 
+Flat 
+TOU 
+Similar in structure to scenario 2, 
+this scenario has relatively high 
+flat consumption charges and 
+lower time dependent demand 
+charges. 
+5 
+TOU (Modern) 
+None 
+Modern TOU peak consumption 
+hours are from 4 to 9pm when 
+the statewide net electricity grid 
+experiences a ramping of 
+demand. 
+6 
+TOU (RTP) 
+None 
+RTP represents the CA 
+independent system operator 
+(ISO) locational marginal pricing 
+(LMP) for Northern or Southern 
+CA utilities. 
+7 
+Grid operating 
+marginal emissions 
+None 
+Optimized based on the marginal 
+emissions intensity for Northern 
+or Southern CA water utilities. 
+8 
+Grid average 
+emissions 
+None 
+Optimized based on the average 
+emissions intensity of the 
+California Electric grid, 
+estimated for 2020–2030 (CEC, 
+2020).  
+A.M. Rupiper et al.                                                                                                                                                                                                                             
+
+Journal of Cleaner Production 437 (2024) 140373
+5
+currently provided by Southern California Edison and San Diego Gas and 
+Electric with a variety of consumption and demand combinations and 
+structures that are applicable to water utilities with significant pumping 
+demands as well as two scenarios representing average and marginal 
+electric grid GHG emission intensities. Fig. 2 graphically displays the 
+consumption and demand charges for each scenario for the summer and 
+winter by hour of day. For these scenarios summer runs from June 1st 
+until September 30th. Subplots ‘A’ and ‘B’ show the various consump­
+tion rates under each pricing scenario for each hour of the day on a 
+weekday with subplots ‘C’ and ‘D’ showing the weekend rates. Subplots 
+‘E’ and ‘F’ show the demand rates. For scenarios 7 and 8, the con­
+sumption rate varied for every hour of the year in our optimization, but 
+follow a similar pattern by season. In Fig. 2, scenarios 6 and 7 are plotted 
+as averages for the winter and summer to demonstrate the typical 
+pattern they followed, although any given hour used in the optimization 
+may have varied from this pattern. Scenarios 7 and 8 emissions in­
+tensities were minimized as if they were consumption charges using 
+mTCOe/MWh marginal emissions intensity values as if it was a $/kWh 
+consumption charge. At any given hour, marginal emissions varied be­
+tween the northern and southern region, but on average they were the 
+same, which is why you see only one line for marginal emissions in 
+Fig. 2. 
+3.5. Model outputs and metrics 
+Several metrics will be used to assess the system performance under 
+the various scenarios as compared to the baseline including total energy 
+consumption, emission intensity, net load shifted, and reduction of the 
+net demand peak. These metrics assess the pricing signal’s ability to 
+impact the electric grid when applied to Californian water distribution 
+systems. 
+3.5.1. Total energy consumption 
+Assuming constant pumping efficiencies, it takes a certain amount of 
+energy to deliver a given volume of water and we would expect each 
+scenario to consume roughly the equivalent total quantity of energy over 
+the same period. The optimization can result in water systems storing 
+excess water at the end of some simulations in preparation for future 
+time-steps. As a result, some combinations of water system character­
+istics and energy price signals can result in select water systems poten­
+tially ending the simulation with slightly more energy consumed by 
+storing excess water in their storage tanks. This is accounted for by 
+normalizing later results by this total energy consumption. 
+3.5.2. Net load shifted 
+Between the hours of 8am – 6pm there can be times where forecast 
+renewable generation exceeds energy demand resulting in curtailment 
+Fig. 2. Energy pricing rate structures (consumption and demand) under each scenario by season, weekdays, and weekends. (Marginal Emissions, scenario 8, are 
+plotted as mTCOe/MWh/2 for ease of plotting). 
+A.M. Rupiper et al.                                                                                                                                                                                                                             
+
+Journal of Cleaner Production 437 (2024) 140373
+6
+of renewable resources as shown in Fig. 3 (CAISO, 2021b). The greatest 
+curtailment in CA occurs in the first half of the year, peaking in April 
+with high solar availability and low energy demands and lowest in 
+August with high energy demands resulting in less need for curtailment. 
+In order to avoid curtailment, increase integration of renewable re­
+sources, and take advantage of low carbon, often inexpensive, energy 
+sources it may be desirable to shift energy demand to when curtailment 
+is at its highest. Currently in CA the greatest curtailment of renewable 
+resources and the lowest net energy demands occur between 9am and 
+4pm after which net demand begins ramping up toward an evening peak 
+between 7 and 8pm. We quantify the magnitude of energy shifted into 
+the curtailment window minus any energy shifted out of the 9am – 4pm 
+window as the Net Load Shifted. 
+3.5.3. Average emission intensity, and avoided emissions 
+Shifting the energy load may impact the average emission intensity 
+of the water distribution sector given the variable GHG emissions of the 
+electric grid at different times of the day due to the availability of 
+renewable resources (Miller et al., 2022). Total GHG emissions and 
+average emissions intensity will be calculated as in Equation (3) by 
+multiplying the energy profiles under each scenario by emissions factors 
+according to the appropriate hour and month and then summing the 
+emissions and dividing by the total energy consumption. Average 
+emissions intensities highlight the fraction of the grid-wide emissions 
+that can be attributed to the energy consumption (which comes from a 
+variety of sources) of the water distribution sector. The average GHG 
+emissions factors by hour and month for California used in this analysis 
+can be found in the SI section. 
+We also considered marginal emissions intensities because they 
+better represent the consequential impact of load shifting and avoided 
+emissions. We calculated avoided emissions under each scenario by 
+multiplying the change in hourly electricity demand (baseline minus 
+scenarios 1–8) by hourly marginal emissions factors as in Equation (4). 
+This accounts for the emissions intensity of the last unit of energy that 
+would have been produced to meet demand. By reducing demand when 
+marginal emissions intensities are high, the last units of energy are not 
+required and those emissions are avoided. Avoided emissions account 
+for the impact of shifting water distribution demands on the electric grid 
+(which changes the last unit of produced energy), i.e. how the water 
+sector can change overall grid emissions. 
+Average Emission Intensity
+(mTCO2e
+MWh
+)
+=
+∑
+T
+t=0
+(Energyt ∗AvgEmissionFactort)
+Total Energy
+Equation 3  
+Avoided Emissions (mTCO2e ) =
+∑
+T
+t=0
+[(
+Energyt (Baseline) −
+Energyt (Scenario X)
+)
+∗MargEmissionsFactort
+]
+Equation 4  
+3.5.4. Net demand peak reduction 
+Net demand peak is the maximum net energy demand (total energy 
+demand minus wind and solar generation) in a single interval each day. 
+This quantity represents the total nonrenewable capacity that was 
+required that day and can dictate the number and size of fossil fuel 
+generated power plants required to meet energy demand in California 
+(CEC, 2021). Reducing the net energy demand peak may mean greater 
+grid reliability as the grid can have greater capacity to handle demands 
+and reduce the likelihood of rolling blackouts or insufficient energy 
+supplies during high demand periods. A reduction in the net demand 
+peak may also mean reducing grid emissions since peak demand is often 
+served by less-efficient and more emitting ‘peaking power plants’ 
+(Torriti, 2015). Regular peak energy demand has been shifting later in 
+the day since 2011 with the summer total demand peak occurring on 
+average around 6pm in 2020 and the net demand peak occurring after 
+7pm (CEC, 2021). This metric of impact will be assessed at the statewide 
+Fig. 3. Total Solar and wind curtailment by hour of day and month in California for 2020 (Data from CAISO, 2021a).  
+A.M. Rupiper et al.                                                                                                                                                                                                                             
+
+Journal of Cleaner Production 437 (2024) 140373
+7
+level by examining the overall water distribution sector net energy de­
+mand curve of the baseline relative to the different scenarios at 7pm. For 
+perspective, in 2020 the annual California grid-wide instantaneous peak 
+demand occurred in August at 47,121 MW with typical daily net demand 
+peaks throughout the year around 30,000 MW (CAISO, 2021b). 
+4. Results 
+4.1. Utility level 
+At the individual utility level, we saw that the ability to load shift was 
+largely limited by storage volume relative to water demand, the total 
+Fig. 4. Optimized operations for individual utilities for five days in May starting on a Friday under real-time pricing scenario 6.  
+A.M. Rupiper et al.                                                                                                                                                                                                                             
+
+Journal of Cleaner Production 437 (2024) 140373
+8
+pumping capacity, and local minima in the pricing structures. In order to 
+illustrate the outputs of our modeling, before reporting the aggregated 
+statewide results, we first focus on two water utilities with different 
+characteristics under the real-time pricing (RTP) scenario 6. The first 
+water utility, plotted in purple on Fig. 4, is the Moulton Niguel Water 
+District (MNWD) in Southern California, which is characteristic of larger 
+water systems with large amounts of storage relative to their water de­
+mand. Plotted in black is the City of Dixon in Northern California, which 
+is characteristic of a smaller water system with less available storage 
+relative to water demand. 
+The ability for an individual utility to load shift is limited by their 
+storage volume. In Fig. 4, during the relatively high costs of energy near 
+7pm (panel ‘B’), the MNWD optimization avoided pumping (panel ‘C’) 
+and used sizeable storage (panel ‘D’) to meet water demand until energy 
+costs decreased. On Sunday (hours 48–72) energy costs in the afternoon 
+were at their lowest for the week, reaching as low as $0/kWh. MNWD 
+took advantage of Sunday’s low rates and used their storage to pump 
+almost constantly throughout the afternoon until prices increased in the 
+evening when they were able to shut off their pumps and meet water 
+demand by draining their stored water. During this same period, the City 
+of Dixon also increased their pumping, but could not take advantage of 
+the entire low pricing period given their limited storage. Panel ‘D’ of 
+Fig. 4 shows Dixon filing their tanks to capacity when energy prices are 
+low and draining to their minimum when prices increased. We noted 
+numerous utilities, shown as thin gray lines in Fig. 4, maxing out their 
+tanks during low pricing periods indicating that their storage was 
+limiting their ability to load shift. 
+Total pumping capacity also plays a role in the ability of an indi­
+vidual utility to load shift. MNWD has plenty of storage capacity, but at 
+the global minimum price signal their pumps could not completely fill 
+their tanks and instead they had to pump later in the week when prices 
+were at a local low. We see this shown in Fig. 4 around hour 60, when 
+prices reached $0/kWh and most utilities pumped at full capacity 
+(provided they had storage), but most could not sufficiently fill their 
+tanks during this time period and had to pump again around hour 75 
+(early Monday morning) during a local low price, but outside the load- 
+shifting window. 
+Most utilities will shut off their pumps when facing relatively high 
+price signals, but not all utilities have sufficient storage or pumping 
+capacity to do this. In Fig. 4 we see the RTP signal peaking around hour 
+19 (7pm) and for several utilities (thin gray lines) their pumping rate in 
+panel ‘C’ remains high or even increases during this time in order to 
+deliver adequate water volumes to meet demand. In cases where a water 
+system has no appreciable storage, they are forced to pump to exactly 
+meet demand and therefore demonstrate no capacity for load-shifting. 
+Global minima and maxima prices matter, but local minima and 
+maxima in rate structures can be especially impactful on utilities that 
+have limited storage or pumping capacity. As seen in panels B and C of 
+Fig. 4, both MNWD and Dixon pumped when local lows in the pricing 
+scheme occurred. In the case of Dixon, they did not have adequate 
+storage to meet demand for extended periods and were forced to pump 
+whenever a local low energy price occurred even when a lower price 
+would be available in a few hours. In the case of MNWD, which has 
+excess storage, they could be more selective on when they pumped and 
+could wait for lower pricing periods, but due to their pumping limita­
+tions they could not fully take advantage of their storage capacity and 
+the global minima and were still impacted by local minima prices. 
+4.2. Statewide level 
+Summing the energy demands for the 702 water distribution systems 
+in our dataset resulted in an annual energy usage of approximately 3200 
+GWh for distribution pumping, shown in Table 5, making up roughly 
+1.2% of the 272,576 GWh total electrical energy consumed in California 
+in 2020 (CEC, 2020). Since the water systems modeled represent 84% of 
+the water distribution in California, we assume that the entire urban 
+water distribution sector in California uses approximately 1.4% of the 
+total statewide electricity consumption. 
+The aggregated optimization results across the eight scenarios yields 
+insight into the ability of the water sector as a whole to impact the 
+California electric grid and statewide energy and emissions goals. 
+Depending on the scenario, utilities behaved differently to minimize cost 
+or minimize GHG emissions resulting in varying energy demand profiles, 
+electric grid impacts, and load shifting potentials. 
+4.2.1. Net load shifted 
+Non-demand charge scenarios (5–8) resulted in significant shifts in 
+energy loads into the curtailment window in aggregate over the entire 
+year. Fig. 5 plots the annual daily average energy demand in California 
+by the water distribution sector by hour of day under each optimization 
+scenario. Marked on the figure as a shaded gray area is the curtailment 
+window representing the hours when sizable quantities of energy are 
+curtailed in California along with a dotted line representing the actual 
+curtailment values for 2020. Scenarios with demand charges (1–4, solid 
+lines) all resulted in minimal or negative load shifting and relatively flat 
+hourly consumption rates so as to avoid being penalized for periods of 
+high consumption. Scenarios 5–8, without demand charges (dashed 
+lines), all resulted in positive load shifting and much more dynamic 
+energy consumption over a 24-h period. These patterns held true for 
+both the winter and summer periods as shown in panels ‘A’ and ‘B’ of 
+Fig. 6. 
+Pricing signals featuring their lowest pricing or emissions rates 
+during the curtailment window with relatively high rates at all other 
+times (scenarios 5&8) resulted in the greatest load-shifting. Scenario 8 
+which minimized average GHG emissions resulted in the greatest annual 
+net load shifted with the ability to shift approximately a third of its 
+energy demand, approximately 1070 GWh, followed by scenario 5 with 
+a modern TOU energy consumption rate without a demand charge. 
+Scenarios 6 (RTP) and 7 (Marginal Emissions) also resulted in significant 
+load-shifting, but to a lesser degree due to local low rates in the early 
+morning outside the load-shifting window. 
+4.2.1.1. Impact on curtailment. If we consider net load shifted as the 
+potential to reduce curtailment of renewable energy, i.e. increase the 
+capacity for integration of renewable energy, then statewide curtailment 
+could be reduced by up to 68% under the optimized average emission 
+scenario (scenario 8). In Fig. 5, California’s average daily renewable 
+energy curtailment for 2020 is plotted by hour of day relative to the 
+energy demand by the water sector under the various scenarios. In 2020 
+the California Independent Service Operator curtailed a total of 1580 
+GWh of solar and wind energy (CAISO 2021a). 
+4.2.1.2. Seasonal impacts. The capacity for utilities to load-shift is 
+greater in the winter than in the summer. Of the scenarios that were 
+successful at load-shifting, with the exception of the average emission 
+scenario 8 which performed similarly in summer and winter, their ca­
+pacity to do so more than doubles in the winter months as shown in 
+Table 3 and Fig. 6. One reason for this could be the different energy 
+pricing schemes for summer and winter. For scenario 5 (modern TOU) 
+this could be a result of a dip in energy prices during the load-shifting 
+window in the winter which does not exist under the summer pricing 
+scheme. For scenarios 6 and 7 (RTP and Marginal Emissions), their low 
+prices are better aligned with the load-shifting window during the 
+winter months whereas they skew earlier during the summer (see Fig. 2). 
+The second reason for this is reduced water demand in the winter 
+(largely due to reduced irrigation demands) paired with constant storage 
+and pumping capacity allowing for greater flexibility to shift loads. 
+4.2.2. Total GHG emissions, average emission intensity, and avoided 
+emissions 
+Shifting pumping to the middle of the day means lower overall GHG 
+A.M. Rupiper et al.                                                                                                                                                                                                                             
+
+Journal of Cleaner Production 437 (2024) 140373
+9
+Fig. 5. Aggregated annual daily average water sector pumping energy demand by hour of day under eight optimization scenarios, CA 2020 electric energy 
+curtailment by hour of day, and 2020 CA net demand peak hour. Solid lines indicate the presence of a demand charge. 
+Fig. 6. Aggregated A) summer and B) winter daily average water sector pumping energy demand by hour of day under eight optimization scenarios, CA 2020 electric 
+energy curtailment by hour of day, and 2020 CA net demand peak hour. Solid lines indicate the presence of a demand charge. 
+A.M. Rupiper et al.                                                                                                                                                                                                                             
+
+Journal of Cleaner Production 437 (2024) 140373
+10
+emissions due to the prevalence of solar energy on the California electric 
+grid. As expected, and shown in Table 2, operating to minimize average 
+GHG emission under scenario 8 resulted in the lowest average emission 
+intensity and reduced water-sector emissions by 19% as compared to the 
+baseline. Other scenarios that shift load into the middle of the day 
+(scenarios 5–7), when grid carbon intensity is lower, also reduced 
+emissions compared to the baseline. Although the RTP scenario shifted 
+load into low carbon intensity periods, it also increased energy con­
+sumption during the early morning, when carbon intensity is high, 
+resulting in a low net reduction in water sector emissions. 
+Operating to minimize indirect avoided grid emissions using a 
+marginal emissions signal, unsurprisingly, results in the greatest quan­
+tity of avoided GHG emissions, followed closely by the RTP scenario. 
+Although the modern TOU and average emission optimization scenarios 
+resulted in the largest load shifting and reduction in renewable energy 
+curtailment, they avoided less than half of the emissions avoided by the 
+RTP and marginal emissions scenarios. However, while these results 
+describe the short-run emissions impact of load shifting, these results do 
+not describe how more permanent load shaping in the water sector 
+might affect long-run avoided emissions. 
+4.2.3. Net demand peak reduction 
+RTP, modern TOU consumption, and marginal emissions (scenarios 
+6, 5, and 7) resulted in the largest reductions in the net demand peak, 
+85.1%, 75.6%, and 72.0% over baseline, respectively. This equates to 
+reducing the overall grid peak by approximately 1%. Table 4 summa­
+rizes annual average daily net demand peaks under each scenario for 
+comparison. 
+5. Discussion 
+The results from this experiment support three major findings: 1) the 
+water sector currently has the physical potential to play a role in sup­
+porting a resilient and reduced carbon intensity electricity grid, 2) en­
+ergy rate structures drive the water sectors capacity to influence the 
+electric grid, and 3) in a changing energy market, energy rates must 
+change to reflect modern goals. 
+5.1. Water Sector’s potential as a grid resource 
+Shifts to water distribution pumping will not solve California’s en­
+ergy concerns by itself, but its potential impact is not negligible when 
+compared to existing policies and incentives. The results of this work 
+show that the water sector could shift up to one third of its total energy 
+demand from undesirable periods into the middle of the day to promote 
+increased integration of solar energy. Given that the water distribution 
+sector accounts for 1.4% of the total electricity consumption in Cali­
+fornia, this could mean potentially moving almost 0.5% (1275.6 GWh) 
+of California’s total electricity demand into the middle of the day using 
+already built infrastructure and no changes to the consumption patterns 
+of individual water users. Additionally, our modeling suggests that the 
+water sector could reduce the net demand peak by up to 321 MW or 
+approximately a 1% reduction of the overall net demand peak of the grid 
+(CAISO, 2021b). For perspective, electricity utility demand response 
+programs combined statewide accounted for 3–4% of the grid adequacy 
+Table 2 
+Annual total energy consumed, shifted, emissions, and emission intensity under 
+eight different optimization scenarios.  
+Scenario 
+(Consumption/ 
+Demand 
+Charges) 
+Annual Total 
+Energy 
+Consumed 
+(MWh)a 
+Annual Net 
+Load Shifted 
+into Midday 
+(MWh)b 
+Average 
+GHG 
+Emission 
+Intensity 
+(mTCO2e/ 
+MWh)c 
+Annual Total 
+Avoided 
+Emissions 
+(mTCO2e)d 
+Baseline (Flat/ 
+None) 
+3,273,163 
+0.0 
+0.1552 
+0.0 
+1 (Flat/Flat) 
+3,214,285 
+−16,660 
+0.1560 
+21,859 
+2 (Low/High) 
+3,228,971 
+−37,354 
+0.1578 
+29,200 
+3 (Legacy TOU/ 
+Flat) 
+3,183,231 
+−80,584 
+0.1579 
+34,005 
+4 (Flat/TOU) 
+3,202,021 
+30,195 
+0.1559 
+42,621 
+5 (Modern TOU/ 
+None) 
+3,189,280 
+740,900 
+0.1416 
+149,178 
+6 (RTP/None) 
+2,989,939 
+578,158 
+0.1518 
+289,574 
+7 (Mar. Emit/ 
+None) 
+3,134,091 
+535,682 
+0.1488 
+330,627 
+8 (Avg. Emit/ 
+None) 
+3,179,347 
+1,071,478 
+0.1263 
+128,256  
+a Total energy consumption under all scenarios should be identical given 
+identical water demands. Small variations exist because each optimization sce­
+nario may have resulted in slightly different final water storage levels each 
+month resulting in slightly more or less total energy being demanded for 
+pumping. The total energy consumed for pumping under all scenarios equates to 
+approximately 1.2% of the total energy consumed in CA in 2020. 
+b Net load shifted is relative to the baseline considering the energy consumed 
+between the hours of 9am and 4pm. Negative values indicate that a greater load 
+was shifted out the load shift window than in. 
+c Average GHG emission intensity, calculated as the annual sum of the energy 
+demand in each hour multiplied by the corresponding hourly average CA elec­
+tricity grid emissions rate divided by the annual total energy consumed as re­
+ported in the first column. 
+d Avoided emissions, calculated as the sum of the differences in energy de­
+mands between scenarios 1–8 and the baseline scenario multiplied by the 
+operating marginal emissions intensity of the CA electric grid for every hour in 
+2020. 
+Table 3 
+Annual total energy consumed, shifted, emissions, and emission intensity under 
+eight different optimization scenarios.  
+Scenario (Consumption/ 
+Demand Charges) 
+Summer Daily Average 
+Net Load Shifted 
+(MWh)a,b 
+Winter Daily Average 
+Net Load Shifted 
+(MWh)a 
+Baseline 
+0 
+0 
+1 (Flat/Flat) 
+−32 
+−53 
+2 (Low Flat/High TOU) 
+−239 
+−34 
+3 (Legacy TOU/Flat) 
+−307 
+−178 
+4 (Flat/TOU) 
+196 
+26 
+5 (Modern TOU/None) 
+926 
+2584 
+6 (RTP/None) 
+482 
+2137 
+7 (Marg. Emissions/None) 
+706 
+1849 
+8 (Avg. Emissions/None) 
+2749 
+3029  
+a Net load shifted is relative to the baseline considering the energy consumed 
+between the hours of 9am and 4pm. Negative values indicate that a greater load 
+was shifted out the load shift window than in. 
+b Summer represents the months of June through September. 
+Table 4 
+Annual average daily peak net energy demanded from the CA water distribution 
+sector, magnitude and percent reduction in average daily net demand peak 
+relative to scenario one for all eight scenarios.  
+Scenario 
+(Consumption/ 
+Demand Charges)a 
+Annual Average 
+Daily Peak Net 
+Energy 
+Demanded 
+(MW)a 
+Change in Annual 
+Average Daily 
+Peak Net Energy 
+Demand relative to 
+baseline (MW) 
+Percent Change 
+in Average Daily 
+Peak Net Demand 
+relative to 
+baseline (%) 
+Baseline 
+378.3 
+0.0 
+0.0 
+1 (Flat/Flat) 
+376.1 
+−2.1 
+−0.6 
+2 (Low/High) 
+342.5 
+−37.9 
+−9.3 
+3 (TOU/Flat) 
+375.2 
+−2.6 
+−0.7 
+4 (Flat/TOU) 
+295.3 
+−82.7 
+−21.8 
+5 (TOU/None) 
+92.5 
+−285.7 
+−75.6 
+6 (RTP/None) 
+56.3 
+−321.5 
+−85.1 
+7 (Marginal 
+Emissions) 
+105.6 
+−272.1 
+−72.0 
+8 (Average 
+Emissions) 
+399.2 
+21.4 
+5.7  
+a Peak energy measured as energy demanded at the 7 pm hour (representing 
+the approximate net demand peak on the CA grid in 2020). 
+A.M. Rupiper et al.                                                                                                                                                                                                                             
+
+Journal of Cleaner Production 437 (2024) 140373
+11
+capacity in the summer of 2021 (CAISO, 2022). 
+Shifting water distribution pumping not only allows for greater 
+integration of more renewable resources and greater load capacity, but it 
+could also avoid GHG emissions by as much as 330,627mTCO2e/yr, or 
+approximately 0.55% of the total emissions of the California electric grid 
+in 2020 (California Air Resources Board, 2022). Under California 
+cap-and-trade markets this reduction could be worth as much as $US 5.6 
+M (based on Q4 2020 Prices of $16.93/mTCO2e, CARB, 2023). 
+5.2. The role of energy rate structures in the water sector 
+For the water sector to meet its potential as a grid resource, water 
+utilities need to be appropriately incentivized. This means removing 
+electricity demand charges, matching the TOU consumption charges and 
+timings to grid goals, and being aware of water system limitations with 
+regard to water storage capacity, pumping, and water demands. 
+All scenarios with demand charges resulted in relatively flat energy 
+consumption and low potential to load-shift or reduce peak demands. 
+Demand charges discourage utilities from high levels of energy con­
+sumption at any given time thus resulting in utilities maintaining a 
+consistent level of consumption to minimize their overall demand. 
+Removing demand charges allows utilities to respond to dynamic pric­
+ing signals and be more responsive overall to the needs of the grid. 
+Not every water utility can participate in load-shifting, but when 
+faced with high energy prices (in the absence of a demand charge) the 
+water sector as a whole was able to reduce pumping until prices dipped 
+back down. If those pricing signals correspond to the load shifting 
+window or a net demand peak (i.e. lowest prices between 9am and 4pm 
+and highest between 5 and 9pm) utilities are able to perform significant 
+amounts of load-shifting into the middle of the day and away from the 
+early evening. To maximize this, the pricing signals need to be greater at 
+all times of the day outside the load shifting window. Several of the rate 
+structures we examined do this to an extent, but inconsistently with 
+occasional low prices during periods of high carbon intensity and/or 
+outside the load-shifting window. The modern TOU rate structure we 
+examined did this during the winter, which is what allowed it to be so 
+successful at load shifting during this period. 
+Local minima in a TOU rate structure can have a significant impact 
+on energy consumption in the water sector. Most water utilities cannot 
+wait to pump until the daily minimum prices occur due to storage and 
+pumping constraints. Even when incentivized to pump in the middle of 
+the day, they were forced to also pump at alternative times, often in the 
+early morning when local minimum prices occurred. The most obvious 
+example of this is with scenarios 6 and 7 which have local minima 
+around 3am. This resulted in less energy being shifted into the middle of 
+the day, but greater avoided emissions. Timing of the local minima play 
+a significant role in how water utilities respond to the pricing signals and 
+their ability to meet electricity grid goals. 
+In general, the modern TOU pricing structure (scenario 5) performed 
+consistently at the top for all of the metrics we examined. Other sce­
+narios, like the average emissions rate did well at shifting energy and 
+avoiding emissions but performed poorly when considering grid ca­
+pacity as related to the net demand peak. Depending on the goal, 
+different energy rate structures performed the best. Table 5 summarizes 
+the best and worst performing rate structures by the metrics used in this 
+paper. 
+5.3. Modern energy markets need modern rate structures 
+Scenario 3, which has a legacy TOU consumption charge, resulted in 
+the largest amount of load shifted out of the curtailment window. Legacy 
+TOU consumption rates are still widely used by many electricity utilities 
+and have their lowest prices during the night when energy demand is 
+typically at its lowest. These rates were primarily designed to shift en­
+ergy demand away from peak demand periods to limit the overall energy 
+demand on the grid at any point in time. 
+These rates made a lot of sense when the energy generated during the 
+night and the day both came from the same fossil fuel-based sources and 
+resulted in the same emission intensities, which is no longer true. These 
+rates which used to make energy grids more resilient are breaking down 
+in a new energy market. When applied to the water sector, legacy TOU 
+rates resulted in grid impacts working counter to their original goals, 
+demonstrating the need to remove and replace them with rates reflective 
+of our changing energy market. 
+5.4. Limitations 
+While we believe that this study represents the best available esti­
+mate to date of the demand flexibility potential of the California water 
+sector, it has several important limitations. Water distribution systems 
+are complex and this method simplifies utility operations in order to 
+account for the 700+ public water systems in California. In the simpli­
+fication of water systems, important operational constraints have been 
+ignored, including water quality requirements, pressure requirements, 
+and forecasting ability. 
+Further research with more detail could improve the results and 
+provide additional insight about the application of the principles dis­
+cussed in this paper. Additionally, RTP and emissions rates are dynamic 
+and would change in response to water system load shifting and pur­
+chasing energy at alternative hours. If the entire water sector were to 
+participate in the wholesale market (i.e. RTP) that may change the en­
+ergy rates and this analysis. Likewise, more renewables being added to 
+the grid as is expected to meet CA renewable energy goals, will influence 
+the energy rates as well as the emissions intensities. 
+For the purposes of our study we assumed a baseline energy rate 
+tariff with flat energy consumption rates and no demand charges. In 
+reality, water utilities are likely to be using a variety of energy rate 
+tariffs, often multiple at a single utility. The purpose of assigning a 
+baseline was to indicate the flexibility of the water sector, i.e. how much 
+could the water distribution sector shift its energy demands when pre­
+sented with different energy rate tariffs. A flat rate tariff was selected as 
+the baseline because it results in a flat demand profile and operates in­
+dependent of time (i.e. no matter how or when a utility consumed en­
+ergy the total bill would be the same). Any of the scenarios could be used 
+as a baseline and numbers recalculated using the values presented in this 
+paper. 
+Our optimization assumed perfect forecasting ability, which would 
+not be present in the real world. Being able to perfectly forecast water 
+demands and dynamic energy prices give a water system operator the 
+ability to plan days ahead for low or high upcoming prices or water 
+demands allowing for a minimization of cost while ensuring reliability. 
+In reality, under some of the scenarios, water systems might not be 
+aware of low energy prices until a few hours ahead, which will change 
+how and their ability to shift their pumping demands. This limitation 
+especially applies to dynamic energy tariffs such as wholesale (RTP) 
+pricing and emissions minimization scenarios. For this reason, our es­
+timate may be on the high side relative to a real-life operator who may 
+be more cautious in the face of uncertainty. 
+Table 5 
+Best and worst electricity rate structures under a given metric as it pertains to 
+shifting energy demands in the California water distribution sector.  
+Metric 
+Best Rate Structure 
+Worst Rate Structure 
+Shifting Energy 
+8 (Average 
+Emissions) 
+3 (Legacy TOU Rate) 
+Avoiding Emissions 
+7 (Marginal 
+Emissions) 
+2 (High Demand 
+Charge) 
+Reducing the Net Demand 
+Peak 
+6 (Real-Time Pricing) 
+8 (Average Emissions) 
+Overall (combined metrics) 
+5 (Modern TOU) 
+4 (Legacy TOU)  
+A.M. Rupiper et al.                                                                                                                                                                                                                             
+
+Journal of Cleaner Production 437 (2024) 140373
+12
+5.5. Future exploration and what is needed 
+From the findings of this research, there are several opportunities for 
+extensions or additional exploration to be undertaken. A pilot applica­
+tion of a handful of utilities with the ability to respond to dynamic en­
+ergy prices such as RTP could be useful in validating the results and the 
+flexibility of the water sector to perform load-shifting. Further, using 
+what was uncovered in this research to create an ‘optimum’ rate struc­
+ture for water utilities and applying the same or similar optimization 
+process could help clarify the full potential, not limited to the currently 
+available rate tariffs, of the water distribution network in California to 
+respond to grid needs. Lastly, this research largely focused on the im­
+pacts of load-shifting in the water sector on the electric grid, but did not 
+explore the impacts to the distribution systems themselves such as costs, 
+water quality, operational challenges, etc. Future research may consider 
+what is occurring on the individual utility level and how that affects 
+water distribution goals and operations. This research could consider 
+questions such as which rates might be easiest for a utility to adopt, what 
+operational controls are needed to optimize energy demands, and how a 
+rate structure could be specifically designed for the water sector 
+considering any sector specific limitations and challenges. 
+This analysis focused on reducing curtailment and assigned a load- 
+shifting window to 9am-4pm, but could have been shifted to examine 
+another time period or address other needs of the electric grid. This 
+study did not examine the impact of the various energy rate scenarios on 
+grid concerns such as ramping of energy demands, which can occur 
+leading up to the net demand peak. Additional analysis that examines 
+how the water sector can be leveraged to meet other grid-related goals 
+could be informative. 
+6. Conclusion 
+Potable distribution pumping in the water sector accounts for 
+approximately 1.4% of the total electricity consumption in California 
+annually and has the capacity to shift when it uses that energy to help 
+integrate more renewable resources onto the grid, reduce curtailment, 
+decrease GHG emissions, and reduce the net demand peak. We account 
+for the operations of 702 public water distribution systems in California 
+with simulated water demand, pumping, and energy demands under 
+eight different energy pricing and emissions minimization scenarios. 
+From this simulation, we find that the water sector has the flexibility to 
+shift its energy demands by up to 1071 GWh annually, to reduce 
+curtailment in California by up to 68%, to reduce its contribution to peak 
+net demand by up to 321 MW, and/or avoid 330,627mTCO2e of emis­
+sions depending on the energy rate tariff. 
+The potential distribution system response depends on individual 
+system’s combination of tank storage capacity, pumping capacity, and 
+water demands as well as the applied energy tariff structure. Most sys­
+tems had the ability to perform some load shifting with the greatest 
+potential at systems with high storage volumes, low water demands, and 
+high pumping capacity. Energy tariffs with demand charges resulted in 
+minimal and in some cases negative load-shifting compared to the 
+baseline. The tariffs without demand charges and TOU consumption 
+charges that aligned low pricing with the load shifting window and 
+higher prices outside the window, resulted in the most dynamic energy 
+consumption, the greatest shifts in energy load, and the lowest GHG 
+emissions. Depending on the objective, adjusting rate structures could 
+encourage the water sector to shift when it demands energy such that it 
+could better assist California in meeting future energy and emission 
+targets. 
+Funding 
+This study was funded by the California Energy Commission with 
+financing from the Electric Program Investment Charge (EPIC), the 
+ratepayer surcharge authorized by the California Public Utilities 
+Commission, through agreement number EPC-16-062. Any opinions, 
+findings, and conclusions expressed in this material are those of the 
+authors and do not necessarily reflect the views of the funding agency. 
+CRediT authorship contribution statement 
+Amanda M. Rupiper: Conceptualization, Data curation, Formal 
+analysis, Methodology, Visualization, Writing – original draft. Robert 
+Good: Conceptualization, Data curation, Formal analysis, Methodology, 
+Software, Writing – review & editing. Gregory J. Miller: Conceptuali­
+zation, Data curation, Formal analysis, Methodology. Frank Loge: 
+Conceptualization, Formal analysis, Funding acquisition, Investigation, 
+Methodology, Project administration, Supervision, Writing – review & 
+editing. 
+Declaration of competing interest 
+The authors declare that they have no known competing financial 
+interests or personal relationships that could have appeared to influence 
+the work reported in this paper. 
+Data availability 
+Data will be made available on request. 
+Acknowledgements 
+A special thanks to student interns Kideok Kwon, Jonathan Fernan­
+dez, and Rohan Malhotra who helped with dataset cleaning and 
+processing. 
+Appendix A. Supplementary data 
+Supplementary data to this article can be found online at https://doi. 
+org/10.1016/j.jclepro.2023.140373. 
+References 
+Aghajanzadeh, A., McKane, A., Wray, C., Therkelsen, P., 2015. 2006-2015 Research 
+Summary of Demand Response Potential in California Industry, Agriculture, and 
+Water Sectors. Lawrence Berkeley National Laboratory LBNL, 1004131. 
+Amaral Lopes, R., Gronborg Junker, R., Martins, J., Muta-Pina, J., Reynders, G., 
+Madsen, H., 2020. Characterisation and use of energy flexibility in water pumping 
+and storage systems. Appl. Energy 277, 115587. 
+Beck, F., Martinot, E., 2004. Renewable energy policies and barriers. Encyclopedia of 
+Energy 5. 
+California Air Resources Board (CARB), 2022. California Greenhouse Gass Emissions for 
+2000 to 2020: Tends in Emissions and Other Indicators. https://ww2.arb.ca.gov/sit 
+es/default/files/classic/cc/inventory/2000-2020_ghg_inventory_trends.pdf. 
+California Air Resources Board (CARB), 2023. Cap-and-Trade Program Data Dashboard: 
+Carbon Allowance Prices. Retrieved on 12/15/2023 from. https://ww2.arb.ca.gov 
+/our-work/programs/cap-and-trade-program/program-data/cap-and-trade-program 
+-data-dashboard#Figure7. 
+California Energy Commission (CEC), 2021. A peek at net peak. https://www.energy.ca. 
+gov/data-reports/energy-insights/peek-net-peak. (Accessed 11 September 2021). 
+California Energy Commission (CEC), 2020. 2020 total systems electric generation. htt 
+ps://www.energy.ca.gov/data-reports/energy-almanac/california-electricity-data 
+/2020-total-system-electric-generation. (Accessed 11 September 2021). 
+California Independent Systems Operator (CAISO), 2017. Impacts of Renewable Energy 
+on Grid Operations chrome-extension:http://efaidnbmnnnibpcajpcglclefindmka 
+j/viewer.html?pdfurl=https%3A%2F%2Fwww.caiso.com%2Fdocuments%2Fcurtai 
+lmentfastfacts.pdf&clen=743715&chunk=true.  
+California Independent Systems Operator (CAISO), 2021b. Today’s outlook : current and 
+forecasted demand. http://www.caiso.com/TodaysOutlook/Pages/default. 
+aspx#section-net-demand-trend. (Accessed 11 September 2021). 
+California Independent Systems Operator (CAISO), 2021a. Managing Oversupply. 
+http://www.caiso.com/informed/Pages/ManagingOversupply.aspx. 
+California Independent Systems Operator (CAISO), 2022. Demand Response Issues and 
+Performance 2021. Department of Market Monitoring. https://www.caiso.com/Do 
+cuments/Demand-Response-Issues-Performance-Report-Jan-12-2022.pdf. 
+California State Water Resources Control Board (CA SWRCB), 2023. Electronic Annual 
+Report. Accessed from: https://www.waterboards.ca.gov/drinking_water/certlic/dri 
+nkingwater/ear.html. 
+A.M. Rupiper et al.                                                                                                                                                                                                                             
+
+Journal of Cleaner Production 437 (2024) 140373
+13
+Denholm, P., Hand, M., 2011. Grid flexibility and storage required to achieve very high 
+penetration of variable renewable electricity. Energy Pol. 39 (3), 1817–1830. 
+https://doi.org/10.1016/j.enpol.2011.01.019. 
+Faruqui, A., Sergici, S., 2013. Arcturus: international evidence on dynamic pricing. 
+Electr. J. 26 (7), 1040–6190. https://doi.org/10.1016/j.tej.2013.07.007. 
+Ge, M., Friedrich, J., Vigna, L., 2020. 4 Charts Explain Greenhouse Gas Emissions by 
+Countries and Sectors. World Resources Institute. Accessed 12/30/2023. https 
+://www.wri.org/insights/4-charts-explain-greenhouse-gas-emissions-countries-an 
+d-sectors. 
+Kernan, R., Liu, X., McLoone, S., Fox, B., 2017. Demand side management of an urban 
+water supply using wholesale electricity price. Appl. Energy 189, 395–402. 
+Menke, R., Abraham, E., Parpas, P., Stoianov, I., 2016. Demonstrating demand response 
+from water distribution system through pump scheduling. Appl. Energy 170, 
+377–387. 
+Miller, G., Novan, K., Jenn, A., 2022. Hourly accounting of carbon emissions from 
+electricity consumption. Environ. Res. Lett. 17, 044073 https://doi.org/10.1088/ 
+1748-9326/ac6147. 
+Oikonomou, K., Parvania, M., Khatami, R., 2018. Optimal demand response scheduling 
+for water distribution systems. IEEE Trans. Ind. Inf. 14, 5112–5122. 
+Park, L., Minasian, C., Wells, J., Vu, M., 2019. Water Sector Over-generation Mitigation 
+and Flexible Demand Response, Phase 2 Program Recommendations. Water Energy 
+Innovations. 
+Robinson, L., Edwards, J., Willnow, L., 2012. Computer modeling of water distribution 
+systems. In: AWWA MANUAL M32, third ed. American Water Works Association, 
+2012, Denver, CO.  
+Sherwood, J., Chitkara, A., Cross-Call, D., Li, B., 2016. A Review of Alternative Rate 
+Designs: Industry Experience with Time-Based and Demand Charge Rates for Mass- 
+Market Customers. Rocky Mountain Institute. http://www.rmi.org/alternative_rat 
+e_designs. 
+Sowby, R.B., 2021. Increasing water and wastewater utility participation in demand 
+response programs. Energy Nexus 1, 2772–4271. https://doi.org/10.1016/j. 
+nexus.2021.100001. 
+Sowby, R.B., 2023. Making waves: research to support water and wastewater utilities in 
+the transition to a clean-energy future. Water Res. 233 (15) https://doi.org/ 
+10.1016/j.watres.2023.119739. 
+Torriti, J., 2015. Peak Energy Demand and Demand Side Response, first ed. Routledge, 
+New York. https://doi.org/10.4324/9781315781099.  
+United Nations, 2021. The Sustainable Development Goals Report. https://unstats.un.or 
+g/sdgs/report/2021/. (Accessed 23 May 2022). 
+United States Energy Information Administration (US EIA), 2021. California’s 
+Curtailments of Solar Electricity Generation Continue to Increase. https://www.eia. 
+gov/todayinenergy/detail.php?id=49276. (Accessed 19 April 2021). 
+Van Triel, F., Lipman, T.E., 2020. Modeling the future California electricity grid and 
+renewable energy integration with electric vehicles. Energies 13, 5277. https://doi. 
+org/10.3390/en13205277. 
+Wimmler, C., Hejazi, G., de Oliveira Fernandes, E., Moreira, C., Conner, S., 2017. Impacts 
+of load shifting on renewable energy integration. Energy Proc. 107, 248–252. 
+Zohrabian, A., Plata, S.L., Min Kim, D., Childress, A.E., Sanders, K.T., 2021. Leveraging 
+the water-energy nexus to derive benefits for the electric grid through demand-side 
+management in the water supply and wastewater sectors. WIREs Water 8 (3). 
+https://doi.org/10.1002/wat2.1510. 
+A.M. Rupiper et al.                                                                                                                                                                                                                             

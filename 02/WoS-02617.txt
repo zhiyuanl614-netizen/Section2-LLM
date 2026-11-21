@@ -1,0 +1,1647 @@
+394
+IEEE TRANSACTIONS ON SMART GRID, VOL. 15, NO. 1, JANUARY 2024
+Exploiting the Flexibility Potential of Water
+Distribution Networks: A Pilot Project in Belgium
+Ioannis Boukas
+, Elodie Burtin, Antonio Sutera
+, Quentin Gemine, Bernard Pevee, and Damien Ernst
+Abstract—Flexibility, and in particular, energy storage is
+expected to assume a key role in the efﬁcient and secure opera-
+tion of the power system, and thus, in the transition towards a
+carbon-free electricity sector. In this paper, we propose a method-
+ology for exploiting the ﬂexibility existing in water distribution
+systems from water storage in reservoirs. The methodology relies
+ﬁrst on a modelling approach, from which an optimization
+problem is deﬁned. The resolution of this optimization problem
+leads to an operating pattern for the pumps. The methodology
+assumes that all the electricity is bought on the day-ahead mar-
+ket, where the bids are placed by constructing and solving an
+optimization problem. The uncertain water consumption and the
+electricity market prices are predicted using machine learning
+techniques. The methodology is tested on a real-life water distri-
+bution network in Belgium and the results from the pilot project
+indicate a cost reduction up to 11%.
+Index Terms—Flexibility, water distribution network, model
+predictive control.
+I. INTRODUCTION
+R
+ECENT directives and goals in Europe and worldwide
+for decarbonisation of the energy sector have resulted in
+targets for massive renewable energy sources (RES) integration
+in the coming decades [1], [2]. This large-scale RES integra-
+tion however entails risks for the secure operation of power
+systems. The uncertainty induced by RES due to the inability
+to predict accurately its power production is expected to lead
+to substantial challenges on handling imbalances in real-time.
+Flexibility is essential for achieving effectively the set goals
+for decarbonisation [3]. In particular, the use of ﬂexibility can
+assist in shifting energy from times that it is produced to times
+that it is needed to be consumed [4]. In this way, the match-
+ing of supply and demand of electricity can be realised more
+effectively.
+Manuscript received 29 August 2022; revised 30 January 2023 and 25
+March 2023; accepted 2 April 2023. Date of publication 2 May 2023; date of
+current version 26 December 2023. This work was supported by the Public
+Service of Wallonia—Department of Energy and Sustainable Buidling. Paper
+no. TSG-01240-2022. (Corresponding author: Ioannis Boukas.)
+Ioannis Boukas is with the Department of Electrical Engineering and
+Computer Science, University of Liège, 4000 Liège, Belgium (e-mail:
+ioannis.boukas@uliege.be).
+Elodie Burtin, Antonio Sutera, and Quentin Gemine are with the Intelligent
+Systems Solutions, Haulogy, 4120 Liège, Belgium.
+Bernard Pevee is with the Pôle Technique—Expert énergie, Société wal-
+lonne des eaux, 4800 Verviers, Belgium.
+Damien Ernst is with the Department of Electrical Engineering and
+Computer Science, University of Liège, 4000 Liège, Belgium, and also with
+the LTCI, Telecom Paris, Institut Polytechnique de Paris, 91120 Paris, France.
+Color versions of one or more ﬁgures in this article are available at
+https://doi.org/10.1109/TSG.2023.3272469.
+Digital Object Identiﬁer 10.1109/TSG.2023.3272469
+In this paper, we consider the case where ﬂexibility is
+offered by a large consumer that operates a water distribution
+network (WDN). Typically, during the operation of a WDN,
+the water pumps are the most energy intensive components.
+These pumps are responsible for transferring water between
+water reservoirs. The ﬂexibility potential lies on the ability
+to exploit the storage capacity of the reservoirs in a way
+that allows for scheduling the water pumps in the most cost-
+effective manner. In particular, we focus on the ﬂexibility
+that can be exploited in the case of a water treatment station
+(WTS). In the case of a WTS, the pumping process responsi-
+ble for transferring water from the production reservoirs to the
+reservoirs that supply the water demand takes up a large share
+of the total electricity consumed. In this case, ﬂexibility can be
+offered by such a station by shifting the pumping processes in
+time, thus beneﬁting from the capacity of the existing water
+reservoirs. This shift leads to effectively placing large parts
+of the electrical consumption of the station during periods of
+the day that the electricity is cheaper or when there is excess
+of local renewable energy production. In this way, the total
+electricity cost for the station is reduced and the system is
+operated in a more efﬁcient way.
+However, in order to properly be rewarded for its ﬂexibility
+it is necessary for the WTS operator to have access to an
+appropriate market mechanism/structure [5]. An appropriate
+market mechanism is such that provides a temporal granularity
+that matches with the size of the reservoirs and the pumping
+capacity of the WTS. In this paper, we consider that the WTS
+has access to all relevant energy markets through its retailer
+via a special contract (FLEXI-PROFILE). More speciﬁcally,
+the participation of the WTS operator in the markets is divided
+in three steps:
+1) Forward: Reservation of a ﬁxed amount of energy for
+the target year in the forward markets. Purchasing 1 MW
+of product CAL 2023 corresponds to a block of energy
+purchase for the year 2023, i.e., 8760 MWh. Forward
+markets are used by energy market players as a hedge
+against the risk/volatility/uncertainty of the spot markets,
+i.e., the day-ahead market. The price at which energy is
+traded in the long-term markets is said to be an expec-
+tation of what the average day-ahead market price will
+be for the given period.
+2) Day-ahead: Nomination of the amount of energy that
+will be consumed by the WTS during each quarter-
+hour of the next day. In Europe the day-ahead market is
+cleared around midday one day in advance and energy
+exchanges take place in hourly time-slots. Although,
+1949-3053 c⃝2023 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:37:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+BOUKAS et al.: EXPLOITING THE FLEXIBILITY POTENTIAL OF WATER DISTRIBUTION NETWORKS
+395
+there is one energy price per hour the retailer requests
+for a quarter-hourly nomination in order to manage the
+imbalance settlement process.
+3) Imbalance settlement: The difference between the mar-
+ket position (forward and day-ahead) of the WTS opera-
+tor and the real/measured consumption for each quarter
+of the day is penalised by the imbalance price.
+In this paper, we focus on addressing the short-term energy
+management of the WTS. To this end, for the sake of sim-
+plicity, in the presented methodology, we do not consider at
+all the forward step. More precisely, we consider that there
+is no energy reserved in the forward market. We also assume
+that the WTS operator does not intend to arbitrage between the
+day-ahead market and the imbalance market by speculating on
+the price difference between the two markets. This is a rea-
+sonable assumption that is made to reduce the risk/exposure
+of the WTS since its core business is not energy trading
+but water production. Additionally, the WTS operator in real-
+time is assumed to perform all means necessary to avoid any
+imbalances between the nominated and the realized energy
+consumption regardless of the imbalance prices.
+Broadly speaking, the participation of consumers in the elec-
+tricity markets, in the context of demand-side management
+(DSM) or demand-side response (DSR), for the procure-
+ment of ﬂexibility has been extensively studied in the litera-
+ture [6], [7]. An optimal bidding strategy for the participation
+of a variety of ﬂexible demand-side resources (e.g., plug-in
+electric vehicles and distributed generation and ﬂexible load)
+in the day-ahead market is proposed in [8], [9]. The authors
+consider explicitly the uncertainties related to the market price,
+the renewable generation and the electrical consumption and
+solve the problem by constructing robust optimization model
+that accounts for risk. Similarly, the strategic participation of
+ﬂexible loads in air-conditioned buildings is proposed in [10].
+A detailed model of the building is used to capture the
+relationship between the occupant comfort and the electri-
+cal consumption for heating, ventilation, and air-conditioning
+(HVAC). The optimal bidding strategy and real-time control
+of the system is determined using model-predictive control
+(MPC).
+Beyond traditional DSM technologies, the coupling of the
+WDN with the power system for ﬂexibility procurement has
+been proposed recently in the literature [11], [12]. In [13], [14]
+the optimal water ﬂow problem is formulated accounting for
+the WDN topology and the hydraulic constraints imposed by
+each component (e.g., water pumps, junctions, tanks, reser-
+voirs). The originally formulated optimization problem is
+nonconvex and is subsequently approximated using convex
+relaxations. A key assumption for constructing this model
+is that we have full knowledge of all the network parame-
+ters. In practice, this task becomes increasingly complex as
+the size of the WDN grows. Moreover, the participation of
+a WDN in DSR and in particular in offering grid services
+is investigated in [15], [16]. In [15] the hydraulic constraints
+of each component are modeled explicitly and a linearization
+method is employed to reduce the computation time needed,
+while price and water demand uncertainty is not considered.
+Results demonstrate promising proﬁt opportunities for water
+distribution system operators both in DSR and frequency regu-
+lation markets, by co-optimizing the schedule of water pumps
+and tanks over the whole network. In [16], ﬂexibility is offered
+by a WDN operator in order to procure both voltage support
+and frequency regulation to the grid.
+The participation of a WDN in the French wholesale energy
+market through a speciﬁc mechanism (“Notiﬁcation d’Echange
+de Blocs d’Effacement” (NEBEF)) is investigated in [17].
+The novelty introduced by the proposed approach is related
+to the management of the uncertainty stemming from water
+consumption in the network. In order to account for the
+water demand uncertainty a chance constrained problem is
+formulated to integrate water systems ﬂexibility to power
+system operation. A similar approach is followed in [18],
+where a chance-constrained optimization framework is used
+to account for water demand uncertainty. Results indicate that
+the approach is conservative leading to high reliability at high
+cost. A machine learning approach is proposed in [19] for
+predicting the water consumption. The forecasts are then used
+to control water pumps with the goal to smoothen the elec-
+tricity consumption and to shave peaks in a remote island in
+Greece. Results indicate gains up to 15%.
+In this paper, we focus on deriving an optimal bidding strat-
+egy and an optimal real-time control for the operation of an
+individual WTS instead of the entire WDN. However, the
+proposed modeling framework can be extended to the case
+where there is a set of WTS that need to be co-optimized.
+Moreover, we implement the proposed approach on a real
+WTS located in Belgium and we report results collected dur-
+ing the pilot phase. In the following, we frame the problem
+of a WTS operator maximizing the value of ﬂexibility in the
+short-term markets as following. Firstly, the WTS operator
+needs to predict the day-ahead market prices, the uncontrol-
+lable water ﬂows (i.e., water demand) and the uncontrollable
+power consumption of the WTS for the following day. Based
+on these predictions and a model of the WTS, an optimal
+day-ahead plan is constructed and is nominated to the retailer.
+This plan is created by optimizing the operation of the pump-
+ing processes and the utilisation of the water reservoirs in such
+a way that the total cost of energy is minimized while respect-
+ing any operating constraints related to the security of water
+supply, protection of equipment, etc. Secondly, once the day-
+ahead plan is nominated the real-time controller is responsible
+for matching the nominated day-ahead plan to the real-time
+consumption of the WTS.
+II. PROBLEM DESCRIPTION
+In this section, we describe in detail the market participation
+of a WTS operator. First, we present the decision-making pro-
+cess of the operator in the short-term markets. Subsequently,
+we describe the discrete time model used for modelling the
+operation of a generic WTS.
+A. Water Treatment Station Operation
+In this section, we present an abstract framework that is
+used to model the operation of a WTS. A schematic of the
+generic representation of a WTS is illustrated in Figure 1. This
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:37:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+396
+IEEE TRANSACTIONS ON SMART GRID, VOL. 15, NO. 1, JANUARY 2024
+Fig. 1.
+Schematic of a generic water treatment station. Reservoirs are
+connected with water ﬂows that can be controllable by a set of pumps or
+uncontrollable (e.g., water consumption).
+framework together with data from a real WTS is used to
+have a concrete representation of each individual WTS that is
+controlled. There are two main building blocks in this generic
+WTS model, namely the reservoirs and the water ﬂows that
+enter in or exit from the reservoirs.
+1) Water Flows: Let Qi,t[m3/h] denote the i-th ﬂow of
+water at time step t in the set of water ﬂows Q considered,
+with i ∈Q = {1, 2, . . . , I}. Water ﬂows are categorised in
+two subsets, namely controllable Qc ⊆Q and uncontrollable
+Qu ⊆Q. For instance, as shown in Figure 1, ﬂows Q1, Q3,
+Q4, Q5 are considered to be uncontrollable whereas ﬂow Q2
+is considered to be controllable.
+Each controllable ﬂow Qi,t are effectively controlled by a
+group/set of pumps Gi. The pumps considered in this analysis
+are assumed to be driven by a ﬁxed speed motor. Each pump
+g ∈Gi is considered to have a nominal power consumption ¯Pg
+and a nominal ﬂow ¯Qg, with g ∈{1, 2, . . .} ⊂N. Additionally,
+each pump is considered to have a binary status sg
+t ∈{0, 1}
+that takes the value 0 when the pump is off and the value
+1 when the pump is on at each time step t. Additionally, we
+consider a number of periods k during which each pump needs
+to remain on once it is activated and a number of periods
+m during which each pump needs to remain off once it is
+deactivated. This allows for limiting the number of activations
+and deactivations that could potentially lead to degradation of
+the pump or its motor. For example, in the presented Figure 1,
+pump group G1 is used to control ﬂow Q2 and is composed
+of three pumps namely g ∈{1, 2, 3}.
+At each time step t the water ﬂow Qi,t for each controllable
+ﬂow i ∈Qc can be computed as a function of the status of
+each pump in the pump group Gi according to:
+Qi,t =
+
+g∈Gi
+sg
+t · ¯Qg
+(1)
+At each time step t the power consumption Pi,t that corre-
+sponds to controllable water ﬂow i ∈Qc can be computed
+accordingly as:
+Pi,t =
+
+g∈Gi
+sg
+t · ¯Pg
+(2)
+The total electrical consumption of the WTS Pt at each
+time step t is given by the sum of the controllable power,
+the uncontrollable power consumption of the station Pupc
+t
+and
+the renewable energy sources (e.g., solar photovoltaic etc.)
+generation Pres
+t
+as:
+Pt =
+
+i∈Qc
+Pi,t + Pupc
+t
+−Pres
+t
+(3)
+The term uncontrollable power consumption Pupc
+t
+is used to
+denote the set of electrical devices in the WTS such as elec-
+trical motors related to water ﬁltering etc. over which we do
+not have any control.
+The set of uncontrollable ﬂows Qu corresponds to processes
+that are not controlled by the operator such as the water
+demand of the area or the cleaning of the water ﬁlters (which
+is a seasonal operation that cannot be interrupted). These
+processes will be modelled by means of statistical models,
+as described in Section III.
+2) Reservoirs: Let SoCr
+t denote the state of charge of the
+reservoir r ∈{1, 2, . . . , R} ⊂N time step t, with SoCr
+t [m3] ∈
+[SoCr, SoC
+r]. It is considered that a set of inﬂows Qr,in ⊆Q
+and outﬂows Qr,out ⊆Q are attached to each reservoir r.
+For instance, in Figure 1, for reservoir 1 it is considered that
+Q1,in = {Q1} and Q1,out = {Q2}, while for reservoir 2 we
+have Q2,in = {Q2, Q3} and Q2,out = {Q4, Q5}. More for-
+mally, we can deﬁne an adjacency matrix with dimension
+R × I for grouping together all the inﬂows and outﬂows for
+all reservoirs.
+A =
+⎡
+⎢⎢⎢⎣
+a11
+a12
+· · ·
+a1I
+a21
+a22
+· · ·
+a2I
+...
+...
+...
+...
+aR1
+aR2
+· · ·
+aRI
+⎤
+⎥⎥⎥⎦
+(4)
+Each element ar,i takes values in {−1, 0, 1} depending on
+whether ﬂow Qi is an outﬂow, not connected or an inﬂow to
+reservoir r respectively.
+We can also deﬁne the efﬁciency matrix η with dimensions
+R×I that represents the losses/leakages for each inﬂow/outﬂow
+as:
+η =
+⎡
+⎢⎢⎢⎣
+η11
+η12
+· · ·
+η1I
+η21
+η22
+· · ·
+η2I
+...
+...
+...
+...
+ηR1
+ηR2
+· · ·
+ηRI
+⎤
+⎥⎥⎥⎦
+(5)
+Parameters ηr,i represent the losses/leakages for each
+inﬂow/outﬂow i for reservoir r. Parameters ηr,i take values
+ηr,i ≥1 when dealing with outﬂows and values ηr,i ≤1 when
+dealing with inﬂows. Appropriate values for these parameters
+can identiﬁed by performing a system identiﬁcation process
+using data from the WTS that we intend to model. This process
+is described in detail in Section III.
+Let Qt denote the vector containing all the ﬂows at
+timestep t, deﬁned as:
+Qt =
+	Q1,t
+Q2,t
+· · ·
+QI,t
+
+(6)
+The state of charge matrix SoCt can be deﬁned as:
+SoCt =
+	
+SoC1
+t
+SoC2
+t
+· · ·
+SoCR
+t
+
+(7)
+The evolution of the state of charge in matrix notation is
+given by:
+SoCt+t = SoCt + A ⊙η · QT
+t
+(8)
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:37:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+BOUKAS et al.: EXPLOITING THE FLEXIBILITY POTENTIAL OF WATER DISTRIBUTION NETWORKS
+397
+Fig. 2.
+Decision timeline for day-ahead nomination and real-time control.
+The symbol ⊙is used to denote the Hadamard product, also
+known as the element-wise product.
+B. Market Participation
+Let us consider a ﬂexible WTS operator nominating its con-
+sumption for the next day in the day-ahead market and controls
+in real-time the consumption of the station.
+The decision timeline for the ﬂexible WTS for a day
+D is presented in Figure 2. At each time step t ∈T =
+{00 : 00, . . . , 23:45} the WTS operator takes decisions about
+the level of the real-time consumption Pt. The real-time con-
+sumption of the WTS is deﬁned in Section II-A1. For the sake
+of simplicity regarding the notation and the indexing, we will
+assume that the decision timeline and the actual delivery of
+power have the same interval, i.e., t = 15min.
+In addition to that, one day in advance (D −1) at 10 a.m.
+the WTS operator nominates/submits in the day-ahead mar-
+ket the 96 values of its net consumption proﬁle for the next
+day (D). More formally, the WTS operator decides the day-
+ahead proﬁle for day D, denoted by PDA
+D
+= {PDA
+t
+,
+∀t ∈T}.
+When the day-ahead market clears, the prices for each hour of
+the next day λDA
+D = {λDA
+t
+,
+∀t ∈T} become known. While in
+reality the day-ahead prices have an hourly granularity, in the
+FLEXI-PROFILE contract its speciﬁed that the WTS operator
+nominates quarter-hourly proﬁles. Therefore, we assume the
+day-ahead prices to be at a constant level for each quarter of
+the same hour. It is stipulated by the contract, that if the day-
+ahead nominated power is positive the WTS buys its energy
+at the day-ahead market price, whereas if the day-ahead nom-
+inated power is negative (production), the WTS sells energy
+to the market at a ﬁxed contractually predeﬁned price λSell,
+that does not depend on the time.
+The WTS operator can compute its day-ahead cost at each
+timestep t ∈T as:
+CDA
+t
+=
+λDA
+t
+· |PDA
+t
+|,
+if
+PDA
+t
+≥0,
+−λSell · |PDA
+t
+|, otherwise.
+(9)
+The imbalance PIM
+t
+at each timestep t is deﬁned as:
+PIM
+t
+= Pt −PDA
+t
+,
+(10)
+The imbalance price λIM
+t
+for each quarter becomes known at
+the end of the quarter. The imbalance cost can be computed as:
+CIM
+t
+= λIM
+t
+· PIM
+t ,
+(11)
+As described in Section I, in this paper we assume that
+the WTS operator does not intend to arbitrage between the
+day-ahead market and the imbalance market by speculating on
+the price difference between the two markets. Additionally, in
+real-time, the operator could deviate its consumption from the
+day-ahead plan in order to beneﬁt from the imbalance prices.
+However, this would imply that the WTS operator has access
+to accurate forecasts of the imbalance price. This can be very
+risky because imbalance markets are highly volatile. Instead,
+at each timestep t in real-time the WTS operator controls its
+consumption in order to match its day-ahead nomination while
+satisfying the operational constraints of the unit.
+C. Problem Deﬁnition
+In this section, we deﬁne the problem faced by a WTS
+operator that participates in the day-ahead market. The cost
+minimization objective for electricity transacted in the day-
+ahead market faced by a WTS operator can be summarized as:
+min
+
+Pt,PDA
+t
+,∀t∈T
+
+
+t∈T
+λDA
+t
+· Pbuy
+t
+−λsell · Psell
+t
+(12)
+where at each timestep we ensure that the power consump-
+tion/production Pt is bought/sold in the market. Thus, we
+have:
+Pt = PDA
+t
+(13)
+PDA
+t
+= Pbuy
+t
+−Psell
+t
+(14)
+Pbuy
+t
+, Psell
+t
+≥0
+(15)
+The solution of this optimization model yields the optimal
+day-ahead nomination plan and the optimal real-time power
+consumption for the WTS. However, in reality, the day-ahead
+nomination problem cannot be solved optimally due to the
+various sources of uncertainty at the day-ahead stage. More
+speciﬁcally, at the day-ahead decision stage there is uncertainty
+related to the day-ahead prices (λDA
+t
+), the uncontrollable water
+ﬂows (Qi,t,
+∀i ∈Qu), the uncontrollable power consumption
+(Pupc
+t
+) and the renewable power generation (Pres
+t ).
+The uncertainty related to the uncontrollable water ﬂows,
+the uncontrollable power consumption and the renewable
+power generation may result in discrepancies between the
+real-time consumption and the day-ahead plan. Therefore, dur-
+ing real-time operation, the WTS operator needs to solve an
+optimization problem with the objective to minimimize devi-
+ations (Pup
+t , Pdown
+t
+) from the day-ahead plan according to:
+min
+{Pt∀t∈T}
+
+t∈T
+C ·
+
+Pup
+t
++ Pdown
+t
+
+,
+(16)
+where we have:
+Pt = PDA
+t
++ Pup
+t
+−Pdown
+t
+(17)
+Pup
+t , Pdown
+t
+≥0
+(18)
+The objective presented in equation (16) aims at penalizing
+by a factor C any deviations (Pup
+t , Pdown
+t
+) between the
+real-time consumption of the WTS Pt and the day-ahead nom-
+inated schedule PDA
+t
+. At the real-time stage uncertainty is
+mostly related to the uncontrollable water ﬂows. In the fol-
+lowing we develop a methodology that creates forecasts of
+the various sources of uncertainty. Moreover, we decouple
+the optimization problem in two distinct models. One that is
+solved at the day-ahead stage and one that is solved in real-
+time at each timestep t in order to correct any discrepancies
+between the predicted and the realized plan. The methodology
+for generating predictions for the uncertain variables, as well
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:37:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+398
+IEEE TRANSACTIONS ON SMART GRID, VOL. 15, NO. 1, JANUARY 2024
+as, the optimization models solved for taking optimal deci-
+sions in day-ahead and real-time are presented in the following
+section.
+III. METHODOLOGY
+As detailed in Section II, the decision making problem of a
+ﬂexible WTS operator participating in the short-term markets
+consists in two stages, namely i) the day-ahead nomination
+of the amount of energy that will be consumed during each
+quarter of the next day and ii) the real-time control of the
+controllable ﬂows. In this section, we describe the method-
+ology used for solving the aforementioned problem. We ﬁrst
+describe the methodology used to estimate the parameters of
+the WTS through a system identiﬁcation process that relies on
+historical data. Subsequently we describe the methods used to
+create predictions of the prices, the uncontrollable ﬂows and
+the residual consumption at the day-ahead stage. We proceed
+by presenting the optimization model used at the day-ahead
+stage to determine the optimal power nomination. Finally, we
+present the optimization model that is solved during real-time
+in order to generate the optimal control of the pumps that
+matches the nominated day-ahead plan.
+A. System Identiﬁcation
+As described in Section II-A2, in order to have a realistic
+model for estimating the state of charge for reservoir r ∈R at
+each time step t, the values of the efﬁciency parameters η need
+to be identiﬁed. To achieve that, we use the model presented
+in equation (8) and historical data regarding the matrices of
+the ﬂows Qt and the state of charge of the reservoirs SoCt. The
+historical dataset containing H sequential data samples can be
+deﬁned as:
+B =
+
+˜
+SoC0,
+˜
+SoC1, . . . ,
+˜
+SoCH
+
+,
+
+˜Q0, ˜Q1, . . . , ˜QH
+
+.
+We use each sample
+˜
+SoCh, ˜Qh in the historical dataset
+and the model presented in equation (8) to produce estimates
+of the state of charge matrix
+ˆ
+SoCh+1 at the next timestep.
+Subsequently, we aim at ﬁnding the parameters η that mini-
+mize the error between the estimates of the model
+ˆ
+SoCh+1 of
+equation (8) and the historical data
+˜
+SoCh+1. We have:
+η = arg min
+η
+1
+H
+
+h∈{1,...,H}
+
+ˆ
+SoCh −
+˜
+SoCh
+2
+(19)
+s.t.
+ˆ
+SoCh+1 =
+˜
+SoCh + A ⊙η · ˜QT
+h ,
+∀h ∈{0, . . . , H −1}.
+(20)
+B. Day-Ahead Price Forecasting
+The WTS operator every day D at 10 a.m. needs to nom-
+inate the power that will be consumed for the operational
+needs of the WTS during the next day. The WTS opera-
+tor schedules most of its consumption during periods of the
+day that the price of electricity is at the lowest levels. To
+identify these periods of the day the WTS operator creates
+predictions of the day-ahead price for the following N days.
+We deﬁne the look-ahead horizon at day D that is denoted
+by ¯T = {D
+00 : 00, D
+00 : 15, . . . , D + N
+23 : 45}. We
+denote as ˆλDA
+D = {ˆλDA
+t
+,
+t ∈¯T}, the forecast of the day-ahead
+market prices for the following N days.
+In order to generate predictions for the day-ahead prices of
+the following days we use an auto-regressive time-series model
+predDA that relies on historical values of the day-ahead price
+of the past M days. We denote as λDA
+D−1 the 96 quarter-hourly
+values of the day-ahead price for day D −1. The prediction
+task can be described by:
+ˆλDA
+D = predDA
+
+λDA
+D−1, . . . , λDA
+D−M
+
+(21)
+More speciﬁcally, the model predDA is an instance of Facebook
+Prophet, that is a decomposition time-series framework that
+decomposes the signal in its trend, its seasonality and the holi-
+days [20]. The parameters of the model predDA are tuned using
+a large dataset of historical values of the day-ahead prices.
+The motivation behind using such a model lies on the fact
+that the day-ahead price formation depends on the strong daily
+seasonality of the electricity demand. In addition to that, in
+this particular application, we are not necessarily interested to
+obtain high accuracy on the precise value of the prediction of
+the absolute day-ahead price. Instead, we are more interested
+in predicting the spread and the time periods of peak versus
+off-peak prices, because this information is in essence what
+will lead the WTS to schedule its controllable consumption.
+C. Uncontrollable Water Flow Forecasting
+There are two different types of ﬂows that can be considered
+uncontrollable in the context of a WTS. The ﬁrst type refers
+to ﬂows that correspond to water demand from the users. The
+latter corresponds to water inﬂows/outﬂows that originate from
+or are directed towards some internal process of the station,
+e.g., water production, ﬁlter cleaning etc.
+For the prediction task of the ﬁrst type of uncontrollable
+water ﬂows that corresponds to user water demand we use
+an auto-regressive seasonality model. The motivation behind
+the use of such a model lies on the fact that generally speak-
+ing, the water demand has strong daily and yearly seasonality
+components. To this end, we denote the forecast of the uncon-
+trollable seasonal ﬂows as ˆQi,D = { ˆQi,t,
+t ∈¯T}, where
+i ∈Qu. Similar to the day-ahead forecasting process we deﬁne
+a water ﬂow forecasting model predQ that relies on the histor-
+ical realizations of the uncontrollable ﬂow of the past M days
+as:
+ˆQi,D = predQ
+
+Qi,D−1, . . . , Qi,D−M
+
+(22)
+The parameters of the model predQ are tuned using a large
+dataset of historical values of each ﬂow Qi. We denote as
+Qi,D−1 the 96 quarter-hourly values of the ﬂow for day D−1.
+For the prediction task of the second type of uncontrol-
+lable water ﬂows a detailed analysis on the nature of the
+process is necessary. Depending on the underlying physi-
+cal task, a custom model can be constructed in order to
+predict its values for the considered look-ahead horizon. For
+the case study presented in this paper, the methodology for
+tackling the prediction task of these ﬂows is detailed in
+Section IV-C. However, there is no generic methodology that
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:37:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+BOUKAS et al.: EXPLOITING THE FLEXIBILITY POTENTIAL OF WATER DISTRIBUTION NETWORKS
+399
+can be abstracted and used in every setting and it is therefore
+case-sensitive.
+D. Uncontrollable Consumption & RES Generation
+Forecasting
+As
+described
+in
+Section
+II-A1,
+the
+uncontrollable
+power
+consumption
+consists
+of
+any
+uncontrollable
+processes
+at
+the
+WTS
+that
+consume
+electrical
+power.
+The prediction of the uncontrollable consumption denoted
+as ˆPupc,DA
+D
+= {ˆPupc
+t
+t ∈¯T}. The prediction of the renewable
+generation is denoted as ˆPres,DA
+D
+= {ˆPres
+t
+t ∈
+¯T}. The
+prediction of both the uncontrollable power consumption
+and the RES generation is also performed by means of an
+auto-regressive model similar to the two previous prediction
+tasks presented in equations (21) and (22).
+E. Day-Ahead Optimization Model
+As described previously, the WTS operator every day
+at 10 a.m. nominates the consumption level for each quar-
+ter of the next day D, denoted by PDA
+D = {PDA
+t
+,
+∀t ∈T}. As
+described in Section II-A1, the day-ahead nomination for the
+consumption at each time step t of the next day can be split
+into two parts, namely the day-ahead estimate of the control-
+lable consumption and the forecasts of the uncontrollable part
+and the RES generation as:
+PDA
+t
+= ˆPupc
+t
+−ˆPres
+t
++
+
+i∈Qc
+Pi,t.
+In order to construct its nomination, the WTS operator
+solves an optimization model to determine the optimal con-
+trollable consumption plan. After the system identiﬁcation and
+the prediction steps described above, the ﬂexible WTS opera-
+tor constructs the optimization model as shown in Algorithm 1
+for determining the controllable part
+⎧
+⎨
+⎩
+
+i∈Qc
+Pi,t,
+∀t ∈T
+⎫
+⎬
+⎭
+of the day-ahead nomination that is submitted each day D to
+the retailer.
+It is important to note that, equations (30) - (34) are used
+to model the minimum time on/off constraints for protecting
+the pumps from frequent activations and deactivations. More
+speciﬁcally, binary variables bg
+t and eg
+t are used to indicate
+whether pump g is activated or deactivated at timestep t respec-
+tively. Equation (31) denotes that if pump g was activated at
+timestep t, i.e., bg
+t = 1, it cannot be deactivated in the fol-
+lowing k timesteps, i.e., eg
+t = eg
+t+t = · · · = eg
+t+kt = 0.
+Similarly, equation (32) denotes that if pump g was deacti-
+vated at timestep t, i.e., eg
+t = 1, it cannot be activated in the
+following m timesteps, i.e., bg
+t = bg
+t+t = · · · = bg
+t+kt = 0.
+Additionally, equation (33) imposes a speciﬁc order with
+which pumps are activated in a group of pumps. This con-
+straint is introduced by the technical operation of the WTS.
+More speciﬁcally, the control action transmitted to the oper-
+ating system of the WTS is the total number of pumps that
+Algorithm 1: Day-Ahead Optimization Model
+Input:
+¯T: look-ahead horizon,
+ˆλDA
+D : day-ahead price forecast,
+{ ˆQi,D}i∈Qu: uncontrollable water ﬂows forecast,
+{¯Pg}g∈{Gi}i∈Qc : nominal power for all pumps,
+{ ¯Qg}g∈{Gi}i∈Qc : nominal water ﬂow for all controllable ﬂows,
+η: efﬁciencies matrix,
+A: adjacency matrix,
+SoC, SoC: reservoir lower and upper limits.
+Output: PDA
+D : day-ahead nomination,
+{Qi,D}i∈Qc: controllable ﬂows plan,
+SoCD}: day-ahead plan for the state of charge of all reservoirs,
+{sg
+D}g∈{Gi}i∈Qc : day-ahead plan for the status of all pumps
+Solve:
+min
+
+t∈¯T
+ˆλDA
+t
+· t · Pbuy
+t
+−λsell · Psell
+t
+(23)
+s.t.
+∀t ∈¯T:
+PDA
+t
+= ˆPupc
+t
+−ˆPres
+t
++
+
+i∈Qc
+Pi,t
+(24)
+PDA
+t
+= Pbuy
+t
+−Psell
+t
+(25)
+Pi,t =
+
+g∈Gi
+sg
+t · ¯Pg,
+∀i ∈Qc
+(26)
+Qi,t =
+
+g∈Gi
+sg
+t · ¯Qg,
+∀i ∈Qc
+(27)
+SoCr
+t+t = SoCr
+t +
+
+i∈Qu
+ar,i · ηr,i · ˆQi,t
++
+
+i∈Qc
+ar,i · ηr,i · Qi,t
+∀r ∈R
+(28)
+SoCr ≤SoCr
+t ≤SoCr,
+∀r ∈R,
+(29)
+sg
+t −sg
+t−1 = bg
+t −eg
+t , ∀g ∈Gi,
+∀i ∈Qc
+(30)
+bg
+t +
+t+k·t
+
+t
+eg
+t ≤1, ∀g ∈Gi,
+∀i ∈Qc
+(31)
+eg
+t +
+t+m·t
+
+t
+bg
+t ≤1, ∀g ∈Gi,
+∀i ∈Qc
+(32)
+s1
+t ≤s2
+t ≤· · · ≤s|Gi|
+t
+,
+∀i ∈Qc
+(33)
+sg
+t , bg
+t , eg
+t ∈{0, 1}, ∀g ∈Gi,
+∀i ∈Qc
+(34)
+Pbuy
+t
+, Psell
+t
+≥0
+(35)
+should be active. The decision about which pumps will be
+active at each point is a decision made by the operators.
+After solving the optimization problem described, we obtain
+a day-ahead estimate of the values of the ﬂows ({Qi,D}i∈Qc)
+and the state of charge of the reservoirs ({SoCr
+D}r∈R). A little
+subtlety regarding the look-ahead horizon versus the actual
+day-ahead nomination horizon is that since we are considering
+the control of water reservoirs it is important to consider a
+look-ahead horizon longer than one day. The reason for that
+is that at the end of the horizon the state of the reservoirs
+would end up at the minimum allowed level. To avoid that we
+instead consider a longer than one day look-ahead horizon and
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:37:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+400
+IEEE TRANSACTIONS ON SMART GRID, VOL. 15, NO. 1, JANUARY 2024
+we only keep for the day-ahead nomination only the results
+we obtained for the following day.
+F. Real-Time Optimization Model
+As described previously, after the day-ahead plan is nom-
+inated PDA
+D , the WTS operator is responsible to control the
+real-time controllable consumption in such a way that it fol-
+lows as close as possible the day-ahead plan. To achieve
+that, the operator would generate new forecasts in real-time
+for the uncontrollable water ﬂows as described above. The
+look-ahead horizon for the real-time decision is deﬁned as
+˜T(t) = {t, . . . , t + K · t}. Based on these updated forecasts
+that depend on the realization of the ﬂows close to real-
+time, the operator solves the optimization model described in
+Algorithm 2. The output of this optimization model is the
+activation or deactivation of the pumps {sg
+t , ∀g ∈Gi, ∀i ∈Qc}
+considered in order to control optimally the water ﬂows and
+the electrical consumption of the WTS. While we compute
+values in the entire look-ahead horizon ˜T(t) only the values
+computed at time step t are applied to the real system. It is
+important to note that, similar to the day-ahead problem, equa-
+tions (42) - (46) are used to ensure the minimum time on/off
+constraints during the real-time operation as well.
+IV. CASE STUDY: STEMBERT TREATMENT STATION
+In the context of a real-life pilot project, the described
+methodology is used for the day-ahead nomination and real-
+time control of the Stembert water treatment station located
+in Verviers, Wallonia, Belgium (50◦36’06.6’‘N 5◦54’14.3’‘E).
+More speciﬁcally, the presented algorithms for the prediction
+and control of a WTS are implemented in the AMEO1
+(Advance
+Management
+of
+Energy
+Operations)
+platform,
+developed by Haulogy.2 AMEO allows for data collection and
+processing from various sources and runs intelligent forecast-
+ing and decision-making algorithms to optimize the economic
+and technical operations of energy systems. AMEO provides
+advanced monitoring solutions tailored to the considered use
+case and allows for rapid prototyping and implementation.
+During this pilot project the station of Stembert was operated
+automatically by AMEO for a period of 16 days.
+A. Reservoir Operation
+In this section, we will focus on the operation of the two
+large reservoirs, called Louveterie and Bronde, with 30, 000m3
+capacity each, as depicted in Figure 3(a). Water from the treat-
+ment plant is gathered in a small reservoir called Cisternes
+with capacity 5, 000m3. Water from this reservoir is treated
+and then pumped through ﬁve low-pressure pumps and into
+Bronde. Subsequently, four high-pressure water pumps are
+responsible for pumping water either towards Louveterie, or
+directly towards the water network. Each one of these high-
+pressure pumps, when operated, consumes 250kW and creates
+a ﬂow of 1, 000m3/h. Alternatively, water stored in Louveterie
+1https://www.haulogy.net/en/2021/12/17/successful-go-live-in-the-context-
+of-the-hydroﬂex-project/
+2https://haulogy.net/software-platforms/platform-for-new-energy-markets/
+Algorithm 2: Real-Time Optimization Model
+Input:
+˜T(t): look-ahead horizon,
+PDA
+D : day-ahead nomination,
+C: deviation penalty,
+{ ˆQi,˜T(t)}i∈Qu: uncontrollable water ﬂows forecast,
+{¯Pg}g∈{Gi}i∈Qc : nominal power for all pumps,
+{ ¯Qg}g∈{Gi}i∈Qc : nominal water ﬂow for all controllable ﬂows,
+η: efﬁciencies matrix,
+A: adjacency matrix,
+SoC, SoC: reservoir lower and upper limits.
+Output: {sg
+t }g∈{Gi}i∈Qc : activation signal for all pumps,
+{Qi,˜T(t)}i∈Qc: real-time estimation of the controllable ﬂows,
+SoC ˜T(t)}: real-time estimation of the state of charge of all
+reservoirs
+Solve:
+min
+
+t∈˜T(t)
+C · (Pup
+t
++ Pdown
+t
+)
+(36)
+s.t.
+∀t ∈˜T(t):
+
+∀i∈Qc
+Pi,t + ˆPupc
+t
+−ˆPres
+t
+= ¯PDA
+t
++ Pup
+t
+−Pdown
+t
+(37)
+Pi,t =
+
+g∈Gi
+sg
+t · ¯Pg,
+∀i ∈Qc
+(38)
+Qi,t =
+
+g∈Gi
+sg
+t · ¯Qg,
+∀i ∈Qc
+(39)
+SoCr
+t+t = SoCr
+t +
+
+i∈Qu
+ar,i · ηr,i · ˆQi,t
++
+
+i∈Qc
+ar,i · ηr,i · Qi,t
+∀r ∈R
+(40)
+SoCr ≤SoCr
+t ≤SoCr,
+∀r ∈R,
+(41)
+sg
+t −sg
+t−1 = bg
+t −eg
+t , ∀g ∈Gi,
+∀i ∈Qc
+(42)
+bg
+t +
+t+k·t
+
+t
+eg
+t ≤1, ∀g ∈Gi,
+∀i ∈Qc
+(43)
+eg
+t +
+t+m·t
+
+t
+bg
+t ≤1, ∀g ∈Gi,
+∀i ∈Qc
+(44)
+s1
+t ≤s2
+t ≤· · · ≤s|Gi|
+t
+,
+∀i ∈Qc
+(45)
+sg
+t , bg
+t , eg
+t ∈{0, 1}, ∀g ∈Gi,
+∀i ∈Qc
+(46)
+Pup
+t , Pdown
+t
+≥0.,
+∀t ∈˜T(t)
+(47)
+can be directed towards the water network that is supplying
+the area of Liège.
+Conventionally, the operating strategy of both pump groups
+is based on thresholds of the water level in the reservoirs
+upstream and downstream. More precisely, when the water level
+of Bronde is between 2.8m and 4.2m one pump is operating. If
+the water level is higher than 4.2m then an additional pump starts
+operating in parallel. When the water level drops below 2.8m
+then the water pump towards Louveterie stops. Additionally,
+pumping water towards Louveterie is suspended in case the
+water level in Louveterie is higher than 4.78m. The operating
+strategy of the low-pressure pumps responsible for pumping
+water from the Cisterns to Bronde is the following. When
+the water level of Cisterns is between 2.2m and 3.45m one
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:37:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+BOUKAS et al.: EXPLOITING THE FLEXIBILITY POTENTIAL OF WATER DISTRIBUTION NETWORKS
+401
+Fig. 3.
+Schematic representation of Stembert water treatment station.
+pump is operating. If the water level is higher than 3.45m
+then two pumps are operating in parallel. When the water
+level drops below 2.2m then the water pump towards Bronde
+stops. Due to restrictions related to the chemical composition
+of the water gathered in the reservoir of Cisternes we assume
+that the WTS operator cannot change the conventional control
+strategy for the low-pressure pumps. These rule-based control
+strategies for the conventional operation of both pump groups
+together with the model of the station detailed in Section II-A
+are used to simulate the conventional operation and power
+consumption of the station during the 15-day period of the pilot
+phase.
+In the following we consider that the WTS operator can ben-
+eﬁt from its ﬂexibility potential by adapting the operation of
+the high-pressure pump group G3 as illustrated in Figure 3(b).
+The set of ﬂows that appear in the selected system is Q =
+{Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8}. Out of the set of all ﬂows
+we distinguish between the controllable ﬂows Qc = {Q3} and
+the uncontrollable ones Qu = {Q1, Q2, Q4, Q5, Q6, Q7, Q8}.
+The controllable ﬂow Q3 is controlled by pump group that
+consists of 3 individual pumps, i.e., G3 = {1, 2}. Each of
+these pumps is able to generate a ﬂow of ¯Q1, ¯Q2 = 1000m3/h
+and its power consumption is ¯P1, ¯P2 = 250kW.
+There are two reservoirs involved in our study so we con-
+sider R = {Br, Lou}. The adjacency matrix used for this case
+study is:
+A =
+Q1
+Q2
+Q3
+Q4
+Q5
+Q6
+Q7
+Q8
+
+
+Brou
+0
+1
+−1
+0
+−1
+−1
+0
+0
+Lou
+0
+0
+1
+−1
+0
+0
+0
+0
+The inﬂow to Bronde is QBr,in = {Q2} and the outﬂows are
+QBr,out = {Q5, Q6}. The considered reservoir security limits
+for Bronde are SoCBr = 12, 000m3, SoC
+Br = 27, 000m3. The
+inﬂow for Louveterie is QLou,in = {Q3} and the outﬂow is
+QLou,out = {Q4}. The considered reservoir security limits for
+Louveterie are SoCLou = 15, 000m3, SoC
+Lou = 28, 000m3.
+B. System Identiﬁcation
+As described in Section III-A, in order to have a working
+model of the WTS we need to identify the efﬁciencies of the
+input/output ﬂows for each water reservoir (η). To this end,
+we use historical data of water ﬂows and state of charge for
+each of the two reservoirs namely, Bronde and Louveterie. The
+average error achieved was ∼4%. The values of the obtained
+parameters are the following:
+η =
+Q1
+Q2
+Q3
+Q4
+Q5
+Q6
+Q7
+Q8
+
+
+Brou
+0
+0.95
+1
+0
+1.01
+1.01
+0
+0
+Lou
+0
+0
+0.96
+1.05
+0
+0
+0
+0
+C. Producing Forecasts
+In this section, we present the results for the generation
+of forecasts that are used in the day-ahead nomination and
+the real-time control decision processes. It is important to
+note that, there was no RES production considered during
+the period of the pilot project. For the day-ahead nomina-
+tion step we need to predict the day-ahead prices in order
+to optimize the WTS consumption pattern. As described in
+Section III-B, we use an instance of Facebook prophet. The
+day-ahead optimization horizon is selected to be N = 2 days.
+It is important to note, that accuracy in terms of absolute val-
+ues is not the main goal at this step. Instead, a forecaster that
+can predict well the shape of the day-ahead price curve, i.e.,
+the periods of low and high prices, is sufﬁcient for producing
+an optimal day-ahead nomination.
+Additionally, as described above, in both the day-ahead and
+the real-time stage we need to produce forecasts for the uncon-
+trollable ﬂows (Qu = {Q1, Q2, Q4, Q5, Q6}) of the system
+presented in Figure 3(b). Out of the set of uncontrollable
+ﬂows, during the exploratory data analysis there were two
+ﬂows, namely Q4 (Adduction) and Q5 (Restitution) that were
+categorised to have strong daily seasonality. For each one of
+these two ﬂows we use a Facebook prophet instance.
+The rest of the uncontrollable ﬂows do not have some daily
+seasonality and mainly depend on the cleaning processes of
+the ﬁlters (Lavage). In order to obtain a forecast for ﬂows
+{Q1, Q2, Q6, Q7, Q8} we work as following. For the prediction
+of the inﬂow to the Bronde Q2 and the ﬂow from the Bronde
+to Lavage Q6, we need to simulate the conventional opera-
+tion for the part of the station that we do not control, i.e.,
+upstream of the low-pressure pumps. First, we predict based
+on historical data the water consumption for Lavage ˆQ8 and
+the inﬂow rate at Cisterns ˆQ0. Next, we simulate the state of
+charge of Cisterns using the pumping strategy described in
+Section IV-A, as presented in Algorithm 3, in order to predict
+the ﬂow ˆQ1.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:37:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+402
+IEEE TRANSACTIONS ON SMART GRID, VOL. 15, NO. 1, JANUARY 2024
+Fig. 4.
+(a) Day-ahead (orange) nomination versus the real-time operation (blue) of the controllable high-pressure pumps. (b) Day-ahead estimation (orange)
+versus the real-time operation (blue) of the state of charge (i.e., water volume) of Bronde. (c) Day-ahead estimation (orange) versus the real-time operation
+(blue) of the state of charge (i.e., water volume) of Louveterie. (d) Day-ahead price forecast (orange) versus the realisation (blue). (e) Day-ahead forecast of
+ﬂow Q4 (orange) versus the realisation (blue). (f) Day-ahead forecast of ﬂow Q2 (orange) versus the realisation (blue).
+The predictions of the water ﬂows ˆQ1 and ˆQ8 serve as input
+to the rule-based algorithm presented in Algorithm 4, in order
+to predict ﬂows ˆQ2,t, ˆQ6,t, ˆQ7,t. In case that, we predicted that
+at timestep t the ﬁlters are being washed ( ˆQ8,t > 0), then
+ﬂow ˆQ1,t is used entirely for this purpose, i.e., ˆQ2,t = 0 and
+ˆQ7,t = ˆQ1,t. If the water ﬂow needed for ﬁlter cleaning Q8
+is larger than the water ﬂow ˆQ1,t (i.e., ˆQ8,t > ˆQ1,t), addi-
+tional water ﬂows from Bronde ˆQ7,t = ˆQ8,t −ˆQ1,t. In the
+case that, there is no water needed for ﬁlter cleaning we have
+ˆQ2,t = ˆQ1,t.
+D. Day-Ahead Nomination & Real-Time Control
+As described in Section III, the WTS operator makes
+two decision steps in order to valorize its ﬂexibility in the
+short-term market. The ﬁrst step takes place one day in
+advance by nominating the WTS consumption plan for the next
+day. The second step takes place in real-time and it consists
+in matching the day-ahead plan to the real-time consumption.
+The day-ahead plan (orange) and the real-time value (blue) of
+the power consumed by the high-pressure pumps is presented
+in Figure 4(a). It can be observed that, there are really minor
+differences between the two which indicates that the WTS can
+be securely operated based on the day-ahead plan with minor
+corrections necessary in real-time.
+Algorithm 3: Rule-Based Control of Cisterns
+1: Inputs: ˆQ0,t,
+ˆ
+SoCCis
+t
+2: if 2.2m <
+ˆ
+SoCCis
+t
+< 3.45m then
+3:
+ˆQ1,t ←1000m3
+4: else if 3.45m <
+ˆ
+SoCCis
+t
+then
+5:
+ˆQ1,t ←2000m3
+6: else
+7:
+ˆQ1,t ←0m3
+8: end if
+9: Output: ˆQ1,t
+In effect, small deviations (errors) between day-ahead ﬂow
+predictions and realisations can be dampened due to the reser-
+voirs and in particular the one of Bronde. This can be observed
+by the day-ahead estimation (orange) versus the real-time
+operation (blue) of the state of charge (i.e., water volume) of
+Bronde illustrated in Figure 4(b). We can see that while the
+shapes of the two curves are very similar there are discrep-
+ancies that are attributed to the imperfect forecasts of water
+ﬂows that enter and leave Bronde ({Q1, Q5, Q6}). As can be
+seen in Figure 4(f) the seasonal ﬂow of Restitution (Q2) can
+be predicted with high accuracy.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:37:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+BOUKAS et al.: EXPLOITING THE FLEXIBILITY POTENTIAL OF WATER DISTRIBUTION NETWORKS
+403
+Algorithm 4: Rule-Based Water-Flow Prediction
+1: Inputs: ˆQ1,t, ˆQ8,t
+2: if
+ˆQ8,t > 0 then
+3:
+if
+ˆQ8,t > ˆQ1,t then
+4:
+ˆQ2,t ←0
+5:
+ˆQ6,t ←ˆQ8,t −ˆQ1,t
+6:
+ˆQ7,t ←ˆQ1,t
+7:
+else
+8:
+ˆQ2,t ←0
+9:
+ˆQ6,t ←0
+10:
+ˆQ7,t ←ˆQ1,t
+11:
+end if
+12: else
+13:
+ˆQ2,t ←ˆQ1,t
+14:
+ˆQ6,t ←0
+15:
+ˆQ7,t ←0
+16: end if
+17: Output: ˆQ2,t, ˆQ6,t, ˆQ7,t
+TABLE I
+COST REDUCTION IN STEMBERT WATER TREATMENT
+STATION IN THE PILOT 15-DAYS PERIOD
+On the other hand, as it can be observed in Figure 4(c), the
+day-ahead estimation (orange) versus the real-time operation
+(blue) of the state of charge of Louveterie are practically iden-
+tical. This occurs due to the fact that the predictions related to
+the water demand (Q4) are quite accurate, as it can be seen in
+Figure 4(e) and the pumping is exactly the same as the day-
+ahead pumping plan. Finally, we can see in Figure 4(d) that
+the day-ahead price forecast is able to successfully capture the
+peak versus off-peak periods of the day.
+The ﬂexible consumption of the Stembert WTS during the
+pilot project versus the previous non-ﬂexible consumption is
+illustrated in Figure 5(a). More precisely, we can see clearly
+in Figure 5(b) that part of the consumption related to the
+controllable high-pressure pumps is shifted from periods of
+the day with high prices to periods where the price is low.
+The cost reduction achieved during the 15-days period of the
+project is presented in Table I. We can see a substantial cost
+reduction (∼11%) on the cost related to the operation of the
+high-pressure pumps and 6.7% cost reduction considering all
+pumping processes. This reduction is related to the fact that the
+changes in the operation of the high-pressure pump may affect
+indirectly the pumping process in the low-pressure pumping
+group. Finally, a 3.6% was achieved when taking into account
+the total consumption of the WTS.
+V. CONCLUSION
+Flexibility is key for enabling the large-scale penetration of
+RES in the context of the energy transition. In this paper, we
+exploit the value of ﬂexibility coming from water treatment
+stations. We present a generic modelling framework for the
+energy market participation and the real-time operation of a
+WTS. We apply this framework to a real-life pilot project in
+Fig. 5. The ﬂexible consumption of the Stembert WTS during the pilot project
+versus the conventional non-ﬂexible consumption during the pilot phase.
+Wallonia, where the operation of a WTS has been adapted
+and consumption from the high-consuming pumping processes
+is shifted during the day. The results from the pilot project
+indicate cost reduction up to 11% and a large potential for
+ﬂexible WTS.
+ACKNOWLEDGMENT
+The authors would like to thank Avelino Gonzalez and
+Thierry Hoebeke for the fruitful discussions regarding the
+operation of the Stembert water treatment station.
+REFERENCES
+[1] “Paris agreement.” 2019. [Online]. Available: https://unfccc.int/process-
+and-meetings/the-paris-agreement/the-paris-agreement
+[2] “Clean energy for all Europeans.” European Commission. 2019.
+[Online].
+Available:
+https://op.europa.eu/en/publication-detail/-/
+publication/b4e46873-7528-11e9-9f05-01aa75ed71a1
+[3] A. Ulbig and G. Andersson, “On operational ﬂexibility in power
+systems,” in Proc. IEEE Power Energy Soc. Gen. Meeting, 2012,
+pp. 1–8.
+[4] H. Chandler (Int. Energy Agency, Paris, France). A Guide to the
+Balancing Challenge. (2011). [Online]. Available: www.iea.org
+[5] V. Rious, Y. Perez, and F. Roques, “Which electricity market design to
+encourage the development of demand response?” Econ. Anal. Policy,
+vol. 48, pp. 128–138, Dec. 2015.
+[6] R. Shariﬁ, S. Fathi, and V. Vahidinasab, “A review on demand-side tools
+in electricity market,” Renew. Sustain. Energy Rev., vol. 72, pp. 565–572,
+May 2017. [Online]. Available: https://www.sciencedirect.com/science/
+article/pii/S1364032117300230
+[7] M. Parvania, M. Fotuhi-Firuzabad, and M. Shahidehpour, “Optimal
+demand response aggregation in wholesale electricity markets,” IEEE
+Trans. Smart Grid, vol. 4, no. 4, pp. 1957–1965, Dec. 2013.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:37:39 UTC from IEEE Xplore.  Restrictions apply. 
+
+404
+IEEE TRANSACTIONS ON SMART GRID, VOL. 15, NO. 1, JANUARY 2024
+[8] S. Vandael, B. Claessens, D. Ernst, T. Holvoet, and G. Deconinck,
+“Reinforcement learning of heuristic EV ﬂeet charging in a day-
+ahead electricity market,” IEEE Trans. Smart Grid, vol. 6, no. 4,
+pp. 1795–1805, Jul. 2015.
+[9] Z. Xu, Z. Hu, Y. Song, and J. Wang, “Risk-averse optimal bidding
+strategy for demand-side resource aggregators in day-ahead electric-
+ity markets under uncertainty,” IEEE Trans. Smart Grid, vol. 8, no. 1,
+pp. 96–105, Jan. 2017.
+[10] C. Utama, S. Troitzsch, and J. Thakur, “Demand-side ﬂexibility and
+demand-side bidding for ﬂexible loads in air-conditioned buildings,”
+Appl. Energy, vol. 285, Mar. 2021, Art. no. 116418. [Online]. Available:
+https://www.sciencedirect.com/science/article/pii/S0306261920317815
+[11] B. Zimmermann, H. Gardian, and K. Rohrig, “Cost-optimal ﬂexibiliza-
+tion of drinking water pumping and treatment plants,” Water, vol. 10,
+no. 7, p. 857, 2018. [Online]. Available: https://www.mdpi.com/2073-
+4441/10/7/857
+[12] A. Zohrabian, S. L. Plata, D. M. Kim, A. E. Childress, and K. T. Sanders,
+“Leveraging the water-energy nexus to derive beneﬁts for the elec-
+tric grid through demand-side management in the water supply and
+wastewater sectors,” Wiley Interdiscip. Rev. Water, vol. 8, no. 3, 2021,
+Art. no. e1510.
+[13] D. Fooladivanda, A. D. Domínguez-García, and P. W. Sauer, “Utilization
+of water supply networks for harvesting renewable energy,” IEEE Trans.
+Control Netw. Syst., vol. 6, no. 2, pp. 763–774, Jun. 2019.
+[14] M. K. Singh and V. Kekatos, “Optimal scheduling of water distribution
+systems,” IEEE Trans. Control Netw. Syst., vol. 7, no. 2, pp. 711–723,
+Jun. 2020.
+[15] K. Oikonomou, M. Parvania, and R. Khatami, “Optimal demand
+response scheduling for water distribution systems,” IEEE Trans. Ind.
+Informat., vol. 14, no. 11, pp. 5112–5122, Nov. 2018.
+[16] A. Stuhlmacher and J. L. Mathieu, “Flexible drinking water pump-
+ing to provide multiple grid services,” Electr. Power Syst. Res.,
+vol. 212, Nov. 2022, Art. no. 108491. [Online]. Available: https://www.
+sciencedirect.com/science/article/pii/S0378779622005806
+[17] C. Mkireb, A. Dembélé, A. Jouglet, and T. Denoeux, “Robust
+optimization of demand response power bids for drinking water
+systems,”
+Appl.
+Energy,
+vol.
+238,
+pp. 1036–1047,
+Mar.
+2019.
+[Online]. Available: https://www.sciencedirect.com/science/article/pii/
+S0306261919301461
+[18] A. Stuhlmacher and J. L. Mathieu, “Chance-constrained water pump-
+ing to manage water and power demand uncertainty in distribution
+networks,” Proc. IEEE, vol. 108, no. 9, pp. 1640–1655, Sep. 2020.
+[19] E. Sarmas, E. Spiliotis, V. Marinakis, G. Tzanes, J. K. Kaldellis, and
+H. Doukas, “ML-based energy management of water pumping systems
+for the application of peak shaving in small-scale islands,” Sustain. Cities
+Soc., vol. 82, Jul. 2022, Art. no. 103873.
+[20] S. J. Taylor and B. Letham, “Forecasting at scale,” Amer. Stat., vol. 72,
+no. 1, pp. 37–45, 2018.
+Ioannis
+Boukas
+received the B.Sc. degree in
+mechanical engineering from the National Technical
+University of Athens, Greece, and the M.Sc. degree
+in electro-mechanical engineering and the Ph.D.
+degree in machine learning and optimization for
+energy storage management from the University
+of Liège, Belgium. He spent two years as a
+Postdoctoral Researcher with the University of
+Liège, where he leads the research on the eval-
+uation of the ﬂexibility potential in water distri-
+bution network operation. He is currently a Data
+Scientist with ENGIE Belgium working on the use of machine learning and
+optimization to create and automate trading activities in the short-term energy
+markets.
+Elodie Burtin received the M.Sc. degree in elec-
+trical engineering from the University of Liège,
+Belgium, in 2016. She is a Software Engineer
+with Haulogy, a company developing software
+solutions for the energy sector. She collaborates
+with researchers to integrate advanced algorithms
+of machine learning and applied mathematics in
+real-world software solutions. Her main interests
+include electrical energy systems, energy markets,
+and energy transition.
+Antonio Sutera received the B.Sc., M.Sc., and
+Ph.D. degrees in electrical engineering and computer
+science from the University of Liège. He is cur-
+rently a Product Owner of Energy Suppliers Related
+Software with Haulogy.
+Quentin Gemine received the B.Sc., M.Sc., and
+Ph.D. degrees in electrical engineering and computer
+science from the University of Liège. He is cur-
+rently the Head of Intelligence Solutions, Haulogy.
+He focuses on the development of intelligent soft-
+ware solutions for the energy sector, together with
+a team of 30 bright and dedicated data scientists,
+power systems experts, and software engineers. He
+leverages advanced optimization and machine learn-
+ing technology to help energy sector players face the
+challenges of the energy transition.
+Bernard Pevee is an Energy Expert with Société wallonne des eaux.
+Damien
+Ernst
+received the M.Sc. and Ph.D.
+degrees in engineering from the University of Liège,
+Belgium, in 1998 and 2003, respectively, where
+he is currently a Full Professor. He is a Visiting
+Professor with Télécom Paris. He is also the CSO of
+Haulogy, a company developing intelligent software
+solutions for the energy sector. He has coauthored
+more than 300 research papers and two books. His
+research interests include electrical energy systems
+and reinforcement learning, a subﬁeld of artiﬁcial
+intelligence. He has also won numerous awards for
+his research and, among which, the prestigious 2018 Blondel Medal. He is
+also regularly consulted by industries, governments, international agencies,
+and the media for its deep understanding of the energy transition.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:37:39 UTC from IEEE Xplore.  Restrictions apply. 

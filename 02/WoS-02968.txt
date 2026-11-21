@@ -1,0 +1,1525 @@
+6868
+IEEE TRANSACTIONS ON INFORMATION FORENSICS AND SECURITY, VOL. 20, 2025
+MoCC-BD-FID: Multi-Objective Clustering
+Combination-Based Backdoor Defense for
+Federated Intrusion Detection of
+Industrial Control Systems
+Guo-Qiang Zeng , Senior Member, IEEE, Jun-Min Shao, Kang-Di Lu , Member, IEEE, Guang-Gang Geng ,
+and Jian Weng , Senior Member, IEEE
+Abstract—Deep learning and federated learning (FL) play a
+crucial role in ensuring the security of industrial control systems
+(ICSs), but they also face severe security threats, especially
+the threat of backdoor attacks. Most FL backdoor defense
+methods primarily focus on a single clustering strategy, result-
+ing in low true positive rates (TPR) and true negative rates
+(TNR) in the attack classiﬁcation task. Due to the excessive
+combination scheme of currently available clustering strategies,
+it is diﬃcult to manually select an appropriate combination
+scheme of clustering strategies to defense backdoor attacks in
+federated ICSs. This work is the ﬁrst time to automatically
+design a multi-objective clustering combination-based backdoor
+defense for federated intrusion detection in ICSs, called MoCC-
+BD-FID. The automated design issue of clustering strategies
+combination for backdoor defense is formulated as a mixed-
+variable multi-objective optimization problem, which considers
+both combinatorial variables, i.e., the combination length and
+the speciﬁc combination of clustering strategies, and continuous
+variables, i.e., the conﬁdence levels of each combined clustering
+as the decision variables, and considers maximization of both
+TPR and TNR as the two objectives. To describe and evolve the
+Received 5 November 2024; revised 24 May 2025 and 26 June 2025;
+accepted 1 July 2025. Date of publication 7 July 2025; date of current
+version 10 July 2025. This work was supported in part by Zhejiang Provin-
+cial Natural Science Foundation of China under Grant LZ25F030007; in
+part by the National Natural Science Foundation of China under Grant
+61972288, Grant 62403122, and Grant 92067108; in part by the Key-
+Area Research and Development Program of Guangdong Province under
+Grant 2020B0101090004; in part by Shanghai Sailing Program under Grant
+24YF2701300; in part by the Natural Science Foundation of Guangdong
+Province under Grant 2021A151501131; in part by the Ministry of Industry
+and Information Technology (MIIT) Project Industrial Internet Identiﬁca-
+tion Resolution System Security Monitoring and Protection under Grant
+TC220H078; and in part by Guangdong Key Laboratory of Data Secu-
+rity and Privacy Preserving, National Joint Engineering Research Center
+of Network Security Detection and Protection Technology. The associate
+editor coordinating the review of this article and approving it for publica-
+tion was Dr. Daisuke Mashima. (Corresponding authors: Guo-Qiang Zeng;
+Kang-Di Lu.)
+Guo-Qiang Zeng is with the National-Local Joint Engineering Research
+Center of Digitalized Electrical Design Technology, Wenzhou University,
+Wenzhou 325035, China, and also with the College of Cyber Security and the
+National Joint Engineering Research Center of Network Security Detection
+and Protection Technology, Jinan University, Guangzhou 510632, China
+(e-mail: zeng.guoqiang5@gmail.com).
+Jun-Min Shao, Guang-Gang Geng, and Jian Weng are with the College
+of Cyber Security and the National Joint Engineering Research Center
+of Network Security Detection and Protection Technology, Jinan Univer-
+sity, Guangzhou 510632, China (e-mail: shaojunmin@stu2021.jnu.edu.cn;
+gggeng@jnu.edu.cn; cryptjweng@gmail.com).
+Kang-Di Lu is with the College of Information Science and Technology,
+Donghua University, Shanghai 201620, China (e-mail: kangdilu@dhu.edu.cn).
+Digital Object Identiﬁer 10.1109/TIFS.2025.3586479
+diﬀerent combinations of 12 clustering strategies with conﬁdence
+levels, we develop an eﬃcient mixed and variable-length encoding
+mechanism, and the speciﬁcally tailored crossover operation
+and mutation operation under the framework of nondominated
+sorting genetic algorithm II. The experiments are conducted on
+the three widely-used ICS datasets including Secure Water Treat-
+ment, Water Distribution, and Power System Attack datasets
+under two diﬀerent backdoor attacks. The experimental results
+demonstrate that MoCC-BD-FID outperforms the single cluster-
+ing strategy-based backdoor defense methods and ﬁve existing
+backdoor defense methods, i.e., Krum, Weak-DP, FoolsGold,
+DeepSight, and CrowdGuard, in terms of the classiﬁcation
+accuracy of the poisoned model on regular samples and backdoor
+samples, TPR, and TNR.
+Index Terms—Industrial control systems, federated intrusion
+detection, backdoor defense, automated clustering combination,
+multi-objective optimization.
+I. INTRODUCTION
+I
+NDUSTRIAL control systems (ICSs) are vital for manag-
+ing and automating essential infrastructure, including smart
+grids, water treatment plants, and manufacturing operations
+[1], [2]. However, ICSs are highly susceptible to cyber-attacks
+due to their increased connectivity with information technol-
+ogy networks and the adoption of Internet of Things devices
+[3]. Recently, a variety of increasingly severe cyber-attacks
+on ICSs have been reported [4], [5]. These attacks have not
+only led to signiﬁcant ﬁnancial losses for aﬀected companies
+and entities, but also posed serious risks to the safety of local
+people. Consequently, the security issue of ICS has garnered
+considerable attention from the research community.
+To guarantee the safe operations of a speciﬁc ICS, an
+intrusion detection system (IDS) is often implemented for
+real-time monitoring [6]. If any intrusions are detected within
+the system, the IDS triggers an alert and initiates defensive
+measures against both known and unknown cyber-attacks. Due
+to its strong ﬁtting and learning abilities, the deep learning
+model has emerged as the top choice for most IDSs [7].
+Furthermore, federated learning (FL) has gained widespread
+adoption across various domains as an eﬀective solution for
+addressing data privacy concerns [8], [9]. Therefore, some
+recent works have prioritized integrating FL with deep learning
+for the intrusion detection [10], [11], [12]. Utilizing FL in IDSs
+not only safeguards data privacy and security but also delivers
+high classiﬁcation accuracy for cyber-attacks [13], [14].
+1556-6021 © 2025 IEEE. All rights reserved, including rights for text and data mining, and training of artiﬁcial intelligence and
+similar technologies. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:09:04 UTC from IEEE Xplore.  Restrictions apply. 
+
+ZENG et al.: MoCC-BD-FID OF INDUSTRIAL CONTROL SYSTEMS
+6869
+Although FL provides an eﬀective method for protecting
+data privacy, it simultaneously presents some challenges in
+ensuring security [15]. Because FL allows federated training
+without compromising data privacy, the heterogeneous dis-
+tribution of data among federated clients makes it diﬃcult
+for the server to verify the integrity of local model updates.
+This vulnerability makes the IDSs deployed in ICSs based
+on FL susceptible to backdoor attacks [16], [17], [18], [19].
+For instance, during the federated training phase, malicious
+clients can tamper with the training data or model updates in
+speciﬁc ways, and ﬁnally upload the poisoned updates to the
+server. When the server aggregates these malicious updates, it
+can lead to a global model with a backdoor, thereby forming
+a backdoor attack. Therefore, it is urgent to design eﬀective
+backdoor defense schemes for federated intrusion detection of
+ICSs.
+In response to the new threats posed by backdoor attacks,
+several clustering strategy-based backdoor defense methods
+have been proposed. These techniques aim to enhance the
+security of deep learning models, reduce the impact of back-
+door attacks, and improve the robustness of models. It is
+worth noting that most methods use a single clustering strategy
+to cluster the processed client update parameters [20], [21]
+with low true positive rates (TPR) and true negative rates
+(TNR) in the attack classiﬁcation task. Only a few methods
+adopt a combination of two clustering strategies, but these
+methods were designed by trial and error [22], [23]. Due to
+the low interpretability of deep learning models in a federated
+framework, the updated parameters of the model occurring at
+the client side are generally complex and diﬃcult to interpret.
+Even after operations such as pruning, dimensionality reduc-
+tion, and similarity calculation are performed on the model
+update parameters by using lower dimensions to represent
+these update parameters, there are still signiﬁcant challenges
+in accurately clustering updated parameters. Using various
+advanced clustering strategies can eﬀectively address this
+issue. Therefore, clustering results of these update parameters
+largely depend on whether the selected clustering strategy
+can accurately perform clustering, which is the most critical
+step in backdoor defense. Determining the applicability of
+the selected clustering strategy is often by experimentally
+comparing its test performance with other clustering strategies
+[24]. However, when it is necessary to select two or more clus-
+tering strategies for combination, experimentally comparing is
+clearly no longer applicable due to the excessive variety of
+combination scheme of clustering strategies.
+In order to employ the combination of various clustering
+strategies with conﬁdence levels to defend against backdoors,
+we establish it as a mixed-variable multi-objective optimiza-
+tion problem. Due to the population-based characteristics,
+multi-objective evolutionary algorithms, e.g., nondominated
+sorting genetic algorithm II (NSGA-II) [25], are naturally
+well-suited for solving multi-objective problems. However,
+evolutionary algorithms do not possess eﬃcient techniques
+for generating oﬀspring to address the mixed-variable multi-
+objective optimization problem. Some evolutionary operation
+frequently used in continuous problems, e.g., simulated binary
+crossover [26] and diﬀerential evolution mutation [27], can
+be introduced to solve the integer and categorical variables
+after minor adjustments. In [28], a rounding operation was
+considered based on continuous variable operators. For combi-
+natorial optimization problems, oﬀspring generation methods
+must be customized to ﬁt the unique characteristics of each
+problem. Yet, these approaches often lack generalizability
+and cannot be easily applied to solving various problems.
+Therefore, for mixed-variable multi-objective clustering com-
+bination optimization problem, we need to carefully design
+coding mechanism, crossover operation, and mutation opera-
+tion to obtain more eﬀective backdoor defense strategy.
+Based on the abovementioned considerations, this paper
+proposes a multi-objective clustering combination-based back-
+door defense for federated intrusion detection of ICSs, called
+MoCC-BD-FID. The main idea behind this method ﬁrstly for-
+mulates the combination scheme of clustering strategies with
+conﬁdence levels for eﬀective backdoor defense of IDSs in
+ICSs as a mixed-variable multi-objective optimization problem
+with both combinatorial and continuous decision variables
+by optimizing the trade-oﬀbetween TPR and TNR. Then,
+we solve the established problem eﬃciently by designing
+a speciﬁcally tailed evolutionary algorithm under NSGA-II
+framework [25].
+The main contributions of this work are summarized as
+follows:
+(1) Most federated IDSs for ICSs focus on detecting
+cyber-attacks and do not consider the possibility of backdoor
+attacks in the system. Additionally, most clustering strategy-
+based backdoor defense methods typically use a single or
+two types of clustering strategies and contain the following
+shortcomings: low performance in TPR and TNR and lack
+an eﬀective automatic selection mechanism to choose diﬀer-
+ent combination schemes when involving multiple clustering
+strategies. This work originally develops a backdoor defense
+method through the automated design combination scheme
+of 12 diﬀerent clustering strategies for federated intrusion
+detection of ICSs. To the best of our knowledge, this paper is
+the ﬁrst to automatically design the backdoor defense method
+for federated intrusion detection of ICSs from the perspective
+of multi-objective clustering combination.
+(2) In the design process, the defense strategy against
+backdoor attacks for federated intrusion detection of ICSs
+utilizing a combination of diﬀerent clustering strategies is
+formulated as a mixed-variable multi-objective optimization
+problem, where maximization of both TPR and TNR is deﬁned
+as the two objective functions. Furthermore, we develop an
+eﬃcient mixed-variable and variable-length encoding scheme,
+and the speciﬁed crossover and mutation operations under the
+framework of NSGA-II to describe and evolve various com-
+binations of 12 classic clustering strategies with conﬁdence
+levels, i.e., the proportion of each clustering strategy in the
+classiﬁcation result.
+(3) The experimental results on three ICS intrusion datasets
+including Secure Water Treatment (SWaT) [29], Water Dis-
+tribution (WADI) [30], and Power System Attack (PSA)
+[31] datasets indicate that the MoCC-BD-FID obtains satis-
+factory defense performance against two diﬀerent backdoor
+attacks, i.e., SIG [32] and BadNet [33]. Moreover, the
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:09:04 UTC from IEEE Xplore.  Restrictions apply. 
+
+6870
+IEEE TRANSACTIONS ON INFORMATION FORENSICS AND SECURITY, VOL. 20, 2025
+proposed MoCC-BD-FID outperforms other 12 types of single
+clustering strategy-based backdoor methods and ﬁve existing
+backdoor defense methods including three classical methods,
+i.e., Krum [34], Weak-DP [35], FoolsGold [36] and two man-
+ually designed methods, i.e., DeepSight [37] and CrowdGuard
+[22], in terms of the classiﬁcation accuracy of the poisoned
+model on regular samples and backdoor samples, TPR, and
+TNR.
+II. RELATED WORKS
+In order to eﬀectively address the challenges posed by
+backdoor attacks in FL, various defense methods were pre-
+sented [21], [22], [23], [24], [38], [39]. Zhang et al. [21]
+presented SecFedNIDS, which ﬁrst provided an eﬃcient low-
+dimensional representation of the client local model update
+parameters and then used the Stochastic Outlier Selection
+(SOS) strategy to cluster these parameters, thereby identi-
+fying and ﬁltering out malicious update parameters. Rieger
+et al. [22] proposed federated backdoor detection method,
+called CrowdGuard. It utilized feedback from clients regarding
+speciﬁc models and removed compromised models using
+a step-by-step pruning approach. Additionally, CrowdGuard
+implemented a stacked clustering method on the server side to
+strengthen its resistance against malicious client input. In [23],
+RDFL was proposed. In RDFL, appropriate update parameters
+were selected to compute the cosine distance. HDBSCAN and
+Hierarchical Clustering strategies were combined to perform
+adaptive clustering to detect and remove suspicious malicious
+client updates, followed by adaptive pruning and noise addition
+operations. Nguyen et al. [24] proposed the FLAME defense
+framework. It ﬁrst measured the angular diﬀerences between
+all model update parameters by calculating the cosine dis-
+tance of the update parameters from each client model in
+pairs. Then, it clustered these update parameters based on
+the dynamic HDBSCAN clustering strategy to identify and
+ﬁlter out malicious updates. Finally, in the server-side param-
+eter aggregation phase, it eﬀectively eliminated backdoors
+by dynamically pruning the update parameters and adding
+suﬃcient noise. In [37], a model ﬁltering method, called
+DeepSight, was presented. DeepSight employed three novel
+techniques to analyze the training data distribution and detect
+subtle diﬀerences in neural networks, enabling it to identify
+suspicious model updates. By clustering these updates and
+applying weight clipping defenses, it eﬀectively mitigated the
+impact of potential backdoor contributions from undetected
+poisoned models. Chen et al. [39] presented RFBDS method
+and the privacy-preserving version, i.e., PrivRFBDS to ensure
+the elimination of malicious backdoors. RFBDS ﬁrst used
+Ampliﬁed Magnitude Sparsiﬁcation to extract the major client
+local model update parameters and then calculated the median
+Euclidean distance between the model updates. After that, it
+performed clustering based on the OPTICS or DBSCAN strat-
+egy and ﬁnally executed an adaptive model pruning operation
+to remove existing backdoors.
+Most methods use a single clustering strategy to cluster
+the processed client update parameters, while only a few
+methods combined two clustering strategies. Due to the low
+interpretability of deep learning models, the model update
+Fig. 1. The process of backdoor attack in FL.
+parameters from clients are complex and diﬃcult to interpret.
+Even after pruning, dimensionality reduction, and similar-
+ity calculations of the model update parameters, accurately
+clustering these parameters remains a signiﬁcant challenge.
+Although there are backdoor defense methods based on two
+clustering strategies, these methods are obtained through man-
+ually designed based on the extensive experience of experts,
+making it diﬃcult to apply when multiple clustering strategies
+are involved.
+III. THE PROPOSED MOCC-BD-FID METHOD
+A. Assumptions
+1) Attacker’s Goals: The goal of the attacker is to com-
+promise the global intrusion detection model. The attacker
+manipulates the controlled clients to perform local training
+and sends malicious local update parameters to the server.
+During the server’s parameter aggregation process, a speciﬁc
+backdoor is implanted into the global model. This backdoor
+causes the global model to misjudge speciﬁc traﬃc types, such
+as classifying malicious traﬃc as normal, thereby facilitating
+attacks on ICSs. The process of the backdoor attack in FL is
+illustrated in Fig. 1.
+2) Attacker’s Strategy: The attacker considers two types of
+backdoor attacks against FL, called the SIG backdoor attack
+[32] and the BadNet backdoor attack [33]. Both types of
+attacks are simple and eﬃcient to implement in real-world
+settings. The SIG attack uses an overlaid sinusoidal signal as
+a trigger, while BadNet uses a small square with a maximum
+pixel value of 255 as a trigger. These methods are applied to
+traﬃc to construct backdoor samples while adhering to certain
+constraints in ICSs.
+B. The Process of Backdoor Defense
+In the scenario of defending against backdoor attacks in
+federated intrusion detection of ICS, it is crucial to process the
+updated parameters uploaded by clients. Typically, each update
+parameter contains a large number of features, including a lot
+of redundant information. To reduce this redundant informa-
+tion and lower the complexity of subsequent computations, it
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:09:04 UTC from IEEE Xplore.  Restrictions apply. 
+
+ZENG et al.: MoCC-BD-FID OF INDUSTRIAL CONTROL SYSTEMS
+6871
+is necessary to ﬁrst perform dimensionality reduction on the
+update parameters. Here, principal component analysis (PCA)
+is used to perform dimensionality reduction on the update
+parameters shown in (1) as follows:
+W =
+2
+664
+W11 . . . W1n
+W21 . . . W2n
+. . . . . . . . .
+Wm1 . . . Wmn
+3
+775 →V =
+2
+664
+V11 . . . V1k
+V21 . . . V2k
+. . . . . . . . .
+Vm1 . . . Vmk
+3
+775
+(1)
+where W represents the set of updated parameters from all
+clients participating in training under the federated framework.
+m is the number of clients, with each row representing the
+update parameters of a single client. n denotes the number
+of features included in each update parameter. V is the value
+after PCA and k is the number of features contained in each
+update parameter after dimensionality reduction after PCA.
+For the updated parameters V after dimensionality reduc-
+tion, pairwise cosine distances are calculated to obtain the
+cosine distance matrix H shown in (2)-(3) as follows:
+H =
+2
+664
+cos11 cos12 . . . cos1m
+cos21 cos22 . . . cos2m
+. . .
+. . .
+. . .
+. . .
+cosm1 cosm2 . . . cosmm
+3
+775
+(2)
+cosuv = cos(Vu, Vv) = 1 −Vu × Vv
+∥Vu∥∥Vv∥, 1 ≤u, v ≤m
+(3)
+It is worth noting that one advantage of calculating cosine
+distance is that even if a malicious client scales up the local
+model’s updated parameters to enhance its impact, the cosine
+distance remains unaﬀected because the angle between the
+update weight vectors is not changed.
+Using the optimized combination scheme of clustering
+strategies obtained by MoCC-BD-FID method to cluster the
+cosine distance matrix H. Suppose the optimized combination
+scheme is the Cluster = [l, (x1, cl1) , . . . , (x j, clj), . . . , (xl, cll)],
+then the classiﬁcation results of all clustering strategies are
+combined to obtain the ﬁnal result of each updated parameter.
+The speciﬁc calculation process is given in (4) as follows:
+result =
+l
+X
+j=1
+xj × cluster j = [r1, r2, . . . , rh, . . . , rm]
+(4)
+where l is the encoding length. clj represents the selected
+clustering strategy. cluster j is the classiﬁcation result of the
+clustering strategy on the cosine distance matrix. x j denotes
+the conﬁdence level of cluster j. For the clustering result of a
+single clustering strategy, the category with the highest propor-
+tion is labeled as 0, meaning a normal update, while all other
+categories are labeled as 1, indicating an abnormal update.
+If there are multiple categories with the highest proportion,
+one category is randomly selected to be labeled as 0, and the
+remaining categories are labeled as 1.
+Set the classiﬁcation threshold th, and classify the result of
+the combined clustering result to obtain the ﬁnal classiﬁcation
+predict shown in (5) as follows:
+predict = [pr1, pr2, . . . , pri, . . . , prm]
+pri =
+(
+0, rh < th
+1, rh ≥th,
+1 < h < m
+(5)
+Finally, select the updated parameters from the classiﬁcation
+results of 0 in the prediction. Carry out server-side parameter
+aggregation and then redistribute the aggregated parameters to
+each client.
+C. Problem Formulation
+In this paper, the searching for an optimized combination
+scheme of clustering strategies is formulated as a mixed-
+variable multi-objective optimization problem. The detailed
+decision variables, i.e., X = [l, x1, cl1, . . . , xj, clj, . . . , xl, cll]
+with two objective functions F(X) are given as follows:
+max
+F(X) = ( f1(X), f2(X))
+(
+f1 = TPR = TP/(TP + FN)
+f2 = TNR = TN/(TN + FP)
+s.t.
+Xl
+j=1 xj = 1, [cl1, . . . , cl j, . . . , cll] ∈ClusterSet, 1 ≤l
+≤12
+(6)
+where
+[TP, TN, FP, FN] = f(Wte, labelte, X∗)
+X∗= arg min
+X
+MSE(Wtr, labeltr, X)
+MSE = 1
+N
+XN
+i=1 (li −ri)2
+labeltr = [l1, l2, . . . , li, . . . lN]
+result = [r1, r2, . . . , ri, . . . rN]
+=
+Xl
+j=1 (x j × clj(Wtr))
+(7)
+where f1 and f2 represent two objective functions to obtain
+TPR and TNR. It should be noted that the TPR and TNR
+mentioned above are metrics used to evaluate the eﬀectiveness
+of clustering methods. Here, TNR represents the proportion
+of normal gradients correctly identiﬁed as normal in the
+clustering results. Generally, we aim for higher TNR values
+because only gradients classiﬁed as normal are aggregated
+to update the global model. A higher TNR indicates fewer
+malicious gradients being incorporated into the global model.
+TPR measures the proportion of malicious gradients cor-
+rectly identiﬁed as malicious in the clustering results. These
+deﬁnitions diﬀer from the TPR and TNR metrics used in
+conventional model performance evaluation. TP represents the
+number of malicious samples correctly classiﬁed as intrusions.
+TN represents the number of normal samples correctly classi-
+ﬁed as normal. FP represents the number of normal samples
+incorrectly classiﬁed as intrusions. FN represents the number
+of malicious samples incorrectly classiﬁed as normal. Wtr is
+the training set and Wte is the test set, respectively. labeltr and
+labelte are the labels correspond to Wtr and Wte, respectively,
+indicating the nature of the updates: 0 for normal updates
+and 1 for malicious updates. l is the length of the selected
+clustering strategies. [cl1, . . . , clj, . . . , cll] is a combination
+scheme of clustering strategies, containing a free combination
+scheme of 12 diﬀerent clustering strategies. ClusterSet is
+the set of 12 diﬀerent clustering strategies. [x1, . . . , xj, . . . , xl]
+denotes the conﬁdence level for each clustering strategy in
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:09:04 UTC from IEEE Xplore.  Restrictions apply. 
+
+6872
+IEEE TRANSACTIONS ON INFORMATION FORENSICS AND SECURITY, VOL. 20, 2025
+TABLE I
+THE INDEX AND CORRESPONDING CLUSTERING STRATEGY
+the combination. The sum of all conﬁdence levels equals
+1. clj(Wtr) represents the clustering result of a single clustering
+strategy on the update parameters within each sample group.
+result is the result of clustering based on the combination
+scheme. X∗is the optimal X according to the minimization
+of mean squared error (MSE). N is the number of samples. f
+is the relationship of testing result to obtain TP, TN, FP, and
+FN based on Wte, labelte, and X∗.
+Table I gives the index and the corresponding clustering
+strategy. The details of 12 clustering strategies are described
+as follows:
+1) HDBSCAN: HDBSCAN is a density-based clustering
+strategy aiming to identify clusters with varying densities and
+can handle noise points. HDBSCAN combines the advantages
+of DBSCAN and hierarchical clustering, eﬀectively dealing
+with noise and outliers in the data.
+2) DBSCAN: DBSCAN is a density-based clustering strat-
+egy used to identify clusters with high density and eﬀectively
+handles noise points. DBSCAN does not require the number of
+clusters to be speciﬁed in advance and can adaptively identify
+clusters of arbitrary shapes. It is insensitive to the choice of
+parameters.
+3) K-Means: K-Means is a common clustering strategy
+used to divide data points into K diﬀerent clusters, aiming
+to minimize the squared distance between each data point and
+the center of its respective cluster. K-Means accomplishes the
+clustering process by iteratively optimizing the positions of
+the cluster centers.
+4) MeanShift: MeanShift is a density-based nonparametric
+clustering strategy used to discover density estimate patterns
+in data, especially suited for identifying clusters of arbitrary
+shapes. MeanShift continuously adjusts the positions of data
+points, moving them towards the local maxima of the data
+density, thereby locating the centers of the clusters.
+5) OPTICS: OPTICS is a density-based clustering strategy
+designed to identify cluster structures and noise points in data.
+Similar to the DBSCAN, OPTICS can also handle clusters of
+arbitrary shapes and does not require the pre-speciﬁcation of
+the number of clusters.
+6) Spectral Clustering: Spectral Clustering is a spectral
+clustering strategy based on graph theory and spectral theory
+groups data by transforming it into a low-dimensional feature
+space and performing clustering in space. Spectral clustering
+strategies are typically used to handle clustering problems
+involving non-spherical and linearly inseparable data.
+7) Gaussian Mixture: Gaussian Mixture is a probabilistic
+model used to describe data distributions formed by the
+combination of multiple Gaussian distributions, typically used
+for clustering analysis and density estimation problems. The
+basic assumption is that the data is a mixture of multiple
+Gaussian distributions.
+8) MiniBatch KMeans: MiniBatch KMeans is a variant of
+the K-Means strategy aiming to accelerate the computation
+speed of the K-Means strategy, making it particularly suitable
+for handling large-scale datasets. Unlike the traditional K-
+Means strategy, which processes all data points at once, the
+MiniBatchKMeans strategy updates cluster centers using small
+batches, thereby reducing computational complexity.
+9) Birch: Birch is a hierarchical clustering strategy for
+large-scale datasets. It aims to cluster eﬃciently by gradually
+reducing the dimensions and density of the dataset, making
+it suitable for handling large amounts of data while being
+constrained by memory.
+10) Agglomerative Clustering: Agglomerative Clustering is
+a hierarchical clustering strategy. Agglomerative Clustering
+starts from each data point, treating each data point as an
+individual cluster, and then gradually merges adjacent clusters
+until the stopping condition is met.
+11) Aﬃnity
+Propagation:
+Unlike
+traditional
+clustering
+strategies based on distance or density, the Aﬃnity Propa-
+gation strategy determines the propagation weights between
+data points by calculating the similarity between them, thereby
+achieving clustering.
+12) SOS: SOS is an anomaly detection algorithm based
+on random sampling, which is used to select outliers or
+anomalous values in a dataset. SOS identiﬁes potential outliers
+by randomly selecting samples and calculating similarity to
+other samples.
+D. The Framework of MoCC-BD-FID Method
+In this work, we propose a clustering combination optimiza-
+tion approach that combines multiple clustering algorithms to
+enhance the robustness of detection. This optimization prob-
+lem is inherently a mixed-variable multi-objective optimization
+problem. NSGA-II excels in such scenarios due to their natural
+selection mechanisms, which enable global search capabilities
+without relying on continuous diﬀerentiability.
+In addition, NSGA-II inherently supports mixed-variable
+encoding and parallel computation, accelerating convergence
+for mixed-variable multi-objective optimization problem. In
+contrast, reinforcement learning requires extensive environ-
+mental interaction, particularly suﬀering from action space
+explosion in mixed-variable settings, leading to high training
+costs. Sparse and delayed reward signals further complicate
+policy exploration in multi-objective optimization. Bayesian
+optimization depends on prior distribution modeling with
+insuﬃcient priors or sparse data, convergence slows and sub-
+optimal solutions. Deep learning models, primarily designed
+for classiﬁcation and regression, struggle to directly handle
+mixed-variable multi-objective optimization. Therefore, we
+use NSGA-II as the main optimization tool to solve the mixed-
+variable multi-objective optimization problem.
+The diversity of clustering algorithms results in an enor-
+mous number of possible combinations. For instance, simple
+permutations and combinations of 12 fundamental methods
+already yield over 4,000 candidate solutions. Furthermore,
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:09:04 UTC from IEEE Xplore.  Restrictions apply. 
+
+ZENG et al.: MoCC-BD-FID OF INDUSTRIAL CONTROL SYSTEMS
+6873
+Algorithm 1 Framework of the Proposed MoCC-BD-FID
+Method
+the introduction of clustering method conﬁdence parameters
+signiﬁcantly increases complexity, causing the number of
+candidate solutions to grow exponentially. Under these cir-
+cumstances, exhaustive enumeration becomes computationally
+infeasible. Therefore, to eﬃciently identify optimal solutions,
+we employ NSGA-II that automatically optimize strategies
+to balance search breadth with computational cost, evaluating
+and selecting the best clustering combination strategy through
+objective function assessment.
+The overall framework of the proposed MoCC-BD-FID
+method is given in Fig. 2. The pseudocode of MoCC-
+BD-FID method is shown in Algorithm 1. The proposed
+MoCC-BD-FID method consists of four main parts: popu-
+lation initialization, ﬁtness calculation, oﬀspring generation
+and environmental selection. First, determine the related input
+parameters including population size N, the maximum number
+of generation G, crossover probability θc, mutation probability
+θm, and the set of 12 clustering strategies ClusterSet. Use the
+developed encoding scheme to randomly initialize the parent
+population S 0 containing N individuals and evaluate the ﬁtness
+of all individuals in S 0. Next, perform the developed crossover
+operation and mutation operation on the parent population
+S 0 to generate the oﬀspring population Qg, and evaluate the
+ﬁtness of all individuals in Qg. Merge the parent population
+S n and oﬀspring population Qg for environmental selection to
+obtain the next generation population and update S n. Repeat
+the above operations until the G are reached. Obtain the
+Pareto front in the ﬁnal population as the corresponding
+combination scheme of clustering strategies and the conﬁdence
+Algorithm 2 Fitness Calculation
+level corresponding to each clustering strategy, and select one
+solution in Pareto front for backdoor attack defense in the
+FL-based intrusion detection system of ICS.
+We employ NSGA-II to obtain clustering combination strat-
+egy for the cosine similarity matrix clustering. In practical
+deployment, the MoCC-BD-FID is conducted oﬄine. During
+online detection, the optimized clustering scheme is directly
+applied without introducing additional latency, thus satisfying
+real-time response requirements. Furthermore, since FL model
+aggregation is inherently periodic, the MoCC-BD-FID only
+needs to be executed once during the initial federated training
+phase. Subsequent model update cycles do not require multiple
+iterations.
+E. Population Initialization
+Initialize N individuals as the initial population S 0
+=
+{Indii, i = 1, 2, . . . , N}, where Indii represents the encoding
+of the i-th individual. Each individual represents a combi-
+nation scheme of clustering strategies for backdoor defense.
+The encoding format of each individual in the population
+is Indii = [li, (xi1, ci1), . . . , (xi j, ci j), . . . , (xili, cili)], where li
+represents the length of the current individual encoding. The
+maximum length of an individual encoding is 12 and the
+minimum length is 1. ci j represents the j-th encoding in the
+i-th individual, where 1 ≤j ≤li. ci j is an integer between 1 and
+12, corresponding to the serial number of a selected clustering
+strategy. xi j represents the conﬁdence level of the clustering
+strategy ci j, with values ranging from 0 to 1. Fig. 3 shows
+an example of mixed-variable encoding scheme of clustering
+strategy.
+F. Fitness Calculation
+The pseudocode for ﬁtness calculation of MoCC-BD-FID
+is shown in Algorithm 2. For each individual Indii in the
+population S n, decode the Indii and construct the combination
+scheme of clustering strategies to form a backdoor defense.
+The combination scheme is evaluated using each sample set
+from the training set. For each sample set W, we can calculate
+H and result according to (1)–(3)
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:09:04 UTC from IEEE Xplore.  Restrictions apply. 
+
+6874
+IEEE TRANSACTIONS ON INFORMATION FORENSICS AND SECURITY, VOL. 20, 2025
+Fig. 2. The overall framework of the proposed MoCC-BD-FID method.
+Fig. 3. An example of mixed-variable encoding scheme of clustering strategy.
+Calculate the loss between the result and the true label
+labletr = [l1, l2, . . . , lN], as shown in (8):
+loss = 1
+N
+N
+X
+i=1
+(li −ri)2
+(8)
+Optimize the conﬁdence coeﬃcient xi through the gradient
+descent method, as shown in (9)
+xi = xi −lr × ∂loss
+∂Xi
+, 1 ≤i ≤l
+(9)
+where lr is the learning rate. For the updated xi, perform
+normalization according to (10)-(11) as follows:
+sumx =
+l
+X
+i=1
+xi, i = 1, 2, . . . , l
+(10)
+normxi =
+xi
+sumx, i = 1, 2, . . . , l
+(11)
+The ﬁnal conﬁdence level xi is optimized based on all samples
+in the training set. Then, the combination scheme is tested
+using the test set, which is composed similarly to the training
+set. For each sample wte in the test set, the clustering results
+are classiﬁed according to (1)–(4). For each sample in the test
+set, based on the true label labelte of each sample, TPR and
+TNR are calculated as the ﬁtness of the current combination
+scheme.
+G. Oﬀspring Generation
+The population S n undergoes crossover and mutation oper-
+ations to produce the oﬀspring population Qg. Two individuals
+are randomly selected from S n and denoted as Indi1 and Indi2,
+respectively. A random real number rc within the range (0,1)
+is generated. If rc < θc, a position is randomly selected from
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:09:04 UTC from IEEE Xplore.  Restrictions apply. 
+
+ZENG et al.: MoCC-BD-FID OF INDUSTRIAL CONTROL SYSTEMS
+6875
+Fig. 4. An example of the developed crossover operation.
+Fig. 5. An example of the developed mutation operation.
+Indi1 and Indi2 as the crossover point, and a single-point
+crossover is performed on Indi1 and Indi2 to produce two
+oﬀspring individuals, i.e., c1 and c2. If rc ≥θc, then c1 = Indi1
+and c2 = Indi2.
+Mutation operation is then performed on the oﬀspring after
+crossover. For each individual ci, a random real number rm
+within the range (0,1) is generated. If rm < θm, a position is
+randomly selected from ci as the mutation point. An integer pi
+within the range from 1 to 12 that is diﬀerent from the initial
+value at the mutation point is randomly generated, replacing
+the value at the mutation point in ci, thereby producing a
+mutated individual.
+The above-mentioned crossover operation and mutation
+operation are repeated until the number of individuals in the
+oﬀspring population Qg reaches N. Fig. 4 and Fig. 5 provide
+an example of the crossover operation and mutation operation,
+respectively.
+H. Environmental Selection
+During the environmental selection phase, the framework of
+NSGA-II [25] is used for environmental selection. First, the
+parent population and the oﬀspring population are merged, and
+a fast non-dominated sorting is performed on the combined
+population. Then, the individuals in the population are ranked
+based on dominance and non-dominance relationship and the
+crowding distance. Finally, an elitist strategy is adopted to
+select N individuals as the next generation population.
+IV. EXPERIMENTAL RESULTS
+The experiments are carried out on a server equipped with
+an Intel RO Xeon RO E5-2683v3 @ 2.00 GHz processor, 256 GB
+of memory, and 4 A100-PCIE graphics cards. Binary super-
+vised learning tasks are conducted by using SWaT, WADI,
+and PSA datasets that contain normal and attack samples. For
+dataset processing, Min-Max normalization is applied to the
+SWaT, WADI, and PSA datasets.
+During the experiments, we conﬁgure 100 federated client
+nodes, with each client’s training data maintaining independent
+and identically distributed characteristics to the greatest extent
+possible. Four A100 GPUs are allocated to these simulated
+clients to provide computational resources for data processing
+and federated training. Among these 100 federated clients,
+we randomly selected 10 clients as malicious participants,
+whose training datasets contained a small proportion of back-
+door attack samples. Each client performed local training
+to generate either normal or backdoor-embedded gradients
+for server-side parameter aggregation. The GPU acceleration
+signiﬁcantly reduces the overall federated training duration,
+thereby shortening running time. Additionally, the NSGA-II
+primarily relied on CPU computation, where GPU acceleration
+showed limited performance improvement.
+A. Datasets
+(1) SWaT [29]: The SWaT (Secure Water Treatment) dataset
+originates from physical testbed systems for water treatment
+managed by Singapore’s Public Utility Board. Within the
+ﬁeld of cyber-security, SWaT is frequently utilized to examine
+the impact of cyber-attacks on ICSs, assess the eﬃcacy of
+intrusion detection techniques, and measure the resilience of
+defense mechanisms under cyber-attack scenarios. This dataset
+monitors 51 diﬀerent variables and includes data reﬂecting
+various operational conditions, such as normal operations and
+attack situations.
+(2) WADI [30]: WADI (Water Distribution) is an expanded
+version of the SWaT system. It represents a distribution
+network made up of numerous water distribution pipelines,
+making it a more intricate and practical water treatment
+system. The dataset tracks 123 variables and encompasses data
+from both normal operations and attack conditions.
+(3) PSA [31]: The PSA (Power System Attack) dataset,
+developed by Uttam Adhikari and Shengyi Pan from Oak
+Ridge National Laboratories in USA, integrates measurement
+data capturing typical operations, equipment malfunctions, and
+cyberattack behaviors in power grids. It employs four pri-
+mary data sources: phasor measurement units (PMUs), snort,
+control panel logs, and relay statuses, collectively forming a
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:09:04 UTC from IEEE Xplore.  Restrictions apply. 
+
+6876
+IEEE TRANSACTIONS ON INFORMATION FORENSICS AND SECURITY, VOL. 20, 2025
+TABLE II
+THE STATISTICS OF DATASETS
+128-dimensional feature set. Each PMU records 29 electrical
+parameters, which are combined with relay alarms and logs.
+The dataset also includes 12 control panel log columns and
+one labeled attack-type column. Here, we use subset 1 from
+PSA as the case study.
+The SWaT and WADI datasets originate from Singapore’s
+ICSs, while SPA dataset comes from Oak Ridge National
+Laboratories in the USA. Using SPA dataset demonstrates the
+transferability of the proposed MoCC-BD-FID approach for
+diﬀerent ICSs.
+Table II gives the statistics of SWaT, WADI, and PSA
+datasets.
+B. Attack Scenarios
+First, the eﬀectiveness of backdoor attacks in the datasets of
+ICSs is validated by generating respective backdoor samples
+using SIG and BadNet methods, which are then added to the
+training set for producing malicious update parameters. In the
+FL setup, the number of malicious clients is set to 10%, with
+each malicious client’s training set containing 5% backdoor
+samples. As a deep learning-based detection method, 1D-CNN
+has been widely applied in ICSs and has achieved good results
+[14]. Thus, we use 1D-CNN model to deploy in the federated
+IDS.
+The WADI dataset serves as an extension of the SWaT
+dataset, both targeting water treatment-related industrial con-
+trol scenarios. They share consistent data collection methods,
+sensor/actuator types, and data format designs, resulting in
+similar feature semantics. For clarity, we use the SWaT dataset
+as an example here. In SWaT, each sample contains 51
+features, where some features represent sensor readings, i.e.,
+continuous values within speciﬁc ranges, and other features
+indicate controller states, i.e., discrete and limited values, e.g.,
+0 for “oﬀ” and 1 for “on”.
+When constructing backdoor samples from initial samples,
+typically normal attack samples, we modify speciﬁc fea-
+ture values to embed backdoors while ensuring compliance
+with feature characteristics and physical constraints. For SIG
+backdoor samples, we generate a 51-dimensional discrete
+low-frequency sine wave signal aligned with SWaT’s feature
+dimensions. Then, superimpose sine wave components only on
+sensor features while preserving controller values and dynam-
+ically adjust certain controller features based on physical
+system constraints to maintain operational logic. For BadNet
+backdoor samples, we select 2-4 critical sensors as triggers,
+assigning ﬁxed values, e.g., median feature values, that satisfy
+physical constraints. Then, maintain unchanged values for
+remaining sensors and controllers and ensure trigger consis-
+tency across all BadNet samples. To measure the eﬀectiveness
+of backdoor attacks, we use two metrics: the classiﬁcation
+accuracy of the poisoned model on regular samples (MA) and
+the classiﬁcation accuracy of the poisoned model on backdoor
+samples (BA). The detailed deﬁnitions of MA and BA are
+given in (12) and (13) as follows:
+MA =
+TP + TN
+TP + TN + FP + FN
+(12)
+BA =
+TN
+TN + FP
+(13)
+To comprehensively evaluate the classiﬁcation performance,
+we employ other three metrics including, precision (Pre),
+recall (Rec), F1-score (F1), and false positive rate (FPR). The
+detailed expressions of Pre, Rec, and F1 are given as follows:
+Pre =
+TP
+TP + FP
+(14)
+Rec =
+TP
+TP + FN
+(15)
+F1 = 2 × Pre × Rec
+Pre + Rec
+(16)
+FPR =
+FP
+FP + TN
+(17)
+The deﬁnitions of TP, TN, FN, and FP have been previously
+explained in (6).
+Table III shows the eﬀectiveness of backdoor attack meth-
+ods, i.e., SIG and BadNet, without ﬁltering malicious update
+parameters. As can be seen from Table III, without defense,
+the SIG and BadNet backdoor attacks can eventually achieve
+a high success rate after multiple rounds of federated training.
+Additionally, Fig. 6 presents the confusion matrix of the
+classiﬁcation model. From Fig. 6 and Table III, we can see
+that the model maintains strong classiﬁcation performance
+both before and after suﬀering from backdoor attacks. Fig. 7
+presents the results of SIG and BadNet on the SWaT dataset,
+including the original samples, SIG backdoor attack-based
+samples, and BadNet backdoor attack-based samples. From
+Fig. 7, it can be seen that the attack samples generated by
+the SIG and BadNet method are close to the original samples.
+Clearly, both SIG and BadNet ensure that the generated attack
+samples are closely matched to the original samples.
+False alarms refer to the misclassiﬁcation of normal traﬃc
+and it can be quantiﬁed by the model’s FPR metric. Based on
+the FPR calculations, we can obtain the detailed false alarms
+per hour. For the SWaT dataset, the FPR ranges from 0.0055
+to 0.0063, resulting in 20 to 23 false alarms per hour. For the
+WADI dataset, the FPR ranges from 0.0010 to 0.0011, yielding
+4 false alarms per hour.
+The TPR quantiﬁes the system’s ability to detect actual
+attacks, while the TNR reﬂects system stability, and the
+FPR represents operational costs associated with false alarms.
+Although even small FPR values, e.g., 0.01%, can generate
+signiﬁcant false alarms in large-scale ICSs, we can develop
+eﬃcient and standardized alarm rationalization by incorporat-
+ing speciﬁc Industrial Cybersecurity Standards. For instance,
+we can design a natural language processing model based
+on the ISA 18.2 industrial alarm management standard to
+automatically map penetration testing ﬁndings to Adversarial
+Tactics, Techniques, and Common Knowledge relationships,
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:09:04 UTC from IEEE Xplore.  Restrictions apply. 
+
+ZENG et al.: MoCC-BD-FID OF INDUSTRIAL CONTROL SYSTEMS
+6877
+Fig. 6. The confusion matrix of the classiﬁcation model. (a) SWaT dataset under no backdoor attack; (b) SWaT dataset under SIG attack; (c) SWaT dataset
+under BadNet attack; (d) WADI dataset under no backdoor attack; (e) WADI dataset under SIG attack; (f) WADI dataset under BadNet attack.
+Fig. 7. Results of backdoor attack on SWaT dataset. (a) Original sample; (b) SIG backdoor attack-based sample; (c) BadNet backdoor attack-based sample.
+TABLE III
+THE CLASSIFICATION PERFORMANCE OF THE MODEL ON THE SWAT AND WADI DATASET UNDER DIFFERENT ATTACK SCENARIOS
+thereby achieving rationalized alarm management [40]. Fur-
+thermore, as suggested in [41], applying MoCC-BD-FID to
+more realistic training datasets enhances the identiﬁcation of
+genuine attacks. Additionally, we proactively address noisy
+labels that may arise from attack attempts or benign triggers,
+further improving alarm rationalization. For systems that can-
+not tolerate any false positives, we can integrate ε-classiﬁers,
+adopting zero false positives as the primary decision-making
+metric [42].
+C. Evolutionary Process of MoCC-BD-FID Method
+Fig. 8 presents the Pareto fronts of MoCC-BD-FID on the
+SWaT and WADI datasets under SIG and BadNet backdoor
+attacks. We provide the Pareto fronts at generations 1, 5,
+10, and 20. As shown in Fig. 8, for the SWaT dataset, both
+the convergence and diversity of the Pareto fronts improve
+continuously throughout the evolutionary process. Speciﬁcally,
+the results at the 20th generation are signiﬁcantly better than
+those generated randomly at the 1st generation. For the WADI
+dataset, the quality of the Pareto fronts also improves steadily.
+Although some solutions are similar in the 5th and 10th
+generations, the diversity of solutions improves by the 20th
+generation, which is an important metric for Pareto fronts. The
+diversity of solutions provides more options for users, which is
+crucial in practical applications. Hence, using TPR and TNR
+as two objective functions, the designed NSGA-II method
+can obtain satisfactory Pareto fronts. This indicates that our
+designed encoding method, crossover operation, and mutation
+operation can eﬀectively handle the established mixed-variable
+multi-objective optimization problem.
+The combination scheme of clustering strategies obtained
+for SWaT and WADI in the backdoor attack scenarios of SIG
+and BadNet are as follows: For SWaT: [(1, 0.3), (10, 0.3),
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:09:04 UTC from IEEE Xplore.  Restrictions apply. 
+
+6878
+IEEE TRANSACTIONS ON INFORMATION FORENSICS AND SECURITY, VOL. 20, 2025
+Fig. 8.
+The Pareto front of the proposed MoCC-BD-FID method. (a) SWaT dataset under SIG attack; (b) SWaT dataset under BadNet attack; (c) WADI
+dataset under SIG attack; (d) WADI dataset under BadNet attack. Gen-i, i = 1, 5, 10, 20 represents the ith generation.
+(12, 0.4)] and [(11, 0.4), (12, 0.6)]. For WADI: [(3, 0.1),
+(6, 0.5), (12, 0.4)] and [(1, 0.2), (11, 0.3), (12, 0.5)]. Fig. 8
+shows the corresponding combination scheme of clustering
+strategies. For example, in the SIG attack scenario of the
+SWaT dataset, the combination scheme of clustering strategies
+is [(1, 0.3), (10, 0.3), (12, 0.4)], which indicates the use
+of three combination strategies: HDBSCAN, Agglomerative
+Clustering, and Aﬃnity Propagation and the corresponding
+conﬁdence levels are 0.3, 0.3, and 0.4.
+D. Comparison With Single Clustering-Based Defense
+First, collect sample parameters of normal and malicious
+updates generated during the SIG and BadNet backdoor
+attacks to serve as a training set for oﬄine optimization in
+the defense phase. To enhance the robustness of the backdoor
+defense, the training set includes samples that each contain
+10% of malicious update parameters produced by SIG and
+BadNet. The optimized combination scheme of clustering
+strategies is then applied to two diﬀerent scenarios, i.e., SIG
+and BadNet.
+1) Backdoor Defense for SWaT Dataset: Table IV and
+Table V present the backdoor defense experimental results
+on the SWaT dataset. It should be noted that the minor
+diﬀerences in MA metrics in Table VI are related to our
+designed backdoor attack approach. A successful backdoor
+attack should maintain model performance on normal samples
+while eﬀectively triggering speciﬁc backdoor samples. This
+means metrics like accuracy and F1-score on normal test sets
+should show no signiﬁcant diﬀerence from clean models, while
+accurately identifying backdoor samples.
+The BA primarily depends on the clustering methods
+employed. The experiments reveal that single clustering meth-
+ods can initially identify normal gradients, i.e., high TNR,
+precisely in early federated training rounds due to their
+dominant proportion. However, if any round exhibits poor
+clustering performance on normal gradients, the aggregated
+TABLE IV
+COMPARISON
+OF
+BACKDOOR
+DEFENSE
+BY
+DIFFERENT
+METHODS
+AGAINST SIG BACKDOOR ATTACK ON THE SWAT DATASET
+TABLE V
+COMPARISON
+OF
+BACKDOOR
+DEFENSE
+BY
+DIFFERENT
+METHODS
+AGAINST BADNET BACKDOOR ATTACK ON THE SWAT DATASET
+global model incorporates more backdoor parameters, subse-
+quently increasing diﬃculty in identifying normal gradients in
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:09:04 UTC from IEEE Xplore.  Restrictions apply. 
+
+ZENG et al.: MoCC-BD-FID OF INDUSTRIAL CONTROL SYSTEMS
+6879
+TABLE VI
+COMPARISON
+OF
+BACKDOOR
+DEFENSE
+BY
+DIFFERENT
+METHODS
+AGAINST SIG BACKDOOR ATTACK ON THE WADI DATASET
+later rounds. This leads to gradually deteriorating clustering
+performance, demonstrating the limitation of single clustering
+methods, i.e., their lack of robustness. A single round of
+poor clustering can signiﬁcantly compromise overall defense
+eﬀectiveness, causing BA to increase and stabilize at higher
+values while TNR approaches undefended states. This explains
+why most single clustering methods show similar BA and TNR
+metrics. In contrast, the proposed combined multiple clustering
+approach enhances robustness, where poor performance of
+any single method in a particular round doesn’t aﬀect overall
+clustering eﬀectiveness, thereby improving TNR and reducing
+BA.
+Regarding TPR metrics, the generally low values in the
+tables result from our experimental setup where malicious
+clients constituted only 10% of SWaT dataset participants,
+with backdoor samples accounting for merely 0.5% of each
+malicious client’s training data. This conﬁguration makes
+backdoor attacks stealthier, causing most clustering methods
+to perform poorly in identifying malicious gradients, hence the
+similarly low TPR values across diﬀerent methods.
+From Tables IV–V, it can be observed that:
+MoCC-BD-FID achieves the best overall performance.
+Although the TPR value of Agglomerative Clustering is
+0.1203, slightly higher than the 0.12 of MoCC-BD-FID, all
+other single cluster-based defense methods performed worse
+than MoCC-BD-FID. Speciﬁcally, when comparing MoCC-
+BD-FID with Spectral Clustering, it can be observed that all
+other performance indices of MoCC-BD-FID are much better
+than those of Spectral Clustering. Similarly, when comparing
+MoCC-BD-FID with Agglomerative Clustering, the other per-
+formance indices of MoCC-BD-FID are signiﬁcantly better.
+This shows that the proposed MoCC-BD-FID has a strong
+defense eﬀect against SIG backdoor attacks in the SWAT
+dataset.
+Comparing the defense methods based on single cluster
+strategy with the no-defense scenario, the BA value under
+the no-defense condition is the worst. Intuitively, since no-
+defense does not account for defending against backdoor
+attacks, its BA value is the highest. The results obtained by
+MoCC-BD-FID are based on a combination of three clustering
+strategies with diﬀerent conﬁdence levels. Compared with a
+single clustering strategy, MoCC-BD-FID achieves the lowest
+BA value, as it can better defend against backdoor attacks.
+Moreover, these three clustering strategies are automatically
+selected without requiring manual trial and error, which is one
+of the advantages of MoCC-BD-FID.
+By analyzing the results of single cluster strategy, it can be
+seen that no single cluster strategy method can achieve the
+best result. This also indicates the necessity of selecting an
+appropriate combination scheme of clustering strategies.
+In the case of the BadNet backdoor attack, we can also
+obtain similar results. The MoCC-BD-FID method achieves
+the best results. Although its TPR value is not as good as
+HDBSCAN and SOS, this performance index of MoCC-BD-
+FID are very close to those of HDBSCAN and SOS. Further
+comparison between MoCC-BD-FID and SOS shows that the
+BA value of MoCC-BD-FID is 0.2185, much smaller than the
+BA value of SOS. Additionally, the TNR value of MoCC-
+BD-FID is 0.9586, which is much higher than the 0.9173 of
+SOS.
+Comparing the defense performances in the SIG and BadNet
+scenarios, we can see that the BA values in the SIG scenario
+are all larger than those in the BadNet scenario, indicating that
+the SIG attack has a more severe impact. However, MoCC-BD-
+FID can still maintain the BA value below 0.3, demonstrating
+the eﬀectiveness of MoCC-BD-FID in defending against back-
+door attacks.
+Regarding the issue of low TPR and TNR accuracy in single
+cluster strategy-based backdoor defense method, the proposed
+MoCC-BD-FID improves performance and surpasses all single
+cluster strategy-based methods, except that under SIG attacks,
+the TPR is lower than DBSCAN and Spectral Clustering.
+Here, we need to emphasize that although we consider various
+clustering strategies, the combination scheme is automatically
+selected and does not require trial-and-error method.
+2) Backdoor Defense for WADI Dataset: Tables VI shows
+the defense results on the WADI dataset under SIG back-
+door attack. From Table VI, we can see that MoCC-BD-FID
+achieves the best overall performance. Although the TPR
+value is 0.1483, ranking third, it is only slightly worse
+than MeanShift and MiniBatchKMeans but better than other
+strategies. Analyzing the BA value, we observe that MoCC-
+BD-FID’s value of 0.03 is signiﬁcantly better than other
+methods, especially compared to OPTICS, which has a BA
+value as high as 0.72. Furthermore, the results reveal that
+MeanShift performs best in TPR. SOS achieves the best BA
+result among single clustering strategies, but its TPR and TNR
+are not the best. This shows that single clustering strategies
+may perform well in certain aspects but struggle to achieve
+the best overall performance. MoCC-BD-FID, targeting the
+SIG backdoor attack on the WDIA dataset, automatically
+selects the combination scheme of clustering strategies with
+corresponding conﬁdence levels, achieving better overall per-
+formance than single clustering strategies while overcoming
+the design process relied on experts.
+Regarding the scenario of BadNet backdoor attacks on the
+WADI dataset, Table VII presents the comparison results of
+MoCC-BD-FID and other single clustering strategies. From
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:09:04 UTC from IEEE Xplore.  Restrictions apply. 
+
+6880
+IEEE TRANSACTIONS ON INFORMATION FORENSICS AND SECURITY, VOL. 20, 2025
+Fig. 9. The ﬁnal clustering combination strategy obtained from Pareto front of the proposed MoCC-BD-FID method. (a) SWaT dataset under SIG attack; (b)
+SWaT dataset under BadNet attack; (c) WADI dataset under SIG attack; (d) WADI dataset under BadNet attack.
+Fig. 10.
+The rank of four performance indices of MoCC-BD-FID and other compared methods: (a) SIG backdoor attack on SWaT dataset; (b) BadNet
+backdoor attack on SWaT dataset; (c) SIG backdoor attack on WADI dataset; (d) BadNet backdoor attack on WADI dataset.
+TABLE VII
+COMPARISON
+OF
+BACKDOOR
+DEFENSE
+BY
+DIFFERENT
+METHODS
+AGAINST BADNET BACKDOOR ATTACK ON THE WADI DATASET
+Table VII, it can be seen that MoCC-BD-FID has the best
+overall performance. Especially, in the BA value, it achieves
+as low as 0.1682, which is signiﬁcantly better than the highest
+value of 0.7925. The TPR metric ranks second, just behind
+SOS’s 0.29. Additionally, MoCC-BD-FID achieves the best
+TNR, indicating that MoCC-BD-FID is eﬀective in handling
+BadNet attacks.
+Fig. 10 gives the rank of four performance indices of
+MoCC-BD-FID and other compared method. From Fig.
+10, it can be seen that most performance indices of the
+TABLE VIII
+COMPARISON OF FIVE EXISTING BACKDOOR DEFENSES AGAINST SIG
+BACKDOOR ATTACK ON THE SWAT DATASET
+MoCC-BD-FID method rank ﬁrst or second, especially the
+BA, TPR, and TNR metrics. Since MoCC-BD-FID is essen-
+tially a backdoor defense method, the BA metric is very
+important and always ranks ﬁrst. The TPR and TNR metrics,
+which are the objective functions during evolutionary process,
+can dominate most methods. This indicates the eﬀectiveness
+of MoCC-BD-FID.
+E. Comparison With Existing Backdoor Defense
+To further demonstrate the eﬀectiveness of the proposed
+backdoor defense method, we select ﬁve existing backdoor
+defense methods including three classic backdoor defense
+methods, i.e., Krum [34], Weak-DP [35], FoolsGold [36] and
+two manually designed methods, i.e., DeepSight [37] and
+CrowdGuard [22], as comparison methods on the SWaT and
+WADI datasets.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:09:04 UTC from IEEE Xplore.  Restrictions apply. 
+
+ZENG et al.: MoCC-BD-FID OF INDUSTRIAL CONTROL SYSTEMS
+6881
+TABLE IX
+COMPARISON OF FIVE EXISTING BACKDOOR DEFENSES AGAINST BAD-
+NET BACKDOOR ATTACK ON THE SWAT DATASET
+TABLE X
+COMPARISON OF FIVE EXISTING BACKDOOR DEFENSES AGAINST SIG
+BACKDOOR ATTACK ON THE WADI DATASET
+TABLE XI
+COMPARISON OF FIVE EXISTING BACKDOOR DEFENSES AGAINST BAD-
+NET BACKDOOR ATTACK ON THE WADI DATASET
+Table VIII and Table IX show the comparison of six
+defense methods under SIG backdoor attack and BadNet
+backdoor attack on the SWaT dataset, respectively. From
+Table VIII, MoCC-BD-FID outperforms the existing ﬁve
+methods. Although the MA value of MoCC-BD-FID is 0.9883,
+slightly lower than DeepSight’s 0.9893 and CrowdGuard’s
+0.9884, the other metrics are all the best. It should be noted
+that the BA metric of MoCC-BD-FID is signiﬁcantly higher
+than that of manually designed CrowdGuard and DeepSight.
+This shows that the method of automatically selecting a
+combination scheme of clustering strategies can eﬀectively
+defend against SIG backdoor attacks. Similarly, from Table IX,
+we can see that MoCC-BD-FID is only slightly lower than
+Krum’s 0.9885 in the MA metric, while it performs best in
+all other aspects, especially with a signiﬁcant improvement in
+the BA value.
+Table X and Table XI present the defense comparison
+results of MoCC-BD-FID and ﬁve other methods under SIG
+and BadNet attacks on the WADI dataset, respectively. From
+Table X, it can be observed that all the metrics of MoCC-
+BD-FID are the best, with signiﬁcant improvements in both
+the BA and TNR metrics. From Table XI, although the MA
+value of MoCC-BD-FID is slightly inferior to other methods,
+its BA, TPR, and TNR values are much better than those of
+the other methods.
+TABLE XII
+COMPARISON
+OF
+BACKDOOR
+DEFENSE
+BY
+DIFFERENT
+METHODS
+AGAINST SIG BACKDOOR ATTACK ON THE SPA DATASET
+TABLE XIII
+COMPARISON
+OF
+BACKDOOR
+DEFENSE
+BY
+DIFFERENT
+METHODS
+AGAINST BADNET BACKDOOR ATTACK ON THE SPA DATASET
+F. Transferability
+This subsection demonstrates the transferability of MoCC-
+BD-FID. While previous experimental results focused on
+Singapore’s ICSs, we here employ the PSA dataset from
+Oak Ridge National Laboratories in the USA. Tables XII
+and XIII present the backdoor defense results against BadNet
+backdoor attack and SIG backdoor attack on the PSA dataset.
+The results show that MoCC-BD-FID achieves similar MA
+values while obtaining the best BA values compared to no-
+defense and other single clustering methods. For TPR and
+TNR metrics, MoCC-BD-FID delivers the best performance
+against SIG backdoor attack. Against BadNet backdoor attack,
+MoCC-BD-FID achieves 0.2164 in TPR, slightly lower than
+the top-performing Birch single clustering method, but signif-
+icantly outperforms other single clustering approaches.
+To further demonstrate the eﬀectiveness of MoCC-BD-FID
+on the PSA dataset, we compared it with Krum [34], Weak-DP
+[35], FoolsGold [36], DeepSight [37], and CrowdGuard [22].
+Table XIV presents the comparison results between MoCC-
+BD-FID and these ﬁve methods against SIG backdoor attacks
+on the SPA dataset, while Table XV shows the defense perfor-
+mance comparison of all six methods against BadNet backdoor
+attacks on SPA dataset. The results in Tables XIV and XV
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:09:04 UTC from IEEE Xplore.  Restrictions apply. 
+
+6882
+IEEE TRANSACTIONS ON INFORMATION FORENSICS AND SECURITY, VOL. 20, 2025
+TABLE XIV
+COMPARISON OF FIVE EXISTING BACKDOOR DEFENSES AGAINST SIG
+BACKDOOR ATTACK ON THE SPA DATASET
+TABLE XV
+COMPARISON OF FIVE EXISTING BACKDOOR DEFENSES AGAINST SIG
+BACKDOOR ATTACK ON THE SPA DATASET
+demonstrate that MoCC-BD-FID achieves best performance,
+particularly in terms of the BA metric, obtaining values of
+0.2062 and 0.1908 for SIG backdoor attack and BadNet
+backdoor attack scenarios, respectively. These comprehensive
+results conﬁrm that MoCC-BD-FID can be successfully trans-
+ferred to other ICS environments while maintaining excellent
+performance.
+G. Discussion
+In real ICSs, online testing of new IDSs is typically not
+permitted. Performance evaluation of novel IDSs is generally
+ﬁrst conducted on public datasets or experimental testbeds.
+Considering data privacy and security concerns when actual
+systems are under attack, complete datasets are rarely pub-
+licly available. In academic research, experimental approaches
+can simulate attacks on practical systems to generate highly
+representative data including the characteristics of large-scale
+and operational environments [43]. In this paper, we employ
+the SWaT, WADI, and SPA datasets, which largely reﬂect the
+characteristics of real systems, and are widely used in existing
+literature to validate the eﬀectiveness of model. Therefore, if
+MoCC-BD-FID performs well on these datasets, it should also
+achieve good performance when applied to practical systems.
+In practical deployment, the MoCC-BD-FID is conducted
+oﬄine. During online detection, the optimized clustering
+scheme is directly applied without introducing additional
+latency, thus satisfying real-time response requirements. Fur-
+thermore, since FL model aggregation is inherently periodic,
+the MoCC-BD-FID only needs to be executed once during
+the initial federated training phase. Subsequent model update
+cycles do not require multiple iterations. Therefore, when
+deployed in practical systems, MoCC-BD-FID can achieve
+real-time detection.
+Detecting out of distribution (OOD) backdoors remains a
+challenging task, and MoCC-BD-FID can be extended for
+OOD backdoor detection. Following [44], we ﬁrst inject
+indicator tasks into the global model by using OOD data,
+then leverage the distributional similarity between backdoor
+samples and OOD samples to obtain the required backdoor
+samples for MoCC-BD-FID. This enables MoCC-BD-FID to
+detect OOD backdoors to some extent. Also, MoCC-BD-FID
+can be extended to solve OOD backdoors by designing a
+method to mount clean-label backdoor attacks or predicting
+label transitions based on counterfactual explanation [44], [45].
+V. CONCLUSION
+In this paper, we have proposed a multi-objective clustering
+combination-based backdoor defense for federated intrusion
+detection of ICSs, called MoCC-BD-FID. In MoCC-BD-FID,
+we establish the automated design issue of clustering strategies
+combination for defense method as the mixed-variable multi-
+objective optimization problem by maximizing both TPR
+and TNR. Besides, we have developed an eﬃcient encoding
+strategy, crossover operation and mutation operation under the
+framework of NSGA-II to describe and evolve the diﬀerent
+combination schemes of 12 classic clustering strategies with
+diﬀerent conﬁdence levels. The eﬀectiveness of the backdoor
+defense strategy is illustrated by subjecting 1D-CNN to two
+diﬀerent attack scenarios including SIG and BadNet on three
+widely-used ICS intrusion datasets i.e., SWaT, WADI, and
+PSA. The experimental results have shown that MoCC-BD-
+FID achieves better performance in MA, BA, TPR and TNR
+than other 12 single cluster strategy-based methods, three
+classic backdoor defense methods, i.e., Krum [34], Weak-DP
+[35], FoolsGold [36] and two manually designed methods,
+i.e., DeepSight [37] and CrowdGuard [22]. In addition, the
+combination scheme of clustering strategies is automatically
+designed by the developed NSGA-II, which overcomes the
+diﬃculty in determining combination scheme involving more
+than two clustering strategies.
+This work focuses on the automatic selection of an appro-
+priate combination of clustering strategies for defending
+against backdoor attacks, so the illustrated deep learning
+model employed in this study is a simple 1D-CNN, whose
+detection performance especially the FPR can be further
+improved. In practical deployments, more advanced models
+such as automated federated IDS (Fed-GA-CNN-IDS) [14]
+and multi-objective discrete extremal optimization-based CNN
+(MODEO-CNN) [47] will be adopted to further reduce the
+FPR. For federated IDSs, FPR is directly correlated with
+model performance after federated training. However, FL
+encounters increasing convergence challenges with more par-
+ticipating clients, making it diﬃcult to obtain optimal models.
+For future work, we plan to implement multi-dimensional
+collaborative optimization through personalized FL, eﬃcient
+aggregation strategies, and automated deep learning techniques
+to systematically reduce FPR while improving convergence
+eﬃciency. Also, it will be interesting to develop more robust
+defense methods against OOD backdoor attacks.
+REFERENCES
+[1]
+H. Zhu, M. Liu, C. Fang, R. Deng, and P. Cheng, “Detection-
+performance tradeoﬀfor watermarking in industrial control systems,”
+IEEE Trans. Inf. Forensics Security, vol. 18, pp. 2780–2793, 2023.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:09:04 UTC from IEEE Xplore.  Restrictions apply. 
+
+ZENG et al.: MoCC-BD-FID OF INDUSTRIAL CONTROL SYSTEMS
+6883
+[2]
+V. Tay et al., “Taxonomy of ﬁngerprinting techniques for evaluation of
+smart grid honeypot realism,” in Proc. IEEE Int. Conf. Commun., Con-
+trol, Comput. Technol. Smart Grids (SmartGridComm), Kalba, United
+Kingdom, Oct. 2023, pp. 1–7.
+[3]
+Y. Shan, Y. Yao, T. Zhao, and W. Yang, “NeuPot: A neural network-
+based honeypot for detecting cyber threats in industrial control systems,”
+IEEE Trans. Ind. Informat., vol. 19, no. 10, pp. 10512–10522, Oct.
+2023.
+[4]
+M. Asiri, N. Saxena, R. Gjomemo, and P. Burnap, “Understanding
+indicators of compromise against cyber-attacks in industrial control
+systems: A security perspective,” ACM Trans. Cyber-Phys. Syst., vol. 7,
+no. 2, pp. 1–33, Apr. 2023.
+[5]
+R. Langner, “Stuxnet: Dissecting a cyberwarfare weapon,” IEEE Secur.
+Privacy, vol. 9, no. 3, pp. 49–51, May 2011.
+[6]
+J. Chen, Y. Zhao, Q. Li, X. Feng, and K. Xu, “FedDef: Defense against
+gradient leakage in federated learning-based network intrusion detection
+systems,” IEEE Trans. Inf. Forensics Security, vol. 18, pp. 4561–4576,
+2023.
+[7]
+M. Kravchik and A. Shabtai, “Eﬃcient cyber attack detection in indus-
+trial control systems using lightweight neural networks and PCA,” IEEE
+Trans. Dependable Secure Comput., vol. 19, no. 4, pp. 2179–2197, Jul.
+2022.
+[8]
+B. McMahan, E. Moore, D. Ramage, S. Hampson, and B. A. Y. Arcas,
+“Communication-eﬃcient learning of deep networks from decentralized
+data,” in Proc. 20th Int. Conf. Artif. Intell. Statist., 2017, pp. 1273–1282.
+[9]
+H. Zhang, K. Zeng, and S. Lin, “Federated graph neural network for
+fast anomaly detection in controller area networks,” IEEE Trans. Inf.
+Forensics Security, vol. 18, pp. 1566–1579, 2023.
+[10] A. Albaseer, N. Abdi, M. Abdallah, M. Qaraqe, and S. Al-Kuwari,
+“FedPot: A quality-aware collaborative and incentivized honeypot-based
+detector for smart grid networks,” IEEE Trans. Netw. Service Manage.,
+vol. 21, no. 4, pp. 4844–4860, Aug. 2024.
+[11] X. Huang, J. Liu, Y. Lai, B. Mao, and H. Lyu, “EEFED: Personalized
+federated learning of execution & evaluation dual network for CPS intru-
+sion detection,” IEEE Trans. Inf. Forensics Security, vol. 18, pp. 41–56,
+2023.
+[12] B. Ghimire and D. B. Rawat, “Recent advances on federated learning
+for cybersecurity and cybersecurity for federated learning for Internet of
+Things,” IEEE Internet Things J., vol. 9, no. 11, pp. 8229–8249, Jun.
+2022.
+[13] S. I. Popoola, R. Ande, B. Adebisi, G. Gui, M. Hammoudeh, and
+O. Jogunola, “Federated deep learning for zero-day botnet attack
+detection in IoT-edge devices,” IEEE Internet Things J., vol. 9, no. 5,
+pp. 3930–3944, Mar. 2022.
+[14] J.-M. Shao, G.-Q. Zeng, K.-D. Lu, G.-G. Geng, and J. Weng,
+“Automated federated learning for intrusion detection of industrial con-
+trol systems based on evolutionary neural architecture search,” Comput.
+Secur., vol. 143, Aug. 2024, Art. no. 103910.
+[15] X. Hao, C. Lin, W. Dong, X. Huang, and H. Xiong, “Robust and secure
+federated learning against hybrid attacks: A generic architecture,” IEEE
+Trans. Inf. Forensics Security, vol. 19, pp. 1576–1588, 2024.
+[16] E. Bagdasaryan, A. Veit, Y. Hua, D. Estrin, and V. Shmatikov, “How
+to backdoor federated learning,” in Proc. Int. Conf. Artif. Intell. Statist.,
+2020, pp. 2938–2948.
+[17] X. Gong, Y. Chen, Q. Wang, and W. Kong, “Backdoor attacks and
+defenses in federated learning: State-of-the-art, taxonomy, and future
+directions,” IEEE Wireless Commun., vol. 30, no. 2, pp. 114–121, Apr.
+2023.
+[18] Y. Wan, Y. Qu, W. Ni, Y. Xiang, L. Gao, and E. Hossain, “Data and
+model poisoning backdoor attacks on wireless federated learning, and the
+defense mechanisms: A comprehensive survey,” IEEE Commun. Surveys
+Tuts., vol. 26, no. 3, pp. 1861–1897, 3rd Quart., 2024.
+[19] T. D. Nguyen, T. Nguyen, P. L. Nguyen, H. H. Pham, K. D. Doan,
+and K.-S. Wong, “Backdoor attacks and defenses in federated learning:
+Survey, challenges and future research directions,” Eng. Appl. Artif.
+Intell., vol. 127, Jan. 2024, Art. no. 107166.
+[20] H. Jeong, H. Son, S. Lee, J. Hyun, and T.-M. Chung, “FedCC:
+Robust federated learning against model poisoning attacks,” 2022,
+arXiv:2212.01976.
+[21] Z. Zhang, Y. Zhang, D. Guo, L. Yao, and Z. Li, “SecFedNIDS: Robust
+defense for poisoning attack against federated learning-based network
+intrusion detection system,” Future Gener. Comput. Syst., vol. 134,
+pp. 154–169, Sep. 2022.
+[22] P. Rieger, T. Krauß, M. Miettinen, A. Dmitrienko, and A.-R. Sadeghi,
+“CrowdGuard: Federated backdoor detection in federated learning,”
+2022, arXiv:2210.07714.
+[23] Y. Wang, D.-H. Zhai, Y. He, and Y. Xia, “An adaptive robust defending
+algorithm against backdoor attacks in federated learning,” Future Gener.
+Comput. Syst., vol. 143, pp. 118–131, Jun. 2023.
+[24] T. D. Nguyen et al., “FLAME: Taming backdoors in federated learning,”
+in Proc. 31st USENIX Security Symp. (USENIX Security), 2022,
+pp. 1415–1432.
+[25] K. Deb, A. Pratap, S. Agarwal, and T. Meyarivan, “A fast and elitist
+multiobjective genetic algorithm: NSGA-II,” IEEE Trans. Evol. Com-
+put., vol. 6, no. 2, pp. 182–197, Apr. 2002.
+[26] K. Deb, K. Sindhya, and T. Okabe, “Self-adaptive simulated binary
+crossover for real-parameter optimization,” in Proc. 9th Annu. Conf.
+Genet. Evol. Comput., 2007, pp. 1187–1194.
+[27] H. Li and Q. Zhang, “Multiobjective optimization problems with compli-
+cated Pareto sets, MOEA/D and NSGA-II,” IEEE Trans. Evol. Comput.,
+vol. 13, no. 2, pp. 284–302, Apr. 2009.
+[28] J. Liu, Y. Wang, B. Xin, and L. Wang, “A biobjective perspective for
+mixed-integer programming,” IEEE Trans. Syst., Man, Cybern., Syst.,
+vol. 52, no. 4, pp. 2374–2385, Apr. 2022.
+[29] J. Goh, S. Adepu, K. N. Junejo, and A. Mathur, “A dataset to support
+research in the design of secure water treatment systems,” in Proc. Int.
+Conf. Crit. Inf. Infrastruct. Secur., 2017, pp. 88–99.
+[30] C. M. Ahmed, V. R. Palleti, and A. P. Mathur, “WADI: A water
+distribution testbed for research in the design of secure cyber physical
+systems,” in Proc. Int. Workshop CySWater, 2017, pp. 25–28.
+[31] S. Pan, T. Morris, and U. Adhikari, “Classiﬁcation of disturbances and
+cyber-attacks in power systems using heterogeneous time-synchronized
+data,” IEEE Trans. Ind. Informat., vol. 11, no. 3, pp. 650–662, Jun.
+2015.
+[32] M. Barni, K. Kallas, and B. Tondi, “A new backdoor attack in CNNs
+by training set corruption without label poisoning,” in Proc. IEEE Int.
+Conf. Image Process. (ICIP), Sep. 2019, pp. 101–105.
+[33] T. Gu, K. Liu, B. Dolan-Gavitt, and S. Garg, “BadNets: Evaluating
+backdooring attacks on deep neural networks,” IEEE Access, vol. 7,
+pp. 47230–47244, 2019.
+[34] P. Blanchard, E. M. E. Mhamdi, R. Guerraoui, and J. Stainer, “Machine
+learning with adversaries: Byzantine tolerant gradient descent,” in Proc.
+Adv. Neural Inf. Process. Syst., vol. 30, Dec. 2017, pp. 118–128.
+[35] Z. Sun, P. Kairouz, A. Theertha Suresh, and H. Brendan McMahan, “Can
+you really backdoor federated learning?,” 2019, arXiv:1911.07963.
+[36] C. Fung, C. J. Yoon, and I. Beschastnikh, “The limitations of federated
+learning in Sybil settings,” in Proc. 23rd Int. Symp. Res. Attacks,
+Intrusions Defenses, 2020, pp. 301–316.
+[37] P. Rieger, T. Duc Nguyen, M. Miettinen, and A.-R. Sadeghi, “DeepSight:
+Mitigating backdoor attacks in federated learning through deep model
+inspection,” 2022, arXiv:2201.00763.
+[38] X. Cao, J. Jia, and N. Z. Gong, “Provably secure federated learning
+against malicious clients,” in Proc. AAAI Conf. Artif. Intell., 2021,
+vol. 35, no. 8, pp. 6885–6893.
+[39] Z. Chen, S. Yu, M. Fan, X. Liu, and R. H. Deng, “Privacy-enhancing
+and robust backdoor defense for federated learning on heterogeneous
+data,” IEEE Trans. Inf. Forensics Security, vol. 19, pp. 693–707, 2024.
+[40] S. Alabdulhadi and A. Al-Matouq, “Eﬃcient and standardized alarm
+rationalization for cybersecurity monitoring,” IEEE Access, vol. 12,
+pp. 166936–166944, 2024.
+[41] L. Yang et al., “True attacks, attack attempts, or benign triggers?
+An empirical measurement of network alerts in a security operations
+center,” in Proc. 33rd USENIX Secur. Symp. (USENIX Secur. 24), 2024,
+pp. 1525–1542.
+[42] M. Sayad Haghighi, F. Farivar, and A. Jolfaei, “A machine learning-
+based approach to build zero false-positive IPSs for industrial IoT and
+CPS with a case study on power grids security,” IEEE Trans. Ind. Appl.,
+vol. 60, no. 1, pp. 920–928, Jan. 2024.
+[43] R. Sommer and V. Paxson, “Outside the closed world: On using machine
+learning for network intrusion detection,” in Proc. IEEE Symp. Security
+Privacy, May 2010, pp. 305–316.
+[44] S. Li and Y. Dai, “BackdoorIndicator: Leveraging OOD data for proac-
+tive backdoor detection in federated learning,” in Proc. 33rd USENIX
+Secur. Symp. (USENIX Secur.), 2024, pp. 4193–4210.
+[45] Y. Zeng, M. Pan, H. Just, L. Lyu, M. Qiu, and R. Jia, “Narcissus: A
+practical clean-label Backdoor attack with limited information,” in Proc.
+ACM SIGSAC Conf. Comput. Commun. Secur., 2023, pp. 771–785.
+[46] H. Sui et al., “DMGNN: Detecting and mitigating backdoor attacks in
+graph neural networks,” 2024, arXiv:2410.14105.
+[47] K.-D. Lu, J.-C. Huang, G.-Q. Zeng, M.-R. Chen, G.-G. Geng, and
+J. Weng, “Multi-objective discrete extremal optimization of variable-
+length blocks-based CNN by joint NAS and HPO for intrusion detection
+in IIoT,” IEEE Trans. Dependable Secure Comput., early access, Feb.
+24, 2025, doi: 10.1109/TDSC.2025.3545363.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:09:04 UTC from IEEE Xplore.  Restrictions apply. 

@@ -1,0 +1,2167 @@
+Securing industrial control systems: Developing a SCADA/IoT test bench 
+and evaluating lightweight cipher performance on hardware simulator
+Darshana Upadhyay a, Sagarika Ghosh a, Hiroyuki Ohno b, Marzia Zaman c, Srinivas Sampalli a,*
+a Faculty of Computer Science, Dalhousie University, Halifax, Nova Scotia B3H 1W5, Canada
+b Graduate School of Natural Science and Technology, Kanazawa University, Kakumamachi, Kanazawa, Ishikawa 920-1192, Japan
+c Research & Development Dept, Cistel Technology, Research and Development Department, Ottawa, Ontario, K2E 7V7, Canada
+A R T I C L E I N F O
+Keywords:
+SCADA
+ICSs
+IoT
+Hardware test bench
+Cyber-attacks
+Lightweight cipher
+Raspberry Pi
+Modbus
+MQTT
+VTSCADA
+A B S T R A C T
+This paper addresses the critical need for enhancing security in Supervisory Control and Data Acquisition 
+(SCADA) networks within Industrial Control Systems (ICSs) to protect the industrial processes from cyber- 
+attacks. The purpose of our work is to propose and evaluate lightweight security measures to safeguard crit­
+ical infrastructure resources. The scope of our effort involves simulating a secure SCADA/IoT-based hardware 
+test bench for ICSs, utilizing Modbus and MQTT communication protocols. Through case studies in remote servo 
+motor control, water distribution systems, and power system voltage level indicators, vulnerabilities such as 
+Denial of Service (DoS) and Man-in-The-Middle (MiTM) attacks are identified, and security recommendations are 
+provided. To execute our work, we deploy lightweight ciphers such as Prime Counter & Hash Chaining (PCHC) 
+and Ascon algorithm with Compression Rate (ACR) for secure information exchange between the plant floor and 
+the control center. Evaluation of these ciphers on Raspberry Pi focuses on execution speed and memory utili­
+zation. Additionally, a comparison with the AGA-12 protocol standard for SCADA networks is conducted to 
+underscore the efficacy of the proposed security measures. Our findings include the identification of SCADA 
+network vulnerabilities and the proposal of lightweight security measures to mitigate risks. Performance eval­
+uation of the proposed ciphers on Raspberry Pi demonstrates their effectiveness, emphasizing the importance of 
+deploying such measures to ensure resilience against cyber threats in SCADA environments.
+1. Introduction
+Supervisory Control and Data Acquisition (SCADA) systems play a 
+crucial role in monitoring and controlling industrial processes such as oil 
+mining, smart grids operations, nuclear power plants, water & sewage 
+systems. Originally, SCADA systems were primarily designed to enhance 
+accurate and efficient process execution within localized settings such as 
+manufacturing plants. The emphasis was on local operations rather than 
+securing network information [1]. However, with the increasing inte­
+gration of SCADA systems for remote monitoring to enhance efficiency, 
+they have become vulnerable to cyber-attacks. Fig. 1 illustrates a generic 
+SCADA communication architecture consisting mainly of three sections, 
+namely, field site, intermediate SCADA, and control center. Field site 
+devices are all known as plant floor components and consist of sensors, 
+Remote Terminal Units (RTUs), Programmable Logic Controllers (PLCs), 
+and Intelligent Electronic Devices (IEDs). These devices facilitate the 
+transfer of data from the field instrumentation level to the supervisory 
+level, where the expected parameter values are validated by components 
+such as the Master Terminal Unit (MTU). Once validated, the data is 
+then transmitted back to the field instrumentation level. Additionally, 
+the SCADA control center serves as a central hub for storing and dis­
+playing the exchanged measured data in a database, enabling central­
+ized monitoring and system control. In network infrastructures for 
+power plants or water plants, extensive SCADA networks are employed, 
+which consist of numerous remote dedicated control units to distribute 
+the load on the centralized server [2]. The increased interconnectivity of 
+networks and the remote accessibility of systems within a SCADA 
+network pose risks stemming from diverse vulnerabilities and potential 
+cyber-attacks. The impact of quantum computing on SCADA systems is 
+an area of active research, with efforts to classify attacks based on 
+SCADA security requirements and assess the risks associated with 
+quantum computing in the SCADA network [3]. In February 2021, an 
+incident occurred at a U.S. Water Treatment Facility, wherein unau­
+thorized access to SCADA systems resulted in a compromise. The 
+* Corresponding author at: Faculty of Computer Science, Dalhousie University, Halifax, Nova Scotia B3H 1W5, Canada.
+E-mail addresses: darshana@dal.ca (D. Upadhyay), sagarika.ghosh@dal.ca (S. Ghosh), marzia@cistel.com (M. Zaman), srini@cs.dal.ca (S. Sampalli). 
+Contents lists available at ScienceDirect
+International Journal of Critical Infrastructure Protection
+journal homepage: www.elsevier.com/locate/ijcip
+https://doi.org/10.1016/j.ijcip.2024.100705
+Received 25 January 2024; Received in revised form 4 July 2024; Accepted 14 August 2024  
+international journal of critical infrastructure protection 47 (2024) 100705 
+Available online 23 August 2024 
+1874-5482/© 2024 The Author(s). Published by Elsevier B.V. This is an open access article under the CC BY-NC license ( http://creativecommons.org/licenses/by- 
+nc/4.0/ ). 
+
+attackers exploited a vulnerability and manipulated the control com­
+mands, leading to an increase in the amount of sodium hydroxide used 
+in the water treatment process. This incident highlights the potential 
+risks and consequences associated with unauthorized access to SCADA 
+systems in critical infrastructure. Additionally, various federal agencies 
+have recently discovered the presence of malware known as Pipedream 
+in liquefied natural gas plants. Pipedream specifically targets and dis­
+rupts the operations conducted by multiple Programmable Logic Con­
+trollers (PLCs). Notably, it has been employed to destabilize PLCs 
+manufactured by prominent companies such as Schneider Electric in 
+France and Omron in Japan [4]. These incidents underscore the urgent 
+need for robust security measures and continuous monitoring to safe­
+guard SCADA systems against cyber threats in industrial environments.
+It is crucial to implement sufficient safety measures to enhance the 
+security of SCADA networks at this point. Key precautions involve 
+limited perimeters, patch management, robust cryptography, and, 
+notably, segregating the control network and corporate network 
+through the defense-in-depth approach. However, applying these secu­
+rity measures is challenging due to inherited weaknesses from legacy 
+systems and the potential risk of exploitation during real-time commu­
+nication [6].
+The consequences of failing to secure SCADA systems can be cata­
+strophic, as demonstrated by the successful attack on the core command 
+control system in Rye Brook, which remained undetected for several 
+years [7]. Traditional SCADA standards such as IEC 60,870, DNP3, IEC 
+61,850, and Modbus are known to have various security limitations. 
+However, the AGA-12 standard has been developed to provide improved 
+security features compared to these traditional standards [8]. AGA-12 
+incorporates three primary algorithms, namely, AES with a minimum 
+key length of 124 bits, RSA with a minimum key length of 1024 bits, and 
+ECDSA with a key length of at least 160 bits, along with SHA-1 for 
+cryptographic operations. These algorithms are utilized in AGA-12 to 
+ensure confidentiality, integrity, and authentication [9]. However, 
+Gidney et al. conducted theoretical calculations and provided evidence 
+that Shor’s algorithm can be utilized to exploit the vulnerabilities of RSA 
+[10]. They also estimated the quantum resources required for such at­
+tacks. Additionally, the quantum search algorithm known as Grover’s 
+algorithm has weakened the security of AES and ECDSA. Moreover, it 
+has been demonstrated that SHA-1 is susceptible to collision attacks 
+[11]. These findings emphasize the need for enhancing AGA-12 with a 
+more robust scheme that can withstand both traditional and quantum 
+attacks [12].
+Several security standards and mechanisms have been proposed by 
+researchers and standards bodies to address the vulnerabilities and 
+strengthen SCADA security [13]. Security protocols rely on strong key 
+management schemes, providing confidentiality, integrity, authentica­
+tion, and non-repudiation for SCADA communications. Implementing 
+well-designed key exchange and management systems is essential for 
+maintaining the security and resilience of SCADA-based Industrial 
+Control Systems (ICS). Researchers have developed protocols such as 
+hybrid cryptosystems to address the availability, performance, and se­
+curity requirements of SCADA infrastructure [14]. The foregoing dis­
+cussion underscores the necessity for an effective cryptography solution 
+that can prevent these systems from potential breaches. The objective of 
+this paper is to design and develop a small SCADA testbed to measure the 
+efficiency of proposed robust and low-cost security algorithms for 
+automated industries, aiming to mitigate various security flaws and 
+cyber-attacks. This paper aims to offer a robust and secure 
+system-in-chip component that can be easily integrated with field site 
+components while securely communicating with control center 
+components.
+Major Contributions: The contributions of this paper are as follows:
+1. We propose a secure framework design and development of secure 
+SCADA/IoT-based hardware simulation for ICSs by targeting cyber- 
+attack opportunities and locations of attacks. Accordingly, we pro­
+pose the integration of security modules to protect critical resources 
+of industrial control systems from cyber-attacks.
+2. We validate our proposed design by hardware simulation using three 
+case studies of industrial applications, namely, controlling servo 
+motors from remote locations, water distribution systems, and 
+voltage level indicators for power systems utilizing MQTT & Modbus 
+protocols for communication and integrating plant floor and control 
+center components. The contribution lies in designing and deploying 
+a small testbed that demonstrates secure communication, remote 
+control capabilities, and alarm system functionality. This research 
+work contributes to the practical understanding and implementation 
+of SCADA systems in industrial control environments.
+3. We provide a thorough comparative analysis of three security algo­
+rithms, namely, hash-chaining using multi-layered architecture 
+(PCHC), ASCON algorithm using compression rate (ACR), and 
+SCADA protocol standard (AGA-12), focusing on execution time and 
+memory utilization. Moreover, the paper summarizes the compari­
+son in terms of applicable cyber attacks to SCADA-based industrial 
+control systems and prevention mechanisms provided by our pro­
+posed security algorithms along with AGA-12.
+Fig. 1. Large SCADA communication architecture (SINGLE FITTING IMAGE) [5].
+D. Upadhyay et al.                                                                                                                                                                                                                             
+International Journal of Critical Infrastructure Protection 47 (2024) 100705 
+2 
+
+Outline of the paper:
+The rest of this paper is organized as follows. Section 2 describes 
+related research in the areas of key management, secure key and in­
+formation exchange, and various testbed for SCADA systems. Section 3
+demonstrates the design and development of a secure hardware testbed 
+for the SCADA system. The hardware simulation of the testbed is 
+demonstrated in Section 4 by considering three test cases, namely, 
+controlling the servo motor remotely, water/oil distribution system, and 
+voltage level indicator for power systems. Section 5 presents the com­
+plete experimental setup which includes algorithm selection for cipher 
+suites, performance evaluation of the proposed methods, and AGA-12 
+protocol standard in terms of execution speed and memory utilization. 
+Section 6 presents the comparative analysis of proposed security 
+methods with AGA-12 in terms of computational speed, resource utili­
+zation, and security analysis. Section 7 concludes the paper.
+2. Background and related work
+Failure to secure SCADA systems can have catastrophic conse­
+quences. According to the U.S. Department of Justice, an attack in Rye 
+Brook was successfully launched in 2013, where hackers gained control 
+over the core command control system. This breach went unnoticed 
+until 2016 [15]. Additionally, SCADA standards and security protocols 
+face threats due to a lack of confidentiality, integrity, and availability. 
+To address these vulnerabilities, researchers and organizations have 
+proposed various security standards and schemes. The current crypto­
+graphic standard, AGA-12, employs RSA as asymmetric key cryptog­
+raphy for secure seed exchange, AES for encryption, and ECDSA based 
+on SHA-1 for generating signatures. However, RSA and AES are 
+vulnerable to Shor’s and Grover’s algorithms in a quantum setting, and 
+SHA-1 has been compromised in practice [16].
+Secure key exchange and management systems are critical in 
+ensuring the security of SCADA-based Industrial Control Systems (ICS). 
+These systems are responsible for establishing and managing crypto­
+graphic keys that are used to secure communication channels, authen­
+ticate users and devices, and protect sensitive information in SCADA 
+environment. Secure key exchange is the process of securely establishing 
+shared cryptographic keys between communicating entities in a SCADA 
+system. It ensures that the keys are exchanged in a way that is resistant 
+to eavesdropping, tampering, and unauthorized access. The common 
+secure key exchange mechanisms used in SCADA include Diffie-Hellman 
+(DH) Key Exchange, Public Key Infrastructure (PKI), and Quantum Key 
+Distribution (QKD). A DH Key exchange allows two parties to agree 
+upon a shared secret key over an insecure channel without directly 
+transmitting the key. DH key exchange provides a secure way to 
+establish symmetric keys for encryption and authentication in SCADA 
+systems. While PKI is a public-key cryptography framework to facilitate 
+secure key exchange and authentication, it employs digital certificates 
+and a trusted certificate authority to verify the identities of users, de­
+vices, and control centers in a SCADA system. Whereas QKD is a quan­
+tum cryptography technique that leverages the principles of quantum 
+physics to securely exchange cryptographic keys. QKD ensures the se­
+curity of key exchange by detecting any attempt to eavesdrop or tamper 
+with the keys.
+Key management systems are responsible for the generation, distri­
+bution, storage, revocation, and lifecycle management of cryptographic 
+keys within a SCADA system. During key generation, keys used in 
+SCADA systems are generated using secure random number generators 
+or cryptographic algorithms. The keys may include symmetric encryp­
+tion keys, asymmetric key pairs (public and private keys), session keys, 
+and authentication keys. Secure distribution of keys is crucial to prevent 
+unauthorized access. Key distribution mechanisms may involve secure 
+channels, pre-shared keys, key agreement protocols, or the use of trusted 
+third parties. Moreover, keys need to be securely stored to prevent un­
+authorized access or compromise. Hardware security modules (HSMs) or 
+secure key storage systems can be used to protect keys from physical or 
+logical attacks. While key revocation involves when a key is compro­
+mised or no longer needed, it should be revoked to ensure the security of 
+the system. Key revocation mechanisms, such as certificate revocation 
+lists (CRLs) or key escrow systems, are used to invalidate and replace 
+compromised or outdated keys. Key management systems handle the 
+entire lifecycle of cryptographic keys, including key rotation, expiration, 
+renewal, and archival. Proper key lifecycle management ensures the 
+security and integrity of key usage over time. Furthermore, key man­
+agement systems should incorporate auditing and monitoring capabil­
+ities to track key usage, detect anomalies, and identify any unauthorized 
+activities related to key management. Secure key exchange and key 
+management systems in SCADA-based ICSs are crucial in addressing the 
+unique security requirements and challenges of industrial control envi­
+ronments. They aim to provide confidentiality, integrity, authentication, 
+and non-repudiation for SCADA communications and protect sensitive 
+information from unauthorized access or manipulation. Implementing 
+robust key exchange and key management systems is essential to 
+maintaining the security and resilience of SCADA-based ICSs.
+Researchers have developed various key management protocols, 
+based on symmetric, asymmetric, and hybrid key cryptosystems. The 
+symmetric key scheme is efficient and provides authentication and 
+confidentiality. However, it fails to provide integrity. Typically, asym­
+metric key cryptography provides message integrity and authentication 
+at the cost of high availability. Thus, hybrid cryptosystems are more 
+feasible for SCADA infrastructure. Rezai et al. propose an advanced 
+Hybrid key management architecture (HSKMA) that addresses the lack 
+of availability and increases the performance and security of the 
+communication channel [17]. It also provides a replacement scheme to 
+address the availability requirement. Table 1 summarizes various key 
+exchange and management schemes.
+Various testbeds have been designed by researchers and organiza­
+tions and can be categorized based on their features. The hardware- 
+based large-scale testbeds have high costs and are difficult to imple­
+ment. However, Idaho National Laboratory (INL) has developed a 
+comprehensive smart grid infrastructure of 61 miles with a 138 kV dual- 
+fed power loop using seven subterminal units for real-time testing [23]. 
+It has layers of security features including encryption schemes based on 
+hybrid algorithms, intrusion detection systems and firewalls. The Na­
+tional Renewable Energy Laboratory (NREL) focuses on assessing 
+Distributed Energy Resource (DER) system performance, supporting 
+standards development, and addressing complex system integration 
+challenges. Another smart grid test bed is Jeju Island which acts as a 
+real-world smart grid testbed platform in collaboration with South 
+Korea Electronic Power [24]. The microgrid at the Illinois Institute of 
+Technology (IIT) was constructed to provide economically viable, 
+environmentally friendly, resilient, and self-healing capabilities for the 
+university campus during power outages. It consists of two 4-MW gas 
+turbines, 140 KW solar PV cells, an 8-KW wind turbine with EV charging 
+stations, and a 500-KWH storage system [25]. The Energy Systems 
+Research Laboratory (ESRL) at Florida International University boasts a 
+comprehensive testbed that encompasses both hardware and a complete 
+cyber-physical infrastructure. This testbed facilitates research in multi­
+ple areas and includes a total power capacity of up to 136 kW, incor­
+porating conventional generation, renewable units, and storage 
+capabilities. Actual generation stations are integrated with PMUs, IEDs, 
+and PLCs, forming a complete platform for various smart grid domains 
+[26].
+There are various testbeds that analyze security and privacy as part 
+of their research. Sandia National Laboratories developed The Virtual 
+Control System Environment (VCSE) which is a SCADA testbed to 
+analyze the threats and vulnerabilities of the critical infrastructure. The 
+testbed involves encrypted and secure data communication between 
+Internet Protocol routed units, simulated RTUs, and Human Machine 
+Interfaces (HMI). The DNP3 and Modbus protocols are also implemented 
+and are tested against various cyber-attacks including MiTM, precision 
+insider, and rogue software attacks. Furthermore, Wireshark is used as a 
+D. Upadhyay et al.                                                                                                                                                                                                                             
+International Journal of Critical Infrastructure Protection 47 (2024) 100705 
+3 
+
+traffic monitoring tool to analyze the network topology. The Testbed for 
+Analyzing Security of SCADA Control System (TASSCS) is specifically 
+designed to enhance the security and protection of SCADA systems 
+against a wide range of cyber-attacks. The evaluation of this testbed 
+includes assessing factors such as detection rate, false alerts, and the 
+effectiveness of protection techniques. It utilizes simulated RTUs and 
+PLCs that operate on Modbus and DNP3 protocols, which are integrated 
+with a power system simulator and the OPNET network simulator pro­
+gram. Various attack scenarios are studied within TASSCS, including 
+unauthorized access to a PLC device, blocking field sensors to generate 
+false data or events, spoofing a master control or HMI station, device and 
+function scanning, MR (Message Relay), request tampering (modifica­
+tion of frames), malicious function injection, and DoS attacks. By 
+simulating these scenarios, it provides a controlled environment for 
+analyzing and testing the security measures implemented in SCADA 
+systems [27]. SCADASim is a simulation tool designed to mimic indus­
+trial and critical infrastructure functions such as electricity, gas, water, 
+railway, and traffic. It focuses on studying four main types of attacks: 
+DoS, MiTM, eavesdropping, and spoofing. Built on the OMNET++
+simulation engine, SCADASim enables communication between mod­
+ules through message passing and offers gate implementations such as 
+Modbus Gate, DNP3Gate, and HTTP Gate for remote access, with the 
+flexibility to incorporate other protocols as extensions (Advisory 
+[[28-13–291–01B], 2018). Moreover, Mississippi State University’s 
+SCADA Security Lab and Power and Energy Research Lab feature a 
+cyber-physical testbed for critical infrastructures [29]. They conduct 
+vulnerability assessments and forensic studies using Modbus and DNP3 
+protocols, supporting various protocols and wireless communication 
+setups for water storage, raised water towers, factory conveyors, gas 
+pipelines, industrial blower control, and electric substations [30]. 
+Moreover, NTRU cryptographic algorithm is developed to address the 
+security and complexities of SCADA systems [31]. It is a lightweight 
+public key algorithm based on lattice-based cryptography and has been 
+resistant to quantum attacks. The existing standards and proposed key 
+management schemes have the above research gaps and must be 
+addressed to secure SCADA communication [3]. Furthermore, various 
+SCADA testbeds have been deployed for testing energy management 
+schemes, various cyber attacks on the power grid, and mitigation stra­
+tegies. Phasor Measurement Units (PMUs) are used with GPS reference 
+signals to collect data from a smart grid system [32]. In [33], the SWaT 
+testbed was introduced, featuring a 6-stage water treatment process 
+where each stage is independently governed by a local Programmable 
+Logic Controller (PLC). Communication among sensors, actuators, and 
+PLCs is facilitated through both wired and wireless channels, enhancing 
+the realism of experimental conditions. Although SWaT has demon­
+strated its significance for conducting research in dynamic and authentic 
+settings, the paper underscores certain design constraints. Specifically, 
+limitations related to system identification and attack detection in select 
+experiments highlight areas for potential enhancement in future itera­
+tions of the testbed. Furthermore, in [34] authors have addressed the 
+need for comprehensive validation and testing approaches, proposing a 
+multi laboratory cooperation model within the ERIGrid project to 
+establish a pan-European smart grid research infrastructure. Moreover, 
+The RGCE was conceptualized as a versatile hybrid testbed, enabling the 
+creation of tailored scenarios involving interdependencies across 
+various infrastructure and organizational tiers, suitable for both training 
+and research endeavors [35]. The HEDvA served as a pivotal factor, 
+inspiring numerous architectural choices that shaped the design of the 
+CANVAS laboratory. Following a three-tier structure, it incorporates 
+layers for assets, infrastructure, and the laboratory environment [36]. 
+However, most of the past research have utilized simulators to evaluate 
+their protocols. Moreover, few of the implementation and development 
+of SCADA-based ICS testbeds are costly and time-consuming to imple­
+ment. Currently, there is a lack of significant research studies or small 
+testbeds that offer a low-cost setup for evaluating lightweight security 
+algorithms and conducting performance assessments for SCADA-based 
+ICSs.
+The foregoing discussions highlight that in the current threat land­
+scape, the increasing interconnectivity of SCADA systems exposes them 
+to a wider range of cyber threats. The advent of quantum computing 
+poses a specific risk to traditional cryptographic standards, like AGA-12, 
+necessitating innovative security solutions. Recent security breaches 
+underscore the urgent need for robust measures in SCADA systems, 
+especially in addressing vulnerabilities in confidentiality, integrity, and 
+availability. The challenges in existing cryptographic standards, exem­
+plified by AGA-12, call for a re-evaluation and enhancement of security 
+frameworks, particularly in key management, to address evolving 
+threats such as quantum attacks. To address these issues, our motivation 
+is to develop a comprehensive SCADA/IoT test bench that combines 
+hardware simulation and lightweight cryptographic algorithms. The 
+proposed test bench aims to fill existing research gaps by providing a 
+controlled environment for testing the security measures implemented 
+in SCADA systems against a range of cyber-attacks. This paper lays the 
+foundation for a practical, efficient, and resilient security framework for 
+SCADA/IoT systems, ensuring the confidentiality, integrity, and avail­
+ability of critical infrastructure. The comparative analysis with AGA-12, 
+Table 1 
+A comparison of various published key exchange mechanism for SCADA systems.
+Key exchange Mechanism
+Method Description
+Algorithm Used
+Characteristics
+Advantages
+Disadvantages
+SCADA Key Establishment 
+(SKE) [18]
+Establishing secure keys 
+for SCADA communication
+Diffie-Hellman 
+(DH), RSA, AES, 
+etc.
+Provides secure key 
+establishment
+Ensures confidentiality 
+and integrity of SCADA 
+communication
+May require additional 
+computational resources for 
+key establishment
+SCADA Key Management 
+Architecture (SKMA) 
+[19]
+Managing keys for SCADA 
+systems
+AES, RSA, Elliptic 
+Curve 
+Cryptography
+Centralized key management
+Allows efficient key 
+distribution and 
+management
+Vulnerable to a single point of 
+failure
+Advanced SCADA Key 
+Management 
+Architecture (ASKMA) 
+[20]
+An enhanced version of 
+SKMA with improved 
+security and scalability
+AES, RSA, Elliptic 
+Curve 
+Cryptography
+Scalable and robust key 
+management
+Supports secure 
+communication in large- 
+scale SCADA systems
+Increased complexity in 
+implementation and 
+maintenance
+Hybrid Key Management 
+Architecture (HKMA) 
+[21]
+Combining symmetric and 
+asymmetric key 
+management techniques
+AES, RSA, DH
+Combines the benefits of 
+symmetric and asymmetric 
+key management techniques
+Provides a balance 
+between security and 
+computational efficiency
+Requires careful management 
+of key distribution and 
+synchronization
+Advanced Hybrid SCADA 
+Key Management 
+Architecture (AHSKMA) 
+[17]
+An enhanced version of 
+HKMA with improved 
+security and efficiency
+AES, RSA, DH
+Efficient and secure key 
+management
+Supports secure 
+communication in large- 
+scale SCADA systems
+Increased complexity in 
+implementation and 
+maintenance
+Limited Self-Healing key 
+distribution (LiSH) [22]
+Key distribution with self- 
+healing capabilities
+Elliptic Curve 
+Cryptography
+A self-healing mechanism for 
+key distribution
+Provides resilience and 
+fault tolerance in SCADA 
+communication
+May introduce additional 
+overhead in terms of 
+computational resources and 
+latency
+D. Upadhyay et al.                                                                                                                                                                                                                             
+International Journal of Critical Infrastructure Protection 47 (2024) 100705 
+4 
+
+based on execution time and memory utilization, will provide insights 
+into the efficacy of our proposed solutions, aiming to advance the state- 
+of-the-art in SCADA security. Thus, we developed a secure hardware 
+testbed for SCADA networks based on Modbus and MQTT protocols. 
+Additionally, we simulated our security protocol model on Raspberry Pi 
+and performed a comparative analysis of our proposed solutions with 
+AGA-12 based on execution time and memory utilization. This paper 
+provides a strong foundation for the real-time implementation of the 
+SCADA security framework.
+3. Design and development of secure hardware test bench for 
+SCADA/IoT-based ICSs
+The methodology to design and develop a secure SCADA/IoT-based 
+hardware simulation for ICSs is discussed in this section. An overview of 
+the testbed design, along with attack opportunities and attack locations, 
+has been provided in Section 3.1. Furthermore, we explain the inte­
+gration of the security module to protect the critical resources of in­
+dustrial systems. Following that, we discuss the installation steps to 
+create a communication environment for both communication parties, 
+namely, MTU and RTU in Section 3.2. The testbed focuses on two 
+communication protocols: MQTT protocol for IoT devices and Modbus 
+for SCADA components. Additionally, the discussion focuses on under­
+standing the functionality of the lightweight cipher proposed in one of 
+our earlier research papers is broadly explained in Section 3.3. The 
+simulation of security solutions on the hardware test bench is discussed 
+in the next section. Finally, we assess the performance of the lightweight 
+cipher by deploying it into a Raspberry Pi, which acts as a system-on- 
+chip component functioning as a plant floor controller.
+3.1. Overview of proposed secure SCADA/IoT testbed
+This section covers the three major modules of the SCADA networks, 
+namely, the design and development of a small testbed of SCADA/IoT- 
+based Industrial Control Systems, attack opportunities and locations of 
+DoS and MiTM attacks, and integration of the security module to protect 
+the system. Fig. 2 demonstrates the concept of testbed design for secure 
+SCADA communication. We have considered the communication 
+between PLCs and MTU where PLC is situated on the plant floor and 
+MTU at the control center. At the control center, VTSCADA Light is used 
+for various purposes such as controlling and monitoring the plant floor 
+devices remotely via HMI, maintaining the log files at reporting server, 
+and generating alerts for suspicious events. Here, we have configured 
+the MTU Server in the Windows subsystem of Linux (WSL). The HMI is 
+connected to MTU Server using an HDMI cable (wired connection). The 
+proposed security module is deployed in the MTU Server for secure 
+communication with plant floor devices. However, owing to legacy 
+inherited security loopholes of Modbus protocol, the internal intruder 
+has the ability to intercept the traffic between MTU and HMI. To protect 
+the system from such internal attacks, deployment of IDS is essential. We 
+have proposed lightweight IDS systems for the control center and plant 
+floor in one of our previous research papers [27,29]. Moreover, the 
+secure channel is established by deploying a lightweight cipher at the 
+end of both communication parties.
+3.2. Communication protocols and environment setup
+3.2.1. MQTT protocol
+The MQTT (Message Queuing Telemetry Transport) protocol is a 
+lightweight, publish-subscribe messaging protocol designed for efficient 
+communication in constrained environments, making it ideal for IoT and 
+SCADA systems. Here’s a detailed breakdown of its implementation and 
+setup:
+Basics of MQTT Protocol:
+• MQTT operates on a publish-subscribe model, where clients (pub­
+lishers) send messages to a central broker, which then distributes 
+them to subscribing clients based on predefined topics.
+• It utilizes TCP/IP as the underlying transport protocol, ensuring 
+reliable communication over networks.
+• MQTT is renowned for its low bandwidth usage, efficient message 
+distribution, and support for Quality of Service (QoS) levels to ensure 
+message delivery.
+Implementation and Environment Setup for MQTT communication:
+To establish a communication channel amongst all the IoT/SCADA 
+Fig. 2. Test bench design for secure SCADA communications (SINGLE FITTING IMAGE).
+D. Upadhyay et al.                                                                                                                                                                                                                             
+International Journal of Critical Infrastructure Protection 47 (2024) 100705 
+5 
+
+components, we have used monogramming approach [37]. This in­
+volves utilizing Arduino Integrated Development Environment (IDE) to 
+implement sketches for communication with sensors and actuators on 
+the plant floor. Signals received from simulated plant floor devices are 
+transmitted to control center devices using the MQTT protocol. The 
+setup requires the following Linux packages to be installed to enable the 
+communication with IoT/SCADA devices. Additionally, a public MQTT 
+broker (e.g., broker.hivemq.com) is utilized to facilitate communication 
+between plant floor devices and the HMI at the control center. 
+Enhancement of MQTT security using topic-based access control and 
+password authentication:
+We have enhanced the security of our MQTT communication by 
+implementing a combination of topic-based access control and password 
+authentication. Firstly, we’ve organized our MQTT messages into spe­
+cific topics to categorize different types of data and define access control 
+policies. This ensures that only authorized devices or users can access 
+sensitive topics, thereby controlling who can publish or subscribe to 
+certain data streams. Additionally, we’ve implemented password 
+authentication, requiring clients to provide valid credentials (username/ 
+password) when connecting to our MQTT broker. By verifying the 
+identity of clients, we ensure that only authorized users can access our 
+MQTT network. By combining topic-based access control with password 
+authentication, we’ve established a robust security framework that re­
+stricts access to our MQTT communication channels, protecting against 
+unauthorized access and data breaches.
+3.2.2. Modbus protocol
+The Modbus protocol is a widely used communication protocol in 
+industrial automation systems which facilitate communication between 
+various field devices and control systems. Below we have explained in- 
+depth exploration of its configuration and setup for the proposed 
+testbed:
+Basics of Modbus Protocol:
+• Modbus operates on a client-server architecture, where a master 
+device (e.g., SCADA system) communicates with slave devices (e.g., 
+PLCs, RTUs) using a request-response mechanism.
+• It supports different data types and functions, allowing for versatile 
+communication and control of industrial processes.
+• Modbus typically uses serial communication (RS-232, RS-485) or 
+Modbus TCP/IP for communication over Ethernet networks.
+• Modbus TCP/IP is a variant of the Modbus protocol that operates 
+over Ethernet networks. It allows devices to communicate using the 
+Modbus protocol over TCP/IP, which is the standard communication 
+protocol of the internet.
+• In Modbus TCP/IP, data is encapsulated in TCP/IP packets, allowing 
+for reliable and efficient communication between devices on a 
+network. Unlike Modbus RTU or Modbus ASCII, which are serial- 
+based variants of the protocol, Modbus TCP/IP utilizes Ethernet as 
+the physical layer for communication, offering advantages such as 
+higher data transfer rates, longer communication distances, and 
+support for more concurrent connections.
+Implementation 
+and 
+Environment 
+Setup 
+for 
+Modbus 
+communication:
+In our proposed testbed setup, the Modbus protocol is configured in 
+both the Windows subsystem for Linux (WSL) acting as the MTU at the 
+control center, and a Raspberry Pi serving as the interface for plant floor 
+devices such as sensors and actuators. The Python programs to setup this 
+environment is found in the GitHub repository [37]. The following steps 
+are used to set up a communication environment.
+1. Install and configure Modbuspal simulator on Raspberry Pi: We 
+installed and configured Modbuspal simulator on a Raspberry Pi 
+device. This simulator was set up to mimic the registers and coils of 
+Programmable Logic Controllers typically found on the plant floor.
+2. Establish communication with real PLCs/RTUs: As an alternative, we 
+can also establish communication with real PLCs or RTUs by con­
+necting them to the Raspberry Pi using wired communication 
+methods such as RS-2332 or RS-485.
+3. Run WSL_TCP_Server.py on Windows Subsystem for Linux (WSL): 
+We executed the Python program "WSL_TCP_Server.py" within the 
+WSL environment. This program acted as the Master Terminal Unit 
+(MTU) for the control center which facilitates the communication 
+with the Raspberry pi acted as a interface for plant floor devices over 
+the Internet via Modbus TCP/IP protocol.
+4. Run coil_write.py on Raspberry Pi: On the Raspberry Pi, we ran the 
+Python program "coil_write.py" to receive data from the Modbuspal 
+simulator. This data was then redirected to the proposed lightweight 
+Python security module for further processing.
+5. Implement Dynamic_MTU_Secure_Communication_Module.py: At 
+both ends (WSL and Raspberry Pi), we implemented the "Dynam­
+ic_MTU_Secure_Communication_Module.py" program. This module 
+was responsible for encryption and decryption of incoming and 
+outgoing control signals to ensure secure communication between 
+the control center and plant floor machinery.
+6. Configure VTSCADA with Modbus protocol: Finally, we configured 
+VTSCADA, a Supervisory Control and Data Acquisition (SCADA) 
+software, to communicate with the WSL MTU using the Modbus 
+protocol. This configuration allowed us to remotely control and 
+monitor the plant floor machinery from the control center to enable 
+efficient operation and management of industrial processes.
+By understanding and implementing both the MQTT and Modbus 
+protocols, our proposed testbed facilitates efficient and secure commu­
+nication among IoT/SCADA components. MQTT enables lightweight 
+and reliable messaging, while Modbus provides robust communication 
+between control center and plant floor devices. Through this compre­
+hensive setup, our objective is to ensure seamless integration and 
+operation of SCADA systems.
+In integrating our proposed lightweight cipher within our hardware 
+test bench, we focused on securing communication channels using both 
+MQTT and Modbus protocols to transmit critical information from the 
+MTU to field-site components. Initially, the lightweight cipher was 
+configured on both the MTU and Raspberry Pi. Raspberry Pi is directly 
+connected to field-site components. Subsequently, we implemented 
+encryption and decryption functions using this cipher to secure outgoing 
+MQTT messages before transmission and to decrypt them upon receipt. 
+Similarly, for Modbus communication, the cipher was integrated to 
+ensure data confidentiality and integrity. This integration necessitated 
+modifying MQTT and Modbus client applications to include encryption 
+D. Upadhyay et al.                                                                                                                                                                                                                             
+International Journal of Critical Infrastructure Protection 47 (2024) 100705 
+6 
+
+and decryption functions, ensuring that messages are encrypted before 
+publication and decrypted upon reception. Protocol handling for both 
+MQTT and Modbus at the receiver’s end was adjusted accordingly. This 
+approach ensured that both communication parties utilized our pro­
+posed lightweight cipher, thereby guaranteeing robust and secure 
+communication over MQTT and Modbus protocols. Detailed information 
+regarding our proposed lightweight cipher is provided in the next 
+section.
+3.3. Security modules used for secure information exchange
+3.3.1. Prime Counter & Hash Chaining (PCHC) using multi-layered 
+architecture
+Many SCADA-based industrial applications rely on real-time 
+communication and require highly available systems. Therefore, for a 
+secure communication channel between the plant floor and control 
+center components, we have deployed the lightweight cipher that we 
+have proposed in our earlier work [38]. The proposed security solution 
+follows a hybrid efficient key management scheme to distribute the 
+session key. Further, the lightweight cipher is used for secure informa­
+tion exchange by merging the concept of a random number generator 
+and Hashed Message Authentication Code (HMAC). The proposed 
+scheme used Random Number (RN), Fraction Square Root of Prime 
+(FSRP), and Current Date and Time (CDT) to generate a fresh session key 
+(KS) for every session at both ends, namely, MTU, and RTU. However, 
+these elements are not transferred openly, rather RN is encrypted using a 
+session key generated using CDT and FSRP. Moreover, XOR operation is 
+applied on FSRP and CDT to generate key salt which will be shared over 
+the network along with the cipher text of RN and HMAC. Here, the index 
+of FSRP acts as a root of trust for the entire scheme. Once, elements of 
+the session key have been distributed securely, both communication 
+parties generate the session key for secure information exchange.
+A lightweight symmetric key cryptography (Vernam Cipher) is used 
+during the encryption and decryption process. Vernam cipher requires a 
+fresh key during every message exchange, and hence symmetric key is 
+generated using a session key, CDT, and FSRP depending on the pro­
+posed approaches. Prime Counter needs both FSRP and CDT to generate 
+the symmetric key, however, Hash Chaining only requires FSRP for 
+secure information exchange. Moreover, FSRP can be generated by 
+increasing the index of a prime number using the prime counter method. 
+Fig. 3 represents the complete process diagram of secure communication 
+between RTU and MTU consisting of secure key exchange along with 
+secure information exchange by considering two methods, namely, 
+Prime Counter ad Hash Chaining. Readers can explore the detailed in­
+formation about these methods in our earlier work [38]. Furthermore, 
+Table 2 depicts the robustness of our proposed approach in terms of 
+various security mechanisms.
+Fig. 3. Process diagram of secure communication between MTU and RTU using Lightweight cipher (SINGLE FITTING IMAGE).
+Table 2 
+Analysis 
+based on 
+security 
+mechanisms for 
+robust 
+secure SCADA 
+communications.
+Message Integrity
+■ Vernam stream Cipher – resistance to 
+cryptography attacks [39]
+■ Randomness of Key – immune to 
+Collison & Preimage resistance attack 
+[40]
+■ Public Key Cryptography (NTRU) – 
+resistance to Quantum attacks [41]
+■ HMAC - immune against length 
+extension attacks [42]
+High Availability – Faster execution
+■ Reusability of hash to generate 
+symmetric key and HMAC
+■ Vernam stream cipher requires 4 
+cycles [43]
+■ NTRU – faster and smaller than RSA 
+and ECC [31]
+Authentication, Confidentiality
+■ Public Key Cryptography (NTRU) – 
+Private key of Sender, Public key of 
+Receiver
+■ Message Authentication Code (HMAC)
+Scalability
+■ The same symmetric cipher is used 
+for encryption & decryption
+■ Authentication & Encryption 
+established with sender’s & 
+receiver’s key
+D. Upadhyay et al.                                                                                                                                                                                                                             
+International Journal of Critical Infrastructure Protection 47 (2024) 100705 
+7 
+
+3.3.2. Ascon algorithm using compression rate (ACR)
+The proposed security solution provides secure communication be­
+tween MTU and RTU in SCADA infrastructure. The MTU first generates 
+key pairs based on the Huffman Coding Function along with time- 
+variant parameters, pseudorandom number generator parameters, and 
+the unique id of the MTU. Furthermore, the proposed algorithm in Fig. 4
+involves using a radioactive decay equation to generate the compression 
+rate of Huffman coded raw key, which is processed to generate the 
+public key and cipher. The public key is hashed and split into two chunks 
+(r,k). The cipher and k is hashed to generate the shared secret key. MTU 
+sends the public key and cipher to RTU. The RTU decrypts the cipher and 
+follows key decapsulation to obtain the essence of the public key, which 
+includes the parameters such as time variants, chunks, and the hashed 
+value of the raw key as well as the unique id of MTU. Based on the 
+essence, the MTU generates its own compression rate and shared secret 
+key. The shared secret key is validated by comparing the received 
+compression rate and generated compression rate by RTU. Once the 
+session key establishment is achieved, the MTU encrypts the sensitive 
+message using the ACSON algorithm to generate a cipher and an 
+authentication tag. The RTU received the cipher and the tag, decrypts it 
+with a shared secret key, and extracts the message and the tag is used to 
+validate the data integrity.
+3.4. Deployment of security solutions on a hardware test bench
+In our implementation, we have undertaken the security re­
+quirements across both the control center and plant floor in industrial 
+environments. At the control center, we have leveraged the capabilities 
+of WSL acts as the Master Terminal Unit by employing proposed light­
+weight cipher algorithms (PCHC & ACR) for efficient and secure mes­
+sage exchange. This strategic choice optimizes resource utilization while 
+ensuring robust encryption to safeguard sensitive communications. On 
+the other hand, at the plant floor, we have deployed the same light­
+weight cipher (PCHC & ACR) within Raspberry Pi, employing its 
+affordability and versatility as a system-in-chip component. Here, Rasp­
+berry Pi serves as a secure interface for field site devices like PLCs, IEDs, 
+and RTUs which bolster their security strength despite inherent 
+vulnerabilities and limited computational resources. The field site 
+components of SCADA systems often inherit legacy security weaknesses 
+and possess constrained computational and memory capabilities. To 
+bridge this gap and meet security requirements, we have introduced 
+additional components between the field site devices and the network. 
+Raspberry Pi is an affordable and easily obtainable platform for proto­
+typing, performing ladder logic testing, and integrating PLCs, RTUs, and 
+IEDs in real time for various industrial control systems and cybersecurity 
+concepts. Despite utilizing wired connections for internal communica­
+tion between the plant floor and control center, interception risks 
+persist, primarily due to vulnerabilities in the Modbus protocol. To 
+counter this threat, we proposed deployment of accurate Intrusion 
+Detection Systems (IDS) at both ends. Our proposed IDS, outlined in our 
+prior published work [27,29], proactively identifies and prevents in­
+trusions which bolster the overall security framework. In a nutshell, our 
+approach incorporates a defense-in-depth architecture to establish 
+secure communication channels between field site components and the 
+control center. By integrating encryption protocols, IDS, and other se­
+curity measures, we have constructed a resilient framework to safeguard 
+industrial control systems against cyber threats comprehensively. Fig. 5
+illustrates the comprehensive flow diagram of the proposed SCADA test 
+bench, showcasing the establishment of secure communication through 
+a defense-in-depth architecture between field site components and the 
+control center. Within this framework, the Modbuspal simulator serves a 
+crucial role in simulating the behavior of plant floor field site compo­
+nents. A Python script manages the redirection of simulated data to the 
+lightweight cipher module responsible for encrypting received data. 
+Once encrypted, the information is securely transmitted over the 
+Internet, utilizing the MQTT and TCP/IP communication protocols. 
+Upon arrival at the control center, the encrypted data undergoes 
+decryption using the same security module employed earlier. Subse­
+quently, the sensitive information is directed to the Human-Machine 
+Interface (HMI), notably VTSCADA, facilitating remote operation of 
+the plant floor components by operators and technicians. This meticu­
+lous process ensures the integrity and confidentiality of data exchanged 
+between the control center and field site components that strengthen the 
+security of the SCADA system as a whole.
+Fig. 4. Model diagram of secure communication between MTU and RTU using ACR algorithm (SINGLE FITTING IMAGE).
+D. Upadhyay et al.                                                                                                                                                                                                                             
+International Journal of Critical Infrastructure Protection 47 (2024) 100705 
+8 
+
+4. Hardware simulation for industrial control system 
+applications
+The test bench design consists of three major components, namely, 
+plant floor devices, control center elements, and communication pro­
+tocols. We have developed three small demo applications, namely, 
+control and monitor the speed of the servo motor using the HMI (Human 
+Machine Interface) of VTSCADA from a remote location, water distri­
+bution system to control the water level and operate the valves and 
+pumps, monitor the voltage level of the power systems. The simulation 
+setup uses sensors, actuators, a Modbuspal simulator, and micro controls 
+(Arduino, GBK Kit, Raspberry Pi) as plant floor components, while WSL 
+and VTSCADA are used as control center devices. The communication is 
+carried out using two communication protocols: MQTT for IoT Devices 
+and Modbus for SCADA components. The lightweight cipher is deployed 
+at both the communication ends for secure information exchange, 
+namely, WSL which acts as an MTU at the control center, and Raspberry 
+Pi which acts as an interface between RTU and MTU.
+4.1. Case study 1: Controlling servo motor remotely using VTSCADA and 
+MQTT protocol
+We have developed a small testbed to remotely control a servo motor 
+using VTSCADA as the Human-Machine Interface (HMI), employing the 
+MQTT protocol for communication among all devices. This setup mir­
+rors scenarios found in manufacturing plants where precise control over 
+machinery is crucial for optimizing production efficiency and ensuring 
+worker safety. For instance, consider a manufacturing facility where 
+robotic arms are utilized to assemble delicate electronic components. In 
+such a scenario, VTSCADA serves as the central control hub, enabling 
+operators to remotely adjust the movement of robotic arms to perform 
+intricate tasks with precision. Another real-time scenario is a 
+manufacturing plant where conveyor belts are controlled by servo mo­
+tors at the plant floor to transport materials between different produc­
+tion stations. In this scenario, VTSCADA acts as the centralized control 
+interface, allowing operators to monitor and adjust the speed and 
+direction of conveyor belts by controlling servo motors remotely. MQTT 
+protocol facilitates real-time communication between VTSCADA and 
+embedded controllers responsible for controlling the motors driving the 
+conveyor belts.
+The experimental setup comprises various embedded system com­
+ponents including the Grove Beginner Kit (GBK), Servo Motor, Rotary 
+Potentiometer, LED & Buzzer (Alarm System), and VTSCADA (Control 
+Center). The servo motor, connected to the GBK kit that enables both 
+clockwise and anti-clockwise rotations controlled remotely via 
+VTSCADA. Fig. 6 illustrates the experimental setup for controlling the 
+motor using the HMI. The process of controlling and monitoring the 
+system remotely involves two main steps. Firstly, data is sent from 
+VTSCADA to rotate the servo motor. Secondly, an alarm system is set up 
+based on predefined thresholds. For instance, if the input exceeds a 
+certain threshold (e.g., 80), indicating potential issues such as over­
+heating or excessive load on the motor, the LED will illuminate, and the 
+buzzer will sound to alert personnel working on the plant floor. Addi­
+tionally, such alerts help prevent malicious activities such as unautho­
+rized data modification or Man-in-the-Middle (MiTM) attacks, ensuring 
+the integrity and security of the manufacturing process.
+Sending Data from the Plant Floor to Control Center involves sending 
+data from the Rotary Potentiometer to VTSCADA, where the alarm 
+system is again configured based on set points. If the input surpasses a 
+predefined threshold, the buzzer activates, indicating a high alert to 
+technicians or operators at the control center. This real-time monitoring 
+and control system enhance operational efficiency and safety in indus­
+trial settings, showcasing the practical applications of VTSCADA and 
+MQTT communication protocol.
+The following setup represents the small testbed for the controlling a 
+servo motor remotely using VTSCADA witch acts as HMI for this system. 
+Here, we have represented the steps for controlling and monitoring the 
+system remotely.
+Step 1: Sending data from VTSCADA to Rotate the servo motor.
+Step 2: Setup the Alarm system according to the set points.
+Fig. 5. Flow diagram of proposed framework for SCADA test bench (SINGLE FITTING IMAGE).
+D. Upadhyay et al.                                                                                                                                                                                                                             
+International Journal of Critical Infrastructure Protection 47 (2024) 100705 
+9 
+
+• If the input is greater than 80 then the LED will be ON & Buzzer starts 
+buzzing
+• Alert the people working on the plant floor.
+• Prevent malicious activities – Data modification, MiTM attacks.
+Sending Data from Plant Floor to Control Center
+Step 1: Sending data from Rotary Potentiometer to VTSCADA
+Step 2: Setup the Alarm system according to the set points on HMI
+• If the input is greater than 80 then Buzzer starts buzzing and in­
+dicates on the alarm page
+• Indicates the high alert to technicians/operators at the control 
+center.
+4.2. Case study 2: Distribution system for water/oil refinery industries
+We have designed a small testbed for water/oil refinery management 
+and distribution systems, incorporating water-level sensors connected to 
+Arduino microcontrollers to measure water levels, as presented in Fig. 7. 
+The setup includes devices such as sensors, actuators, Arduino, Rasp­
+berry Pi, WSL, and VTSCADA, which utilize the MQTT protocol for 
+communication. A security module deployed in the Raspberry Pi and 
+WSL at the control center ensures secure communication among the two 
+parties. In this setup, three tanks equipped with water level sensors are 
+monitored, with Arduino connected to Raspberry Pi for secure 
+communication. The status information of water levels is securely 
+transmitted to the Windows Subsystem for Linux (WSL), acting as an 
+MTU Server. At the SCADA server, the information is decrypted using 
+the same security module and displayed on the HMI (VTSCADA) 
+(Figs. 8and 9). Operators can remotely operate pumps and inlet or outlet 
+valves to control motor flow. Additionally, an automatic water overflow 
+alarm system is deployed to shut off water flow when tanks reach 80 % 
+capacity, with alerts sent to operators and technicians monitoring de­
+vices from the HMI.
+Consider a large-scale oil refinery, where tanks store various types of 
+crude oil or refined products. Maintaining accurate inventory levels and 
+preventing overflow or leakage is critical to ensure safety and compli­
+ance with environmental regulations. The water/oil refinery manage­
+ment and distribution system depicted in this case study provide a real- 
+time solution for monitoring tank levels and controlling pumps and 
+valves remotely. As an illustrative example, imagine an operator re­
+ceives an alert on VTSCADA indicating that the level in one of the oil 
+storage tanks is approaching maximum capacity. Using the proposed 
+system, the operator remotely closes the valve to stop the inflow of oil 
+into the tank, preventing overflow and potential environmental hazards.
+Another example is in a chemical processing plant, where tanks are 
+utilized to store various chemicals and solutions critical for 
+manufacturing processes. Accurate monitoring of inventory levels and 
+prevention of spills or leaks are imperative to ensure operational safety 
+and regulatory compliance. The water/oil refinery management and 
+distribution system outlined in this case study offer a real-time solution 
+for monitoring tank levels and remotely controlling pumps and valves. 
+As an illustrative scenario, envision an operator receiving an urgent alert 
+via VTSCADA, indicating that the level of a chemical solution in one of 
+the storage tanks is rapidly approaching capacity. Acting swiftly, the 
+operator remotely intervenes using the proposed system, promptly 
+closing the valve to halt the flow of the solution into the tank. This 
+proactive measure effectively averts any potential overflow incidents 
+and minimizes the risk of chemical spills, thereby safeguarding both 
+personnel and the environment. Such real-world applications under­
+score the practicality and effectiveness of our meticulously designed 
+testbed within industrial control systems, offering enhanced safety and 
+operational efficiency in chemical processing facilities.
+Fig. 6. Experimental setup (SINGLE FITTING IMAGE).
+Fig. 7. Sensors and microcontrollers (SINGLE FITTING IMAGE).
+D. Upadhyay et al.                                                                                                                                                                                                                             
+International Journal of Critical Infrastructure Protection 47 (2024) 100705 
+10 
+
+To simulate this scenario, we have designed a small testbed of water/ 
+oil refinery management & distribution system. We have used water- 
+level sensors which are connected to the Arduino microcontroller to 
+measure the level of the water as shown in Fig. 7. The following rep­
+resents the list of components and communication protocol used for 
+system setup.
+• Devices Used: Sensors, Actuators, Arduino, Raspberry Pi, WSL, 
+VTSCADA
+• Communication Protocol: MQTT
+• Security Module: deployed in Raspberry Pi
+Here, we have considered three tanks consisting of three water level 
+sensors. Further, the Arduino controller is connected to the Raspberry Pi 
+to establish secure communication. The status information of the level of 
+the water has then transmitted securely to the WSL of the windows 
+which acts as an MTU Server. At the SCADA server, the information is 
+decrypted using the same security module and displayed on HMI 
+(VTSCADA) as shown in Figs. 8 and 9. Moreover, using this system, we 
+are capable of operating the pump and inlet/outlet valves from a remote 
+location to control the flow of the motor. Furthermore, the water 
+overflow alarm system has been deployed to automatically shut the 
+input flow of the water when the tank is full of 80 % of the water. The 
+alarm system also alerts operators and technicians who are monitoring 
+and controlling the devices from HMI.
+4.3. Case study 3: Voltage level indicators for power system
+In a power distribution network, voltage regulation is crucial to 
+ensure the stable operation of electrical equipment and prevent damage 
+from overvoltage or undervoltage conditions. Voltage level indicators 
+integrated with Modbus communication provide real-time monitoring of 
+voltage levels at different points in the distribution network. For 
+example, during a sudden surge in electricity demand, voltage levels in 
+certain parts of the power grid begin to fluctuate. Using the voltage level 
+indicators and Modbus communication, operators at the control center 
+quickly identify the affected areas and remotely adjust voltage regula­
+tors to stabilize the grid and prevent potential equipment damage or 
+blackouts.
+By connecting our experimental setups with the above real-world 
+scenarios, we can demonstrate the practical applications and benefits 
+of the proposed methodologies in Industrial Control System settings. 
+During this case study, we have configured voltage level indicators for 
+the power system. The voltage regulators are used to generate voltage at 
+random intervals using the Modbuspal simulator. The generated volt­
+ages are displayed on the HMI screen for continuous monitoring. 
+Moreover, the user interface provides the control of data and secure 
+communication between plant floor and control center components. The 
+following components are used during system design:
+• Plant Floor Devices: Modbuspal Simulator (Automation tool – 
+Voltage regulators, PLC (4 Registers, 2 Coils), Raspberry Pi
+• Control Center Devices: MTU Server (WSL), VTSCADA (HMI, Alarm 
+System, Reporting logs)
+• Communication Protocol: Modbus - TCP/IP (Port – 502)
+• Security Module: Python Code - Lightweight Cipher (Encryption/ 
+Decryption)
+• Automation Tool: Generate Input Voltage Regulator
+The Arduino sketch is available in [44] is used to communicate with 
+Fig. 8. Hardware simulation of water distribution system along with VTSCADA – HMI (Initial Stage).
+Fig. 9. VTSCADA – human machine interface (during simulation).
+D. Upadhyay et al.                                                                                                                                                                                                                             
+International Journal of Critical Infrastructure Protection 47 (2024) 100705 
+11 
+
+Modbus devices (XY-MD02). The connection between Arduino and 
+Raspberry Pi is again wired connections and control signal communi­
+cations are established using the cu command. cu is a Basic Networking 
+Utilities (BNU) command that is used to send and receive signals 
+through a Unix terminal [45].
+Using the automation tool of the Modbuspal simulator, we have 
+generated the random input voltage for one of the four registers of PLC. 
+Another three registers contain the values of output voltage, low voltage 
+alarm, and high voltage alarm respectively as shown in Fig. 10. The 
+values assigned to these registers are dynamic and generated by the 
+simulator as depicted in Fig. 11.
+The Modbus protocol is widely used in industrial automation and 
+control systems due to its simplicity and efficiency. However, it lacks 
+built-in security features, which can pose risks to data confidentiality 
+and integrity during transmission. In Fig. 12, we illustrate how data 
+transmitted using the Modbus protocol can be visible to potential at­
+tackers. To address this vulnerability, we have implemented a security 
+solution utilizing a multi-layered architecture based on hash chaining. 
+We have captured the Modbus traffic using the loopback address as 
+shown in Fig. 13. This solution encrypts the data before it leaves the 
+system, ensuring that it remains secure during transmission over the 
+network.
+Fig. 14 depicts this encryption process, which takes place at the 
+Raspberry Pi device before the voltage information is sent to the Master 
+Terminal Unit (MTU). Upon receiving the encrypted data, the MTU 
+decrypts it using the same security module, as illustrated in Fig. 15. This 
+decryption process ensures that the original status information of the 
+registers is accurately retrieved. Subsequently, the decrypted data is 
+transmitted to the Human-Machine Interface (HMI) of VTSCADA for 
+further processing and visualization. The simulation environment uti­
+lizes the Modbus TCP/IP protocol, operating on port number 502, to 
+facilitate communication between the Programmable Logic Controller 
+(PLC) and the MTU. Additionally, we have introduced two coils within 
+the simulation to enable output and provide a safety override mecha­
+nism. To reinforce the security of communication between the PLC and 
+MTU, we have deployed security modules at both ends of the commu­
+nication channel. Specifically, security measures are implemented at the 
+Raspberry Pi device located at the plant floor and at the Workstation 
+License (WSL) acting as the control center. These security modules 
+ensure that data exchange between the PLC and MTU is conducted 
+securely, safeguarding sensitive information from potential threats.
+5. Performance evaluation of proposed security modules
+In this section, we evaluated the performance of two of our proposed 
+security modules and AGA-12 for resource constraint plant floor devices 
+in SCADA network, namely:
+(i) Prime Counter & Hash Chaining (PCHC) using multi- 
+layered architecture
+(ii) ASCON with Compression Rate (ACR)
+(iii) AGA-12
+5.1. Results of PCHC module
+This section represents the measurement of computational speed and 
+memory utilization of Prime Counter and Hash Chaining (two of the 
+most promising proposed security methods - described at the beginning 
+in Section 3.3) on micro-processors (Raspberry Pi, version 3 & 4). To 
+calculate the execution time of each method we have considered the 
+overall time of each module to generate and extract the symmetric key 
+along with the encryption and decryption time taken by the Vernam 
+stream cipher. We conducted a thorough assessment of execution la­
+tency by measuring the time taken to complete specific tasks across a 
+range of Raspberry Pi configurations. These tasks encompassed gener­
+ating binary strings, creating MAC, and executing encryption and 
+decryption processes using security modules like hash chaining. To 
+ensure precise measurements, we relied on timing functions and per­
+formance profiling tools available within the programming language 
+environment. Specifically, we utilized the time.time() function in Py­
+thon to capture timestamps before and after task execution that enable 
+accurate calculation of elapsed time and providing insights into the ef­
+ficiency of each Raspberry Pi configuration in handling the designated 
+tasks. Additionally, to monitor memory usage during these tasks, we 
+integrated the psutil library. This library allowed us to retrieve memory 
+information such as total memory, available memory, used memory, and 
+free memory, providing further context for system performance 
+evaluation.
+In Table 3, we present the time of two proposed symmetric key 
+cryptography methods (in milliseconds) for various sizes of input 
+streams. Here, the generation of bit strings represents the number of 
+runs. For example, to generate 10 binary strings, we need to execute the 
+module 10 times, which is equivalent to the number of runs. Moreover, 
+the average execution time is calculated by dividing the total execution 
+time by the number of runs. For example, the average execution time is 
+computed by dividing the total execution time to generate 10 binary 
+strings by the number of runs, which equals 19.052/10 = 1.9052 Milli 
+Seconds. Based on the results, hash chaining seems to be the most effi­
+cient in terms of computational speed. Moreover, Raspberry Pi 4 has 
+proven efficient in terms of processing power compared to Raspberry Pi 
+3. The average execution time to extract the MAC and to distribute the 
+MAC along with the session key is shown in Fig. 16.
+To find the standard deviation, we have first calculated the mean 
+execution time based on number of binary strings (256 bits) for each 
+configuration and algorithm. Then, we used the formula for standard 
+deviation.
+• For Raspberry Pi - 3 Prime Counter, Mean execution time per 1 bi­
+nary string (256 bits): 
+Fig. 10. Modbus hardware testbed simulated at plant floor (From left to right, Raspberry Pi 3, Arduino + isolated RS485 shield, XY-MD02 (two Modbus devices), AC 
+outlet, and power supply for RS-485).
+D. Upadhyay et al.                                                                                                                                                                                                                             
+International Journal of Critical Infrastructure Protection 47 (2024) 100705 
+12 
+
+1.960 + 1.905 + 1.650 + 1.600 + 1.604 + 1.441 + 1.604
++ 1.578
+= 13.942/8 = 1.74275 ms/bits 
+• Raspberry Pi 4 Prime Counter, Mean execution time per 1 binary 
+string (256 bits): 
+0.923 + 0.721 + 0.635 + 0.578 + 0.619 + 0.540 + 0.624
++ 0.614
+= 5.654 / 8 = 0.70675 ms/bits 
+• Raspberry Pi 3 Hash Chaining Time, Mean execution time per 1 bi­
+nary string (256 bits): 
+0.678 + 0.654 + 0.693 + 0.667 + 0.607 + 0.601 + 0.645
++ 0.632
+= 5.277/8 = 0.659625 ms/bits 
+• Raspberry Pi 4 Hash Chaining, Mean execution time per 1 binary 
+string (256 bits): 
+0.275 + 0.241 + 0.243 + 0.261 + 0.243 + 0.236 + 0.243
++ 0.244
+= 1.986/8 = 0.24825 ms/bits 
+Fig. 11. Modbuspal simulator - register values (SINGLE FITTING IMAGE).
+Fig. 12. Automation tool for input Voltage generator (SINGLE FITTING IMAGE).
+Fig. 13. HMI view of voltage indicator on VTSCADA (SINGLE FITTING IMAGE).
+D. Upadhyay et al.                                                                                                                                                                                                                             
+International Journal of Critical Infrastructure Protection 47 (2024) 100705 
+13 
+
+These are the mean execution times per 1 binary string (256 bits) for 
+each security module on the respective Raspberry Pi models. The 
+following calculation represents the standard deviation using the for­
+mula for each configuration and algorithm.
+• For Raspberry Pi - 3 Prime Counter, Standard Deviation 
+√((1.960 −
+1.732)∧2 + (1.905 −
+1.732)∧2 + ….
++ (1.578 −
+1.732)∧2) / 8] ≈0.108 ms / bits 
+• For Raspberry Pi - 4 Prime Counter, Standard Deviation 
+√[0.923 −
+0.637)∧2 + (0.721 −
+0.637)∧2 + ….
++ (0.614 −
+0.637)∧2 / 8] ≈0.081 ms / bits 
+• For Raspberry Pi - 3 Hash Chaining Time, Standard Deviation 
+√[0.678 −
+0.656)∧2 + (0.654 −
+0.656)∧2 + ….
++ (0.632 −
+0.656)∧2 / 8] ≈0.011 ms / bits 
+• For Raspberry Pi - 4 Hash Chaining Time, Standard Deviation 
+√[0.275 −
+0.251)∧2 + (0.241 −
+0.251)∧2 + …..
++ (0.244 −
+0.251)∧2 / 8] ≈0.007 ms / bits 
+Moreover, we have computed the average execution time of each 
+phase of the proposed module by considering 10,000 binary strings. As 
+depicted in Table 4, we have considered three different phases, namely, 
+symmetric key generation, data encryption, and data decryption along 
+with MAC to compare the execution time of two methods on two ver­
+sions of Raspberry Pi. We have also derived the execution time of key 
+encryption and decryption of NTRU-based public key cryptography to 
+securely exchange the seed of session key as shown in Table 5.
+For memory utilization, we have used the psutil (python system and 
+process utilities) tool, a cross-platform library. This tool retrieves 
+Fig. 14. Encryption applied on PLC data (SINGLE FITTING IMAGE).
+Fig. 15. Decryption of received data at MTU (SINGLE FITTING IMAGE).
+Table 3 
+Total execution time of proposed security algorithms on Raspberry Pi (in Milli 
+seconds).
+Bit 
+Strings
+Prime Counter
+Hash Chaining Time
+Raspberry Pi - 
+3
+Raspberry Pi - 
+4
+Raspberry Pi - 
+3
+Raspberry Pi - 
+4
+1
+1.960
+0.923
+0.678
+0.275
+10
+19.052
+7.214
+6.536
+2.413
+50
+82.516
+31.728
+34.630
+12.144
+100
+160.039
+57.815
+66.740
+26.14
+500
+802.070
+309.366
+303.382
+121.661
+1000
+1441.089
+540.111
+600.563
+236.421
+5000
+8019.959
+3119.473
+3226.179
+1216.03
+10,000
+15,775.525
+6140.058
+6319.000
+2438.607
+D. Upadhyay et al.                                                                                                                                                                                                                             
+International Journal of Critical Infrastructure Protection 47 (2024) 100705 
+14 
+
+information on running processes and system utilization in Python such 
+as CPU, memory, disks, networks, and sensors. It is mainly used for 
+system profiling and monitoring the running processes. Particularly, we 
+have used the memory_info function to retrieve the process memory 
+utilization from total physical memory. The RSS (resident set size) 
+represents non-swapped physical memory utilization. VMS (Virtual 
+Memory Size) is the total amount of virtual memory a process used 
+during computation. Shared memory is used by multiple processes. The 
+text represents the amount of memory devoted to executable code. The 
+data field represented in Table 6 indicates the amount of physical 
+memory devoted to other than executable code. The size of these pa­
+rameters is in Bytes.
+5.2. Results of ACR module
+This section provides the experimental results observed of ACR 
+implemented on Raspberry Pi 3. In Table 7, the session key generation 
+and distribution algorithm has an execution time of 0.277996 millisec­
+onds whereas both encryption using a symmetric key and tag generation 
+as well as decryption and validation using tag requires same execution 
+time of 0.672602 milliseconds. Thus, both the operations require a 
+similar amount of processing time and has higher execution time than 
+that of the session key generation and distribution algorithm. Further­
+more, in Table 8, The time to generate Public Key is 1.495 milliseconds, 
+while that of Private Key took 2.680 milliseconds. Thus, public key 
+generation took less processing time on raspberry pi as compared to that 
+of private key generation.
+In Table 9, we present the observed memory utilization of ACR al­
+gorithms on a Raspberry Pi, mainly, memory usage across key genera­
+tion, SSK generation and distribution, encryption, and decryption phase. 
+The memory parameters that we have observed are RSS, VMS, Shared, 
+Text, and Data of each phase. The total memory utilization is the sum of 
+all the memory parameters and that adds up to 118.59 MB for RSS, 
+207.56 MB for VMS, 51.44 MB for Shared, 15.04 MB for Text, and 69.75 
+MB for Data. The size of the data is displayed in megabytes (MB).
+Fig. 16. Average execution time of security algorithms on raspberry Pi (SINGLE FITTING IMAGE).
+Table 4 
+Computational speed of various phases of symmetric key algorithms on Rasp­
+berry Pi (in Milli seconds).
+Phases
+Prime Counter
+Hash Chaining
+Raspberry Pi 
+3
+Raspberry Pi 
+4
+Raspberry Pi 
+3
+Raspberry Pi 
+4
+Symmetric Key 
+Generation
+0.772
+0.472
+0.172
+0.062
+Data Encryption
+0.211
+0.111
+0.1412
+0.121
+Data Decryption
+0.823
+0.132
+0.2411
+0.111
+Table 5 
+Execution time of asymmetric key algorithm on raspberry Pi.
+Keys Generated
+Key Sizes (in bits)
+Key Generation (in ms)
+NTRU Public Key
+3388
+1.495
+NTRU Private Key
+2624
+2.680
+Table 6 
+Comparison of memory utilization of proposed security PCHC on Raspberry Pi 
+(in MB).
+Memory 
+Parameters
+Prime Counter
+Hash Chaining
+Raspberry Pi 
+3
+Raspberry Pi 
+4
+Raspberry Pi 
+3
+Raspberry Pi 
+4
+RSS
+39.931904
+30.081024
+39.997440
+30.195712
+VMS
+53.587968
+38.297600
+53.583872
+38.039552
+Shared
+1.0436608
+8.167424
+10.518528
+8.278016
+Text
+3.760128
+3.760128
+3.760128
+3.760128
+Data
+29.802496
+22.618112
+29.798400
+22.360064
+Table 7 
+Execution time of ACR symmetric key algorithm on Raspberry Pi.
+Algorithms (executed on Raspberry Pi)
+Execution Time (ms)
+Symmetric Key Generation
+0.277996
+Encryption using Symmetric Key and tag
+0.672602
+Decryption and Signature/Tag Generation
+0.672602
+Table 8 
+Execution time of asymmetric algorithm on Raspberry Pi.
+Keys Generated
+Key Sizes (in bits)
+Key Generation (in ms)
+ACR Public Key
+3388
+1.495
+ACR Private Key
+2624
+2.680
+Table 9 
+Memory utilization of proposed security ACR on Raspberry Pi.
+Memory 
+Parameters
+Key 
+Generation
+SSK 
+Generation 
+& 
+Distribution
+Encryption 
+and Tag 
+generation
+Decryption 
+and Tag 
+generation
+Total
+RSS
+29.67 MB
+29.64MB
+29. 64 MB
+29.64MB
+118.59
+VMS
+51.71 MB
+51.97 MB
+51.90 MB
+51.98 MB
+207.56
+Shared
+12.87 MB
+12.85 MB
+12.85 MB
+12.87 MB
+51.44
+Text
+3.76 MB
+3.76 MB
+3.76 MB
+3.76 MB
+15.04
+Data
+17.20 MB
+17.46 MB
+17.45 MB
+17.64MB
+69.75
+D. Upadhyay et al.                                                                                                                                                                                                                             
+International Journal of Critical Infrastructure Protection 47 (2024) 100705 
+15 
+
+5.3. Results of AGA-12 (SCADA standard)
+Table 10 displays the execution time of the RSA algorithm and key 
+sizes generated in AGA-12. For the RSA algorithm, both the RSA Public 
+Key and RSA Private Key have a key size of 1024 bytes. The key gen­
+eration process for both keys took approximately 108.485 milliseconds, 
+with a negligible difference of 0.003 milliseconds between the public 
+and private keys. Table 11 presents the execution time of encryption and 
+signature generation in AGA-12. The AGA-12 Encryption algorithm took 
+2.445 milliseconds to execute, while the AGA-12 Signature Generation 
+algorithm took significantly longer at 68.419 milliseconds.
+We have done a similar analysis of memory utilization of AGA-12 
+algorithms as shown in Table 12.
+5.4. Comparative analysis execution time (PCHC, ACR, AGA-12)
+We provide a comparative analysis between PCHC, ACR, and AGA- 
+12 based on two factors: mainly, execution time, and memory utiliza­
+tion respectively. The observed result in the tables provides an in-depth 
+insight into the performance characteristics of the algorithms and 
+optimizing their execution on Raspberry Pi devices. Based on Tables 13 
+and Table 14, PCHC has a total execution time of considering both 
+symmetric and asymmetric key cryptography is 3.455 milliseconds, ACR 
+takes around 4.075 milliseconds, and AGA-12 has a much higher total 
+execution time of 221.64 milliseconds. PCHC has the lowest execution 
+time. ACR has a higher execution time than PCHC. On the other hand, 
+AGA-12 exhibits a significantly higher execution time compared to the 
+other two algorithms. Thus, we can conclude that PCHC and ACR appear 
+to be more efficient in terms of execution time, as compared to that of 
+AGA-12 because algorithms in AGA-12 require a significantly higher 
+time to perform its operations. In Table 15, based on the observations, 
+PCHC has a memory utilization of 39.997440 for RSS, 53.583872 for 
+VMS, 10.518528 for Shared, 3.760128 for Text, and 29.798400 for Data. 
+While for ACR, the memory utilization is 118.59 for RSS, 207.56 for 
+VMS, 51.44 for Shared, 15.04 for Text, and 69.75 for Data. And that of 
+AGA-12 is 61.2 for RSS, 104.3 for VMS, 27.89 for Shared, 11.28 for Text, 
+and 34.8 for Data. Thus, ACR shows the highest utilization across all 
+memory parameters, AGA-12 has moderate memory utilization, and 
+PCHC has the lowest memory utilization. Based on the comparative 
+analysis results, we conclude that PCHC has relatively efficient execu­
+tion and lower memory utilization on the Raspberry Pi. ACR requires 
+more resources, however, still performs reasonably well. AGA-12, on the 
+other hand, has significantly higher memory utilization and execution 
+times.
+5.5. Analysis based on scalability, flexibility, and real-time processing
+Scalability is a crucial aspect of any SCADA-based ICSs especially 
+considering the potential growth in industrial settings over time. We 
+evaluated our system’s scalability by conducting stress tests and 
+measuring its performance by considering factors such as execution time 
+for key generation, encryption and decryption, storage cost of keys, and 
+memory consumption, particularly on resource-constrained devices 
+within industrial settings. Analyzing the execution time of various se­
+curity operations enabled us to determine the responsiveness of the 
+system and its ability to meet real-time processing requirements.
+We conducted a comparative analysis between PCHC, ACR, and 
+AGA-12, focusing on execution time and memory utilization, to optimize 
+their performance on Raspberry Pi devices. These performance evalua­
+tion metrics were part of stress tests and were further extended to 
+measure the scalability of these systems. This analysis indicates that 
+PCHC offers efficient execution and lower memory utilization, making it 
+the most scalable option for Raspberry Pi devices. Although ACR re­
+quires more resources, it still performs reasonably well, while AGA-12 
+presents challenges due to significantly higher memory utilization and 
+execution time.
+Deploying lightweight symmetric key cryptography ensures unifor­
+mity in cipher deployment across all locations, making it suitable for the 
+applications of critical infrastructure. The efficiency of lightweight 
+cryptography optimizes resource utilization, enabling seamless inte­
+gration into real-time systems without compromising performance. This 
+standardized approach facilitates robust security measures in cable- 
+based setups while ensuring timely and secure communication in dy­
+namic real-time applications, thereby enhancing overall system reli­
+ability and effectiveness.
+The storage cost of keys is a critical factor in evaluating the perfor­
+mance of SCADA networks, especially in distributed systems where field 
+control devices like RTUs, PLCs, and IEDs are remotely located from the 
+MTU. Periodic updates of session keys are necessary for secure 
+Table 10 
+Execution time of AGA-12 asymmetric key algorithm and Key Sizes on Raspberry 
+Pi.
+Keys Generated
+Key Sizes (in bytes)
+Key Generation (in ms)
+RSA Public Key
+1024
+108.485
+RSA Private Key
+1024
+108.488
+Table 11 
+Execution time of AGA-12 symmetric key algorithm on Raspberry Pi.
+Algorithms (executed on Raspberry Pi)
+Execution Time (ms)
+AES Encryption
+2.445
+AES Decryption
+2.24
+AES Symmetric key generation
+1.23
+Table 12 
+Memory utilization of AGA-12 on Raspberry Pi.
+Memory 
+Parameters
+RSA Key 
+Generation
+AES 
+Encryption
+ECC 
+Signature
+Total
+RSS
+20.2 MB
+20.6 MB
+20.4 MB
+61.2
+VMS
+34.7 MB
+34.9 MB
+34.7 MB
+104.3
+Shared
+9.29 MB
+9.31 MB
+9.29 MB
+27.89
+Text
+3.76 MB
+3.76 MB
+3.76 MB
+11.28
+Data
+11.5 MB
+11.8 MB
+11.5 MB
+34.8
+Table 13 
+Comparative analysis of symmetric key algorithms based on execution time 
+(ciphering & deciphering the data on Raspberry PI).
+Security algorithms
+Total Execution time (in ms)
+PCHC (Hash Chaining – PCHC)
+0.72 ms
+ACR (Symmetric Key - ACR)
+1.34 ms
+AGA-12 (AES- AGA12)
+4.68 ms
+Table 14 
+Comparative analysis of asymmetric key algorithms based on execution time 
+(ciphering & deciphering the data on Raspberry PI).
+Security algorithms
+Total Execution time (in milliseconds)
+PCHC (NTRU - PCHC)
+3.161
+ACR (Enhanced ASCON - ACR)
+2.735
+AGA-12 (RSA – AGA12)
+216.96
+Table 15 
+Memory utilization of the algorithms on Raspberry PI.
+Security Methods
+RSS
+VMS
+Shared
+Text
+Data
+PCHC
+39.99
+53.58
+10.51
+3.76
+29.79
+ACR
+118.59
+207.56
+51.44
+15.04
+69.75
+AGA-12
+61.2
+104.3
+27.89
+11.28
+34.8
+D. Upadhyay et al.                                                                                                                                                                                                                             
+International Journal of Critical Infrastructure Protection 47 (2024) 100705 
+16 
+
+communication, balancing the risk of exposure due to compromised 
+static keys against the cost of key generation, distribution, and extrac­
+tion. In our proposed scheme, we prioritize minimizing the number of 
+stored keys on each field control device to enhance security and reduce 
+operational overhead. We classify communication into three types, 
+namely, point-to-point, broadcast, and multicast, considering in­
+teractions among MTU, Sub-MTU, and RTU as depicted in Table 16. By 
+analyzing key storage requirements for each communication type, we 
+derive a scalable approach to managing keys efficiently across SCADA 
+locations. Broadcast and multicast communications involve similar key 
+requirements, with the addition of public keys for broadcasting mes­
+sages from the MTU to RTUs. For point-to-point communication, private 
+keys are required for encryption between the MTU and its connected 
+Sub-MTUs and RTUs. Public keys are needed for encryption in the 
+reverse direction. In total, the MTU requires one private key and a 
+variable number of public keys, while the Sub-MTU and RTU each need 
+one private key and a fixed number of public keys, ensuring secure 
+communication within the network.
+Our proposed approach for SCADA systems offers affordability in 
+terms of key storage, as resource-constrained devices located at the plant 
+floor only need to store one private key. The public keys are distributed 
+over the network when two communication parties start communicating 
+with each other. By efficiently managing keys across SCADA locations, 
+the proposed scheme ensures scalability without significant cost in­
+creases in terms of memory. The summary presented in Table 17 high­
+lights the key considerations of scalability and flexibility in our proposed 
+scheme. Efficiently managing key storage costs while ensuring robust 
+encryption through lightweight ciphers enables seamless integration 
+into distributed SCADA systems, thus enhancing security and opera­
+tional efficiency. Balanced security here refers to hybrid cryptography, 
+wherein asymmetric key cryptography is utilized for the initial seed 
+exchange, followed by the use of symmetric key cryptography for faster 
+execution. Furthermore, seamless integration reflects the use of inde­
+pendent lightweight ciphers that can be integrated easily into any 
+resource-constrained devices without any other modifications in the 
+design and deployment of the proposed security solution for the SCADA 
+systems.
+Our approach emphasizes efficient key management to ensure scal­
+ability across distributed SCADA systems. By centralizing the storage of 
+private keys and dynamically distributing public keys during commu­
+nication initiation, we minimize memory costs while maintaining robust 
+security measures. Moreover, the performance metrics evaluated 
+include execution time, memory utilization, and the efficiency of cryp­
+tographic operations, which are crucial in assessing the scalability of our 
+system. The assessment based on these parameters demonstrates how 
+well our solution can handle increasing data loads and computational 
+demands without compromising performance. Lower execution times 
+and optimized memory utilization indicate the system’s ability to scale 
+effectively by efficiently utilizing resources, even in distributed SCADA 
+environments. This method supports a scalable architecture and facili­
+tates seamless integration into existing and new SCADA environments 
+without extensive modifications. Furthermore, these key performance 
+metrics also ensure optimal real-time processing capabilities. The use of 
+lightweight ciphers enables fast encryption and decryption operations 
+on resource-constrained devices, contributing to minimal latency and 
+efficient data transmission. Uniform deployment of lightweight ciphers 
+at both communication endpoints enhances compatibility and reli­
+ability, ensuring consistent security measures throughout the network.
+Overall, our scalable and flexible security module addresses the 
+complexities of SCADA-based ICSs by balancing security, affordability in 
+key storage, and efficient real-time processing. By considering factors 
+such as execution time, memory utilization, uniform cipher deployment, 
+and lightweight design, our proposed framework ensures both security 
+and operational efficiency across SCADA environments.
+5.6. Summary of attack analysis
+This section summarizes the comparison in terms of applicable cyber 
+attacks to SCADA-based industrial control systems and prevention 
+mechanisms provided by our proposed security algorithms. In the 
+Table 18, we have reviewed the security algorithms used to design our 
+proposed modules along with AGA-12 and how each algorithm will 
+prevent cyber attacks to address security goals. The table provides a 
+comprehensive comparison between the existing SCADA Security Stan­
+dard (AGA-12) method and two proposed modules, namely, PCHC (Hash 
+chaining using multi layered architecture) and ACR (Ascon using 
+compression rate), in terms of attack analysis and prevention 
+mechanisms.
+PCHC and ACR both address various security goals such as confi­
+dentiality, authentication, message integrity, and non-repudiation. 
+PCHC provides secure session key exchange using NTRU, secure infor­
+mation exchange through Hash-chaining, and employ Hash Function 
+Blake2 for generating hash values. ACR The first involves a shared secret 
+key exchange using innovative techniques based on Huffman coding and 
+the concept of Radioactive Decay rate. This method ensures a secure and 
+unique exchange of keys, enhancing the confidentiality of information. 
+The second mechanism involves secure information exchange using 
+ASCON, a lightweight authenticated encryption scheme. ASCON pro­
+vides a robust and efficient way to exchange information securely, 
+ensuring the integrity and authenticity of the data being transmitted. 
+Additionally, the use of HMAC (Hash-based Message Authentication 
+Code) with Sha3 enhances the security of the exchanged data by 
+generating a hash of the MAC (Message Authentication Code) function. 
+This ensures that the integrity and authenticity of the transmitted data 
+are maintained, providing a secure communication channel. Unlike 
+AGA-12, the proposed modules effectively prevent eavesdropping, man- 
+in-the-middle attacks, and spoofing, ensuring a higher level of security.
+PCHC and ACR address the vulnerabilities found in AGA-12, such as 
+length-extension attacks. They enhance security by preventing these 
+attacks through advanced algorithms and protocols providing HMAC as 
+encapsulation layer. Additionally, the proposed modules mitigate 
+quantum attacks and collision attacks based on Grover’s search algo­
+rithm, which AGA-12 fails to address. They utilize NTRU-based post- 
+quantum algorithms and ASCON with a digest based on SHA-3 for better 
+resistance against quantum attacks and improved message integrity. 
+Furthermore, the proposed PCHC focuses on reducing latency and 
+ensuring high availability. They employ lightweight ciphers and a 
+Table 16 
+Storage cost based on types of communication.
+Broadcast Communication: 
+MTU to RTU: Private Key of MTU = 1 
+(E), Public Key of MTU = 1 (D) 
+RTU to RTU: Private Key of Controller 
+RTU = 1 (E), Public Key of Controller 
+RTU = 1 (D)
+Multicast Communication: 
+MTU to RTU: Private Key of MTU = 1 
+(E), Public Key of MTU = 1 (D) 
+RTU to RTU: Private Key of Controller 
+RTU = 1 (E), Public Key of Controller 
+RTU = 1 (D)
+Point-to-Point Communication: 
+MTU to SUB-MTU: Private Key of MTU 
+= 1 (D) 
+SUB-MTU to RTU: Public Key = m (E) 
+RTU to SUB-MTU: Public key of Sub- 
+MTU
+Total Keys: 
+MTU: 1 (Private Key), m + 1 (Public Key) 
+SUB-MTU: 1 (Private Key), r + 2 (Public 
+Key) 
+RTU: 1 (Private Key), 2 (Public Key)
+Legend: E = Encryption, D = Decryption, m = number of SUB-MTUs, r = number 
+of RTUs.
+Table 17 
+Key points for the proposed scalable and flexible security module for SCADA- 
+based ICSs.
+Aspect
+Scalability
+Flexibility
+Key Storage Cost
+Efficiently managed
+Balanced security
+Lightweight cipher
+Adaptable deployment
+Robust cryptography
+Distributed systems
+Scalable architecture
+Seamless integration
+D. Upadhyay et al.                                                                                                                                                                                                                             
+International Journal of Critical Infrastructure Protection 47 (2024) 100705 
+17 
+
+hybrid approach combining NTRU and Hash-chaining, ensuring efficient 
+execution while maintaining a high level of security. The proposed 
+modules also introduce machine learning-based Intrusion Detection 
+Systems (IDS) to detect and prevent Denial of Service (DoS) attacks, 
+which has not been addressed by AGA-12.
+Our research is limited to covering access-control policies and rein­
+forcement learning to react immediately in the case of a data breach. 
+Specifically, internal threats from disgruntled employees or unautho­
+rized personnel pose significant risks, as they may exploit access privi­
+leges to sabotage operations or steal sensitive data. Attackers could 
+potentially eavesdrop on communications or manipulate data packets, 
+resulting in unauthorized access or tampering. These security implica­
+tions need to be properly handled by network administrators, employing 
+proper access-control strategies to mitigate such situations. Moreover, 
+the deployment of the IPS based on reinforcement learning can aid in 
+effectively reacting to potential breaches. To further mitigate these risks, 
+practitioners are advised to adopt a defense-in-depth approach, 
+leveraging not only the capabilities of our proposed lightweight ciphers 
+and IDS but also employing reinforcement learning to construct adaptive 
+IPS and deploying effective access control mechanisms. Additionally, 
+conducting regular risk assessments, developing incident response 
+plans, managing vendor risks, implementing continuous monitoring and 
+logging, providing security awareness training, and ensuring regulatory 
+compliance are all recommendations that organizations need to follow 
+while enhancing the resilience and effectiveness of industrial control 
+systems against evolving cyber threats.
+6. Summary and concluding remarks
+In this paper, we present a comprehensive framework for a SCADA 
+testbed aimed at ensuring the security and availability of industrial 
+control systems during real-time communications. Leveraging compo­
+nents from an industrial field site and control center devices, we outline 
+a robust methodology for designing and developing SCADA/IoT-based 
+ICS applications. Our testbed supports both MQTT for IoT devices and 
+Modbus for SCADA components, establishing a versatile platform for 
+secure communication.
+A key aspect of our framework involves the implementation of 
+lightweight ciphers at both endpoints to establish a secure channel be­
+tween the control center and plant floor devices. We evaluate the effi­
+ciency of our proposed security algorithms in terms of computational 
+speed and memory utilization through deployment into a hardware 
+testbed. Our proposed security modules address various vulnerabilities 
+and prevent advanced attacks by employing advanced cryptographic 
+techniques, post-quantum algorithms, and machine learning-based 
+Intrusion Detection Systems. The evaluation of proposed security algo­
+rithms, including Prime Counter & Hash Chaining (PCHC) and Ascon 
+algorithm with Compression Rate (ACR), demonstrates superior per­
+formance compared to the current SCADA security standard AGA-12. 
+This comparative analysis highlights the efficacy of the proposed secu­
+rity measures in terms of computational speed, memory utilization, and 
+resilience against cyber threats.
+Furthermore, through case studies involving remote servo motor 
+control, water distribution systems, and power system voltage level in­
+dicators, vulnerabilities such as Denial of Service and Man-in-The- 
+Middle attacks have been identified and effectively addressed. For 
+example, in remote servo motor control, the implementation of light­
+weight ciphers ensures that commands transmitted from the control 
+center to servo motors are encrypted, preventing unauthorized inter­
+ception or manipulation. This encryption not only safeguards command 
+integrity but also restricts communication to authenticated devices, 
+thereby mitigating the risk of Man-in-The-Middle attacks. In water dis­
+tribution systems, where reliability and data integrity are paramount, 
+our proposed cryptographic techniques such as PCHC and ACR are 
+crucial. Specifically, the Ascon algorithm with Compression Rate secures 
+data transmission between sensors and the central control system while 
+enhancing system resilience against DoS attacks. By efficiently man­
+aging computational resources and maintaining consistent communi­
+cation channels, ACR ensures uninterrupted operation of critical 
+infrastructure. Similarly, for power system voltage level indicators, the 
+deployment of lightweight ciphers and advanced cryptographic pro­
+tocols ensures the secure and tamper-proof transmission of data to the 
+central control system. These protocols guarantee that voltage readings 
+cannot be manipulated or falsified during transmission, preventing 
+malicious actors from disrupting the power grid through injection of 
+false data or unauthorized access attempts to critical control systems. 
+Table 18 
+Comparison of attack analysis and prevention mechanisms.
+Attack
+Applicable Algorithms
+Methodology for Prevention
+Security Goals 
+Addressed
+AGA- 
+12
+PCHC
+ACR
+AGA-12
+PCHC
+ACR
+Eavesdropping
+✔*
+✔*
+✔*
+A secure session key 
+exchange: RSA, secure 
+information exchange: 
+AES, Hash Function: SHA1
+A secure session key exchange: 
+NTRU, secure information 
+exchange: Hash-chaining 
+(multi-layered security), Hash 
+Function: Blake2
+Shared Secret Key Exchange 
+based on Huffman and 
+Radioactive Decay rate and 
+ASCON for encryption
+Confidentiality, 
+Authentication, 
+Message Integrity, Non- 
+repudiation
+Man-in-the-Middle 
+Attack
+✔*
+✔*
+✔*
+Spoofing
+✔*
+✔*
+✔*
+Rainbow 
+Table Attack
+✔*
+✔*
+✔*
+SHA1: vulnerable to 
+length-extension attacks 
+[46]
+Generated Hash of the MAC 
+function - HMAC
+Shared Secret Key Exchange 
+based on Huffman and 
+Radioactive Decay rate and 
+ASCON for encryption and 
+authentication.
+Authentication, 
+Message Integrity
+Preimage Attack
+✔*
+✔*
+✔*
+Collision Attack
+✔*
+✔*
+✔*
+Length Extension 
+Attack
+✘
+✔*
+✔*
+Quantum Attacks
+✘
+✔*
+✔*
+Vulnerable
+Used NTRU-based post- 
+quantum algorithm [12]
+ASCON and digest based on SHA- 
+3.
+Message Integrity
+Collision Attack 
+based on Grover’s 
+search algorithm
+✘
+✔*
+✔*
+Latency
+✔✔
+✔✔
+✔✔
+Used light-weight cipher 
+for faster execution (RSA 
+þ AES): slower than 
+NTRU & Hash-chaining 
+[31]
+Proposed light-weight cipher 
+using a hybrid approach (NTRU 
+þ Hash-chaining)
+Shared Secret Key Exchange 
+based on Huffman and 
+Radioactive Decay rate. ASCON: 
+a lightweight authenticated 
+encryption scheme.
+Availability
+Denial of Service 
+Attack
+✘
+✔
+✔
+No provision for DoS 
+attack (Vulnerable)
+Proposed ML-based IDS [27]
+Shared Secret Key Exchange 
+based on Huffman and 
+Radioactive Decay rate.
+✔* represents prevention of attacks, ✔ represents detection of attack,.
+✔✔ represents a highly available system, ✘ vulnerable to attack.
+D. Upadhyay et al.                                                                                                                                                                                                                             
+International Journal of Critical Infrastructure Protection 47 (2024) 100705 
+18 
+
+Overall, the use of our proposed lightweight ciphers facilitates secure 
+information exchange between plant floor and control center compo­
+nents, safeguarding the integrity and availability of industrial control 
+systems across diverse operational environments. By demonstrating the 
+integration of our robust cryptographic measures tailored to specific 
+industrial applications, our goal is to showcase the strength of our 
+proposed framework against real-world security threats, ensuring reli­
+able and secure operation of critical infrastructure components.
+The successful hardware simulation of our testbed enables operators 
+and technicians to remotely monitor and control plant floor machinery 
+via Human-Machine Interface (HMI), thereby protecting the entire 
+network from potential breaches. Through this research, we aim to 
+demonstrate the feasibility of low-cost, secure, and highly available 
+hardware testbeds for industrial control systems, with scalability to 
+large-scale SCADA infrastructure.
+In conclusion, our work addresses the critical need for enhancing 
+security in SCADA networks within ICSs, offering practical solutions to 
+safeguard critical infrastructure resources. By proposing a secure 
+framework design, validating it through hardware simulation, and 
+providing a thorough comparative analysis of security algorithms, we 
+contribute valuable insights towards ensuring resilience against cyber 
+threats in SCADA environments. Overall, this research contributes to the 
+practical understanding and implementation of SCADA systems in in­
+dustrial control environments.
+CRediT authorship contribution statement
+Darshana Upadhyay: Writing – original draft, Methodology, Formal 
+analysis, Data curation, Conceptualization. Sagarika Ghosh: Method­
+ology, Formal analysis. Hiroyuki Ohno: Validation, Methodology. 
+Marzia Zaman: Project administration, Funding acquisition. Srinivas 
+Sampalli: Writing – review & editing, Validation, Supervision.
+Declaration of competing interest
+The authors declare that they have no known competing financial 
+interests or personal relationships that could have appeared to influence 
+the work reported in this paper.
+Data availability
+Data will be made available on request.
+Acknowledgments
+The authors gratefully acknowledge the support in part by the Nat­
+ural Sciences and Engineering Research Council (NSERC) and industry 
+partners Cistel Technology Inc. and Technologie Sanstream, through a 
+Collaborative Research Grant.
+References
+[1] D. Upadhyay, S. Sampalli, B Plourde, Vulnerabilities’ assessment and mitigation 
+strategies for the small linux server, onion Omega2, Electronics (Basel) 9 (2020) 
+967, https://doi.org/10.3390/ELECTRONICS9060967. Page2020;9:967.
+[2] J. Liu, Y. Xiao, S. Li, W. Liang, C.L.P Chen, Cyber security and privacy issues in 
+smart grids, IEEE Communicat. Surveys Tutorials 14 (2012) 981–997, https://doi. 
+org/10.1109/SURV.2011.122111.00145.
+[3] S. Ghosh, S Sampalli, A survey of security in SCADA networks: current Issues and 
+Future Challenges, IEEE Access 7 (2019) 135812–135831.
+[4] Tuomala V. Human Factor, Cyber Hygiene, Cyber-Physical Systems, and Industrial 
+Control Systems in the Context of Cybersecurity 2023.
+[5] D. Upadhyay, S. Sampalli, SCADA (Supervisory Control and Data Acquisition) 
+systems: vulnerability assessment and security recommendations, Comput. Secur. 
+89 (2020) 101666 a.
+[6] S. Nazir, S. Patel, D Patel, Assessing and augmenting SCADA cyber security: a 
+survey of techniques, Comput. Secur. 70 (2017) 436–454, https://doi.org/ 
+10.1016/j.cose.2017.06.010.
+[7] Department of Energy. Enhancing control systems security in the energy sector 
+NSTB National SCADA Test Bed Common Cyber Security Vulnerabilities Observed 
+in Control System Assessments by the INL NSTB Program. U.S.: 2008.
+[8] V.M. Igure, S.A. Laughter, R.D Williams, Security issues in SCADA networks, 
+Comput. Secur. 25 (2006) 498–506.
+[9] S.I. Khan, R Raut, Lightweight security algorithm for wireless sensor network 
+computer security, Int. J. Intellig. Syst. Appl. Eng. 12 (2024) 147–157.
+[10] C. Gidney, M Ekerå, How to factor 2048 bit RSA integers in 8 h using 20 million 
+noisy qubits, Quantum 5 (2021) 433.
+[11] Deodoro J., Gorbanyov M., Malaika M., Sedik T.S., Peiris S.J. Quantum Computing 
+and the Financial System: spooky Action at a Distance? IMF Working Papers 2021; 
+2021.
+[12] A.P. Premnath, J.-Y. Jo, Y Kim, Application of NTRU cryptographic algorithm for 
+SCADA security, in: 2014 11th international conference on information 
+technology: new generations, IEEE, 2014, pp. 341–346.
+[13] D. Upadhyay, S. Sampalli, SCADA (Supervisory Control and Data Acquisition) 
+systems: vulnerability assessment and security recommendations, Comput. Secur. 
+89 (2020) 101666, https://doi.org/10.1016/J.COSE.2019.101666 b.
+[14] Cagalaban G., Kim T., Kim S. Towards Improving SCADA Control Systems Security 
+with Vulnerability Analysis Improving SCADA Control Systems Security with 
+Software Vulnerability 2016. https://doi.org/10.1007/978-3-642-22706-6.
+[15] C.R. Harrell, M. Patton, H. Chen, S Samtani, Vulnerability assessment, remediation, 
+and automated reporting: case studies of higher education institutions, in: 2018 
+IEEE International Conference on Intelligence and Security Informatics, ISI, 2018, 
+pp. 148–153, https://doi.org/10.1109/ISI.2018.8587380, 2018.
+[16] Ado K. SHA-1 Has Been Compromised In Practice. Https://Auth0Com/Blog/Sha-1- 
+Collision-Attack/ 2017.
+[17] A. Rezai, P. Keshavarzi, Z Moravej, Advance hybrid key management architecture 
+for SCADA network security, Security and Communication Networks 9 (2016) 
+4358–4368.
+[18] D. Choi, S. Lee, D. Won, S Kim, Efficient secure group communications for SCADA, 
+IEEE Trans. Power Delivery 25 (2010) 714–722, https://doi.org/10.1109/ 
+TPWRD.2009.2036181.
+[19] R. Dawson, C. Boyd, E. Dawson, J Gonzalez Nieto, SKMA-A key management 
+architecture for SCADA systems. ACSW Frontiers 2006, in: Proceedings of the 4th 
+Australasian Symposium on Grid Computing and e-Research (AusGrid 2006) and 
+the 4th Australasian Information Security Workshop (Network Security)(AISW- 
+NetSec 2006)[CRPIT, Volume 54], Australian Computer Society, 2006, 
+pp. 183–192.
+[20] Z. Wan, G. Wang, Y. Yang, S Shi, SKM: scalable key management for advanced 
+metering infrastructure in smart grids, IEEE Trans. Ind. Electron. 61 (2014) 
+7055–7066.
+[21] D. Choi, H. Jeong, D. Won, S Kim, Hybrid key management architecture for robust 
+SCADA systems, J. Inform. Sci. Eng. 29 (2013) 281–298.
+[22] R. Jiang, R. Lu, J. Luo, C. Lai, X Shen, Efficient self-healing group key management 
+with dynamic revocation and collusion resistance for SCADA in smart grid, 
+Security and Communication Networks 8 (2015) 1026–1039.
+[23] INL. NSTB Assessments Summary Report: common Industrial Control System Cyber 
+Security Weaknesses. 2010.
+[24] A. Baatarbileg, H. Ko, Z. Otgongerel, G Lee, Characteristics of wind power 
+generation in Jeju Island, Proc. Inst. Mech. Eng. Part A J. Power Energy 235 (2021) 
+620–628.
+[25] M. You, X. Zhang, G. Zheng, J. Jiang, H Sun, A versatile software defined smart 
+grid testbed: artificial intelligence enhanced real-time co-evaluation of ICT systems 
+and power systems, IEEE Access 8 (2020) 88651–88663.
+[26] E. Samadaei, A. Salehi, M. Iranian, E Pouresmaeil, Single DC source multilevel 
+inverter with changeable gains and levels for low-power loads, Electronics (Basel) 
+9 (2020) 937.
+[27] D. Upadhyay, J. Manero, M. Zaman, S Sampalli, Intrusion Detection in SCADA 
+Based Power Grids: recursive Feature Elimination Model with Majority Vote 
+Ensemble Algorithm, IEEE Trans Netw Sci Eng 8 (2021) 2559–2574, https://doi. 
+org/10.1109/TNSE.2021.3099371, a.
+[28] Advisory (ICSA-13-291-01B). DNP3 Implementation Vulnerability (Update B) | 
+ICS-CERT. Advisory Database 2018. https://ics-cert.us-cert.gov/advisories/ICSA-1 
+3-291-01B (accessed November 20, 2018).
+[29] D. Upadhyay, J. Manero, M. Zaman, S Sampalli, Gradient Boosting Feature 
+Selection with Machine Learning Classifiers for Intrusion Detection on Power 
+Grids, IEEE Trans. Netw. Serv. Manage. 18 (2021) 1104–1116, https://doi.org/ 
+10.1109/TNSM.2020.3032618, b.
+[30] Byres E. DNP3 Vulnerabilities Part 1 of 2 - NERC’s Electronic Security Perimeter is 
+Swiss Cheese | Tofino Industrial Security Solution 2013. https://www.tofinosecurit 
+y.com/blog/dnp3-vulnerabilities-part-1-2-nercs-electronic-security-perimeter 
+-swiss-cheese (accessed November 16, 2018).
+[31] J. Hermans, F. Vercauteren, B Preneel, Speed Records for NTRU, Topics in 
+Cryptography – CT-RSA 2010 5985 (2010) 73–88, https://doi.org/10.1007/978-3- 
+642-11925-5_6.
+[32] D. Li, H. Guo, J. Zhou, L. Zhou, J.W Wong, SCADAWall: a CPI-enabled firewall 
+model for SCADA security, Comput. Secur. 80 (2019) 134–154, https://doi.org/ 
+10.1016/j.cose.2018.10.002.
+[33] A.P. Mathur, N.O Tippenhauer, SWaT: a water treatment testbed for research and 
+training on ICS security, in: 2016 international workshop on cyber-physical 
+systems for smart water networks (CySWater), IEEE, 2016, pp. 31–36.
+[34] Otte M., Pala D., Sandroni C., Rohjans S., Strasser T. Multi-laboratory cooperation 
+for validating microgrid and smart distribution system approaches 2018.
+[35] T. Cruz, P Sim˜oes, Down the rabbit hole: fostering active learning through guided 
+exploration of a scada cyber range, Appl. Sci. 11 (2021) 9509.
+D. Upadhyay et al.                                                                                                                                                                                                                             
+International Journal of Critical Infrastructure Protection 47 (2024) 100705 
+19 
+
+[36] Piispanen J. Technical specification for federation of cyber ranges 2018.
+[37] Ohno H., Upadhyay darshana, Ghosh S., Zaman M., Sampalli S. GitHub - hohno- 
+46466/xZone–MYTechLab–ModbusBar: monogramming based Modbus test 
+modules n.d. https://github.com/hohno-46466/xZone–MYTechLab–ModbusBar
+(accessed March 8, 2023a).
+[38] D. Upadhyay, M. Zaman, R. Joshi, S Sampalli, An efficient key management and 
+multi-layered security framework for SCADA systems, IEEE Trans. Netw. Serv. 
+Manage. 19 (2022) 642–660, https://doi.org/10.1109/TNSM.2021.3104531.
+[39] H. Delfs, H Knebl. Symmetric-key cryptography. Introduction to Cryptography: 
+Principles and Applications, 2015, pp. 11–48.
+[40] M. Stevens, E. Bursztein, P. Karpman, A. Albertini, Y. Markov. The first collision for 
+full SHA-1. Advances in Cryptology-CRYPTO 2017; 37th Annual International 
+Cryptology Conference, Santa Barbara, CA, USA, August 20-24, 2017, Proceedings, 
+Part I 37, Springer: 2017, p. 570-96.
+[41] H. Wang, Z. Ma, C. Ma, An efficient quantum meet-in-the-middle attack against 
+NTRU-2005, Chin. Sci. Bull. 58 (2014) 3514–3518.
+[42] S.N. Kumar, Review on network security and cryptography, Int. Transac. Electr. 
+Comput. Eng. Syst. 3 (2015) 1–11.
+[43] S. Ghosh, M. LeMay, M.R. Sastry, D.M. Durham, Inventors: Intel Corp, assignee. 
+Processor hardware and instructions for SHA3 cryptographic operations, United 
+States Patent US 11, 222 (2022) 127.
+[44] Ohno H., Upadhyay D., Ghosh S., Zaman M., Stacey B., Sampalli S. GitHub - hohno- 
+46466/xZone–MYTechLab–SCADAtestbed: experimental repository for SCADA 
+testbed in MYTechLab n.d. https://github.com/hohno-46466/xZone–MYTechLab 
+–SCADAtestbed (accessed March 8, 2023b).
+[45] IBM. cu Command - IBM Documentation n.d. https://www.ibm.com/docs/en/aix/ 
+7.2?topic=c-cu-command (accessed March 8, 2023).
+[46] Stevens M., Bursztein E., Karpman P., Albertini A., Markov Y. The first collision for 
+full SHA-1 2017.
+D. Upadhyay et al.                                                                                                                                                                                                                             
+International Journal of Critical Infrastructure Protection 47 (2024) 100705 
+20 

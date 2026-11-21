@@ -1,0 +1,3104 @@
+Engineering Applications of Artificial Intelligence 166 (2026) 113542
+Available online 20 December 2025
+0952-1976/© 2025 The Authors. Published by Elsevier Ltd. This is an open access article under the CC BY license (http://creativecommons.org/licenses/by/4.0/).
+Machine learning for resilience analysis: a review of systems
+under cyberattacks
+Ruoqing Yin *
+, Liz Varga
+Department of Civil, Environmental and Geomatic Engineering, UCL, London, UK
+A R T I C L E I N F O
+Keywords:
+Machine learning
+Deep learning
+Reinforcement learning
+Cyberattack
+Cyber physical systems
+Resilience
+A B S T R A C T
+Intelligent cyber-physical systems (CPS) are increasingly exposed to sophisticated cyberattacks, yet existing
+machine learning (ML)-focused surveys provide only fragmented coverage of the resilience lifecycle. They often
+separate attack modelling from defence strategies, overlook cross-sector insights, and lack clear evaluation
+benchmarks, limiting practical applicability. This review offers the first lifecycle-oriented synthesis of ML-
+enabled CPS resilience, covering detection, defence, recovery, and adaptation. It integrates diverse ML-based
+attack techniques with corresponding resilience mechanisms and provides a comparative analysis across two
+critical CPS sectors—power and water—to highlight shared vulnerabilities and sector-specific behaviours. The
+review further distils key limitations in current ML approaches, including data scarcity, interpretability chal-
+lenges, and limited real-world validation. Finally, it proposes five actionable research directions and resilience
+quantification considerations to guide future development of robust and transferable ML-based CPS resilience
+frameworks.
+Abbreviations
+ADP
+Adaptive Dynamic Programming
+AE
+Autoencoder
+AGC
+Automatic Generation Control
+AI
+Artificial Intelligence
+ANN
+Artificial Neural Network
+CNN
+Convolutional Neural Network
+CPCS
+Cyber-Physical Control System
+CPPS
+Cyber-Physical Power System
+CPS
+Cyber-Physical System
+DDPG
+Deep Deterministic Policy Gradient
+DNDF
+Dynamic Neural Decision Framework
+DQN
+Deep Q-Network
+DRL
+Deep Reinforcement Learning
+DSAE
+Denoising Sparse Autoencoder
+EL
+Ensemble learning
+FDIA
+False Data Injection Attack
+FIS
+Fuzzy Inference System
+FL
+Fuzzy Logic
+GAIN
+Generative Adversarial Imputation Network
+GAN
+Generative Adversarial Network
+GCN
+Graph Convolutional Network
+GRNN
+Gated Recurrent Neural Network
+GRU
+Gated Recurrent Unit
+(continued on next column)
+(continued)
+GWO
+Grey Wolf Optimization
+GNNs
+Graph Neural Networks
+KNN
+k-Nearest Neighbors
+RF
+Random Forest
+LR
+Logistic Regression
+DT
+Decision Tree
+SVC
+Support Vector Classifier
+ABC
+AdaBoost Classifier
+ETC
+Extra Tree Classifier
+GNB
+Gaussian Naive Bayes
+BC
+Bagging Classifier
+GB
+Gradient Boosting
+XGB
+Extreme Gradient Boosting
+BAG
+Bagging
+TD3
+Win-Delayed Deep Deterministic Policy Gradient
+TDG
+Traffic Dispersion Graph
+ODAE
+Overcomplete Denoising Autoencoders
+PMU
+Phaser Measurement Units
+PDC
+Phasor Data Concentrator
+This article is part of a special issue entitled: AI-Driven Innovations in Cyber-Physical Systems published in Engineering Applications of Artificial Intelligence.
+* Corresponding author.
+E-mail addresses: ucesryi@ucl.ac.uk (R. Yin), l.varga@ucl.ac.uk (L. Varga).
+Contents lists available at ScienceDirect
+Engineering Applications of Artificial Intelligence
+journal homepage: www.elsevier.com/locate/engappai
+https://doi.org/10.1016/j.engappai.2025.113542
+Received 10 December 2024; Received in revised form 6 December 2025; Accepted 11 December 2025
+
+Engineering Applications of Artificial Intelligence 166 (2026) 113542
+2
+1. Introduction
+Rapid technological advancements have transformed infrastructure
+systems into “smart” networks by integrating communication technol-
+ogies, giving rise to cyber-physical systems (CPS). These advancements
+have significantly enhanced operational efficiency and facilitated
+automated decision-making. However, they have also introduced sub-
+stantial cyber vulnerabilities, which are often exploited through sector-
+specific cyberattacks, reflecting the unique challenges inherent to
+different infrastructure domains.
+In power systems, the integration of renewable energy sources has
+introduced novel vulnerabilities, particularly due to the proliferation of
+distributed generation resources such as wind and solar (He et al.,
+2022). These vulnerabilities were starkly highlighted in 2022 through a
+series of high-profile incidents. In February, a cyberattack on the Viasat
+KA-SAT satellite network disrupted the remote control of 5800 Enercon
+wind turbines in Germany. Similarly, in April, another attack on Deut-
+sche Windtechnik impacted 2000 wind turbines (Trakimaviˇcius). These
+events underscore the urgent need for enhanced cybersecurity measures
+to protect the renewable energy sector. The White House has further
+emphasized the necessity of a comprehensive cybersecurity overhaul for
+the nation’s clean energy infrastructure (Calma).
+Cyberattacks on water systems also pose significant threats to public
+health and national security. For instance, in 2023, a cyberattack in
+County Mayo, Ireland, disrupted water treatment processes, compro-
+mising water quality for 160 households over two days (‘ﺡﻡﻝﻩﺱﺍﯼﺏﺭﯼ
+ﻩﮎﺭﻩﺍﯼﺝﻡﻩﻭﺭﯼﺍﺱﻝﺍﻡﯼ
+.)Between 2019 and 2021, ransomware attacks
+targeted five water and wastewater treatment facilities in the United
+States, as reported by U.S. law enforcement agencies (Lyngaas). This
+figure excludes three additional widely publicized incidents within the
+same period, highlighting the growing cybersecurity challenges faced by
+critical water infrastructure.
+To address the growing challenges posed by cyberattacks, the
+concept of resilience has emerged as a critical framework for managing
+interruptions and incidents in infrastructure systems. Resilience is a
+widely debated concept (Jufri et al., 2019), a well-known definition is
+defined by the 4Rs: robustness, rapidity, resourcefulness, and redun-
+dancy (Bruneau et al., 2003). Some definitions emphasize absorptive,
+adaptive, and restorative capabilities (Nan and Sansavini, 2017), while
+others define resilience as the ability to predict, absorb, adapt to, and
+recover from disruptive events (Hosseini et al., 2016).
+In the context of CPS within the infrastructure sector, resilience fo-
+cuses on the ability to maintain continuous operation under adverse
+conditions. This includes prioritizing safe degradation and preventing
+significant performance interruptions (Segovia-Ferreira et al., 2024)
+(Clark and Zonouz, 2019) (Arghandeh et al., 2016). Resilience, in this
+sense, is the system’s capacity to endure disruptive events and efficiently
+return to normal operations (Ti et al., 2022). As technology continues to
+evolve, the complexity and unpredictability of cyber threats are
+increasing, necessitating adaptive and robust approaches.
+In this study, resilience in infrastructure CPS is defined in alignment
+with ISO 22372:2024 as the system’s ability to absorb and adapt to a
+changing environment. So, here we conceptualize resilience in two
+stages, as shown in Fig. 1. Stage 1 — absorption — refers to the system’s
+immediate ability to withstand the onset of a cyberattack, limiting
+damage and maintaining essential functionality as performance de-
+grades toward its lowest point, Pmin. This stage captures short-term
+resistance and the system’s capacity to prevent uncontrolled failure.
+Stage 2 — adaptation — involves the recovery and improvement pro-
+cess, during which the system rebounds from Pmin and progresses toward
+regaining optimal functionality Popt. From trec to topt, the system ideally
+needs to surpass its original performance level, P0, to reach a higher
+performance Popt to demonstrate the system ’s improved adaptability
+and preparedness for future threats.
+Other attributes such as reliability, robustness, survivability, safety,
+and maintainability are noted for context but are not examined further,
+as this study focuses specifically on resilience as the most comprehensive
+measure of CPS response to cyber disruptions.
+This study focuses on specific cyberattack types, including FDIA, DoS
+attacks, machine learning attacks, and hybrid attacks, as these represent
+significant challenges to the resilience of CPS. For each selected attack
+type, we provide detailed modelling formulations to offer a compre-
+hensive understanding of their underlying mechanisms. While a wide
+range of cyber threats exists, this paper does not aim to cover all possible
+attack types. Instead, it concentrates on these key examples to enable
+focused and in-depth analysis.
+The machine learning techniques presented in this paper primarily
+focus on enhancing resilience; however, some ML-based cyberattack
+modelling techniques are also discussed. While all resilience enhance-
+ment countermeasures are ML-based, not all attack modelling tech-
+niques rely on ML. As illustrated in Fig. 2, machine learning plays a
+critical role in combating cyberattacks through various activities.
+However, it is a double-edged sword, as it can also be leveraged to
+optimize attack strategies, as shown in Fig. 3. While ML strengthens
+resilience through detection, defence, recovery, and adaptive design,
+modern cyberattacks can also exploit ML technique. At the same time,
+CPS resilience is supported by non-ML mechanisms—including redun-
+dancy, encryption, and control-theoretic safety—showing that ML acts
+as both an enabler of resilience and a potential source of new
+vulnerabilities.
+Despite growing interest in applying ML to enhance CPS resilience,
+existing review studies exhibit several critical limitations that become
+evident through the comparative analysis in Table 1. Most prior surveys
+focus narrowly on individual phases of the resilience lifecycle—such as
+anomaly detection or defensive strategies—while omitting recovery and
+adaptive design, resulting in an incomplete and fragmented under-
+standing of resilience. Furthermore, few reviews integrate cyberattack
+modelling with ML-based countermeasures, leaving unclear how spe-
+cific ML techniques address particular attack mechanisms. The table also
+shows that existing works tend to emphasize either high-level CPS
+concepts or single-sector analyses, with limited cross-sector comparison
+across domains such as water and transportation, reducing the trans-
+ferability of their findings. In contrast, our review is the only study that
+systematically covers attack modelling, deep learning, reinforcement
+learning, resilience analysis, defensive strategies, recovery approaches,
+Fig. 1. Conceptual resilience curve illustrating system performance during
+absorption and adaptation stages. The post-recovery performance shown above
+the original baseline represents a desirable but not mandatory outcome, indi-
+cating
+potential
+adaptive
+improvement
+rather
+than
+a
+guaranteed
+sys-
+tem response.
+R. Yin and L. Varga
+
+Engineering Applications of Artificial Intelligence 166 (2026) 113542
+3
+and adaptive design within a unified lifecycle framework, thereby
+addressing the methodological fragmentation identified in prior works.
+The novelty of this review is in threefold: 1) a comprehensive linkage
+between cyberattack simulation methods and corresponding ML-based
+countermeasures, 2) a holistic perspective on the role of machine
+learning in enhancing resilience, covering the full cycle—from detection
+and defence to recovery and adaptive system design.3) introduces a
+unique cross-sector comparative analysis, offering broader context on
+both cyberattack strategies and resilience measures. This not only helps
+readers understand the distinct vulnerabilities across different CPS
+sectors, such as power and water, but also sheds light on the sector-
+specific challenges in improving resilience.
+The contributions of this review are as follows:
+1) We provide an in-depth review of diverse cyberattack strategies,
+with a focus on advanced algorithmic and dynamic attacks designed
+to cause severe disruptions.
+2) We examine machine learning methods through the lens of a
+comprehensive resilience process, covering the full spectrum from
+anomaly detection to adaptive system design
+3) We examine both the attack strategies and ML-based resilience ap-
+proaches from the perspectives of two CPS domains—power and
+water systems—providing a comparative analysis and outlining
+tailored pathways forward for each sector
+4) We discuss the limitations of current ML approaches, emphasizing
+challenges related to real-world data compatibility and interpret-
+ability in state-of-the-art algorithms
+5) We outline five future research directions, each supported by prac-
+tical examples, to guide the development of ML-driven resilience
+solutions in CPS
+The structure of this article is as follows which is shown in Fig. 4.
+Following the Introduction, Section 2 presents four types of cyberattack
+modelling techniques. Section 3 explores machine learning approaches
+for enhancing resilience, divided into two parts: Section 3.1 focuses on
+the absorption phase, and Section 3.2 on the adaptation phase. Both
+Sections 2 and 3 end with summary subsections that include compara-
+tive analyses of power and water CPS within their respective research
+contexts. Section 4 discusses the limitations of current state-of-the-art
+ML methods. Section 5 outlines future research directions, and the
+article concludes with a final summary in the Conclusion section.
+Fig. 2. Relationship between attack models, resilience mechanisms, and machine learning. While ML enhances resilience through detection, defence, recovery, and
+adaptation, some cyberattacks also exploit ML-based techniques, making ML a double-edged sword in CPS security.
+Fig. 3. Malicious and resilience applications of ML in CPS.
+R. Yin and L. Varga
+
+Engineering Applications of Artificial Intelligence 166 (2026) 113542
+4
+2. Cyberattack modelling
+Cyberattack modelling is the preliminary stage of resilience analysis.
+The design and understanding of cyberattacks are essential to identify
+system vulnerabilities and simulate potential threats effectively. This
+stage involves constructing detailed attack scenarios to analyze how
+cyberattacks compromise the functionality and performance of CPS.
+Such models provide critical insights into attack vectors, methods, and
+impacts, serving as a foundation for developing robust defence
+mechanisms.
+The following subsections introduce four key types of cyberattack
+modelling techniques, focusing on their methodologies, applications,
+and specific impact to power and water CPS.
+2.1. False Data Injection Attacks
+False Data Injection Attacks (FDIA): FDIA are a specific type of
+cyberattack where an attacker strategically injects false data into a
+system to manipulate its operation and outcomes. FDIA is first intro-
+duced by Liu et al., represent a significant threat to data integrity (Liu
+et al., 2011). This attack involves the manipulation of sensor readings to
+introduce errors in the calculation of state variables and values. The
+terminology related to FDIA is summarised in Table 2.
+FDIA in power sector: Within the context of Smart Grids (SGs), the
+vulnerability of meters and sensors that lack tamper-resistant hardware
+heightens the risk of such malicious data injections, as illustrated in
+Fig. 5. Consequently, attackers can exploit these weaknesses to disrupt
+the operations of the SG, undermining the reliability and stability of the
+system (Nafees et al., 2023). There are two characteristics of FDIA to
+Table 1
+Comparison between other review/survey articles.
+Ref
+Attack modelling
+DL
+RL
+Resilience analysis
+Anomaly detection
+Defensive strategies
+Recovery strategies
+Adaptive design
+Nafees et al. (2023)
+​
+​
+​
+Suaboot et al. (2021)
+​
+​
+​
+​
+​
+Aslani et al. (2024a)
+​
+​
+​
+Olowononi et al. (2021)
+​
+Vu et al. (2020)
+​
+​
+​
+​
+Abdi et al. (2024)
+​
+​
+​
+​
+Humayed et al. (2017)
+​
+​
+​
+​
+​
+​
+Deng et al. (2017)
+​
+​
+​
+​
+Nguyen and Reddi (2023)
+​
+Liang et al. (2017a)
+​
+​
+​
+​
+Duo et al. (2022)
+​
+​
+Liu et al. (2017)
+​
+​
+​
+Pang et al. (2022)
+​
+Wu et al. (2022)
+​
+​
+​
+​
+Zhang et al. (2021a)
+​
+​
+​
+Hasan et al. (2023)
+​
+​
+​
+​
+Ding et al. (2018)
+​
+​
+​
+Sukiasyan et al. (2022)
+​
+​
+​
+El-Kady et al. (2023)
+​
+​
+​
+Cassottana et al. (2023)
+​
+​
+Mboweni et al. (2021)
+​
+​
+​
+​
+This study
+R. Yin and L. Varga
+
+Engineering Applications of Artificial Intelligence 166 (2026) 113542
+5
+make it as a severe cyberattack in power system. Firstly, FDIA can bypass
+the bad data detection algorithm without be detected (Anubi et al.,
+2019). Secondly, FDIA can be launched multiple times due to its’
+stealthy nature, which was also called replay attacks. These character-
+istics making FDIA a significant threat to the stability and security of
+power systems.
+FDIA in water sector: FDIA in water distribution networks exploit
+the system’s reliance on continuous, fluid-based processes, where even
+small changes in flow or pressure can cause cascading physical effects
+like pipe bursts, water wastage, or contamination (Goh et al., 2017)
+(Inoue et al., 2017) (Mabunda et al., 2022) (Gauthama Raman et al.,
+2020) (Falas et al., 2020). Unlike power systems, water systems face
+challenges like storage dynamics in tanks and the irreversible nature of
+water mixing, making attacks harder to detect and mitigate (Nedeljkovic
+and Jakovljevic, 2022) (Jagtap et al., 2021) (Guibene et al., 2023)
+(Ramotsoela et al., 2019) (Jahromi et al.).
+Fig. 6 summarises the main FDIA techniques and highlights how they
+differ methodologically. Knowledge-based attacks depend on the at-
+tacker’s understanding of system topology, while signal-shaping attacks
+apply simple ramp or scaling patterns to distort measurements. ML-
+generated attacks use models such as LSTMs or adversarial methods
+(e.g., FGSM, BIM) to create more adaptive and dynamic perturbations.
+Optimization-based attacks formulate FDIA as an optimization problem
+to maximize system impact while remaining stealthy. Synchronization-
+manipulation attacks instead target timing signals to disrupt the align-
+ment of measurements. Together, these categories show how FDIA
+methods range from simple rule-based distortions to advanced data-
+driven and optimization-driven strategies. A common focus across
+methods is maximizing disruption while minimizing detectability,
+making stealthiness a critical feature in FDIA modelling. The detailed
+modelling methods for FDIA can be found in Appendix Table 1.
+2.2. Denial of Service
+Denial of Service (DoS): DoS attack aim at disrupting the critical
+service by overwhelming the communication channels and computation
+resources, as shown in Fig. 7. The origins of DoS attacks can be traced
+back to the 1980s, with the Morris Worm often recognized as one of the
+earliest significant instances (‘The Morris Internet Worm). Although the
+Morris Worm was not a traditional DoS attack by contemporary defi-
+nitions—where the intent is to deliberately overwhelm a system—it had
+a comparable impact, causing substantial disruption across a large
+network. This event is considered one of the first large-scale network
+disruptions.Table 3 summarises the related terminology used in the
+literature to for DoS attacks.
+DoS in power sector: In the realm of power systems, the first
+documented DoS-like attack dates back to 2007, known as the Aurora
+Generator Test (‘Aurora Generator Test, ). This test was conducted to
+demonstrate how a cyberattack could destabilize the operation of an
+Fig. 4. Organization of this review.
+Table 2
+Terminology related to FDIA.
+Terms
+Ref
+FDIA
+(Guibene et al., 2023), (Chen et al., 2021), (Liang et al.,
+2017b), (Shuhan et al., 2024)
+Data Manipulation
+Attack
+(Shuhan et al., 2024), (Karacayılmaz and Artuner,
+2024), (Chawla et al., 2023a)
+Replay Attacks
+(Li et al., 2024a), (Patriarca et al., 2022)
+Data Integrity Attacks
+(Kumar et al., 2023), (Khalid and Peng, 2016), (Wang
+and Govindarasu, 2020), (Tahsini et al., 2020), (Jadidi
+et al., 2024)
+Stealthy Deception
+Attacks
+(Pang et al., 2022), (Raman and Mathur, 2022)
+Load Redistribution (LR)
+attacks
+Zhao et al. (2021a)
+State Estimation Attacks
+(Mustafa et al., 2023), (Ding et al., 2021)
+Fake Trip Commands
+(Meydani et al., 2024), (Aygul et al., 2024), (Abazari
+et al., 2024)
+Sensor spoofing
+Goh et al. (2017)
+R. Yin and L. Varga
+
+Engineering Applications of Artificial Intelligence 166 (2026) 113542
+6
+electric generator by manipulating its control systems, thereby show-
+casing the potential for cyber threats to cause physical damage in critical
+infrastructure. DoS attack can overwhelm wireless communication
+networks, preventing operators from receiving timely signals. This
+disruption can lead to erroneous decision-making and compromise the
+stability of the power system.
+DoS in water sector: DoS attack disrupts water systems by pre-
+venting real-time monitoring of pressure and flow, leading to undetected
+leaks, pipe bursts, or tank overflows. Unlike power systems, which fail
+rapidly under unobservability, water systems experience slower, local-
+ized impacts, allowing short-term operation but risking cumulative
+damage over time (Falas et al., 2020). This unobservability compromises
+resource allocation during emergencies like flooding, making water
+systems particularly vulnerable to prolonged inefficiencies and delayed
+responses, emphasizing the need for resilient monitoring solutions
+(Jayalaxmi et al.)
+Fig. 8 summarises the key categories of Denial-of-Service (DoS) at-
+tacks commonly considered in cyber-physical systems. Signal-pat-
+tern–based attacks disrupt system operation through irregular or high-
+frequency interference patterns. Protocol-manipulation attacks exploit
+weaknesses in communication protocols, such as forcing reset behav-
+iours. Protocol flooding attacks overwhelm system resources via exces-
+sive network traffic, including HTTP flooding, TCP/UDP floods, or SYN
+floods. Jamming-based DoS interferes with wireless communication
+channels using constant, reactive, deceptive, or random jamming sig-
+nals. Finally, time-synchronization attacks target clock alignment
+mechanisms through GPS spoofing, PTP delay manipulation, or clock-
+drift injection. Together, these categories reflect the diverse mecha-
+nisms through which DoS attacks degrade availability and reliability in
+modern infrastructure systems.
+Fig. 5. This figure illustrates how a FDIA can distort electricity market operations by altering residential bid prices and manipulating communication between the
+market operator and electricity producers.
+Fig. 6. Taxonomy of false data injection attacks (FDIAs).
+R. Yin and L. Varga
+
+Engineering Applications of Artificial Intelligence 166 (2026) 113542
+7
+2.3. Machine learning attack
+ML attack: ML attack involves adversarial strategies aimed at
+compromising the performance and reliability of ML models by target-
+ing their training or inference processes (Takiddin et al., 2021), as
+shown in Fig. 9. These attacks can be categorized into two main types:
+data manipulation (poisoning attacks), which inject false or corrupted
+data to degrade model training, and inference manipulation (white-box
+or black-box attacks), where adversaries exploit model vulnerabilities
+during real-time decision-making to achieve malicious goals. The ter-
+minology related to ML attack is summarised in Table 4.
+Poisoning attack: A poisoning attack involves manipulating the
+training process by injecting or altering malicious data to degrade the
+model’s performance or influence its behavior in a targeted manner (Sun
+et al., 2022). There are some similarities and difference between FDIA
+and poisoning attack. Regarding the similarities, they both manipulate
+data, aim to corrupt the decision making which can cause incorrect re-
+sponses. Regarding the difference, the target of FDIA is to modify the
+real monitoring data of CPS, result in incorrect real time decision
+making, while the target of poisoning attack is to generate the incorrect
+training data and inject them to the machine learning algorithm. How-
+ever, it is worth note that the FDIA can have the profound impact, if
+without being detected or corrected, the recorded historical false data
+can be used as the ML training data, can ultimately result in a poisoning
+attack.
+White-Box Attack: A white-box attack involves an adversary
+exploiting
+full
+knowledge
+of
+the
+system’s
+internal
+architecture,
+Fig. 7. Mechanisms of DoS and DDoS attacks, where attackers use one or multiple compromised machines to flood a target system with excessive traffic, aiming to
+disrupt its normal operation.
+Table 3
+Terminology related to DoS.
+Terms
+Ref
+DoS
+(Chaudhary et al.), (Chawla et al., 2023b), (Palanimuthu et al.,
+2023) (Wei et al., 2024), (Yu et al., 2024)
+Flooding
+Attacks
+Meydani et al. (2024)
+Time-delay
+Attacks
+(Abazari et al., 2024), (Akbari et al., 2023), (Saxena et al., 2024),
+Reset Attack
+Chawla et al. (2023b)
+Jamming
+Attacks
+Yang et al. (2021)
+Fig. 8. Taxonomy of denial-of-service attacks (DoS).
+R. Yin and L. Varga
+
+Engineering Applications of Artificial Intelligence 166 (2026) 113542
+8
+algorithms, and parameters to execute targeted attacks (Li et al., 2024b).
+This type of attack allows the attacker to craft highly sophisticated
+strategies, such as injecting precisely designed false data or manipu-
+lating control signals to disrupt system operations effectively.
+Black box attack: A black-box attack in the context of CPS refers to
+an adversarial strategy where the attacker has no direct access to the
+internal workings or architecture of the system but exploits its input-
+output behavior to craft malicious actions (Bhattacharjee et al., 2024).
+These attacks rely on probing the system with various inputs and
+analyzing the outputs to infer patterns or vulnerabilities for compro-
+mising its performance or security.
+ML attack in power sector: Modern power systems increasingly rely
+on machine learning technologies for critical applications such as gen-
+eration and consumption forecasting, fault detection, and renewable
+energy integration, which depend heavily on predictive algorithms
+(Elgarhy et al., 2024). ML attacks in this sector, such as data poisoning or
+adversarial sample injection, exploit these dependencies to manipulate
+predictions or decision-making processes, destabilizing grid operations.
+Additionally, attacks like FDIA can corrupt real-time monitoring data,
+leading
+to
+incorrect
+operational
+decisions
+while
+simultaneously
+poisoning training datasets, creating long-term vulnerabilities. With
+renewable energy sources relying on accurate forecasting for grid sta-
+bility, such attacks pose a significant threat, amplifying risks of
+cascading failures, widespread outages, and compromised reliability.
+ML attack in water sector: Machine learning is increasingly used in
+the water sector for critical applications such as water leakage predic-
+tion, flow optimization, and quality monitoring, where accurate and
+timely decision-making is essential. ML attacks exploit vulnerabilities in
+these systems by tampering with sensor data or injecting adversarial
+samples, enabling attackers to mask anomalies such as tank overflows,
+pipe bursts, or contamination (Sikder et al., 2023). These attacks
+leverage the spatial distribution of pipelines and reservoirs, creating
+localized disruptions that avoid immediate cascading effects, while
+exploiting slower physical propagation to evade detection. By manipu-
+lating temporal and spatial data dependencies, adversaries can mislead
+Intrusion Detection Systems (IDS), compromising water quality, supply
+reliability, and public health, making water systems particularly
+vulnerable to stealthy and prolonged adversarial manipulations (Zizzo
+et al., 2020).
+Fig. 10 summarises the main categories of machine learning (ML)
+attacks relevant to cyber-physical systems. White-box attacks assume
+full access to model parameters and gradients, enabling gradient-based
+adversarial generation methods such as FGSM, iterative attacks,
+ensemble gradients, and momentum-driven variants. Model-behavior
+simulation attacks focus on imitating or reverse-engineering a model’s
+behavior, including PUF modelling, system imitation, and replay/
+impersonation techniques. Data poisoning attacks corrupt training data
+to degrade model performance, affecting federated learning, distributed
+training, or inducing targeted label-flipping errors. Black-box attacks
+operate without internal model knowledge, leveraging transferability,
+query-based probing, or zeroth-order optimization to craft adversarial
+inputs.(see Fig. 11)
+All methods focus on exploiting vulnerabilities in machine learning
+models used in CPS, primarily through the generation of adversarial
+inputs. Two key characteristics emerge: (1) the deliberate modification
+of input data—whether through gradient-based evasion, poisoning, or
+simulation-based inference—to degrade model performance or evade
+detection; and (2) the ability of ML attacks to target both inference
+(evasion) and training (poisoning) phases, highlighting the need for end-
+to-end security measures. As ML becomes increasingly integrated into
+critical infrastructure, there is a growing need for robust, explainable,
+and attack-resilient architectures, particularly in high-stakes domains
+like energy management and smart grid security.
+2.4. Hybrid cyberattacks
+Hybrid cyberattacks: A hybrid cyberattack involves multiple types
+of attacks, strategically arranged to maximize impact. These attacks may
+occur sequentially, where one facilitates the next, or simultaneously.
+The aim is to exploit vulnerabilities in a coordinated manner, potentially
+leading to significant damage.
+A cyberattack typically involves several phases. According to the
+cyber kill chain, a successful attack progresses through seven stages: 1)
+reconnaissance, 2) weaponization, 3) delivery, 4) exploitation, 5)
+installation, 6) command and control, and 7) actions on objectives. For
+example, during the reconnaissance phase, which occurs in the early
+stages, the primary objective is to identify the target and potential vul-
+nerabilities. In the later stages, the attacker builds on this groundwork to
+carry out the attack.
+Hybrid cyberattacks can take several forms. One type follows a
+structured sequence, aligned with the phases of the cyber kill chain
+(Presekal et al., 2023). Alternatively, some hybrid attacks occur simul-
+taneously rather than in a specific order, often targeting different
+components to amplify their overall impact (Abazari et al., 2024) (Khan
+et al., 2022) (Chaudhary et al.) (Saxena et al., 2024) (Li et al., 2024b)
+(Akbari et al., 2023).
+Hybrid attack in power sector: In power systems, hybrid cyber-
+attacks can have devastating impacts due to the interconnected nature of
+generation, transmission, and distribution components. These attacks
+often exploit vulnerabilities in Supervisory Control and Data Acquisition
+(SCADA) systems, communication protocols, or state estimation pro-
+cesses to manipulate critical operational parameters such as load, fre-
+quency, and voltage. By combining multiple attack vectors, such as FDIA
+to mislead operators and malware to disable protective relays, attackers
+can destabilize the grid. This can lead to cascading failures, system-wide
+blackouts, and even physical damage to infrastructure such as trans-
+formers and generators. The interdependence of power systems with
+telecommunications and other critical infrastructures amplifies the
+consequences, creating widespread societal and economic disruptions.
+Resilience strategies in this domain must focus on real-time anomaly
+detection, robust predictive algorithms for transient stability, and the
+Fig. 9. The attack target of Poisoning attack, White-Box Attack and Black
+box attack.
+Table 4
+Terminology Related to ML attack.
+Terms
+ref
+Adversarial attack
+(Zizzo et al., 2020), (Zeng et al., 2022)
+Poisoning attack
+(Sikder et al., 2023), (Sun et al., 2022), (Takiddin et al., 2021)
+White-Box attack
+(Elgarhy et al., 2024), (Gungor et al.)
+Black-Box attack
+Bhattacharjee et al. (2024)
+Evasion attack
+(Olowononi et al., 2021), (Elgarhy et al., 2024)
+R. Yin and L. Varga
+
+Engineering Applications of Artificial Intelligence 166 (2026) 113542
+9
+implementation of layered defence mechanisms to mitigate coordinated
+attack scenarios.
+Hybrid attack in water sector: Hybrid cyberattacks on water sys-
+tems, unlike power systems, have not been thoroughly analyzed, with a
+focus often on the combined effects of cyber and physical threats. These
+attacks target critical infrastructure such as pipelines and valves,
+exploiting vulnerabilities in flow sensors or pressure controllers. By
+integrating cyber and physical threats—such as manipulating water flow
+Fig. 10. Taxonomy of machine learning attack.
+Fig. 11. This figure exemplifies a two-stage hybrid attack, where the attacker first conducts reconnaissance to identify critical nodes, and then launches a
+DDoS attack in the second stage to overwhelm the targeted server (Presekal et al., 2023).
+Table 5
+Modelling methods of hybrid cyberattacks.
+Attacks
+Attack Order
+Methods
+ref
+DDoS, active
+reconnaissance
+One after another
+The hybrid attack combines:
+1) Active reconnaissance identifies critical nodes for
+targeted DDoS attacks
+2) Map and exploit DoS based on traffic patterns
+through attack graph.
+Presekal et al.
+(2023)
+FDIA, Time Delay attack
+Simultaneously targeted different components
+The hybrid attack combines:
+1) FDIA alters control command data
+2) Time Delay attacks affect feedback timing.
+Abazari et al.
+(2024)
+FDIA, DoS, Time Delay
+Attacks
+Simultaneously, the power system was divided into three areas, each area
+is targeted by a different attack
+The hybrid attack combines:
+1) FDIA, by modifying control signals
+2) DoS attacks, through periodic jamming:
+3) Time Delay attacks, by delaying feedback signals
+Saxena et al.
+(2024)
+DoS, FDIA
+Simultaneously
+The hybrid attack combines:
+1) DoS attacks block communication over intervals,
+2) FDIA alters state variables
+Akbari et al.
+(2023)
+FDIA, Replay Attack
+Simultaneously or one after another
+The hybrid attack combines:
+1) FDIA injects false data, while
+2) replay attacks reuse past data.
+The hybrid attack switches modes via a Markov process
+Li et al. (2024b)
+R. Yin and L. Varga
+
+Engineering Applications of Artificial Intelligence 166 (2026) 113542
+10
+data to conceal high-pressure flooding—attackers can intensify stress on
+infrastructure, especially during heavy rainfall (Sharmeen et al., 2022).
+The hybrid cyber-attacks shown in Table 5 are designed to be more
+effective by targeting different system components or layers—either
+simultaneously or in sequence. The goal is to disrupt system stability,
+degrade feedback loops, and evade detection more effectively than
+single-mode attacks. Hybrid attacks present a greater threat to CPS than
+single-mode attacks due to their coordinated and multi-layered nature.
+Modelling these attacks requires careful consideration of timing,
+component targeting, and attack interaction, as the combined effect can
+be significantly more disruptive. Effective resilience strategies must
+address not only individual attack types but also their potential com-
+binations and orchestration mechanisms, such as those seen in real-
+world advanced persistent threats (APTs).
+Across the hybrid attack cases in Table 5, a common progression
+becomes clear when viewed through the unified hybrid-attack frame-
+work. Most scenarios begin with a cyber entry point—such as recon-
+naissance,
+FDIA,
+or
+DoS—which
+then
+interacts
+with
+timing
+manipulation or data replay to reinforce the disruption. These in-
+teractions create characteristic escalation patterns, including loss of
+observability, delayed feedback, and multi-area destabilisation. Despite
+their differing forms, the examples collectively show that hybrid attacks
+follow identifiable pathways of initiation, interaction, and escalation,
+leading to amplified system-level impacts. This synthesis highlights that
+hybrid attacks operate as coordinated, compounding processes rather
+than isolated techniques.
+Most cyberattacks on CPS involve FDIA, delaying or blocking
+communication (e.g., DoS, replay, jamming), or intercepting and
+altering control signals (e.g., MitM, deception) (See Table 6). These at-
+tacks target four key layers within CPS: the physical layer, network
+layer, control and estimation layer, and data/AI layer. Each layer has its
+own unique vulnerabilities and requires tailored protection. Ensuring
+the resilience and reliability of CPS therefore demands a multi-layered
+security strategy—one that combines physical safeguards, secure
+communication protocols, robust control algorithms, and resilient AI
+defences.
+3. Machine learning for increase resilience
+This section outlines activities designed to enhance CPS resilience
+through two stages: adaptation and absorption. Each stage presents
+specific activities tailored to strengthen resilience at that level (See
+Fig. 12). The activities and corresponding ML algorithms are summa-
+rized in Table 7 (Absorption) and Table 8 (Adaptation).
+Benchmark datasets play a crucial role in advancing CPS security and
+resilience research, providing standardised environments for testing
+attack scenarios, validating detection methods, and comparing system
+performance across domains (see Table 8). These datasets capture
+diverse operational conditions, cyber-attack behaviours, and system
+responses, enabling researchers to evaluate algorithms under realistic
+and repeatable settings. Table 9 presents a selection of widely used CPS
+benchmark datasets and their associated application domains.
+While benchmark datasets mentioned in Table 9 have been instru-
+mental in advancing CPS security research by providing controlled,
+repeatable
+environments
+for
+evaluating
+detection
+and
+resilience
+methods, several limitations remain. These datasets often lack coverage
+of critical real-world threat vectors—such as lateral movement,
+protocol-level manipulation, and advanced persistent-threat behav-
+iours—reducing their ability to represent modern OT–IT converged
+attack surfaces (Tory et al.). Models trained on a single dataset also tend
+to exhibit poor generalisation across domains, as detection techniques
+that perform well on one testbed may fail when transferred to different
+CPS settings. Furthermore, many datasets are limited in scale and
+exhibit
+data
+imbalance,
+with
+few
+attack
+events
+and
+an
+over-
+representation of specific operating conditions, which may bias evalu-
+ation results. Together, these issues highlight both the value and the
+Table 6
+Details of cyberattack strategies.
+Ref
+Attack type
+Attack target
+Attack objective
+Zhang et al. (2020)
+FDIA
+TES, including
+market control,
+house controllers
+Attackers target
+prosumer bids to
+influence market
+clearing price
+Tabassum et al.
+(2024a)
+FDIA
+Inverter-based AC
+microgrid,
+focusing on
+control and
+communication.
+Inject false data,
+cause instability,
+compromise
+integrity, trigger
+failures
+Ahmadi-Assalemi
+et al. (2022)
+DoS, DDoS,
+FDIA, MitM,
+Sensors, actuators,
+communication
+networks, and ICS
+Disrupt operations,
+manipulate data,
+cause safety
+hazards, financial
+losses
+Al-Hawawreh
+et al. (2021)
+DDoS,
+Data Injection
+Attacks,
+Malware
+Attacks,
+Botnet Attacks
+IoT networks,
+communication
+links, control
+systems, and
+databases.
+Disruption of
+Service.
+Kayode Saheed
+et al. (2023a)
+DoS, Data
+Injection
+attacks, MitM,
+Replay attacks,
+Malware and
+Virus attacks
+IoT networks,
+communication
+links, control
+systems, and
+databases.
+Disruption of
+Service.
+Wang and
+Govindarasu
+(2020)
+DoS and
+operational
+abnormalities
+System Integrity
+Protection (SIP)
+schemes
+Compromise
+System Integrity,
+induce Single
+Points of Failure
+Pacheco et al.
+(2020)
+DDoS attacks
+Replay attacks
+Flooding
+attacks
+IoT Gateways and
+Fog Nodes (edge
+devices)
+Disrupting Service,
+Compromising
+Data Integrity,
+Gaining
+Unauthorized
+Access
+He et al. (2022)
+FDIA
+Transmission Lines
+of Smart Grids
+Causing Line
+Congestions and
+Potential Blackouts
+Asef et al. (2023)
+FDIA
+Prediction
+algorithms in
+Energy
+Management
+System (EMS)
+Disrupt Accurate
+Predictions,
+Imbalance in
+Energy Supply and
+Demand,
+(Jayalaxmi et al.)
+White-box
+adversarial
+attacks
+Machine Learning
+Models
+Disrupt Prediction
+Accuracy,
+Compromise
+Maintenance
+Decisions
+Lakshminarayana
+et al. (2019)
+FDIA
+State Estimation
+Process
+Maximize
+Estimation Error,
+Disrupt System
+Operation
+Khan et al. (2022)
+FDIA, Replay
+Attacks
+Sensor
+Measurements,
+control
+Commands, state
+Estimation
+Processes
+Evade standard
+anomaly detection
+mechanisms and
+operate undetected
+for as long as
+possible
+Khalid and Peng
+(2016)
+FDIA, Periodic
+DoS
+Sensor
+measurements and
+the
+communication
+network within
+the power system
+Disrupt state
+estimation and
+control processes,
+prevent timely
+communication,
+and destabilize the
+power system
+Tabassum et al.
+(2024b)
+Dynamic load
+altering attacks
+(D-LAAs)
+Power system
+loads and the
+overall stability
+and control
+mechanism.
+Destabilize the
+power grid,
+overwhelm control
+systems, and cause
+economic and
+operational
+disruptions
+(continued on next page)
+R. Yin and L. Varga
+
+Engineering Applications of Artificial Intelligence 166 (2026) 113542
+11
+current constraints of existing CPS benchmarks, underscoring the need
+for broader, more realistic, and domain-spanning datasets for future
+research.
+3.1. Stage 1 – absorption
+In Stage 1, which focuses on applying machine learning to enhance
+system resilience during an attack, two key activities are emphasized:
+anomaly detection and defensive strategy.
+3.1.1. Anomaly detection
+Anomaly detection is a crucial technique in identifying unusual
+patterns or deviations from normal behavior, allowing for early detec-
+tion of potential cyber-attacks. By analyzing data in real time, anomaly
+detection models can flag suspicious activities, enabling timely inter-
+vention to prevent or mitigate damage to the system (see Fig. 12).
+3.1.1.1. Deep learning-based approach. In this section, we focus specif-
+ically on semi-supervised and unsupervised deep learning methods,
+given the scarcity of labeled data in real-world scenarios; the underlying
+mechanism is illustrated in Fig. 13.
+1) Semi-supervised prediction-based methods:
+This semi supervised methods indicate the operator have normal
+data, which feed into the deep learning model first, and then this
+model detects the anomalies by the prediction error.
+These methods usually incorporate two steps. The first step is to
+train the model (e.g., LSTM, GRU) using only normal data to learn
+the typical temporal and structural patterns of the system. The model
+learns to reconstruct or predict future values of the input time series.
+(Al-Hawawreh et al., 2021) (Chawla et al., 2023a) (Kumar et al.,
+2023) (Karanfil et al., 2023) (Machina et al., 2023). Second step
+During deployment (inference phase), the trained model is fed with
+new (possibly anomalous) data. The model attempts to reconstruct or
+predict the input prediction error (for LSTMs, GRUs, etc.) is
+computed. If this error exceeds a defined threshold, the instance is
+flagged as anomalous.
+2) Unsupervised reconstruction-based methods:
+These methods operate without prior knowledge of what defines
+normal behavior. Instead of relying solely on normal data, they allow
+flexibility by incorporating assumptions about the rarity or distinc-
+tiveness of anomalies. Typically, reconstruction-based models such
+as AE are used, where the model learns to reconstruct input data
+Table 6 (continued)
+Ref
+Attack type
+Attack target
+Attack objective
+El-Kady et al.
+(2023)
+MitM, DDoS
+Programmable
+Logic Controllers
+(PLCs) and IIoT
+devices
+Disrupt normal
+operations by
+manipulating,
+interrupting, or
+controlling the
+communication
+and operations of
+PLCs and IIoT
+devices
+Aygul et al. (2024)
+FDIA, Fake Trip
+Attacks
+PMU
+Measurements
+Disrupt Stability
+Prediction,
+Manipulate System
+State
+Mustafa et al.
+(2023)
+FDIA, DoS,
+Time Delay
+Attacks
+Communication
+Pathways
+Communication
+pathways among
+PMUs, control
+centers, and
+control areas
+Rath et al. (2024)
+Rootkit attacks,
+data injection
+attacks, and
+stochastic
+attack
+distributed
+generators (DGs)
+and
+communication
+links in microgrids
+Create instabilities
+in the network and
+perform
+eavesdropping for
+reconnaissance
+Fig. 12. Four key activities essential to CPS resilience: detection, defence, recovery, and adaptation.
+R. Yin and L. Varga
+
+Engineering Applications of Artificial Intelligence 166 (2026) 113542
+12
+while encouraging sparsity or distributional separation in the latent
+space—effectively distinguishing between normal and abnormal
+patterns.
+A notable example is the Anomaly Transformer (Xu et al., 2022),
+which introduces an Anomaly-Attention mechanism designed to
+capture both prior-association and series-association in time series
+data. This mechanism models the Association Discrepancy—the
+difference between expected and observed associations—which is
+indicative of anomalies. To further enhance the separation between
+normal and abnormal instances, a minimax strategy is proposed to
+amplify the distinguishability of this discrepancy, resulting in a novel
+and robust association-based detection criterion.
+3) Graph augmented methods:
+In the context of anomaly detection, graph-augmented methods
+leverage the structural and temporal properties of graphs to identify
+abnormal patterns that deviate from learned relational or topological
+norms. A key distinction in this context is between relational and
+causal dependencies. Accordingly, graph-based methods can be
+broadly categorized into non-causal and causal approaches.
+Non-Causal Graph-Based Methods: These methods focus on
+Table 7
+ML algorithm for in power and water CPS in Absorption stage.
+Activity
+Sector
+ML
+algorithm
+Model comparison
+Ref
+Challenge
+Anomaly
+detection
+Power
+RNN-LSTM
+Good at detecting temporal
+anomalies;
+Struggles with long sequences
+and training speed.
+(Chawla et al., 2023a) (Al-Hawawreh et al.,
+2021) (Ye et al., 2021) (Kumar et al., 2023) (
+Karanfil et al., 2023) (Machina et al., 2023)
+Ensure real-time efficiency while addressing
+challenges like high computational costs,
+complex interdependencies, evolving attack
+patterns, and scalability to large, dynamic
+datasets.
+GNN
+Captures spatial-temporal
+patterns well;
+Lack of interpretation
+(Yoon et al., 2020), (Kaynar and Sivrikaya,
+2016) (Presekal et al., 2023)
+Autoencoder
+Effective in unsupervised
+detection;
+Lack of interpretability
+(Zhang et al., 2020) (Tabassum et al., 2024a) (
+Shereen and Dan, 2020)
+GAN
+Good for generating anomalies;
+Hard to train, low transparency.
+Shuhan et al. (2024)
+SVM
+Simple and accurate for small
+data; not ideal for time-series
+(Tabassum et al., 2024b) (Wang and
+Govindarasu, 2020)
+EL
+Boosts accuracy and stability;
+Computationally heavy.
+(Ahmadi-Assalemi et al., 2022) (Kayode Saheed
+et al., 2023a) (Kayode Saheed et al., 2023b) (
+Ahmadi et al., 2023) (Alrayes et al., 2023)
+FL
+Enables privacy-preserving
+learning;
+Prior knowledge is needed
+(Jadidi et al., 2024) (Saxena et al., 2024) (Jadidi
+et al., 2023)
+Water
+RNN-LSTM
+Good at detecting temporal
+anomalies;
+Struggles with long sequences
+and training speed
+(Goh et al., 2017) (Zizzo et al., 2020) (
+Yazdinejad et al., 2023) (Alguliyev et al., 2021)
+Heterogeneous data, computational efficiency,
+evolving attack patterns, limited datasets,
+scalability, and model robustness.
+Autoencoder
+Effective in unsupervised
+settings;
+Weak interpretability
+(Gauthama Raman et al., 2020) (Jayalaxmi
+et al.) (Sikder et al., 2023) (Schneider and
+B¨ottinger, 2018) (Stojanovi´c et al., 2022)
+CNN
+Detects spatial patterns well;
+Limited for sequential
+dependencies.
+(Nedeljkovic and Jakovljevic, 2022) (Kravchik
+and Shabtai, 2018) (Alabassi et al., 2022) (P.
+et al., 2020) (Raman and Mathur, 2022)
+SVM
+Works well with small datasets;
+Low scalability for large systems.
+(Inoue et al., 2017) (Mabunda et al., 2022)
+RL
+Learns adaptive detection
+policies;
+High training complexity with
+limited data.
+Yang et al. (2024)
+Defensive
+strategies
+Power
+RL
+Learns adaptive responses;
+Needs large exploration and
+tuning time
+(Lakshminarayana et al., 2019) (Rath et al.,
+2024) (Islam et al., 2023) (Yu et al., 2024) (Guo
+et al., 2021) (Yuan et al., 2024) (Yang et al.,
+2021) (Palanimuthu et al., 2023), (Tabassum
+et al., 2024a)
+Dynamic threat adaptation, computational
+overhead, response latency, integration with
+legacy systems, model vulnerability, evolving
+attacker tactics, and real-time response
+reliability
+DNN
+Strong at pattern recognition;
+Lacks interpretability and needs
+large data.
+(Li et al., 2024b) (Huang and Dong, 2019) (
+Chen et al., 2019a)
+FL
+Enables decentralized defence
+with privacy; Suffers from
+communication delays and
+system heterogeneity
+(Guha, 2023) (Abazari et al., 2024)
+RBFNN
+Fast learning and good
+generalization;
+Limited scalability for large
+systems.
+(Chaudhary et al.) (Tian et al., 2024) (Akbari
+et al., 2023)
+Water
+DNN
+Effective in modelling complex
+patterns;
+Data-hungry and not transparent.
+(Liu et al., 2024) (Jia and Zhang, 2024)
+Addressing interdependencies, contamination
+risks, spatial-temporal variability, and
+integrating physical-environmental factors with
+cyber defence strategies
+PINNs
+Integrates physics with learning,
+robust to noise;
+Sensitive to physical model
+accuracy.
+Falas et al. (2020)
+R. Yin and L. Varga
+
+Engineering Applications of Artificial Intelligence 166 (2026) 113542
+13
+relational patterns among variables without explicitly modelling cau-
+sality. They often integrate GNNs with attention mechanisms to capture
+evolving dependencies. For instance (Deng and Hooi, 2021), presents a
+structure-learning framework combined with GNNs, leveraging atten-
+tion weights to enhance interpretability in anomaly detection. Another
+approach (Wang et al., 2024) dynamically transforms time-series sub-
+sequences into graphs, capturing evolving interdependencies. Graph
+alignment is then used to compare these graphs over time—minimizing
+alignment cost for normal sequences and maximizing it for anomalies.
+Causal Graph-Based Methods: These methods typically model
+graphs as Directed Acyclic Graph (DAG), following the Structural Causal
+Model (SCM) framework (Pearl, 2009), which captures the underlying
+causal mechanisms that govern anomalies.
+Dai and Chen propose GANF, a graph-augmented anomaly detection
+method that employs a Bayesian network modeled as a DAG to represent
+causal dependencies and factorize the joint probability distribution
+across the constituent time series. (Dai and Chen, 2022). Despite their
+potential, causal graph-based methods remain underutilized in anomaly
+detection (Zhu et al., 2025). Typically, causal discovery is treated as a
+separate post hoc analysis following anomaly detection, rather than
+being seamlessly integrated into the anomaly detection process itself.
+3.1.1.2. Reinforcement learning-based approach. Compared with deep
+learning, RL-based anomaly detection is not well developed, primarily
+due to its complexity in implementation, reliance on interaction-based
+learning, and significant computational demands, which make it less
+practical for real-time applications.
+However, RL has the potential to enhance anomaly detection capa-
+bilities with more advanced and adaptive techniques. For example, Yang
+et al.’s Agent-based Dynamic Thresholding (ADT) framework demon-
+strates how RL, combined with an AE and DQN, can dynamically adjust
+detection thresholds in real time (Yang et al., 2024). This approach al-
+lows for the identification of anomalies under challenging conditions,
+such as noisy or delayed feedback, while maintaining low false positive
+and negative rates. The ADT framework highlights the promise of RL to
+increase anomaly detection accuracy and adaptability, particularly in
+dynamic and high-stakes environments like water systems, where timely
+interventions are critical for ensuring operational reliability and
+cybersecurity.
+3.1.2. Defensive strategy
+Defensive strategies in cyberattacks encompass proactive measures
+to protect system integrity and ensure operational continuity under
+adversarial conditions. These strategies focus on strengthening system
+Table 8
+ML algorithm for in power and water CPS in Adaptation stage.
+Activity
+Sector
+ML algorithm
+Model characteristics
+Ref
+Challenge
+Recovery
+strategies
+Power
+Representation
+Learning-CNN
+Captures spatial features well;
+Limited for sequential recovery
+modelling.
+Lu et al. (2024)
+Real-time recovery efficiency, scalability, limited predictive
+accuracy, interdependency complexities, resource constraints, and
+ensuring rapid stabilization post-attack.
+RL
+Learns dynamic recovery policies;
+Training is complex and time-
+intensive.
+Wei et al. (2020)
+ODAE
+Handles missing data during
+recovery;
+May struggle with unseen
+disruptions
+Chawla et al.
+(2023b)
+DNN
+Good at pattern learning;
+Poor interpretability and high data
+dependency.
+Machina et al.
+(2023)
+GAIN
+Effective in data recovery via
+imputation;
+Sensitive to noise.
+Chawla et al.
+(2023a)
+Water
+PINNs
+Integrates physical laws with
+learning for robust recovery;
+High computation cost, especially
+for large-scale systems.
+(Falas et al., 2020) (
+Guibene et al.,
+2023)
+Public health impact, resource allocation, ensuring rapid isolation
+and restoration
+Adaptive
+design
+Power
+LSTM
+Effective at learning time-based
+patterns;
+Needs careful tuning, sensitive to
+noise
+(Chen et al., 2021) (
+Asef et al., 2023)
+Handling renewable variability, automation-induced
+vulnerabilities, system-level adaptability,
+Water
+LSTM
+Good at forecasting and adaptation;
+Struggles with very long sequences
+or inadequate data
+Chen et al. (2019b)
+Integrating ML with system-level adaptive strategies,
+prioritization scheme
+LSTM-SVM
+Combines temporal modelling
+(LSTM) with classification power
+(SVM);
+Increased computational and
+architectural complexity.
+Zhang et al. (2023)
+ML
+Flexible for various adaptive tasks;
+performance varies by algorithm
+choice.
+Alobaidy et al.
+(2022)
+DRO
+Robust under data uncertainty;
+High computation and may over-
+conservatism.
+Zhao et al. (2021b)
+Table 9
+Benchmark datasets used in CPS security and resilience research.
+Benchmark/Dataset
+CPS Domain
+SWaT (Secure Water Treatment) (ngoclesydney)
+Water/ICS
+WADI (Water Distribution) (Ahmed et al., 2017)
+Water distribution
+BATADAL Competition Dataset (‘Batadal, ’. Accessed)
+Water distribution
+Tennessee Eastman Process (TEP) (Du)
+Chemical process ICS
+ADAPT ICS Dataset (‘ADAPT dataset, )
+Industrial control systems
+HIAD Dataset (Zhang, 2025)
+Industrial control systems
+PowerCyber Testbed (‘Home)
+Power system
+IEEE 14/39/118-Bus Systems (Li et al., 2021)
+Power grid
+ARPA-E GRID DATA Repository (‘Grid DATA | ARPA)
+Power grid
+NIST CPS Testbed (‘Cyber-Physical Systems)
+Cross-domain CPS
+R. Yin and L. Varga
+
+Engineering Applications of Artificial Intelligence 166 (2026) 113542
+14
+resilience through methods such as RL (see Table 10), deep learning,
+machine learning approaches, each designed to adaptively counter and
+mitigate the effects of cyber threats in real-time by optimizing control
+actions
+and
+implementing
+robust
+responses
+against
+potential
+disruptions.
+3.1.2.1. Reinforcement learning-based approach.
+1) Value based RL
+Value-based RL techniques, such as Q-learning, DQN, and Federated
+DQN (F-DQN), alongside game-theoretic methods like Nash Q-Learning
+Fig. 13. The mechanism of two anomaly detection methods.
+Table 10
+Details of RL application and construction.
+Application
+Algorithms
+States
+Actions
+Rewards
+ref
+Microgrid Frequency Control
+under FDIA
+DDPG, TD3
+Frequency deviation, Power
+output of Diesel Generator,
+Power output of Electric
+Vehicle Station
+Adjust the power output of DG
+and EVS based on detected
+frequency deviations and attack
+Minimize frequency deviation,
+stabilize the microgrid under
+Tabassum et al.
+(2024b)
+Formulate optimal attack
+strategy target voltage
+control in IEEE 9 Bus system
+MDP, Q-
+Learning
+Kalman Filter estimation error
+Injecting false measurements into
+the Kalman Filter
+The sum of the squared
+estimation errors of the
+system’s state.
+Lakshminarayana
+et al. (2019)
+The defence strategy
+implemented in the IEEE
+39-bus system to protect
+against Dynamic Load
+Altering Attacks (D-LAA)
+Minimax-q
+learning,
+game theory
+The statuses of transmission
+lines in the power grid (binary
+values indicating whether each
+line is operational or out of
+service)
+The attacker’s actions involve
+disconnecting generators, while
+the defender’s actions are focused
+on protecting vulnerable loads at
+specific buses
+The amount of load shedding.
+The attacker gets higher
+rewards for increasing load
+shedding, while the defender’s
+goal is to minimize it
+Guo et al. (2021)
+Microgrid cybersecurity
+defending against rootkit
+attacks
+Deep Q-
+Learning
+Microgrid states (DG
+frequency, voltage,
+communication matrix status)
+Change the communication
+topology, remove malware from
+DG
+Stability of the microgrid,
+minimizing deviations from
+nominal states (frequency,
+voltage) and minimizing
+attacker utilities
+Rath et al. (2024)
+Jammed CPS with multiple
+transmission channels
+(helicopter and wheeled
+mobile robot platforms)
+Q-learning,
+Dynamic
+Bayesian
+Game
+Discrete system states: channel
+selections by defender and
+attacker
+Transmission power for
+transmitter, jamming power for
+attacker
+Optimization of control
+performance under jamming
+attacks, minimization of
+energy costs
+Yuan et al. (2024)
+anti-jamming communication
+system
+Fuzzy WoLF-
+PHC-based RL
+Previous jamming power
+levels, Signal-to-Interference-
+plus-Noise Ratio values, and
+current estimated channel
+coefficients
+Transmit power at the base
+station and the reflecting
+beamforming (phase shift) at the
+IRS
+Maximizing system rate,
+minimizing power
+consumption, and ensuring
+minimum SINR constraints
+against smart jamming
+Yang et al. (2021)
+Large-Scale Wind Turbine
+System (LS-WTS) under
+ADoS attacks
+RL-based
+Sliding Mode
+Control (SMC)
+Rotor speed, wind conditions
+Torque control input, pitch angle
+control input
+Minimize rotor speed tracking
+error, maximize power
+extraction
+Palanimuthu et al.
+(2023)
+Photovoltaic Battery
+Regeneration System
+against DoS
+Nash Q-
+learning,
+game theory
+Discretized tracking error
+intervals
+Sensor: Selects a communication
+channel or remains silent
+Output performance,
+observation error (Kalman
+filter), and energy efficiency
+Yu et al. (2024)
+Attacker: Jams a communication
+channel or remains silent
+Multi-UAV system for task
+offloading
+DQN,
+Federated
+Learning
+Input data size, Quality of
+Service requirement, Task type,
+Energy level
+Local execution, Edge offloading,
+Cloud offloading
+Task execution latency and
+energy consumption, penalty
+for unmet Quality of Service
+Wang and
+Govindarasu (2020)
+R. Yin and L. Varga
+
+Engineering Applications of Artificial Intelligence 166 (2026) 113542
+15
+and Minimax-Q Learning, provide powerful frameworks for developing
+optimal strategies to combat cyberattacks. These approaches estimate
+the value, or expected utility, of potential defensive actions, allowing
+control systems in CPS to learn and adaptively refine their responses to
+evolving threats. By prioritizing actions that maximize detection accu-
+racy and mitigation effectiveness, these RL techniques enable these
+systems to enhance their defences, continuously optimizing based on
+observed outcomes and reducing vulnerability over time.
+Various Q-learning-based approaches have been explored in recent
+studies to strengthen defences and optimize decision-making in systems
+facing complex and adversarial conditions. Lakshminarayana et al. use
+Q-learning to improve defences against FDIAs in cyber-physical control
+systems (CPCS), where the system learns optimal responses by evalu-
+ating actions that minimize estimation errors. By updating Q-values
+based on rewards for effective actions, the approach creates a defence
+policy that continuously adapts to new attacks (Lakshminarayana et al.,
+2019). Another study applies deep Q-learning in microgrids, employing
+a deep neural network to approximate Q-values for defensive actions.
+This allows the system to dynamically adjust controls in response to
+different attack scenarios, optimizing its defences based on historical
+data (Rath et al., 2024). Similarly, Islam et al. use Federated DQN to
+enhance UAVs’(Unmanned Aerial Vehicle) decision-making for task
+offloading in uncertain environments (Islam et al., 2023). By framing
+offloading as a Markov Decision Process, this approach enables
+resource-efficient strategies, extending UAVs’ operational time.
+Game theoretic Value-Based RL: Game-theoretic value-based RL
+applies principles from game theory to value-based RL, enabling systems
+to develop optimal defensive strategies in adversarial contexts. Unlike
+standard Q-learning or deep Q-learning, which optimize individual
+agent performance, game-theoretic RL explicitly models interactions
+between competing agents (e.g., defender vs. attacker) in a zero-sum
+framework, often leading to a Nash equilibrium. This equilibrium rep-
+resents a stable state where both agents’ strategies are optimized in
+anticipation of each other’s actions, making it particularly effective in
+scenarios where adaptive, intelligent attacks threaten system stability.
+Yu et al. construct an RL algorithm for a two-player zero-sum sto-
+chastic game between a sensor (defender) and a malicious adversary
+(attacker), where the sensor minimizes tracking error and energy use,
+and the attacker seeks to maximize disruption. The RL approach in-
+corporates a state-based adaptive reward function balancing tracking
+performance with energy efficiency, leading to a Nash equilibrium that
+ensures resilient tracking control while conserving energy, enhancing
+system resilience under adversarial conditions (Yu et al., 2024). Simi-
+larly, Guo et al. employ minimax-Q learning to create dynamic defence
+strategies against Dynamic Load Altering Attacks (D-LAAs) on power
+grids. This algorithm models adversarial interactions within a zero-sum
+game, iteratively updating Q-values for state-action pairs to converge on
+an optimal defence policy, which minimizes potential damage and
+adapts to attacker strategies (Guo et al., 2021). Yuan et al. applies Nash
+Q-learning in a dynamic Bayesian game for wireless communications,
+integrating belief-based updates and discounted future rewards to
+handle incomplete information. This adaptation enables players to
+maximize cumulative payoffs, effectively addressing uncertainty and
+strategic decision-making in adversarial settings (Yuan et al., 2024).
+2) Policy based RL
+Policy-based RL is a framework where the algorithm directly learns a
+policy, or strategy, for selecting actions rather than estimating values for
+each state-action pair, as in value-based RL. This approach is particu-
+larly useful in continuous or complex environments, such as cyber-
+physical systems, where fine-tuned, adaptive responses are needed to
+counter cyber threats. Unlike value-based RL, which aims to maximize
+expected rewards through Q-values, policy-based RL focuses on finding
+optimal action policies, making it highly effective for scenarios requiring
+continuous adaptation, such as maintaining system stability under
+attack.
+Yang et al. leverage the fuzzy Win or Learn Fast-Policy Hill-Climbing
+(WoLF-PHC) algorithm, using variable learning rates and fuzzy state
+aggregation (FSA) to optimize power allocation and beamforming at an
+Intelligent Reflecting Surface (IRS). This approach enables efficient,
+adaptable policy adjustments, effectively countering jamming attacks by
+maximizing system rate and minimizing power use (Yang et al., 2021).
+Meanwhile, Palanimuthu et al. use a policy-based RL scheme for wind
+turbines to maintain stability amid aperiodic DoS attacks. Their
+approach integrates Sliding Mode Control (SMC) and adaptive learning,
+allowing real-time policy adaptation to handle changing wind condi-
+tions and attack patterns without extensive modelling. Both studies
+showcase how policy-based RL, enhanced with techniques like FSA and
+SMC, enables systems to respond effectively and maintain performance
+under adversarial conditions (Palanimuthu et al., 2023).
+3) Actor-Critic RL
+Actor-Critic RL combines elements of both value-based and policy-
+based approaches, enabling systems to optimize their response to
+cyberattacks by balancing action selection and evaluation. In Actor-
+Critic methods, the actor selects actions based on a policy, while the
+critic evaluates these actions by estimating value functions, guiding the
+actor toward optimal strategies. This structure allows for more stable
+learning and adaptability in continuous action spaces, unlike pure value-
+based RL, which focuses solely on value estimation, or policy-based RL,
+which directly optimizes policies without explicit value evaluation.
+In the study from Tabassum et al. an RL agent using the Twin-
+Delayed Deep Deterministic Policy Gradient (TD3) algorithm is imple-
+mented to mitigate FDIAs by continuously monitoring the microgrid’s
+state and dynamically adjusting control actions to maintain stability
+(Tabassum et al., 2024a). The TD3 algorithm leverages an actor-critic
+framework with delayed policy updates, which stabilize learning by
+preventing excessive corrective actions that could destabilize the sys-
+tem. This approach allows the RL agent to adapt in real-time to the
+severity of the attack, effectively minimizing frequency deviations and
+sustaining the microgrid’s operational integrity. By doing so, the RL
+agent significantly outperforms traditional PID controllers, demon-
+strating the advantage of actor-critic methods in maintaining resilience
+under adversarial conditions.
+3.1.2.2. Deep learning approach. In the context of proposing defensive
+strategies in real-time control during cyberattacks, these methods are
+primarily focused on predicting system behavior or dynamics under
+disruption and approximating attack patterns or signals. Deep learning
+is particularly effective in capturing the time-varying nature of both the
+system and the attack patterns. Its robustness lies in the ability to make
+accurate approximations even under disruption, which, in turn, informs
+the development of optimal control strategies to enhance system
+resilience.
+For instance, regarding the approximation of attack pattern. Li et al.
+apply a neural network to approximate and adapt to uncertain, time-
+varying FDIA, enabling real-time adjustments and improved control
+system resilience (Li et al., 2024b). Additionally, Huang et al. use Dy-
+namic Neural Networks (NNs) to model system dynamics under attack,
+with an Adaptive Dynamic Programming (ADP)-based Critic Neural
+Network ensuring system stability and optimal control (Huang and
+Dong, 2019). Chen et al. propose a deep learning approach for optimize
+the network structure under random and targeted attacks (Chen et al.,
+2019a). The study from Liu et al. and Jia et al. propose DNN for pre-
+dicting optimal responses or expected signals for conducting isolation
+strategies
+(Liu
+et
+al.,
+2024)
+(Jia
+and
+Zhang,
+2024).
+Also,
+physics-informed neural networks (PINNs) have been used to safeguard
+sensor data against attacks by modelling physical dynamics based on
+Navier-Stokes equations, providing surrogate measurements to maintain
+R. Yin and L. Varga
+
+Engineering Applications of Artificial Intelligence 166 (2026) 113542
+16
+control integrity (Falas et al., 2020).
+3.2. Stage 2 – adaptation
+Stage 1 focuses on enhancing system resilience during an attack.
+Stage 2 aims to recover the system, improve its robustness by
+learning from failures, and adapt to future changes. The goal is not
+only to restore performance to normal levels but also to surpass pre-
+attack performance and prepare for evolving challenges. This stage
+emphasizes two key activities: recovery strategies and adaptive
+design.
+3.2.1. Recovery strategy
+3.2.1.1. Recovery of data. Machine learning techniques are increasingly
+applied to address data integrity challenges posed by cyberattacks, such
+as missing data from system disruptions or manipulated data from at-
+tacks. For missing data, machine learning models can predict and
+reconstruct gaps based on learned patterns, while for manipulated data,
+they can detect and correct anomalies to maintain reliable system
+operation. These capabilities are crucial in cyber-physical systems,
+where ensuring data continuity and accuracy is essential for maintaining
+situational awareness and operational resilience under adversarial
+conditions.
+Dealing missing data: To address missing data in complex, time-
+sensitive systems like power grids, machine learning models such as
+Overcomplete Denoising Autoencoders (ODAE) are commonly used.
+These autoencoders learn representations from complete data, capturing
+spatial and temporal correlations to predict missing values. By encoding
+data into a higher-dimensional latent space, ODAEs leverage learned
+patterns for accurate imputation, even when data gaps arise from dis-
+ruptions like Denial of Service (DoS) attacks.
+The reconstruction of missing PMU data in (Chawla et al., 2023b) is
+achieved using an Overcomplete Denoising Autoencoder (ODAE). The
+ODAE model encodes the input Phasor Data Concentrator (PDC) data
+stream,
+which
+may
+contain
+gaps
+due
+to
+DoS
+attacks,
+into
+a
+higher-dimensional space that captures complex spatial and temporal
+relationships between phasor measurements across the grid. During
+training, the model learns these patterns from complete datasets,
+allowing it to leverage this knowledge to predict and reconstruct missing
+values when deployed. By decoding the encoded representation back
+into the original dimensional space, the ODAE effectively fills in gaps,
+maintaining accurate and continuous situational awareness even when
+data is missing. This capability hinges on the model’s ability to deeply
+understand
+and
+reconstruct
+relationships
+between
+available
+measurements.
+Dealing manipulated data: Data manipulation, such as that caused
+by FDIA, poses significant threats over extended periods by undermining
+system integrity and reliability. To address this challenge, machine
+learning methods are often integrated with anomaly detection tech-
+niques. Once anomalous data is detected, these methods initiate the
+generation of corrective data to replace or adjust the manipulated en-
+tries. This two-step approach—detection followed by correction—en-
+ables the system to maintain accurate and reliable performance, even in
+the face of ongoing data manipulation, thus bolstering long-term resil-
+ience against cyber threats.
+Machina et al. employ a Multi-Deep Neural Network (MDNN) for
+anomaly detection, targeting FDI attacks in Direct Current Microgrids
+(DCMGs) (Machina et al., 2023). An Error Detection Network (EDN)
+monitors deviations in output voltages, trained on both normal and
+attack scenarios, and generates corrective signals when anomalies are
+detected. Chawla et al. utilize GAIN to correct corrupted data, mitigating
+cyberattacks’ impact and supporting reliable operation of critical ap-
+plications during attacks (Chawla et al., 2023a). Falas et al. (2020) and
+Guibene et al. (2023) propose leveraging PINNs to recover manipulated
+data in water system during cyberattacks by integrating physical laws
+into sensor measurement predictions. This approach enhances accuracy
+and reduces computational demands, enabling efficient real-time
+recovery.
+3.2.1.2. Recovery of system. Isolating strategy: An effective isolating
+strategy is essential for the recovery of cyberattacks in CPS, as it enables
+targeted removal of compromised data, thereby enhancing the accuracy
+of subsequent state estimations. Lu et al. propose Representation-
+Learning-Based Convolutional Neural Network (RL-CNN), which uti-
+lizes representation learning to detect and isolate compromised mea-
+surements (Lu et al., 2024). In this approach, RL-CNN leverages a deep
+autoencoder to reduce feature dimensionality, allowing the algorithm to
+treat the localization task as a multi-label classification problem and
+accurately identify attack points across CPPS data. Once attacks are
+localized, the Minimum Mean-Squared Error estimator is employed for
+recovery, taking specific actions to exclude contaminated measurements
+and estimate system states with minimized error variance.
+Reconnecting strategy: In the recovery process following cyber-
+attacks, an effective reconnection strategy is essential to maintain sys-
+tem stability and prevent cascading failures, as abrupt restoration of
+power lines can exacerbate disturbances. For power system, a well-
+timed reconnection strategy allows for gradual synchronization of
+affected regions, which minimizes the risk of power surges and ensures
+smoother integration back into the operational grid.
+Pacheco et al. employ the Deep Deterministic Policy Gradient
+(DDPG) algorithm to facilitate recovery of cyber-physical power systems
+following cyberattacks (Wei et al., 2020). Specifically, the DDPG
+framework calculates an optimal reclosing strategy for the transmission
+lines disconnected during an attack, aiming to prevent potential insta-
+bility caused by immediate reconnection. This strategy involves intro-
+ducing calculated delays for each transmission line to avoid excessive
+current flows or power swings that could further compromise system
+integrity. By selecting these delays within safe operational boundaries,
+the proposed method seeks to restore system stability with minimal risk
+of cascading failures, thus enhancing resilience against cyber-induced
+disruptions.
+Recovery system state: Effective system recovery is essential once
+an attack has been isolated and the extent of data corruption is under-
+stood. Zhang et al., propose a runtime recovery framework that (after
+detecting a sensor attack) removes poisoned data, reconstructs the sys-
+tem state, and uses a Linear-Quadratic Regulator (LQR) to compute a
+safe control trajectory that drives the system back to a safe target region
+before a specified deadline (Zhang et al., 2021b).
+In the recovery analysis of CPS under cyberattacks, many strategies
+focus on data-centric solutions, such as missing data imputation and
+corrective data generation, to restore data availability and integrity.
+However, there remains a scarcity of machine learning-driven ap-
+proaches that address recovery from a broader, system-level perspec-
+tive. Unlike data-focused solutions, system-level ML strategies, such as
+(Wei et al., 2020), emphasize optimizing overall system resilience and
+stability in the wake of an attack, marking a critical area for further
+research and development in CPS recovery (Aslani et al., 2024b).
+3.2.2. Adaptive design
+Adaptive design aims to strengthen system components and pro-
+cesses, making them resilient to potential disruptions caused by cyber-
+attacks. By incorporating fault tolerance and redundancy, robust
+design minimizes vulnerabilities, ensuring the system can continue
+functioning effectively even under adverse conditions.
+3.2.2.1. Adversarial
+training. Adversarial
+training
+enhances
+model
+robustness by using adversarial examples in a min-max optimization
+framework. By exposing the model to carefully crafted perturbations
+R. Yin and L. Varga
+
+Engineering Applications of Artificial Intelligence 166 (2026) 113542
+17
+during training, it learns to handle such challenges effectively,
+improving
+its
+resilience
+to
+cyber
+threats
+and
+intentional
+data
+manipulations.
+Chen et al. utilized LSTM models to predict FDIA signals in real-time,
+demonstrating their superiority over Support Vector Regression for dy-
+namic signal prediction. By enabling the AGC system to adjust control
+strategies instantly, these models help maintain system stability even
+during attacks (Chen et al., 2021). Furthermore, LSTMs have been in-
+tegrated into the Intelligent Dynamic Energy Management Strategy
+optimize hybrid microgrids. Adversarial training and defensive distil-
+lation techniques were applied to these LSTM models to expose them to
+both clean and adversarial data, enhancing their ability to resist small
+perturbations (Asef et al., 2023).
+3.2.2.2. Attack scenario simulation. Attack scenario simulation is an
+adaptive strategy in CPS that uses ML and optimization to identify
+vulnerabilities. By creating realistic cyberattack scenarios, it reveals
+weaknesses in defences, guiding the development of stronger detection
+and mitigation strategies to enhance infrastructure resilience.
+Chen et al. employ predictive models like LSTM and SVR to simulate
+actuator manipulations’ impact on physical states, enabling the gener-
+ation of targeted attacks to test and improve cybersecurity defences
+(Chen et al., 2019b). Zhang et al. extend this approach with LSTM and
+SVM models to predict sensor manipulations’ effects, facilitating the
+simulation of stealthy attacks such as FDIA, supported by active learning
+to refine predictions (Zhang et al., 2023). Alobaidy et al. focus on robust
+communication in IoT networks for water systems, using ML-based path
+loss prediction to ensure reliable data flow and reduce vulnerabilities
+exploitable by cyberattacks (Alobaidy et al., 2022). Meanwhile, Zhao
+et al. integrate data-driven principles through a Distributional Robust
+Optimization (DRO) framework, leveraging Conditional Value-at-Risk
+(CVaR) to address sector interdependencies and mitigate FDIA impacts
+in coupled water-energy systems (Zhao et al., 2021b). Together, these
+studies highlight the versatility of ML and optimization in simulating
+attacks, identifying weaknesses, and enhancing system resilience.
+3.2.2.3. Explainable machine learning. A growing body of research has
+begun to adapt explainability techniques specifically for CPS. Wang
+et al. applied temporal–spatial attention visualisation to transformer
+models to explain load-forecasting anomalies in energy systems. For
+networked CPS, Lucic et al. proposed CF-GNNExplainer, which is a
+method that generates counterfactual explanations for Graph Neural
+Networks by identifying minimal perturbations (edge deletions) that
+change the model’s prediction (Lucic et al., 2022). These emerging
+techniques provide deeper insight into how hypothetical interventions
+influence system states, enabling more transparent diagnostics and
+supporting informed operator decision-making. However, the trans-
+lation of XAI methods into real-world CPS deployments is still at an early
+stage, with significant gaps between experimental demonstrations and
+practical implementation.
+Explainable ML supports the adaptation stage of resilience by
+revealing why models behave as they do and which system factors drive
+failures or attack impacts. These insights enable engineers to refine
+models, update control strategies, and redesign system components in a
+transparent, informed manner. By showing how small changes could
+have prevented or mitigated disruptions, XAI facilitates continuous
+learning and adaptive design, strengthening long-term CPS resilience.
+4. Limitations of state-of-art
+While ML approaches have shown significant potential in enhancing
+the resilience of CPS, several critical limitations remain. The limitations
+are mainly from the practical use of the ML in real world CPS
+environments.
+Limitation 1: Rigid anomaly assumptions in general-purpose
+detection methods: Anomaly detection algorithms are typically built
+on specific assumptions about what constitutes an anomaly, some
+typical anomalies assumptions are shown in Table 11. However, in real
+world CPS, anomalies can take many forms, and relying on a single
+assumption often fails to capture this complexity. Therefore, current
+state-of-art general-purpose anomaly detection methods across different
+CPS datasets can lead to inaccurate results in real world application.
+Limitation 2: Lack of adaptive and causality-aware learning in
+ML for CPS: Current ML methods in CPS largely rely on static, offline
+training and often lack adaptive learning frameworks capable of
+responding to evolving system dynamics. These approaches typically
+focus on detecting anomalies after they occur, rather than proactively
+preventing them. Moreover, they tend to overlook the underlying
+physical processes that generate anomalies, limiting their interpret-
+ability and effectiveness in real-world systems. While causality-inspired
+ML and root cause analysis have gained attention for early anomaly
+detection, they often depend heavily on historical labeled data, which is
+scarce and may not represent emerging disturbances (Zhao and Zhang,
+2024) (Wang et al., 2023) (Han et al., 2025). Even when successful on
+public CPS datasets, such models struggle in real-world CPS due to noisy
+data,
+heterogeneous
+variables,
+and
+complex,
+large-scale
+inter-
+actions—making it difficult to reliably identify true causal relationships
+and generalize to unseen scenarios.
+Limitation 3: Lack of physically meaningful interpretability in
+ML models for CPS: Effective resilience in CPS requires a deep under-
+standing
+of
+cause-effect
+relationships
+within
+the
+system.
+While
+explainable
+AI
+(XAI)
+techniques—such
+as
+attention
+mechanisms
+(Vaswani et al., 2023)—aim to improve transparency, their outputs
+often lack physical meaning. For instance, in attention mechanisms,
+highlighting a specific time step or variable may indicate where the
+model is focusing, but it often lacks context or physical mean-
+ing—limiting its usefulness for system operators who need actionable
+insights to prevent future disruptions.
+To address these limitations, we propose a general four-step work-
+flow that can be incorporated into future ML approaches for CPS
+resilience:
+●Step one: Identify and define multiple anomaly types based on his-
+torical data, ensuring clear and domain-specific categorization to
+address Limitation 1
+●Step two: Enrich the anomaly context by identifying causal patterns,
+time-lag effects, and links to subsequent system failures, aiming to
+address the causality aspect of Limitation 2.
+●Step three: Implement an explainable framework that facilitates
+collaboration with domain experts to validate Step One and Step
+Two, aiming to address Limitation 3.
+●Step four: Enable adaptive learning by continuously updating the
+model with new data to capture evolving disturbances. As new data
+becomes available, repeat Steps One and Two to redefine anomaly
+types and enrich contextual understanding—ensuring the model re-
+mains aligned with the system’s changing behavior and maintains
+long-term relevance, aiming to address the adaptive capability
+aspect of Limitation 2.
+Table 11
+The anomaly assumption in state-of-art ML algorithm.
+Type
+Anomaly assumption
+Ref
+Density based
+Anomalies occur in regions of low data density
+Dai and Chen
+(2022)
+Association
+based
+Anomalies have less connection or interaction
+with the whole series than their adjacent points
+Yang et al.
+(2023)
+Frequency
+based
+Anomalies show prominent differences against
+the normal series in different frequency bands
+Wu et al.
+(2025)
+Causality
+based
+When an anomaly occurs, the Granger causality
+patterns between sequences will change
+significantly
+(Liu et al.)
+R. Yin and L. Varga
+
+Engineering Applications of Artificial Intelligence 166 (2026) 113542
+18
+5. Future direction
+Chapter 5 presents the future directions emerging from this review,
+focusing on how evolving cyber–physical threats require improved un-
+derstanding and adaptive defence mechanisms. The chapter is organised
+into four parts: pathways for understanding attack methods, absorption
+and adaptation, and a set of actionable research directions.
+5.1. Path forward for power system
+Modern power systems face increasingly complex cyber–physical
+threats, making resilience a critical research priority. This section
+highlights key directions for strengthening grid security, including
+improved attack modelling, advanced anomaly detection, and recovery
+and adaptation strategies tailored to large-scale Cyber-Physical Power
+Systems (CPPS).
+Attack Modelling and Vulnerability Assessment:
+• Move beyond maximizing operational errors to systematic vulnera-
+bility assessment across grid components.
+• Identify weak points in the infrastructure that could be exploited by
+sophisticated adversaries.
+• Investigate ML-specific vulnerabilities, including:
+• Adversarial attacks on models
+• Bias exploitation
+• Data poisoning and training-time manipulation
+• Develop robust ML models that can resist stealthy and adaptive
+cyberattacks (Ibrahim et al., 2023).
+Advanced Anomaly Detection for Large-Scale Power Grids:
+• Develop anomaly detection algorithms capable of processing large-
+scale, high-dimensional, real-time data.
+• Account
+for
+strong
+interdependencies
+among
+power
+grid
+components.
+• Expand the use of graph-based anomaly detection to model struc-
+tural and functional relationships.
+• Incorporate time-lag effects, dynamic dependencies, and multivar-
+iate interactions.
+• Integrate root-cause analysis to support timely and effective defen-
+sive responses after detection.
+Recovery, Adaptation, and Future System Design:
+• Build on emerging ML-based recovery methods such as adversarial
+training and resilient model architectures.
+• Enhance the adaptability of Cyber-Physical Power Systems (CPPS)
+under evolving attack scenarios.
+• Address new vulnerabilities introduced by renewable energy inte-
+gration, including intermittency and unpredictability.
+• Examine risks arising from advanced automation and autonomous
+control strategies.
+• Prioritize scenario-based analyses to evaluate resilience against
+future grid configurations and threat landscapes.
+• Design adaptive systems that can respond to changing operational
+conditions and novel threats.
+These research directions underscore the need for an integrated
+resilience approach in power systems—one that proactively identifies
+vulnerabilities, detects anomalies in real time, and enables adaptive
+recovery. Advancing these capabilities will help ensure secure and
+reliable grid operation under evolving cyber–physical threats.
+5.2. Path forward for water system
+Water distribution systems face unique cyber–physical risks due to
+their strong interdependencies, large spatial footprints, and exposure to
+environmental factors. Strengthening resilience in this domain requires
+advances in attack modelling, improved anomaly detection under real-
+world data constraints, and recovery strategies that prioritize public
+health and safety. This section outlines key challenges and research di-
+rections across these areas.
+Attack Modelling & Vulnerability Analysis.
+• Conduct more scenario-based cyberattack modelling to uncover
+spatial and temporal vulnerabilities.
+• Water systems have stronger interdependencies (clean water,
+wastewater, sewage) →cascading attack risks.
+• Hybrid physical–cyber-attacks exploiting factors such as rainfall or
+infrastructure stress require deeper study.
+• These scenarios pose elevated health and safety risks, including
+contamination during service disruptions (Chen et al., 2019b) (Liu
+et al., 2024).
+Data and Detection Challenges.
+• Water networks exhibit large spatial footprints and depend heavily
+on external factors (e.g., weather).
+• Limited availability of representative, real-world datasets constrains
+anomaly detection research.
+• Current studies rely mainly on SWaT and a few foundational testbeds
+→need more diverse datasets (Narayanan et al., 2022) (Ntalampiras
+and Potamitis, 2023).
+• Defensive strategies must better incorporate spatial complexity and
+environmental dependencies.
+Recovery and Public Health Considerations.
+• ML-based recovery schemes remain underdeveloped, especially at
+the system level.
+• Current recovery research focuses on data reconstruction, not oper-
+ational system recovery.
+• Water systems require fast, safety-critical recovery, particularly
+under contamination scenarios.
+• Future solutions should integrate spatial–temporal information to
+isolate affected areas and restore service rapidly.
+• Prioritize recovery methods that explicitly account for public health
+risks during cyberattacks.
+Overall, enhancing resilience in water systems demands more real-
+istic cyberattack modelling, richer and more representative datasets,
+and recovery methods that account for spatial complexity and health-
+critical consequences. Progress in these areas will support safer, faster,
+and more reliable responses to cyber–physical disruptions in essential
+water services.
+5.3. Actionable research directions
+In Section 4, we outlined key limitations and proposed targeted so-
+lutions to address them. Building on that foundation, Section 5 presents
+five future trajectories aimed at advancing the use of machine learning
+for resilience analysis in CPS.
+Developing multi-modal data fusion frameworks to establish a
+robust baseline: Combining operational, contextual, and environ-
+mental data to establish a robust baseline for more realistic and effective
+cyberattack countermeasures. Operational data refers to dynamic sys-
+tem behavior, typically represented as time-series numerical data.
+Contextual data includes static descriptive information, often in the
+form of text, such as maintenance logs or system configuration. Envi-
+ronmental data captures external factors that influence system behavior,
+such as weather conditions, holidays, events, or news reports. Inte-
+grating diverse data sources offers a deeper understanding of CPS
+R. Yin and L. Varga
+
+Engineering Applications of Artificial Intelligence 166 (2026) 113542
+19
+dynamics and a more robust baseline for modelling cyberattacks and
+other disturbances.
+For example, in large-scale water distribution networks, combining
+time-series water flow(operational) with maintenance logs and repair
+records (contextual), and weather conditions (environmental), helps
+build a baseline scenario that captures the normal and existed anoma-
+lous situations (Yin and Varga, 2025). This is essential for creating ac-
+curate, realistic, scenario-based cyberattack simulations and resilience
+strategies.
+Improving simulated data through domain knowledge: Access-
+ing real-world CPS data may be challenging due to sensitivity and se-
+curity concerns, causing many ML studies to rely on simulations or
+limited testbed datasets. Incorporating domain-specific knowledge into
+the simulation process can significantly improve the quality, relevance,
+realism, and rigor of the generated data (Yin et al., 2025).
+For example, in infrastructure CPS, we suggest the following
+knowledge can be provided by domain expert to enhance simulated
+dataset: 1) the effects of environmental disturbances, 2) periodic usage
+patterns, 3) realistic noise levels, 4) types of anomalies, 5) failures
+propagation behavior, 6) time lag effects between component failures,
+7) failure toleration thresholds, 8) determinants of node criticality.
+Embedding resilience indicators into ML reward or loss func-
+tions: Most ML approaches for cyberattacks lack resilience- oriented
+training. While resilience optimization has been explored in physics-
+based models, data-driven methods still struggle to incorporate resil-
+ience principles (Gu et al., 2023). Although various resilience metrics
+exist, they are rarely integrated into ML frameworks (Ibne Hossain et al.,
+2020).
+For instance, domain-specific resilience metrics Rres
+t
+can be embed
+into RL training by modifying the reward as rʹ
+t = rt + λ⋅Rres
+t , where λ
+adjusts the influence of resilience on learning.
+Evaluating the proposed countermeasures resilience gain and
+economic feasibility: For example, a major limitation in current
+research is the lack of post-implementation assessment, leading to an
+incomplete understanding of the actual impact of resilience in-
+terventions. Additionally, the economic feasibility of these strategies
+must be thoroughly evaluated to ensure they are not only effective but
+also practical and sustainable in real-world applications.
+For example, in a water distribution network, a DL-based anomaly
+detection system may be deployed to identify potential cyberattacks or
+pipe bursts. While the model may perform well during testing, without
+post-implementation evaluation, it’s unclear how effectively it improves
+system resilience—such as reducing response time or preventing
+cascading failures. Furthermore, the cost of deploying and maintaining
+the system must be weighed against its resilience benefits. A compre-
+hensive evaluation would assess both the system’s real-world impact on
+resilience and whether the investment is economically justified over
+time.
+Aggregating Cross-Sector Knowledge and Interdependencies: A
+key future direction is to develop a transferable knowledge framework
+that captures resilience strategies and best practices across CPS domains.
+Although sectors like water, transportation, and power differ techni-
+cally, they share common objectives such as real-time monitoring,
+control, and cyber resilience. This creates a strong foundation for cross-
+sector learning.
+For example, anomaly detection techniques from the power sector
+using real-time SCADA data can be adapted to water systems by
+applying similar methods to flow and pressure monitoring. Likewise,
+peak traffic management strategies from transportation can inform dy-
+namic load balancing in power grids. Additionally, weather-based fail-
+ure prediction models used in water networks can be applied to forecast
+equipment stress in the energy sector.
+6. Conclusion
+Enhancing the resilience of infrastructure systems against advanced
+cyberattacks has become an imperative. ML holds great promise for
+strengthening the resilience of CPS. This paper has reviewed ML
+approach across various stages, including two stages and four activities:
+stage one absorption including (1) anomaly detection and (2) defence;
+stage two adaption including (3) recovery, and (4) adaptive system
+design.
+Our review identified that: there is an imbalance in current research,
+with greater emphasis on the application of ML in absorption phases, i.
+e., anomaly detection and defence, and relatively less focus on adapta-
+tion phases, i.e., recovery and adaptive design. On the other hand, state-
+of-the-art anomaly detection algorithms perform well on curated public
+datasets may fail in real-world CPS environments due to rigid anomaly
+Fig. 14. A structured pathway from current CPS limitations to future research opportunities.
+R. Yin and L. Varga
+
+Engineering Applications of Artificial Intelligence 166 (2026) 113542
+20
+assumptions and the absence of causality-based, explainable frame-
+works for proactive detection. To address this gap, we propose a four-
+step workflow aiming to increase the practicality of anomaly detection
+in real world CPS, i.e., 1) identify and define anomaly type, 2) enrich
+anomaly context, 3) validate step 1) and 2) with domain expert, 4)
+enable adaptive learning by updating step 1) and 2) with new data. The
+overall pathway are summarized in Fig. 14.
+We outline five future research trajectories for advancing ML in
+enhancing CPS resilience. Among them, a critical direction is the
+development of multi-modal data fusion frameworks, which are essen-
+tial for building practical and effective ML solutions. By integrating
+operational, contextual, and environmental data, these frameworks
+enable the construction of robust and realistic baselines that better
+reflect the complexity of real-world CPS. Once the baseline is estab-
+lished, it allows for more reliable modelling of various cyberattacks or
+disturbances, leading to ML models that can respond effectively to real
+world complex conditions and are actionable in practical deployments.
+CRediT authorship contribution statement
+Ruoqing Yin: Writing – original draft, Methodology, Investigation,
+Formal analysis, Conceptualization. Liz Varga: Writing – review &
+editing, Supervision, Conceptualization.
+Declaration of competing interest
+The authors declare that they have no known competing financial
+interests or personal relationships that could have appeared to influence
+the work reported in this paper.
+Appendix
+This appendix provides a consolidated summary of the modelling approaches used for different categories of cyberattacks analyzed in this study.
+To support clarity and reproducibility, we compile three dedicated tables that outline the representative modelling techniques for False Data Injection
+Attacks (FDIA), Denial-of-Service (DoS) attacks, and machine-learning attacks. These tables synthesise commonly referenced methods across the
+literature and offer a structured reference for researchers seeking to understand or implement these attack models in cyber-physical system studies.
+Appendix Table 1
+Modelling methods of FDIA
+Methods description
+Modelling methods
+Application
+FDIA was constructed through different
+knowledge level of attackers
+Two methods are employed, including:
+1) FDIA with Complete Network Information: a = h(x + c) −
+h(x)
+a is the attack vector, h(x +c) is the measurement prediction based on the
+compromised state x + c, h(x) is the measurement prediction based on the true state
+x.
+2) FDIA with Partial Network Information, optimization problem (minimize Slack
+Variables for making the attack less detectable)
+AC state estimation process used in
+power systems (Yu et al., 2018)
+FDIA was constructed through three different
+attack signals: ramp, scaling and random
+The paper models data integrity attacks using three common templates: ramp,
+scaling, and random attacks: ys, m(t)
+⎧
+⎨
+⎩
+ys(t) + λrt, t ∈Tr(Ramp Attack)
+(1 + λS)ys(t), t ∈Ts(Scaling Attack)
+ys(t) + rand(α, β), t ∈Ts(Random Attack)
+ys, m(t) is the manipulated measurement, ys(t) is the actual sensor signal, λr and λS
+are the ramp and scaling parameters, respectively, rand(α, β) adds random noise
+between α and β
+PV output current and voltage sensors
+within microgrids (Jadidi et al., 2024)
+FDIA signals was generated from two ML
+algorithms: 1) regression model for constant
+FDIA. 2)LSTM network for periodic FDIA
+FDIA Signal Construction based on ML including:
+1) Sequence-to-Point Regression for Constant FDIA:
+2) LSTM Network for Periodic FDIA
+Automatic generation control (AGC)
+systems of power grids (Chen et al.,
+2021)
+The attack vector of FDIA and its stealthy was
+mathematically formulated.
+FDIA is introduced by adding an attack vector. And a stealthy attack strategy where
+the attacker ensures the residuals remain within a range that avoids detection
+Compromise a subset of measurements,
+Alter control commands (Khan et al.,
+2022)
+FDIA is constructed using FGSM, BIM, and
+DeepFool techniques to generate adversarial
+examples.
+Simulated FDIA scenarios based on three algorithms:
+1) Fast Gradient Sign Method (FGSM), which employs a direct gradient-based
+method
+2) Basic Iterative Method (BIM), which enhances this approach through iterative
+refinement
+3) DeepFool, which aims to find the minimal perturbation necessary to trigger a
+misclassification
+The predictive machine learning
+models in Energy Management System
+(EMS) (Asef et al., 2023)
+FDIA was constructed through Fake Reference
+Time, which is the time signal generated by the
+attacker to disrupt the PMU’s time
+synchronization.
+Three different attack strategies have been proposed:
+1) Rectangular Attack: constructed based on a constant rate throughout the attack
+duration
+2) Triangular Attack: is manipulated at a rate that increases linearly to a peak and
+then decreases
+3) Logistic Attack: which follows a logistic curve, with a smooth increase and
+decrease in the attack rate
+Time synchronization attacks (TSAs)
+against PMUs (Shereen and Dan, 2020)
+The FDIA attack was constructed as a constrained
+stochastic optimization problem.
+The attacker’s objective is to maximize the cumulative estimation error over a given
+time horizon.
+State estimation process within the
+control system. (Lakshminarayana
+et al., 2019)
+R. Yin and L. Varga
+
+Engineering Applications of Artificial Intelligence 166 (2026) 113542
+21
+Appendix Table 2
+Modelling methods of DoS
+Methods description
+Modelling methods
+Application
+The aperiodic Denial of Service was created based on
+signal generation mechanism that alternates between
+periods of active DoS attack
+This paper constructs aperiodic Denial of Service (ADoS) attacks as a
+function IDoS(t):
+IDoS(t)
+{
+0, if t ∈Hn
+off
+1, if t ∈Dn
+off
+IDoS(t) represents whether the DoS attack is active or not at a given time t.
+Actuator systems of large-scale wind
+turbines (Palanimuthu et al., 2023)
+The Reset attack strategy was constructed through a
+well-established series technique
+This paper employs methods including:
+1) Port scanning to identify the network’s structure,
+2)Address Resolution Protocol poisoning to manipulate and redirect network
+traffic, and the
+3) Transmission Control Protocol Reset attack to forcibly terminate the
+communication sessions between PMUs and the Phasor Data
+Concentrator.
+PMU - PDC connections within the WAMS
+(Chawla et al., 2023b)
+High-frequency DoS attacks was constructed based on
+persistent dwell-time
+The total DoS attack duration within a time window is defined as the union of
+all active attack periods. Conversely, the DoS absence (or sleeping) time
+represents the intervals when no attacks occur during that same window.
+Communication channels within
+networked control systems (Wei et al.,
+2024)
+The DoS attack strategy is modeled by altering the SINR
+through interference power
+This paper introduces the concept of a packet error rate (PER) to quantify the
+probability of a successful DoS attack. The PER is influenced by the Signal-to-
+Noise Ratio (SNR) and the Signal-to-Interference-and-Noise Ratio (SINR) of
+the communication channels.
+Communication channels between the
+sensor and the controller in the CPS (Yu
+et al., 2024)
+Appendix Table 3
+Modelling methods of ML attack
+Methods description
+Modelling methods
+Target
+The white box attacks generate adversarial examples
+by modifying malicious input data using gradient-
+based methods to evade detection.
+This paper presents three methods
+1) FGSM-based evasion attack:
+This method generates adversarial samples by adding a small
+perturbation in the direction of the gradient of the cost function. The
+size of this perturbation is controlled by a parameter called epsilon.
+2) BIM-based evasion attack:
+An iterative version of FGSM, BIM repeatedly updates the adversarial
+sample by taking small steps (defined by a step size) in the gradient
+direction and clipping the result to stay within valid bounds.
+3) Ensemble Gradient Attack (GradSign-Ens):
+This approach calculates the average gradient direction across multiple
+models (an ensemble) to craft adversarial samples. It improves
+transferability by aligning the attack with the shared vulnerability
+across different models.
+ML-based electricity theft detection system
+(Elgarhy et al., 2024)
+White box attack using the gradient-based adversarial
+attack methods to craft perturbed data
+This paper presents two methods:
+1) MIM (Momentum Iterative Method) strengthens adversarial attacks
+by using momentum to guide perturbations, smoothing the update
+direction over multiple steps for greater effectiveness.
+2) MOM (Robust Optimization Method) improves model robustness by
+training not only on normal data but also on worst-case, perturbed
+inputs, helping the model resist adversarial manipulation.
+The model predicts the Remaining Useful Life of a system, and
+adversarial examples are created by adding small, targeted disturbances
+to the input data.
+Deep learning models used for Remaining Useful
+Life prediction in predictive maintenance
+(Gungor et al.)
+Machine learning modelling attack for simulating the
+PUF’s behavior
+The paper formulates the attack by leveraging the behavior of a Physical
+Unclonable Function (PUF). The PUF generates a response (β) for any
+given challenge (α), as defined by β ←PUF(α)
+The attacker collects a set of challenge-response pairs (CRPs) {(α1,β1),
+(α2,β2),…,(αw, βw)}.
+The attacker uses the collected CRPs to train a machine learning model̂
+m that can predict the responsê β =̂ m(α) for any new challenge α.
+Using the trained model, the attacker aims to generate responses (β* =
+PUF(α*)) hat mimic the actual PUF responses, enabling impersonation
+of the legitimate device
+The attack targets smart meters equipped with
+reconfigurable PUF authentication mechanisms.
+(Gope and Sikdar, 2021)
+The paper develops poisoning attacks on federated
+multitask learning through a bilevel optimization
+framework
+The bilevel optimization framework including:
+1) Upper-Level Objective: Maximizes the model’s loss on clean target
+data by injecting poisoned data at selected source nodes, to evaluate
+the worst-case attack impact.
+2) Lower-Level Optimization: Trains the model using both clean and
+poisoned data while considering node relationships and applying
+regularization to prevent overfitting.
+Degrade performance of federated multitask
+learning models on target nodes (Sun et al.,
+2022).
+R. Yin and L. Varga
+
+Engineering Applications of Artificial Intelligence 166 (2026) 113542
+22
+Data availability
+No data was used for the research described in the article.
+References
+Abazari, A., Soleymani, M.M., Zadsar, M., Ghafouri, M., Assi, C., Shafie-Khah, M., 2024.
+Online recursive detection and adaptive fuzzy mitigation of cyber-physical attacks
+targeting topology of IMG: an LFC case study. IEEE Trans. Smart Grid 15 (2),
+2129–2145. https://doi.org/10.1109/TSG.2023.3304537.
+Abdi, N., Albaseer, A., Abdallah, M., 2024. The role of deep learning in advancing
+proactive cybersecurity measures for smart grid networks: a survey. IEEE Internet
+Things J. 11 (9), 16398–16421. https://doi.org/10.1109/JIOT.2024.3354045.
+Ahmadi, A., Nabipour, M., Taheri, S., Mohammadi-Ivatloo, B., Vahidinasab, V., 2023.
+A new false data injection attack detection model for cyberattack resilient energy
+forecasting. IEEE Trans. Ind. Inf. 19 (1), 371–381. https://doi.org/10.1109/
+TII.2022.3151748.
+Ahmadi-Assalemi, G., Al-Khateeb, H., Epiphaniou, G., Aggoun, A., 2022. Super learner
+ensemble for anomaly detection and cyber-risk quantification in industrial control
+systems. IEEE Internet Things J. 9 (15), 13279–13297. https://doi.org/10.1109/
+JIOT.2022.3144127.
+Ahmed, C.M., Palleti, V.R., Mathur, A.P., 2017. WADI: a water distribution testbed for
+research in the design of secure cyber physical systems. In: Proceedings of the 3rd
+International Workshop on Cyber-Physical Systems for Smart Water Networks. ACM,
+Pittsburgh Pennsylvania, pp. 25–28. https://doi.org/10.1145/3055366.3055375.
+Akbari, E., Tabatabaei, S.M., Barkhordari Yazdi, M., Arefi, M.M., Cao, J., 2023. Resilient
+backstepping control for a class of switched nonlinear time-delay systems under
+hybrid cyber-attacks. Eng. Appl. Artif. Intell. 122, 106128. https://doi.org/10.1016/
+j.engappai.2023.106128.
+Al-Hawawreh, M., Moustafa, N., Garg, S., Hossain, M.S., 2021. Deep learning-enabled
+threat intelligence scheme in the internet of things networks. IEEE Trans. Netw. Sci.
+Eng 8 (4), 2968–2981. https://doi.org/10.1109/TNSE.2020.3032415.
+Alabassi, A., Jahromi, A.N., Karimipour, H., Dehghantanha, A., Siano, P., Leung, H.,
+2022. A self-tuning cyber-attacks’ location identification approach for critical
+infrastructures. IEEE Trans. Ind. Inf. 18 (7), 5018–5027. https://doi.org/10.1109/
+TII.2021.3133361.
+Alguliyev, R., Imamverdiyev, Y., Sukhostat, L., 2021. Hybrid DeepGCL model for cyber-
+attacks detection on cyber-physical systems. Neural Comput. Appl. 33 (16),
+10211–10226. https://doi.org/10.1007/s00521-021-05785-2.
+Alobaidy, H.A.H., et al., 2022. Low-altitude-platform-based airborne IoT network (LAP-
+AIN) for water quality monitoring in harsh tropical environment. IEEE Internet
+Things J. 9 (20), 20034–20054. https://doi.org/10.1109/JIOT.2022.3171294.
+Alrayes, F.S., Zakariah, M., Driss, M., Boulila, W., 2023. Deep neural decision forest
+(DNDF): a novel approach for enhancing intrusion detection systems in network
+traffic analysis. Sensors 23 (20), 8362. https://doi.org/10.3390/s23208362.
+Anubi, O.M., Konstantinou, C., Roberts, R., 2019. Resilient optimal estimation using
+measurement prior. arXiv: arXiv:1907.13102 [Online]. Available: http://arxiv.
+org/abs/1907.13102. (Accessed 29 July 2024).
+Arghandeh, R., Von Meier, A., Mehrmanesh, L., Mili, L., 2016. On the definition of cyber-
+physical resilience in power systems. Renew. Sustain. Energy Rev. 58, 1060–1069.
+https://doi.org/10.1016/j.rser.2015.12.193.
+Asef, P., Taheri, R., Shojafar, M., Mporas, I., Tafazolli, R., 2023. SIEMS: a secure
+intelligent energy management system for industrial IoT applications. IEEE Trans.
+Ind. Inf. 19 (1), 1039–1050. https://doi.org/10.1109/TII.2022.3165890.
+Aslani, B., Mohebbi, S., Oughton, E., 2024a. A systematic review of optimization
+methods for recovery planning in cyber–physical infrastructure networks: current
+state and future trends. Comput. Ind. Eng. 192, 110224. https://doi.org/10.1016/j.
+cie.2024.110224.
+Aslani, B., Mohebbi, S., Oughton, E., 2024b. A systematic review of optimization
+methods for recovery planning in cyber–physical infrastructure networks: current
+state and future trends. Comput. Ind. Eng. 192, 110224. https://doi.org/10.1016/j.
+cie.2024.110224.
+Aygul, K., Mohammadpourfard, M., Kesici, M., Kucuktezcan, F., Genc, I., 2024.
+Benchmark of machine learning algorithms on transient stability prediction in
+renewable rich power grids under cyber-attacks. Internet Things 25, 101012.
+https://doi.org/10.1016/j.iot.2023.101012.
+Bhattacharjee, A., Bai, G., Tushar, W., Verma, A., Mishra, S., Saha, T.K., 2024. DeeBBAA:
+a benchmark deep black box adversarial attack against cyber-physical power
+systems. IEEE Internet Things J. https://doi.org/10.1109/JIOT.2024.3454257, 1–1.
+Bruneau, M., et al., 2003. A framework to quantitatively assess and enhance the seismic
+resilience of communities. Earthq. Spectra 19 (4), 733–752. https://doi.org/
+10.1193/1.1623497.
+Calma, J.. Cyberattacks on clean energy are coming — the white house has a plan - the
+verge [Online]. Available: https://www.theverge.com/2024/8/9/24216329/cybe
+rsecurity-clean-energy-biden-administration-priorities?utm_source=chatgpt.com.
+(Accessed 4 December 2024).
+Cassottana, B., Roomi, M.M., Mashima, D., Sansavini, G., 2023. Resilience analysis of
+cyber-physical systems: a review of models and methods. Risk Anal. 43 (11),
+2359–2379. https://doi.org/10.1111/risa.14089.
+Chawla, A., Agrawal, P., Panigrahi, B.K., Paul, K., 2023a. Deep-learning-based data-
+manipulation attack resilient supervisory backup protection of transmission lines.
+Neural Comput. Appl. 35 (7), 4835–4854. https://doi.org/10.1007/s00521-021-
+06106-3.
+Chawla, A., Panigrahi, B.K., Bhalja, B.R., 2023b. Deep-learning-based denial-of-service
+resilient framework for wide area situational awareness of power systems. IEEE
+Trans. Ind. Inf. 19 (8), 9204–9216. https://doi.org/10.1109/TII.2022.3227726.
+Chen, N., Qiu, T., Zhou, X., Li, K., Atiquzzaman, M., 2019a. An intelligent robust
+networking mechanism for the internet of things. IEEE Commun. Mag. 57 (11),
+91–95. https://doi.org/10.1109/MCOM.001.1900094.
+Chen, Y., Poskitt, C.M., Sun, J., Adepu, S., Zhang, F., 2019b. Learning-guided network
+fuzzing for testing cyber-physical system defences. In: 2019 34th IEEE/ACM
+International Conference on Automated Software Engineering (ASE). IEEE, San
+Diego, CA, USA, pp. 962–973. https://doi.org/10.1109/ASE.2019.00093.
+Chen, C., Chen, Y., Zhao, J., Zhang, K., Ni, M., Ren, B., 2021. Data-driven resilient
+automatic generation control against false data injection attacks. IEEE Trans. Ind.
+Inf. 17 (12), 8092–8101. https://doi.org/10.1109/TII.2021.3058413.
+Clark, A., Zonouz, S., 2019. Cyber-physical resilience: definition and assessment metric.
+IEEE Trans. Smart Grid 10 (2), 1671–1684. https://doi.org/10.1109/
+TSG.2017.2776279.
+Dai, E., Chen, J., 2022. Graph-augmented normalizing flows for anomaly detection of
+multiple time series. arXiv: arXiv:2202.07857. https://doi.org/10.48550/
+arXiv.2202.07857.
+Deng, A., Hooi, B., 2021. Graph neural network-based anomaly detection in multivariate
+time series. arXiv: arXiv:2106.06947. https://doi.org/10.48550/arXiv.2106.06947.
+Deng, R., Xiao, G., Lu, R., Liang, H., Vasilakos, A.V., 2017. False data injection on state
+estimation in power systems—attacks, impacts, and defense: a Survey. IEEE Trans.
+Ind. Inf. 13 (2), 411–423. https://doi.org/10.1109/TII.2016.2614396.
+Ding, D., Han, Q.-L., Xiang, Y., Ge, X., Zhang, X.-M., 2018. A survey on security control
+and attack detection for industrial cyber-physical systems. Neurocomputing 275,
+1674–1683. https://doi.org/10.1016/j.neucom.2017.10.009.
+Ding, D., Han, Q.-L., Ge, X., Wang, J., 2021. Secure state estimation and control of cyber-
+physical systems: a survey. IEEE Trans. Syst. Man Cybern. Syst. 51 (1), 176–190.
+https://doi.org/10.1109/TSMC.2020.3041121.
+Duo, W., Zhou, M., Abusorrah, A., 2022. A survey of cyber attacks on cyber physical
+systems: recent advances and challenges. IEEECAA J. Autom. Sin. 9 (5), 784–800.
+https://doi.org/10.1109/JAS.2022.105548.
+El-Kady, A.H., Halim, S., El-Halwagi, M.M., Khan, F., 2023. Analysis of safety and
+security challenges and opportunities related to cyber-physical systems. Process Saf.
+Environ. Prot. 173, 384–413. https://doi.org/10.1016/j.psep.2023.03.012.
+Elgarhy, I., Badr, M.M., Mahmoud, M.M.E.A., Mahmoud, M.N., Alsabaan, M.,
+Ibrahem, M.I., 2024. Securing smart grid false data detectors against white-box
+evasion attacks without sacrificing accuracy. IEEE Internet Things J. 11 (20),
+33873–33889. https://doi.org/10.1109/JIOT.2024.3433600.
+Falas, S., Konstantinou, C., Michael, M.K., 2020. Special session: physics- informed
+neural networks for securing water distribution systems. In: 2020 IEEE 38th
+International Conference on Computer Design (ICCD). IEEE, Hartford, CT, USA,
+pp. 37–40. https://doi.org/10.1109/ICCD50377.2020.00022.
+Gauthama Raman, M.R., Dong, W., Mathur, A., 2020. Deep autoencoders as anomaly
+detectors: method and case study in a distributed water treatment plant. Comput.
+Secur. 99, 102055. https://doi.org/10.1016/j.cose.2020.102055.
+Goh, J., Adepu, S., Tan, M., Lee, Z.S., 2017. Anomaly detection in cyber physical systems
+using recurrent neural networks. In: 2017 IEEE 18th International Symposium on
+High Assurance Systems Engineering (HASE). IEEE, Singapore, pp. 140–145. https://
+doi.org/10.1109/HASE.2017.36.
+Gope, P., Sikdar, B., 2021. A privacy-aware reconfigurable authenticated key exchange
+scheme for secure communication in smart grids. IEEE Trans. Smart Grid 12 (6),
+5335–5348. https://doi.org/10.1109/TSG.2021.3106105.
+Gu, C., Chen, C., Tang, W., 2023. Accurate and fast machine learning algorithm for
+systems outage prediction. Sol. Energy 251, 286–294. https://doi.org/10.1016/j.
+solener.2023.01.014.
+Guha, D., 2023. Fuzzy-aided finite-time frequency controller of renewable-integrated
+power systems with hydrogen energy storage. Eng. Appl. Artif. Intell. 126, 106814.
+https://doi.org/10.1016/j.engappai.2023.106814.
+Guibene, K., Messai, N., Ayaida, M., 2023. Surviving false data injection attacks: an
+effective recovery scheme for resilient CPS. In: GLOBECOM 2023 - 2023 IEEE Global
+Communications Conference. IEEE, Kuala Lumpur, Malaysia, pp. 1801–1806.
+https://doi.org/10.1109/GLOBECOM54140.2023.10437740.
+Guo, Y., Wang, L., Liu, Z., Shen, Y., 2021. Reinforcement-learning-based dynamic
+defense strategy of multistage game against dynamic load altering attack. Int. J.
+Electr. Power Energy Syst. 131, 107113. https://doi.org/10.1016/j.
+ijepes.2021.107113.
+Han, X., Absar, S., Zhang, L., Yuan, S., 2025. ROOT CAUSE ANALYSIS OF ANOMALIES
+IN MULTI- VARIATE TIME SERIES THROUGH GRANGER CAUSAL DISCOVERY. ’.
+Hasan, M.K., Habib, A.A., Shukur, Z., Ibrahim, F., Islam, S., Razzaque, M.A., 2023.
+Review on cyber-physical and cyber-security system in smart grid: standards,
+protocols, constraints, and recommendations. J. Netw. Comput. Appl. 209, 103540.
+https://doi.org/10.1016/j.jnca.2022.103540.
+He, Z., Khazaei, J., Moazeni, F., Freihaut, J.D., 2022. Detection of false data injection
+attacks leading to line congestions using neural networks. Sustain. Cities Soc. 82,
+103861. https://doi.org/10.1016/j.scs.2022.103861.
+Hosseini, S., Barker, K., Ramirez-Marquez, J.E., 2016. A review of definitions and
+measures of system resilience. Reliab. Eng. Syst. Saf. 145, 47–61. https://doi.org/
+10.1016/j.ress.2015.08.006.
+Huang, X., Dong, J., 2019. Reliable control of cyber-physical systems under sensor and
+actuator attacks: an identifier-critic based integral sliding-mode control approach.
+Neurocomputing 361, 229–242. https://doi.org/10.1016/j.neucom.2019.06.069.
+Humayed, A., Lin, J., Li, F., Luo, B., 2017. Cyber-physical systems security—A survey.
+IEEE Internet Things J. 4 (6), 1802–1831. https://doi.org/10.1109/
+JIOT.2017.2703172.
+R. Yin and L. Varga
+
+Engineering Applications of Artificial Intelligence 166 (2026) 113542
+23
+Ibne Hossain, N.U., Nagahi, M., Jaradat, R., Shah, C., Buchanan, R., Hamilton, M., 2020.
+Modeling and assessing cyber resilience of smart grid using Bayesian network-based
+approach: a system of systems problem. J. Comput. Des. Eng. 7 (3), 352–366.
+https://doi.org/10.1093/jcde/qwaa029.
+Ibrahim, M., Elhafiz, R., Al-Wadi, A., 2023. Reinforcement learning-based attack graph
+analysis for wastewater treatment plant. IEEE Trans. Ind. Appl. 59 (6), 7858–7867.
+https://doi.org/10.1109/TIA.2023.3298289.
+Inoue, J., Yamagata, Y., Chen, Y., Poskitt, C.M., Sun, J., 2017. Anomaly detection for a
+water treatment system using unsupervised machine learning. In: 2017 IEEE
+International Conference on Data Mining Workshops (ICDMW), New Orleans, LA: IEEE,
+pp. 1058–1065. https://doi.org/10.1109/ICDMW.2017.149.
+Islam, S., Badsha, S., Khalil, I., Atiquzzaman, M., Konstantinou, C., 2023. A triggerless
+backdoor attack and defense mechanism for intelligent task offloading in Multi-UAV
+systems. IEEE Internet Things J. 10 (7), 5719–5732. https://doi.org/10.1109/
+JIOT.2022.3172936.
+Jadidi, S., Badihi, H., Zhang, Y., 2023. Design of an intelligent hybrid diagnosis scheme
+for cyber-physical PV systems at the microgrid level. Int. J. Electr. Power Energy
+Syst. 150, 109062. https://doi.org/10.1016/j.ijepes.2023.109062.
+Jadidi, S., Badihi, H., Zhang, Y., 2024. Active fault-tolerant and attack-resilient control
+for a renewable microgrid against power-loss faults and data integrity attacks. IEEE
+Trans. Cybern. 54 (4), 2113–2128. https://doi.org/10.1109/TCYB.2023.3305240.
+Jagtap, S.S., S. V. S, S, V., 2021. A hypergraph based Kohonen map for detecting
+intrusions over cyber–physical systems traffic. Future Gener. Comput. Syst. 119,
+84–109. https://doi.org/10.1016/j.future.2021.02.001.
+Jia, M., Zhang, P., 2024. Attack isolation in a water treatment plant. IFAC-PapersOnLine
+58 (4), 496–501. https://doi.org/10.1016/j.ifacol.2024.07.267.
+Jufri, F.H., Widiputra, V., Jung, J., 2019. State-of-the-art review on power grid resilience
+to extreme weather events: definitions, frameworks, quantitative assessment
+methodologies, and enhancement strategies. Appl. Energy 239, 1049–1065. https://
+doi.org/10.1016/j.apenergy.2019.02.017.
+Karacayılmaz, G., Artuner, H., 2024. A novel approach detection for IIoT attacks via
+artificial intelligence. Clust. Comput. https://doi.org/10.1007/s10586-024-04529-
+w.
+Karanfil, M., et al., 2023. Detection of microgrid cyberattacks using network and system
+management. IEEE Trans. Smart Grid 14 (3), 2390–2405. https://doi.org/10.1109/
+TSG.2022.3218934.
+Kaynar, K., Sivrikaya, F., 2016. Distributed attack graph generation. IEEE Trans.
+Dependable Secure Comput. 13 (5), 519–532. https://doi.org/10.1109/
+TDSC.2015.2423682.
+Kayode Saheed, Y., Harazeem Abdulganiyu, O., Ait Tchakoucht, T., 2023a. A novel
+hybrid ensemble learning for anomaly detection in industrial sensor networks and
+SCADA systems for smart city infrastructures. J. King Saud Univ. Comput. Inf. Sci. 35
+(5), 101532. https://doi.org/10.1016/j.jksuci.2023.03.010.
+Kayode Saheed, Y., Harazeem Abdulganiyu, O., Ait Tchakoucht, T., 2023b. A novel
+hybrid ensemble learning for anomaly detection in industrial sensor networks and
+SCADA systems for smart city infrastructures. J. King Saud Univ. Comput. Inf. Sci. 35
+(5), 101532. https://doi.org/10.1016/j.jksuci.2023.03.010.
+Khalid, H.M., Peng, J.C.-H., 2016. A bayesian algorithm to enhance the resilience of
+WAMS applications against cyber attacks. IEEE Trans. Smart Grid 7 (4), 2026–2037.
+https://doi.org/10.1109/TSG.2016.2544854.
+Khan, M.M.S., Giraldo, J.A., Parvania, M., 2022. Attack detection in power distribution
+systems using a cyber-physical real-time reference model. IEEE Trans. Smart Grid 13
+(2), 1490–1499. https://doi.org/10.1109/TSG.2021.3128034.
+Kravchik, M., Shabtai, A., 2018. Detecting cyber attacks in industrial control systems
+using convolutional neural networks. In: Proceedings of the 2018 Workshop on
+Cyber-Physical Systems Security and Privacy. ACM, Toronto Canada, pp. 72–83.
+https://doi.org/10.1145/3264888.3264896.
+Kumar, P., Kumar, R., Kumar, A., Franklin, A.A., Garg, S., Singh, S., 2023. Blockchain
+and deep learning for secure communication in digital twin empowered industrial
+IoT network. IEEE Trans. Netw. Sci. Eng. 10 (5), 2802–2813. https://doi.org/
+10.1109/TNSE.2022.3191601.
+Lakshminarayana, S., Karachiwala, J.S., Teng, T.Z., Tan, R., Yau, D.K.Y., 2019.
+Performance and resilience of cyber-physical control systems with reactive attack
+mitigation. IEEE Trans. Smart Grid 10 (6), 6640–6654. https://doi.org/10.1109/
+TSG.2019.2909357.
+Li, H., Yeo, J.H., Bornsheuer, A.L., Overbye, T.J., 2021. The creation and validation of
+load time series for synthetic electric power systems. IEEE Trans. Power Syst. 36 (2),
+961–969. https://doi.org/10.1109/TPWRS.2020.3018936.
+Li, X., Chadli, M., Tian, Z., Zhang, W., 2024a. Resilient-learning control of cyber–physical
+systems against mixed-type network attacks. IEEE Trans. Syst. Man Cybern. Syst
+1–12. https://doi.org/10.1109/TSMC.2024.3408413.
+Li, X., Chadli, M., Tian, Z., Zhang, W., 2024b. Resilient-learning control of
+cyber–physical systems against mixed-type network attacks. IEEE Trans. Syst. Man
+Cybern. Syst 1–12. https://doi.org/10.1109/TSMC.2024.3408413.
+Liang, G., Zhao, J., Luo, F., Weller, S.R., Dong, Z.Y., 2017a. A review of false data
+injection attacks against modern power systems. IEEE Trans. Smart Grid 8 (4),
+1630–1638. https://doi.org/10.1109/TSG.2015.2495133.
+Liang, G., Weller, S.R., Dong, Z.Y., 2017b. A review of false data injection attacks against
+modern power systems. IEEE Trans. Smart Grid 8 (4).
+Liu, Y., Ning, P., Reiter, M.K., 2011. False data injection attacks against state estimation
+in electric power grids. ACM Trans. Inf. Syst. Secur. 14 (1), 1–33. https://doi.org/
+10.1145/1952982.1952995.
+Liu, Y., Peng, Y., Wang, B., Yao, S., Liu, Z., 2017. Review on cyber-physical systems.
+IEEECAA J. Autom. Sin. 4 (1), 27–40. https://doi.org/10.1109/JAS.2017.7510349.
+Liu, G., Tan, Z., Liang, Z., Chen, H., Zhong, X., 2024. Fractional optimal control for
+malware propagation in internet of underwater things. IEEE Internet Things J. 11
+(7), 11632–11651. https://doi.org/10.1109/JIOT.2023.3331736.
+Lu, K.-D., Zhou, L., Wu, Z.-G., 2024. Representation-learning-based CNN for intelligent
+attack localization and recovery of cyber-physical power systems. IEEE Transact.
+Neural Networks Learn. Syst. 35 (5), 6145–6155. https://doi.org/10.1109/
+TNNLS.2023.3257225.
+Lucic, A., ter Hoeve, M., Tolomei, G., de Rijke, M., Silvestri, F., 2022. CF-GNNExplainer:
+counterfactual explanations for graph neural networks. arXiv: arXiv:2102.03322.
+https://doi.org/10.48550/arXiv.2102.03322.
+S. Lyngaas, ‘cyberattacks are hitting water systems throughout US, biden officials warn
+governors | CNN Politics’. Accessed: December. 4, 2024. [Online]. Available: https
+://edition.cnn.com/2024/03/19/politics/cyberattacks-water-systems-us/index.
+html.
+Mabunda, H.D., Ramotsoela, D.T., Abu-Mahfouz, A.M., 2022. Intrusion detection in
+water distribution systems using machine learning techniques: a survey. In: 2022
+IEEE 31st International Symposium on Industrial Electronics (ISIE), Anchorage, AK,
+USA. IEEE, pp. 418–423. https://doi.org/10.1109/ISIE51582.2022.9831687.
+Machina, V.S.P., Koduru, S.S., Madichetty, S., Mishra, S., 2023. A novel standalone
+implementation of MDNN controller for DC–DC converter resilient to sensor
+attacks—A design approach. IEEE J. Emerg. Sel. Top. Power Electron. 11 (3),
+2805–2815. https://doi.org/10.1109/JESTPE.2023.3242299.
+Mboweni, I.V., Abu-Mahfouz, A.M., Ramotsoela, D.T., 2021. A machine learning
+approach to intrusion detection in water distribution systems – a review. In: IECON
+2021 – 47th Annual Conference of the IEEE Industrial Electronics Society. IEEE,
+Toronto, ON, Canada, pp. 1–7. https://doi.org/10.1109/
+IECON48115.2021.9589237.
+Meydani, A., Shahinzadeh, H., Ramezani, A., Nafisi, H., Gharehpetian, G.B., 2024.
+A review and analysis of attack and countermeasure approaches for enhancing smart
+grid cybersecurity. In: 2024 28th International Electrical Power Distribution Conference
+(EPDC), Zanjan, Iran, Islamic Republic Of: IEEE, pp. 1–19. https://doi.org/10.1109/
+EPDC62178.2024.10571761.
+Mustafa, A., Mazouchi, M., Modares, H., 2023. Secure event-triggered distributed kalman
+filters for state estimation over wireless sensor networks. IEEE Trans. Syst. Man
+Cybern. Syst 53 (2), 1268–1283. https://doi.org/10.1109/TSMC.2022.3195121.
+Nafees, M.N., Saxena, N., Cardenas, A., Grijalva, S., Burnap, P., 2023. Smart grid cyber-
+physical situational awareness of complex operational technology attacks: a review.
+ACM Comput. Surv. 55 (10), 1–36. https://doi.org/10.1145/3565570.
+Nan, C., Sansavini, G., 2017. A quantitative method for assessing resilience of
+interdependent infrastructures. Reliab. Eng. Syst. Saf. 157, 35–53. https://doi.org/
+10.1016/j.ress.2016.08.013.
+Narayanan, S.N., Joshi, A., Bose, R., 2022. ABATe: automatic behavioral abstraction
+technique to detect anomalies in smart cyber-physical systems. IEEE Trans.
+Dependable Secure Comput. 19 (3), 1673–1686. https://doi.org/10.1109/
+TDSC.2020.3034331.
+Nedeljkovic, D., Jakovljevic, Z., 2022. CNN based method for the development of cyber-
+attacks detection algorithms in industrial control systems. Comput. Secur. 114,
+102585. https://doi.org/10.1016/j.cose.2021.102585.
+ngoclesydney, ‘Anomaly-Detection-with-Swat-Dataset/Anomaly_3_attacks_25_01.ipynb
+at master ⋅Ngoclesydney/anomaly-detection-With-swat-dataset’, GitHub. Accessed:
+December. 1, 2025. [Online]. Available: https://github.com/ngoclesydney/Anomal
+y-Detection-with-Swat-Dataset/blob/master/Anomaly_3_attacks_25_01.ipynb.
+Nguyen, T.T., Reddi, V.J., 2023. Deep reinforcement learning for cyber security. IEEE
+Transact. Neural Networks Learn. Syst. 34 (8), 3779–3795. https://doi.org/
+10.1109/TNNLS.2021.3121870.
+Ntalampiras, S., Potamitis, I., 2023. Few-shot learning for modeling cyber physical
+systems in non-stationary environments. Neural Comput. Appl. 35 (5), 3853–3863.
+https://doi.org/10.1007/s00521-022-07903-0.
+Olowononi, F.O., Rawat, D.B., Liu, C., 2021. Resilient machine learning for networked
+cyber physical systems: a survey for machine learning security to securing machine
+learning for CPS. IEEE Commun. Surv. Tutor. 23 (1), 524–552. https://doi.org/
+10.1109/COMST.2020.3036778.
+P, S., Krithivasan, K., P. S, Sriram V.S., S., 2020. Detection of cyberattacks in industrial
+control systems using enhanced principal component analysis and hypergraph-based
+convolution neural network (EPCA-HG-CNN). IEEE Trans. Ind. Appl. 56 (4),
+4394–4404. https://doi.org/10.1109/TIA.2020.2977872.
+Pacheco, J., Benitez, V.H., Felix-Herran, L.C., Satam, P., 2020. Artificial neural networks-
+based intrusion detection system for internet of things fog nodes. IEEE Access 8,
+73907–73918. https://doi.org/10.1109/ACCESS.2020.2988055.
+Palanimuthu, K., et al., 2023. Reinforcement learning-based resilient power
+maximization and regulation control for large-scale wind turbines under cyber
+actuator attacks. Sustain. Energy Grids Netw. 36, 101210. https://doi.org/10.1016/
+j.segan.2023.101210.
+Pang, Z.-H., et al., 2022. Security of networked control systems subject to deception
+attacks: a survey. Int. J. Syst. Sci. 53 (16), 3577–3598. https://doi.org/10.1080/
+00207721.2022.2143735.
+Patriarca, R., Simone, F., Di Gravio, G., 2022. Modelling cyber resilience in a water
+treatment and distribution system. Reliab. Eng. Syst. Saf. 226, 108653. https://doi.
+org/10.1016/j.ress.2022.108653.
+Pearl, J., 2009. Causality: Models, Reasoning and Inference, second ed. Cambridge
+University Press, USA.
+Presekal, A., S¸ tefanov, A., Rajkumar, V.S., Palensky, P., 2023. Attack graph model for
+cyber-physical power systems using hybrid deep learning. IEEE Trans. Smart Grid 14
+(5), 4007–4020. https://doi.org/10.1109/TSG.2023.3237011.
+R. Yin and L. Varga
+
+Engineering Applications of Artificial Intelligence 166 (2026) 113542
+24
+Raman, M.R.G., Mathur, A.P., 2022. A hybrid physics-based data-driven framework for
+anomaly detection in industrial control systems. IEEE Trans. Syst. Man Cybern. Syst.
+52 (9), 6003–6014. https://doi.org/10.1109/TSMC.2021.3131662.
+Ramotsoela, D.T., Hancke, G.P., Abu-Mahfouz, A.M., 2019. Attack detection in water
+distribution systems using machine learning. Hum.-Centric Comput. Inf. Sci. 9 (1),
+13. https://doi.org/10.1186/s13673-019-0175-8.
+Rath, S., Das, T., Sengupta, S., 2024. Improvise, adapt, overcome: dynamic resiliency
+against unknown attack vectors in microgrid cybersecurity games. IEEE Trans. Smart
+Grid 15 (4), 4245–4258. https://doi.org/10.1109/TSG.2024.3372643.
+Saxena, A., Shankar, R., Kumar, C., Parida, S.K., 2024. A resilient frequency regulation
+for enhancing power system security against hybrid cyber-attacks. IEEE Trans. Ind.
+Appl. 60 (3), 4583–4597. https://doi.org/10.1109/TIA.2024.3354228.
+Schneider, P., B¨ottinger, K., 2018. High-performance unsupervised anomaly detection for
+cyber-physical system networks. In: Proceedings of the 2018 Workshop on Cyber-
+Physical Systems Security and Privacy. ACM, Toronto Canada, pp. 1–12. https://doi.
+org/10.1145/3264888.3264890.
+Segovia-Ferreira, M., Rubio-Hernan, J., Cavalli, A., Garcia-Alfaro, J., 2024. A survey on
+cyber-resilience approaches for cyber-physical systems. ACM Comput. Surv. 56 (8),
+1–37. https://doi.org/10.1145/3652953.
+Sharmeen, S., Huda, S., Abawajy, J., Ahmed, C.M., Hassan, M.M., Fortino, G., 2022. An
+advanced boundary protection control for the smart water network using
+semisupervised and deep learning approaches. IEEE Internet Things J. 9 (10),
+7298–7310. https://doi.org/10.1109/JIOT.2021.3100461.
+Shereen, E., Dan, G., 2020. Model-based and data-driven detectors for time
+synchronization attacks against PMUs. IEEE J. Sel. Area. Commun. 38 (1), 169–179.
+https://doi.org/10.1109/JSAC.2019.2952017.
+Shuhan, W., Chengzhi, Y., Xiaoxiao, L., Siyu, W., 2024. Smart infrastructure design:
+machine learning solutions for securing modern cities. Sustain. Cities Soc. 107,
+105439. https://doi.org/10.1016/j.scs.2024.105439.
+Sikder, M.N.K., Nguyen, M.B.T., Elliott, E.D., Batarseh, F.A., 2023. Deep H2O: cyber
+attacks detection in water distribution systems using deep learning. J. Water Process
+Eng. 52, 103568. https://doi.org/10.1016/j.jwpe.2023.103568.
+Stojanovi´c, B., Neuschmied, H., Winter, M., Kleb, U., 2022. Enhanced anomaly detection
+for cyber-attack detection in smart water distribution systems. In: Proceedings of the
+17th International Conference on Availability, Reliability and Security, Vienna Austria:
+ACM, pp. 1–7. https://doi.org/10.1145/3538969.3543796.
+Suaboot, J., et al., 2021. A taxonomy of supervised learning for IDSs in SCADA
+environments. ACM Comput. Surv. 53 (2), 1–37. https://doi.org/10.1145/3379499.
+Sukiasyan, A., Badikyan, H., Pedrosa, T., Leitao, P., 2022. Secure data exchange in
+industrial internet of things. Neurocomputing 484, 183–195. https://doi.org/
+10.1016/j.neucom.2021.07.101.
+Sun, G., Cong, Y., Dong, J., Wang, Q., Lyu, L., Liu, J., 2022. Data poisoning attacks on
+federated machine learning. IEEE Internet Things J. 9 (13), 11365–11375. https://
+doi.org/10.1109/JIOT.2021.3128646.
+Tabassum, T., Toker, O., Khalghani, M.R., 2024a. Cyber–physical anomaly detection for
+inverter-based microgrid using autoencoder neural network. Appl. Energy 355,
+122283. https://doi.org/10.1016/j.apenergy.2023.122283.
+Tabassum, T., Lim, S., Khalghani, M.R., 2024b. Artificial intelligence-based detection and
+mitigation of cyber disruptions in microgrid control. Elec. Power Syst. Res. 226,
+109925. https://doi.org/10.1016/j.epsr.2023.109925.
+Tahsini, A., Dunstatter, N., Guirguis, M., Ahmed, C., IEEE, 2020. ‘DeepBLOC: a
+Framework for Securing CPS through Deep Reinforcement Learning on Stochastic
+Games’. In: Texas State University System.
+Takiddin, A., Ismail, M., Zafar, U., Serpedin, E., 2021. Robust electricity theft detection
+against data poisoning attacks in smart grids. IEEE Trans. Smart Grid 12 (3),
+2675–2684. https://doi.org/10.1109/TSG.2020.3047864.
+Ti, B., Li, G., Zhou, M., Wang, J., 2022. Resilience assessment and improvement for
+cyber-physical power systems under typhoon disasters. IEEE Trans. Smart Grid 13
+(1), 783–794. https://doi.org/10.1109/TSG.2021.3114512.
+Tian, Y., Zhang, H., Liu, Y., Zhao, N., Mathiyalagan, K., 2024. Event-triggered adaptive
+secure tracking control for nonlinear cyber–physical systems against unknown
+deception attacks. Math. Comput. Simulat. 221, 79–93. https://doi.org/10.1016/j.
+matcom.2024.02.022.
+L. Trakimaviˇcius, ‘west must secure Baltic wind, Renewable Energy Sources - CEPA’.
+Accessed: December. 4, 2024. [Online]. Available: https://cepa.org/article/west-m
+ust-secure-baltic-sea-renewable-energy-resources/.
+Vaswani, A., et al., 2023. Attention is all you need. arXiv: arXiv:1706.03762. https://doi.
+org/10.48550/arXiv.1706.03762.
+Vu, T.V., Nguyen, B.L.H., Cheng, Z., Chow, M.-Y., Zhang, B., 2020. Cyber-physical
+microgrids: toward future resilient communities. IEEE Ind. Electron. Mag. 14 (3),
+4–17. https://doi.org/10.1109/MIE.2019.2958039.
+Wang, P., Govindarasu, M., 2020. Multi-agent based attack-resilient system integrity
+protection for smart grid. IEEE Trans. Smart Grid 11 (4), 3447–3456. https://doi.
+org/10.1109/TSG.2020.2970755.
+Wang, D., et al., 2023. Interdependent causal networks for root cause localization. In:
+Proceedings of the 29th ACM SIGKDD Conference on Knowledge Discovery and Data
+Mining. Long Beach, CA USA, pp. 5051–5060. https://doi.org/10.1145/
+3580305.3599849. ACM.
+Wang, Y., et al., 2024. Interdependency matters: graph alignment for multivariate time
+series anomaly detection. arXiv: arXiv:2410.08877. https://doi.org/10.48550/
+arXiv.2410.08877.
+Wei, F., Wan, Z., He, H., 2020. Cyber-attack recovery strategy for smart grid based on
+deep reinforcement learning. IEEE Trans. Smart Grid 11 (3), 2476–2486. https://doi.
+org/10.1109/TSG.2019.2956161.
+Wei, C., Xie, X., Sun, J., Park, J.H., 2024. Attack-resilient dynamic-memory event-
+triggered control for fuzzy switched systems with persistent dwell-time. IEEE Trans.
+Fuzzy Syst. 32 (5), 3154–3164. https://doi.org/10.1109/TFUZZ.2024.3364754.
+Wu, J., Peng, C., Yang, H., Wang, Y.-L., 2022. Recent advances in event-triggered
+security control of networked systems: a survey. Int. J. Syst. Sci. 53 (12), 2624–2643.
+https://doi.org/10.1080/00207721.2022.2053893.
+Wu, X., et al., 2025. CATCH: CHANNEL-AWARE MULTIVARIATE TIME SERIES
+ANOMALY DETECTION VIA FREQUENCY PATCHING. ’.
+Xu, J., Wu, H., Wang, J., Long, M., 2022. Anomaly transformer: time series anomaly
+detection with association discrepancy. arXiv: arXiv:2110.02642. https://doi.org/
+10.48550/arXiv.2110.02642.
+Yang, H., et al., 2021. Intelligent reflecting surface assisted anti-jamming
+communications: a fast reinforcement learning approach. IEEE Trans. Wireless
+Commun. 20 (3).
+Yang, Y., Zhang, C., Zhou, T., Wen, Q., Sun, L., 2023. DCdetector: dual attention
+contrastive representation learning for time series anomaly detection. In:
+Proceedings of the 29th ACM SIGKDD Conference on Knowledge Discovery and Data
+Mining, pp. 3033–3045. https://doi.org/10.1145/3580305.3599295.
+Yang, X., Howley, E., Schukat, M., 2024. ADT: time series anomaly detection for cyber-
+physical systems via deep reinforcement learning. Comput. Secur. 141, 103825.
+https://doi.org/10.1016/j.cose.2024.103825.
+Yazdinejad, A., Kazemi, M., Parizi, R.M., Dehghantanha, A., Karimipour, H., 2023. An
+ensemble deep learning model for cyber threat hunting in industrial internet of
+things. Digit. Commun. Netw. 9 (1), 101–110. https://doi.org/10.1016/j.
+dcan.2022.09.008.
+Ye, Z., Yang, H., Zheng, M., 2021. Using modified prediction interval-based machine
+learning model to mitigate data attack in microgrid. Int. J. Electr. Power Energy Syst.
+129, 106847. https://doi.org/10.1016/j.ijepes.2021.106847.
+Yin, R., Varga, L., 2025. From prediction to action: interpretable multivariate time series
+analysis under uncertainty in real world flood-affected water networks. SSRN.
+https://doi.org/10.2139/ssrn.5229790.
+Yin, R., Xu, H., Wei, J., Varga, L., 2025. Addressing data sharing challenges for leakage
+management in water distribution networks – An MCDM-based assessment of
+barriers and solutions. J. Environ. Manage. 391, 126481. https://doi.org/10.1016/j.
+jenvman.2025.126481.
+Yoon, S., Cho, J.-H., Kim, D.S., Moore, T.J., Free-Nelson, F., Lim, H., 2020. Attack graph-
+based moving target defense in software-defined networks. IEEE Trans. Netw. Serv.
+Manag. 17 (3), 1653–1668. https://doi.org/10.1109/TNSM.2020.2987085.
+Yu, J.J.Q., Hou, Y., Li, V.O.K., 2018. Online false data injection attack detection with
+wavelet transform and deep neural networks. IEEE Trans. Ind. Inf. 14 (7),
+3271–3280. https://doi.org/10.1109/TII.2018.2825243.
+Yu, Y., Liu, G.-P., Huang, Y., Hu, W., 2024. Optimal resilient tracking control for
+networked systems with multichannels under attacks. IEEE Trans. Ind. Electron. 71
+(3), 3001–3011. https://doi.org/10.1109/TIE.2023.3269465.
+Yuan, H., Yuan, Y., Zhong, Y., Xia, Y., 2024. Incomplete information-based resilient
+strategy design for cyber-physical systems under stochastic communication protocol.
+IEEE Trans. Ind. Electron. 1–10. https://doi.org/10.1109/TIE.2024.3363738.
+Zeng, L., Qiu, D., Sun, M., 2022. Resilience enhancement of multi-agent reinforcement
+learning-based demand response against adversarial attacks. Appl. Energy 324,
+119688. https://doi.org/10.1016/j.apenergy.2022.119688.
+Zhang, X., 2025. cnulab/HiAD. Python [Online]. Available: https://github.com/cn
+ulab/HiAD. (Accessed 1 December 2025).
+Zhang, Y., et al., 2020. Cyber physical security analytics for transactive energy systems.
+IEEE Trans. Smart Grid 11 (2), 931–941. https://doi.org/10.1109/
+TSG.2019.2928168.
+Zhang, D., Wang, Q.-G., Feng, G., Shi, Y., Vasilakos, A.V., 2021a. A survey on attack
+detection, estimation and control of industrial cyber–physical systems. ISA Trans.
+116, 1–16. https://doi.org/10.1016/j.isatra.2021.01.036.
+Zhang, L., Lu, P., Kong, F., Chen, X., Sokolsky, O., Lee, I., 2021b. Real-time attack-
+recovery for cyber-physical systems using linear-quadratic regulator. ACM Trans.
+Embed. Comput. Syst. 20 (5s), 79:1–79:24. https://doi.org/10.1145/3477010.
+Zhang, F., et al., 2023. Constructing cyber-physical system testing suites using active
+sensor fuzzing. IEEE Trans. Software Eng. 49 (11), 4829–4845. https://doi.org/
+10.1109/TSE.2023.3309330.
+Zhao, K., Zhang, L., 2024. CAUSALITY-INSPIRED SPATIAL-TEMPORAL EXPLA-
+NATIONS FOR DYNAMIC GRAPH NEURAL NETWORKS.
+Zhao, P., Gu, C., Ding, Y., Liu, H., Bian, Y., Li, S., 2021a. Cyber-resilience enhancement
+and protection for uneconomic power dispatch under cyber-attacks. IEEE Trans.
+Power Deliv. 36 (4), 2253–2263. https://doi.org/10.1109/TPWRD.2020.3038065.
+Zhao, P., et al., 2021b. A cyber-secured operation for water-energy nexus. IEEE Trans.
+Power Syst. 36 (4), 3105–3117. https://doi.org/10.1109/TPWRS.2020.3043757.
+Zhu, J., Li, K., Mai, Z., Xie, H., AbdAlmageed, W., Abraham, Z., 2025. Attention-driven
+causal discovery: from transformer matrices to granger causal graphs for non-
+stationary time-series data. In: ICASSP 2025 - 2025 IEEE International Conference on
+Acoustics, Speech and Signal Processing (ICASSP). IEEE, Hyderabad, India, pp. 1–5.
+https://doi.org/10.1109/ICASSP49660.2025.10889219.
+Zizzo, G., Hankin, C., Maffeis, S., Jones, K., 2020. Adversarial attacks on time-series
+intrusion detection for industrial control systems. In: 2020 IEEE 19th International
+Conference on Trust, Security and Privacy in Computing and Communications
+(TrustCom). IEEE, Guangzhou, China, pp. 899–910. https://doi.org/10.1109/
+TrustCom50675.2020.00121.
+ADAPT dataset - dataset - NASA open data portal [Online]. Available: https://data.nasa.
+gov/dataset/adapt-dataset. (Accessed 1 December 2025).
+Aurora Generator Test - Wikiwand [Online]. Available: https://www.wikiwand.com/en
+/articles/Aurora_Generator_Test. (Accessed 10 December 2024).
+Batadal [Online]. Available: https://www.batadal.net/. (Accessed 1 December 2025).
+R. Yin and L. Varga
+
+Engineering Applications of Artificial Intelligence 166 (2026) 113542
+25
+Cyber-Physical Systems/internet of things testbed, NIST, Accessed: December. 1, 2025.
+[Online]. Available: https://www.nist.gov/programs-projects/cyber-physical-syste
+msinternet-things-testbed.
+Grid DATA | ARPA-e [Online]. Available: https://arpa-e.energy.gov/programs-and-initia
+tives/view-all-programs/grid-data. (Accessed 1 December 2025).
+Home • PowerCyberSec: cybersecurity for the smart grid lab • Iowa State University’.
+Accessed: December. 1, 2025. [Online]. Available: https://www.ece.iastate.
+edu/powercybersec/.
+The Morris Internet Worm [Online]. Available: https://web.archive.org/web/2015050
+7040714/https://snowplow.org/tom/worm/worm.html. (Accessed 3 September
+2024).
+.ﺡﻡﻝﻩﺱﺍﯼﺏﺭﯼﻩﮎﺭﻩﺍﯼﺝﻡﻩﻭﺭﯼﺍﺱﻝﺍﻡﯼﻡﻭﺝﺏﻕﻁﻉﺁﺏﻡﻥﻁﻕﻩﺍﯼﺩﺭﺍﯼﺭﻝﻥﺩﺵﺩ| ﺍﯼﺭﺍﻥﺍﯼﻥﺕﺭﻥﺵﻥﺍﻝ
+[Online]. Available: https://www.iranintl.com/202312141554. (Accessed 4
+December 2024).
+R. Yin and L. Varga

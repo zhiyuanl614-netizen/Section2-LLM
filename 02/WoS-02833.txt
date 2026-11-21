@@ -1,0 +1,1615 @@
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 40, NO. 5, SEPTEMBER 2025
+3833
+Assessing Power and Water Network Resilience
+When Water Pumps Provide Frequency Regulation
+Anna Stuhlmacher
+, Member, IEEE, Seth Guikema
+, and Johanna L. Mathieu
+, Senior Member, IEEE
+Abstract—Pumps in drinking water distribution networks can
+be operated as ﬂexible, controllable loads to help support the elec-
+tric power grid, e.g., by providing frequency regulation. However,
+departures from conventional water network operation should not
+degrade the ability of the water and power networks to respond to
+high impact low frequency events. In this paper, we evaluate the
+resilience of water and power distribution networks surrounding a
+storm-induced power outage given an optimal pumping strategy
+that minimizes electricity costs and is capable of offering fre-
+quency regulation. The water network resilience under optimal
+water pumping strategies is compared with its resilience under a
+conventional rule-based water pumping strategy. In a case study,
+we consider an extreme wind event that causes power outages in the
+powerdistributionnetworkimpactingpumpsinthewaternetwork.
+Wefoundthattheoptimalcontrolstrategiesaresigniﬁcantlylessex-
+pensive than the traditional rule-based strategy but the water tanks
+levels are lower within the optimal pumping strategies, potentially
+reducing water service availability during long power outages.
+However, we also observed that the tank levels remain further from
+their limits when the optimal pumping strategy provides frequency
+regulation in addition to minimizing electricity costs, resulting in
+improved resilience metrics.
+Index Terms—Extreme weather, frequency regulation, power
+distribution network, resilience, water network.
+NOMENCLATURE
+Sets
+E
+Water network edges.
+J
+Water network junctions.
+K
+Power distribution network buses.
+L
+Power distribution network lines.
+N
+Water network nodes.
+P
+Water network pumps.
+R
+Water network reservoirs.
+S
+Water network storage tanks.
+T
+Time steps in the scheduling problem.
+Received 6 April 2024; revised 30 July 2024 and 8 November 2024; accepted
+3 February 2025. Date of publication 6 February 2025; date of current version 21
+August 2025. This work was supported in part by NSF under Award 2222096.
+Paper no. TPWRS-00578-2024. (Corresponding author: Anna Stuhlmacher.)
+Anna Stuhlmacher is with the Department of Electrical and Computer Engi-
+neering, Michigan Technological University, Houghton, MI 49931 USA (e-mail:
+annastu@mtu.edu).
+Seth Guikema is with the Department of Industrial and Operations Engineer-
+ing, University of Michigan, Ann Arbor, MI 48109 USA, and also with the
+Department of Civil and Environmental Engineering, University of Michigan,
+Ann Arbor, MI 48109 USA (e-mail: sguikema@umich.edu).
+Johanna L. Mathieu is with the Department of Electrical Engineering and
+Computer Science, University of Michigan, Ann Arbor, MI 48109 USA (e-mail:
+jlmath@umich.edu).
+Color versions of one or more ﬁgures in this article are available at
+https://doi.org/10.1109/TPWRS.2025.3539288.
+Digital Object Identiﬁer 10.1109/TPWRS.2025.3539288
+Parameters
+Ac
+Conductor area.
+b1
+ij, b0
+ij
+Head gain coefﬁcients for pump ij.
+c
+Tank level slack variable penalty coefﬁcient.
+c1
+ij, c0
+ij
+Pump power parameters of pump ij.
+dt
+j
+Water demand at junction j, time t.
+f t,1
+ij , f t,0
+ij
+Linearized parameters of edge ij, time t.
+ˆhj
+Elevation head of node j.
+h
+Height of utility pole.
+Hj, Hj
+Min., max. head for node j.
+kij
+Resistance coefﬁcient of pipe ij.
+N
+Number of scenarios.
+V t
+Three-second gust wind speed at time t.
+wij, wij
+Min., max. normalized speed of pump ij.
+xij
+Maximum ﬂow rate of pump ij.
+y
+Modiﬁed age of the utility pole.
+γj
+Cross-sectional area of tank j.
+ΔT
+Duration of time step.
+θ
+Angle between wind direction and conductors.
+ν
+Pipe head loss exponent.
+πt
+ij
+Energy price at time t for pump ij, time t.
+πt
+fr
+Price of frequency regulation capacity at time t.
+φ
+Tank water level tolerance.
+Decision Variables
+F t
+ij ∈F
+Frequency regulation capacity of pump ij, time t.
+Ht
+j
+Hydraulic head at node j, time t.
+pt
+ij ∈p
+3-phase real power demand of pump ij, time t.
+s
+Tank level slack variable.
+wt
+ij
+Normalized speed of pump ij, time t.
+W t
+ij
+Normalized speed squared of pump ij, time t.
+xt
+ij
+Flow rate of water through pipe ij, time t.
+zt
+ij
+On/off status of pump ij, time t.
+Resilience Metrics
+P t
+Network performance at time t.
+Rn
+Network resilience metric of scenario n.
+Subscripts
+FR
+Frequency regulation.
+line
+Active lines.
+load
+Connected loads.
+N
+Operation under normal conditions.
+pressure
+Pressure met.
+tank
+Final tank capacity.
+W
+Operation under wind-induced outage conditions.
+wsa
+Water service availability.
+0885-8950 © 2025 IEEE. All rights reserved, including rights for text and data mining, and training of artiﬁcial intelligence and similar technologies.
+Personal use is permitted, but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:57:29 UTC from IEEE Xplore.  Restrictions apply. 
+
+3834
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 40, NO. 5, SEPTEMBER 2025
+I. INTRODUCTION
+A
+S MORE intermittent renewable energy sources are added
+to the electric power grid, more sources of ﬂexibility are
+needed to ensure safe grid operation. There is growing interest in
+utilizing water pumps in drinking water distribution networks as
+a source of ﬂexibility for the electric power grid. Pumps in water
+distribution networks can be treated as ﬂexible loads, capable
+of shifting their power consumption both temporally (utilizing
+water storage tanks) and spatially (across multiple pumping
+stations). Recent work focuses on optimizing the operation of
+water distribution networks given the interactions and intercon-
+nection between the water network and the electric power grid
+(for example, to leverage the water network to provide services
+to the power grid), such as [1], [2], [3], [4], [5], [6], [7], [8], [9],
+[10].Inapilotprogram,thePennsylvaniaAmericanWaterutility
+successfully provided frequency regulation to PJM, resulting in
+electricity cost savings of 2-3% by adjusting the speed of a single
+variable speed pump [11]. This pilot program demonstrates the
+ability of variable speed pumps to adjust on the seconds-scale
+to provide frequency regulation, and also the value provided
+by these actions. In [12], the ﬂexibility potential of leveraging
+drinking water pumps to provide grid services was found to be
+a sizable asset. The estimated power and energy capacity was
+around 21 GW and 925 GWh in the United States, respectively.
+However, we need to ensure that the proposed operational
+choices do not degrade the resilience of the networks compared
+to the resilience of conventionally implemented practices. Most
+water distribution networks currently operate using heuristic
+control rules that adjust pump and valve settings given time
+patterns or events (e.g., triggered by tank water level and/or
+nodal pressures). In this work, we investigate the performance
+of the water distribution network before, during, and after a
+storm-induced power outage when the supply pumps are opti-
+mally scheduled and controlled to provide grid services.
+There is a major focus on resilience in power networks
+(e.g., [13], [14], [15]) and in water networks (e.g., [16]) since
+both networks are considered critical infrastructure systems.
+However, few papers investigate the resilience across intercon-
+nected power and water distribution systems with the exception
+of [17], [18], [19], which propose coupled power-water network
+resilience metrics. These works help capture the interactions
+between power and water networks. However, to the best of
+our knowledge, no work considers the impact of optimal water
+distribution network control on the resilience of power and water
+distribution networks.
+The goal of this paper is to evaluate the operational resilience
+of the power and water distribution network to hazard events
+under different water pumping operational strategies. Speciﬁ-
+cally, we consider optimal water pumping strategies subject to
+water ﬂow constraints that minimize pump electricity costs and
+provide frequency regulation to the bulk transmission system.
+We solve for the pump schedules and frequency regulation
+capacity bid into the ancillary service market. It should be noted
+that we are considering frequency regulation (also known as sec-
+ond frequency control or load frequency control) not frequency
+response(alsoknownasdroopcontrolorprimaryfrequencycon-
+trol). Speciﬁcally, to provide frequency regulation, the pumps
+must adjust their power consumption based on a frequency regu-
+lation signal sent by the independent system operator. Real-time
+frequency regulation control actions are determined based on the
+afﬁnity laws. We then evaluate the strategies within a hydraulic
+simulation. Metrics (e.g., the number of power distribution lines
+online and the amount of water demand served) quantify the
+resilience of the water and power distribution networks after a
+wind event that causes power outages, and network performance
+under the optimal pump control strategy is compared with
+the performance under conventional rule-based water network
+operation.
+Some past approaches have considered water pumping pro-
+viding frequency regulation, e.g., [5], [20]. In previous work, we
+considered providing frequency regulation and voltage support
+concurrently with ﬁxed speed pumps [5]. In contrast, here,
+we consider variable speed pumps which are better suited to
+respond to a frequency regulation signal by adjusting their speed
+set point. In [20], the authors solve for demand response and
+frequency regulation capacity in a radial 15-node test network
+using variable speed pumps; however, they do not specify or sim-
+ulate the real-time pump speed adjustments given a frequency
+regulation signal, as we do here.
+An important aspect of our work is ensuring that optimal wa-
+ter pumping strategies produce tractable and feasible solutions
+within nonconvex hydraulic simulations. When evaluating some
+of the existing modeling and approximation approaches within
+a hydraulic simulator, we observed cases where the tank levels
+were drained or ﬁlled more than expected. This led to cases
+with infeasible solutions or reduced water service availability.
+To address this, we improve and extend upon existing optimal
+water pumping formulations that provide frequency regulation
+in order for the formulation to apply to variable speed pumps and
+preserve accuracy. Speciﬁcally, we use an iterative mixed integer
+linear programming approach similar to [21], that incorporates
+variable speed pumps while using soft tank level constraints to
+improve convergence. This approach is evaluated in Section V
+with a high-ﬁdelity hydraulic simulator with two-second time
+steps.
+In summary, the contributions of this work are 1) improv-
+ing upon optimal water pumping formulations to incorporate
+variable speed pumps while ensuring tractability and accuracy
+within the original problem, 2) using a hydraulic simulator to
+compare the accuracy and performance of the rule-based and
+optimal water ﬂow strategies under normal and extreme condi-
+tions, 3) simulating a wind-based hazard event and investigating
+the impact of pump control strategies on the water network’s
+operational resilience in a case study, and 4) discussing the
+implications of our results and how network resilience can be
+incorporated in optimal water pumping problems.
+The rest of this paper is organized as follows: Section II
+provides an overview of our approach and the considered pump
+control strategies. In Section III, we present the hazard modeling
+and simulation methods as well as discuss how we quantify and
+compare the resilience of the power and water network under
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:57:29 UTC from IEEE Xplore.  Restrictions apply. 
+
+STUHLMACHER et al.: ASSESSING POWER AND WATER NETWORK RESILIENCE WHEN WATER PUMPS PROVIDE FREQUENCY REGULATION
+3835
+Fig. 1.
+Flowchart of process.
+different control strategies. The optimal pumping problems are
+fully described in Section IV. Last, we present the results of
+a case study in Section V and provide concluding remarks in
+Section VI.
+II. PROBLEM DESCRIPTION
+We consider interconnected power and water distribution
+networks experiencing a wind hazard event that may damage
+the utility poles in the power distribution network. Underground
+water distribution systems are indirectly impacted by wind
+events: power outages in the power distribution network cause
+water pumping stations to shut down which can lead to reduced
+water pressures and water shortages in the water distribution
+network. While power outages impact both the power and water
+distribution network, power outages do not typically cause long-
+term damage to the water distribution network [22]. It should be
+noted that a water distribution network may have fuel-based
+backup pumps that may eliminate or postpone water delivery
+issues. However, backup pumps are usually insufﬁcient to meet
+demand for signiﬁcant power outages [23].
+A. Problem Approach
+Fig. 1 provides a general outline of our approach to evaluate
+the resilience of the power and water distribution networks
+under different operational strategies and power outage scenar-
+ios. We ﬁrst determine the planned pump operation for three
+different control strategies, which are outlined in Section II-B
+and formulated in Section IV. Given the planned pump oper-
+ation, we evaluate the operational resilience of the power and
+water network experiencing a wind hazard event that damages
+wooden utility poles. To do this, we simulate N large wind event
+scenarios and evaluate the power distribution network’s (and
+correspondingly the water distribution network’s) vulnerability
+to the considered hazard under different operational schemes.
+Probabilistic fragility curves are used to generate N wind hazard
+event scenarios (see Section III-A). In this paper, we compare
+how different operational control strategies pre-position a water
+distribution network to respond to storm-induced power outages.
+For each wind event scenario, we run hydraulic simulations
+given the pump outages and restorations. We then compute
+power and water distribution network resilience metrics for all
+scenarios. We describe the hydraulic simulator in Section III-B
+and the resilience metrics in Section III-C.
+B. Water Distribution Network Operational Control Strategies
+Inthiswork,weevaluatenetworkresilienceunderthreediffer-
+ent operational strategies. The operational control strategies are
+employed under normal operation, or pre-contingency. When
+the water network is experiencing pump outages, the water
+system operator would prioritize supplying sufﬁcient water to
+consumers at adequate water pressures, over minimizing costs.
+1) Rule-Based Control (Rule): We compare our optimal
+pumping strategies against the rule-based controls that are tra-
+ditionally used by water system operators. Control rules in
+EPANET can adjust the status and setting of pumps and valves
+based on simulation time triggers (e.g., turn pump 2 off at 5:00
+am) or network conditions (e.g., turn on pump 1 if the tank
+pressure goes below ﬁve meters).
+2) Optimal Water Flow Control (OWF): We optimally solve
+forthewaterpumpoperationsubjecttothewaterﬂowconstraints
+while minimizing water pumping electricity costs. We formulate
+this problem as a mixed-integer linear program that we solve
+iteratively, which is described in Section IV-B.
+3) Optimal Water Flow Control + Frequency Regulation
+(OWF+FR): We optimize the water pump operation to provide
+frequency regulation subject to the water ﬂow constraints. We
+minimize the operational costs, i.e., the electricity cost of pump
+power consumption minus the proﬁt associated with providing
+frequency regulation capacity. We solve for the pump schedule
+and frequency regulation capacity that can be provided in the
+ancillary service market over a 24-hour scheduling horizon. In
+real time, we adjust the pump speed to respond to the frequency
+regulation signal using the afﬁnity laws. The OWF+FR for-
+mulation and the frequency regulation signal adjustments are
+described in Section IV-C.
+III. WIND HAZARD EVENT MODELING AND SIMULATION
+In this section, we ﬁrst describe modeling wind hazard events
+and the subsequent damage states of the wooden utility poles in
+the power distribution network. We then describe the hydraulic
+simulator and the metrics used to evaluate the resilience of the
+power and water networks.
+A. Hazard Simulation and Outage States
+We consider a multi-period wind event that can damage
+wooden utility poles. The damage states of the wooden utility
+poles determine the outage statuses of the lines and buses within
+the power distribution network as well as the power outage
+statuses of the water pumps. We consider N scenarios, or repli-
+cations, of a wind hazard event in order to evaluate the resilience
+of the networks under a range of damage state outcomes. Below
+are the steps used to generate the outage states of the power and
+water distribution networks given a wind event.
+1) Wind-Based Hazard Event: For each scenario, the start
+time of the wind event is randomly generated from a uniform
+distribution. This allows us to consider the impact of hazards
+occurring at different times during the simulation horizon. Sim-
+ilar to [15], we assume time-varying, deterministic wind speeds
+that are uniform over the entire power distribution network. It
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:57:29 UTC from IEEE Xplore.  Restrictions apply. 
+
+3836
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 40, NO. 5, SEPTEMBER 2025
+Fig. 2.
+Probability of wooden utility pole failure as a function of the three-
+second gust wind speed. Fragility curves are depicted given the pole parameters
+used in the case study for varying wind directions θ with respect to the conductor
+orientation.
+should be noted that we could also simulate the wind ﬁelds with
+spatial resolution, e.g., [24].
+2) Fragility Curves: For each scenario, we determine the
+damage states of the wooden utility poles in the power dis-
+tribution network using fragility curves. A fragility curve is a
+probabilistic analysis of a speciﬁc network component’s perfor-
+mance under extreme conditions (see Fig. 2). For instance, a
+wooden utility pole can have a probability of failure from zero
+(unaffected) to one (critical, 100% chance of failure) given the
+wind speed intensity. We use the fragility curves of wooden
+utility poles for strong wind events developed in [25]. A utility
+pole’s probability of failure during wind events is estimated
+given information on the poles (class, age, and height), con-
+ductors (number, diameter, orientation, and span length), and
+wind (speed and direction) [25]. The fragility curve is modeled
+with a lognormal cumulative distribution function
+Pf(V t, y, θ, Ac, h) = Φ
+ln(2.24V t) −μ(y, θ, Ac, h)
+σ(y, θ, Ac, h)
+
+, (1)
+where Pf is the probability of failure (-), V t is the three-second
+gust wind speed at time step t (m/s), y is the modiﬁed age
+of the pole (years), θ is the angle between the wind direction
+and the conductors (degrees), Ac is the conductor area (m2), h
+is the height of pole (m), and Φ(·) is the cumulative distribution
+function of the standard normal distribution. The second-degree
+multivariable functions μ(·) and σ(·) return the mean and stan-
+dard deviation of the lognormal distribution, where the coefﬁ-
+cients are ﬁtted for different pole classes given 20,000 training
+points in [25]. It should be noted that the fragility curve in [25]
+does not depict the full damage impact of wind events on the
+power distribution network, since it does not consider downed
+lines from vegetation and debris.
+3) Utility Pole Damage Scenarios: We next create N multi-
+period scenarios given the fragility curves, where each scenario
+includes the damage states for all utility poles over the schedul-
+ing horizon. Given the span length and the distance between
+buses in the power distribution network topology, we determine
+the number of wooden utility poles between connected buses.
+For each scenario, we determine which (if any) utility poles
+are damaged during the wind hazard event. A pole fails at
+time t if Pf(V t, y, θ, Ac, h) > rt, where rt ∈[0, 1] is randomly
+generated from a uniform distribution. We consider a ﬁnite
+number of repair crews, where the poles within the power
+distribution network are repaired in order of importance. In
+other words, there is a priority to get critical infrastructure, such
+as water pumps, online ﬁrst. The water distribution network is
+considered critical infrastructure and is essential for providing
+clean drinking water to consumers. Long pump outages and
+inadequate pressure levels can lead to contamination, boil water
+advisories, and water shortages.
+4) Network Outage Scenarios: Given the utility pole damage
+states in the N scenarios, we determine what distribution lines
+and water pumps are experiencing outages.
+The pump and line outage information is needed for running
+the hydraulic analysis (Section III-B) and solving for the power
+and water network resilience metrics (Section III-C).
+B. Hydraulic Simulation
+We simulate the water distribution network operation using
+the EPANET 2.2 hydraulic simulator within the WNTR (Water
+Network Tool for Resilience) package in Python [26]. EPANET
+is an open source hydraulic simulator that is commonly used
+by water utilities and researchers. Since we are considering
+cases where there may be low pressure levels and unmet water
+demands,weusethepressure-drivendemandwaterﬂowanalysis
+(as opposed to demand-driven water ﬂow analysis which is only
+reasonable under normal operating conditions). Within WNTR,
+we run hydraulic simulations over all N scenarios for each
+operational control strategy.
+C. Evaluating Operational Resilience
+It is critical that the power and water distribution networks
+are able to anticipate, absorb, adapt to, and recover from dis-
+ruptive events. Operational resilience is related to supply and
+demand availability, effectiveness of corrective actions, and the
+operational status of assets surrounding extreme events [15]. We
+use operational resilience metrics to quantify the performance
+of the power and water networks over the response and recovery
+to a hazard event [13], [27]. Resilience metrics capture network
+performance–such as loss of load and unmet water demand–over
+a speciﬁed time frame. For a given performance curve (such as
+the time-varying loss of load over the scheduling horizon), the
+associated network resilience metric Rn for scenario n is the
+relative network performance under a hazard event compared to
+normal operation over the scheduling horizon, i.e.,
+Rn =
+
+t∈T P t
+W,n
+
+t∈T P t
+N
+∀n = 1. . .N,
+(2)
+where P t
+W,n and P t
+N are the time-varying performance curves for
+the wind-induced outage scenario n and the normal operating
+case and T is the set of periods within the operational horizon.
+Note that the value Rn is normalized, where one indicates that
+the network performance is unaffected by the hazard event.
+Below, we describe different power and water network resilience
+metrics that can be used within resilience studies.
+1) Power Distribution Network Resilience Metrics: For the
+power distribution network, we calculate resilience metrics on
+the number of active lines and connected loads in the wind-
+induced outage scenarios compared to the normal operating case
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:57:29 UTC from IEEE Xplore.  Restrictions apply. 
+
+STUHLMACHER et al.: ASSESSING POWER AND WATER NETWORK RESILIENCE WHEN WATER PUMPS PROVIDE FREQUENCY REGULATION
+3837
+Rline,n =
+
+t∈T
+
+ℓ∈L P t
+line ℓ,W,n
+
+t∈T
+
+ℓ∈L P t
+line ℓ,N
+∀n = 1. . .N,
+(3)
+Rload,n =
+
+t∈T
+
+k∈K P t
+load k,W,n
+
+t∈T
+
+k∈K P t
+load k,N
+∀n = 1. . .N,
+(4)
+where P t
+line ℓ,W,n ∈{0, 1} and P t
+load k,W,n ∈{0, 1} are the ac-
+tive/connected statuses of line ℓand bus k at time t for scenario n,
+L is the set of lines, and K is the set of buses. The variables
+P t
+line ℓ,N ∈{0, 1} and P t
+load k,N ∈{0, 1} are the active/connected
+statuses of line ℓand bus k at time t for the normal operating
+case. The power distribution network resilience metrics Rline,n
+and Rload,n quantify the severity of the wind events.
+2) Water Distribution Network Resilience Metrics: For the
+water distribution network, we can quantify resilience in terms
+of the normalized water service availability Rwsa,n (i.e., the ratio
+of delivered water to expected water demand), pressure met
+Rpressure,n (i.e., demand junctions where the hydraulic head is
+above the minimum head limit Hj), and the stored water capac-
+ity of the tank Rtank,n (i.e., ratio of water stored to cumulative
+tank volume) over the entire scheduling horizon for all scenarios
+n
+Rwsa,n =
+
+t∈T
+
+j∈J P t
+wsa j,W,n
+
+t∈T
+
+j∈J P t
+wsa j,N
+∀n = 1. . .N, (5)
+Rpressure,n =
+
+t∈T
+
+j∈J P t
+pressure j,W,n
+
+t∈T
+
+j∈J P t
+pressure j,N
+∀n = 1. . .N, (6)
+Rtank,n =
+
+t∈T
+
+j∈S P t
+tank j,W,n
+
+t∈T
+
+j∈S P t
+tank j,N
+∀n = 1. . .N, (7)
+where P t
+wsa j,W,n and P t
+wsa j,N are the amounts of water received
+at junction j and time t for scenario n and the normal oper-
+ating case, P t
+pressure j,W,n and P t
+pressure j,N indicate whether the
+hydraulic head is within its operational limits at node j and time
+t for scenario n and the normal operating case, P t
+tank j,W,n and
+P t
+tank j,N are the ratio of water volume to maximum tank volume
+at tank j and time t for scenario n and the normal operating
+case, J is the set of demand junctions, and S is the set of water
+storage tanks. It should be noted that variations in Rtank,n away
+from one are not necessarily bad; instead, the metric provides
+information on the ability of the tanks to supply and store water
+surrounding pump power outages.
+IV. OPTIMAL WATER PUMPING FRAMEWORKS
+In this section, we summarize the network constraints and the
+problem formulation for the optimal water pumping problems.
+The problem is solved over set T with periods of duration ΔT.
+The water ﬂow constraints are nonconvex, which makes the
+optimization problem difﬁcult to solve, so we employ water
+ﬂowapproximations,resultinginamixed-integerlinearprogram
+(MILP) that we solve iteratively.
+A. Modeling Water Flow Constraints
+The water distribution network is represented as a directed
+graph with a set of nodes N and edges E connecting the nodes.
+Each node is classiﬁed as either a junction J , reservoir R, or
+storage tank S. The edges are either pumps P or pipes (i.e., E \
+P). The water ﬂow at time t is characterized by the volumetric
+ﬂow rate xt
+ij through pipe ij (i.e., from node i to node j) for all
+ij ∈E and the hydraulic head Ht
+j at node j for all j ∈N. The
+water ﬂow constraints are summarized below.
+1) Nodes: We ﬁrst focus on the nodal constraints
+
+i:ij∈E
+xt
+ij + dt
+j = 0 ∀j ∈J ,
+(8)
+Hj ≤Ht
+j ≤Hj
+∀j ∈N,
+(9)
+Ht
+j = hj
+∀j ∈R,
+(10)
+Ht
+j = Ht−1
+j
+−ΔT
+γj
+dt−1
+j
+∀j ∈S,
+(11)
+where dt
+j is the water injection at node j and time t, Hj and Hj
+are the minimum and maximum head limits at node j, and γj
+is the cross-sectional area of tank j. In (8), the conservation of
+water entering and exiting each junction must be satisﬁed. The
+hydraulic head (elevation plus pressure head) at all nodes must
+be within safe operating limits in (9). Reservoirs are modeled as
+inﬁnite sources with a ﬁxed hydraulic head hj in (10). In (11),
+the tank heads are updated given the previous period’s head and
+tank water injection. Since the water demands follow a daily
+pattern, we want to ensure that the ﬁnal tank levels over a 24-hour
+period are similar to the initial tank levels. We formulate the ﬁnal
+cumulative tank levels with a soft constraint
+
+j∈S
+Ht=0
+j
+≤s +
+
+j∈S
+Ht=24
+j
+≤ψ +
+
+j∈S
+Ht=0
+j
+,
+(12)
+where ψ is the water level tolerance and s is the cumulative
+tank level slack variable. Final tank levels outside of the tank
+level range (i.e., a non-zero s value) are penalized in the objec-
+tive function. Formulating the ﬁnal tank level limits as a soft
+constraint helps prevent feasibility issues in the iterative MILP
+formulation, which is presented in Section IV-A3.
+2) Edges: We next describe the edge constraints. The hy-
+draulic head at each node in the water network varies given the
+head loss along pipes and head gain across active pumps. The
+frictional head loss along a pipe is
+Ht
+i −Ht
+j = kij · xt
+ij · |xt
+ij|ν−1 ∀ij ∈E \ P,
+(13)
+where kij is the pipe resistance coefﬁcient of pipe ij and ν
+is the pipe head loss exponent. The general form of (13) can
+represent two common head loss formulas: Hazen-Williams
+and Darcy-Weisbach. In this work, we use the Hazen-Williams
+formula, where ν is 1.852 and kij is a function of pipe ij’s length,
+diameter, and roughness coefﬁcient. This is consistent with the
+head loss formula used within the WNTR simulator [26].
+We next consider variable speed supply pumps, where wt
+ij
+is the normalized speed setting of pump ij ∈P at time t and
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:57:29 UTC from IEEE Xplore.  Restrictions apply. 
+
+3838
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 40, NO. 5, SEPTEMBER 2025
+Fig. 3.
+Pump head gain (14), efﬁciency, and power consumption (19) for pump
+1 in the case study. The solid black lines, the blue dashed lines, and the red dotted
+lines are the pump curves at nominal pump speed, maximum pump speed, and
+minimum pump speed, respectively.
+zt
+ij ∈{0, 1} indicates whether pump ij ∈P is on at time t
+zt
+ij = 1 ⇒Ht
+j −Ht
+i = b0
+ij(wt
+ij)2 + b1
+ij(xt
+ij)2 ∀ij ∈P, (14)
+wij · zt
+ij ≤wt
+ij ≤wij · zt
+ij
+∀ij ∈P, (15)
+0 ≤xt
+ij ≤xij · wt
+ij
+∀ij ∈P, (16)
+zt
+ij ∈{0, 1} ∀ij ∈P, (17)
+where b0
+ij and b1
+ij are the nominal pump curve parameters of
+pump ij, wij and wij are the minimum and maximum pump
+speeds, and xij is the maximum pump ﬂow rate when the pump
+is on and operating at the normalized pump speed. In (14), we
+use an indicator constraint to formulate the pump head character-
+istics when the pump is on. When the pump is on (i.e., zt
+ij = 1),
+the power law models the head gain across the pump [28], [29];
+when the pump is off, there is no ﬂow through the pump and the
+head gain is arbitrary. Several off-the-shelf commercial solvers,
+such as Gurobi, have native support for indicator constraints.
+Alternatively, we can use the big-M method to formulate the
+on/off characteristics of the pump performance curve. The top
+plot of Fig. 3 illustrates how the pump head curve is adjusted
+at different pump speeds. When the pump is off, the ﬂow rate
+and speed are zero (enforced by (15)–(16)). When the pump is
+on, the range of feasible ﬂow rates in (16) scale with the pump
+speed (see Fig. 3). Speciﬁcally, the afﬁnity laws approximate
+how changes in pump speed (i.e., pump speed w1 to pump speed
+w2) impact the pump characteristics [30], [31]
+x1
+x2
+= w1
+w2
+,
+ˆH1
+ˆH2
+=
+w1
+w2
+2
+,
+p1
+p2
+=
+w1
+w2
+3
+,
+(18)
+where x, ˆH, and p represent the ﬂow rate, head gain, and
+pump power, respectively. The subscripts ‘1’ and ‘2’ denote two
+different operating points.
+The three-phase pump power consumption depends on the
+head gain and the ﬂow rate across the pump as well as the
+pump efﬁciency. The pump efﬁciency—which is dependent on
+the pump ﬂow rate and speed—is generally modeled with a
+quadratic or cubic polynomial [32]. We assume that the pumps
+are balanced three-phase loads with constant power factors.
+Fig. 3 illustrates the relationship between the ﬂow rate and
+the pump’s head gain, efﬁciency, and power consumption. The
+pump power consumption has a strong linear relationship with
+respect to the ﬂow rate given a constant speed. The pump power
+consumption as a multivariable function of ﬂow rate and speed
+can be approximated as
+pt
+ij = c0
+ij · (wt
+ij)2 + c1
+ij · xt
+ij · wt
+ij
+∀ij ∈P,
+(19)
+wherec0
+ij andc1
+ij areparametersofthepumppowerconsumption
+curve at nominal pump speed.
+3) Approximation and Reformulation: The water ﬂow con-
+straints are mixed-integer nonconvex due to the pipe head
+loss (13), pump head gain (14), and pump power consump-
+tion (19) equations. To help with our reformulation, we deﬁne an
+intermediate variable W t
+ij := (wt
+ij)2 and use linear approxima-
+tionsfortheheaddifferenceconstraintsthatweupdateiteratively
+in the optimal pumping problem. We replace (13), (14)–(16),
+(19) with
+Ht
+i −Ht
+j = f t,0
+ij + xt
+ij
+∀ij ∈E \ P, (20)
+zt
+ij = 1 ⇒Ht
+j–Ht
+i = b0
+ijW t
+ij + f t,1
+ij – xt
+ij ≥0 ∀ij ∈P, (21)
+(wij)2 · zt
+ij ≤W t
+ij ≤(wij)2 · zt
+ij
+∀ij ∈P, (22)
+0 ≤xt
+ij ≤xij · wij · zt
+ij
+∀ij ∈P, (23)
+pt
+ij = c0
+ij · W t
+ij + c1
+ij · xt
+ij
+∀ij ∈P, (24)
+where f t,0
+ij and f t,1
+ij are parameters. Instead of scaling the max-
+imum pump ﬂow rate by the pump speed, we restrict the pump
+head gain to be non-negative in (21) when the pump is on. This
+yields a MILP that we solve in an iterative fashion given updated
+parameters based on the ﬂow rate xt
+ij of the previous solution,
+similar to [21]. During each iteration, the parameters are updated
+given the ﬂow rate from the previous iteration
+f t,0
+ij := xt
+ij · (kij|xt
+ij|ν−1 −1)
+∀ij ∈E \ P,
+(25)
+f t,1
+ij := xt
+ij ·
+
+b1
+ijxt
+ij + 1
+
+∀ij ∈P.
+(26)
+We recover the pump speed a posteriori by taking the square
+root of W t
+ij.
+B. Optimal Water Flow Pumping Control (OWF)
+We ﬁrst present the OWF control strategy, where the water
+system operator minimizes the electricity costs of pumping
+subject to the water ﬂow constraints and the water demand
+forecasts. The OWF problem is a MILP that we solve iteratively,
+where the steps are shown in Algorithm 1. The MILP problem
+solved during each iteration is
+min
+x
+
+t∈T
+
+ij∈P
+πt
+ij · pt
+ij · ΔT + c · |s|
+(OWF)
+s.t. (8) −(11), (17), (20) −(24) ∀t ∈T , (12),
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:57:29 UTC from IEEE Xplore.  Restrictions apply. 
+
+STUHLMACHER et al.: ASSESSING POWER AND WATER NETWORK RESILIENCE WHEN WATER PUMPS PROVIDE FREQUENCY REGULATION
+3839
+Algorithm 1: Iterative OWF MILP Algorithm.
+Require: Water network topology, initial tank conditions
+Ht=0
+j
+∀j ∈S, and forecasted electricity prices
+πt
+ij ∀ij ∈P, t ∈T and water demands
+dt
+j ∀j ∈J , t ∈T
+Output: Pump power consumption pt
+ij, status zt
+ij, and speed
+wt
+ij ∀ij ∈P, t ∈T
+1:
+Set k ←0, tolerance, maxIter, and error
+2:
+Initialize ⟨f⟩k in (25)–(26), and ⟨x⟩k.
+3:
+while error ≥tolerance OR k ≤maxIter do
+4:
+k ←k + 1
+5:
+Solve (OWF)k using ⟨f⟩k−1 to obtain ⟨xt
+ij⟩k.
+6:
+Calculate ⟨f⟩k given ⟨xt
+ij⟩k in (25)–(26).
+7:
+Calculate error := ||⟨f⟩k −⟨f⟩k−1||2.
+8:
+end while
+9:
+The water system operator sets pump status
+zt
+ij := ⟨zt
+ij⟩k and speed wt
+ij := ⟨(W t
+ij)(1/2)⟩k.
+where the parameter πt
+ij is the cost of electricity at pump ij
+and time t and c is the penalty on the ﬁnal tank level slack
+variable. The decision variable x is composed of the pump power
+consumptions pt
+ij, statuses zt
+ij , and speeds squared W t
+ij for
+all pumps ij ∈P as well as the ﬂow rates xt
+ij ∀ij ∈E, and
+hydraulic heads Ht
+j ∀j ∈N for all periods t ∈T . We update
+⟨f⟩k := ⟨f t,0
+ij , f t,1
+ij ⟩k given the ﬂow rates from the previous
+iteration. We deﬁne the error as the Euclidean norm of the
+difference in ⟨f⟩k between each consecutive iteration. We stop
+iterating when the error is below a certain threshold or we reach a
+maximum number of iterations. While there are no convergences
+guarantees, we found that the algorithm performed well with the
+daily tank level as a soft constraint. The absolute value |s| in the
+objective function is reformulated using a non-negative slack
+variable.
+C. Optimal Water Pumping Control + Frequency Regulation
+(OWF+FR)
+We next present the OWF+FR control strategy, where the
+water system operator minimizes the cost associated with pump
+electricity consumption and the cost associated with provid-
+ing frequency regulation capacity subject to the water ﬂow
+constraints. To provide frequency regulation, the pumps track
+a frequency regulation signal sent by the independent system
+operator (which is updated on a seconds timescale) to balance
+real-time supply and demand mismatches. The water system
+operator solves for the optimal frequency regulation capacity
+in advance and then the pumps adjust their power consumption
+in real time as a function of the frequency regulation signal,
+i.e., 	s ∈[−1, 1], which is biased by the schedule and scaled by
+the frequency regulation capacity. We assume a generator sign
+convention where up frequency regulation (a positive signal)
+corresponds to a decrease in pump power consumption and
+down frequency regulation (a negative signal) corresponds to
+an increase in pump power consumption.
+In our formulation, we solve for the scheduled pump operation
+as well as the available frequency regulation capacity to adjust
+the pump power consumption given a frequency regulation
+signal. We assume that the water distribution network needs
+to be capable of providing the offered frequency regulation
+capacity over the entire hour time step t which is consistent with
+CAISO day-ahead market requirements for energy storage [33].
+This ensures that the pumps can respond to the worst case
+signals (i.e., +1 or −1 for the entire hour). Additionally, we
+can use the same timescale as the quasi-steady state water ﬂow
+constraints in our optimization problem. We assume that there is
+an offsetting mechanism so that the frequency regulation signal
+is ‘energy neutral’ over the contracted period [33]. We deﬁne F t
+ij
+as the maximum three-phase symmetric up and down frequency
+regulation capacity that pump ij can provide at time t
+F t
+ij ≥0 ∀ij ∈P.
+(27)
+The OWF+FR problem is solved using the same iterative
+method as OWF, where the optimization problem solved in every
+iteration is
+min
+x
+
+t∈T
+
+ij∈P
+πt
+ij · pt
+ij · ΔT −πt
+fr · F t
+ij + c · |s|
+s.t. Wscheduled(p) ∀t ∈T
+(OWF + FR)
+WFR(p ± F ), (27) ∀t ∈T ,
+where πt
+fr is the expected price of frequency regulation capacity.
+The scheduled water ﬂow constraint set Wscheduled(·) contains
+(8)–(12), (17), (20)–(24). The constraint sets WFR(·) represent
+the water ﬂow constraints if the full down and up frequency
+regulation was used, i.e., (8)–(11), (17), (20)–(24). The input
+p ± F is the power consumption when providing frequency
+regulation equal to the full frequency regulation capacity and
+replaces the left side of (24). The decision variable x includes
+the water ﬂow variables associated with the schedule and fre-
+quency regulation capacity for all periods. The scheduled power
+consumption pt
+ij, speed wt
+ij, and frequency regulation capacities
+F t
+ij for each pump ij are solved for in the day-ahead opti-
+mization problem. The total frequency regulation capacity at
+time t is the cumulative capacity for all pumps at time t, i.e.,
+F t = 
+ij∈P F t
+ij. Unlike our previous work [5], which solves
+for the combined voltage support and frequency regulation
+capacity of ﬁxed speed pumps as a mixed-integer second order
+cone program, the problem here is formulated as a MILP that
+solves for the frequency regulation capacity of variable speed
+pumps iteratively and the afﬁnity laws are used to determine
+the real-time pump adjustments of variable speed pumps; this
+allows the problem to be solved quickly with nonlinear real-time
+adjustments. The iterative solution approach for solving the
+OWF+FR problem is similar to Algorithm 1, where we solve
+the (OWF+FR) problem at each iteration instead of the (OWF)
+problem.Oncetheproblemconverges,thewatersystemoperator
+also determines the frequency regulation capacity, F t
+ij.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:57:29 UTC from IEEE Xplore.  Restrictions apply. 
+
+3840
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 40, NO. 5, SEPTEMBER 2025
+Fig. 4.
+Topology of the interconnected power distribution network (left) and
+water distribution network (right). Blue nodes in the power distribution network
+indicate the buses that have a pump connected.
+The real-time pump power adjustments are determined by the
+afﬁnity laws (18) given the frequency regulation signal 	s
+ˆwij = wt
+ij ·
+
+1 + F t
+ij	s
+pt
+ij
+1/3
+∀ij ∈P, t ∈T ,
+(28)
+where ˆwij is the real-time pump speed. The scheduled pump
+speed wt
+ij, pump power consumption pt
+ij, and frequency regula-
+tioncapacityF t
+ij aredeterminedin(OWF+FR)foreachperiodof
+ΔT. The real-time pump speed changes based on the frequency
+regulation signal on a faster time scale (e.g., every two seconds).
+This relationship applies when the pump is on and providing
+frequency regulation.
+V. CASE STUDY
+In a case study, we compare power and water network re-
+silience metrics given the optimal and rule-based pumping
+strategies under wind-induced power outages. We consider an
+interconnected power and water distribution network, with net-
+work topologies shown in Fig. 4. We consider a 72-hour time
+horizon.
+A. Set up
+For the water distribution network, we use NET3, a 96-node
+example network included in the EPANET software. We set the
+minimum pressure head at the demand junctions to 20 psi and the
+maximumnominalpumpﬂowtoxij = (b0
+ij/b1
+ij)1/2 m3/h(same
+as the deﬁnition in WNTR). The pump curves are determined
+from EPANET’s single-point curve deﬁnition given the desired
+ﬂow rate and head at nominal speed provided in the EPANET
+INP ﬁle. The minimum and maximum normalized pump speeds
+are 0.7 and 1.3, respectively. In [31], the authors found that for
+speed changes less than 33% of the nominal speed, the afﬁnity
+laws accurately approximate pump performance and changes
+in the pump efﬁciency curve can be neglected. We use cubic
+pump efﬁciency functions developed in [32], where the peak
+wire-to-water efﬁciency of both pumps is 75%.
+For the power distribution network, we use the IEEE 34-node
+test feeder [34]. We assume that all of the utility poles are 50-year
+oldclassﬁvepoles;classﬁvedistributionpolesaretypicallyused
+in the United States [35]. We assume a span length of 46 meters,
+Fig. 5.
+(Left) Electricity prices over scheduling horizon and (Right) Nominal
+three-second wind gust speed during the wind hazard event.
+Ac = 2 m2, and height of 12.2 meters. The pumps are connected
+to buses 844 and 814. The electricity price is shown in Fig. 5.
+We set the frequency regulation capacity price to $0.20/kW and
+assume it is known in advance.
+For the wind-based hazard, we assume the three-second gust
+wind speed is spatially uniform (yet with temporal variations)
+over the feeder, with an event duration of ﬁve hours (see
+Fig. 5(b)). To consider different storm intensities, we use a
+multiplier to scale the three-second wind gust speed, e.g., a
+150% wind speed intensity indicates that the wind speeds in
+Fig. 5 are multiplied by 1.5. The wind direction is 30◦from due
+east. It should be noted that the orientation of each conductor
+with respect to the wind direction determines the ‘steepness’ of
+the fragility curve. The probability of failure is higher at smaller
+wind speeds when the angle between the wind and conductor
+is larger (see Fig. 2). There can be multiple pole outages that
+impact the outage of a power distribution line. The active time
+to repair each pole is ﬁve hours [27]. We consider ﬁve crews
+repairingtheutilitypolesinorderofpriority.Itisassumedthatno
+repairs are made during the storm for safety purposes. Therefore,
+the repairs start at the end of the wind event. The wind event
+start time is randomly generated from a uniform distribution
+U[t = 9, t = 19] to ensure that the entire wind event concludes
+in the ﬁrst 24 hours. We consider a sample size of N = 500
+scenarios, where we also evaluate the impact of sample size in
+Section V-B5.
+For the hydraulic simulation, we use the EPANET 2.2 sim-
+ulator within the WNTR v.1.0.0 Python package [26]. For all
+control strategies in our case study, we assume the water network
+reverts to rule-based control when the water distribution network
+experiences an outage. While we could also update the optimal
+water pumping problem given a partial outage or restoration,
+we do not have information on how the water system operator
+would make changes to the rule-based operation during and
+after an outage event. As a result, the only aspect that changes
+between simulations in our case study is what strategy is used
+before the outage occurs. For the rule-based control strategy,
+we use the pre-existing controls in NET3’s input ﬁle. For the
+optimal control strategies, we add a condition so that the WNTR
+rule-based controls are not used under normal conditions (i.e.,
+before any pump outages occur). This is done by rewriting the
+WNTR controls as rules with an additional simulation time
+condition. We use a hydraulic time step and reporting time step
+of two seconds to be consistent with the frequency regulation
+signal. With the optimal control strategies, we set the pump
+speed and status using simulation time condition rules. For the
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:57:29 UTC from IEEE Xplore.  Restrictions apply. 
+
+STUHLMACHER et al.: ASSESSING POWER AND WATER NETWORK RESILIENCE WHEN WATER PUMPS PROVIDE FREQUENCY REGULATION
+3841
+Fig. 6.
+(Left) Tank water levels as percentage of total operational tank volume,
+and (Right) pump power consumption in the Rule-based (top), OWF (middle),
+and OWF+FR (bottom) control strategies under normal operating conditions.
+The lightly shaded blue and red bands in the OWF+FR’s pump power consump-
+tion plot (bottom right) illustrates the frequency regulation capacity for pumps
+1 and 2, respectively.
+frequency regulation signal within the real-time simulation, we
+use PJM’s RegD signal from January 1, 2020 [36]. We use the
+EPANET simulator within the WNTR package instead of the
+WNTR simulator since the WNTR simulator is missing features
+necessary for our hydraulic analysis (e.g., the WNTR simulator
+cannot accommodate variable speed pumps). The EPANET
+simulator has an issue where the tanks can still supply water
+to the network when the tanks are empty resulting in incorrectly
+reported supplied water values and pressure values. We can esti-
+mate the actual water service ability by subtracting the (ﬁctional)
+amount of water that is supplied to the network by the tanks
+at their minimum water level from the EPANET simulator’s
+reported supplied water demand. To verify the accuracy of this
+approach, we compare the water service availability calculated
+a posteriori with the EPANET solver with the water service
+availability calculated with the WNTR simulator for a ﬁxed
+speed pump case. We found that the water service availability
+is very similar between the two approaches (i.e., 35.76% versus
+35.56%).
+We solve the OWF and OWF+FR problems using Gurobi
+v9.5.2 in the JuMP package in Julia over the scheduling hori-
+zon. We initialize the iterative algorithms with the rule-based
+schedule. We set the tank violation penalty c to 10,000in order
+to maintain feasibility within the successive iterations of Algo-
+rithm 1 while discouraging ﬁnal tank levels outside our desired
+range. We set ψ to 2 m.
+B. Results
+1) Performance of Water Network Operation Strategies Un-
+der Normal Operation: We ﬁrst compare the three control
+strategies under normal operation using the EPANET simulator.
+Fig. 6 depicts the tank levels and pump power consumption
+for each control strategy. Due to the diurnal pattern of water
+demands and the operational constraint that ensures the tank
+TABLE I
+DAILY OPERATIONAL COSTS UNDER NORMAL OPERATION
+levels at the start of each day are similar (12), the normal
+operation for the three days within the scheduling horizon is
+very similar. Although we consider a 72-hour time horizon for
+both normal and extreme operations, we show the results for
+the normal operating conditions over a 24-hour time horizon.
+The pump power consumption between the control strategies
+ends up varying signiﬁcantly. In the rule-based control, pump 1
+switches on and off frequently. This is because the rule-based
+operation has stricter constraints on the tank level: a control
+rule enforces that pump 1 is turned on whenever tank 1’s water
+level goes below 40% and continues pumping until tank 1’s
+water level goes above 60% of its total available capacity. In
+the optimal control strategies, the pump speed varies away
+from the normalized pump speed in order to realize lower costs
+and/or provide frequency regulation. In the OWF+FR case, very
+frequent pump power changes occur during periods where the
+pump is providing frequency regulation. Frequent pump power
+adjustments are made as the pumps change their speeds to
+track the frequency regulation signal. The pumps do not always
+provide frequency regulation. In the OWF+FR case in Fig. 6, the
+optimization problem determines that it is most cost-effective for
+the water distribution network to provide frequency regulation
+for seven time periods within the scheduling horizon. During the
+other periods, the pumps are operating at their minimum pump
+speed wij and are unable to provide up frequency regulation
+(i.e., decrease pump power consumption from their scheduled
+setpoint). Sincethepumpsmustprovidesymmetricupanddown
+frequency regulation, this prevents the pumps from providing
+frequency regulation during these time periods. We calculate
+the average tank level over the scheduling horizon as 64.1%,
+56.3%, and 58.4% for the rule-based, OWF, and OWF+FR cases,
+respectively. This indicates that the rule-based operation keeps
+the tank fuller during each 24-hour period. We also can observe
+that the optimal tank level is higher when providing frequency
+regulation, likely because there needs to be enough water in the
+tanks for the pumps to provide both up and down frequency
+regulation.
+Table I reports the electricity costs, frequency regulation
+proﬁt, and total costs for the three control strategies. We observe
+that the total costs of the optimal control strategies are signiﬁ-
+cantly less than the rule-based control strategy. For instance, the
+costs of the OWF and OWF+FR solutions are 59.8% and 69.9%
+less than the rule-based solution cost. This is because the opti-
+mal pumping strategies minimize the electricity cost associated
+with pumping and, in the OWF+FR problem, maximizes proﬁt
+associated with frequency regulation.
+2) Accuracy and Performance of Solution Approach: We
+next evaluate the accuracy and performance of the optimal
+pumping strategies within the two-second resolution hydraulic
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:57:29 UTC from IEEE Xplore.  Restrictions apply. 
+
+3842
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 40, NO. 5, SEPTEMBER 2025
+Fig. 7.
+Convergence of the OWF (left) and OWF+FR (right) iterative solution
+approaches.
+Fig. 8.
+Frequency regulation performance over one hour within the OWF+FR
+problem. The blue solid line is the expected pump power consumption given
+the frequency regulation signal. The red dashed line is the actual pump power
+consumption simulated in WNTR. The yellow solid line is the scheduled, or
+nominal, pump schedule.
+simulator under normal operation. All control strategy solutions
+were feasible where the hydraulic heads, pump ﬂow rates, and
+tank levels were within the speciﬁed limits. Additionally, the
+ﬁnal tank levels were similar to the initial tank levels (see Fig. 6).
+The OWF and OWF+FR problem converged in 4011 and 1649
+iterations, respectively. Fig. 7 shows the iteration error for the
+OWF and OWF+FR problem. While there are no guarantees of
+convergence, we found that the approach performed well. The
+solver time for the MILP iteration was less than a tenth of a
+second for the OWF problem and 2 seconds for the OWF+FR
+problem on a 64-bit Intel i7 core CPU at 2.10 GHz and 32-GB
+RAM.
+Fig. 8 illustrates the water pumps’ ability to follow the fre-
+quency regulation signal with the OWF+FR control strategy.
+We examine the OWF+FR control strategy over the span of
+one hour to better observe the pump adjustments made based
+on the two-second frequency regulation signal. It should be
+noted that other time periods in which the pumps provide fre-
+quency regulation have a similar performance. We calculate the
+real-time pump speed in (28) given the frequency regulation
+signal and the optimal frequency regulation capacity, scheduled
+pump speed, and scheduled pump power consumption solved
+for in (OWF+FR). Overall, we observe that the pumps generally
+follow the frequency regulation signal but the afﬁnity laws
+appear to consistently over-estimate the real-time pump power
+deviation that is provided. It should be noted that the afﬁnity
+laws are an approximation of the change in pump curves. The
+actual pump set point is determined given the intersection of
+the pump head curve and the system curve. However, when
+TABLE II
+AVERAGE POWER DISTRIBUTION NETWORK RESILIENCE METRICS
+Fig. 9.
+Percentage of power distribution lines online for varying wind speed
+intensities. Each curve is the average performance curve over 500 scenarios.
+TABLE III
+AVERAGE WATER DISTRIBUTION NETWORK RESILIENCE METRICS
+we calculated PJM’s performance score using [37], the pump
+performance was sufﬁcient. To minimize the signal error further,
+we could alternatively use real-time feedback of the pump power
+consumption to adjust the pump speed instead of using the
+afﬁnity laws (e.g., with a proportional-integral controller).
+3) Resilience of Power Network Surrounding Wind Hazard
+Events: Next, we consider the impact of the wind hazard on the
+power distribution network. We calculate the averaged resilience
+metrics of the active distribution lines Rlines,n and connected
+loads Rload,n (using the deﬁnitions in (3) and (4)) over all
+scenarios n and report the results in Table II. As expected, the
+loss in loads and lines increases as the wind speed intensity
+increases. The power distribution network performance curves
+help us understand the implications of storm severity over time.
+To illustrate, in Fig. 9, we plot the active line performance curves
+of the power distribution network, averaged over 500 scenarios,
+while varying the three-second wind gust speed intensity. In
+Fig. 9, we can observe that the recovery time of the 140% and
+150% wind intensities is signiﬁcantly longer than the 100% and
+125% wind intensities.
+4) Resilience of Water Network Surrounding Wind Hazard
+Events: We next evaluate the resilience of the rule-based, OWF,
+and OWF+FR control strategies when the water distribution
+network is experiencing pump outages due to a wind hazard.
+Table III presents the resilience of the rule-based, OWF, and
+OWF+FR control strategies for varying wind speed intensities.
+WecalculatetheaverageresiliencemetricsforRwsa,n andRtank,n
+over all scenarios n using the deﬁnitions in (5) and (7). We do
+not compute Rpressure,n because of limitations with the EPANET
+simulator, which are discussed in Section V-A. As expected,
+the resilience of the water distribution network decreases as the
+wind hazard intensity increases. The water availability between
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:57:29 UTC from IEEE Xplore.  Restrictions apply. 
+
+STUHLMACHER et al.: ASSESSING POWER AND WATER NETWORK RESILIENCE WHEN WATER PUMPS PROVIDE FREQUENCY REGULATION
+3843
+TABLE IV
+AVERAGE RESILIENCE METRICS FOR MODIFIED OWF
+control strategies is close but generally worse in the optimal
+control strategies compared to the rule-based strategy. We also
+observe that tank levels are more depleted in the optimal control
+strategies.
+One thing to note is that the controls in the rule-based strategy
+keep the tank levels within a smaller range of possible values
+(e.g., a control rule enforces tank 1’s water storage to be between
+40% and 60% of the total operational tank capacity). Alterna-
+tively, the optimal pumping problems do not place further limits
+on the tank levels throughout the scheduling horizon. Since
+the optimal pumping strategies choose less expensive operating
+points, there is a chance that the operational set points may
+end up being more risky for the water distribution network. To
+address this, we can incorporate constraints within the optimal
+pumping problem to improve the water network resilience.
+For example, we could strictly limit the scheduled tank level
+operation to be within a restricted range of values or penalize
+deviations outside of a certain range of tank levels. In the case
+where the water system operator is aware of an upcoming hazard
+event, pre-ﬁlling tank constraints can be incorporated into the
+optimal pumping problem, as is often done in practice.
+To illustrate this, we investigate the impact of adding a min-
+imum tank level constraint to the OWF control strategy. We
+choose the OWF control strategy since the resilience metrics
+were generally lowest for this strategy. We enforce that tank 1’s
+water storage must be greater than or equal to 45% capacity. In
+Table IV, the resilience metrics are presented for the modiﬁed
+OWF control strategy. As expected, when we constrain the lower
+limitsoftank1,weseethattheresilienceofthewaterdistribution
+networkincreases.Inthiscase,westillobservethattheresilience
+metrics are lower than in the rule-based scenario. This is because
+the rule-based strategy requires that pump 1 remains on until
+tank1isat60%capacity,whereastheOWFstrategyjustenforces
+a lower limit for the tank level.
+In all cases, pump outages deplete the tanks. This is because
+the tanks provide more water to meet demand when the pumps
+cannot. For short periods, tanks can be used to hedge against
+outages and water demand uncertainty. The OWF+FR control
+strategy generally performs better than the OWF control strategy
+and comparable to the rule-based strategy. This is likely due
+to the OWF+FR schedule maintaining a more conservative set
+point in which the tank levels vary less in order to be able to re-
+spond to both up and down frequency regulation. Consequently,
+while the scheduled electricity cost in the OWF+FR solution is
+higher than the cost in the OWF solution (see Table I), using
+the water pumps to supply frequency regulation decreases total
+costs and can help hedge the water distribution network against
+hazards.
+Fig. 10.
+Box plots of the OWF solution’s Rwsa,n (left) and Rtank,n (right)
+resilience metrics for 500 and 1000 scenarios with 140% wind intensity.
+5) Impact of Scenario Sample Size on the Resilience Metrics:
+Lastly, we evaluate whether we get representative results when
+using a sample size of 500 scenarios. To do this, we re-run
+all of the hydraulic simulations of the rule-based, OWF, and
+OWF+FR control strategies using 1,000 scenarios and compare
+the characteristic mean and standard deviations for these two
+sample sets. Fig. 10 compares the distribution of the resilience
+metrics over the two sample sets. Overall, the mean and standard
+deviation of the water distribution network resilience metrics
+Rwsa,n and Rtank,n across 500 scenarios and 1000 scenarios are
+close. This indicates that the resilience results calculated using
+500 scenarios are representative of the actual resilience of the
+control strategies.
+VI. CONCLUSION
+In this paper, we evaluate the ability of water pumps in the
+water distribution network to provide frequency regulation ser-
+vices to the bulk transmission system given wind hazard events.
+We compare the performance and operational resilience of the
+water network given a wind-based event under different control
+strategies. The wind event causes power outages in the power
+distribution network which then causes pump outages in the
+water distribution network. We ﬁnd that the cost of the optimal
+strategies are signiﬁcantly less expensive than the traditional,
+heuristic approach (i.e., with cost reductions greater than 59%).
+When simulating the wind-based hazards, the optimal strategies
+performed worse since less water demand was supplied and the
+tank levels remained at lower levels than the rule-based control.
+This is due to the fact that the rule-based control strategy has
+stricter tank limits during normal operation than what is included
+in the optimal water ﬂow problem. However, we can incorporate
+constraints that can improve the network resilience (e.g., tank
+limits throughout the scheduling horizon or tank pre-ﬁlling
+requirements before a big storm).
+Furthermore, we observe that operational resilience im-
+proves when the water network provides frequency regulation
+(OWF+FR) compared to just minimizing electricity costs, since
+thefrequencyregulationservicehelps buffer thetanklevels. This
+indicates that allocating reserve capacity to frequency regulation
+may also help provide a buffer in water distribution network
+operation against hazards. Future work will implement methods
+to eliminate error in the frequency regulation response (i.e., a
+feedback controller), develop metrics to capture other signiﬁcant
+aspects of performance, such as water quality and pressure met,
+investigate performance on more water distribution networks as
+well as consider network simpliﬁcation approaches (e.g. [38]),
+and evaluate trade-offs between operational costs and long-term
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:57:29 UTC from IEEE Xplore.  Restrictions apply. 
+
+3844
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 40, NO. 5, SEPTEMBER 2025
+concerns of wear-and-tear on the pumps due to more frequent
+pump changes.
+REFERENCES
+[1] K. S. Ayyagari, S. Wang, N. Gatsis, A. F. Taha, and M. Giacomoni,
+“Co-optimization of interdependent water and power distribution net-
+works,” in Proc. IEEE Power Energy Soc. Innov. Smart Grid Technol.
+Conf., 2021, pp. 1–5.
+[2] D. Fooladivanda, A. D. Dominguez-Garcia, and P. Sauer, “Utilization of
+water supply networks for harvesting renewable energy,” IEEE Trans.
+Control Netw. Syst., vol. 6, no. 2, pp. 763–774, Jun. 2019.
+[3] A. Zamzam, E. Dall’Anese, C. Zhao, J. Taylor, and N. Sidiropoulos,
+“Optimal water-power ﬂow problem: Formulation and distributed optimal
+solution,” IEEE Trans. Control Netw. Syst., vol. 6, no. 1, pp. 37–47,
+Mar. 2019.
+[4] M. K. Singh and V. Kekatos, “Optimal scheduling of water distribution
+systems,” IEEE Trans. Control Netw. Syst., vol. 7, no. 2, pp. 711–723,
+Jun. 2020.
+[5] A. Stuhlmacher and J. L. Mathieu, “Flexible drinking water pumping to
+provide multiple grid services,” Electric Power Syst. Res., vol. 212, 2022,
+Art. no. 108491.
+[6] A. Stuhlmacher and J. L. Mathieu, “Chance-constrained water pumping
+to manage water and power demand uncertainty in distribution networks,”
+Proc. IEEE, vol. 108, no. 9, pp. 1640–1655, Sep. 2020.
+[7] S. Zuloaga, P. Khatavkar, V. Vittal, and L. W. Mays, “Interdependent
+electric and water infrastructure modelling, optimisation and control,” IET
+Energy Syst. Integration, vol. 2, no. 1, pp. 9–21, 2020.
+[8] A. B. Bianchi, M. A. Pardo, T. Alskaif, H. H. M. Rijnaarts, and S. Shariat
+Torbaghan, “Novel market-based mechanism for ﬂexibility provision by
+water distribution networks to power systems,” IEEE Access, vol. 12,
+pp. 86869–86885, 2024.
+[9] I. Boukas, E. Burtin, A. Sutera, Q. Gemine, B. Pevee, and D. Ernst,
+“Exploiting the ﬂexibility potential of water distribution networks: A pilot
+project in Belgium,” IEEE Trans. Smart Grid, vol. 15, no. 1, pp. 394–404,
+Jan. 2024.
+[10] A. Farahmand-Zahed, A. Akbari-Dibavar, B. Mohammadi-Ivatloo, and
+K. Zare, “Optimal scheduling of water distribution systems’ participation
+in demand response and frequency regulation services,” in Electricity
+Markets: New Players and Pricing Uncertainties, S. Nojavan and K. Zare,
+Eds. Cham, Switzerland: Springer, 2020, pp. 213–228.
+[11] M. Duffy, Creating Operational Efﬁciencies in the Water Industry. Cam-
+den, NJ, USA: American Water, White Paper, 2014.
+[12] A. Stuhlmacher and J. Mathieu, “Demand response potential of drinking
+water distribution networks,” in Proc. Hawaii Int. Conf. System Sci., 2025,
+pp. 2891–2899.
+[13] M. Panteli, P. Mancarella, D. N. Trakas, E. Kyriakides, and N. D. Hatziar-
+gyriou, “Metrics and quantiﬁcation of operational and infrastructure re-
+silience in power systems,” IEEE Trans. Power Syst., vol. 32, no. 6,
+pp. 4732–4742, Nov. 2017.
+[14] S. Chanda, A. K. Srivastava, M. U. Mohanpurkar, and R. Hovsapian,
+“Quantifying power distribution system resiliency using code-based met-
+ric,” IEEE Trans. Ind. Appl., vol. 54, no. 4, pp. 3676–3686, Jul./Aug. 2018.
+[15] G. V. Iswaran, R. Vakili, and M. Khorsand, “A comprehensive framework
+based on dynamic and steady state analysis to evaluate power system
+resiliency to extreme weather conditions,” in Proc. IREP Bulk Power
+System Dyn. Control, 2022, pp. 1–15.
+[16] K. A. Klise, R. Murray, and L. T. N. Walker, “Systems measures of water
+distribution system resilience,” U.S. EPA Ofﬁce Res. Develop., Cincinnati,
+OH, USA, Tech. Rep. EPA/600/R-14/383, 2015.
+[17] S. Zuloaga and V. Vittal, “Quantifying power system operational and
+infrastructural resilience under extreme conditions within a water-
+energy nexus framework,” IEEE Open Access J. Power Energy, vol. 8,
+pp. 229–238, 2021.
+[18] S. Zuloaga, P. Khatavkar, L. Mays, and V. Vittal, “Resilience of cyber-
+enabled electrical energy and water distribution systems considering in-
+frastructural robustness under conditions of limited water and/or energy
+availability,” IEEE Trans. Eng. Manag., vol. 69, no. 3, pp. 639–655,
+Jun. 2022.
+[19] L. Rodriguez-Garcia, M. M. Hosseini, T. M. Mosier, and M. Parvania,
+“Resilience analytics for interdependent power and water distribution sys-
+tems,” IEEE Trans. Power Syst., vol. 37, no. 6, pp. 4244–4257, Nov. 2022.
+[20] K. Oikonomou, M. Parvania, and R. Khatami, “Optimal demand response
+scheduling for water distribution systems,” IEEE Trans. Ind. Electron.,
+vol. 14, no. 11, pp. 5112–5122, Nov. 2018.
+[21] K. S. Ayyagari and N. Gatsis, “Optimal pump scheduling in multi-phase
+distribution networks using benders decomposition,” Electr. Power Syst.
+Res., vol. 212, 2022, Art. no. 108584.
+[22] J. H. Eto, K. H. LaCommare, P. Larsen, A. Todd, and E. Fisher, “An
+examination of temporal trends in electricity reliability based on reports
+from U.S. electric utilities,” Lawrence Berkeley Nat. Lab., Berkeley, CA,
+USA, Tech. Rep. LBNL-5268E, 2012.
+[23] R. Goldstein and W. Smith, “Water & sustainability (volume 4): US elec-
+tricity consumption for water supply & treatment-The next half century,”
+EPRI, Palo Alto, CA, USA, Tech. Rep. 1006787, 2002.
+[24] B. Anderson et al., “stormwindmodel,” 2018. [Online]. Available: https:
+//github.com/geanders/stormwindmodel
+[25] Y. M. Darestani and A. Shaﬁeezadeh, “Multi-dimensional wind fragility
+functionsforwoodutilitypoles,”Eng.Struct.,vol.183,pp. 937–948,2019.
+[26] K. A. Klise et al., “Water network tool for resilience (WNTR) user
+manual,” U.S. EPA Ofﬁce Res. Develop., Washington, DC, USA, Tech.
+Rep. EPA/600/R-20/185, 2020.
+[27] M.OuyangandL.DueñasOsorio,“Multi-dimensionalhurricaneresilience
+assessment of electric power systems,” Struct. Saf., vol. 48, pp. 15–24,
+2014.
+[28] L. A. Rossman, H. Woo, M. T. F. Shang, R. Janke, and T. Haxton,
+“EPANET2.2UserManual,”U.S.Environ.ProtectionAgency,Cincinnati,
+OH, USA, Tech. Rep. EPA/600/R-20/133, 2020.
+[29] C. D’Ambrosio, A. Lodi, S. Wiese, and C. Bragalli, “Mathematical pro-
+gramming techniques in water network optimization,” Eur. J. Oper. Res.,
+vol. 243, no. 3, pp. 774–788, 2015.
+[30] A. Marchi, A. R. Simpson, and N. Ertugrul, “Assessing variable speed
+pump efﬁciency in water distribution systems,” Drink. Water Eng. Sci.,
+vol. 5, no. 1, pp. 15–21, 2012.
+[31] I. Sárbu and I. Borza, “Energetic optimization of water pumping in distri-
+bution systems,” Period. Polytech. Mech. Eng., vol. 42, no. 2, pp. 141–152,
+1998.
+[32] B. Ulanicki, J. Kahler, and B. Coulbeck, “Modeling the efﬁciency and
+power characteristics of a pump group,” J. Water Resour. Plan. Manag.,
+vol. 134, no. 1, pp. 88–93, 2008.
+[33] ISO California, “Regulation energy management draft ﬁnal proposal,”
+2011.
+[Online].
+Available:
+https://www.caiso.com/Documents/
+RevisedDraftFinalProposal-RegulationEnergyManagement-Jan13_2011.
+pdf
+[34] W. H. Kersting, “Radial distribution test feeders,” in Proc. IEEE Power
+Eng. Soc. Winter Meet., 2001, vol. 2, pp. 908–912.
+[35] C. Zhai, T. Y. j. Chen, A. G. White, and S. D. Guikema, “Power outage
+prediction for natural hazards using synthetic power distribution systems,”
+Reliab. Eng. Syst. Saf., vol. 208, 2021, Art. no. 107348.
+[36] PJM, “Ancillary services: RTO regulation signal data.” Accessed:
+Dec. 13, 2022. [Online]. Available: https://www.pjm.com/markets-and-
+operations/ancillary-services
+[37] G. S. Ledva et al., “Co-simulation testbed and controllers for compressor-
+based loads providing grid balancing services,” 2023. [Online]. Available:
+https://github.com/Giannisgran/Co-Simulation-testbed-and-controllers-
+for-compressor-based-loads-providing-grid-balancing-services
+[38] F. J. Martínez-Solano, P. L. Iglesias-Rey, D. Mora-Meliá, and V. S. Fuertes-
+Miquel, “Exact skeletonization method in water distribution systems for
+hydraulic and quality models,” Procedia Eng., vol. 186, pp. 286–293,
+2017.
+Anna Stuhlmacher (Member, IEEE) received the
+B.S. degree in electrical engineering from Boston
+University, Boston, MA, USA, in 2017, and the M.S.
+and Ph.D. degrees in electrical engineering from the
+University of Michigan, Ann Arbor, MI, USA, in
+2019 and 2023, respectively. She is an Assistant Pro-
+fessor with the Electrical and Computer Engineer-
+ing Department, Michigan Technological University,
+Houghton, MI. Her research interests include the op-
+timization of uncertain distributed energy resources
+and the coordination of the power grid with other
+infrastructure systems, such as drinking water and agricultural systems.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:57:29 UTC from IEEE Xplore.  Restrictions apply. 
+
+STUHLMACHER et al.: ASSESSING POWER AND WATER NETWORK RESILIENCE WHEN WATER PUMPS PROVIDE FREQUENCY REGULATION
+3845
+Seth Guikema received the B.S. degree in environ-
+mental engineering from Cornell University, Ithaca,
+NY, USA, in 1997, the M.S. degree in civil and
+environmental engineering from Stanford University,
+Stanford, CA, USA, in 1999, the M.Eng. degree in
+civil engineering from the University of Canterbury,
+Christchurch, New Zealand, in 1999, and the Ph.D.
+degree in engineering risk and decision analysis from
+StanfordUniversityin2003.HeisaProfessorwiththe
+Civil and Environmental Engineering and Industrial
+and Operations Engineering Departments, University
+of Michigan, Ann Arbor, MI, USA, and a Professor II with the Department of
+Safety, Economics, and Planning, University of Stavanger, Stavanger, Norway.
+He was a Faculty Member with Texas A&M University and Johns Hopkins
+University, a Senior Analyst with Innovative Decisions, Inc. and a Data Science
+Fellow with One Concern, Inc.
+Johanna L. Mathieu (Senior Member, IEEE) re-
+ceived the B.S. degree in ocean engineering from the
+Massachusetts Institute of Technology, Cambridge,
+MA, USA, in 2004, the M.S. and Ph.D. degrees
+in mechanical engineering from the University of
+California, Berkeley, CA, USA, in 2008 and 2012,
+respectively. She is an Associate Professor with the
+Department of Electrical Engineering and Computer
+Science, the University of Michigan, Ann Arbor, MI,
+USA. Prior to joining the University of Michigan, she
+was a Postdoctoral Researcher with the Swiss Federal
+Institute of Technology) Zurich, Zurich, Switzerland. Her research interests
+include modeling, estimation, control, and optimization of distributed energy
+resources.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:57:29 UTC from IEEE Xplore.  Restrictions apply. 

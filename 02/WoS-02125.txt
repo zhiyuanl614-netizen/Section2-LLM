@@ -1,0 +1,1713 @@
+Sustainable Cities and Society 83 (2022) 103963
+Available online 3 June 2022
+2210-6707/© 2022 The Author(s). Published by Elsevier Ltd. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-
+nc-nd/4.0/).
+Contents lists available at ScienceDirect
+Sustainable Cities and Society
+journal homepage: www.elsevier.com/locate/scs
+InfraRisk: An open-source simulation platform for resilience analysis in
+interconnected power–water–transport networks
+Srijith Balakrishnan ∗, Beatrice Cassottana
+Future Resilient Systems, Singapore-ETH Centre at CREATE, 1 Create Way, Singapore 138602, Singapore
+A R T I C L E
+I N F O
+Dataset link: Github
+Keywords:
+Infrastructure simulation
+Sequential simulation
+Disaster resilience
+Infrastructure asset management
+Hazard analysis
+A B S T R A C T
+Integrated simulation models are emerging as an alternative for analyzing large-scale interdependent infras-
+tructure networks due to their modeling advantages over traditional interdependency models. This paper
+presents an open-source integrated simulation package for the component-level analysis of interdependent
+power-, water-, transport networks. The simulation platform, named ’InfraRisk’ and developed in Python,
+can simulate network-wide effects of disaster-induced infrastructure failures and subsequent post-disaster
+restoration. InfraRisk consists of an infrastructure module, a hazard module, a recovery module, a simulation
+module, and a resilience quantification module. The infrastructure module integrates existing infrastructure
+network packages (wntr for water distribution systems, pandapower for power systems, and a static traffic
+assignment model for road transport systems) through an interface that facilitates the network-level simulation
+of infrastructure failures. The hazard module generates infrastructure component failures based on various
+disaster characteristics. The recovery module determines repair sequences and assigns repair crews based
+on predefined heuristics-based recovery strategies or model predictive control (MPC) based optimization.
+Based on the schedule, the simulation module simulates the consequences of the disaster impacts and the
+recovery actions on the performance of the interdependent network. The resilience quantification module
+offers system-level and consumer-level metrics to quantify both the risks and resilience of the integrated
+infrastructure networks against disaster events. InfraRisk provides a virtual platform for decision-makers to
+experiment and develop region-specific pre-disaster and post-disaster policies to enhance the overall resilience
+of interdependent urban infrastructure networks.
+1. Introduction
+Climate-induced extreme weather events and emerging threats, such
+as cyber-attacks and acts of terrorism, pose severe risks to the uninter-
+rupted functioning of urban infrastructure systems.1 While infrastruc-
+ture systems, such as power-, water-, and transport systems, are critical
+for other infrastructure systems, businesses, and communities alike,
+they are also highly vulnerable to major hazards, such as earthquakes
+and floods. Of significant concern are the short- and long-term societal
+and economic losses resulting from infrastructure service disruptions,
+which may be compounded by the interdependencies among critical
+infrastructure systems. This had been evident in the recent 2021 Texas
+snowstorm, which caused power blackouts and water supply disrup-
+tions in the industrial hubs of Central Texas (Busby et al., 2021),
+leading to ripple effects in the national and global supply chains.
+Similar events in the past have shown that the scale of the indirect
+∗Corresponding author.
+E-mail address: srijith.balakrishnan@sec.ethz.ch (S. Balakrishnan).
+1 For ensuring consistency and clarity, we use the following conventions throughout the article: a ‘system’ refers to an infrastructure providing a certain utility
+service (for eg., a water or power distribution system). A ‘network’ is defined as a system of interconnected infrastructure systems (for eg., an interdependent
+power-, water-, and transport network.).
+economic impacts resulting from infrastructure disruptions are of mag-
+nitude larger than the direct costs incurred due to infrastructure failure
+and restoration (Hallegatte, Rentschler, & Rozenberg, 2019; National
+Research Council, 1999).
+Empirical data and simulation studies confirm that judicious inter-
+ventions to improve resilience against infrastructure failures resulting
+from external factors could not only reduce operational disruptions to
+individual infrastructure systems but also decrease the likelihood of
+large-scale network-wide consequences (de Almeida & Mostafavi, 2016;
+Sadashiva et al., 2021). Such interventions may be classified according
+to the targeted resilience characteristic(s) of the infrastructure system,
+namely resistant capacity, absorptive capacity, and restorative capacity
+(Ouyang, 2014; Vugrin, Warren, & Ehlen, 2011).
+However, the challenge is to identify and evaluate various feasible
+resilience alternatives (both system-level and component-level) and
+https://doi.org/10.1016/j.scs.2022.103963
+Received 24 January 2022; Received in revised form 17 May 2022; Accepted 21 May 2022
+
+Sustainable Cities and Society 83 (2022) 103963
+2
+S. Balakrishnan and B. Cassottana
+implement the cost-effective ones (Najarian & Lim, 2020). Moreover,
+such an effort requires frameworks and tools for a holistic under-
+standing of the network-wide consequences of various system-level and
+component-level resilience strategies (Ouyang, 2014; Setola, Luiijf, &
+Theocharidou, 2016) so that the cost and benefit aspects can be evalu-
+ated. In addition, the increasing societal and economic significance in
+infrastructure resilience studies also strengthens the case for developing
+simulation tools with the capability to perform more granular analyses.
+While modeling and simulation tools have been extensively applied
+for resilience analysis in individual infrastructure systems, those in-
+tended for integrated infrastructure systems for component-level anal-
+yses are very few and require further research (Saidi, Kattan, Jayas-
+inghe, Hettiaratchi, & Taron, 2018). Among the available integrated
+infrastructure models, there is little attention to interdependent water–
+power–transport networks, despite their considerable importance to the
+efficiency and resilience of cities. The overall objective of this study is
+to present an open-source simulation package for the analysis of inter-
+dependent power–water–transport network. The simulation platform is
+named ‘InfraRisk’ and is developed in Python. The specific objectives
+of InfraRisk are as follows:
+1. Integrate existing domain-specific infrastructure simulation li-
+braries using an object-oriented interface and present a sequen-
+tial approach for the simulation of network-wide effects in inter-
+dependent power, water-, and transport systems.
+2. Incorporate hazard initiation and recovery submodels in the
+integrated infrastructure model to investigate disaster-induced
+infrastructure component failures and subsequent post-disaster
+restoration actions on the resilience capabilities of the infrastruc-
+ture systems.
+3. Provide appropriate functional metrics to evaluate the effective-
+ness of pre- and post-disaster resilience interventions.
+In summary, InfraRisk provides a decision-making support tool to
+design, test, and evaluate various component- and system-level re-
+silience interventions in interdependent power-, water-, and transport
+systems using simulation approach. The rest of the paper is organized
+as follows: Section 2 provides a brief overview of the existing tools
+for interdependent infrastructure simulation; Section 3 discusses the
+architecture of InfraRisk simulation platform and its various functional-
+ities; Section 4 presents an experimental simulation of interdependent
+effects of a few disaster scenarios on a test network using the InfraRisk
+platform, and Section 5 summarizes the conclusions.
+2. Related work
+While disaster resilience has been historically acknowledged as an
+indispensable quality of infrastructure systems, the need for considering
+the (inter)dependencies in assessing their ability to withstand unantic-
+ipated events has gained attention only in the last three decades. Until
+then, the focus was on developing best practices to enhance the physical
+security and robustness of individual infrastructure systems (Fisher,
+Norman, & Peerenboom, 2018). However, several disasters in the past,
+such as the World Trade Center attack in 2001, the Northeast blackout
+of 2003, the Indian Ocean earthquake and tsunami in 2004, and
+Hurricane Katrina in 2005, showed that the interconnections among
+critical infrastructure sectors intensified the societal and economic
+loss incurred by disasters (O’Rourke, 2007). Over the years, several
+countries incorporated infrastructure systems and their interdependen-
+cies as major considerations in aspects concerning national security
+and extended support for research and development in the area of
+infrastructure resilience (Communities Commission of the European,
+2006; The White House, 2013). Consequently, academic interest in
+the identification, classification, and modeling of infrastructure inter-
+dependencies has grown considerably in the recent past, leading to the
+development of numerous frameworks, methods, and models for the
+analysis of interdependent infrastructure networks.
+2.1. Traditional infrastructure simulation models
+Traditional infrastructure interdependency models can be catego-
+rized into two groups: empirical models and computational models
+(Mitsova, 2021). Empirical models rely on data related to historical in-
+frastructure breakdowns for characterizing the interactions between in-
+frastructure systems. Empirical models could be built using qualitative
+data (for example, based on expert judgments Cooke & Goossens, 2004;
+Zorn, Pant, Thacker, Andreae, & Shamseldin, 2021) or quantitative
+data (for example, based on post-disaster impact assessment reports,
+newspaper reports, and official incident reports Luiijf, Nieuwenhuijs,
+Klaver, van Eeten, & Cruz, 2009; McDaniels, Chang, Peterson, Mikawoz,
+& Reed, 2007). The major limitation of empirical models is their
+incapability to identify possible failure and cascading event scenarios
+that may not yet have occurred.
+On the contrary, the computational approach explicitly captures
+physical-, cyber-, geographic-, and logical relationships among infras-
+tructure systems using mathematical and logical functions along with
+functional data and attempts to mimic real-world systems in a con-
+trolled environment. Therefore, such models are effective in under-
+standing the role of infrastructure properties and resilience interven-
+tions in system response. The most common computational models are
+graph-based models, system-dynamics models, and agent-based models.
+In graph-based models, abstractions of infrastructure systems are
+created by representing infrastructure components producing or con-
+suming resources using nodes and their interrelationships using edges
+(Svendsen & Wolthusen, 2007, 2008). Graph theory and network-
+flow optimization concepts have been extensively applied to study
+the impacts of infrastructure component failures and their conse-
+quences (Holden, Val, Burkhard, & Nodwell, 2013; Praks, Kopustinskas,
+& Masera, 2017). The graph-based models do not consider detailed
+functional aspects of system components.
+System dynamics-based models use the concepts of feedback loops,
+stocks, and flows to create abstractions of interdependent infrastructure
+networks. System dynamics-based models simulate the dynamic and
+evolutionary effects in the infrastructure system by testing various
+policies and investment alternatives using stock and flow variables
+(Pasqualini & Witkowski, 2005; Powell, DeLand, & Samsa, 2008). The
+notable drawbacks of system dynamics models are their incapability
+to analyze infrastructure systems at component-level, the need for a
+large amount of data for calibration, and excessive dependence on
+expert judgments for establishing feedback loops in the model (Ouyang,
+2014).
+The agent-based modeling (ABM) is a bottom-up approach for mod-
+eling interdependent infrastructure networks at a more granular scale
+by considering them as system-of-systems (SoS) (Nilsson & Darley,
+2006). ABMs simulate infrastructure components as agents and allow
+them to interact with each other in representative operating environ-
+ments to obtain quantitative insights into the system behavior (Bal-
+akrishnan & Zhang, 2020; Tesfatsion, 2003; Thompson et al., 2019).
+Some of the key issues pertaining to ABM are its over-dependence on
+assumptions, calibration of parameters, and validation of the results
+(Ouyang, 2014).
+In a few other models, a hybrid approach that combines empirical
+models with computational models have been proposed. For exam-
+ple, Cavalieri, Franchin, Gehl, and D’Ayala (2017) applied simulation
+techniques to generate conditional probability tables for constructing
+Bayesian Networks for assessing seismic risks in water networks. In
+addition to empirical and computational models, economic theory mod-
+els, such as input–output models (Haimes et al., 2005; Oliva, Panzieri,
+& Setola, 2010), have also been extensively used for modeling inter-
+dependencies. However, such models, like empirical models, depend
+on disaster data for calibrating the strength of dependencies among
+infrastructure sectors.
+
+Sustainable Cities and Society 83 (2022) 103963
+3
+S. Balakrishnan and B. Cassottana
+Table 1
+Examples of water, power and traffic simulation packages and tools.
+Infrastructure
+systems
+Simulation
+platform
+Programming language
+Open-source
+Functionalities
+Water
+EPANET and its extensions
+Standalone with GUI,
+versions in Python (wntr), R
+(Epanet2toolkit), Matlab
+(EPANET Toolkit).
+Yes
+Hydraulic simulation of water
+distribution systems.
+WaterGEMS
+Standalone with GUI
+No
+Hydraulic simulation of water
+distribution systems
+Replica
+Standalone with GUI
+No
+Dynamic simulation of fluids, including
+hydraulic simulation.
+TSNet
+Python
+Yes
+Transient simulation of water
+distribution systems.
+Power
+Matpower
+MATLAB
+Yes
+Steady-state power system simulation
+and optimization.
+Pandapower
+Python
+Yes
+Analysis and optimization of power
+systems.
+PowerWorld
+Simulator
+Standalone with GUI
+No
+Interactive simulation, analysis and
+visualization of power systems.
+OpenDSS
+Standalone with GUI
+Yes
+Simulation of electric utility distribution
+systems.
+GridLAB-D
+Standalone with GUI
+Yes
+Simulation and analysis of power
+distribution systems.
+Dome
+Python
+Yes
+Power system analysis.
+Transportation
+MATSIM
+Java
+Yes
+Agent-based simulation of large-scale
+transport systems, including road
+networks.
+MatLAB DTA package
+MATLAB
+Yes
+Dynamic traffic assignment in road
+traffic networks.
+Vissim
+Standalone with GUI
+No
+Microscopic and mesoscopic traffic
+simulation.
+Python STA package
+Python
+Yes
+Static traffic assignment in road traffic
+networks.
+2.2. Integrated infrastructure simulation models
+As an alternative to traditional interdependency models, recent
+advancements in computational modeling have led to the integration
+of existing infrastructure-specific simulation models (Eusgeld, Nan, &
+Dietz, 2011; Nan & Eusgeld, 2011; Portante, Kavicky, Craig, Talaber,
+& Folga, 2017). Such integrated models intend to take full advantage
+of existing domain-specific models to simulate the global behavior
+of complex heterogeneous systems (Gomes, Thule, Broman, Larsen, &
+Vangheluwe, 2018). The key challenges of developing an integrated
+infrastructure model are time synchronization and coupling of con-
+stituent simulators having divergent functional dynamics, complexity,
+and time-scale (Caire, Sánchez, & Hadjsaid, 2013).
+As far as critical infrastructure systems are concerned, integrated
+models have been used in various fields. For example, Monti, Colciago,
+Conti, Maglio, and Dougal (2009) developed an integrated model by
+combining VTBPro (power system), Matlab Simulink (control system)
+and OpNet (communication system) simulation tools for studying the
+role of communication systems in the performance of power grids. In
+another study, Erdener, Pambour, Lavin, and Dengiz (2014) developed
+an electricity and gas network simulation and analysis platform by
+integrating infrastructure specific simulation models using a MATLAB
+interface.
+A more advanced set of integrated models, known as co-simulation
+models, adopt a distributed simulation approach. Co-simulation frame-
+works can be used to operate computationally intensive domain-specific
+submodels on different computers and seamlessly interact with each
+other on a real-time basis, enhancing both efficiency and usability
+(Wang, Magoua, & Li, 2022). Several frameworks and standards have
+been developed to implement co-simulation of complex systems, such
+as functional mock-up interface (FMI), high-level architecture (HLA),
+and distributed interactive simulation (DIS) (Ahmad, Kazmi, Shahzad,
+Palensky, & Gawlik, 2016). In recent years, the high-level architecture
+(HLA) standard has been increasingly adopted to develop interdepen-
+dent infrastructure models for perform simulations in a distributed
+environment (Dubaniowski & Heinimann, 2019; Wang et al., 2022).
+Recent studies have also extended the scope of integrated infras-
+tructure models by combining infrastructure-specific simulators with
+other urban system models for investigating various aspects of disas-
+ter resilience of urban regions. For example, Marasco et al. (2021)
+developed a Python-based integrated platform for assessing the vul-
+nerability and resilience of urban power and water systems against
+seismic events by combining infrastructure simulators and agent-based
+socio-technical models. Yang et al. (2021) combined geographic infor-
+mation system (GIS) tools, building information modeling (BIM) tools,
+and domain-specific infrastructure simulation models to develop an
+integrated model to analyze the risks of urban flooding on both in-
+frastructure and communities. Similarly, Franchin and Cavalieri (2015)
+studied the resilience characteristics of urban infrastructure and com-
+munities against seismic hazards by integrating existing seismic models,
+a network-based urban infrastructure network model (utilities, critical
+facilities, and build), and a community vulnerability model.
+2.3. Simulation of power-, water-, and transport systems and their interde-
+pendencies
+As far as power-, water-, and transport systems are concerned,
+there are several standalone simulation tools that can replicate the
+real-world operational characteristics. Table 1 lists some of the most
+common software packages used for the simulation of power-, water-,
+and transport systems and their operations. In the case of water distri-
+bution systems, most of the available tools adopt hydraulic modeling
+(for e.g., EPANET), which utilize concepts from areas, such as net-
+work simulation, statistical analysis, and classical optimization meth-
+ods (Berglund et al., 2020). In power system simulation, most of the
+tools focus on power flow optimization (steady state and dynamic), sta-
+bility analysis, and short circuit detection (eg. pandapower), which are
+modeled and solved as a combination of algebraic and differential equa-
+tions (Vugrin & Baca, 2013). Traffic flow on road networks are modeled
+and simulated by different methods, such as network-flow optimization
+techniques (static traffic assignment and dynamic traffic assignment),
+
+Sustainable Cities and Society 83 (2022) 103963
+4
+S. Balakrishnan and B. Cassottana
+multi-agent simulations models (eg. MATSIM), microscopic/mesoscopic
+simulation (eg. VISSIM), and cellular automata (Kotusevski & Hawick,
+2009).
+In addition, several studies have attempted to model the depen-
+dencies in interdependent power-water, power-transport and water-
+transport networks, using traditional- and integrated simulation ap-
+proaches. The major component-level dependencies between water and
+power systems commonly modeled are pumping stations and storage
+tanks (electric power to operate water pumps) (Dudenhoeffer et al.,
+2007; Zhang, Yang, & Lall, 2016), and cooling stations in power plants
+(water required as coolant) (Thompson et al., 2019). The most com-
+monly found dependency between transport system and other two
+systems is related to the road accessibility after a hazard occurs. Cas-
+cading failures resulting from fallen electric poles (Zou & Chen, 2019)
+and damaged pipelines/sewers (Dong, Wang, Mostafizi, & Song, 2020)
+road accessibility have been modeled and studied in the past.
+2.4. Research gaps
+The following are the major findings from the review of the litera-
+ture related to simulation of interdependent infrastructure networks.
+1. Most of the available traditional interdependent infrastructure
+simulation models provide a system-level abstraction of in-
+frastructure system performance with limited emphasis on the
+component-level operational characteristics.
+2. Due to their intrinsic limitations and homogeneous modeling
+approaches, traditional simulation models are incapable of lever-
+aging upon the existing domain knowledge in the constituent
+infrastructure sectors. Consequently, their ability to perform
+analyses involving realistic resilience interventions is often lim-
+ited.
+3. Recent advancements in integrated modeling techniques have
+led to its greater adoption in interdependent infrastructure mod-
+eling and analysis. However, the use of integrated models in
+infrastructure analysis is an emerging field and in the early
+stages of adoption, especially in the case of civil infrastructure
+systems.
+Several disasters, such as, Hurricane Harvey in 2017 and Texas
+snowstorm in 2021, have shown how critical power-, water-, and
+transport systems are for economic and community resilience in cities
+(Doss-Gollin, Farnham, Lall, & Modi, 2021; Frame, Wehner, Noy, &
+Rosier, 2020). The uninterrupted and coordinated functioning of the
+above systems is vital for both normal operations and post-disaster
+recovery. Despite the relevance of the above systems and their interde-
+pendencies in disaster resilience of cities, there is a lack of integrated
+infrastructure tools for analyzing interdependent power-, water-, and
+transport network. An open-source integrated platform to simulate
+disaster impacts on large-scale interdependent power-, water-, and
+transport networks could be of interest to a wide range of stakeholders
+involved in urban resilience decision-making and help in advance
+the use of integrated models for the analysis of other interdependent
+infrastructure networks. The integration of individual infrastructure
+simulators in InfraRisk is performed using a simpler sequential ap-
+proach compared to the distributed simulation frameworks, such as
+HLA and DIS, while maintaining adequate simulation performance.
+3. Methodology
+3.1. Methodological framework
+Fig. 1 illustrates the methodological framework adopted in the
+InfraRisk simulation platform. The platform is based on the widely
+accepted risk- and resilience analysis frameworks as presented in Ar-
+gyroudis et al. (2020) and Balakrishnan (2020). In this framework, the
+most important component is an interdependent infrastructure model
+that consists of various infrastructure system submodels of interest. In
+addition, the major hazards in the region can also be modeled. Further,
+the vulnerabilities in the network to those hazards are mapped and the
+direct impacts (physical and functional failures in the infrastructure
+components) are simulated using the hazard model. For scheduling
+post-disaster restoration/repair actions, a recovery model is also devel-
+oped. The restoration actions are prioritized based on specific recovery
+strategies or optimization methods. The indirect failures in the network
+are simulated using the interdependent infrastructure model based
+on the initial failure events and the subsequent repair actions. The
+component– and system-level operational performance are quantified
+and tracked using appropriate resilience metrics.
+3.2. Implementation in Python
+Python programming language is chosen for developing InfraRisk
+because of its versatility, ease of use, and extensive open-source li-
+braries. Python repositories house several efficient libraries to model
+individual infrastructure systems, such as water (wntr) and power
+(pypower and pandapower) systems, which could be adopted as domain-
+specific infrastructure simulators.
+The basic idea behind the InfraRisk simulation package is to in-
+tegrate existing infrastructure-specific simulation models through an
+object-oriented interface so that interdependent infrastructure simu-
+lation can be achieved. Interfacing requires identifying and modeling
+the dependencies among various infrastructure components and time-
+synchronization among infrastructure simulation models. To address
+the above challenges, InfraRisk is built using a sequential simula-
+tion framework (Fig. 1). The advantage of this approach is that it
+simplifies the efforts for data preparation and enables the complete
+utilization of component-level modeling features of the domain-specific
+infrastructure models.
+InfraRisk consists of five modules, namely, (a) integrated infras-
+tructure network simulation, (b) hazard initiation and vulnerability
+modeling, (c) recovery modeling, (d) simulation of direct and indirect
+effects, and (e) resilience quantification. In the rest of the section, a
+detailed discussion on each of the above modules is provided.
+3.2.1. Integrated infrastructure network simulation
+This module houses the three infrastructure
+models to simulate
+power-, water-, and transport systems. These models are developed
+using existing Python-based packages. In order to model the power
+system, pandapower is employed (Thurner et al., 2018). The water
+distribution system is modeled using wntr package (Klise et al., 2020).
+The traffic
+model provides the travel costs for traveling from one
+point in the network to another and is modeled using the static traffic
+assignment method (Boyles, Lownes, & Unnikrishnan, 2020). All three
+packages have network-flow optimization models that identify the
+steady-state resource flows in the respective systems considering the
+operational constraints. The details of the packages are presented in
+Table 2.
+The pandapower package can be used to determine the steady-state
+optimal power flow for a given set of system conditions. The optimal
+power flow problem, solved by pandapower, attempts to minimize the
+total power distribution costs in the system under load flow-, branch-,
+bus-, and operational power constraints (Eq. (1)) (Thurner et al., 2018).
+min
+∑
+𝑖∈𝑔𝑒𝑛,𝑠𝑔𝑒𝑛,𝑙𝑜𝑎𝑑,𝑒𝑥𝑡𝑔𝑟𝑖𝑑
+𝑃𝑖× 𝑓𝑖
+(𝑃𝑖
+)
+s.t.
+𝑃𝑚𝑖𝑛,𝑖≤𝑃𝑖≤𝑃𝑚𝑎𝑥,𝑖
+∀𝑖∈𝑔𝑒𝑛, 𝑠𝑔𝑒𝑛, 𝑒𝑥𝑡𝑔𝑟𝑖𝑑, 𝑙𝑜𝑎𝑑
+𝑄𝑚𝑖𝑛,𝑖≤𝑄𝑖≤𝑄𝑚𝑎𝑥,𝑖
+∀𝑖∈𝑔𝑒𝑛, 𝑠𝑔𝑒𝑛, 𝑒𝑥𝑡𝑔𝑟𝑖𝑑, 𝑙𝑜𝑎𝑑
+𝑉𝑚𝑖𝑛,𝑗≤𝑉𝑗≤𝑉𝑚𝑎𝑥,𝑗
+∀𝑗∈𝑏𝑢𝑠
+𝐿𝑘≤𝐿𝑚𝑎𝑥,𝑘
+∀𝑘∈𝑡𝑟𝑎𝑓𝑜, 𝑙𝑖𝑛𝑒, 𝑡𝑟𝑎𝑓𝑜3𝑤
+(1)
+where 𝑖, 𝑗, and 𝑘are the power system components, 𝑔𝑒𝑛is the set of
+generators, 𝑠𝑔𝑒𝑛is the set of static generators, 𝑙𝑜𝑎𝑑is the set of loads,
+
+Sustainable Cities and Society 83 (2022) 103963
+5
+S. Balakrishnan and B. Cassottana
+Fig. 1. Software implementation framework adopted in the InfraRisk simulation platform.
+Table 2
+Infrastructure packages using in the simulation model.
+Infrastruc-
+ture
+Package
+Capabilities
+Power
+pandapower
+• Capable of generating power distribution
+systems with standard components, such
+as lines, buses, and transformers based on
+design data.
+• Capable of performing power-flow
+analysis.
+Water
+wntr
+• Capable of generating water distribution
+systems with standard components such as
+pipes, tanks, and nodes based on design
+data.
+• Capable of performing pressure
+dependent demand or demand-driven
+hydraulic simulations.
+Transport
+Static traffic
+assignment
+package
+• Capable of implementing static traffic
+assignment and computing travel times
+between origin–destination pairs.
+𝑒𝑥𝑡𝑔𝑟𝑖𝑑is the set of external grid connections , 𝑏𝑢𝑠is the set of bus bars,
+𝑡𝑟𝑎𝑓𝑜is the set of transformers, 𝑙𝑖𝑛𝑒is the set of lines, and 𝑡𝑟𝑎𝑓𝑜3𝑤is
+the set of three winding transformers, 𝑓𝑖(⋅) is the cost function, 𝑃𝑖is the
+active power in 𝑖, 𝑄𝑖is the reactive power in 𝑖, 𝑉𝑗is the voltage in 𝑗
+and 𝐿𝑘is the loading percentage in 𝑘.
+The wntr package can simulate water flows in water distribution
+systems using two common approaches, namely, demand-driven analy-
+sis (DDA) and pressure-dependent demand analysis (PDA). While DDA
+assigns pipe flows based on the demands irrespective of the pressure
+at demand nodes, PDA assumes that the demand is a function of the
+pressure at which water is supplied. The PDA approach is more suitable
+for pressure-deficient situations, such as disaster-induced disruptions to
+water infrastructure. In the case of PDA, the actual node demands is
+computed as a function of available the water pressure at the nodes as
+in Eq. (2) (Klise et al., 2020).
+𝑑𝑖(𝑡) =
+⎧
+⎪
+⎪
+⎨
+⎪
+⎪⎩
+0
+𝑝𝑖(𝑡) ≤𝑃0
+𝐷𝑖(𝑡)
+(
+𝑝𝑖(𝑡)−𝑃0
+𝑃𝑓−𝑃0
+) 1
+𝑒
+𝑃0 < 𝑝𝑖(𝑡) ≤𝑃𝑓
+𝐷𝑖
+𝑝𝑖(𝑡) > 𝑃0
+(2)
+where 𝑑𝑖(𝑡) is the actual demand at node 𝑖at time 𝑡, 𝐷𝑖(𝑡) is the desired
+demand at a node 𝑖at 𝑡, 𝑝𝑖(𝑡) is the available pressure in node 𝑖at 𝑡, 𝑃𝑓
+is the nominal pressure, and 𝑃0 is the lower pressure threshold, below
+which no water is consumed. In InfraRisk, the hydraulic simulation is
+performed using the PDA approach.
+The traffic condition in the transport system is modeled using
+the static traffic assignment method based on the principle of user-
+equilibrium. Under user-equilibrium, every user tries to minimize their
+travel costs. The traffic assignment problem considered in InfraRisk
+package is formulated as follows (Eq. (3)) (Boyles et al., 2020).
+min
+𝐱,𝐡
+∑
+(𝑖,𝑗)∈𝐴∫
+𝑥𝑖𝑗
+0
+𝑡𝑖𝑗(𝑥𝑖𝑗)𝑑𝑥
+s.t.
+𝑥𝑖𝑗=
+∑
+𝜋∈𝛱
+ℎ𝜋𝛿𝜋
+𝑖𝑗
+∀(𝑖, 𝑗) ∈𝐴
+∑
+𝜋∈𝛱𝑟𝑠
+ℎ𝜋= 𝑑𝑟𝑠
+∀(𝑟, 𝑠) ∈𝑍2
+ℎ𝜋≥0
+∀𝜋∈𝛱
+(3)
+where 𝐴is the set of all road links with 𝑖and 𝑗as the tail and head
+nodes, 𝑡𝑖𝑗is the travel cost on link (𝑖, 𝑗), 𝑥𝑖𝑗is the traffic flow on
+link (𝑖, 𝑗), ℎ𝜋is the flow on path 𝜋∈𝛱, 𝛿𝜋
+𝑖𝑗is an indicator variable
+
+Sustainable Cities and Society 83 (2022) 103963
+6
+S. Balakrishnan and B. Cassottana
+that denotes whether (𝑖, 𝑗) is part of 𝜋, 𝑑𝑟𝑠is the total flow between
+origin–destination pair 𝑟, 𝑠.
+The module also consists of an interdependency layer which serves
+as an interface between infrastructure systems. The interdependency
+layer stipulates the different pieces of information that can be ex-
+changed among individual infrastructure systems and their respective
+formats. The interdependency submodule also stores information re-
+lated to the various component-to-component couplings between infras-
+tructure systems. The module facilitates the communication between
+infrastructure systems and enables information transfer triggered by
+dependencies. Currently the following dependencies are considered.
+• Power–water dependencies, which include dependency of water
+pumps on electric motors and generators on reservoirs (hydro-
+power).
+• Dependencies also exist between road traffic system and the other
+two infrastructure systems, as the former provides access to the
+latter. The disruptions to transport infrastructure components and
+their recovery are key considerations that influence the restora-
+tion and recovery of all other infrastructure systems. The module
+also stores the functional details of all infrastructure components,
+including their operational status after a disaster.
+The interdependency layer communicates with the infrastructure
+simulators through inbuilt functions (wrappers).
+3.2.2. Hazard initiation and vulnerability modeling
+The hazard module generates disaster scenarios and initiates
+disaster-induced infrastructure failures based on their vulnerability.
+The hazard initiation and the resulting infrastructure component fail-
+ures is the first step in the interdependent infrastructure simulation.
+The probabilistic failure of an infrastructure component is modeled as
+follows (Eq. (4)):
+𝑝(failure𝑖
+) = 𝑝(hazard) × 𝑝(exposure𝑖|hazard) × 𝑝(failure𝑖|exposure𝑖
+)
+(4)
+where 𝑖is the component, 𝑝(⋅) is the probability. The probability of
+failure of a component is computed as the product of the probability
+of the hazard, the probability of the component being exposed to the
+hazard if it occurs, and the probability of failure of the component if it
+is exposed to the event.
+The hazard module generates infrastructure component failures
+based on the hazard characteristics. In its current version, point events
+(such as random failures, terrorist attacks, and fire incidents), track-
+based events (such as floods, cyclones, and tornadoes), random events,
+and custom events can be generated using the module.
+For generating point events, three parameters, namely, the location
+of occurrence of the event, the radius of the impact, and the intensity of
+the event are to be provided. The hazard module allows five predefined
+intensity levels — low, moderate, high, extreme, and random. The
+conditional failure probability (𝑝(failure𝑖|exposure𝑖)) is dependent on
+the intensity level. The conditional probability of a component being
+exposed to the event (𝑝(exposure𝑖|hazard)) is defined as a function of
+the ratio of the distance of the component to the location of occurrence
+of the event and the radius of impact.
+In the case of track-based events, the input parameters are the track
+of the event, intensity of the event, and the offset distance of impact.
+In the case of flood events, the GIS data of the regional water bodies
+are also needed. For other track-based events, such as tornadoes and
+hurricanes, the tracks are randomly generated using a spline function.
+For all track-based events, the conditional probability of being exposed
+to the event is calculated as a function of the ratio of the perpendicular
+distance from the component to the track to the offset distance of
+impact.
+The third type of disruptions that can be generated is the random
+failure events. The user can choose the number of components that
+needs to be randomly failed in each disaster scenario.
+In addition to the above three pre-defined disruption classes, In-
+fraRisk includes a custom events class, which allows the user to define
+the disaster and failed components before performing the integrated
+network simulation. Due to its flexibility, this class of disruptions can
+be coupled with realistic hazard and vulnerability analysis models,
+such as Espinoza, Panteli, Mancarella, and Rudnick (2016), Pitilakis,
+Crowley, and Kaynia (2014) and Pregnolato, Ford, Wilkinson, and
+Dawson (2017).
+A few disaster scenarios generated by the hazard module are il-
+lustrated in Fig. 2. The radius/offset distance of impact is marked in
+gray color, whereas the failed components as determined by Eq. (4) is
+denoted using red color.
+After a disaster scenario is generated, the module stores the details
+of infrastructure disruptions (disrupted components, time of disruption,
+and the severity of disruption) in the local directory for use during the
+network simulation.
+3.2.3. Recovery modeling
+The third module, which is the recovery module, determines how
+the repair actions are sequenced and implemented. The three major
+factors that influence recovery are the availability of repair crews,
+repair times of components, and the criteria used for selecting sub-
+sequent components to restore. In InfraRisk, the user can specify the
+number of crews deployed for restoration of the three infrastructure
+systems, their initial locations in the network, and the repair times of
+the infrastructure components.
+The repair sequence can be derived using two approaches. The first
+approach
+is
+to
+adopt
+pre-defined
+repair
+strategies
+based
+on
+performance- and network-based heuristics . Currently, there are three
+inbuilt strategies based on the following criteria:
+1. Maximum flow handled: The resource-flow during normal oper-
+ating conditions could reflect the importance of an infrastruc-
+ture component to the system (Nicholson, Barker, & Ramirez-
+Marquez, 2016). The maximum resource-flow handled by a com-
+ponent, considering the temporal fluctuations, can be used as a
+performance-based heuristics to prioritize failed components for
+restoration.
+2. Betweenness centrality: Centrality is a graph-based measure that
+is used to denote the relative importance of components (nodes
+and links) in a system. Betweenness centrality is often cited as an
+effective measure to identify critical infrastructure components
+(Almoghathawi & Barker, 2019).
+3. Landuse/zone: Certain regions of a network may have consumers
+with large demands or critical to the functioning of the whole
+city. Industrial zones and central business districts are critical
+from both societal and economic perspectives.
+While it is comparatively easier to derive repair sequences based on
+heuristics, they may not guarantee optimal recovery of the system or
+the network.
+The second approach is an optimization model leveraging on the
+concept of model predictive control (MPC) (Camacho & Bordons,
+2007). In this approach, first, out of 𝑛repair steps, the solution
+considering only 𝑘steps (called the prediction horizon) is computed.
+Next, the first step of the obtained solution is applied to the system
+and then the process is repeated for the remaining 𝑛−1 components
+until all components are scheduled for repair. In the context of the
+integrated infrastructure simulation, the optimizer module evaluates
+repair sequences of the length of the prediction horizon for each in-
+frastructure (assuming that each infrastructure has a separate recovery
+crew) based on a chosen resilience metric (Kottmann, Kyriakidis, Dang,
+& Sansavini, 2021) (see Section 3.2.5 for a detailed discussion on the
+
+Sustainable Cities and Society 83 (2022) 103963
+7
+S. Balakrishnan and B. Cassottana
+Fig. 2. Examples of disaster scenarios and resultant infrastructure failures generated by the hazard module.
+resilience metrics used). The optimal repair sequence is found by max-
+imizing the resilience metric. At this stage, the optimal repair action
+in each prediction horizon is computed using a brute-force approach
+where the resilience metric is evaluated for each of the possible repair
+sequences. The major limitation of MPC is that it is suitable only for
+small disruptions involving a few component failures; MPC becomes
+computationally expensive to derive optimal restoration sequences for
+larger disruptions due to the large number of repair permutations it has
+to simulate.
+3.2.4. Simulation of direct and indirect effects
+The simulation module implements the integrated infrastructure
+simulation in two steps, namely, event table generation and interde-
+pendent infrastructure simulation. The objective of the event table is
+to provide a reference object to schedule all the disruptions and repair
+actions for implementing the interdependent network simulation.
+While individual infrastructure agencies may have finalized a
+restoration plan immediately after a disaster (especially one based
+on the strategies defined by heuristics), there are several factors that
+could influence its implementation. The most important hurdle is
+accessing the locations of disrupted components, as roads could also be
+disrupted either due to damage or debris (Comes & Van de Walle, 2014;
+Iloglu & Albert, 2020). In such a scenario, the crews may modify the
+repair sequence by prioritizing those components which are accessible
+under prevalent road system conditions. The modified repair sequence
+considering road access and the corresponding repair start and end
+times are computed by the model using the algorithm illustrated in
+Fig. 3.
+The algorithm first checks if there are components affected by the
+disruptive event. If there are any, the infrastructure repair sequences
+based on the strategy chosen by the user is derived and the repair tasks
+are assigned to the respective infrastructure system crews. Now, for
+each of the infrastructure system, one component at a time is selected
+in the order and its accessibility by the repair crew from their current
+location is ascertained. If the component is accessible, the shortest path
+(based on the static traffic assignment method under prevailing road
+conditions) is identified and the travel time is computed. Next, the start
+and the end times of the repair action are computed based on the travel
+time and the component repair time. At the end of the repair, if the
+component belongs to the transport system, the static traffic assignment
+model is rerun and the link flows and travel times are updated. This
+completes one cycle of the algorithm and the same process is repeated
+until all the components are scheduled for repair.
+The component failures, repair actions, and the respective time-
+stamps, as obtained from the algorithm described in Fig. 3, are recorded
+in an event table for later use in the simulation module. The simulation
+platform uses the event table as a reference to modify the operational
+status of system components during the simulation, so that the con-
+sequences of disaster events and repair actions are reflected in the
+system performance. The recovery module also stores details including
+the number of repair crews for every infrastructure system, and their
+initial locations.
+The next step is to simulate the interdependent effects resulting from
+the component disruptions and the subsequent restoration efforts. One
+of the main challenge in simulating the interdependent effects using
+a platform that integrates multiple infrastructure models is the time
+synchronization. Time synchronization is essential in InfraRisk for the
+following reasons:
+
+Sustainable Cities and Society 83 (2022) 103963
+8
+S. Balakrishnan and B. Cassottana
+Fig. 3. Algorithm used for scheduling the repair actions scheduled using a predefined recovery strategy.
+• The water system model (wntr) simulates the water flows during
+specified intervals, whereas the power system model pandapower
+computes power flows for a given time instance.
+• The network-wide effects are immediately reflected in the power
+system, whereas, in the case of water distribution system, there
+might be delayed responses, such as gradual emptying of the
+tanks, which need to be captured by the resilience metrics.
+In order to synchronize the times, the power- and water system
+models are run successively for every subsequent time-interval in the
+event table. The required water system metrics are collected for every
+one minute of simulation time from the wntr model, whereas power sys-
+tem characteristics at the start of every time interval is recorded from
+the pandapower model. The power flow characteristics are assumed to
+remain unchanged unless there is any modification to the power system
+in the subsequent time-steps in the simulation.
+Algorithm 1 presents the pseudo-code for simulating the interdepen-
+dent effects in the water and power systems.
+Algorithm 1 Pseudo-code for simulating interdependent effects in
+water and power systems and calculating resilience metrics
+timeList[] = sorted array of unique time stamps in the event table.
+for 𝑖= 0 to 𝑡𝑖𝑚𝑒𝐿𝑖𝑠𝑡.𝑙𝑒𝑛𝑔𝑡ℎ- 1 do
+Update operating status of the failed components at timeList[i] in both
+the power and water system models.
+Run the power system model and calculate the system performance at
+timeList[i].
+Update the indirectly affected components in the water system if any
+based on the predefined dependencies.
+Run the water system model for the time interval timeList[i] and
+timeList[i+1] and calculate the system performance.
+Update the indirectly affected components in the power system if any
+based on the predefined dependencies.
+end for
+Calculate the resilience metrics from the network performance time series.
+3.2.5. Resilience quantification
+The network-wide effects of infrastructure disruptions and the sub-
+sequent repair actions are measured using inbuilt resilience metrics.
+The repair actions are reflected in the resilience metric, which in turn
+can be used to identify the best resilience strategy or intervention.
+Currently, the model has two measures of performance (MOP),
+namely, equitable consumer serviceability (ECS) and prioritized con-
+sumer serviceability (PCS), to quantify the system- and network steady-
+state performances. The above MOPs are based on the well-known
+concepts of satisfied demand (Didier, Broccardo, Esposito, & Stojadi-
+novic, 2017) and productivity (Poulin & Kane, 2021). Th MOPs are used
+as the basis for defining the resilience metrics.
+Consider an interdependent infrastructure network K consisting of
+a set of infrastructure systems denoted by 𝐾∶𝐾∈K. There are
+𝑁consumers who are connected to K and the resource supply from
+a system 𝐾to consumer 𝑖∈𝑁at time 𝑡under normal operating
+conditions is represented by 𝑆𝐾
+𝑖(𝑡).
+The ECS approach assumes equal importance to all the consumers
+dependent on the system irrespective of the quantity of resources
+consumed from the system. For an infrastructure system, the ECS at
+time 𝑡is given by Eq. (5).
+ECS𝐾(𝑡) =
+⎛
+⎜
+⎜⎝
+∑
+∀𝑖∶𝑆𝐾
+𝑖(𝑡)>0
+𝑠𝐾
+𝑖(𝑡)
+𝑆𝐾
+𝑖(𝑡)
+⎞
+⎟
+⎟⎠
+∕𝑛𝐾(𝑡),
+where 0 ≤𝑠𝐾
+𝑖(𝑡) ≤𝑆𝐾
+𝑖(𝑡)
+(5)
+where 𝑠𝑖is the resource supply at time 𝑡under stressed system con-
+ditions and 𝑛𝐾(𝑡) is the number of consumers with a non-zero normal
+demand at time 𝑡.
+In the case of PCS, the consumers are weighted by the quantity of re-
+sources drawn by them. This approach assumes that disruptions to ser-
+viceability of large-scale consumers, such as manufacturing sector, have
+larger effect to the whole region compared to small-scale consumers
+such as residential buildings. The PCS metric of an infrastructure system
+at time 𝑡is given by Eq. (6).
+PCS𝐾(𝑡) =
+⎛
+⎜
+⎜⎝
+∑
+∀𝑖∶𝑆𝐾
+𝑖(𝑡)>0 𝑠𝐾
+𝑖(𝑡)
+∑
+∀𝑖∶𝑆𝐾
+𝑖(𝑡)>0 𝑆𝐾
+𝑖(𝑡)
+⎞
+⎟
+⎟⎠
+,
+where 0 ≤𝑠𝐾
+𝑖(𝑡) ≤𝑆𝐾
+𝑖(𝑡)
+(6)
+The normal serviceability component (𝑆𝐾
+𝑖(𝑡)) makes both ECS and
+PCS metrics unaffected by the intrinsic design inefficiencies as well as
+the temporal fluctuations in demand.
+For water distribution systems, pressure-driven approach is chosen
+as it is reported to be most ideal for the hydraulic simulation under
+pressure deficient situations. The component resource supply values for
+water systems are computed as in Eqs. (7)–(8).
+𝑠𝑤𝑎𝑡𝑒𝑟
+𝑖
+(𝑡) = 𝑄𝑖(𝑡)
+(7)
+𝑆𝑤𝑎𝑡𝑒𝑟
+𝑖
+(𝑡) = 𝑄0
+𝑖(𝑡)
+(8)
+where 𝑄𝑖(𝑡) and 𝑄0
+𝑖(𝑡) are the water supplied to consumer 𝑖during
+stressed and normal system conditions, respectively.
+For power systems, the power supplied to components under normal
+and stressed system conditions can be calculated using Eqs. (9)–(10).
+𝑠𝑝𝑜𝑤𝑒𝑟
+𝑖
+(𝑡) = 𝑝𝑖(𝑡)
+(9)
+𝑆𝑝𝑜𝑤𝑒𝑟
+𝑖
+(𝑡) = 𝑝0
+𝑖(𝑡)
+(10)
+where 𝑝𝑖(𝑡) and 𝑝0
+𝑖(𝑡) are the power supplied to consumer 𝑖under
+stressed and normal power system conditions.
+The ECS and PCS time series can be used to profile the effect of the
+disruption on any of the infrastructure systems. To quantify the system-
+level cumulative performance loss, a resilience metric called Equivalent
+Outage Hours (EOH), based on the well-known concept of ‘resilience
+
+Sustainable Cities and Society 83 (2022) 103963
+9
+S. Balakrishnan and B. Cassottana
+Table 3
+Component details of the simple network.
+Power system
+Water system
+Traffic system
+Component
+Count
+Component
+Count
+Component
+Count
+Buses/poles
+9
+Main pipelines
+12
+Arterials
+22
+Loads
+3
+Demand nodes
+9
+Attractor zones
+9
+Motors
+1
+Pumps
+1
+Generator zones
+9
+Switches
+0
+Tanks
+1
+External grids
+1
+Reservoirs
+1
+Power lines
+5
+Transformers
+2
+triangle’ (Bruneau et al., 2003), is introduced. EOH of an infrastructure
+system due to disaster event 𝛾𝐾is calculated as in Eq. (11).
+𝛾𝐾=
+1
+3600 ∫
+𝑡𝑚𝑎𝑥
+𝑡0
+[1 −𝑃𝐶𝑆𝐾(𝑡)] 𝑑𝑡
+or
+𝛾𝐾=
+1
+3600 ∫
+𝑡𝑚𝑎𝑥
+𝑡0
+[1 −𝐸𝐶𝑆𝐾(𝑡)] 𝑑𝑡
+(11)
+where 𝑡0 is the time of the disaster event in the simulation and 𝑡𝑚𝑎𝑥
+is the maximum simulation time (both in seconds). In Eq. (11), sys-
+tem performance during normal operating conditions is 1 due to the
+expression of the MOP used (see Eqs. (5)–(6)).
+EOH of an infrastructure system can be interpreted as the duration
+(in hours) of a full infrastructure service outage that would result in
+an equivalent quantity of reduced consumption of the same service by
+all consumers during a disaster. The larger the EOH value, the larger
+the impact on the infrastructure system and thereby on the consumers
+due to the disruptive event. The EOH metric can effectively capture
+the response and resilience of the infrastructure system (Eq. (11)),
+according to the serviceability criteria chosen by the user.
+Similar to EOH of a system, the consumer-level EOH can also be
+quantified, which indicates the equivalent duration of infrastructure
+service outage experienced by each consumer (Eq. (12)).
+𝛾𝐾
+𝑖
+= ∫
+𝑇
+𝑇0
+[
+1 −
+𝑠𝐾
+𝑖(𝑡)
+𝑆𝐾
+𝑖(𝑡)
+]
+𝑑𝑡
+(12)
+Finally, in order to compute the resilience of the interdependent
+infrastructure network, a weighted EOH metric is derived (Eq. (13)).
+𝛾=
+∑
+𝐾∈K
+𝑤𝐾𝛾𝐾
+(13)
+By default, equal weights are applied to both water and power systems.
+4. Experiment testbeds
+The InfraRisk package is equipped with two self-standing exper-
+iment testbeds to carry out generic infrastructure resilience studies,
+namely, the simple network and the modified Micropolis network. Both
+networks consist of water-, power-, and traffic networks, and their
+functional interdependencies.
+4.1. Simple network
+As the name indicates, the simple integrated network is developed
+by combining relatively smaller power-, water-, and traffic systems. The
+networks are constructed using the most basic infrastructure compo-
+nents. The power system consists of three loads, one external grid con-
+nection, and five powerlines. The water system consists of 12 pipelines,
+nine demand nodes, one water pump, and a tank. The traffic system
+consists of 22 road links, and nine trip generator- and attractor zones.
+The details related to the infrastructure components in the integrated
+network are presented in Table 3.
+4.2. Modified micropolis network
+The second integrated infrastructure test-bed is based on the well-
+known Micropolis virtual city developed at the Texas A&M University.
+It is a hypothetical city of 5000 inhabitants and is equipped with
+residential areas, industrial units, and a central business district. Mi-
+cropolis was originally developed for the design and simulation of
+water distribution systems (Brumbelow, Torres, Guikema, Bristow, &
+Kanta, 2007) due to the unavailability of real network data. Later its
+scope was extended to other infrastructure systems, including power
+system and communications (Bagchi, Sprintson, & Singh, 2009; Ciornei
+et al., 2017) to investigate the role of interdependencies among infras-
+tructure systems. Currently, the testbed consists of water-, power, and
+transpor system (Fig. 4). The component-level details of the network
+are presented in Table 4.
+5. Experiment simulation
+In this section, an experimental simulation to demonstrate the scope
+of the InfraRisk package is presented. The simulation is performed in
+the modified Micropolis network (Fig. 4). The objective of the experi-
+mental simulation is to quantify the direct and indirect component-level
+operational risks to infrastructure systems resulting from hypothetical
+floods along a water stream in the Micropolis city. The direct risks are
+evaluated using the hazard initiation module, whereas the interdepen-
+dent simulations are performed to derive the indirect risks. Statistical
+analysis is then performed to determine the effectiveness of various
+heuristics-based resilience strategies.
+5.1. Hypothetical floods and direct impacts on infrastructure components
+To generate hypothetical floods, a flood hazard profile is required.
+However, since Micropolis is a virtual city, there is no real historical
+disaster data to derive the flood risks for the network. Therefore, the
+authors generated the floods with assumptions on a few of the disaster
+parameters. It is assumed that the floodplains (regions exposed to
+floods) are within 100 m from the centerline of the main water stream.
+Three flood intensities are considered, namely, low, moderate, and
+high with respective probabilities of occurrence of 0.1, 0.3, and 0.5.
+The conditional probability of exposure (𝑝(exposure|hazard)) is deter-
+mined based on the distance criterion as explained in Section 3.2.2.
+The conditional component failure probabilities (𝑝(failure|exposure))
+corresponding to low, moderate, high, and extreme intensity floods
+generated in the study are 0.1, 0.3, and 0.6, respectively. A total of 165
+flood events are simulated, and the corresponding network component
+failures are determined using Eq. (4). Only water main pipelines (52
+nos.), power lines (22 nos.), and road links (17 nos.) are considered
+for failure as these are the most critical components of the respective
+infrastructure systems and are exposed to the simulated floods. For the
+water pipelines, a failed state represents a leakage with area equivalent
+to half of the cross-sectional area of respective pipe. In the case of
+power lines and road links, a full failure is assumed. Fig. 5 shows
+the failure probabilities of exposed infrastructure components to the
+simulated floods.
+5.2. Simulation of interdependent effects
+The next step is to perform the simulation of network-wide impacts
+of the initial infrastructure disruptions due to each
+flood event. The
+network-wide impacts are simulated under the three recovery strategies
+(based on maximum resource-flow handled, betweenness centrality,
+and land use/zoning). The repair sequences based on each
+strategy
+are derived by the recovery module and the resultant repair actions
+are scheduled and implemented in separate simulations. The prioritized
+component serviceability (PCS) is used as the measure of performance
+of systems.
+
+Sustainable Cities and Society 83 (2022) 103963
+10
+S. Balakrishnan and B. Cassottana
+Table 4
+Component details of modified Micropolis network.
+Power system
+Water system
+Traffic system
+Component
+Count
+Component
+Count
+Component
+Count
+Buses/poles
+1225
+Main pipelines
+678
+Arterials
+24
+Loads
+788
+Building connections
+685
+Subarterials
+25
+Motors
+3
+Hydrants
+52
+Collector streets
+56
+Switches
+61
+Valves (modeled as pipes)
+196
+Attractor zones
+39
+External grids
+1
+Pumps
+8
+Generator zones
+29
+Generators
+0
+Tanks
+1
+Power lines
+378
+Reservoirs
+2
+Transformers
+789
+Fig. 4. Topology details of the Micropolis integrated power-water-transport testbed.
+Table 5
+Repeated measures ANOVA results.
+Infrastructure
+Source
+SS
+df
+MS
+F
+p-value
+Water
+Strategy
+2161.12
+2
+1080.56
+12.82
+<0.001
+Error
+23 927.90
+284
+84.25
+Power
+Strategy
+8.17
+2
+4.08
+2.64
+0.07
+Error
+439.08
+284
+1.54
+The consumer-level EOH values are evaluated under various strate-
+gies for all the simulated flood scenarios. Fig. 6 illustrates the mean
+EOH of the water and power consumers resulting from the simulated
+floods when centrality-based restoration strategy was adopted.
+5.3. Analysis of the effectiveness of recovery strategies
+To statistically test if the three recovery strategies vary in terms
+of their effectiveness in bringing back the integrated network to the
+pre-disaster state, repeated measures Analysis of Variance (ANOVA)
+combined with post-hoc pairwise t-tests are employed. Repeated mea-
+sures ANOVA is a technique used to detect any statistical difference
+in the means of related (not independent) groups. The results of the
+repeated measures ANOVA for both water and power systems are
+presented in Table 5.
+In the case of the water system, the repeated measures ANOVA
+rejected the null hypothesis in favor of the alternate hypothesis that
+the expected EOH significantly differed across the recovery strategies
+[𝐹(2, 284) = 12.82, 𝑝< 0.05]. The results indicate that there is a signifi-
+cant difference in the effectiveness of recovery strategies in minimizing
+the cumulative disaster impacts on the consumers. However, in the case
+of power system, the repeated measures ANOVA did not reject the null
+hypothesis that the expected EOH across strategies are not significantly
+different. [𝐹(2, 284) = 2.64, 𝑝> 0.05].
+Motivated by the results of the repeated measures ANOVA tests,
+post-hoc pairwise t-tests using Benjamini and Hochberg’s correction
+are employed to identify the most-effective recovery strategy for the
+infrastructure systems (Table 6). In the case of the Micropolis water
+system, the results show that the expected EOH is the highest for
+centrality-based strategy (mean = 37.88 h) and the lowest for capacity-
+based strategy (mean = 31.80 h). The expected EOH of zone-based
+strategy is 35.71 h. The results suggests the higher effectiveness of
+capacity-based strategy for Micropolis water system compared to that
+of centrality- and zone-based strategies. On the other hand, for the
+power system, the post-hoc tests confirm the findings from the repeated
+measures ANOVA that there is no statistical difference in the expected
+EOH among strategies based on capacity (mean = 2.98 h), centrality
+(mean = 2.90 h), and zone (mean = 3.23 h). The higher mean EOH
+values of water system compared to that of power system confirms that
+the latter is more resilient against the flood impacts.
+The results indicate that each infrastructure system may have spe-
+cific repair strategies that are the most effective, even when the
+amounts of resources available for recovery
+are similar. This could
+be attributed to the unique topological, functional, and recovery char-
+acteristics of the infrastructure systems.
+
+Sustainable Cities and Society 83 (2022) 103963
+11
+S. Balakrishnan and B. Cassottana
+Fig. 5. Probability of failure of infrastructure components (all three infrastructure systems) based on the simulated floods.
+Table 6
+Post-hoc tests for pairwise comparison of effectiveness of recovery strategies.
+Infrastructure
+Strategy 1
+Strategy 2
+Mean diff.
+T
+p-value
+Water
+Capacity
+Centrality
+−6.08
+−5.53
+<0.0001
+Capacity
+Zone
+−3.91
+−3.69
+<0.0001
+Centrality
+Zone
+2.16
+2.21
+0.002
+Power
+Capacity
+Centrality
+0.09
+0.89
+0.372
+Capacity
+Zone
+−0.24
+−1.35
+0.269
+Centrality
+Zone
+−0.33
+−2.11
+0.109
+5.4. Model limitations
+While InfraRisk offers a wide-range of applications in infrastructure
+resilience research, it also has a few shortcomings and limitations,
+which could be addressed in future research. Some of these limitations
+are listed below.
+• Since InfraRisk has integrated existing infrastructure simulators,
+the limitations of each simulator must also be considered in while
+inferring the network simulation outcomes.
+• The hazard module in InfraRisk currently models exposure, vul-
+nerability, and consequence (failure of components) purely from
+a probability perspective. These aspects could be better modeled
+by incorporating disaster-dependent and infrastructure-specific
+fragility curves, leading to more reliable simulation results.
+• There could be additional interdependencies, which may be rel-
+evant to risk and resilience assessment of infrastructure systems,
+depending upon the scope of the study.
+• The scope of the current model is limited to the power-, water-
+and road- system. In future research, additional interdependent
+critical infrastructure could be modeled (e.g., communication
+network).
+6. Conclusions
+This research presented an open-source simulation package for sim-
+ulating disaster impacts on interconnected power-, water-, and traffic
+systems and analyze their network-wide effects. Existing infrastructure-
+specific simulation models are integrated using a sequential simulation
+framework for interdependent infrastructure simulations. The details
+of the constituent modules developed for the integrated infrastructure
+network modeling, hazard initiation and vulnerability modeling, recov-
+ery modeling, simulation of direct and indirect disaster impacts, and
+resilience quantification, are discussed. Later, the features and capa-
+bilities of the simulation package are demonstrated using a case study
+based on a virtual integrated network. While the infrastructure model
+can simulate the component-level performance of the infrastructure
+systems considering the interdependencies, the resilience indices are
+designed to track the quality of infrastructure services at the consumer-
+level. The above features make the simulation platform unique and
+capable of testing realistic resilience policies, strategies, and interven-
+tions in a controlled environment. Some of the potential applications
+of the package are listed below.
+• Assessment of pre-disaster component- and system-level resilience
+enhancement measures, such as structural enhancements.
+• Identification of system-level vulnerabilities and critical compo-
+nents.
+• Post-disaster
+recovery
+enhancement
+by
+improving
+existing
+restoration strategies and protocols, resource allocation, etc.
+• Resilience-based design of greenfield urban infrastructure sys-
+tems.
+Beyond interfacing of existing infrastructure simulators, InfraRisk
+offers a single platform for hazard generation, interdependency model-
+ing, recovery modeling, and resilience quantification, allowing detailed
+resilience analysis of networks and constituent infrastructure compo-
+nents. The object-oriented nature would also help users to use more
+accurate vulnerability and recovery models along with InfraRisk to
+gather more accurate insights into resilience of interdependent power-,
+water-, transport networks
+
+Sustainable Cities and Society 83 (2022) 103963
+12
+S. Balakrishnan and B. Cassottana
+Fig. 6. Expected consumer-level impacts for centrality-based repair strategy.
+CRediT authorship contribution statement
+Srijith Balakrishnan: Conceptualization, Methodology, Data cu-
+ration, Software, Visualization, Formal analysis, Writing – original
+draft, Project administration. Beatrice Cassottana: Conceptualization,
+Methodology, Validation, Resources, Writing – review and editing,
+Supervision.
+Declaration of competing interest
+The authors declare that they have no known competing finan-
+cial interests or personal relationships that could have appeared to
+influence the work reported in this paper.
+Data availability
+The InfraRisk package can be downloaded from Github. Documen-
+tation and codes for sample simulations are available in the InfraRisk
+package.
+Acknowledgments
+This research is supported by the National Research Foundation,
+Prime Minister’s Office, Singapore under its Campus for Research Ex-
+cellence and Technological Enterprise (CREATE) programme.
+The authors extend their gratitude to Prof. Stephen Boyles at the
+University of Texas at Austin for providing the codes of the traffic
+assignment model.
+The authors would like to extend their sincere gratitude to Felix
+Kottmann, Nazli Yonca Aydin, Ph.D., and Jun Xing Chin, Ph.D., for their
+suggestions and feedback in developing the InfraRisk package.
+References
+Ahmad, I., Kazmi, J. H., Shahzad, M., Palensky, P., & Gawlik, W. (2016). Co-
+simulation framework based on power system, AI and communication tools for
+evaluating smart grid applications. Proceedings of the 2015 IEEE innovative smart grid
+technologies - Asia, ISGT ASIA 2015, http://dx.doi.org/10.1109/ISGT-ASIA.2015.
+7387092.
+
+Sustainable Cities and Society 83 (2022) 103963
+13
+S. Balakrishnan and B. Cassottana
+de Almeida, B. A., & Mostafavi, A. (2016). Resilience of infrastructure systems to
+sea-level rise in coastal areas: Impacts, adaptation measures, and implementation
+challenges. Sustainability, 8(11), 1115. http://dx.doi.org/10.3390/su8111115.
+Almoghathawi, Y., & Barker, K. (2019). Component importance measures for interde-
+pendent infrastructure network resilience. Computers & Industrial Engineering, 133,
+153–164. http://dx.doi.org/10.1016/J.CIE.2019.05.001.
+Argyroudis, S. A., Mitoulis, S. A., Hofer, L., Zanini, M. A., Tubaldi, E., & Frangopol, D.
+M. (2020). Resilience assessment framework for critical infrastructure in a multi-
+hazard environment: Case study on transport assets. Science of the Total Environment,
+714, Article 136854. http://dx.doi.org/10.1016/j.scitotenv.2020.136854.
+Bagchi, A., Sprintson, A., & Singh, C. (2009). Modeling the impact of fire spread on
+the electrical distribution network of a virtual city. In 41st North American power
+symposium, NAPS 2009. http://dx.doi.org/10.1109/NAPS.2009.5484082.
+Balakrishnan, S. (2020). Methods for risk and resilience evaluation in interdependent
+infrastructure networks (Ph.D. thesis), (p. 268). Austin, Texas: The University of
+Texas at Austin, http://dx.doi.org/10.26153/tsw/13859.
+Balakrishnan, S., & Zhang, Z. (2020). Modeling interdependent effects of infrastruc-
+ture failures using imprecise dependency information. http://dx.doi.org/10.1080/
+23789689.2020.1735836, doi: 10.1080/23789689.2020.1735836.
+Berglund, E. Z., Pesantez, J. E., Rasekh, A., Shafiee, M. E., Sela, L., & Haxton, T. (2020).
+Review of modeling methodologies for managing water distribution security.
+Journal of Water Resources Planning and Management, 146(8), Article 03120001.
+http://dx.doi.org/10.1061/(asce)wr.1943-5452.0001265.
+Boyles, S. D., Lownes, N. E., & Unnikrishnan, A. (2020). Transportation Network Analysis,
+Vol. 1 (0.85 ed.).
+Brumbelow, K., Torres, J., Guikema, S., Bristow, E., & Kanta, L. (2007). Virtual cities for
+water distribution and infrastructure system research. In Restoring our natural habitat
+- proceedings of the 2007 world environmental and water resources congress (pp. 1–7).
+American Society of Civil Engineers, http://dx.doi.org/10.1061/40927(243)469.
+Bruneau, M., Chang, S. E., Eguchi, R. T., Lee, G. C., O’Rourke, T. D., Reinhorn, A.
+M., et al. (2003). A framework to quantitatively assess and enhance the seismic
+resilience of communities. Earthquake Spectra, 19(4), 733–752. http://dx.doi.org/
+10.1193/1.1623497.
+Busby, J. W., Baker, K., Bazilian, M. D., Gilbert, A. Q., Grubert, E., Rai, V., et al.
+(2021). Cascading risks: Understanding the 2021 winter blackout in Texas. Energy
+Research & Social Science, 77, Article 102106. http://dx.doi.org/10.1016/J.ERSS.
+2021.102106.
+Caire, R., Sánchez, J., & Hadjsaid, N. (2013). Vulnerability analysis of coupled
+heterogeneous critical infrastructures: A co-simulation approach with a testbed
+validation. In 2013 4th IEEE/PES innovative smart grid technologies europe, ISGT
+Europe 2013. http://dx.doi.org/10.1109/ISGTEurope.2013.6695485.
+Camacho, E. F., & Bordons, C. (2007). Introduction to model predictive control. In
+Advanced textbooks in control and signal processing (9781852336943), (pp. 1–11).
+Springer International Publishing, http://dx.doi.org/10.1007/978-0-85729-398-5_
+1.
+Cavalieri, F., Franchin, P., Gehl, P., & D’Ayala, D. (2017). Springer series in reliability
+engineering: Vol. 0, Bayesian networks and infrastructure systems: Computational and
+methodological challenges (pp. 385–415). Springer London, http://dx.doi.org/10.
+1007/978-3-319-52425-2_17.
+Ciornei,
+I.,
+Heracleous,
+C.,
+Kyriakou,
+M.,
+Eliades,
+D.,
+Constantinou,
+C.
+K.,
+&
+Kyriakides, E. (2017). Test system for mapping interdependencies of critical
+infrastructures for intelligent management in smart cities. In Smart cities in the
+mediterranean (pp. 355–377). Springer, Cham, http://dx.doi.org/10.1007/978-3-
+319-54558-5_17.
+Comes, T., & Van de Walle, B. A. (2014). Measuring disaster resilience: The impact of
+hurricane sandy on critical infrastructure systems. In Proceedings of the 11th inter-
+national ISCRAM conference, Vol. 11 (pp. 195–204). University Park, Pennsylvania,
+USA.
+Communities, Commission of the European (2006). Communication from the commis-
+sion on a European programme for critical infrastructure protection. URL https:
+//eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=COM:2006:0786:FIN:EN:PDF.
+Cooke, R. M., & Goossens, L. H. J. (2004). Expert judgement elicitation for risk
+assessments of critical infrastructures. Journal of Risk Research, 7(6), 643–656.
+http://dx.doi.org/10.1080/1366987042000192237.
+Didier, M., Broccardo, M., Esposito, S., & Stojadinovic, B. (2017). A compositional
+demand/supply framework to quantify the resilience of civil infrastructure systems
+(Re-CoDeS).
+3(2),
+86–102.
+http://dx.doi.org/10.1080/23789689.2017.1364560,
+doi: 10.1080/23789689.2017.1364560.
+Dong, S., Wang, H., Mostafizi, A., & Song, X. (2020). A network-of-networks percolation
+analysis of cascading failures in spatially co-located road-sewer infrastructure
+networks. Physica A: Statistical Mechanics and its Applications, 538, Article 122971.
+http://dx.doi.org/10.1016/j.physa.2019.122971.
+Doss-Gollin,
+J.,
+Farnham,
+D.
+J.,
+Lall,
+U.,
+&
+Modi,
+V.
+(2021).
+How
+un-
+precedented
+was
+the
+February
+2021
+Texas
+cold
+snap?
+Environmental
+Re-
+search
+Letters,
+16(6),
+Article
+064056.
+http://dx.doi.org/10.1088/1748-9326/
+ac0278, URL https://iopscience.iop.org/article/10.1088/1748-9326/ac0278https://
+iopscience.iop.org/article/10.1088/1748-9326/ac0278/meta.
+Dubaniowski, M. I., & Heinimann, H. R. (2019). Time granularity in system-of-systems
+simulation of infrastructure networks. In Studies in computational intelligence, Vol.
+812 (pp. 482–490). Springer, Cham, http://dx.doi.org/10.1007/978-3-030-05411-
+3_39.
+Dudenhoeffer, D. D., Permann, M. R., Woolsey, S., Timpany, R., Miller, C., McDer-
+mott, A., et al. (2007). Interdependency modeling and emergency response. In
+Summer computer simulation conference 2007-SCSC’07, Vol. 2 (pp. 1230–1237). San
+Diego, California, United States: Society for Computer Simulation International,
+URL https://dl.acm.org/doi/10.5555/1357910.1358101.
+Erdener, B. C., Pambour, K. A., Lavin, R. B., & Dengiz, B. (2014). An integrated
+simulation model for analysing electricity and gas systems. International Journal of
+Electrical Power & Energy Systems, 61, 410–420. http://dx.doi.org/10.1016/j.ijepes.
+2014.03.052.
+Espinoza, S., Panteli, M., Mancarella, P., & Rudnick, H. (2016). Multi-phase assessment
+and adaptation of power systems resilience to natural hazards. Electric Power Systems
+Research, 136, 352–361. http://dx.doi.org/10.1016/j.epsr.2016.03.019.
+Eusgeld, I., Nan, C., & Dietz, S. (2011). "System-of-systems" approach for interdependent
+critical infrastructures. Reliability Engineering & System Safety, 96(6), 679–686.
+http://dx.doi.org/10.1016/J.RESS.2010.12.010.
+Fisher, R., Norman, M., & Peerenboom, J. (2018). Resilience history and focus in the
+United States: Tech. Rep. January, (p. 22). Idaho Falls, Idaho: U.S. Department of
+Energy, URL https://www.osti.gov/servlets/purl/1476740.
+Frame, D. J., Wehner, M. F., Noy, I., & Rosier, S. M. (2020). The economic costs
+of hurricane harvey attributable to climate change. Climatic Change, 160(2), 271–
+281. http://dx.doi.org/10.1007/S10584-020-02692-8/TABLES/2, URL https://link.
+springer.com/article/10.1007/s10584-020-02692-8.
+Franchin, P., & Cavalieri, F. (2015). Probabilistic assessment of civil infrastructure
+resilience
+to
+earthquakes.
+Computer-Aided
+Civil
+and
+Infrastructure
+Engineering,
+30(7), 583–600. http://dx.doi.org/10.1111/mice.12092, URL https://onlinelibrary.
+wiley.com/doi/full/10.1111/mice.12092https://onlinelibrary.wiley.com/doi/abs/
+10.1111/mice.12092https://onlinelibrary.wiley.com/doi/10.1111/mice.12092.
+Gomes, C., Thule, C., Broman, D., Larsen, P. G., & Vangheluwe, H. (2018). Co-
+simulation: A survey. ACM Computing Surveys, 51(3), http://dx.doi.org/10.1145/
+3179993, URL https://dl.acm.org/doi/abs/10.1145/3179993.
+Haimes, Y. Y., Horowitz, B. M., Lambert, J. H., Santos, J., Lian, C., & Crowther, K.
+(2005). Inoperability input-output model for interdependent infrastructure sectors.
+I: Theory and methodology. Journal of Infrastructure Systems, 11(2), 67–79. http:
+//dx.doi.org/10.1061/(ASCE)1076-0342(2005)11:2(80).
+Hallegatte, S., Rentschler, J., & Rozenberg, J. (2019). Lifelines: The resilient infrastructure
+opportunity. Washington D.C.: World Bank, http://dx.doi.org/10.1596/978-1-4648-
+1430-3.
+Holden, R., Val, D. V., Burkhard, R., & Nodwell, S. (2013). A network flow model for
+interdependent infrastructures at the local scale. Safety Science, 53, 51–60.
+Iloglu, S., & Albert, L. A. (2020). A maximal multiple coverage and network restoration
+problem for disaster recovery. Operations Research Perspectives, 7, Article 100132.
+http://dx.doi.org/10.1016/j.orp.2019.100132.
+Klise, K., Hart, D., Bynum, M., Hogge, J., Haxton, T., Murray, R., et al. (2020).
+Water network tool for resilience (WNTR) user manual: Tech. rep., Sandia National
+Lab.(SNL-NM), Albuquerque, NM (United States).
+Kottmann, F., Kyriakidis, M., Dang, V. N., & Sansavini, G. (2021). Enhancing infras-
+tructure resilience by using dynamically updated damage estimates in optimal
+repair planning: The power grid case. ASCE-ASME Journal of Risk and Uncertainty
+in Engineering Systems, Part A: Civil Engineering, 7(4), Article 04021048. http:
+//dx.doi.org/10.1061/ajrua6.0001159.
+Kotusevski, G., & Hawick, K. A. (2009). A review of traffic simulation software.
+Research Letters in the Information and Mathematical Sciences, 13, 35–54, URL
+https://mro.massey.ac.nz/handle/10179/4506.
+Luiijf, E., Nieuwenhuijs, A., Klaver, M., van Eeten, M., & Cruz, E. (2009). Empirical
+findings on critical infrastructure dependencies in europe. In Critical information
+infrastructure security (pp. 302–310). Berlin, Heidelberg: Springer, http://dx.doi.org/
+10.1007/978-3-642-03552-4_28.
+Marasco, S., Cardoni, A., Zamani Noori, A., Kammouh, O., Domaneschi, M., &
+Cimellarof, G. P. (2021). Integrated platform to assess seismic resilience at the
+community level. Sustainable Cities and Society, 64, Article 102506. http://dx.doi.
+org/10.1016/j.scs.2020.102506.
+McDaniels, T., Chang, S., Peterson, K., Mikawoz, J., & Reed, D. (2007). Empiri-
+cal framework for characterizing infrastructure failure interdependencies. Journal
+of Infrastructure Systems, 13(3), 175–184. http://dx.doi.org/10.1061/(asce)1076-
+0342(2007)13:3(175).
+Mitsova, D. (2021). Integrative interdisciplinary approaches to critical infrastructure
+interdependency analysis. Risk Analysis, 41(7), 1111–1117. http://dx.doi.org/10.
+1111/risa.13129.
+Monti, A., Colciago, M., Conti, P., Maglio, M., & Dougal, R. (2009). A co-simulation
+approach for analysing the impact of the communication infrastructure in power
+system control. In Proc. conference on grand challenges in modeling and simulation
+(GCMS’09) (pp. 278–282). http://dx.doi.org/10.5555/2349462.2349499, URL http:
+//dl.acm.org/citation.cfm?id=2349462.2349499.
+Najarian, M., & Lim, G. J. (2020). Optimizing infrastructure resilience under budgetary
+constraint. Reliability Engineering & System Safety, 198, Article 106801. http://dx.
+doi.org/10.1016/J.RESS.2020.106801.
+Nan, C., & Eusgeld, I. (2011). Adopting HLA standard for interdependency study.
+Reliability Engineering & System Safety, 96(1), 149–159. http://dx.doi.org/10.1016/
+J.RESS.2010.08.002.
+
+Sustainable Cities and Society 83 (2022) 103963
+14
+S. Balakrishnan and B. Cassottana
+National Research Council (1999). The impacts of natural disasters. Washington D. C.:
+National Academies Press, http://dx.doi.org/10.17226/6425.
+Nicholson, C. D., Barker, K., & Ramirez-Marquez, J. E. (2016). Flow-based vulnerability
+measures for network component importance: Experimentation with preparedness
+planning. Reliability Engineering & System Safety, 145, 62–73. http://dx.doi.org/10.
+1016/j.ress.2015.08.014.
+Nilsson, F., & Darley, V. (2006). On complex adaptive systems and agent-based
+modelling for improving decision-making in manufacturing and logistics settings.
+International Journal of Operations & Production Management, 26(12), 1351–1373.
+Oliva, G., Panzieri, S., & Setola, R. (2010). Agent-based input-output interdependency
+model. International Journal of Critical Infrastructure Protection, 3(2), 76–82.
+O’Rourke, T. D. (2007). Critical infrastructure, interdependencies, and resilience.
+BRIDGE-Washington-National Academy of Engineering, 37(1), 22.
+Ouyang, M. (2014). Review on modeling and simulation of interdependent critical
+infrastructure systems. Reliability Engineering & System Safety, 121, 43–60.
+Pasqualini, D., & Witkowski, M. (2005). System dynamics approach for critical infras-
+tructure and decision support. a model for a potable water system.. In American
+geophysical union fall meeting abstracts.
+Pitilakis, K., Crowley, H., & Kaynia, A. M. (2014). SYNER-G: TYpology definition and
+fragility functions for physical elements at seismic risk: Buildings, lifelines, trans-
+portation networks and critical facilities. Geotechnical, Geological and Earthquake
+Engineering, 27, http://dx.doi.org/10.1007/978-94-007-7872-6.
+Portante, E. C., Kavicky, J. A., Craig, B. A., Talaber, L. E., & Folga, S. M. (2017).
+Modeling electric power and natural gas system interdependencies. Journal of
+Infrastructure Systems, 23(4), Article 04017035. http://dx.doi.org/10.1061/(asce)
+is.1943-555x.0000395, URL https://ascelibrary.org/doi/abs/10.1061/%28ASCE%
+29IS.1943-555X.0000395.
+Poulin, C., & Kane, M. B. (2021). Infrastructure resilience curves: Performance measures
+and summary metrics. In Reliability engineering and system safety, Vol. 216. Elsevier,
+Article 107926. http://dx.doi.org/10.1016/j.ress.2021.107926.
+Powell, D. R., DeLand, S. M., & Samsa, M. E. (2008). Critical infrastructure protection
+decision making. In Wiley handbook of science and technology for homeland security
+(pp. 1–15). Hoboken, NJ, USA: John Wiley & Sons, Inc..
+Praks, P., Kopustinskas, V., & Masera, M. (2017). Monte-Carlo-Based reliability and
+vulnerability assessment of a natural gas transmission system due to random
+network component failures. Sustainable and Resilient Infrastructure, 2(3), 97–107.
+http://dx.doi.org/10.1080/23789689.2017.1294881.
+Pregnolato, M., Ford, A., Wilkinson, S. M., & Dawson, R. J. (2017). The impact of
+flooding on road transport: A depth-disruption function. Transportation Research Part
+D: Transport and Environment, 55, 67–81. http://dx.doi.org/10.1016/J.TRD.2017.06.
+020.
+Sadashiva, V., Mowll, R., Uma, S. R., Lin, S. L., Heron, D., Horspool, N., et al. (2021).
+Improving Wellington region’s resilience through integrated infrastructure resilience
+investments. Bulletin of the New Zealand Society for Earthquake Engineering, 54(2),
+117–134. http://dx.doi.org/10.5459/BNZSEE.54.2.117-134.
+Saidi, S., Kattan, L., Jayasinghe, P., Hettiaratchi, P., & Taron, J. (2018). Integrated
+infrastructure systems—A review. Sustainable Cities and Society, 36, 1–11. http:
+//dx.doi.org/10.1016/J.SCS.2017.09.022.
+Setola, R., Luiijf, E., & Theocharidou, M. (2016). Managing the complexity of critical
+infrastructures. In R. Setola, V. Rosato, E. Kyriakides, & E. Rome (Eds.), Studies
+in systems, decision and control: Vol. 90, Managing the complexity of critical infras-
+tructures: a modelling and simulation approach (pp. 1–18). Springer International
+Publishing, http://dx.doi.org/10.1007/978-3-319-51043-9.
+Svendsen, N. K., & Wolthusen, S. D. (2007). Graph models of critical infrastruc-
+ture interdependencies. In AIMS 2007: Inter-domain management (pp. 208–211).
+Berlin, Heidelberg: Springer Berlin Heidelberg, http://dx.doi.org/10.1007/978-3-
+540-72986-0_27, URL http://link.springer.com/10.1007/978-3-540-72986-0_27.
+Svendsen, N., & Wolthusen, S. (2008). Multigraph dependency models for heteroge-
+neous infrastructures. In E. Goetz, & S. Shenoi (Eds.), Critical infrastructure protection
+(pp. 337–350). Boston, MA: Springer US.
+Tesfatsion, L. (2003). Agent-based computational economics: Modeling economies as
+complex adaptive systems. Information Sciences, 149(4), 262–268.
+The White House (2013). Presidential policy directive 21: Critical infrastructure security
+and resilience (PPD-21). URL https://obamawhitehouse.archives.gov/the-press-
+office/2013/02/12/presidential-policy-directive-critical-infrastructure-security-
+and-resil.
+Thompson, J. R., Frezza, D., Necioglu, B., Cohen, M. L., Hoffman, K., & Rosfjord, K.
+(2019). Interdependent critical infrastructure model (ICIM): An agent-based model
+of power and water infrastructure. International Journal of Critical Infrastructure
+Protection, 24, 144–165. http://dx.doi.org/10.1016/j.ijcip.2018.12.002.
+Thurner, L., Scheidler, A., Schafer, F., Menke, J. H., Dollichon, J., Meier, F., et
+al. (2018). Pandapower - An open-source Python tool for convenient modeling,
+analysis, and optimization of electric power systems. IEEE Transactions on Power
+Systems, 33(6), 6510–6521. http://dx.doi.org/10.1109/TPWRS.2018.2829021.
+Vugrin, E. D., & Baca, M. J. (2013). ENG 505 energy surety and systems: Electric
+power system modeling and analysis (interdependies & consequences): Tech. rep., Sandia
+National Lab.(SNL-NM), Albuquerque, NM (United States).
+Vugrin, E. D., Warren, D. E., & Ehlen, M. A. (2011). A resilience assessment framework
+for infrastructure and economic systems: Quantitative and qualitative resilience
+analysis of petrochemical supply chains to a hurricane. Process Safety Progress,
+30(3), 280–290. http://dx.doi.org/10.1002/prs.10437.
+Wang, F., Magoua, J. J., & Li, N. (2022). Modeling cascading failure of interde-
+pendent critical infrastructure systems using HLA-based co-simulation. Automation
+in Construction, 133, Article 104008. http://dx.doi.org/10.1016/j.autcon.2021.
+104008.
+Yang, Y., Ng, S. T., Dao, J., Zhou, S., Xu, F. J., Xu, X., et al. (2021). BIM-GIS-
+DCES enabled vulnerability assessment of interdependent infrastructures – a case
+of stormwater drainage-building-road transport nexus in urban flooding. Automa-
+tion in Construction, 125, Article 103626. http://dx.doi.org/10.1016/j.autcon.2021.
+103626.
+Zhang, Y., Yang, N., & Lall, U. (2016). Modeling and simulation of the vulnerability of
+interdependent power-water infrastructure networks to cascading failures. Journal
+of Systems Science and Systems Engineering, 25(1), 102–118. http://dx.doi.org/10.
+1007/s11518-016-5295-3, URL https://link.springer.com/article/10.1007/s11518-
+016-5295-3.
+Zorn, C., Pant, R., Thacker, S., Andreae, L., & Shamseldin, A. Y. (2021). Quantifying
+system-level dependencies between connected electricity and transport infrastruc-
+ture networks incorporating expert judgement. Civil Engineering and Environmental
+Systems, 38(3), 176–196. http://dx.doi.org/10.1080/10286608.2021.1943664.
+Zou, Q., & Chen, S. (2019). Enhancing resilience of interdependent traffic-electric
+power system. Reliability Engineering & System Safety, 191, Article 106557. http:
+//dx.doi.org/10.1016/j.ress.2019.106557.

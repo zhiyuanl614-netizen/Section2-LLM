@@ -1,0 +1,1870 @@
+4244
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 37, NO. 6, NOVEMBER 2022
+Resilience Analytics for Interdependent Power and
+Water Distribution Systems
+Luis Rodriguez-Garcia
+, Student Member, IEEE, Mohammad Mehdi Hosseini
+, Student Member, IEEE,
+Thomas M. Mosier
+, Member, IEEE, and Masood Parvania
+, Senior Member, IEEE
+Abstract—The occurrence of large-scale outages in power dis-
+tribution systems (PDSs) caused, for instance, by extreme weather
+events has raised concerns on the cascading impact of the power
+outages on the resilience of other critical infrastructures, includ-
+ing water distribution systems (WDSs), whose healthy operation
+highly relies on the availability of power from PDSs. This paper
+proposes an analytics model for quantifying the interdependence
+between the resilience of power and water distribution systems. The
+proposed model ﬁrst performs spatio-temporal outage analysis on
+the PDS and WDS to determine the PDS power serving capability
+and the resulting cascading impact on the WDS water serving
+capability during the occurrence of disruptions. The resilience
+interdependence is then determined by a proposed set of six metrics
+calculated using the power and water serving capability proﬁles,
+which trace and quantify the cascading impacts of power outages in
+the operation of WDSs during the degradation and recovery stages.
+The proposed analytics model is implemented on the IEEE 33-bus
+power distribution system supplying power for pumping stations
+of a 15-node test WDS, considering multiple cases of water storage
+capacity, single and multiple outage scenarios, and availability of
+distributed generation. The numerical results demonstrate that the
+proposed metrics track the temporal and spatial interdependence
+between the resilience of power and water distribution systems,
+providing a mechanism to identify weak spots, and assess options
+to enhance the resilience of the critical water infrastructure.
+Index Terms—Water-power nexus, water distribution system,
+power distribution system, resilience metric, outage analysis.
+NOMENCLATURE
+A. Sets and Indices
+s
+Index of outage scenarios.
+i, j
+Indices of power buses.
+ij
+Index of the line connecting buses i and j.
+t
+Index of time steps.
+u
+Index of distributed generation units.
+Manuscript received 2 March 2021; revised 27 August 2021 and 17 Decem-
+ber 2021; accepted 29 January 2022. Date of publication 8 February 2022;
+date of current version 20 October 2022. This work was supported by the
+U.S. Department of Energy (DOE) Water Power Technology Ofﬁce (WPTO)
+under Department of Energy Idaho Operations Ofﬁce under Contract Number
+DE-AC07-05ID14517.Paperno.TPWRS-00335-2021.(Correspondingauthor:
+Masood Parvania.)
+Luis Rodriguez-Garcia, Mohammad Mehdi Hosseini, and Masood Parvania
+are with the Department of Electrical and Computer Engineering, the University
+of Utah, Salt Lake City, UT 84112 USA (e-mail: luis.rodriguez@utah.edu;
+mehdi.hosseini@utah.edu; masood.parvania@utah.edu).
+Thomas M. Mosier is with the Idaho National Laboratory, Idaho Falls, ID
+83402 USA (e-mail: thomas.mosier@inl.gov).
+Color versions of one or more ﬁgures in this article are available at
+https://doi.org/10.1109/TPWRS.2022.3149463.
+Digital Object Identiﬁer 10.1109/TPWRS.2022.3149463
+e
+Index of ES systems.
+n
+Index of water nodes.
+B
+Number of power buses.
+N
+Number of water nodes.
+P
+Number of water pipelines.
+M
+Number of water pumps.
+T
+Number of time steps in operation horizon.
+S
+Set of outage scenarios.
+T , T ′
+Set of time steps in operation horizon.
+B
+Set of power buses.
+L
+Set of power lines.
+Ls
+Subset of outage lines in scenario s.
+U
+Set of distributed generation units.
+Ui
+Subset of distributed generation units connected
+to bus i.
+E
+Set of ES systems.
+Ei
+Subset of ES systems connected to bus i.
+N
+Set of water nodes.
+B. Parameters
+Δt
+Time step.
+ECi,t
+Value of lost load at bus i at time t.
+pD
+i,t,s, qD
+i,t,s
+Active/reactive power demand at bus i in scenario
+s during time t.
+gij, bij, bij
+sh
+Conductance, susceptance, and shunt admittance
+of line section ij.
+αij
+t,s
+Status of line ij at time t during scenario s.
+vi, vi
+Min/max voltage magnitude at bus i.
+Sij
+Maximum capacity of power line ij.
+pDG
+u
+Maximum active power output of distributed gen-
+eration unit u.
+qDG
+u
+, qDG
+u
+Min/maxreactivepoweroutputofdistributedgen-
+eration unit u.
+Fu
+Available fuel of distributed generation unit u.
+ηc
+e, ηd
+e
+Charging/discharging efﬁciency rates of ES sys-
+tem e.
+Ee, Ee
+Min/max ES capacity of system e.
+Be
+Maximum power input/output of ES system e
+qES
+e
+, qES
+e
+Min/max reactive power output of ES system e.
+WCn
+Unit cost of water not supplied at node n.
+W D
+n,t,s
+Water demand at node n, time t during scenario
+s.
+A
+P × N pipeline-to-node incidence matrix.
+Λ
+U × N matrix mapping water tanks to water
+nodes.
+0885-8950 © 2022 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+RODRIGUEZ-GARCIA et al.: RESILIENCE ANALYTICS FOR INTERDEPENDENT POWER AND WATER DISTRIBUTION SYSTEMS
+4245
+1N, 1M
+N/M-dimensional vector of ones.
+Δ
+U × U diagonal matrix of water tank area.
+V, V
+U × 1 vector of max/min tank capacity.
+Vinit
+U × 1 vector of initial water volume.
+C, D
+U × 1 vector of maximum tank input/output ca-
+pacity.
+g
+Gravity.
+G
+P × P diagonal matrix of pipe friction coefﬁ-
+cients.
+Q
+P × 1 vector of maximum water ﬂow.
+H, H
+N × 1 vector of min/max pressure head.
+a, b, c
+Characteristic parameters of pumps.
+B
+M × P matrix mapping pumps to arcs.
+ρ
+Water density.
+ηpump
+Pump efﬁciency.
+PW
+M × 1 vector of maximum pump power con-
+sumption.
+It,s
+M × 1 binary vector of power outage status of
+pumps.
+PB
+M × 1 vector of maximum backup generator
+power output.
+FB
+M × 1 vector of backup generator available fuel.
+C. Variables
+γP
+i,t,s
+Ratio of power served at bus i in scenario s during
+time t.
+pgrid
+t,s , qgrid
+t,s
+Active/reactive power supplied by the bulk power
+grid at time t of scenario s.
+pij
+t,s, qij
+t,s
+Active/reactive power ﬂow from bus i to bus j at
+time t of scenario s.
+pDG
+u,t,s, qDG
+u,t,s
+Active/reactive power supplied by the distributed
+generation unit u at time t.
+DES
+e,t,s
+Discharging rates of the ES system e connected
+to bus i of scenario s.
+CES
+e,t,s
+Charging rates of the ES system e connected to
+bus i of scenario s.
+qES
+e,t,s
+Reactive power supplied by the ES system e at
+time t.
+vi,t,s
+Voltage magnitude at bus i at time t of scenario s.
+θi,t,s
+Voltage phase angle at bus i at time t of scenario
+s.
+Ee,t,s
+State-of-charge of ES system e at time t of sce-
+nario s.
+γW
+n,t,s
+Ratio of water served at water node n in scenario
+s at time t.
+WR
+t,s
+N × 1 vector of water injections from reservoirs
+to nodes.
+Qt,s
+P × 1 vector of pipeline water ﬂow.
+Ct,s, Dt,s
+U × 1 vector of water tank charging/discharging
+ﬂow.
+ΓW
+t,s
+N × 1 vector of ratio of water served.
+Vt,s
+U × 1 vector of tank volume.
+Ht,s
+N × 1 vector of pressure head.
+Θ
+R × N matrix mapping water reservoirs to water
+nodes.
+Z
+R × 1 vector of reservoirs’ elevations.
+ΔHP
+t,s
+M × 1 vector of head rise created by pumps.
+Ωt,s
+M × 1 vector of pump speeds.
+PW
+t,s
+M × 1 vector of power injections to the WDS.
+PB
+t,s
+M × 1 vector of power injections from backup
+generators.
+QP
+t,s
+M × 1 vector of water ﬂows in pumps.
+I. INTRODUCTION
+A. Background and Literature Review
+The interdependence between power distribution systems
+(PDSs) and water distribution systems (WDSs) has received
+growing attention in recent years, focusing on opportunities
+for coordinated operation to improve the performance of both
+systems[1],[2].Theothersideofthisinterdependence,however,
+is related to the vulnerability to outages that cascade from power
+grid into the water infrastructure. The PDSs are exposed to a
+wide variety of faults caused by equipment failures or external
+events [3]–[6], which can cause subsequent cascading outages in
+WDSs that are powered by the PDS. The vulnerability of PDSs
+to such events has been experienced during multiple, recent
+large-scale catastrophic events, Superstorm Sandy in 2012 and
+Hurricane Maria in 2017, which have disrupted the operation
+of other infrastructures dependent on power supply, including
+water and transportation systems [7]–[10]. In particular, the
+interaction between power and water distribution systems is
+critical in case of disasters, since their extended interruption can
+represent a life-threatening risk for vulnerable communities, as
+occurred in Texas during the 2021 winter storm [11].
+Despite the vulnerabilities of power and water infrastructures
+being well known, actions aimed at enhancing the resilience of
+PDSs and WDSs are based on metrics that treat these systems
+as independent, neglecting the effect of their interdependent
+operation. Strategies for enhancing resilience of PDSs include
+splitting the grid into microgrids for self-healing operation [5],
+utilizing distributed resources for local load restoration [12],
+[13], distribution line hardening [14], and grid reconﬁguration to
+maximize the power supply to the affected demand [15], where
+resilience is associated with the amount of load shed during
+recovery. Alternatively, the resilience assessment is achieved
+based on a performance curve that assesses the evolution of a
+resilience indicator in time, the triangle curve or the trapezoid
+curve [16], [17]. The trapezoid curve is utilized in [18] to
+formulate ﬁve metrics which describe the phases experienced
+by a critical infrastructure during the disaster and its restoration.
+In addition, six probabilistic metrics are introduced in [19] to
+capture the response of automated devices in the grid during
+the fault isolation and restoration. These metrics are then used
+in [20] to assess the resilience of the grid against a speciﬁc
+type of natural disaster. Furthermore, a metric to quantify the
+system resilience to a time-evolving event is presented in [21]
+to consider the risk to extreme temperatures and water scarcity.
+Besides, the quantiﬁcation of resilience based on load shedding
+is extended to involve a component criticality ranking in [22] to
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+4246
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 37, NO. 6, NOVEMBER 2022
+support operators during cost-beneﬁt analyses. Moreover, sev-
+eral resilience frameworks for microgrids based on performance
+curves are found in literature, including metrics to quantify vul-
+nerability,degradation,andrestorationefﬁciency[23],resilience
+quantiﬁed as the reciprocal of the performance loss [24], a uni-
+ﬁed resilience metric to integrate the network constraints [25],
+and metrics based on the energy supplied compared to the total
+demand [26], [27]. The beneﬁts of these solutions, however,
+are solely analyzed for load restoration in the PDS and not
+for the interdependent systems. It is discuss in [28] that PDS
+restoration actions should involve ensuring critical load supply
+to other infrastructures that are dependent on power supply for
+operation.
+Similar to PDSs, the hardening actions for WDSs, which
+include upgrading pump stations, increasing tank capacity, pipe
+retroﬁtting, network expansion, and adaptive operation for pres-
+suremanagement,aredeﬁnedaccordingtometricsthatonlycon-
+sider the inherent characteristics of the pipelines and the WDS
+topology, neglecting the interactions with the power infrastruc-
+ture that supplies power for operation of the WDS [29]–[33].
+The resilience quantiﬁcation in WDSs has followed two major
+methods. On one side, the metrics use the deﬁnition introduced
+in [34], where resilience is quantiﬁed as the ability to return to a
+non-failure state after a failure has occurred. On the other hand,
+resilience is quantiﬁed by the ability of WDS to deliver water
+based on the available pressure head surplus at each node,the
+amount of pressure head above the minimum required for water
+distribution [35]. Additional metrics have been proposed in the
+literature based on these methods [29], [30], which are solely
+developed for a stand-alone WDS.
+In general, the resilience quantiﬁcation in critical infrastruc-
+tures is associated with the amount of demand supplied during
+and after the event. A number of resilience metrics is developed
+by modeling the infrastructures as graphs, where resilience is
+deﬁned using the ratio between demand satisfaction and total
+demand [36] or the weighted sum of the individual perfor-
+mance of each infrastructure [37]. While this approach offers
+a modeling alternative for any interdependent infrastructure, the
+resilience assessment requires developing methods that consider
+speciﬁc constraints of each system, which cause inaccuracies
+when neglected [38]. In particular, metrics to quantify resilience
+of interdependent power-gas networks are formulated in [39],
+[40], which are respectively obtained based on the cost of the
+curtailed energy demand and the convex linear combination of
+each infrastructure performance based on budget. In power and
+transportation infrastructures, where power outages cause trafﬁc
+light de-energization, resilience is quantiﬁed as a function of the
+cost of power curtailed and the cost of travel times after power
+interruptions for trafﬁc lights [10] or as the ratio between the
+travel time before and after the event [41].
+The interdependent nature of the PDS and WDS operation has
+been scarcely considered in metrics for resilience assessment.
+A study based on data retrieved from the 1994 Northridge
+earthquake was conducted in [42], where pumps stations were
+identiﬁed as vulnerable elements during the power supply inter-
+ruption. A framework for enhancing resilience in interdependent
+power-water infrastructures is developed in [43], where the
+resilience is quantiﬁed based on the number of users with access
+to electricity and water supply after a disaster. On the other hand,
+a metric is proposed in [44] to aggregate several independent and
+interdependent performance functions of a power transmission
+grid and a WDS, weighted in a single indicator based on a WDS
+sensitivity analysis. Despite the existing methodologies, there is
+a lack of mechanisms to model and quantify the interdependence
+between the resilience of power and water distribution systems
+during the response and recovery after disasters, which are
+key tools to identify vulnerabilities affecting the infrastructures
+during the high-impact events.
+B. Contribution and Paper Structure
+This paper proposes an analytics model for quantifying the
+interdependence between the resilience of power and water dis-
+tribution systems. The proposed model quantiﬁes the cascading
+impact of power outage in PDS that is propagated into the WDS
+by disrupting the operation of pumping stations, which would
+subsequently cause a water shortage in the WDS. Different to
+methodologies based on using a generic metric to assess the
+resilience of power systems with water and other infrastructures,
+the proposed approach quantiﬁes the interdependence between
+the resilience of power and water infrastructures by tracking
+how the PDS response during a disruption is cascaded into the
+WDS operation, considering different stages of the operation
+and performance of the systems after outages. The proposed
+approach ﬁrst determines the average power and water serving
+capabilities resulting from the spatio-temporal outage scenarios
+emulating the impacts of an external event. The importance of
+generating spatio-temporal outage scenarios is to include the
+impact of the outage location on the WDS resilience. Also, the
+assessment is not limited to a single scenario and instead aims at
+considering multiple scenarios representing different outcomes
+from the external event.
+Furthermore, instead of deﬁning a single uniﬁed resilience
+indicator, a set of six indicators are proposed, which are carefully
+formulated to quantify effects on the WDS serving capability
+caused by interruptions in the power supply during the outage
+affecting the PDS serving capability. More speciﬁcally, the six
+indicators aim at quantifying relative effects of the PDS outages
+on the WDS operation and resilience, evidenced in different
+stages of the serving capability curves associated with the effect
+of the PDS degradation on the WDS degradation, the effect of
+the PDS restoration on the WDS recovery, the ratio of supplied
+water with respect to amount of power in the PDS, the simi-
+larities between the power and water serving capabilities, and
+the time differences between the power and water disruption
+and restoration. Hence, the metrics aim at providing sensitivity
+to WDS vulnerabilities intensiﬁed by its interdependence with
+PDS and expect to motivate utilities from different infrastruc-
+tures to switch paradigms from an isolated and independent
+planning and operation to a comprehensive framework where
+efforts are coordinated to make their systems more resilient.
+The contributions of the paper are summarized as follows:
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+RODRIGUEZ-GARCIA et al.: RESILIENCE ANALYTICS FOR INTERDEPENDENT POWER AND WATER DISTRIBUTION SYSTEMS
+4247
+r An analytics framework is developed and evaluated, which
+performs the generation of spatio-temporal outage scenar-
+ios, the evaluation of these scenarios in the PDS using a
+second-order cone programming (SOCP) model, and the
+assessment of the cascading effect of power outages into
+the WDS operation during the disaster.
+r A cascading water shortage analysis model is proposed to
+optimize the operation of healthy pumping stations and
+water storage tanks in WDS and minimize the volume and
+duration of water shortage caused by a power outage in
+pumping stations in a given PDS outage scenario.
+r A set of six metrics is proposed to quantify the inter-
+dependence between the resilience of power and water
+distribution systems. The proposed metrics quantify the
+dependency of WDS resilience to PDS in terms of degra-
+dation, recovery, and total loss of service and measure the
+temporal delay between power outage in PDS and water
+shortage in WDS. The proposed metrics enable studying
+and quantifying the impacts of PDS vulnerabilities, as
+well as the beneﬁts from measures taken to improve the
+resilience of PDS on the resilience of WDS.
+The rest of the paper is organized as follows: Section II
+presents an overview of the proposed model and describes the
+cascading effect of PDS disruptions to the WDS operation.
+The formulation of the mathematical models for power outage
+analysis in PDS and cascading water shortage analysis in WDS
+are presented in Section III. The proposed metrics to quantify
+the interdependent resilience of PDS and WDS are deﬁned in
+Section IV. The numerical results of implementing the proposed
+model on the IEEE 33-bus test PDS and a 15-node test WDS are
+presented in Section V. Conclusions are presented in Section VI.
+II. OVERVIEW OF THE PROPOSED MODEL
+A reliable power supply is critical for the operation of energy-
+intensive processes in WDSs, including water withdrawal, treat-
+ment, and pumping, which are supplied by PDSs [2], [45].
+According to [46], almost all of the water treatment facilities
+in the United States are dependent on an external power supply
+to maintain their core operation. The occurrence of faults in the
+PDSmayresult inapower outageinthewater facilityanddisrupt
+the operation of WDS. The mitigation of power outage risk on
+water treatment and water distribution facilities relies mostly on
+the use of fuel-based backup power generators, including diesel,
+naturalgas,propane,andgasolinegenerators.Stationaryengines
+and portable generators are used depending on the amount
+of power to be supplied. In case of large demand, stationary
+engines provide uninterrupted electricity to supply the demand
+and power pumps, while less expensive portable generators
+are preferred to supply facilities with low power consumption.
+In the United States, these portable generators can be owned
+by the water facility or borrowed from other utilities before a
+naturaldisasterthroughtheWater/WastewaterAgencyResponse
+Network (WARN) to ensure the backup power requirements are
+met during the event [47], [48]. Although 88% of the treatment
+facilities are equipped with some form of backup generation,
+Fig. 1.
+Propagation of power outage in PDS to water shortage in WDS.
+including distributed generators, portable generators, and unin-
+terruptible power supply (UPS), their capacity is typically not
+big enough to fully supply the power demand of the water facility
+during external power outages. The use of fuel-based emergency
+generators is regulated by the U.S. Environmental Protection
+Agency (EPA) according to the Clean Air Act [49], which limits
+the available power at water facilities to sustain the operation
+during the emergency. In developing countries with rural WDSs
+and irrigation districts, the availability of backup power is even
+more restricted, due to the budget limitations and the risk of soil
+contamination from fuels [50].
+An illustrative example of fault propagation from PDS to
+WDS is shown in Fig. 1, which starts by a line fault in PDS and
+subsequent operation of protection devices and circuit breakers
+in (a). This results in the isolation of line sections downstream
+of the breaker and power outage in the PDS load points in (b) in
+Fig. 1. The power outage in the affected PDS buses interrupts the
+power supply to the pumping station in (c), which in turn limits
+the WDS ability to ensure adequate water pressure for distri-
+bution, leading to potential water supply shortages downstream
+of the pump in (d). The water shortage may be compensated
+temporarily by the water stored in the tank in (e). This propaga-
+tion of power outage from PDS to disruption and water shortage
+in WDS is deﬁned in this paper as cascading outage between
+PDS and WDS, which is dependent on the WDS conﬁguration,
+the available water storage, and the interconnection between the
+systems.
+In order to assess the resilience of interdependent power and
+water distribution systems given these cascading outages, this
+paperproposesamodelforresilienceanalyticsofinterdependent
+power and water distribution systems. The proposed model
+quantiﬁes the resilience of both systems using a set of six
+resilience metrics, which quantify the impacts of PDS outage
+scenarios in WDS operation according to the temporal evolution
+of water shortage during power outages. The interdependence of
+power systems to water systems at power transmission level is
+well-known, since water is required for hydropower generation
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+4248
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 37, NO. 6, NOVEMBER 2022
+Fig. 2.
+The proposed resilience analytics model for interdependent power and
+water distribution systems.
+and the cooling process of thermal power plants. At power distri-
+bution level, power generation technologies (small thermal units
+or renewable resources) do not typically rely on water inﬂow for
+cooling or power generation. However, emerging technologies,
+including small-scale pumped-storage hydropower [51], can
+potentially increase the interdependence of power distribution
+systems to water distribution systems, which can be used to
+enhance the resilience of both infrastructures. This dependency,
+however, is not explicitly considered in this paper for the metrics
+development. The structure of the proposed resilience analytics
+model is illustrated in Fig. 2. The proposed model ﬁrst performs
+an outage analysis to determine the actions to be taken by the
+PDS to minimize the demand curtailment of each system, in
+response to the spatio-temporal outage scenarios that model the
+impact of random external events on the PDS operation. The
+actions taken by PDS operator include the power transacted with
+themaingridandthepowerexchangewithdistributedgenerators
+and energy storage (ES) systems. The proposed model, then,
+determines the cascading impacts of power outage on the opera-
+tion of WDS, in terms of the resulting water shortage. Given the
+results of power outage and water shortage in different scenarios,
+the interdependence between the resilience of the PDS and WDS
+is assessed using the proposed set of six resilience metrics.
+The metrics identify temporal PDS and WDS dependencies
+during the system degradation and recovery stages, as well as
+the spatial features associated with the fault location and water
+curtailments. The proposed models for outage analysis in power
+and water distribution systems are presented in Section III, and
+the proposed resilience metrics are introduced in Section IV.
+III. OUTAGE ANALYSIS IN INTERDEPENDENT POWER AND
+WATER DISTRIBUTION SYSTEMS
+This section presents the proposed models for outage analysis
+in interdependent power and water distribution systems. In the
+following, we ﬁrst introduce the proposed spatio-temporal out-
+age scenario generation and evaluation setup, followed by the
+mathematical formulation of models for power outage analysis
+in power distribution and the cascading water shortage analysis
+in water distribution system under the scenarios.
+A. Spatio-Temporal Outage Scenario Model
+Resilience is assessed by evaluating scenarios that represent
+the uncertain behavior of external events (such as natural dis-
+asters) and the response of the PDS subject to disruptions.
+Let the outage scenario s ∈S include outage of subset Ls =
+{1, . . . , Ls} of set of all lines L in PDS, where each line outage
+l ∈Ls is described by a triplet (l, td
+s,l, tr
+s,l) with td
+s,l and tr
+s,l
+representing the outage time and restoration time of line section
+l in scenario s. The outage time td
+s,l is determined according
+to the intensity of the external event, e.g., hurricane, and the
+fragility of the line. The restoration time tr
+s,l is dependent on the
+timeittakesbyrepaircrewtorepairandrestorethedamagedline.
+Each outage scenario s, therefore, represents up to 2Ls number
+of outage and restoration events associated with Ls line outages
+(the number of events could be less if the outage/repair of lines
+coincide). For the scenario evaluation, the operation horizon T
+is divided into sequential sub-horizons deﬁned by the number of
+topology transitions induced by the generated spatio-temporal
+scenario. A topology transition at time t ∈T \{1} refers to a
+change in the health status of power distribution lines between
+time t −1 and t. Based on the outage and restoration times of
+the damaged lines, a set of Rs + 1 sub-horizons are generated
+for each scenario s ∈S, where Rs is the number of topology
+transitions resulting from the outage/restoration events in the
+scenario. Each sub-horizon, which starts at the time of the topol-
+ogy transition and is initialized with the previous sub-horizon
+results, may represent a normal condition where all power
+distribution lines are operating (pre-contingency and restored
+states) or faulted states with single or multiple line outages. The
+solution of each sub-horizon corresponds to the reallocation of
+power and water stored resources, given the new topology status
+after the outage/restoration actions.
+B. Power Distribution Outage Analysis Model
+Let each sub-horizon T ′ in outage scenario s be divided into
+time periods of same length Δt. The objective of the proposed
+PDS outage analysis model is to minimize the cost of energy
+not supplied in scenario s during sub-horizon T ′ as described in
+Section III-A, which is formulated as follows:
+min
+
+t∈T ′
+
+i∈B
+ECi,t ×
+
+1 −γP
+i,t,s
+
+pD
+i,t,sΔt,
+(1)
+where ECi,t is the unit cost of energy not supplied at bus i at
+time t, pD
+i,t,s is the active power demand at bus i during time t,
+and γP
+i,t,s is the ratio of power served at bus i in scenario s during
+time t. The objective function is subject to constraints (2)-(21),
+which are deﬁned for t ∈T ′ except where speciﬁed.
+1) Power Balance Constraints: The active and reactive
+power supplied to PDS by the bulk power grid at the substation
+bus, pgrid
+t,s , qgrid
+t,s , are equal to the summation of the power ﬂows
+of distribution lines connected to the main substation bus, given
+by (2), where p1j
+t,s, q1j
+t,s are the active and reactive power ﬂow
+between the substation bus 1 and the set of buses connected to
+the substation bus 1, respectively. Power balance at distribution
+buses is given by (3)–(4), which integrates power injections from
+available set Ui of distributed generation (DG) and set Ei of ES
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+RODRIGUEZ-GARCIA et al.: RESILIENCE ANALYTICS FOR INTERDEPENDENT POWER AND WATER DISTRIBUTION SYSTEMS
+4249
+systems at bus i, where pDG
+u,t,s, qDG
+u,t,s represent the active and
+reactive power supplied by DG unit u connected to bus i at time
+t; DES
+e,t,s, CES
+e,t,s are the discharging and charging rates of ES
+system e connected to bus i at time t; qES
+e,t,s is the reactive power
+supplied by ES system e connected to bus i at time t; pD
+i,t,s, qD
+i,t,s
+are the active and reactive power demand of bus i at time t; and
+pij
+t,s, qij
+t,s are the active and reactive power ﬂows from bus i to
+buses j that are connected to bus i shown by Bi.
+pgrid
+t,s
+=
+
+j∈B1
+p1j
+t,s,
+qgrid
+t,s
+=
+
+j∈B1
+q1j
+t,s,
+(2)
+
+u∈Ui
+pDG
+u,t,s +
+
+e∈Ei
+
+DES
+e,t,s −CES
+e,t,s
+
+−γP
+i,t,spD
+i,t,s =
+
+j∈Bi
+pij
+t,s,
+∀i ∈B\{1},
+(3)
+
+u∈Ui
+qDG
+u,t,s+
+
+e∈Ei
+qES
+e,t,s−γP
+i,t,sqD
+i,t,s=
+
+j∈Bi
+qij
+t,s,
+∀i∈B\{1}.
+(4)
+2) ContingencyModel: Theproposedmodelintegratesconic
+relaxationofpowerﬂowequationsin(6)–(14)toturntheoriginal
+power ﬂow problem into a convex second-order cone program-
+ming (SOCP) problem, which can be solved efﬁciently as com-
+pared to nonlinear and non-convex power ﬂow equations that
+make the optimization problem NP-hard and does not guarantee
+optimality [52]. Speciﬁcally, power ﬂow is obtained by applying
+conic relaxation on branch ﬂow formulations, which is realized
+by introducing auxiliary variables νi,t,s, Rij
+t,s, T ij
+t,s, expressed as:
+νi,t,s = v2
+i,t,s/
+√
+2,
+Rij
+t,s = vi,t,svj,t,s cos (θi,t,s −θj,t,s),
+T ij
+t,s = vi,t,svj,t,s sin (θi,t,s −θj,t,s),
+(5)
+where vi,t,s and θi,t,s are the voltage magnitude and phase angle
+of bus i, respectively. Active and reactive power ﬂow of lines are
+calculated in (6) and (7), where gij and bij are the conductance
+and the susceptance of line section ij, respectively. Auxiliary
+variables uij
+i,t,s, uij
+j,t,s in constraints (8)–(11) deﬁne the behavior
+of voltages in adjacent buses connected through line ij ∈L,
+according to the line status at time t of scenario s, shown by
+αij
+t,s. When the line is connected,αij
+t,s = 1, and uij
+i,t,s, uij
+j,t,s are
+equal to νi,t,s, νj,t,s. If the line is disconnected, then αij
+t,s = 0,
+setting uij
+i,t,s, uij
+j,t,s to zero and forcing the power ﬂow pij
+t,s, qij
+t,s
+to zero in (12). Line power ﬂow and voltage limit of lines are
+set in (13) and (14), respectively.
+pij
+t,s =
+√
+2gijuij
+i,t,s −gijRij
+t,s −bijT ij
+t,s,
+∀ij,
+(6)
+qij
+t,s = −
+√
+2
+
+bij+ bij
+sh
+2
+
+uij
+i,t,s+bijRij
+t,s−gijT ij
+t,s,
+∀ij, (7)
+0 ≤uij
+i,t,s ≤vi2
+√
+2αij
+t,s,
+∀ij,
+(8)
+0 ≤uij
+j,t,s ≤vj2
+√
+2αij
+t,s,
+∀ij,
+(9)
+0 ≤νi,t,s −uij
+i,t,s ≤vi2
+√
+2(1 −αij
+t,s),
+∀ij, (10)
+0 ≤νj,t,s −uij
+j,t,s ≤vj2
+√
+2(1 −αij
+t,s),
+∀ij,
+(11)
+2uij
+i,t,suij
+j,t,s ≥
+
+Rij
+t,s
+2
++
+
+T ij
+t,s
+2
+, Rij
+t,s ≥0,
+∀ij,
+(12)
+
+pij
+t,s
+2
++
+
+qij
+t,s
+2
+≤
+
+Sij
+2
+,
+∀ij,
+(13)
+vi2
+√
+2 ≤νi,t,s ≤vi2
+√
+2,
+∀i.
+(14)
+3) Distributed Generator Model: The active and reactive
+power supplied by DGs are constrained in (15)–(16), where
+pDG
+u
+, qDG
+u
+, qDG
+u
+are the maximum active power, minimum re-
+active power, and the maximum reactive power limits of DG u,
+respectively. The total power generation of DGs during T ′ is
+limited in (17) to the available fuel, shown by Fu.
+0 ≤pDG
+u,t,s ≤pDG
+u
+,
+∀u,
+(15)
+qDG
+u
+≤qDG
+u,t,s ≤qDG
+u
+,
+∀u,
+(16)
+
+t∈T ′
+pDG
+u,t,sΔt ≤Fu,
+∀u.
+(17)
+4) Energy Storage System Model: Constraints (18)–(21)
+modeltheoperationofESinpowerdistributionsystem.Thestate
+equation of ES systems is formulated in (18), where charging
+and discharging dynamically changes the state-of-charge of ES
+systems, shown by Ee,t,s. The state-of-charge is limited in (19),
+to the minimum required storage Ee and the maximum storage
+capacity Ee. The charging and discharging power of ES systems
+are bounded to their maximum limit Be in (20). The reactive
+power limits of ES systems are deﬁned in (21), where qES
+e
+, qES
+e
+are the lower and upper bounds of reactive power, respectively.
+Ee,t+1,s = Ee,t,s +
+
+ηc
+eCES
+e,t,s −DES
+e,t,s/ηd
+e
+
+Δt,
+∀e, ∀t ∈T ′\{T},
+(18)
+Ee ≤Ee,t,s ≤Ee,
+∀e,
+(19)
+0 ≤CES
+e,t,s, DES
+e,t,s ≤Be,
+∀e,
+(20)
+qES
+e
+≤qES
+e,t,s ≤qES
+e
+,
+∀e.
+(21)
+C. Cascading Water Shortage Analysis Model
+The proposed model for cascading water shortage analysis
+in WDS caused by the PDS power outage is presented here.
+This model takes the results of PDS outage analysis model as
+input to specify the status of water pumps in each scenario,
+i.e., impacted by power outage or not. The proposed model
+extends the formulation in [53] to consider the pumps’ status
+after the power outage, represented by their capability to operate
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+4250
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 37, NO. 6, NOVEMBER 2022
+with the available PDS power supply and the water demand
+shortage required at nodes with limited water supply. The model,
+applicable for both radial and meshed WDSs, adapts the WDS
+operation to minimize the impact of power outage in the water
+supply, by using the available pumps and stored water in tanks
+to maintain appropriate head levels and water ﬂow along the
+pipelines and by controlling the amount of water supplied to
+certain loads to maintain the water balance. More speciﬁcally,
+objective function of the proposed model minimizes the cost
+of water not supplied during each sub-horizon T ′ in outage
+scenarios s as follows:
+min
+
+t∈T ′
+
+n∈N
+WCn×
+
+1 −γW
+n,t,s
+
+W D
+n,t,sΔt,
+(22)
+where W D
+n,t,s is the water demand at node n at time t deﬁned
+over the set of WDS nodes N = {1, . . . , N}, γW
+n,t,s is the ratio
+of water served in node n at time t in scenario s, and WCn is
+the cost of water not supplied per cubic meter in node n. The
+cost coefﬁcients are assumed as ﬁxed for each water demand
+node that are inﬂuenced by the geographical location of the
+nodes [54]. The proposed model determines the ratio of water
+supplied in each node—or conversely the water not supplied
+in each node as shown in (22) by (1 −γW
+n,t,s)—such that the
+cost of water not supplied is minimized. The objective function
+(22) is subject to constraints (23)–(39) deﬁned for all t ∈T ′,
+except where indicated, which include the hydraulic constraints
+of pipelines and tanks, as well as pumps’ status after a power
+outage.
+1) Water Mass Balance: The nodal water balance constraint
+is expressed in (23), where WR
+t,s is a N×1 vector of water
+injections from reservoirs to water nodes, A is a P×N pipeline-
+to-node incidence matrix mapping the pipeline connections to
+the water nodes, Qt,s is a P×1 vector of pipeline water ﬂow,
+and Ct,s, Dt,s are U×1 vectors of water tank charging and
+discharging ﬂows, respectively. The ratio of water supplied in
+nodes, γW
+n,t,s, form variables vector ΓW
+t,s = [γW
+1,t,s, . . . , γW
+N,t,s]T
+that is bounded in (24).
+WR
+t,s −ΓW
+t,s ⊙WD
+t,s = AQt,s + ΛT [Ct,s −Dt,s],
+(23)
+0 ≤ΓW
+t,s ≤1N.
+(24)
+2) Tank Operation Model: The state equation of tanks is
+formulated in (25), which tracks the available water in tanks,
+Vt,s, given the water input and output of the tanks. The volume
+of water stored in a tank is also a function of the pressure head
+Ht,s at the connection node and size of the tank Δ in (26).
+The limits of water stored in tanks and the initial volume in
+tanks are set in (27), where V, V are the vectors of maximum
+and minimum tank capacity, and Vinit is the vector of initial
+water volume. The input and output ﬂow limits of tanks are set
+in (28)–(29), where D, C are vectors of maximum input and
+output rates.
+Vt+1,s = Vt,s + (Ct,s −Dt,s) Δt,
+∀t ∈T ′\{T},
+(25)
+Vt,s = ΔΛHt,s,
+(26)
+V ≤Vt,s ≤V,
+V1,s = Vinit,
+(27)
+0 ≤Dt,s ≤D,
+(28)
+0 ≤Ct,s ≤C.
+(29)
+3) Water Pipeline Model: The pipeline head losses are ex-
+pressed using the Hazen-Williams equation in (30), where G
+is a P×P diagonal matrix of friction coefﬁcients of pipes, and
+Π(.) is a sign function. The pipeline water ﬂow is bounded by the
+maximum water ﬂow vector Q (31). The hydraulic head of nodes
+is constrained between the minimum and maximum limitsH and
+H in (32). The head for water reservoirs is ﬁxed to the elevation
+at the reservoir location in (33), where Θ is a matrix mapping
+the pressure head at water nodes to the reservoirs’ elevation Z.
+AT Ht,s = GΠ(Qt,s) |Qt,s|1.852 ,
+(30)
+0 ≤Qt,s ≤Q,
+(31)
+H ≤Ht,s ≤H,
+(32)
+ΘHt,s = Z.
+(33)
+4) Variable-Speed Pump Model: The head rise created by
+pumps, ΔHP
+t,s, is expressed as a function of the water ﬂow and
+the pump speed Ωt,s in (34), where a, b, c are the characteristic
+parameters of M pumps. The pump head rise is related with
+the water nodes connected to the pumps in (35). The power
+consumption of pumps, which is supplied from the power dis-
+tribution system PW
+t,s and the pump backup generators PB
+t,s, is
+calculated in (36) as a function of the water ﬂow in pumps QP
+t,s.
+The pump power consumption supplied by the grid is bounded
+by the maximum power PW in (37), where the binary parameter
+vector It,s expresses the power outage status of pumps, and is
+equal to zero when the pump has a power outage in scenario s,
+ﬁxing the power withdrawn from the power distribution system
+to zero. The power output from the backup generators is limited
+to its maximum capacity PB when the power outage status is
+zero in (38) or forced to zero if the power supply for the pump
+is enabled. The energy consumed in the horizon T ′ must not
+exceed the maximum available energy of the backup generators
+FB, as given by (39).
+ΔHP
+t,s = Ω2
+t,s ⊙[a1M −b((1M ⊘Ωt,s) ⊙BQt,s)c] , (34)
+ΔHP
+t,s = BAT Ht,s,
+(35)
+PW
+t,s + PB
+t,s =
+ρg
+ηpump
+ΔHP
+t,s ⊙QP
+t,s,
+(36)
+0 ≤PW
+t,s ≤PW ⊙It,s,
+(37)
+0 ≤PB
+t,s ≤PB ⊙(1M −It,s),
+(38)
+
+t∈T ′
+PB
+t,sΔt ≤FB.
+(39)
+IV. RESILIENCE METRICS FOR INTERDEPENDENT POWER AND
+WATER DISTRIBUTION SYSTEMS
+This section presents the proposed metrics to quantify the
+interdependence between resilience of power and water distri-
+bution systems. The proposed metrics take as input the spatio-
+temporal power outage in PDS and the resulting cascading water
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+RODRIGUEZ-GARCIA et al.: RESILIENCE ANALYTICS FOR INTERDEPENDENT POWER AND WATER DISTRIBUTION SYSTEMS
+4251
+Fig. 3.
+Evolution of power and water serving capability in time.
+shortage in WDS during outages, in terms of the ratio of power
+served, γP
+i,t,s and the ratio of water served, γW
+n,t,s, respectively
+for PDS buses i ∈B and WDS nodes n ∈N, for the set of
+outage scenarios S during T , which are calculated using the
+PDS and WDS outage analysis models proposed in Section III.
+We ﬁrst deﬁne two metrics, Power Serving Capability, shown
+by SCP (t), and Water Serving Capability, shown by SCW (t),
+as the average ratio of power and water served respectively by
+the PDS and WDS in S outage scenarios during T , as follows:
+SCP (t) =
+1
+B · S
+
+s∈S
+
+i∈B
+γP
+i,t,s,
+(40)
+SCW (t) =
+1
+N · S
+
+s∈S
+
+n∈N
+γW
+n,t,s.
+(41)
+The evolution of SCP (t) during outages and its cascading
+impact in the WDS operation, shown by SCW (t), is divided into
+multiple phases spanning the pre-disruption to post-disruption
+phases,ashypotheticallyillustratedinFig.3.InFig.3,theoutage
+in the PDS occurs at tP
+0 . The impact of the power outage on
+WDS, in terms of water shortage, starts later at tW
+0 , depending on
+the outage location and available water stored in tanks. The PDS
+experiences a decay from its initial state SCP
+0 to its degraded
+condition SCP
+min at time tP
+e , where the external disruption sub-
+sides and the repair crew actions to restore the PDS operation are
+scheduled. Restoration of PDS faulted lines starts at time tP
+p . The
+degraded state of the WDS operation, SCW
+min, could be reached
+in a different time tW
+e , since the degradation from its initial state
+SCW
+0
+is dependent on the discharge ﬂow rate of water tanks. A
+similar condition is experienced during the restoration, where
+WDS restoration may start after PDS restoration, at time tW
+p in
+Fig. 3. Power restoration is expected to be completed at time tP
+r ,
+while water recovery may be achieved before or after at time
+tW
+r , depending on the tank water volume and restoration of line
+sections supplying power for pumping. Based on the evolving
+performance of PDS and WDS in supplying power and water
+to the customers, quantiﬁed using SCP (t) and SCW (t), the
+followingmetricsareintroducedtoquantifytheinterdependence
+between the resilience of power and water infrastructures.
+1) WDS Sensitivity to PDS Degradation (RD): This metric
+establishes a relationship between WDS and PDS performances
+during the degradation stage by comparing the rates of decay
+from the pre-disruption stage to the degraded stage of each
+system as follows:
+RD = SCW
+0
+−SCW
+min
+SCP
+0 −SCP
+min
+× tP
+0 −tP
+e
+tW
+0 −tW
+e
+.
+(42)
+The comparison of rates of decay establishes a measure of how
+sensitive the WDS response is to the disruptions in the PDS
+during the degradation stage. Hence, larger values of RD show
+an increased dependence of WDS on the PDS operation.
+2) WDS Recovery Dependence to PDS Restoration (RQ):
+This metric determines the recovery rapidity of WDS operation
+compared to the PDS restoration rate when transitioning from
+the degraded stage to the post-disruption stage and is calculated
+as follows:
+RQ = SCW
+0
+−SCW
+min
+SCP
+0 −SCP
+min
+× tP
+r −tP
+p
+tW
+r −tW
+p
+.
+(43)
+The value of RQ measures the sensitivity of how fast WDS
+recovers once the PDS is restored, indicating the need for power
+restoration to ensure the WDS operation.
+3) Relative Impact of PDS Disruptions on WDS Operation
+(RA): This metric measures the relative impact of outages in the
+PDS and the resulting cascading outages in the WDS operation,
+which is calculated as follows:
+RA =
+	
+t∈T SCW (t)
+	
+t∈T SCP (t) .
+(44)
+The RA values lower than one represent a higher degradation
+on the WDS compared to the PDS, and values larger than one
+represent a less dependent operation of the WDS to meet the
+water demand despite the PDS degradation.
+4) Dependence of WDS Water Shortage to PDS Power Out-
+age (I): This metric is based on the mathematical deﬁnition of
+cross-correlation, which provides a measure of the association
+betweenthepowerandwaterservingcapabilitymetrics,SCP (t)
+and SCW (t):
+I = max
+τ
+
+ +∞
+
+t=−∞
+(1 −SCP (t))(1 −SCW (t + τ))
+
+,
+(45)
+where larger values of I indicate increased dependency of the
+WDS operation to PDS disruptions. The formulation can be
+extendedtodeﬁnethedependenceofeachWDSnodeshortageto
+PDS power outages. Let SCW
+n (t) be the water serving capability
+of demand n at time t:
+SCW
+n (t) = 1
+S
+
+s∈S
+γW
+n,t,s.
+(46)
+The dependence of the water demand at node n to the power
+outages, In, is given by:
+In = max
+τ
+
+ +∞
+
+t=−∞
+(1 −SCP (t))(1 −SCW
+n (t + τ))
+
+. (47)
+5) Expected Delay for WDS Degradation (ΔtD): The WDS
+operation could be sustained for a duration after the occurrence
+of the PDS disruption, either because the outage locations are not
+affecting the WDS operation, or the water demand is supplied
+from the water stored in tanks. This metric measures the period
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+4252
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 37, NO. 6, NOVEMBER 2022
+Fig. 4.
+(a) interdependent test 33-bus power and 15-node water distribution systems, (b) total power and water demand proﬁles for the systems.
+that a WDS sustains the operation during the power outage,
+which is deﬁned as follows:
+ΔtD = tW
+0 −tP
+0 .
+(48)
+6) Expected Delay of WDS Recovery (ΔtQ): This metric
+determines the difference between the recovery time of WDS
+and PDS, which may be different given the outage locations, the
+WDS connections to the PDS, and the WDS ability to supply
+the water demand as the pump operation is restored. This metric
+is deﬁned as follows:
+ΔtQ = tP
+r −tW
+r .
+(49)
+Negative values of ΔtQ indicate a restoration delay in
+the WDS. Positive values show that the dependence between
+the two systems is low, indicating that the total restoration of the
+PDS is not necessary to fully restore the WDS operation.
+V. NUMERICAL STUDY
+The proposed resilience analytics model for interdependent
+powerandwaterdistributionsystemsisutilizedinthissectionfor
+resilience assessment of a 15-node WDS interconnected with the
+IEEE 33-bus test power distribution system [2], which is subject
+to high speed wind that causes power outage in the test PDS, and
+results in cascading outages in the test WDS. The diagram of
+interdependent test PDS and WDS is shown in Fig. 4-(a), where
+the pumps J1, J4, and J7 are supplied by buses 12, 24, and 30
+of the test PDS, respectively. Two water tanks with maximum
+capacity 1,200 m3 are operated at nodes 10 and 13 of the test
+WDS, with initial stored water of respectively 1,000 m3 and 500
+m3. Two controllable distributed generators are also available in
+buses 16 and 22 of the test PDS. The power and water demand
+proﬁles are shown in Fig. 4-(b), with peak values of 3.72 MW
+and 1,188 m3/h for the PDS and WDS, respectively. The power
+proﬁles are obtained from CAISO for March 29–30, 2017, and
+the rest of the data for the 15-node WDS is available at [55].
+For the spatio-temporal outage scenario generation, the set of
+line outages at each time step t ∈T is determined by initially
+calculating the failure probability πv
+l,t of each line l ∈L for
+a wind speed v. The line failure probability is modeled as a
+function of the wind speed at the line location using piecewise
+fragility curves [18], [20]. The wind speed is represented by a
+Gaussian function scaled to a maximum wind speed of 78 mph,
+with mean value equal to the expected disruption time, set for
+hour 12, and a standard deviation of 2 hours. Once the failure
+probability πv
+l,t is determined, a uniformly distributed random
+number rl,t is generated for each line l at time t and is compared
+toπv
+l,t todeterminethelinestatus. Ifrl,t ≤πv
+l,t,thelineistripped
+starting from t until the speciﬁed restoration time; otherwise, the
+line operation remains in its normal condition. The restoration
+time is sampled from a normal distribution with a mean value
+equal to the mean-time-to-repair, which is assumed as 6 hours
+with a standard deviation of 1 h for all lines.
+Seven cases are studied for outage assessment and resilience
+metrics evaluation of the test interdependent PDS and WDS in
+Fig. 4. These cases consider different combinations of realistic
+upgrades in the power and water distribution systems, repre-
+sented by the inclusion of distributed power sources at different
+locations and the increase of water storage capacity in tanks,
+respectively. In Case 0, the operation of test PDS and WDS
+is analyzed under 20 spatio-temporal single-equipment outage
+scenarios, without DGs in PDS and restricting the water storage
+in WDS tanks. Case 1 studies the operation of the systems under
+the same scenarios in Case 0, with increased tank capacity of
+1,200 m3 and initial volume in tanks 10 and 13 of 1,000 m3 and
+500 m3, respectively. Case 2 extends the analysis of the effect of
+the water storage to enhance the WDS resilience considering a
+tank capacity of 2,500 m3 and initial volume 2,200 m3 and 1,900
+m3, respectively. In Case 3, the response of the systems to more
+severe disturbances is analyzed, where scenarios may contain
+multiple outages to occur during the study window. Case 4 stud-
+ies the effect of DGs on the resilience of the interdependent PDS
+and WDS, while other conditions are the same as Case 3. Cases 5
+and 6 evaluate the impact of DG location on the interdependence
+between the resilience of power and water distribution systems.
+Case 5 considers the severe scenarios evaluated for Cases 3 and
+4, when DGs are located at power buses 22 and 33, far from the
+pumps’ supply points. Case 6 considers DGs connected at buses
+10 and 25, which are closer to the supply points of pumps J1 and
+J4 from the power distribution grid. In Cases 3–6, a set of 20
+spatio-temporal single and multiple-equipment outage scenarios
+are simulated. A summary of the cases, including the type of
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+RODRIGUEZ-GARCIA et al.: RESILIENCE ANALYTICS FOR INTERDEPENDENT POWER AND WATER DISTRIBUTION SYSTEMS
+4253
+TABLE I
+SUMMARY OF CASE STUDIES
+TABLE II
+RESILIENCE METRICS COMPARISON FOR THE ANALYZED CASES
+Fig. 5.
+Comparison of power and water serving capability in Cases 0, 1, 2.
+Fig. 6.
+Comparison of power and water serving capability in Cases 1 and 3.
+outages considered, along with the power and water distribution
+system enhancements is presented in Table I. Note that Cases
+0–6 do not consider the availability of backup generation in
+pumping stations, which is studied later in Section V-C.
+The resilience metrics for all cases are summarized in Table II.
+Further, the temporal evolution of power and water load serving
+capability metrics, SCP (t) and SCW (t), of the test PDS and
+WDS in Cases 0–2 are shown in Fig. 5. In addition, the serving
+capability comparison between Cases 3 and 1 is presented in
+Fig. 6 to evaluate the impacts of the outage severity. In Cases 0
+and 1, the WDS performance decays immediately when the PDS
+Fig. 7.
+Comparison of power and water serving capability in Cases 3 and 4.
+outage occurs at hour 9. In Case 2, where WDS has more than
+twice the water tank capacity compared to Case 1, the WDS has
+maintained water supply for a longer duration after the power
+outage in pumps. The increased water tank capacity in Case 2
+also leads to a slower rate of decay compared to Cases 0 and 1,
+as evidenced from the respective 61.2% and 32.6% reduction in
+RD metric in Table II, since the water demand can be supplied
+for a longer period compared to Cases 0 and 1, reducing the
+rate of decay after the PDS disruption. When the power serving
+capability of PDS reaches its minimum value at hour 13 in Fig. 5
+along with the water serving capability of WDS in Case 0, WDS
+degradation continues until time 15:45 for Case 1 and 17:45 for
+Case 2, when initial restoration actions are applied. During the
+recovery stage, the WDS with larger water tank capacity in Case
+2 has a reduction of 31.7% and 35.7% of RQ metric in Table II
+compared to Cases 1 and 0, respectively, which indicates lower
+dependence on power restoration for WDS in Case 2. In both
+Cases 1 and 2, the restoration of WDS operation is achieved 1 h
+before the PDS restores according to ΔtQ in Table II, indicating
+that the restoration of some lines does not have a direct impact
+in the WDS operation. The relative impact given by metric RA
+indicates that the PDS disruption was less critical for Case 2,
+as expected, showing a more resilient operation with enhanced
+robustness due to the larger water tank capacity. In general, the
+ability of the WDS to store water in tanks directly inﬂuences
+the WDS resilience, by sustaining the water supply when power
+outages cause interruptions in the ﬂow from water sources.
+In Case 3, where the interdependent PDS and WDS operation
+is analyzed under multiple-outage scenarios, the power serving
+capability of PDS decays to a minimum of 0.617 at hour 13 in
+Fig. 6, which is lower than the minimum value of Case 1, due to
+the increased disturbance caused by multiple-outage scenarios.
+In Case 3, water demand is supplied for 2 hours after the
+power outages occur according to ΔtD in Table II, followed
+by 5:45 decay from the normal operating state before reaching
+the minimum water serving capability of 0.437. Comparing RD
+metric for Case 1 and 3 indicates an increased 59.8% WDS
+sensitivity to PDS disruptions, caused by the increased number
+of lines outages, which is also indicated by the relative impact
+metric RA in Table II.
+The power and water serving capability of the systems in Case
+4, where DG is added to the test PDS, is shown and compared
+with Case 3 in Fig. 7. In Fig. 7, the power curtailment in Case
+4 is reduced as compared to Case 3, since DGs supply power
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+4254
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 37, NO. 6, NOVEMBER 2022
+Fig. 8.
+Dependency of water shortage in WDS nodes to power outages.
+to the line sections isolated from the main substation during the
+outages. The WDS operation also beneﬁts from the inclusion of
+the DGs. In Case 4, the availability of power from DGs enhances
+the WDS operation by reducing the pump power shortages and
+the resulting water curtailment, with a reduced relative impact
+compared to the PDS as given by RA in Table II. In Table II, the
+WDS sensitivity to PDS disruptions, RD, is reduced by 61.7%
+compared to Case 3, as additional power resources reduce the
+degradation rate of water supply. In addition, the extra resources
+reduce the dependence of the WDS to the PDS restoration as
+measured by RQ in Table II.
+TheimpactoftheDGlocationisdiscussedbasedontheresults
+obtained from Cases 5 and 6, presented in Table II. In Case 5,
+the location of DGs is far from the WDS supply points, which
+represents a 131.7% increase in the WDS sensitivity to PDS
+degradation,comparedtotheDGconﬁgurationproposedinCase
+4. Although it represents an improvement compared to the case
+with no DG (Case 3), the WDS operation is more affected by the
+limitationtoaccessbackuppowerfromthedistributedresources,
+resulting in an increased dependency with the PDS restoration
+representedbya78.3%increaseinthemetricI comparedtoCase
+4. In Case 6, the dependence of water shortage to power outages,
+I, where DGs are conveniently located close to the WDS supply
+points of pumps J1 and J4, is reduced by 66.4% compared to
+Case 4. In this case, the sensitivity to the PDS degradation and
+dependence to the PDS restoration are reduced compared to
+Case 4, showing that the WDS is capable of operating with
+the available power sources, ensuring the water supply despite
+the outage occurrence. This implies that the available DGs and
+their proximity to the supply points between power and water
+distribution systems have impact on the WDS resilience, as DG
+units close to the WDS pumps provide backup generation, which
+ensures the pump operation and the water supply continuity.
+A spatial analysis of the dependency metric In can help
+measure the dependence of water shortage in speciﬁc WDS
+nodes to power outage. In this regard, the dependency metric
+In is evaluated for WDS nodes 3, 11, and 15 and is depicted in
+Fig. 8. In Fig. 8, the dependence of water shortage in the WDS
+nodes 11 and 15 to power outage is reduced as more water tank
+capacity is added to WDS, as seen in Cases 0 to 2. In addition, the
+inclusion of DGs in Case 4 enhances the PDS resilience, which
+leads to lower power outages and consequently reduces water
+shortage in WDS that resulted from power outages. Further,
+the dependency metric increases as more severe power outage
+Fig. 9.
+Dependency of water shortage in WDS nodes to outage of individual
+PDS lines.
+TABLE III
+METRICS COMPARISON BASED ON THE NUMBER OF SCENARIOS
+scenarios happen in Case 3. More speciﬁcally, in node 11, since
+all the three pumps are required to supply the water demand, the
+node is very sensitive to power outages as evidenced by high
+value of In in Case 1, but the increased water tank capacity in
+Case 2 reduces its dependency to a power outage.
+The dependency of water shortage in WDS nodes 3, 11, and
+15 to the outage of individual lines in PDS is depicted in Fig. 9.
+The faults at PDS lines 1–9 and 11 have the most impact on water
+shortage in the three WDS nodes since they all cause the power
+outage in the reservoir pump J1. These contingencies expose a
+WDS vulnerability to the power outage in multiple power lines,
+which may need to be hardened to reduce the vulnerability. The
+faults at PDS line 25–29 do not cause power outage in pump J1
+and therefore do not result in any water shortage in nodes 3 and
+15, while causes a water shortage in node 11. Node 11 is the
+most vulnerable to power outage among the three WDS nodes,
+as the outage of many power distribution lines would result in
+water shortage in the node.
+A. Impact of Number of Outage Scenarios
+To assess the impact of the number of outage scenarios in
+the metrics’ evaluation, the metrics were calculated considering
+10, 20, 50, and 100 randomly drawn scenarios, based on the
+conﬁguration of Case 3. This procedure is repeated 10 times
+for each number of scenarios, and the mean value and standard
+deviation obtained for each metric is shown in Table III. Based
+on the obtained results, the value of metrics RD and RQ varies
+41.6% and 36.7% when scenarios are increased from 10 to 20,
+respectively, compared to increasing from 20 to 50 scenarios,
+where the variation reduces to 8.9% and 10.2%. Metric RA
+shows a lower inﬂuence with respect to the number of scenarios,
+with a maximum deviation of 1.3% from 10 to 20 scenarios.
+On the other hand, metric I tends to reduce when increasing
+the number of scenarios. Metric I is based on the similarities
+between the power and water serving capabilities to recognize
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+RODRIGUEZ-GARCIA et al.: RESILIENCE ANALYTICS FOR INTERDEPENDENT POWER AND WATER DISTRIBUTION SYSTEMS
+4255
+Fig. 10.
+Comparison of water serving capabilities with and without backup
+generation at pumping station J1.
+TABLE IV
+EFFECT OF PUMP BACKUP GENERATION ON THE RESILIENCE METRICS
+patterns from the power serving capability that are reﬂected into
+the water serving capability. The effect of severe events, which
+are of interest for resilience assessment, might be attenuated
+while averaging a considerably high number of scenarios, which
+is reﬂected in the metric as a reduction in their interdependence.
+Note that these observations are made for the speciﬁc test sys-
+tems in this session, and the results and variations may depend
+on the system under study.
+B. Effect of Backup Generators Connected to Pumping
+Stations
+As mentioned in Section II, urban WDSs are usually equipped
+with backup generators installed at pumping stations to support
+the pump operation during a power outage. To illustrate the
+beneﬁts of the backup generation in the interdependence be-
+tween the resilience of power and water distribution systems,
+outage scenarios of Case 4 are re-evaluated considering the
+presence of backup generation at pumping station J1, whose
+interruption compromises the water ﬂow from the reservoir to all
+water demands. The power and water serving capabilities with
+and without backup generation are depicted in Fig. 10, along
+with the metrics in Table IV. The backup generator does not
+provide electricity to the power grid; hence, the power serving
+capability is the same for both cases. The results show that the
+water serving capability is increased when backup generation is
+available at pump J1, due to the ability to supply water to the
+demand connected at water node 3. The enhanced resilience is
+also captured by the proposed metrics. Reductions in metrics RD
+and RQ show that the WDS is less affected by the occurrence
+of power outages, and its recovery is less dependent on the PDS
+restoration when backup generators support the pump operation.
+The value of metric RA is greater when backup generation is
+enabled, representing a lower degradation of the WDS operation
+from the power outages. The value of metric I is signiﬁcantly
+lower compared to the case with no backup generation, showing
+that the backup generators ensure that the WDS water serving
+capability is less affected during power outages, as shown in
+Fig. 10, representing a decreased dependency between the two
+infrastructures.
+VI. CONCLUSION
+This paper proposed an analytics model to evaluate the cas-
+cading effects of power outages on the operation of WDSs
+and to quantify the interdependence between the resilience of
+power and water distribution systems. The proposed analytics
+model includes an outage analysis model to determine the power
+serving capability of the PDS, and the resulting water serving
+capability of the WDS, in response to external events disrupting
+the grid operation. A set of six resilience metrics were deﬁned
+to identify dependencies during the degradation and restoration
+stages, which are calculated using the power and water serving
+capabilities obtained from the outage analysis model. Numer-
+ical studies were carried out on the IEEE 33-bus test power
+distribution system, interconnected with a 15-node test water
+distribution system. The results indicate that the increased water
+tank capacity reduces the rate of decay of the water supply by
+compensating the amount of water shortage during the PDS
+outage. In addition, the allocation of DGs in PDS supplies
+power during outages, which reduces the power interruptions of
+pumps and the resulting water shortage in WDS. Although the
+availability of additional water tank capacity in WDS reduces
+the water shortage during power outages, the results indicate
+that the impact of options to enhance the resilience of PDS,
+such as utilizing DGs, is larger on enhancing the resilience of
+WDS to power outages. In addition, the use of backup generation
+weakens the coupling between the two infrastructures, mitigat-
+ing the negative consequences of the power outages in the WDS
+operation. Based on these results, the proposed metrics provide
+a mechanism to evaluate potential upgrades in PDS and WDS
+infrastructures and quantify their beneﬁts for the systems.
+Future works include considering the impacts of other re-
+medial actions by PDS, including network reconﬁguration, in
+the proposed resilience analytics framework. Also, modeling
+the impacts of emerging technologies that intensify the inter-
+dependence of PDS on WDS, such as small pumped-storage
+hydropower, are of interest. Although it is expected that these
+technologies enhance the mutual resilience of both power and
+water infrastructures, as WDS can support the PDS and reduce
+power curtailments, the performance of the proposed metrics
+to capture this effect in a bidirectional interdependent opera-
+tion needs to be assessed. Another potential research area is
+to develop the customer interruption cost function for water
+distribution facilities, which would provide the outage cost for
+a different water facility (such as pumping, desalination, and
+treatment) as a function of outage duration.
+ACKNOWLEDGMENT
+The views expressed are those of the author only and do
+not necessarily represent the views of the DOE or the U.S.
+Government.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+4256
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 37, NO. 6, NOVEMBER 2022
+REFERENCES
+[1] IEA, “Water-energy nexus,” IEA, Paris, France, 2007. [Online]. Available:
+https://www.iea.org/reports/water-energy-nexus
+[2] K. Oikonomou and M. Parvania, “Optimal coordinated operation of in-
+terdependent power and water distribution systems,” IEEE Trans. Smart
+Grid, vol. 11, no. 6, pp. 4784–4794, Nov. 2020.
+[3] ExecutiveOfﬁceofthePresident,“Economicbeneﬁtsofincreasingelectric
+grid resilience to weather outages,” The White House, Tech. Rep., 2013,
+pp. 1–28.
+[4] J.-P. Watson et al., “Conceptual framework for developing resilience
+metrics for the electricity, oil, and gas sectors in the United States,” Sandia
+Nat. Lab., Tech. Rep. SAND-2014-18019, 2015.
+[5] Y. Wang, C. Chen, J. Wang, and R. Baldick, “Research on resilience of
+power systems under natural disasters–a review,” IEEE Trans. Power Syst.,
+vol. 31, no. 2, pp. 1604–1613, Mar. 2016.
+[6] M. M. Hosseini and M. Parvania, “Artiﬁcial intelligence for resilience
+enhancement of power distribution systems,” Electricity J., vol. 34, no. 1,
+2021, Art. no. 106880.
+[7] T. Adachi and B. R. Ellingwood, “Serviceability of earthquake-damaged
+water systems: Effects of electrical power availability and power backup
+systems on system vulnerability,” Rel. Eng. Syst. Saf., vol. 93, no. 1, pp. 78–
+88, 2008.
+[8] K. Kim and L. Bui, “Learning from Hurricane Maria: Island ports and
+supply chain resilience,” Int. J. Disaster Risk Reduction, vol. 39, 2019,
+Art. no. 101244.
+[9] J. W. Muhs and M. Parvania, “Stochastic spatio-temporal hurricane impact
+analysis for power grid resilience studies,” in Proc. IEEE Power Energy
+Soc. Innov. Smart Grid Technol. Conf., 2019, pp. 1–5.
+[10] X. Wang, M. Shahidehpour, C. Jiang, and Z. Li, “Resilience enhancement
+strategiesforpowerdistributionnetworkcoupledwithurbantransportation
+system,” IEEE Trans. Smart Grid, vol. 10, no. 4, pp. 4068–4079, Jul.
+2019.
+[11] R. Oxner, “Texans now face a water crisis after enduring days without
+power,” The Texas Tribune: Winter Storm, Accessed: Feb. 15, 2022,
+Feb. 2021. [Online]. Available: https://www.texastribune.org/2021/02/19/
+texas-water-power-outages/
+[12] H. T. Nguyen, J. Muhs, and M. Parvania, “Preparatory operation of
+automated distribution systems for resilience enhancement of critical
+loads,” IEEE Trans. Power Del., vol. 36, no. 4, pp. 2354–2362, Aug.
+2021.
+[13] M. M. Hosseini and M. Parvania, “Resilient operation of distribution grids
+using deep reinforcement learning,” IEEE Trans. Ind. Informat., vol. 18,
+no. 3, pp. 2100–2109, Mar. 2022.
+[14] X. Wang, Z. Li, M. Shahidehpour, and C. Jiang, “Robust line hardening
+strategies for improving the resilience of distribution systems with vari-
+able renewable resources,” IEEE Trans. Sustain. Energy, vol. 10, no. 1,
+pp. 386–395, Jan. 2019.
+[15] Z. Wang and J. Wang, “Self-healing resilient distribution systems based on
+sectionalization into microgrids,” IEEE Trans. Power Syst., vol. 30, no. 6,
+pp. 3139–3149, Nov. 2015.
+[16] M. Bruneau et al., “A framework to quantitatively assess and enhance
+the seismic resilience of communities,” Earthq. Spectra, vol. 19, no. 4,
+pp. 733–752, 2003.
+[17] M. Panteli and P. Mancarella, “Modeling and evaluating the resilience of
+critical electrical power infrastructure to extreme weather events,” IEEE
+Syst. J., vol. 11, no. 3, pp. 1733–1742, Sep. 2017.
+[18] M. Panteli, P. Mancarella, D. N. Trakas, E. Kyriakides, and N. D. Hatziar-
+gyriou, “Metrics and quantiﬁcation of operational and infrastructure re-
+silience in power systems,” IEEE Trans. Power Syst., vol. 32, no. 6,
+pp. 4732–4742, Nov. 2017.
+[19] M. M. Hosseini, A. Umunnakwe, and M. Parvania, “Automated switching
+operation for resilience enhancement of distribution systems,” in Proc.
+IEEE Power Energy Soc. Gen. Meeting, 2019, pp. 1–5.
+[20] M. M. Hosseini and M. Parvania, “Quantifying impacts of automation
+on resilience of distribution systems,” IET Smart Grid, vol. 3, no. 2,
+pp. 144–152, 2020.
+[21] Y. Zhou, M. Panteli, B. Wang, and P. Mancarella, “Quantifying the system-
+level resilience of thermal power generation to extreme temperatures and
+water scarcity,” IEEE Syst. J., vol. 14, no. 1, pp. 749–759, Mar. 2020.
+[22] S. Espinoza, A. Poulos, H. Rudnick, J. C. de la Llera, M. Panteli, and P.
+Mancarella, “Risk and resilience assessment with component criticality
+ranking of electric power systems subject to earthquakes,” IEEE Syst. J.,
+vol. 14, no. 2, pp. 2837–2848, Jun. 2020.
+[23] M. Amirioun, F. Aminifar, H. Lesani, and M. Shahidehpour, “Metrics
+and quantitative framework for assessing microgrid resilience against
+windstorms,” Int. J. Elect. Power Energy Syst., vol. 104, pp. 716–723,
+2019.
+[24] Z. Li, M. Shahidehpour, F. Aminifar, A. Alabdulwahab, and Y. Al-Turki,
+“Networked microgrids for enhancing the power system resilience,” Proc.
+IEEE, vol. 105, no. 7, pp. 1289–1310, 2017.
+[25] A. Younesi, H. Shayeghi, P. Siano, A. Safari, and H. H. Alhelou, “Enhanc-
+ing the resilience of operational microgrids through a two-stage scheduling
+strategy considering the impact of uncertainties,” IEEE Access, vol. 9,
+pp. 18454–18464, 2021.
+[26] L.-J. Yang, Y. Zhao, C. Wang, P. Gao, and J.-H. Hao, “Resilience-oriented
+hierarchical service restoration in distribution system considering micro-
+grids,” IEEE Access, vol. 7, pp. 152729–152743, 2019.
+[27] M. E. Parast, M. H. Nazari, and S. H. Hosseinian, “Resilience improve-
+ment of distribution networks using a two-stage stochastic multi-objective
+programming via microgrids optimal performance,” IEEE Access, vol. 9,
+pp. 102930–102952, 2021.
+[28] Y. Xu, C. Liu, K. P. Schneider, F. K. Tuffner, and D. T. Ton, “Microgrids
+for service restoration to critical load in a resilient distribution system,”
+IEEE Trans. Smart Grid, vol. 9, no. 1, pp. 426–437, Jan. 2018.
+[29] S. Shin et al., “A systematic review of quantitative resilience measures for
+water infrastructure systems,” Water, vol. 10, no. 2, pp. 1–25, 2018.
+[30] Q. Shuang, H. Liu, and E. Porse, “Review of the quantitative resilience
+methods in water distribution networks,” Water, vol. 11, no. 6, 2019,
+Art. no. 1189.
+[31] B. Balaei, S. Wilkinson, R. Potangaroa, and P. McFarlane, “Investigating
+the technical dimension of water supply resilience to disasters,” Sustain.
+Cities Soc., vol. 56, 2020, Art. no. 102077.
+[32] W. Liu and Z. Song, “Review of studies on the resilience of urban
+critical infrastructure networks,” Rel. Eng. System Saf., vol. 193, 2020,
+Art. no. 106617.
+[33] W. Liu, Z. Song, M. Ouyang, and J. Li, “Recovery-based seismic resilience
+enhancement strategies of water distribution networks,” Rel. Eng. Syst.
+Saf., vol. 203, 2020, Art. no. 107088.
+[34] T. Hashimoto, J. R. Stedinger, and D. P. Loucks, “Reliability, resiliency,
+and vulnerability criteria for water resource system performance evalua-
+tion,” Water Resour. Res., vol. 18, no. 1, pp. 14–20, 1982.
+[35] E. Todini, “Looped water distribution networks design using a resilience
+index based heuristic approach,” Urban Water, vol. 2, no. 2, pp. 115–122,
+Jun. 2000.
+[36] X. Liu, Y.-P. Fang, and E. Zio, “A hierarchical resilience enhancement
+framework for interdependent critical infrastructures,” Rel. Eng. System
+Saf., vol. 215, 2021, Art. no. 107868.
+[37] J. Kong, C. Zhang, and S. P. Simonovic, “Optimizing the resilience
+of interdependent infrastructures to regional natural hazards with com-
+bined improvement measures,” Rel. Eng. System Saf., vol. 210, 2021,
+Art. no. 107538.
+[38] C. Nan and G. Sansavini, “A quantitative method for assessing resilience of
+interdependent infrastructures,” Rel. Eng. System Saf., vol. 157, pp. 35–53,
+2017.
+[39] C. Shao, M. Shahidehpour, X. Wang, X. Wang, and B. Wang, “Integrated
+planningofelectricityandnaturalgastransportationsystemsforenhancing
+the power grid resilience,” IEEE Trans. Power Syst., vol. 32, no. 6,
+pp. 4418–4429, Nov. 2017.
+[40] M. Sang, Y. Ding, M. Bao, S. Li, C. Ye, and Y. Fang, “Resilience-based
+restoration strategy optimization for interdependent gas and power net-
+works,” Appl. Energy, vol. 302, 2021, Art. no. 117560.
+[41] H. Fotouhi, S. Moryadee, and E. Miller-Hooks, “Quantifying the resilience
+of an urban trafﬁc-electric power coupled system,” Rel. Eng. System Saf.,
+vol. 163, pp. 79–94, 2017.
+[42] Multidisciplinary Center for Earthquake Engineering Research (MCEER),
+“Research progress and accomplishments: 2003–2004,” Univ. Buffalo,
+State Univ. New York, Buffalo, NY, USA. Tech. Rep. MCEER-04-SP01,
+2004, pp. 65–86.
+[43] J. Najaﬁ, A. Peiravi, A. Anvari-Moghaddam, and J. Guerrero, “An efﬁcient
+interactive framework for improving resilience of power-water distribution
+systems with multiple privately-owned microgrids,” Int. J. Elect. Power
+Energy Syst., vol. 116, 2020, Art. no. 105550.
+[44] S. Zuloaga, P. Khatavkar, L. Mays, and V. Vittal, “Resilience of
+cyber-enabled electrical energy and water distribution systems con-
+sidering infrastructural robustness under conditions of limited water
+and/or energy availability,” IEEE Trans. Eng. Manag., early access,
+Sep. 2019.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+RODRIGUEZ-GARCIA et al.: RESILIENCE ANALYTICS FOR INTERDEPENDENT POWER AND WATER DISTRIBUTION SYSTEMS
+4257
+[45] H. Han, K. Oikonomou, N. Chalapathi, M. Parvania, and B. Wang, “In-
+teractive visualization of interdependent power and water infrastructure
+operation,” in Proc. IEEE PES Innov. Smart Grid Technol. Conf., 2020,
+pp. 1–5.
+[46] J. A. Phillips, K. E. Wallace, T. Y. Kudo, and J. H. Eto, “Onsite and electric
+power backup capabilities at critical infrastructure facilities in the United
+States,” Angonne Nat. Lab., Tech. Rep. ANG/GSS-16/1, Apr. 2016.
+[47] American Water Works Association and Water/Wastewater Agency
+Response Network, “Hurricanes harvey and irma after-action report,”
+Tech. Rep., 2018. [Online] Available: https://www.awwa.org/Portals/0/
+AWWA/ETS/Resources/Technical%20Reports/HarveyIrmaAARFINAL.
+pdf?ver=2021-05-21-121745-453
+[48] American Water Works Association and CDM, “Planning for an emer-
+gency: Drinking water supply,” Tech. Rep. EPA 600/R-11/054, 2011.
+[49] U.S. House. 101st Congress, 2nd Session. (1990, Nov. 15). S. 1630, Clean
+Air Act Amendments of 1990. [Online]. Available: https://www.govinfo.
+gov/app/collection/uscode/2020/title42/chapter85
+[50] S. Perdue, “Report to the president of the United States from
+the task force on agriculture and rural prosperity,” U.S. Dept.
+Agriculture,
+SW
+Washington
+DC,
+2017
+[Online].
+Available:
+https://www.usda.gov/media/press-releases/2018/01/08/secretary-
+perdue-presents-agriculture-and-rural-prosperity-task
+[51] M. Majidi, L. Rodriguez-Garcia, M. Parvania, and T. M. Mosier, “Inte-
+gration of small pumped storage hydropower units in water distribution
+system operation,” in Proc. IEEE Power Energy Soc. Gen. Meeting, 2020,
+pp. 1–5.
+[52] R.A.Jabr,R.Singh,andB.C.Pal,“Minimumlossnetworkreconﬁguration
+using mixed-integer convex programming,” IEEE Trans. Power Syst.,
+vol. 27, no. 2, pp. 1106–1115, May 2012.
+[53] K. Oikonomou and M. Parvania, “Optimal coordination of water distribu-
+tion energy ﬂexibility with power systems operation,” IEEE Trans. Smart
+Grid, vol. 10, no. 1, pp. 1101–1110, Jan. 2019.
+[54] C. Aubuchon and K. Morley, “The economic value of water: Providing
+conﬁdence and context to FEMA’s methodology,” J. Homeland Secur.
+Emerg. Manage., vol. 10, no. 1, 2013, Art. no. 2194.
+[55] Data for 15-Node Test Water Distrib. Syst., Utah Smart Energy Lab
+(U-Smart), Jan. 2019. [Online]. Available: https://usmart.ece.utah.edu/
+datasets/
+Luis Rodriguez-Garcia (Student Member, IEEE) received the B.Sc. and M.Sc.
+degrees in electrical engineering from the Universidad Tecnológica de Pereira,
+Pereira, Colombia, in 2011 and 2014, respectively. He is currently working
+toward the Ph.D. degree in electrical and computer engineering with the Utah
+Smart Energy Laboratory, University of Utah, Salt Lake City, UT, USA. His
+research interests include the operation and resilience of power and water
+distribution systems. Mr. Rodriguez-Garcia was the recipient of a Scholarship
+from Fulbright Colombia in 2019.
+Mohammad Mehdi Hosseini (Student Member, IEEE) is currently working
+toward the Ph.D. degree in electrical and computer engineering with the Utah
+Smart Energy Laboratory, University of Utah, Salt Lake City, UT, USA. His
+research interests include resilience of power distribution grid and applications
+of machine learning in the operation of power and energy systems.
+Thomas M. Mosier (Member, IEEE) received the dual-major Ph.D. degrees
+in water resources engineering and mechanical engineering from Oregon State
+University, Corvallis, OR, USA, and the B.A. degree in physics from Reed
+College, Portland, OR, USA. He is currently the Group Lead for Energy Systems
+with Idaho National Laboratory. His research interests include advancing the
+interests of communities in the clean energy transition, accelerating deployment
+of emerging energy technologies, and improving water supply reliability and
+resilience for diverse societal uses.
+Masood Parvania (Senior Member, IEEE) is currently an Associate Professor
+and an Associate Chair for Research and Advancement with the Department
+of Electrical and Computer Engineering, University of Utah, Salt Lake City,
+UT, USA. His research interests include the operation, economics, and re-
+silience of power and energy systems, and also modeling and operation of
+interdependent critical infrastructures. Dr. Parvania is an Associate Editor for
+the IEEE TRANSACTIONS ON POWER SYSTEMS, the IEEE TRANSACTIONS ON
+SMART GRID,theIEEE TRANSACTIONS ON SUSTAINABLE ENERGY,andtheIEEE
+POWER ENGINEERING LETTERS. He is currently the Chair of the IEEE Power and
+Energy Society (PES) Utah Chapter, Chair of the IEEE PES Bulk Power System
+Operation Subcommittee, and the Chair of the IEEE PES Reliability, Risk and
+Probability Application (RRPA) Subcommittee.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:13 UTC from IEEE Xplore.  Restrictions apply. 

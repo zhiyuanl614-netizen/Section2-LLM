@@ -1,0 +1,2541 @@
+IEEE TRANSACTIONS ON SMART GRID, VOL. 16, NO. 5, SEPTEMBER 2025
+3801
+Load Frequency Control for Integrated
+Electrical-Water System Considering
+Water Hammer Effect
+Jiyuan Tang
+, Kaigui Xie
+, Fellow, IEEE, Chunyan Li
+, Member, IEEE,
+Heng-Ming Tai
+, Senior Member, IEEE, Changzheng Shao
+, Member, IEEE,
+and Bo Hu
+, Senior Member, IEEE
+Abstract—Demand response (DR) is a valuable tool in load
+frequency control (LFC) of power systems, especially in improv-
+ing the system’s regulating capacity. The pumps, with their
+rapid response capabilities, can be effectively utilized as a
+DR resource to further enhance LFC performance. However,
+improper adjustment of pumps will cause the accumulation of
+pressure pulsations throughout the water distribution system
+(WDS), resulting in the water hammer effect. To address this
+issue, this paper introduces a water hammer feedback loop in
+LFC with DR to balance the power system stability as well as
+WDS operational safety. With the wave tracking method (WTM),
+the proposed LFC method enables efﬁcient modeling of the
+hydrodynamic process with low computational complexity and
+acceptable accuracy. A model predictive control (MPC) based
+optimal control algorithm is also developed to adjust the pumps
+and generation units. Case studies demonstrate that the proposed
+model exhibits signiﬁcant improvement on the performance of
+pressure pulsation regulation. Results also show the enhanced
+stability and effective pressure ﬂuctuation mitigation in the
+electric-water coordinated control.
+Index Terms—Electric-water coordinated control, demand
+response, water hammer effect, load frequency control, model
+predictive control.
+I. INTRODUCTION
+L
+OAD frequency control (LFC) maintains the power
+system stability by matching the supply and demand
+in response to variations in customer demands and volatile
+renewable energy. The accelerating transition into clean energy
+continually reduces the proportion of thermal generating
+units [1]. It exacerbates the shortage of system regulating
+Received 23 December 2024; revised 24 April 2025; accepted 26 May 2025.
+Date of publication 3 June 2025; date of current version 25 August 2025. This
+work was supported in part by the National Natural Science Foundation of
+China under Grant 52177073, and in part by the Fundamental Research Funds
+for the Central Universities under Grant 2025CDJZKKYJH-15 and Grant
+2023CDJKYJH045. Paper no. TSG-02256-2024. (Corresponding author:
+Chunyan Li.)
+Jiyuan Tang, Kaigui Xie, Chunyan Li, Changzheng Shao, and Bo Hu
+are with the State Key Laboratory of Power Transmission Equipment
+and System Security, Chongqing University, Chongqing 400040, China
+(e-mail:
+jiyuan.cqu@foxmail.com;
+kaiguixie@vip.163.com;
+lcycqu@cqu.edu.cn; cshao@cqu.edu.cn; hboy8361@163.com).
+Heng-Ming Tai is with the Department of Electrical and Computer
+Engineering, University of Tulsa, Tulsa, OK 74104 USA (e-mail: tai@
+utulsa.edu).
+Color versions of one or more ﬁgures in this article are available at
+https://doi.org/10.1109/TSG.2025.3576195.
+Digital Object Identiﬁer 10.1109/TSG.2025.3576195
+capacity and reserve resources. Consequently, there is a press-
+ing need to investigate the resources the demand side can
+contribute to system stability.
+Water distribution system (WDS), as an energy-intensive
+infrastructure, holds signiﬁcant potential for ﬂexible regula-
+tion. WDS accounts for 7.1% of the total annual energy
+consumption in California, USA [2] and up to 10% in
+Changzhou City, China [3]. Frequency support capability of
+the WDS is mainly derived from the rapid response charac-
+teristics and inertial support of water pumps. The adjustment
+range is continuously expended with the increasing adoption of
+variable-speed pumps (VSPs) [4]. Since VSPs are connected
+to the grid via the frequency inverters, their contribution to
+inertial support is reduced or non-existent [5]. This means their
+operation must be explicitly controlled, cannot autonomously
+react to frequency ﬂuctuation. Their response is orchestrated
+by the DR aggregator based on the control signal from the
+control facility of power systems [6].
+PumpcontrolisakeysteptostabilityoperationofWDS.WDS
+exhibits “high inertia” and is slow to respond to disturbances
+or adjustments, owing to the large mass of water within it.
+“High inertia” increases system stability by buffering against
+sudden changes. Thus, frequency ﬂuctuation of power system
+can be partly transferred within the WDS by DR control
+of pumps. However, Changes in pump speed bring pressure
+pulsations, known as the water hammer effect, which propagates
+as hydroacoustic pressure waves throughout the WDS [18].
+The overly rapid response of VSPs causes drastic pressure
+ﬂuctuations in WDS, leading to the vibration issues that may
+jeopardize the system’s safety [19]. Existing studies treat water
+hammer as an isolated issue. Those works focus on pipe design
+optimization [29], active noise control [20], and pressure relief
+valves [32]. The strategies primarily aim to accelerate the
+attenuation of water hammer by increasing the damping in the
+water transmission process. The dynamic interactions between
+water hammer mitigation and the role of pumps in grid stability
+were not considered. In fact, the water hammer effect can
+be reduced at its source through proper pump control. It is
+essential to balance the stability performance of the power
+system and water distribution system when more water pumps
+are incorporated into LFC as DR resources.
+The ancillary frequency services provided by DR have been
+developed [7], [8], [9]. The ﬂexible regulation of DR increases
+1949-3053 c⃝2025 IEEE. All rights reserved, including rights for text and data mining, and training of artiﬁcial intelligence
+and similar technologies. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:08:31 UTC from IEEE Xplore.  Restrictions apply. 
+
+3802
+IEEE TRANSACTIONS ON SMART GRID, VOL. 16, NO. 5, SEPTEMBER 2025
+the stability margin and minimizes the frequency ﬂuctuation
+of power system [10], [11]. Many LFC control methods for
+DR were also proposed, such as PID control [12], adaptive
+control [13], model predictive control [14], and sliding mode
+control [15]. Control strategy for pump participating in the
+frequency control was proposed to provide the frequency
+regulation services [16], [17]. Most works on LFC with pumps
+assume that the safety of WDS is inherently satisﬁed with the
+limited output range without considering the water hammer
+effect of WDS.
+To the best of our knowledge, the modeling of water
+hammer effect and its use in the LFC with pumps have not
+been reported.
+The hydrodynamic process of water hammer effect can be
+described by the differential momentum and the continuity
+equations, which are generally the partial differential equations
+(PDEs) that do not have analytic solutions [21]. Numerical
+methods, such as the ﬁnite difference (FD) method [22] and
+the method of characteristics (MOC) [23], have been used
+to ﬁnd the solutions. These methods are often applied in the
+form of time and space discretization, described as ’‘char-
+acteristic grids”. Under actual operating conditions, dense
+spatial discretization, which consumes substantial computa-
+tional resources, may not be necessary. Operators typically
+focus on speciﬁc issues, such as local pressure surges at
+pumps or other critical points [24]. Recently, the electric
+circuit analogy has been applied to model the water transient
+process [25]. But that study relies on Laplace transform, which
+makes the model parameterization relatively challenging.
+Most studies for LFC with DRs were developed based on
+the idea that the consumption of controllable loads can be
+changed instantaneously to improve the frequency stability
+of power system [6]. In these works, DRs were treated as
+independent units with constant frequency response dynamics.
+This is not the case for the pumps in WDS, because the control
+of one pump affects the water ﬂow and pressure of other
+pumps. Thus, pumps need to be considered as interconnected
+units in the WDS model to better reﬂect the dynamic response
+of pump control. Fast pump control enables fast response
+for frequency stability of the power system. However, it also
+causes abrupt change in water pressure, which leads to the
+water hammer effect. In a situation that requires the control
+of multiple pumps, improper control can incur the cumulation
+of water pressure ﬂuctuations, resulting in serious hammer
+effects.
+In this paper, a coordinated LFC model for the integrated
+electrical-water system (IEWS) is proposed to enhance LFC
+performance by achieving fast frequency stability of power
+system and, at the same time, alleviating the water pressure
+ﬂuctuation. The model considers pump pressure establishes a
+water hammer feedback loop is developed to deal with the
+above problem and to enhance the LFC performance. The
+wave tracking method (WTM) [26] is employed to simulate
+the transient process and the water hammer effect in WDS
+with low computational complexity and high accuracy. Main
+contributions are
+a) Propose an electric-water coordinated load frequency
+control framework considering the water hammer effect in
+Fig. 1.
+Schematic diagram of a single-area power system with the water
+system.
+WDS. This framework introduces a water hammer feedback
+loop, fully leveraging the “high inertia” of the WDS.
+b) Establish a recursive equation based on WTM to describe
+the dynamic response of pump pressure and derive the steady-
+state solution. It provides a realistic representation of the water
+hammer effect.
+c) Develop an MPC based controller to balance the
+performance of frequency stability in the power system and the
+pressure safety in WDS, and improve the frequency response
+and alleviate the water hammer effect.
+The remaining sections are as follows. Section II proposes
+a coordinated control model of IEWS. Section III formulates
+the controller design of IEWS-LFC model, derives the analytic
+solution using the MPC approach, and analyzes the control
+stability over an inﬁnite horizon. Section IV presents the case
+study results to validate the efﬁciency of WTM and beneﬁts of
+the proposed MPC control on stability performance, followed
+by Conclusion in Section V.
+II. PROBLEM FORMULATION FOR INTEGRATED
+ELECTRICAL-WATER SYSTEM
+This section describes how the water distribution system
+(WDS) plays in the load frequency control (LFC) of power
+systems to improve the stability. First, the dynamic response
+model for WDS is constructed based on the wave tracking
+method. Then an IEWS-LFC model with water hammer
+feedback loop is developed.
+Fig. 1 depicts the electrical water system structure. It shows
+the connections between the single-area power system and
+water system in the integrated power and water distribution
+system (WDS). It can be seen from Fig. 1 that the WDS is
+coupled with the power system via pumps.
+The LFC model of an integrated electrical-water system
+(IEWS) with DRs is shown in Fig. 2. This model contains
+three frequency control loops: the primary control, supplemen-
+tary control, and DR control loops. This study introduces a
+WDS and the water hammer feedback loop in the DR control.
+To accommodate for safety requirement of the WDS operation,
+water hammer feedback control is deployed to each pump. The
+sharing rate 1-α represent the agreement of the WDS operators
+in frequency services [8]. The pump, used as DR resource
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:08:31 UTC from IEEE Xplore.  Restrictions apply. 
+
+TANG et al.: LFC FOR INTEGRATED ELECTRICAL-WATER SYSTEM CONSIDERING WATER HAMMER EFFECT
+3803
+Fig. 2.
+An LFC model of the integrated electrical-water system with DRs.
+PDRi, mimics the spinning reserve to suppress the frequency
+oscillations [2].
+Pumps, when used as DR resources, provide continuous
+load regulation by adjusting the rotating speed. The primary
+and supplementary control loops can be derived from the
+simpliﬁed power system model [7]. Parameters Tg and Tt
+represent the equivalent governor and turbine time constants,
+respectively. R is the equivalent drop constant. Twt and Tpv
+are the time constants for the wind turbine and photovoltaic
+system, respectively. The aggregate delays of control channels
+in the conventional generation and DR are denoted as dG t
+and dDR t,i, which can be estimated a priori [9]. When the
+frequency deviation is negative (positive), the pump’s con-
+sumption decreases (or increases) by variable speed drives [4].
+The LFC model of IEWS can be modiﬁed as the power
+balance equation, including pumps [12]:
+PT(s) + Pwt(s) + Ppv(s) −PL(s)
++
+Np
+
+i
+PDRi(s) = (2Hs + D)f(s)
+(1)
+In (1), f(s), PT(s), Pwt(s), Ppv(s), PL(s), 2H, D, and
+PDRi(s) are the frequency deviation, turbine output deviation,
+wind power output change, solar power output change, load
+change, inertia constant, and the equivalent load-damping
+coefﬁcient, respectively.
+Generally, there are no limitations on the ramp-up and
+ramp-down of the DR resources [10]. However, the water
+hammer effect, caused by the rotating speed regulation of
+pumps, impairs the safety of the WDS [18]. It propagates
+as hydroacoustic pressure waves (i.e., fpi and Fpi) throughout
+the WDS network. The DR control of pumps is required to
+be constrained based on the magnitude of pressure pulsation
+Hpi, which could affect the power system LFC performance.
+Thus, the primary challenge for IEWS control is simulating
+the inﬂuence of demand changes in pumps by modeling the
+dynamic response.
+A. Dynamic Response Model for WDS
+The dynamic response of WDS is modeled to represent the
+relationship between the pressure waves in the pipes and the
+water hammer effect on the node components during the pump
+adjustment process. The wave tracking method (WTM) for
+hydraulic systems is a powerful tool for modeling the hydraulic
+Fig. 3.
+Illustration of the wave tracking method.
+dynamic response [27]. WTM can be used to analyze the water
+hammer effects in WDS.
+Based on the fact that the ﬂow velocity (c) is considerably
+smaller than the hydroacoustic pressure wave velocity (a), the
+wave equation can be derived from the hydraulic transient
+equations [26]
+d
+dx
+
+h −h0 ± a
+gA(Q −Q0)
+
+= −
+λ
+2gdA2 (Q|Q| −Q0|Q0|). (2)
+h is the pressure head and Q the volume ﬂow rate. The
+subscript 0 denotes the initial state, which can be obtained by
+the Newton-Raphson method. λ is the friction coefﬁcient, g
+the gravitational constant, d the inner diameter of the pipe, and
+x the position along the pipe. A denotes the cross-section area
+of the pipe. Its value is ﬁxed.
+Suppose that the pipes are ﬁlled with water. The shock wave
+dynamics can be expressed as
+2f(x −at) = h −h0 + a
+gA(Q −Q0)
+(3)
+2F(x + at) = h −h0 −a
+gA(Q −Q0).
+(4)
+f(x–at) denotes a pressure shock wave propagating with
+velocity a along the water ﬂow direction, while F(x+at)
+denotes the pressure shock wave propagating in the opposite
+direction.
+Fig. 3 illustrates the operation of the wave tracking method,
+which considers the interplay of different pressure shock
+waves. In WDS, dynamics between the primary wave and the
+reﬂected wave are quantitatively analyzed. In particular, the
+ﬂow change at point x in the pipe is explored by adjusting
+the pump at the end of the pipe. It can be seen from Fig. 3
+and (4) that the change of the ﬂow rate close to the pump
+introduces the primary wave, denoted as FB. This primary
+wave propagates with a velocity a and travels a distance L
+to reach the reservoir. At the reservoir, the pressure remains
+constant at h0. Each arrived pressure wave will be balanced
+by a reﬂected wave fA such that fA = -FA. The reﬂected wave
+then propagates back in the pipe.
+As the reﬂected wave fA travels through a section of
+length LA, it will meet with a newly generated primary wave
+propagating through a section of length LB at point x. The
+propagation process can be approximated by using the mean
+value theorem on (2) to obtain
+Fx(t + dw
+B) = FB(t) + 1
+2RB
+ ¯Q(t)
+ ¯Q(t)
+ −Qx,0
+Qx,0
+
+(5)
+fx(t + dw
+A) = fA(t) −1
+2RA
+ ¯Q(t)
+ ¯Q(t)
+ −Qx,0
+Qx,0
+
+,
+(6)
+where hx,0 and Qx,0 are the initial pressure and ﬂow rate
+at point x, respectively. ¯Q(t) is the average of volume ﬂow
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:08:31 UTC from IEEE Xplore.  Restrictions apply. 
+
+3804
+IEEE TRANSACTIONS ON SMART GRID, VOL. 16, NO. 5, SEPTEMBER 2025
+rate during [t,t+dw
+A(B)]. RA(B)=λLA(B)/2gdA2 are the resistance
+constants for fx (Fx) and dw
+A(B)=LA(B)/a are the delay factors
+for fx (Fx). The pressure hx and ﬂow Qx at point x can be
+determined by the superposition of the primary wave Fxand
+the reﬂected wave fx
+hx(t) = fx(t) + Fx(t) + hx,0
+Qx(t) = gA(fx(t) −Fx(t))/a + Qx,0.
+Then the dynamic response model of WDS can be repre-
+sented in terms of the shock waves described below.
+ηpiPpi(t)
+ρgQpi(t) −a(Api,+ + Api,−)
+gApi,+Api,−
+Qpi(t) −h∗
+pi,0
+= 2
+
+Fpi,−(t) −fpi,+(t)
+
+(7a)
+hpi,+(−)(t) = Fpi,+(−)(t) + fpi,+(−)(t) + hpi,0,+(−)
+(7b)
+hvi(t) + kvi
+
+hvi(t) −
+
+h∗
+vi,0 + 2fvi(t)
+
+= 0
+(7c)
+h∗
+vi,0 = hvi,0 +
+a
+gAvi
+Qvi,0
+(7d)
+Fvi(t) = −fvi(t) + hvi(t) −hvi,0.
+(7e)
+J+
+
+i
+(Fi(t) −fi(t))Ai =
+J−
+
+j
+
+Fj(t) −fj(t)
+
+Aj
+(7f)
+Fi(t) + fi(t) = Fj(t) + fj(t), ∀i, j ∈J
+(7g)
+hTi(t + t) −hTi(t) =
+
+QTi,+(t) −QTi,−(t)
+
+t/ATi
+(7h)
+FTi(t) = −fTi(t) + hTi(t) −hTi,0
+(7i)
+QTi,+(−)(t) = gATi,+(−)
+a
+
+fTi,+(−)(t) −FTi,+(−)(t)
+
++ QTi,0,+(−)(7j)
+Equations (7a) describes the relationship between the shock
+waves, the injected power, and the ﬂow in a pump. The term
+h∗
+pi,0 can be obtained by
+h∗
+pi,0 = hpi,0,−−hpi,0,+ −aQpi,0(1/Api.+ + 1/Api,−)/g.
+Equation (7b) expresses the relationship between the shock
+waves and the water head in a pump. The dynamic response
+of shock waves at the valve can be obtained by (7c)–(7e).
+Equations (7f) and (7g) represent the balance of ﬂow and water
+head in the junction of pipes, respectively. The ﬂow and head
+are replaced with the shock waves of (3) and (4). Equations
+from (7h) to (7j) model the surge tank.
+The plus or minus sign in the subscript of (7a) denotes
+the inlet or outlet to the pump. ρ is the density of water.
+Suppose that the conversion efﬁciency ηpi is constant. Then,
+equation (7a) can be implied by the pump’s electricity con-
+sumption equation [25], equation (3) and equation (4). The set
+of a junction J = (J+, J-) with J+ and J- represents the set
+of the inlet waves and that of the outlet waves, respectively.
+The reﬂection process represented by (7i) occurs inside the
+surge tank. FTi and fTi are the primary and the reﬂected waves
+inside the tank, respectively. In (7j), the plus or minus symbol
+indicates the direction of ﬂow into or out of the tank at the
+steady state. kvi is the coefﬁcient of valve, which is related to
+the valve type and opening [23].
+This study employs the MPC method to alleviate the water
+hammer effect and balance the performance of WDS and
+power system. This method allows for a customized cost
+function, enabling the optimization of speciﬁc objectives, and
+requires a controller design based on future states of WDS
+and power system. Unlike traditional control methods such as
+PI or rule-based control, MPC explicitly incorporates system
+dynamics, input/output constraints, and future reference trajec-
+tories into its optimization framework. This approach enables
+more precise and proactive control and can regulate the load
+frequency and water hammer more efﬁciently than other
+controllers. The future states of pressure pulsations in WDS
+are obtained by (7a)–(7j). Since equations (5), (6), (7a),
+and (7c) are nonlinear, the dynamics of water hammer effect
+can be linearized around an equilibrium point for stability
+analysis and controller design [6].
+Expanding the Taylor approximation of Q(t)|Q(t)| around
+the initial ﬂow rate Qx,0, we have
+Q(t)
+Q(t)
+ ≈2
+Qx,0
+Q(t) −Qx,0
+Qx,0
+.
+Substituting it into (5) and (6) yields
+Fx(t + dw
+B) = FB(t) + RB
+Qx,0
+ ¯Q(t) −Qx,0
+
+(8)
+fx(t + dw
+A) = fA(t) −RA
+Qx,0
+ ¯Q(t) −Qx,0
+
+.
+(9)
+In (7a), suppose that Qpi(t)=Qpi,0+Qpi, where the Qpi,0
+is the initial ﬂow of the pump. Then,
+1/Qpi(t) = 1/(Qpi,0 + Qpi) = (1/Qpi,0)/(1 + Qpi/Qpi,0).
+For
+the
+small-signal
+model,
+Qpi/Qpi,0<<1.
+Thus,
+1/(Qpi,0+Qpi)≈1/ Qpi,0. The equation (7a) can be linearized
+to
+ηpiPpi(t)
+ρgQpi,0
+−a(Api,+ + Api,−)
+gApi,+Api,−
+Qpi(t) −h∗
+pi,0
+= 2
+
+Fpi,−(t) −fpi,+(t)
+
+(10)
+In (7h), Taylor approximation is expanded around the initial
+pressure hvi,0 so that
+kvi
+
+hvi(t) ≈kvi
+
+hvi,0 + 0.5kvi
+
+hvi(t) −hvi,0
+
+
+hvi,0
+.
+Substituting it into the equation (7h), we obtain
+hvi(t) + kvi(
+
+hvi,0 + hvi(t) −hvi,0
+2
+
+hvi,0
+) −
+
+h∗
+vi,0 + 2fvi(t)
+
+= 0.
+(11)
+The linear recursive equations from (7b),(7d)-(7j), and (8)
+to (11) can be converted into a compact form of the state-space
+representation:
+¯Aw,0xw(t) +
+Nm
+
+m=1
+¯Aw,mxw(t −dw
+m) + ¯BwuDR(t) = xw,0 (12)
+where xw(t) =[xw1(t), xw2(t),. . . , xwN(t)]T is the state vector of
+WDS, xwi(t) =[Fi, fi, Qpi, Fpi, fpi, hpi, FTi, fTi, hTi, QTi, Fvi,
+fvi, hvi]T, uDR(t)=[uDR1(t),uDR2(t),. . . ,uDRN(t)]T is the control
+input of the pumps, and xw,0 is the constant vector caused by
+initial state. dw m is the propagating delay of shock wave in
+pipe m. ¯Aw, is the state transition matrix and ¯Bw the input
+matrix.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:08:31 UTC from IEEE Xplore.  Restrictions apply. 
+
+TANG et al.: LFC FOR INTEGRATED ELECTRICAL-WATER SYSTEM CONSIDERING WATER HAMMER EFFECT
+3805
+Fig. 4.
+IEWS-LFC model with water hammer controller for pumps.
+B. IEWS-LFC Considering Water Hammer Feedback
+In this subsection, dynamics of the IEWS-LFC model with
+water hammer feedback loop is described. Fig. 4 shows the
+IEWS-LFC model with water hammer controller for pumps. It
+contains a conventional power system controller (with control
+policy u∗
+G) and a water hammer controller (with control
+policy u∗
+DRi for each pump i). Additionally, the water system
+model is constructed using the dynamic response model MW(s)
+and steady-state model MW,ref (s). The performance of water
+hammer is evaluated by comparing the pressure hpi with its
+steady reference value hpi,ref .The feedback loop is composed
+of the water system model and water hammer feedback
+control, which is incorporated to suppress the water hammer
+effect.
+The water hammer Hpi at each pump i represents the
+deviation between the dynamic and steady-state pressure
+levels. The steady-state equation, obtained by taking the limit
+of the dynamic model (12), can be derived as
+xref (t) = ¯Hw,ref xref (t −h) + ¯Bw,ref uDR(t) + x0,ref .
+(13)
+xref (t) =[xref1(t), xref2(t),. . . , xrefN(t)]T is the steady-state
+reference vector in WDS, each element contains all the
+pressures and volume ﬂow rates, xreﬁ(t) =[Fi,ref , fi,ref , Qpi,ref ,
+Fpi,ref , fpi,ref , hpi,ref , FTi,ref , fTi,ref , hTi,ref , QTi,ref , Fvi,ref ,
+fvi,ref , hvi,ref ]T. ¯Hw,ref is the state transition matrix of WDS,
+considering the ﬁlling and draining process of the surge tank.
+¯Bw,ref is the control matrix of pumps. x0,ref is the constant
+term in the steady-state equation.
+For the sampled-data system, the controller is combined
+with a sampler and a zero-order hold (ZOH). The sampler
+is used to sample the measurements, and the ZOH holds the
+control signal within a constant time interval [9]. The output
+of control signals to the generation and the pumps can be
+expressed as
+uG(t) = uG(kh),
+kh + dG
+k ≤t < (k + 1)h + dG
+k ,
+uDRi(t) = uDRi(kh),
+kh + dDR
+k,i ≤t < (k + 1)h + dDR
+k,i ,
+dw
+m ∈[kw
+mh, (kw
+m + 1)h], (kw
+m = 1, 2, . . . , Nm ≤Nc).
+Note that time delays dDR
+k,i and dG
+k can destabilize the system
+or degrade the performance if not handled properly [16].
+The dynamics of the sampled-data IEWS-LFC system can
+be formulated as
+˙xe(t) = ¯Aexe(t) + ¯BGuG(t) + ¯BDRuDR(t) + ¯Fω(t)
+(14a)
+¯Aw,0xw(t) +
+Nm
+
+m=1
+¯Aw,mxw(t −dw
+m) + ¯BwuDR(t) = xw,0 (14b)
+[ye(t), yw(t)]T = C[xe(t), xw(t)]T
+(14c)
+xw(t) = ϕ(t), t ∈[ −max dw
+m, 0).
+(14d)
+In (14), xT
+e (t)=[f, PT, PG, Pwt, Ppv,
+	
+fdt],
+uT
+DR(t)=[uDR1(t), uDR2(t), . . . , uDRn(t)], ωT(t)=[ PL, Pwind,
+Psolar], ¯BT
+G=[0, 0, T−1
+g , 0, 0, 0],¯BT
+DR,i=[(2H) -1, 0, 0, 0, 0,
+0],¯BT
+DR=[¯BT
+DR,1, BT
+DR,2,. . . ,¯BT
+DR,n],
+¯Ae =
+⎡
+⎢⎢⎢⎢⎢⎢⎣
+−D(2H)−1 (2H)−1
+0
+(2H)−1 (2H)−1 0
+0
+−Tt−1
+Tt−1
+0
+0
+0
+−(RTg)−1
+0
+−Tg−1
+0
+0
+0
+0
+0
+0
+−Twt−1
+0
+0
+0
+0
+0
+0
+−Tpv−1 0
+1
+0
+0
+0
+0
+0
+⎤
+⎥⎥⎥⎥⎥⎥⎦
+¯FT =
+⎡
+⎣
+−(2H)−1 0 0
+0
+0
+0
+0
+0 0 T−1
+wt
+0
+0
+0
+0 0
+0
+T−1
+pv 0
+⎤
+⎦.
+For DR i, uDRi(t) = Ppi is the output power deviation of
+pump i. PG is the position deviation of the speed-governor.
+PL, Pwind, and Psolar are the disturbance of the load, the
+wind farm, and the photovoltaic system, respectively. ϕ(t) is
+the initial condition of WDS when t∈[–max dw m,0).
+III. MPC CONTROL FOR IEWS-LFC
+This section focuses on the optimal control design for the
+demand response of IEWS. An MPC controller is developed
+for ﬁnding the inputs uG(t) and uDR(t) of IEWS-LFC.
+A. Formulation
+The discretized IEWS-LFC model can be described as
+xe(tk+1)
+x′w,0
+
+= A
+xe(tk)
+xw(tk)
+
++
+Nm
+
+m=1
+Hmxw(tk−kwm)
++BkuDR(tk) + 	kuDR(tk−1) + Fdω(tk)
+(15a)
+
+ye(tk), yw(tk)
+T = C[xe(tk), xw(tk)]T
+(15b)
+xref (tk) = ¯Hw,ref xref (tk−1) + ¯Bw,ref uDR(tk) + x0,ref
+(15c)
+xw(tk) = ϕ(tk), t ∈[ −max kw
+m, 0).
+(15d)
+where
+A
+=
+
+e¯Aeh
+0
+0
+	 h
+0 ¯Aw,0ds
+
+,
+Hm
+=
+	 h
+dwm−tkwm
+
+0
+¯Aw,m
+
+dτ
++
+	 dw
+m−1−tkw
+m−1
+0
+
+0
+¯Aw,m−1
+
+dτBk = BDR + MBG, 	k = 	DR + M	G, M =
+α
+1−α 	G =
+	 h
+h−dG
+k
+
+e¯Aes ¯BG
+0
+
+ds, BG =
+	 h−dG
+k
+0
+
+e¯Aes ¯BG
+0
+
+ds,
+	DR = diag{
+	 h
+h−dDR
+1,k
+
+e¯Aes ¯BDR,1
+¯Bw,1
+
+ds, . . . ,
+	 h
+h−dDR
+n,k
+
+e¯Aes ¯BDR,n
+¯Bw,n
+
+ds},
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:08:31 UTC from IEEE Xplore.  Restrictions apply. 
+
+3806
+IEEE TRANSACTIONS ON SMART GRID, VOL. 16, NO. 5, SEPTEMBER 2025
+BDR = diag{
+	 h−dDR
+1,k
+0
+
+e¯Aes ¯BDR,1
+¯Bw,1
+
+ds, . . . ,
+	 h−dDR
+n,k
+0
+
+e¯Aes ¯BDR,n
+¯Bw,n
+
+ds},
+Fd =
+	 h
+0
+
+e¯Aes ¯F
+0
+
+ds, x′
+w,0 = xw,0h.
+The discretization of IEWS-LFC is detailed in Appendix A.
+The goal of IEWS-LFC is to ﬁnd a feedback control policy
+uDR(t) to minimize the response performance index in control
+horizon Nc, considering the time-delays. The control policy
+can be expressed as
+uDR(tk) = f(xe(tk), xw(tk)-xref (tk), xw(tk−1), . . . , xw(tk−Nm),
+uDR(tk−1), ω(tk), xw,0, x0,ref , umin DR1,. . . ,umin DRn,umax
+DR1, . . . , umax DRn),
+where umin DR,* and umax DR,* are the control input
+limits of each pump.
+The performance index is deﬁned as a quadratic cost
+function
+JNc(k) = E[
+Nc
+
+m=1
+∥xe(tk+m)∥2
+Qe + ∥uDR(tk+m−1)∥2
+R
++∥xw(tk+m−1) −xref (tk+m−1)∥2
+Qw]
+= E
+
+XeT(k)QeXe(k) + XwT(k)QwXw(k) + UT(k)RU(k)
+
+(16)
+In (16), R is a positive deﬁnite matrix, Qe and Qw are the
+positive semi-deﬁnite matrices. [·] represents the mathematic
+expectation of [·]. A smaller JNc implies that IEWS-LFC will
+reach the steady state more quickly under frequency deviation
+and pressure pulsation.
+The selection of Q is guided by the requirements for
+frequency response and water hammer mitigation. These
+requirements are
+(1) Zero steady-state frequency deviation after a load step
+change, i.e., [f]2 [6].
+(2) The time error represented by the integral of the
+frequency deviation should remain within ±3 seconds, i.e.,
+[
+	
+fdt]2 [6].
+(3) Maximum pressure deviation should not exceed 30% of
+the rated pump outlet pressure, i.e., Hp−[32].
+Then, the weighting matrices can be deﬁned by considering
+the above requirements. The MPC controller design can be
+written as an quadratic optimization problem
+min JNc(k)
+(17a)
+s.t
+xe(tk+1)
+x′
+w,0
+
+= A
+xe(tk)
+xw(tk)
+
++
+Nm
+
+m=1
+Hmxw(tk−kwm) + BkuDR(tk)
++	kuDR(tk−1) + Fdω(tk)
+(17b)
+xref (tk) = ¯Hw,ref xref (tk−1) + ¯Bw,ref uDR(tk) + x0,ref (17c)
+umin
+DRi ≤uDR,i(tk) ≤umax
+DRi, ∀k = 0, · · ·, Nc −1.
+(17d)
+ω(tk) is the disturbance generated by the load, wind farm,
+and photovoltaic system. For MPC, it is required to introduce
+the state values of pressure pulsations, xw(tk)-xref (tk), in the
+state equations.
+Theorem 1 presents the MPC-based control policy.
+Theorem 1: The control policy that minimizes the IEWS-
+LFC performance index JNc(k) for the sampled-data IEWS
+model with multiple time delays can be expressed as
+u∗
+DR(tk) = [Ip×p, 0, . . . , 0] U∗
+DR(k),
+(18)
+where p is the number of control variables. The optimal control
+U*DR(k) for the control policy can be calculated by
+arg min
+U(k)
+zT(tk)¯ST
+k Q¯Skz(tk) + UT(k){ ¯T
+k Q ¯k + R}U(k)
++2UT(k) ¯T
+k Q¯Skz(tk)
+
+(19a)
+uDR,i(tk) ∈UDRi, ∀k = 0, . . . , Nc −1 (19b)
+Q =diag{Qe, Qw}.
+(20)
+In unconstrained ﬁnite-time MPC, the control is linear state
+feedback with
+u∗
+DR(tk) = (k)z∗(tk)
+(21)
+(k) = −[I, 0 · · · 0] ¯T
+k Q ¯k + R
+−1 ¯T
+k Q¯Sk
+(22)
+where ¯k = E[k] is the system state matrix and ¯Sk = E[Sk]
+is the input matrix. z∗(tk)=[xe(tk), ω(tk), u∗
+DR(tk−1), xw(tk)-
+xref (tk), xw(tk−1), . . . , xw(tk−Nm), xw,0, x0,ref ]T is the feedback
+states at time step k. UDRi is the control limit set of pump i.
+These matrices can be derived from (17b) and (17c) as
+Sk =
+
+Tk Tk2 · · · TkNcT
+(23)
+k =
+⎡
+⎢⎢⎢⎢⎣
+k
+0
+· · · 0
+Tkk
+k
+...
+...
+...
+... 0
+TkNc−1k TkNc−2k · · · k
+⎤
+⎥⎥⎥⎥⎦
+(24)
+k =
+e,k
+w,k
+
+, Tk = diag{Te,k, Tw,k},
+Te,k =
+Ae 	k,e Fd
+0
+0
+k
+
+, Tw,k =
+⎡
+⎣
+G1
+G2
+ϕ1(I, 0)
+0 ϕ2(I, 0)
+0
+0
+0
+I
+⎤
+⎦,
+G1 =
+⎡
+⎣
+0
+0
+	k,w −	k,w,ref ¯Hw,ref
+	k,w
+0
+⎤
+⎦, ϕ1(I, 0) =
+⎡
+⎣
+0 0
+I −I
+I 0
+⎤
+⎦,
+G2 =
+⎡
+⎣
+0
+0
+· · ·
+B
+Hw,1 −¯Hw.ref Hw,2 · · · Hw,N
+Hw,1
+Hw,2 · · · Hw,N
+⎤
+⎦, ϕ2(I, 0) =
+I
+0
+T
+e,k =
+Bk,e
+0
+
+, w,k =
+I Bk,w −Bw,ref Bk,w 0T.
+k in Te,k is the transition matrix of the disturbance ω(tk)
+such that ω(tk+1) = kω(tk). Proof of Theorem 1 is given in
+Appendix B.
+The augmented state equation contains Nc prediction steps
+of (17b) and (17c) ahead from the kth step. Expectation
+calculation is applied at each step due to the uncertainty of
+control delays dDR
+ki
+and dG
+k . In practice, control delays can
+be estimated a priori by the statistical methods [15]. So the
+optimal feedback control gain (k) can be calculated ofﬂine
+in unconstrained condition.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:08:31 UTC from IEEE Xplore.  Restrictions apply. 
+
+TANG et al.: LFC FOR INTEGRATED ELECTRICAL-WATER SYSTEM CONSIDERING WATER HAMMER EFFECT
+3807
+Algorithm 1 MPC Controller Design
+Input: The disturbance sequence ω(tk), IEWS matrices A, Hm,
+Bk, 	k, Fd, reference matrices ¯Hw,ref , ¯Bw,ref , constant terms
+x′
+w,0, x0,ref , control limit UDRi, and control horizon Nc
+Output: Feedback control policy u*DR(tk), k =0, 2,. . . , Nc-1
+1: Select the control weighting matrices Qe, Qw, and R of the
+MPC cost function (16).
+2: Calculate the terminal constraint via (25).
+3: While (k ≤Nc) do
+4: Calculate k and ¯Sk by (21)–(22)
+5: Solve the optimization (19) to obtain the optimal control
+sequence U*DR(k).
+6: Calculate the control policy u*DR(tk) by (18)
+7: k=k+1
+8: end while
+The design process of MPC controller is summarized in
+Algorithm 1.
+B. Stability Analysis
+Theorem 1 is only concerned with guiding the system
+behavior in a ﬁnite period, not about long-term stabil-
+ity of the system. In this subsection, the system behavior
+over inﬁnite horizon is considered, and the stability of
+the closed-loop system will be proved using the Lyapunov
+method.
+If
+IEWS-LFC
+is
+asymptotically
+stabilized,
+a
+control
+policy
+u*DR(tk)
+exist
+and
+the
+system
+state
+satisfying
+that
+lim
+tk→∞E[∥xe(tk)∥2] = 0, ∀xe(t0),
+lim
+tk→∞E[∥xw(tk) −xref (tk)∥2] = 0, ∀xw(t0),
+where xw(t)= ϕ0(t), t∈[-maxkw
+m,0) denotes the initial condi-
+tion of WDS.Proposition 1 and 2 are introduced based on
+Theorem 1.
+Proposition 1: Consider the multiple-delays IEWS-LFC
+model. Assume that the state delays and the mean values
+of control delays are known. In the inﬁnite-horizon scenario,
+the terminal control gain K is obtained by the following
+equation
+K = [I, 0 · · · 0] ¯T
+k Q′ ¯k + R
+−1 ¯T
+k Q′¯Sk,
+(25)
+where Q′ =
+⎡
+⎢⎢⎢⎣
+Q 0 · · · 0
+0 Q
+...
+... ...
+0
+· · · P
+⎤
+⎥⎥⎥⎦, ∃Kwith |eig(Tk −kK)| < 1, such
+that
+E
+
+P −(Tk −kK)TP(Tk −kK)
+
+= E
+
+Q + KTRK
+
+. (26)
+Proof: Along the condition (26), we have
+zTE
+
+P −(Tk −kK)TP(Tk −kK)
+
+z = zTE
+
+Q + KTRK
+
+z
+⇒E
+
+zTPz −zT(Tk −kK)TP(Tk −kK)z
+
+= E
+
+zTQz + zTKTRKz
+
+Without loss of generality, assume uDR(tNc)=–Kz(tNc), then
+we have
+E
+
+z(tNc)TPz(tNc)
+
+−E
+
+zT(tNc+1)Pz(tNc+1)
+
+= E[z(tNc)TQz(tNc) + uDR(tNc)TRuDR(tNc)]
+⇒E
+
+z(tNc)TPz(tNc)
+
+= E
+⎡
+⎣
+∞
+
+i=Nc
+z(ti)TQz(ti) + uDR(ti)TRuDR(ti)
+⎤
+⎦
+This expression is the terminal error form in the ﬁnite
+horizon function JNc(k), which compares with the inﬁnite
+performance function J∞(k).
+Proposition 2: The terminal state z(tk+Nc)⊆Z f , and Z f
+is positively invariant set for system (15) with constraint (17d)
+under the terminal control law uDR(tNc)=-Kz(tNc). Then, we
+have
+(Tk −kK)z(tk) ∈Zf
+(27a)
+{−Kz(tk)}i ∈UDRi.
+(27b)
+Thus, the control design of the inﬁnite horizon can be
+transformed into the equivalent ﬁnite horizon optimization by
+replacing Q with Q′ in cost function. A terminal constraint
+z(tk+Nc)⊆Z f is added to the optimization problem (19). It
+ensures that the control trajectory returns to the unconstrained
+MPC beyond the prediction horizon. Then, the optimal control
+scheme (18) can be obtained.
+Consequently, stability of the MPC closed-loop control for
+the sampled IEWS is summarized in Theorem 2.
+Theorem 2: Consider a general multiple-delay sampled
+IEWS (15) with xw(t)= ϕ0(t) for t∈[-maxkw
+m, 0). Assume that
+the state delays and the mean values of control delays are
+known. The IEWS is asymptotically stable with the closed-
+loop control scheme (18).
+The proof is given in Appendix C.
+■
+C. Implementation Procedure
+The proposed MPC controller updates the control signals
+in every sampling period. Its application procedure for IEWS-
+LFC model can be summarized as follows.
+Step 1: Calculate initial ﬂow rate and pressure, set the
+simulation step ts, and the sample period h, and formulate the
+state-space equations.
+Step 2: Find a gain K such that all eigenvalues of Tk −kK
+are inside the unit circle.
+Step 3: Solve the terminal weighting matrix P in (26).
+Step 4: Calculate the terminal constraints via (27).
+Step 5: Simulate system behavior with time-step ts.
+Step 6: Calculate the optimal control policy u*DR(tk) and
+perform power regulation considering the control delays dDR
+k,i
+and dG
+k .
+In this process, steps 1 to 4 initialize and simulate the system
+dynamics. After that, at each control step tk, the optimal
+control policy u∗
+DR(tk) is determined by solving the quadratic
+optimization problem (17) online. System simulation continues
+with u∗
+DR(tk).
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:08:31 UTC from IEEE Xplore.  Restrictions apply. 
+
+3808
+IEEE TRANSACTIONS ON SMART GRID, VOL. 16, NO. 5, SEPTEMBER 2025
+TABLE I
+PARAMETER VALUES IN HYDRAULIC SYSTEM
+Fig. 5.
+Three nodes hydraulic system.
+IV. CASE STUDY
+The proposed MPC control of IEWS calculates the dynamic
+process of WDS precisely, reduces the water hammer effect,
+and can balance the system frequency deviation and water
+hammer effect. The calculation accuracy analysis was carried
+out on a 3-nodes hydraulic test system. The IEWS-LFC
+performance is veriﬁed by the test system composed of a
+typical WDS with 15 nodes and a single-area power system.
+For fair comparison, a MPC design procedure is also employed
+for controller design in both systems, with and without
+considering the water hammer effect. In addition, performance
+evaluation of the proposed control scheme against PI and LQR
+controllers is carried out in a large-scale system.
+In this study, control delays vary within a certain interval
+and the delays are assumed to follow a uniform distribution
+from 0.05 to 1.2 seconds [9]. The simulation time interval and
+sampling period are set to 0.001s and 2s, respectively. This
+test was performed using MATLAB /Control System Toolbox.
+A. Simulation of WDS Dynamic Process
+A 3-nodes hydraulic system shown in Fig. 5 is used to
+evaluate the effectiveness of the proposed method. Parameters
+of this test system are given in Table I. Suppose that the initial
+ﬂow rates Q1, Q2, and Q3 are equal to zero. The height of
+water is h0=540. The valve coefﬁcient is computed from [26]
+kv = aγ
+g AS
+
+2g
+1 −(γ AS)2 .
+The relative area As is 0.087, discharge coefﬁcient γ satisfying
+γ =0.024t-0.00021t2 when t∈[0, 40], g=9.8m/s2, and the water
+hammer wave velocity a is 1250m/s.
+Prediction performance between the proposed method and
+the ﬁnite-difference (FD) method [22] is shown in Fig. 6. hm is
+the water pressure and Qm the ﬂow rate at the point m. Table II
+shows the computation time of the FD and the proposed
+Fig. 6.
+Comparation of state prediction in valve m by the FD method and
+the proposed method.
+TABLE II
+COMPUTATION TIME OF FD METHOD AND PROPOSED METHOD
+methods. The FD method utilizes a computational grid by
+dividing the spatial domain into 1000 subintervals to ensure
+the accuracy of results. At every grid point, the solutions
+would be updated iteratively over time. To ensure stability, FD
+schemes must satisfy the Courant-Friedrichs-Lewy condition
+t ≤x/a. This requires a large number of calculations.
+On the other hand, the WTM considering the water hammer
+effect only need to utilize the ﬂow and pressure data for
+calculation. It does not require to update the computational
+grid in every step, which signiﬁcantly lowers the computation
+time. It can be seen from Fig. 6 and Table II that the proposed
+method achieves almost the same prediction results as the
+FD method, but takes much less calculation time (0.052 s vs.
+24.6 s) to obtain the solution. The maximum relative errors
+ ˆQm −Qm
+/ ˆQm and
+ˆhm −hm
+/ˆhm between results by both
+methods are lower than 2.8×10-2 during the whole periods.
+B. Advantage of Considering Water Hammer Effect
+The effectiveness of IEWS control can be evaluated by
+comparing the water hammer and frequency performance of
+the proposed coordinated control method with that of the
+traditional LFC-DR method [10]. Parameter values of a single-
+area power system are given in Table III. The parameters Tg
+and Tt represent the equivalent time constants of the governor
+and turbine, respectively. R denotes the equivalent droop
+constant. Twt and Tpv are the time constants of the wind turbine
+and photovoltaic system, respectively. H and D denote the
+inertia constant and the equivalent load-damping coefﬁcient.
+The aggregate control delays in conventional generation and
+demand response (DR) are represented by dG tand dDR
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:08:31 UTC from IEEE Xplore.  Restrictions apply. 
+
+TANG et al.: LFC FOR INTEGRATED ELECTRICAL-WATER SYSTEM CONSIDERING WATER HAMMER EFFECT
+3809
+TABLE III
+PARAMETERS OF A SINGLE-AREA POWER SYSTEM
+Fig. 7.
+Three-pump 15-node WDS wave network. The gray ﬁlled arrows
+denote the direction of ﬂow. The solid one denotes the reference direction of
+the shock wave.
+t,i, respectively. The initial pipeline ﬂow rates and nodal
+pressure are determined from the steady-state hydraulic cal-
+culation. They are Q4=30m3/h, Q8=440m3/h, Q10=300m3/h,
+and h0=10.6m. Fig. 7 shows the 15-node WDS modeled as
+a wave network [28]. There are three pumps and two surge
+tanks in this WDS. The initial load (p.u.) of pumps is given
+by Pp0=[0.146,0.141,0.084]. The pump efﬁciency is 0.8075,
+which is the product of converter efﬁciency (0.95) and motor
+efﬁciency (0.85) [4]. The DR sharing rate is set as α=0.7. The
+diagonal elements of the control weighting matrix Q for f,
+	
+fdt, and Hpi=hpi- hpi,ref are all set to 1, and the control
+cost matrix R is diag{0.1,0.1,0.1}.
+Consider an IEWS-LFC system with different control
+weighting. Set the load disturbance as 0.01 p.u., wind turbines
+and PV disturbance as 0 p.u. Let the aggregated delay
+be dDR
+t,i =0.25s and dG
+t =0.5s. Fig. 8 illustrates the effect
+of frequency integral,
+	
+fdt, and water hammer feedback
+control, Hpi, on LFC performance. Their effects on LFC
+performance appear to be completely opposite. As observed in
+Fig. 8(a), larger penalty cost associated with
+	
+fdt exhibits
+higher overshoot and larger frequency ﬂuctuation. But the
+system frequency is stabilized, and acts like a converged
+steady-state error as the water hammer penalty cost is added.
+It can be seen from Fig. 8(b) that their effects cancel out with
+simultaneous increase in costs. This demonstrates that water
+hammer feedback loop in the small-signal IEWS-LFC system
+acts as a frequency derivative feedback, capable of suppressing
+frequency ﬂuctuations.
+Now we evaluate the frequency deviation performance of
+IEWS-LFC by the proposed controller and the traditional LFC-
+DR control. Suppose that there are three step disturbances
+occurred, respectively, at (0s, 0.1p.u.) for the loads, (5s,
+Fig. 8.
+Performance of frequency deviation f considering different state
+costs. (a) Various integral gain and water hammer gain. (b) Increase the
+frequency integral and water hammer cost by a factor of ten.
+Fig. 9.
+Performance of frequency deviation f and power control inputs
+uG and uDR. (a) Frequency deviation performance. (b) Control inputs by
+traditional LFC-DR. (c) Control inputs by the proposed MPC.
+0.03p.u.) for wind turbines, and (10s, 0.02 p.u.) for the PV.
+Fig. 9 shows the frequency deviation performance and control
+inputs by both methods. The traditional LFC-DR controller
+also used the MPC method to calculate the optimal gain, but
+did not consider the water hammer effect. Fig. 9(a) shows
+that the proposed method exhibits comparable performance
+with the traditional LFC-DR for a similar settling time but
+smaller ﬂuctuation. It can be seen from Fig. 9(b) and 9(c) that
+the proposed method employs smaller control inputs than the
+traditional LFC-DR to achieve the same LFC performance.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:08:31 UTC from IEEE Xplore.  Restrictions apply. 
+
+3810
+IEEE TRANSACTIONS ON SMART GRID, VOL. 16, NO. 5, SEPTEMBER 2025
+Fig. 10.
+Performance of PG, PT, and Pp by the proposed coordinated
+control and traditional LFC-DR methods. (a) Turbine output deviation PT
+(b) Valve position deviation of the governor PG (c) Pump power inputs
+by the proposed method (d) Pump power inputs by the traditional LFC-DR
+method.
+The maximum control input by the proposed method is
+0.0647 p.u., a 31.9% smaller than that by LFC-DR. Moreover,
+frequency ﬂuctuation range is reduced by 27%. In addition,
+Fig 10 represents several time responses of the turbine output
+deviation PT, the governor valve position deviation PG,
+and the pump power inputs Pp of the IEWS. It can be seen that
+the proposed method in the IEWS-LFC achieves a lower peak
+output while maintaining similar performance comparable to
+the traditional LFC-DR method.
+Fig. 10(c) also shows that the water hammer effect can
+be mitigated with different DR control inputs for different
+pumps. uDR1, uDR2 and uDR3 denote the control inputs to
+pumps P1, P2, and P3 in Fig. 7, respectively. Compared to
+LFC-DR, the proposed method increases the control inputs of
+P1 and P3 while reducing those for P2. It adjusts P2 in the
+opposite direction to counteract the pressure surges caused by
+P1 and P3. Water hammer is a transient hydraulic phenomenon
+Fig. 11.
+Performance comparison on water hammer effect at pumps by the
+proposed MPC and the traditional LFC methods. Top panel: Pump p1; Mid
+panel: Pump p2; Bottom panel: Pump p3.
+TABLE IV
+RESPONSE PERFORMANCE OF TRADITIONAL LFC-DR AND PROPOSED
+MPC METHODS
+characterized by pressure surges and oscillations. Thus, the
+performance of the water hammer effect can be described
+by the peak pressure deviation and the time required for the
+system to return to steady-state. Fig. 11 shows the pressure
+pulsations at the outlet of the pump. The terms of Hp1−,
+Hp2−, and Hp3−represent the pressure pulsations of P1,
+P2, and P3, respectively. It can be observed from Fig. 11 that
+the proposed method decreases the peak value and accelerates
+pressure pulsations attenuation in WDS. The cumulative effect
+of water pressure ﬂuctuations at P3 is signiﬁcantly reduced,
+with the pressure deviation peak at 7.965 seconds for a 54.5%
+lower. This demonstrates that differentiated pump controls
+for WDS can alleviate the water hammer effect. Table IV
+is provided to demonstrate the advantages of the proposed
+method in comparison to traditional LFC-DR. It summa-
+rizes the performance by the proposed MPC and traditional
+LFC-DR methods. Performance measures considered are the
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:08:31 UTC from IEEE Xplore.  Restrictions apply. 
+
+TANG et al.: LFC FOR INTEGRATED ELECTRICAL-WATER SYSTEM CONSIDERING WATER HAMMER EFFECT
+3811
+Fig. 12.
+Impact of the sharing rate α of the proposed IEWS-LFC model on
+the frequency performance.
+Fig. 13.
+Impact of the sharing rate α of the proposed IEWS-LFC model on
+the performance of water hammer.
+peak pressure deviation (max{Hpi}), the pressure ﬂuctua-
+tion range (max{Hpi}- min{Hpi}), the system frequency
+nadir (min{f}), the frequency deviation range (max{f}-
+min{f}), and the settling time. It can be seen from Table IV
+that the proposed MPC performs better than the traditional
+LFC-DR methods in term of water hammer mitigation and
+frequency ﬂuctuation reduction. For example, peak pressure
+deviation and pressure ﬂuctuation are signiﬁcantly lower by
+the proposed MPC compared with that by traditional LFC-
+DR controllers. Now consider the IEWS-LFC with various DR
+sharing rate. The DR sharing rate 1-α is assumed to vary in
+0.1, 0.3, 0.5, 0.7 and 0.9. Frequency deviations of different
+sharing rates are depicted in Fig. 12. Sharing rate α indicates
+the proportion of the output of generation unit to the total
+output. A small α means that DR has great impact on the
+performance of LFC. It can be seen from Fig. 12(a) that small
+α lowers the overshoot and dampens the oscillation in the
+system frequency deviation.
+This makes the system respond more smoothly to dis-
+turbances. But it comes at the cost of prolonged settling
+time. thus, it takes longer for the system to fully stabilize
+after a disturbance. Fig. 12(b) shows a detailed view of the
+frequency nadir in Fig. 12(a). Higher DR sharing rate lifts
+frequency nadir, which stabilizes when 1-α exceeds 0.3. The
+corresponding impact on water hammer performance is shown
+in Fig. 13. As the DR sharing rate 1-α increases, the regulation
+of pump power consumption intensiﬁes, thereby exacerbating
+the water hammer phenomenon.
+TABLE V
+WATER HAMMER PERFORMANCE OF THE PROPOSED MPC, LQR, AND PI
+CONTROLLERS
+Fig. 14.
+Performance comparison on frequency deviation f and power
+control inputs uG and uDR by the proposed MPC, LQR, and PI controllers for
+a large-scale system. (a) Frequency deviation f. (b) Control inputs by the
+proposed MPC method. (c) Control inputs by the LQR controller. (d) Control
+inputs by the PI controller.
+C. LFC Performance in Large-Scale System
+A
+large-scale
+system
+is
+used
+to
+further
+verify
+the
+performance of the proposed control scheme. The “Richmond”
+water system contains 41 pipes and 6 pumps [31]. The
+initial electricity consumption (p.u) of the pumps is set as
+Pp0 = [0.0807,0.2363,0.0085,0.0152,0.0117,0.0062]. Control
+input adjustment is constrained to 40% of the initial pump
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:08:31 UTC from IEEE Xplore.  Restrictions apply. 
+
+3812
+IEEE TRANSACTIONS ON SMART GRID, VOL. 16, NO. 5, SEPTEMBER 2025
+load. Two surge tanks are in nodes 13 and 40. Each pump is
+connected to the single-area power system
+LFC performance of IEWS is evaluated by three controllers:
+the proposed MPC controller, an LQR controller [10], and
+a PI controller [12] and [30]. The LQR controller considers
+the delay and sampling in LFC, but no constraints. The
+PI controller is designed using the linear matrix inequality
+method [30]. Although it accounts for transmission delays and
+the sampling process, and implements the DR based on the
+fair sharing principle [12], the effects of water hammer are
+not considered.
+For the proposed MPC and LQR controllers, the weighting
+matrix Q for f and
+	
+fdt are set to 1, and the water hammer
+Hpi is set to 1×10-4. Three step disturbances occurred at
+(0s, 0.06 p.u.) for the loads, (5s, 0.03 p.u.) for the wind
+turbines, and (10s, 0.02 p.u.) for the PV. Coefﬁcients for the
+PI controller are KP= 0.011 and KI= 0.028 [30].
+Fig. 14 displays the frequency deviation performance f and
+control inputs uG, uDR of the IEWS by the proposed MPC,
+LQR, and PI controllers. Table V shows the water hammer
+performance. It can be seen from Fig. 14 that the proposed MPC
+method demonstrates better performance in frequency response
+deviation than other controllers. The response is faster with
+higher nadir. f decays to zero in 15 s using the proposed MPC.
+It takes 24 s by the PI controller and the LQR controller fails to
+achieve stability. The proposed MPC controller also provides
+better performance in mitigating water hammer, as evidenced
+in Table V. It also achieves a lower peak pressure deviation
+and a shorter settling time. These results demonstrate that the
+proposed MPC controller can regulate the load frequency and
+water hammer more efﬁciently than other controllers.
+V. CONCLUSION
+This paper has presented a controller design of an integrated
+electrical-water system for balancing the frequency deviation
+and pressure ﬂuctuation. The computational efﬁciency of
+hydrodynamic process is obtained by eliminating unnecessary
+spatial discretization using the water tracking method. Based on
+the model predictive control, a stochastic Lyapunov equation
+is established to ensure the frequency stability over an inﬁnite
+horizon. An analytical feedback control gain is also derived.
+Simulation results have demonstrated that the proposed
+hydrodynamic transient modeling method is effective and the
+coordinated control strategy can suppress the water hammer
+effect. Performance of the frequency response is also improved
+in comparison to the traditional LFC-DR.
+In future work, effort will focus on the coordinated control
+strategy between different generation units and the water
+system. Additionally, controller parameter tuning methods will
+be explored to improve the frequency regulation performance.
+APPENDIX A
+DISCRETIZATION PROCESS OF THE CONTINUOUS-TIME
+IEWS
+In the time interval [tk, tk+1), the sampled-data IEWS-
+LFC (13) can be articulated as follow:
+ tk+1
+tk
+d
+dt
+
+e−¯Aetxe(t)
+
+dt
+=
+ tk+1
+tk
+e−¯Aet¯BGuG(t) + ¯BDRuDR(t) + ¯Fω(t)
+
+dt
+Nm
+
+m=1
+ tk+1
+tk
+¯Aw,mxw(t −dw
+m)dt
+=
+ tk+1
+tk
+
+xw,0 −¯Aw,0xw(t) −¯BwuDR(t)
+
+dt.
+The disturbance ω(t) is assumed to remain constant in
+sampling process. Due to the pressure wave delays dw m∈(kw
+mh, (kw m+1)h], kw m≥1, the WDS state variables xw are
+approximately unchanged during the sampling period. Then,
+we have
+xe(tk+1) =
+ tk+1
+tk
+e¯Ae(tk+1−t) ¯Fdtω(tk) + e¯Ae(tk+1−tk)xe(tk)
++
+ tk+dG
+k
+tk
+e¯Ae(tk+1−t) ¯BGdtuG(tk−1)
++
+ tk+1
+tk+dG
+k
+e¯Ae(tk+1−t) ¯BGdtuG(tk)
++e¯Aetk+1diag{
+ tk+dDR
+k,1
+tk
+e−¯Aet ¯BDR1dt, . . . ,
+ tk+dDR
+k,n
+tk
+e−¯Aet ¯BDRndt}uDR(tk−1)
++e¯Aetk+1diag{
+ tk+1
+tk+dDR
+k,1
+e−¯Aet ¯BDR1dt, . . . ,
+ tk+1
+tk+dDR
+k,n
+e−¯Aet ¯BDRndt}uDR(tk)
+(28)
+Nm
+
+m=1
+ tk+1
+tk
+¯Aw,mxw(t −dw
+m)dt =
+ tk+1
+tk
+
+xw,0 −¯Aw,0xw(t)
+
+dt
+−diag{
+ tk+dDR
+k,1
+tk
+¯Bw,1dt, . . . ,
+ tk+dDR
+k,n
+tk
+¯Bw,ndt}uDR(tk−1)
+−diag{
+ tk+1
+tk+dDR
+k,1
+¯Bw,1dt, . . . ,
+ tk+1
+tk+dDR
+k,n
+¯Bw,ndt}uDR(tk).
+(29)
+Substituting s=tk+1-t into (28),(29) and vm=t-dw m into
+(29) yield
+xe(tk+1) =
+ h
+0
+eAesFdsω(tk) + eAehxe(tk)
++
+ h
+h−dG
+k
+eAesBGdtuG(tk−1)
++
+ h−dG
+k
+0
+eAesBGdtuG(tk)
++diag{
+ h
+h−dDR
+k,1
+eAesBDR1dt, · · ·,
+ h
+h−dDR
+k,n
+eAesBDRndt}uDR(tk−1)
++diag
+  h−dDR
+k,1
+0
+eAesBDR1dt, · · ·,
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:08:31 UTC from IEEE Xplore.  Restrictions apply. 
+
+TANG et al.: LFC FOR INTEGRATED ELECTRICAL-WATER SYSTEM CONSIDERING WATER HAMMER EFFECT
+3813
+ h−dDR
+k,n
+0
+eAesBDRndt
+
+uDR(tk),
+Nm
+m=1
+ tk−kwm
+tk−dwm
+Aw,mdvmxw(tk−kwm−1)
++Nm
+m=1
+ tk+1−dwm
+tk−kwm
+Aw,mdvmxw(tk−kwm)
+= xw,0h −
+ h
+0
+Aw,0dsxw(tk) −diag{
+ h
+h−dDR
+k,1
+Bw,1ds, · · ·,
+ h
+h−dDR
+k,n
+Bw,ndt}
+uDR(tk−1) −diag{
+ h−dDR
+k,1
+0
+Bw,1dt, · · ·,
+ h−dDR
+k,n
+0
+Bw,ndt}uDR(tk).
+The discrete delay kw
+m+1 = kw
+m + 1, deﬁning kw
+0 = dw
+0 = 0,
+then we have
+xe(tk+1)
+x′w,0
+
+= A
+xe(tk)
+xw(tk)
+
++
+Nm
+
+m=1
+Hmxw(tk−kwm) + BGuG(tk)
++	GuG(tk−1) + BDRuDR(tk) + 	DRuDR(tk−1) + Fdω(tk)
+At any time interval, control actions by the generator and
+the pumps have the following relationship
+α
+1−αuG(tk) = uDR(tk) and MuG(tk) = uDR(tk).
+Then, we obtain (15a).
+APPENDIX B
+PROOF FOR OPTIMAL CONTROL POLICY
+Along the state functions (17b) and (17c), deﬁning ·(n|k) as
+prediction of n steps ahead from time k, we have
+xe(n + 1|k)
+x′
+w,0
+
+= A
+xe(n|k)
+xw(n|k)
+
++
+Nm
+
+m=1
+Hmxw(n −kw
+m|k) (30a)
+xref (n|k) = ¯Hw,ref xref (n −1|k) + ¯Bw,ref uDR(n|k) + x0,ref
+(30b)
+Substituting x(n|k)= xw(n|k)- xref (n|k) into (30), derive that
+z(n + 1|k) = Tkz(n|k) + kuDR(n|k)
+(31)
+where z(n|k)=[xe(n|k), ω(n|k), uDR(n-1|k), x(n-1|k), xw(n-
+1|k),. . . , xw(n-Nm|k), x′
+w,0, x0,ref ]T.
+Consider the LFC constraints (30) in control horizon Nc,
+the compact form can be expressed as
+Z(k) = Skz(n|k) + kU(k)
+(32)
+where Z(k)=[z(1|k),. . . ,z(Nc|k)]T,U(k)=[uDR(0|k),. . . ,uDR(Nc-
+1|k)]T.
+Let JNc(k) ≜E[ZT(k)QZ(k)+UT(k)RU(k)]. Using (30) to
+replace Z(k), then we have
+JNc(k) = E[ZT(k)QZ(k) + UT(k)RU(k)]
+= zT(tk)Sk
+TQSkz(tk) + UT(k){k
+TQk+R}U(k)
++2UT(k)k
+TQSkz(tk)
+This expression is an quadratic constrained optimization
+model with control input U(k) as decision variables, aiming
+to minimize the cost function JNc(k). Then, the optimal
+control scheme (18) can be calculated by solving the quadratic
+constrained optimal problem
+arg min
+U(k)
+zT(tk)¯ST
+k Q¯Skz(tk) + UT(k)
+ ¯T
+k Q ¯k + R
+
+U(k)
++2UT(k) ¯T
+k Q¯Skz(tk)
+
+s.t
+umin
+DRi ≤uDR,i(tk) ≤umax
+DRi, ∀k = 0, · · ·, Nc −1
+Specially, When constraints are inactive during the con-
+trol process, it degenerates into unconstrained MPC and
+can be derived based on the extreme value theorem, where
+∇U(k)JNc(k)=0.
+∂J
+∂U
+
+U=U∗= 0 => 2
+ ¯T
+k Q ¯k + R
+
+U∗(k) + 2 ¯T
+k Q¯Skz(tk) = 0
+=> u∗
+DR(tk) = −[I, 0 · · · 0] ¯T
+k Q ¯k + R
+−1 ¯T
+k Q¯Skz(tk)
+APPENDIX C
+PROOF FOR THEOREM 2
+Consider the IEWS-LFC system with optimal solution
+u∗
+DR(n|k) at time k. Let ω(t)=0, there is at least one feasible
+solution uDR(n|k+1) at time k+1, satisfying
+uDR(n|k + 1) = u∗
+DR(n + 1|k).
+Along the control scheme (18), the corresponding predicted
+state can be obtained by
+z(n|k + 1) = z∗(n + 1|k).
+Deﬁne a Lyapunov function in inﬁnite horizon as
+VLya(k) = J∗
+∞(k) = E[
+∞
+
+n=1
+x∗
+e(n|k)
+2
+Qe
++
+x∗
+w(n −1|k) −x∗
+ref (n −1|k)
+
+2
+Qw
++
+u∗
+DR(n −1|k)
+2
+R]
+The ﬁrst forward difference of the times along the optimal
+control trajectory is
+E
+
+VLya(k)
+
+= E
+
+VLya(k + 1) −VLya(k)
+
+≤E
+
+J∞(k + 1) −J∗
+∞(k)
+
+= E
+ ∞
+
+n=1
+∥xe(n | k + 1)∥2
+Qe −
+x∗
+e(n | k)
+2
+Qe
++
+xw(n −1 | k + 1) −xref (n −1 | k + 1)
+2
+Qw
+−
+x∗
+w(n −1 | k) −x∗
+ref (tk+n−1)
+
+2
+Qw
++ ∥uDR(n −1 | k + 1)∥2
+R
+−
+u∗
+DR(n −1 | k)
+2
+R
+
+= E
+ ∞
+
+n=1
+x∗
+e(n + 1 | k)
+2
+Qe −
+x∗
+e(n | k)
+2
+Qe
++
+x∗
+w(n | k) −x∗
+ref (n | k)
+
+2
+Qw
+−
+x∗
+w(n −1 | k) −x∗
+ref (tk+n−1)
+
+2
+Qw
++
+u∗
+DR(n | k)
+2
+R −∥u∗
+DR(n−
+1 | k) ∥2
+R
+
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:08:31 UTC from IEEE Xplore.  Restrictions apply. 
+
+3814
+IEEE TRANSACTIONS ON SMART GRID, VOL. 16, NO. 5, SEPTEMBER 2025
+The trajectory of inﬁnite horizon follows the Riccati
+equation (24), thus we have
+E
+
+VLya(k)
+
+≤E[ −
+x∗
+e(1|k)
+2
+Qe −
+x∗
+w(0|k) −x∗
+ref (0|k)
+
+2
+Qw
+−
+u∗
+DR(0|k)
+2
+R]
+Note that Qe ≻0, Qw ≻0 andR ≻0,there must exist
+E[VLya(k)] < 0.
+Then, we show that the IEWS-LFC system achieves asymp-
+totic stability if VLya(k) decreases monotonically.
+There is a sufﬁcient small scalar δ1>0, δ2>0 such that
+E
+
+VLya(k)
+
+< −δ1E
+
+xT
+e (tk)xe(tk)
+
+, E
+
+VLya(k)
+
+< −δ2
+E
+
+xw(tk) −xref (tk)
+T
+xw(tk) −xref (tk)
+
+.
+Then, ∀xe(t0), ∀Nx ∈{1,2,. . . }, such that
+−1
+δ1
+Nx
+
+k=0
+E
+
+VLya(k)
+
+>
+Nx
+
+k=0
+E
+
+xT
+e (tk)xe(tk)
+
+.
+Since the VLya(k)≥0, such that
+−1
+δ1
+Nx
+
+k=0
+E
+
+VLya(k)
+
+= 1
+δ1
+Nx
+
+k=0
+E
+
+VLya(k) −VLya(k + 1)
+
+< 1
+δ1
+E
+
+VLya(0)
+
+.
+In a similar way, we have
+−1
+δ2
+Nx
+
+k=0
+E
+
+VLya(k)
+
+< 1
+δ2
+E
+
+VLya(0)
+
+.
+Thus, we have
+Nx
+
+k=0
+E
+
+xT
+e (k)xe(k)
+
+< 1
+δ1
+E
+
+VLya(0)
+
+Nx
+
+k=0
+E
+
+xw(k) −xref (k)
+T
+xw(k) −xref (k)
+
+< 1
+δ2
+E
+
+VLya(0)
+
+This implies that Nx
+k=0 E[∥xe(tk)∥2] and Nx
+k=0 E[∥xw(tk)−
+xref (tk)∥2] have upper bound. Hence, the limit of ||xe(tk)||2 and
+||xw(tk)-xref (tk)||2 tend to zero, for ∀xe(t0), xw(t0).
+APPENDIX D
+THE DERIVATION OF EQUATIONS
+First, from (3) and (4), the shock wave equations of the ith
+pump can be rewritten as
+hpi,+(t) = 2fpi,+(t) −
+a
+gApi,+
+Qpi(t) + hpi,0,+ +
+a
+gApi,+
+Qpi,0, (A1)
+hpi,−(t) = 2Fpi,−(t) +
+a
+gApi,−
+Qpi(t) + hpi,0,−−
+a
+gApi,−
+Qpi,0. (A2)
+Substituting the pump characteristic equation
+hpi,−(t) −hpi,+(t) = f
+
+Ppi(t), Qpi(t)
+
+= ηpiPpi(t)
+ρgQpi(t)
+into (A1) and (A2), we have
+ηpiPpi(t)
+ρgQpi(t) −a(Api,+ + Api,−)
+gApi,+Api,−
+Qpi(t) −h∗
+pi,0
+= 2
+
+Fpi,−(t) −fpi,+(t)
+
+(7a)
+where h∗
+pi,0 = hpi,0,−−hpi,0,+ −(
+a
+gApi,+ +
+a
+gApi,−)Qpi,0.
+Adding (3) and (4) together at the inlet or outlet of the ith
+pump, we have
+hpi,+(−)(t) = Fpi,+(−)(t) + fpi,+(−)(t) + hpi,0,+(−)
+(7b)
+Substituting the valve characteristic equation Qvi(t)
+=
+k∗
+vi
+√hvi(t) into (3) yields
+hvi(t) + kvi
+
+hvi(t) −
+
+h∗
+vi,0 + 2fvi(t)
+
+= 0,
+(7c)
+where kvi = ak∗
+vi
+gAvi , and
+h∗
+vi,0 = hvi,0 +
+a
+gAvi
+Qvi,0.
+(7d)
+Adding (3) and (4) together at the ith valve, we have
+Fvi(t) = −fvi(t) + hvi(t) −hvi,0
+(7e)
+Note that, for valve, only the reﬂected wave of the inlet
+needs to be considered.
+The junction of pipes is governed by the balance law of
+ﬂow
+
+k∈J+
+Qk(t) =
+
+s∈J−
+Qs(t),
+(A3)
+and the balance law of water head
+hk(t) = hs(t), k ∈J+, s ∈J−.
+(A4)
+J+ denotes the junction at which the water ﬂows in and J−
+the junction at which the water ﬂows out.
+Subtracting (4) from (3) and rearranging, we have
+Qk(t) = gAk(fk(t) −Fk(t))/a + Qk,0
+(A5)
+Qs(t) = gAs(fs(t) −Fs(t))/a + Qs,0
+(A6)
+Substituting (R5) and (R6) into (R3) yields
+
+s∈J−
+gAk(fk(t) −Fk(t))
+a
++ Qk,0
+(A7)
+=
+
+s∈J+
+gAs(fs(t) −Fs(t))
+a
++ Qs,0.
+Since Qk,0 and Qs,0 obey the ﬂow balance law of (32), (A7)
+can be expressed written as
+
+k∈J+
+Ak(fk(t) −Fk(t)) =
+
+s∈J+
+As(fs(t) −Fs(t)).
+(7f)
+Adding (3) and (4) together, we have
+hx(t) = fx(t) + Fx(t) + hx,0.
+(A8)
+Substituting (A8) into (A4), we have
+fk(t) + Fk(t) + hk,0 = fs(t) + Fs(t) + hs,0, k ∈J+, s ∈J−.
+(A9)
+Since hk,0 and hs,0 obey the water pressure balance law of
+(A4), (A9) can be written as
+fk(t) + Fk(t) = fs(t) + Fs(t), k ∈J+, s ∈J−.
+(7g)
+The dynamic model at the surge tank with a T-junction,
+which is a special case of the pipe junction model, can be
+written as
+QTi,+(t) −QTi,−(t) = QTi(t).
+(A10)
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:08:31 UTC from IEEE Xplore.  Restrictions apply. 
+
+TANG et al.: LFC FOR INTEGRATED ELECTRICAL-WATER SYSTEM CONSIDERING WATER HAMMER EFFECT
+3815
+Substituting (A10) into the characteristic equation of surge
+tank
+hTi(t + t) −hTi(t) = QTi(t) × t/ATi,
+we have
+hTi(t + t) −hTi(t) =
+
+QTi,+(t) −QTi,−(t)
+
+∗t/ATi. (7h)
+It follows from (A5)-(A6) and (A8) that the pressure wave
+at the tank is governed by
+FTi(t) = −fTi(t) + hTi(t) −hTi,0,
+(7i)
+QTi,+(−)(t) = gATi,+(−)
+a
+
+fTi,+(−)(t) −FTi,+(−)(t)
+
++ QTi,0,+(−).
+(7j)
+APPENDIX E
+THE STRUCTURE OF THE MATRIX Aw And Bw
+i) The state transition matrix Aw
+Aw is constructed based on equation (7b), (7d)–(7j), and (8)
+to (11). It is a square matrix of nw×nw, where nw is number of
+state variables. The equations associated with the construction
+of the matrix Aw can be divided into three groups: ﬂow balance
+equation (7f), pressure balance equation (7g), and component
+characterization equations(7b), (7d)–(7e), (7h)–(7j) and (8)–
+(11). The speciﬁc structure of Aw is represented as bellow:
+Aw,0 =
+⎡
+⎢⎢⎢⎢⎢⎢⎢⎢⎢⎢⎢⎢⎣
+2Ip×p
+0
+0
+−2Ip×p −Ap1
+0
+0
+Ip×p
+0
+Ip×p
+0
+0
+Ip×p
+0
+0
+Ip×p
+0
+Ip×p
+0
+0
+Ip×p
+CotB11 −CinB11 −CotB11 CinB11
+0
+0
+0
+D1,+
+D1,−
+D1,+
+D1,−
+0
+0
+0
+0
+Il×l
+0
+0
+A11
+0
+0
+0
+0
+Il×l
+0
+−A11
+0
+0
+...
+...
+...
+...
+...
+...
+...
+⎤
+⎥⎥⎥⎥⎥⎥⎥⎥⎥⎥⎥⎥⎦
+Aw,m =
+⎡
+⎢⎢⎢⎢⎢⎢⎢⎢⎢⎢⎢⎢⎣
+0
+0 0
+0
+0
+0 0
+0
+0 0
+0
+0
+0 0
+0
+0 0
+0
+0
+0 0
+0
+0 0
+0
+0
+0 0
+0
+0 0
+0
+0
+0 0
+−Il×l(t, t) 0 0
+0
+A11(t, t) 0 0
+0
+0 0 −Il×l(t, t) −A11(t, t) 0 0
+...
+...
+...
+...
+...
+...
+...
+⎤
+⎥⎥⎥⎥⎥⎥⎥⎥⎥⎥⎥⎥⎦
+The ﬁrst row of the matrix Aw,0 is obtained by equation (10)
+of pump output. The second and the third rows of Aw,0 are
+obtained by equation (7b) about pump pressure. The fourth
+row and the ﬁfth row are obtained by the ﬂow balance
+equation (7f) and pressure balance equation (7g), respectively.
+Then, other rows are obtained by the component characteriza-
+tion equations (7d)–(7e), (7h)–(7j), (8)–(9), and (11). Aw,m is
+the state transition matrices with time-delay. It can be obtained
+by the pipe transmission equations (8)–(9) and the time-delay
+equation of surge tank (7h).
+ii)
+The input matrix Bw
+Bw is constructed from the pump equation (10). It is a matrix
+of nw × np, where np is number of pumps. It is obtained by
+combining the output matrices in each pump equation, which
+can be articulated as
+Bw =
+Bpw
+0
+
+,
+where Bpw = diag{
+ηp1
+ρgQpi,0 , . . . ,
+ηpi
+ρgQpi,0 }.
+REFERENCES
+[1] (IEA, Paris, France). World Energy Outlook 2020—Analysis. (2020).
+[Online]. Available: https://www.iea.org/reports/world-energy-outlook-
+2020
+[2] K. Smith et al., “Impact of urban water supply on energy use in China:
+A provincial and national comparison,” Mitig. Adapt Strateg. Glob.
+Change, vol. 21, no. 8, pp. 1213–1233, Dec. 2016.
+[3] Y. Yao, C. Li, C. Shao, B. Hu, and K. Xie, “Efﬁcient operation of inte-
+grated electrical-water system for wind power accommodation,” IEEE
+Trans. Ind. Informat., vol. 19, no. 9, pp. 9382–9393, Sep. 2023.
+[4] B. Ulanicki, J. Kahler, and B. Coulbeck, “Modeling the efﬁciency
+and power characteristics of a pump group,” J. Water Resour. Plann.
+Manage., vol. 134, no. 1, pp. 88–93, Jan. 2008.
+[5] S. Wang et al., “Modeling and control of variable speed drive based
+loads for grid primary frequency support,” IEEE Trans. Power Del.,
+vol. 38, no. 2, pp. 1219–1229, Apr. 2023.
+[6] S. A. Pourmousavi and M. H. Nehrir, “Introducing dynamic demand
+response in the LFC model,” IEEE Trans. Power Syst., vol. 29, no. 4,
+pp. 1562–1572, Jul. 2014.
+[7] P. Babahajiani, Q. Shaﬁee, and H. Bevrani, “Intelligent demand response
+contribution in frequency control of multi-area power systems,” IEEE
+Trans. Smart Grid, vol. 9, no. 2, pp. 1282–1291, Mar. 2018.
+[8] S. A. Hosseini, M. Toulabi, A. S. Dobakhshari, A. Ashouri-Zadeh, and
+A. M. Ranjbar, “Delay compensation of demand response and adaptive
+disturbance rejection applied to power system frequency control,” IEEE
+Trans. Power Syst., vol. 35, no. 3, pp. 2037–2046, May 2020.
+[9] T. N. Pham, H. Trinh, and L. V. Hien, “Load frequency control of
+power systems with electric vehicles and diverse transmission links using
+distributed functional observers,” IEEE Trans. Smart Grid, vol. 7, no. 1,
+pp. 238–252, Jan. 2016.
+[10] C. Lin, B. Hu, C. Shao, W. Li, C. Li, and K. Xie, “Delay-dependent
+optimal load frequency control for sampling systems with demand
+response,” IEEE Trans. Power Syst., vol. 37, no. 6, pp. 4310–4324,
+Nov. 2022.
+[11] A. Oshnoei et al., “Intelligent coordination of traditional power plants
+and inverters air conditioners controlled with feedback-corrected MPC
+in LFC,” IEEE Trans. Circuits Syst. I, Reg. Papers, vol. 71, no. 1,
+pp. 473–484, Jan. 2024.
+[12] J. Hu, J. Cao, J. M. Guerrero, T. Yong, and J. Yu, “Improving frequency
+stability based on distributed control of multiple load aggregators,” IEEE
+Trans. Smart Grid, vol. 8, no. 4, pp. 1553–1567, Jul. 2017.
+[13] S. A. Hosseini, M. Toulabi, A. Ashouri-Zadeh, and A. M. Ranjbar,
+“Battery energy storage systems and demand response applied to power
+system frequency control,” Int. J. Electr. Power Energy Syst., vol. 136,
+Mar. 2022, Art. no. 107680.
+[14] A.
+M.
+Ersdal,
+L.
+Imsland,
+and
+K.
+Uhlen,
+“Model
+predictive
+load-frequency control,” IEEE Trans. Power Syst., vol. 31, no. 1,
+pp. 777–785, Jan. 2016.
+[15] M. I. Ibraheem, M. Edrisi, H. H. Alhelou, M. Gholipour, and A.
+Al-Hinai, “A sophisticated slide mode controller of microgrid system
+load frequency control under false data injection attack and actuator
+time delay,” IEEE Trans. Ind. Appl., vol. 60, no. 2, pp. 2117–2126,
+Mar./Apr. 2024.
+[16] H. Wang, S. Wang, and K. Shan, “Experimental study on the dynamics,
+quality and impacts of using variable-speed pumps in buildings for
+frequency regulation of smart power grids,” Energy, vol. 199, May 2020,
+Art. no. 117406.
+[17] M. K. Kostner, A. Zanfei, J. C. Alberizzi, M. Renzi, M. Righetti,
+and A. Menapace, “Micro hydro power generation in water distri-
+bution networks through the optimal pumps-as-turbines sizing and
+control,” Appl. Energy, vol. 351, Dec. 2023, Art. no. 121802.
+[18] J.-S. Lee, W. Zeng, M. F. Lambert, and J. Gong, “Calibration of
+frequency-dependent wave speed and attenuation in water pipes using a
+dual-sensor and paired-IRF approach,” J. Water Resour. Plan. Manag.,
+vol. 150, no. 11, Nov. 2024, Art. no. 4024051.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:08:31 UTC from IEEE Xplore.  Restrictions apply. 
+
+3816
+IEEE TRANSACTIONS ON SMART GRID, VOL. 16, NO. 5, SEPTEMBER 2025
+[19] Y. Kazantsev, G. Glazyrin, S. Shayuk, D. Tanﬁlyeva, O. Tanﬁlyev, and
+V. Fyodorova, “Hydro unit active power controller minimizing water
+hammer effect,” in Proc. Ural Smart Energy Conf. (USEC), 2020,
+pp. 47–50.
+[20] J. Büker, A. Laß, S. Romig, P. Werner, and F.-H. Wurm, “On the effect
+of an ANC system towards the transient pressure ﬂuctuations caused
+by smart-grid controlled centrifugal pumps,” Appl. Acoust., vol. 209,
+Jun. 2023, Art. no. 109372.
+[21] E. B. Wylie and V. L. Streeter, Fluid Transients. New York, NY, USA:
+McGraw-Hill, 1978.
+[22] D. C. Wiggert and A. S. Tijsseling, “Fluid transients and ﬂuid-structure
+interaction in ﬂexible liquid-ﬁlled piping,” Appl. Mech. Rev., vol. 54,
+no. 5, pp. 455–481, Sep. 2001.
+[23] D. M. Andrade, F. B. de F. Rachid, and A. S. Tijsseling, “A new
+model for ﬂuid transients in piping systems taking into account the
+ﬂuid–structure interaction,” J. Fluids Struct., vol. 114, Oct. 2022,
+Art. no. 103720.
+[24] M. Liu, Y. Han, L. Tan, Y. Lu, C. Ma, and J. Gou, “Theoretical prediction
+model of transient performance for a mixed ﬂow pump under fast start-
+up conditions,” Phys. Fluids, vol. 35, no. 2, Feb. 2023, Art. no. 25125.
+[25] Y. Yao, C. Li, H.-M. Tai, and C. Shao, “Modeling of water transfer
+delay for optimal operation of integrated electrical-water system,” IEEE
+Trans. Power Syst., vol. 38, no. 1, pp. 331–348, Jan. 2023.
+[26] Z. Zhang, “Wave tracking method of hydraulic transients in pipe
+systems with pump shut-off under simultaneous closing of spherical
+valves,” Renew. Energy, vol. 132, pp. 157–166, Mar. 2019.
+[27] Z.
+Zhang,
+Hydraulic
+Transients
+and
+Computations.
+Cham,
+Switzerland:
+Springer
+Int.
+Publ.,
+2020.
+[Online].
+Available:
+https://link.springer.com/book/10.1007/978-3-030-40233-4
+[28] K. Oikonomou and M. Parvania, “Optimal coordination of water dis-
+tribution energy ﬂexibility with power systems operation,” IEEE Trans.
+Smart Grid, vol. 10, no. 1, pp. 1101–1110, Jan. 2019.
+[29] Y. Tang et al., “Analysis of the effectiveness of water hammer protec-
+tion programs for complex long-distance and high-head water supply
+projects,” Water, vol. 16, no. 11, p. 1582, May 2024.
+[30] H. Luo, I. A. Hiskens, and Z. Hu, “Stability analysis of load frequency
+control systems with sampling and transmission delay,”
+IEEE Trans.
+Power Syst., vol. 35, no. 5, pp. 3603–3615, Sep. 2020.
+[31] J. Li et al., “Resilience-motivated distribution system restoration consid-
+ering electricity-water-gas interdependency,” IEEE Trans. Smart Grid,
+vol. 12, no. 6, pp. 4799–4812, Nov. 2021.
+[32] J. Jiang, G. Huang, L. Nie, S. Dong, and X. Chen, “A multi-valve
+protection from water hammer in long-distance pipelines,” in Proc.
+ICMREE, 2011, pp. 1835–1838.
+Jiyuan
+Tang
+received
+the
+B.S.
+degree
+from
+Chongqing University, Chongqing, China, in 2020,
+where he is currently pursuing the Ph.D. degree with
+the School of Electrical Engineering. His research
+interests include integrated energy system and power
+system restoration.
+Kaigui Xie (Fellow, IEEE) received the Ph.D.
+degree in power system and its automation from
+Chongqing University, Chongqing, China, in 2001,
+where he is currently a Full Professor with the
+School of Electrical Engineering. He has authored
+and coauthored more than 200 academic papers and
+six books. His main research interests include power
+system reliability, planning, and analysis. He was
+awarded the title of the National Science Fund for
+Outstanding Young Scholar. He was an Editor of the
+IEEE TRANSACTIONS ON POWER SYSTEMS and
+an Associate Editor of the IET Proceedings-Generation, Transmission, and
+Distribution. He is an IET Fellow.
+Chunyan Li (Member, IEEE) received the Ph.D.
+degree in electrical engineering from Chongqing
+University, Chongqing, China, in 2008, where she is
+currently a Professor with the School of Electrical
+Engineering. Her research interests include the
+operational optimization and dispatch of integrated
+energy systems.
+Heng-Ming
+Tai
+(Senior Member, IEEE) is a
+Professor with the Department of Electrical and
+Computer Engineering, The University of Tulsa,
+Tulsa, OK, USA. His research interests are in the
+areas of signal processing, power system reliability,
+and industrial electronics.
+Changzheng Shao (Member, IEEE) received the
+B.S. degree in electrical engineering from Shandong
+University, Jinan, China, in 2015, and the Ph.D.
+degree in electrical engineering from Zhejiang
+University, Hangzhou, China, in 2020. He is cur-
+rently
+an
+Associate
+Professor
+with
+Chongqing
+University, Chongqing, China. His research interests
+include the operation optimization and reliability
+evaluation of the integrated energy system.
+Bo Hu (Senior Member, IEEE) received the Ph.D.
+degree in electrical engineering from Chongqing
+University, China, in 2010, where he is currently
+working as a Full Professor with the School of
+Electrical Engineering. His research interests include
+power system reliability and parallel computing
+techniques in power systems.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:08:31 UTC from IEEE Xplore.  Restrictions apply. 

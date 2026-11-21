@@ -1,0 +1,1479 @@
+Sustainable Cities and Society 82 (2022) 103876
+Available online 6 April 2022
+2210-6707/© 2022 The Author(s). Published by Elsevier Ltd. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-
+nc-nd/4.0/).
+Iterative Optimization of a Social Inmotics-Based Method in Order to Make 
+Buildings Smart and Resilient 
+Beatriz Montalb´an Pozas a,*, Beatriz Muriel Holgado a, Marta Lucas Bonilla a, 
+Sergio Barroso Ramírez b, Pablo Bustos García de Castro b 
+a Departamento de Construcci´on, Escuela Polit´ecnica de C´aceres, Universidad de Extremadura, Av. de la Universidad s/n 10003, C´aceres, Spain, 0034 927 25 71 95 - 
+0034 649 271 463 
+b Departamento de los Computadores y de las Comunicaciones, Escuela Polit´ecnica de C´aceres, Universidad de Extremadura, Av. de la Universidad s/n 10003, C´aceres, 
+Spain   
+A R T I C L E I N F O  
+Keywords: 
+smart and resilient buildings 
+building energy consumption 
+Indoor Environmental Quality 
+monitoring 
+social inmotics 
+key performance indicators 
+A B S T R A C T  
+The current situation of inefficiency in buildings operation, inadequate occupants’ habits and the low Indoor 
+Environmental Quality suggests a methodology that addresses the implementation of social inmotics. The 
+method allows the continuous optimization of the building performance and occupants’ awareness through an 
+iterative process. In each iteration the experts propose strategies that will be evaluated in the next cycle through 
+key performance indicators. This method develops an open source, scalable, low-cost cyber-physical system using 
+real time data. The results have been obtained from successive approaches, implementation of protocols and 
+empirical validation in different scenarios until reaching the version of the system installed in a public university 
+building, the School of Technology (University of Extremadura, Spain). By testing this methodology, social 
+inmotics through the use of disruptive technologies is proving to find solutions that increase energy savings and 
+improve Indoor Environmental Quality in adaptive and resilient buildings. Some of the results show that elec­
+tricity and water consumption with respect to occupancy density have decreased, important and unexpected 
+consumption peaks as the data servers, the cafeteria, or breakdowns have been detected, and users’ participation 
+improve the initial situation. Furthermore, this paper provides key performance indicators for this building 
+typology.    
+Specific abbreviations used 
+CPS 
+cyber-physical systems 
+EPCC 
+School of Technology of C´aceres (Escuela Polit´ecnica de 
+C´aceres) 
+EU 
+European Union 
+HVAC 
+Heating, Ventilation and Air Conditioning 
+IAQ 
+Indoor Air Quality 
+iBEMS 
+intelligent Building Energy Management System 
+IEQ 
+Indoor Environmental Quality 
+IS 
+Information System 
+1. Introduction 
+Buildings and the construction sector together account for over one- 
+third of global final energy consumption and about 40% of total CO2 
+emissions (International Energy Agency, 2020). Thereby, some of the 
+priority issues defined in the Urban Agenda for the EU, as part of the 
+latest Pact of Amsterdam in 2016, are energy transition, adaptation to 
+climate change, air quality and housing (European Commission, 2016). 
+Thus, a long-term strategy has been established to contribute to the 
+renovation of buildings into highly energy efficient and decarbonized 
+ones by 2050, by facilitating their cost-effective transformation into 
+nearly zero-energy buildings and by reducing greenhouse gas emissions 
+by 80-95% compared to 1990 levels (European Commission, 2020). 
+However, energy consumption in the EU due to buildings remains stable 
+and accounts for 40.3% of total energy use (of which residential is 26.1% 
+and the service sector is 14.2%) (Eurostat, 2020). One of the reasons for 
+the increase in energy use is that most of the population nowadays 
+spends 90 % of their time indoors, using mechanical HVAC equipment to 
+* Corresponding Author. 
+E-mail addresses: bmpozas@unex.es (B. Montalb´an Pozas), beatrizmh@unex.es (B. Muriel Holgado), malucasb@unex.es (M. Lucas Bonilla), sbarmirez@unex.es 
+(S. Barroso Ramírez), pbustos@unex.es (P. Bustos García de Castro).  
+Contents lists available at ScienceDirect 
+Sustainable Cities and Society 
+journal homepage: www.elsevier.com/locate/scs 
+https://doi.org/10.1016/j.scs.2022.103876 
+Received 26 January 2022; Received in revised form 29 March 2022; Accepted 30 March 2022   
+
+Sustainable Cities and Society 82 (2022) 103876
+2
+maintain comfort conditions (Cao, Dai, & Liu, 2016). In this use of the 
+Earth’s resources in buildings, the uncontrolled use of water must also 
+be added (The European Parliament and the Council of the European 
+Union, 2000). 
+Currently, energy efficiency parameters are applied in the design 
+phase of buildings in some cases. Nevertheless, no follow-up study is 
+carried out during the building’s operation phase to verify that the 
+actual conditions correspond to the calculated parameters; therefore, 
+there is a lack of information on the buildings behavior and their con­
+struction elements (Allab, Pellegrino, Guo, Nefzaoui, & Kindinis, 2017). 
+The occupants’ habits are also of great impact on the energy perfor­
+mance of buildings and can lead to considerable improvements (Pan 
+et al., 2017; Stazi, Naspi, & D’Orazio, 2017). Hence, after simulating 
+occupant behavior in different types of buildings, it has been proven that 
+occupant behavior affects energy savings by up to 20% in buildings 
+where high occupant interaction is required to achieve these savings 
+(Sun & Hong, 2017). Likewise, the unknown variables of operation and 
+energy consumption by occupants aggravate the situation (Almeida, 
+Tam, & Le, 2021). In addition, the need to analyze building performance 
+in terms of IEQ to guarantee occupants’ thermal comfort with the lowest 
+possible energy consumption is raised (Kim, Hong, Kong, & Jeong, 
+2020). 
+Moreover, obsolescence and improvement of buildings operation is 
+seen as a problem by many policymakers, which must be addressed 
+urgently (Buitelaar, Moroni, & De Franco, 2021).In this sense, there are 
+currently a wide range of possibilities and technologies for monitoring to 
+ensure the improvement of building performance and indoor environ­
+ment (Ahmad, Mourshed, Mundow, Sisinni, & Rezgui, 2016): by 
+tracking the human-building interaction, collecting surveys and data 
+logger measurements of the thermal behavior (Hong, Yan, D’Oca, & 
+Chen, 2017; Langevin, Gurian, & Wen, 2015), or by identifying and 
+optimizing energy consumption (Melzi, Same, Zayani, & Oukhellou, 
+2017), as well as by managing thermal comfort using smart thermostats 
+and surveys (Stopps & Touchie, 2020); and by integrating energy and 
+occupant satisfaction at the operational stage (Wang & Zheng, 2020), or 
+by occupant-centric building control (Park et al., 2019). 
+Other parameters to be considered with respect to IEQ may be IAQ, 
+lighting or noise (Technical committee AEN/CTN 100, 2007). Besides, 
+experiences in monitoring carried out in laboratories, experimental 
+buildings, previously designed modular units, or even complete neigh­
+borhoods have also been collected (Instituto de Ciencias de la Con­
+strucci´on y Consejo Superior de Investigaciones Científicas, n.d.). 
+Taking all of the above into account, the EU is implementing strategies 
+that should be submitted to promote smart technologies and 
+well-connected buildings and communities (The European Parliament 
+and the Council of the European Union, 2018). 
+Furthermore, it is relevant to develop CPS where physical systems act 
+as sensors to collect real-time information and communicate with the 
+computation modules in order to improve building operational perfor­
+mance (Alam & El Saddik, 2017; Bonci et al., 2019). At the present, the 
+minimum data required for the improvement of building performance 
+have been defined (Xiao & Fan, 2014). For this, it is essential to 
+adequately design both the sensors, which must transmit data in real 
+time (Vellei, Natarajan, Biri, Padget, & Walker, 2016) for proper deci­
+sion making in relation to their management and maintenance (Burgas, 
+Melendez, Colomer, Massana, & Pous, 2015), as well as the monitoring 
+system that involves occupants in issues, such as the resources used and 
+improvements in IEQ (Sharmin et al., 2014). 
+To complete the system, a control procedure, iBEMS, is needed in 
+order to integrate the different monitored parameters of the building 
+(Papantoniou, Mangili, & Mangialenti, 2017). These iBEMSs must be 
+able to find the balance over minimizing energy cost and maintaining 
+users comfort (Aslam et al., 2017; Khalid et al., 2020). In addition, the 
+use of open communication protocols allows for independence from 
+proprietary systems, better scalability and reproducibility, as well as low 
+cost (Ciuffoletti, 2018; Priyanka Jain, 2018). The Enterprise Service Bus 
+facilitates communication between software agents, while integrating 
+and managing multiple information sources with different access 
+methods. The implementation of Digital Twins in CPS constitutes a 
+breakthrough in this field (Chaudhari, Bhadoria, & Prasad, 2017). 
+Presently, there are great technological advances regarding digitiza­
+tion, whose application, however, has not been extended to the urban 
+environment, where it is used in a very isolated way both in new cities or 
+buildings, and in renovation and/or regeneration actions, through the 
+concepts of smart city/village/building (Park et al., 2019). The concept 
+of Smart Cities and Communities and their benefits for society will 
+become a reality in the coming years, the technologies included in the 
+term SmartX, such as Cloud Computing, Big Data, Artificial Intelligence 
+or the Internet of Things are evolving significantly while being inte­
+grated into different sectors of society (Fortes et al., 2019). 
+There are experiences through which smart strategies have been 
+implemented in different building uses: offices (Bamodu, Xia, & Tang, 
+2017), residential (Stopps & Touchie, 2020), public residential (Burgas 
+et al., 2015), non-residential (D’Agostino, Cuniberti, & Bertoldi, 2017), 
+and educational (Fern´andez-Caram´es & Fraga-Lamas, 2019). In this 
+context, Smart Campuses appear as ideal spaces to develop research in 
+this field (´Alvarez, Raposo, Miranda, Bello, & Barbero, 2019; Martins, 
+Lopes, da Cruz, & Curado, 2021), in which different objectives are 
+proposed: from the optimization of the spaces occupancy, to the effi­
+ciency and comfort improvement, or the facilities security control 
+(Gilman et al., 2020), and mainly to expand knowledge and education in 
+the construction and energy efficiency sectors (The European Parlia­
+ment and the Council of the European Union, 2018). The observed ev­
+idence in many facilities shows a wasteful use of energy resources and 
+water, thermal discomfort and/or inefficient use of spaces and resources 
+(Sanchez & Oliveira, 2018). For this reason, systems that allow re­
+sources’ control and maintenance are implemented, so that the buildings 
+that integrate a smart campus are gradually more efficient and adapted 
+to the actual occupants’ demand (Alghamdi & Shetty, 2016). Conse­
+quently, some experiences emerge: in France (Allab et al., 2017), in 
+Australia (Khoshbakht, Gou, & Dupre, 2018), or in Spain: in the Campus 
+of C´aceres (Montalb´an Pozas et al., 2018) and M´alaga (Fortes et al., 
+2019). Furthermore, the evaluation or any actions should be considered 
+essential. Thus, key performance indicators that measure the effective­
+ness in achieving goals in smart buildings are employed (Joud Al 
+Dakheel, Claudio Del Pero, Niccol`oAste, 2020; Technical committee 
+AEN/CTN 100, 2007), to ensure the proper building operation and for 
+monitoring the control system (American Society of Heating and 
+Air-Conditioning Engineers (ASHRAE), 2020; Federation of European 
+Heating & Air Conditioning Associations (REHVA), 2019). 
+Given this background, this article proposes a methodology through 
+an iBEMS with an open, scalable, replicable and low-cost CPS, which, in 
+an automated way, manages the monitoring, control and performance of 
+the building’s operation and its occupants’ behavior, with the inclusion 
+of continuous evaluation indicators. The system, of technological 
+development, progressively transforms conventional buildings into 
+smart ones, by a social inmotic system, which allows incrementally 
+improving the buildings behavior, by reducing the use of resources and 
+improving the IEQ, as well as any other parameter that may be intro­
+duced in the future. The system authorizes real-time data visualization 
+and the implementation of improvement strategies to enable user 
+interaction, along with governance by managers and administrators for 
+proper decision-making. The applied research in the field of smart 
+campus has been extended to the case study of a public university 
+building in a Campus, EPCC, and can be implemented both in other 
+existing buildings as well as in new buildings, filling the information gap 
+that exists in the operation and maintenance phase. 
+2. Methodology 
+The methodology proposed in this article is organized in a circular 
+iterative scheme optimizing the efficiency of the building incrementally 
+B. Montalb´an Pozas et al.                                                                                                                                                                                                                     
+
+Sustainable Cities and Society 82 (2022) 103876
+3
+in each cycle. The final objective is to validate a series of strategies. 
+These are proposed by experts and then evaluated through indicators in 
+every iteration. These indicators are calculated periodically, and they 
+will show the effectiveness of the method. The proposal presented in this 
+article has been developed through successive approximations of the 
+method and the practical validation of its different phases in several 
+scenarios. Variants of the different phases of the methodology have been 
+put into operation in each scenario (Montalb´an Pozas, Amigo Gamero, 
+Domínguez S´anchez, & Bustos García De Castro, 2020; Nú˜nez et al., 
+2020). 
+Thus, the system is developed in four phases. In the first phase, the 
+characterization is carried out with static data relating to the physical 
+model of the building and its occupants. Thanks to this work, a prior 
+evaluation aiming to identify the possible problems that the building 
+may present is obtained. The second phase is based on the previously 
+generated evaluation report. The IS is designed to manage the data 
+which, in turn, must be captured by the sensor network and then 
+monitored obtaining dynamic data. In the third phase, static and dy­
+namic data are incorporated into the analysis. Thanks to this informa­
+tion, the experts propose improvement strategies and define indicators. 
+Finally, a control and actuation system completing the IS is established 
+in the fourth phase. On the one hand, this system programs campaigns or 
+messages, warnings, alarms and actuators. On the other hand, it pro­
+grams new indicators designed to compare with each other when the 
+system begins to iterate, correcting the previously designed strategies. In 
+addition, the process improves the design throughout phases: the IS of 
+phase 3 corrects the model of phase 1, and the phase 3 indicators refine 
+the IS of phase 2 (Fig. 1). 
+2.1. Model characterization 
+At first, the physical model and its occupants are characterized 
+through static data. There are several classifications proposed in the 
+literature that stand out some influential factors, discerning between 
+external and internal influences (Ministerio de Fomento Gobierno de 
+Espa˜na, 2017). On this basis, the classification used in this project dis­
+tinguishes among six factors:  
+• Location and climate: define the unique geographic and climatic 
+conditions, such as latitude, orography, landscape unit, height above 
+sea level, geographic orientation or shadows affecting the building. It 
+also takes into account other factors as temperature, relative hu­
+midity, solar radiation or pluviometry.  
+• Thermal envelope: characterizes the building from a typological and 
+constructive point of view. For that purpose, it uses data on volume, 
+floor area, year of construction, building elements, characteristics of 
+walls and openings, air infiltration and thermal bridges.  
+• Systems and supplies: record the energy supply systems used, either 
+for HVAC, lighting or equipment supply, or water supply. It also 
+collects other internal or external services, such as communication 
+and information networks and infrastructures.  
+• Interior design: defines the configuration of the space through the 
+number of floors, rooms, usable area and heights, among others. 
+Moreover, it differentiates between living/non-living, outdoor/in­
+door or heated/unheated areas. 
+• Occupancy: provides information on the number of users, distribu­
+tion and schedules of the habited spaces,  
+• as well as the occupancy density by zones.  
+• Operation and maintenance: monitor the use and the maintenance of 
+the building, and track the references to detected incidents and pa­
+thologies, reforms and post-construction works, or, if it existes, an 
+action plan. 
+At this moment, a preliminary evaluation of the building may be 
+carried out after its characterization. The goal is to identify its re­
+quirements, which will be established for the subsequent design of the 
+IS. 
+2.2. IS design 
+The architecture of the system must be able to host, maintain, relate 
+and offer all the acquired data. It is described by its main elements 
+depending on where the programs are executed: the management sys­
+tem (back-end) and the visualization system (front-end), both interre­
+lated through the service bus. Along with the time series generated by 
+Fig. 1. Flow chart of the methodology.  
+B. Montalb´an Pozas et al.                                                                                                                                                                                                                     
+
+Sustainable Cities and Society 82 (2022) 103876
+4
+the sensors, the IS must maintain static and dynamic data of the build­
+ing. Data must be organized in such a way that they represent with 
+sufficient fidelity the physical entity of origin. The organization of this 
+mixed information is essential to facilitate its access, visualization and 
+the creation of more complex predictive models. 
+This methodology suggests using two databases: one oriented to 
+graphs, with the objective of representing the spatial structure of the 
+building, and another one of time series, with the aim of storing dynamic 
+data. Both databases must be interconnected through the code that is 
+integrated into the IS. It is also highly advisable that they be open source 
+to guarantee the quality and security of the code. 
+A generic and easy proposal to deploy in this phase is to start from 
+one or several virtual machines that can be on their own infrastructure 
+or in the cloud. Databases are installed on one of the virtual machines. 
+The other machine will host a software known as a service bus that 
+exposes all the IS services outside. The service bus is also responsible for 
+connecting internally and securely with the databases and other pro­
+grams in charge of the internal logic of operation. The IS must therefore 
+have the following parts:  
+• Back-end: receives and stores the information, and provides access. 
+That way, this information can be consulted. It is made up of 3 layers: 
+the virtualization infrastructure (virtual machines and servers), 
+persistence (open-source database storage systems) and logical pro­
+cesses (programs that allow data to enter and exit the system; they 
+check these data and implement security measures to safeguard the 
+integrity of the system).  
+• Service bus: programs that monitor, manage and supervise the 
+execution of services. They also offer various functionalities related 
+to communication protocols and how services are offered.  
+• Front-end: contains the views section, which includes the data 
+collection sources, like sensors. They can generate a series of data 
+related to different variables. An IS such as the one detailed here 
+requires the collection of data from the physical world. Therefore, 
+the ultimate goal is to install a large number of sensing devices 
+progressively. These tools must have the capacity to measure data 
+from the environment and the state of a set of variables of interest. 
+Open connectivity devices should be chosen to facilitate connection 
+to the IS and their subsequent expansion. 
+In addition, and despite the variety of devices, all of them must have 
+integrated communication capabilities with servers. For this purpose, 
+they must use well-established protocols that are implemented in the 
+service bus. The most common practice is to use a REST API over HTTP. 
+The means of connection to the IS must be taken into account. For this 
+reason, a feasibility study of network connections, and of the necessary 
+maintenance is required. The data transfer options are the following: 
+publication from the devices to the server, using standard protocols such 
+as REST or MQTT, and periodic query either to the device or to an in­
+termediate storage location from the server. The latter case occurs when, 
+for example, the LoRaWAN network is used. In this case, packets are 
+retrieved from their servers. This requirement for open operation makes 
+it unfeasible to use many of the existing low-cost sensors (they do not 
+allow re-configuration and only send data to proprietary systems). The 
+visualization system uses tools to allow users to access the data pre­
+sented in different ways. It is vital that these tools are also open to allow 
+them to be connected and, if necessary, be replaced. 
+2.3. Diagnosis and strategies definition 
+In this part of the methodology, the dynamic data obtained through 
+the IS are analyzed, added to those coming from the static character­
+ization of the building. Finally, the diagnosis is made. In this way, the 
+state of the building is fully defined, and it is then possible to propose 
+strategies, which may be aimed at reducing energy demand directly (in 
+systems or equipment) or indirectly (envelope, use and distribution, 
+actions such as ventilation, shading, etc.), improving comfort, inform­
+ing, or raising awareness and modifying the behavior of users. These 
+strategies must be validated by defining indicators that reflect the im­
+provements produced in the system in each iteration. They must also 
+characterize the behavior of the building and allow verification of 
+compliance with the objectives pursued. 
+2.4. Design of the actuation and control system 
+Next, the protocols and rules of action and control are established, 
+which must be set in order to put into practice the strategies established 
+in the previous phase. Their implementation can be carried out through 
+the programming of alerts or warnings, campaigns and messages of 
+persuasion, information and participation, or automated processes for 
+optimizing the system through the monitoring of previously defined 
+indicators and some that will be defined in this stage of the 
+methodology. 
+3. Results and discussion 
+The specific results of the EPCC building case study are presented. 
+These results are obtained from the proposed methodology. 
+3.1. EPCC model characterization 
+The parameters mentioned in section 2.1. are developed below: 
+3.1.1. EPCC location and climate 
+The EPCC is located on the campus on the outskirts of the city of 
+C´aceres. The area is flat and low, precisely 367 m above sea level (about 
+100 m below the level of the city center). The campus has a very low 
+density of occupation, little vegetation or green areas, and no nearby 
+bodies of water. The building is not affected by external shading, and the 
+immediate surroundings are paved or asphalted. 
+The climate is Mediterranean with climate zone Csa, according to 
+K¨oppen-Geiger. According to the Spanish Technical Code, it is C4 with 
+medium climatic severity in winter and high in summer. There is a cli­
+matic station very close to the EPCC. It collects data of high solar radi­
+ation, minimum average temperatures in January of 3.7 ºC, and a 
+maximum of 33.7 ºC. 
+3.1.2. EPCC thermal envelope 
+Most of the buildings that make up the EPCC were built in 1989. 
+There are four long-isolated pavilions with predominant facades, three 
+of them East-West and one North-South. Years later, in 1999 and 2009, 
+the EPCC was extended with two more isolated buildings. Thus, the total 
+built area is about 23,000 m2, distributed over two or three floors 
+(Fig. 2). The envelope of the oldest buildings is made up of walls of 1 foot 
+of brick, 5 cm insulation and a 7 cm brick interior partition wall. The 
+roof is flat and non-trafficable with 5 cm insulation. The openings are 
+made up of aluminum carpentry without thermal bridge break, with 
+double glazing and a chamber, and obsolete shutter boxes with high 
+thermal bridges. These buildings also have large roof skylights made of 
+thin polycarbonate without shading. 
+Thermographic, thermal transmittance and air tightness tests were 
+carried out to complete the characterization of the envelope. Thanks to 
+these tests, thermal bridges and infiltrations were identified. In addition, 
+the existence and effectiveness of thermal insulation, both in walls and 
+in the roof, was confirmed. 
+3.1.3. EPCC systems and supplies 
+The EPCC is supplied with electricity for lighting, equipment power 
+supply (mainly servers and computer equipment), HVAC (mainly with 
+natural gas for heating), and drinking water supply for consumption in 
+bathrooms, laboratories and cafeteria, as well as for cleaning the center. 
+In addition, photovoltaic panels with a power of 10 kW are installed. The 
+B. Montalb´an Pozas et al.                                                                                                                                                                                                                     
+
+Sustainable Cities and Society 82 (2022) 103876
+5
+EPCC also has two internal data networks: a Wi-Fi network, and an in­
+ternal and wired network with limited connection points. In addition, a 
+LoRa antenna is available. 
+As the center’s overall monthly bills for the last six years are usable, 
+the historical and habitual consumption is known. It should be pointed 
+out that the data for the years 2020 and 2021 have been discarded for 
+being unusual. The regular operation of the building was modified 
+because of the worldwide SARS-CoV-2 pandemic. Regarding water 
+consumption, there has been no meter since 2015, so the seven years 
+prior to 2015 have been selected. Moreover, the billing is calculated by a 
+participation coefficient of the entire campus, so it is not accurate. It is 
+considered that the most representative indicators to evaluate each 
+consumption should not only be the global ones. It has been possible to 
+calculate the temporary average consumption indicators per person, 
+surface area, volume, or/and occupancy density. The most relevant ones 
+are: in electricity according to the occupancy density (kWh/(m2/p)); in 
+natural gas, according to the heated volume (kWh/m3); and in water, 
+according to the users (l/p) (Fig. 3). From the data analysis, it can be 
+seen that:  
+• The overall annual electricity consumption has generally decreased 
+progressively since the first year. This drop is in line with the 
+decrease in the number of students. The annual average for the 
+period was 711 MWh.  
+• The lowest monthly values occur when facilities are closed (the 
+minimum registered was 2.4 MWh/(m2/p) in August 2019). In 
+contrast, the highest monthly values happen in the cold months (the 
+maximum was 9.3 MWh/(m2/p) in January 2014). In non-school 
+winter periods, high consumption is observed. This is probably due 
+to the use of individual electric heaters. In addition, a high base is 
+generally observed even in the closed season (the minimum was 33 
+MWh in August 2019). Consumption per occupancy density, like 
+total consumption, has been progressively decreasing (from 7.8 to 
+3.5 MWh/(m2/p)). The monthly average in the analyzed period was 
+5.4 MWh/(m2/p).  
+• On the other hand, the analysis of water consumption does not show 
+a clear trend in its annual or bimonthly behavior, apart from a 
+reduction in non-school periods. The annual average for the period is 
+4,213 m3. In contrast, the monthly average per person for the period 
+analyzed is 4.7 liters per day.  
+• Natural gas consumption shows an annual upward trend, except in 
+the last year, when it decreased slightly. The annual average for the 
+period is 848 MWh, with high dispersion. The maximum monthly 
+record was 3.73 kWh/m3 in February 2017. Higher consumption is 
+observed in January and February. On the contrary, it is null from 
+Fig. 2. Exterior and interior views of EPCC: panoramic view, ground floor hall, classroom, meeting room, first floor hall and laboratory (from left to right and from 
+top to bottom). 
+Fig. 3. Graphs of annual and monthly evolution of total consumption of the EPCC (data from invoices) and data indicators and statistical metrics.  
+B. Montalb´an Pozas et al.                                                                                                                                                                                                                     
+
+Sustainable Cities and Society 82 (2022) 103876
+6
+May to October (both included). The monthly average for the 
+analyzed period is 2.1 kWh/m3 again, with a high dispersion of 
+results. 
+3.1.4. EPCC interior design 
+The usable space is mainly made up of classrooms, laboratories, of­
+fices, restrooms and large common areas spread over 21,000 square 
+meters. Five of the buildings have large double-height spaces with lon­
+gitudinal interior patios linking several floors. The interior carpentry is 
+mostly made of wood, although metalwork can also be found. The 
+interior walls are plastered or tiled. In addition, there are modular or 
+continuous false ceilings in some spaces, especially on the upper floor, 
+and the floor is made of terrazzo (Fig. 2). 
+3.1.5. EPCC occupancy 
+Students, teaching, research and administration and services 
+personnel use the building. The theoretical occupancy has been calcu­
+lated according to the number of enrolled and hired personnel. The 
+number of users has been decreasing in the last five years, from about 
+2,300 to about 1,400 at present. In addition, several surveys have been 
+carried out to diagnose the profile of the main user, and to know the 
+personal involvement and the feeling of comfort in the building. The 
+average profile corresponds to a man between 22 and 24 years old 
+studying in the last courses, who lives in the city in a shared apartment 
+with other classmates, and drives to the university in his own vehicle. 
+Fig. 4, 5, 6, 7, 8, 9, 10 and 11. 
+3.1.6. EPCC operation and maintenance 
+The school serves as a teaching and research center. It is open from 
+Monday to Friday, from 8 a.m. to 10 p.m. Spaces are occupied in a wide 
+variety of ways depending on teaching schedules. Some of the buildings 
+are sometimes used on weekends for public examinations or events. The 
+buildings have not been renovated since their initial construction due to 
+a lack of budget. For this reason, only corrective maintenance has been 
+carried out to solve the most critical flaws. It is worth mentioning the 
+installation of hot air extraction chimneys in three of the pavilions in 
+mid-May 2019. However, as they are not sensorized, the extracted air 
+flow rate is unknown. 
+3.1.7. EPCC prior evaluation 
+After the previous characterization of the building, it is possible to 
+infer the different problems presented by the building in each of the 
+characterized parameters. This analysis will be used to design the IS 
+requirements:  
+• severe climatic zone in summer, with high direct and indirect solar 
+irradiation  
+• façades with unfavorable solar orientation, high thermal losses and 
+gains due to infiltrations, and absence of solar protection - no pre- 
+installation of infrastructure for data networks to connect smart 
+devices  
+• lack of sectorized real time information on energy consumption; high 
+electricity consumption base, even during the closing season; many 
+connected devices without consumption and schedule control; 
+missing protocols of natural gas consumption for heating; no control 
+of faults in the water network  
+• air stratification due to double heights  
+• very long hours of use, with high mobility and variability in the 
+number of occupants; incorrect habits of use  
+• obsolete construction and lack of preventive or predictive 
+maintenance 
+Following these issues, the requirements for the design of the IS are 
+established. The sensor network must be low-cost, and both the elec­
+trical and the data network must be wireless. In addition, it must provide 
+real-time data to allow immediate corrections on a smaller and 
+sectorized time scale. Depending on the type of sensors, a different 
+requirement is set as follows. Hygrothermal sensors should help estab­
+lish strategies for solar gain/protection and ventilation according to the 
+specific space, and the automated control of HVAC systems; in this re­
+gard, it is recommended to sectorize the systems for better adaptation to 
+the occupancy. Electrical network analyzers will allow locating exces­
+sive electrical consumption and devices turned on after hours. Lastly, 
+occupancy sensors will allow controlling the actual number of occupants 
+and their location. 
+There must be different access levels to the data according to the user 
+who consults them. On the one hand, managers will be responsible for 
+making decisions, and experts will be in charge of analysis. On the other 
+hand, users will be allowed to participate in the change of habits. 
+3.2. EPCC IS design 
+An IS adapted to the EPCC building has been designed. It covers 
+monitoring, communications, storage and visualization. Its parts are 
+explained hereafter (Fig. 4). 
+3.2.1. EPCC back-end 
+The virtual machines and servers are hosted in the EPCC. The static 
+data storage obtained in phase 1 has been carried out on the Neo4J 
+database (Neo4j, 2021). It uses a graph as a model to capture the spatial 
+organization of the physical environment, whose nodes are labeled: 
+classroom - floor - building... That way, both the nodes and the edges 
+joining them store sets of key-value pairs called attributes or properties. 
+Its goal is to store more information about the nodes and the existing 
+relationships between them and to connect from there with the other ISs 
+linked to the data typologies described above. Because the nodes of a 
+network are interconnected through links or edges, queries in these 
+databases are quite simple, in contrast with relational models, which can 
+be very costly. In a network, the information is intrinsically connected 
+due to the nature of the data structure (Fig. 5). 
+Moreover, dynamic time series of sensor data are stored in a specific 
+database, InfluxDB (InfluxData, 2019). It is an open source time series. It 
+is optimized for storage and retrieval of consecutive data indexed to a 
+timestamp, produced by measurement devices. It also allows easy 
+integration with the visualization tool for time series data; in this case, 
+Grafana (Grafana Labs, 2020), that is an open and free software. 
+In the IS, there is a database called sensors, where there is a value for 
+each of the sensors that make up the physical world network. The in­
+formation sent by the sensor is organized by columns. Consequently, a 
+consumption sensor will have a column with the timestamp of each 
+measurement and a column with the consumption reading. 
+3.2.2. EPCC service bus 
+Data are acquired through a single enterprise service bus, Zato ESB 
+(“Zato Service Bus,” 2021). It is an open-source software with com­
+mercial and community support written in Python language. It is used to 
+build middleware and back-end systems where they store services for 
+different purposes. The number of data capture devices used was 
+considerable. However, thanks to these services, it has been possible to 
+write the data generated in the databases and the requests in a simple 
+way. 
+A service in Zato can expose an API and consume data from other 
+internal or external services. Conceiving the overall system functionality 
+as divided into multiple small or very small (micro) services is necessary 
+to take full advantage of this technology. In addition, these services must 
+have little interconnection or coupling between them. The services 
+created are maintained by Zato, monitored and hosted on several 
+redundant servers, which increases the level of stability of the system 
+without development cost. There are other ESBs written in Java in the 
+market. Although ESBs serve large corporations and some of them offer 
+community licenses, many of their most key functionalities are 
+restricted. 
+B. Montalb´an Pozas et al.                                                                                                                                                                                                                     
+
+Sustainable Cities and Society 82 (2022) 103876
+7
+3.2.3. EPCC front-end 
+The devices access one of the services available on the service bus to 
+send the information to the databases. When using the REST API offered 
+at the reference address http://smartpolitech-services.unex.es:xxxx, the 
+data is organized according to the JSON format with two main fields: 
+- Info: this structure is formed by the static data that are sent. It 
+consists of an API key field (unique key associated with each sensor) and 
+a device field (unique identifier of each sensor). 
+• Data: this structure is formed by the dynamic data or physical vari­
+ables measured by the sensor. 
+To achieve this objective, the system previously analyzes the 
+relevant factors, taking into account their expansion, distribution, use, 
+location of critical points and selection of devices, either sensors, meters 
+or other devices in the building. Data collection began in 2016 with 83 
+devices, and it is working today with 139 devices. They measure vari­
+ables on energy efficiency, thermal comfort and consumption: ambient 
+temperature and relative humidity, CO2 concentration, electricity con­
+sumption, water consumption, status (on/off) of equipment, contribu­
+tion of renewable energies, temperature of radiators and boiler water 
+supply and return. Some of them have been manufactured at EPCC. Most 
+devices are low cost, wireless, over Wi-Fi and battery-operated. The 
+accuracy range in data collection has also been an important factor to 
+take into account (Table 1). 
+The availability of real-time consumption data obtained through the 
+Fig. 4. EPCC IS.  
+Fig. 5. Neo4J database graph.  
+B. Montalb´an Pozas et al.                                                                                                                                                                                                                     
+
+Sustainable Cities and Society 82 (2022) 103876
+8
+sensors allows replacing invoice values. These invoices have been 
+helpful to validate consumptions; however, they are limited to monthly 
+and annual global consumptions. Therefore, a more detailed analysis in 
+shorter reading intervals can be performed, and besides it is possible to 
+delimit in which pavilion or specific area of the building those incidents 
+occur. 
+The location of the sensors has been established considering the 
+representativeness of the data, building a dense network that captures 
+data from the entire EPCC. Thus, sensors have been placed taking into 
+account the orientation of the rooms (due to solar radiation) or the floor 
+height (due to air stratification). They have also been distributed ac­
+cording to the use of each zone, since it determines different activity, 
+metabolism and occupancy. Depending on the dimension chosen, visu­
+alization is carried out on two different types of viewers: 
+- Temporarily: real-time visualization panels have been generated 
+through the Grafana data server connected to the database. These panels 
+are publicly visible, with series stored in multiple configurations and 
+combinations and with data visualization in variable time periods (some 
+examples in Fig. 6). The panels are displayed as a carousel and are 
+visible on the screens distributed throughout the EPCC.  
+• Spatially: the visualization is done through the specific web viewer 
+developed in this project. The viewer uses Leaf.js and Mapbox open 
+libraries for georeferenced visualization. The different devices and 
+elements that produce data are added on top of the maps. Each type 
+of device is linked to a specific type of visualization to facilitate its 
+interpretation by the end user (Fig. 7). 
+3.3. EPCC diagnosis and strategies definition 
+Thanks to the data obtained in the IS, the initial preliminary evalu­
+ation towards a definitive diagnosis has been developed. Data visuali­
+zation screens are equipped with graphs adapted to the building 
+manager (some examples in Fig 7 to 10). Moreover, indicators to facil­
+itate the analysis of the current status and the subsequent planning and 
+monitoring of strategies have been defined (Table 2). Screens and in­
+dicators extend the precision and knowledge provided by the analyses 
+performed through invoices. 
+As measurements started at the end of 2016, some improvements in 
+building performance can be attributed to the monitoring follow-up 
+being performed. The study starts with complete annual data from 
+2017 and ends in 2019 (Table 2). 2020 and 2021 are discarded for the 
+already stated reason: the global pandemic. 
+The diagnosis allowed the definition of strategies that can be solved 
+through the next phase. The control and action system is also laid out. 
+Their proposals should be preferably passive and with a social inmotics 
+base. The diagnosis has been carried out in the following areas (Table 2):  
+• Sensors and system variables: this indicator has continued to grow 
+from one year to the next, as has the average number of records for 
+each variable. It only decreased slightly in the last year analyzed. It 
+can be deduced that the IS makes the model increasingly reliable. 
+There is a lack of occupancy control by monitoring the number and 
+distribution of occupants. This measurement would help to link 
+consumption to activity.  
+• Electricity consumption indicators: the overall annual decrease and 
+pattern are repeated. In the last three years, the average consumption 
+drops from the previous value of six years of invoices (from 711 MWh 
+to 592 MWh). The monthly average per person is maintained, 
+proving that consumption is proportional to the number of students 
+(32.3 kWh/p on average in this period). However, the consumption 
+decreases from 5.4 to 3.9 MWh/(m2/p) with respect to the occu­
+pancy density. 
+The equipment sensors provide information on those that are still on 
+outside working hours. The annual average of the non-occupancy hours 
+in which the equipment is still on is 38%. 
+The analysis is extended to each pavilion in the graphs, as well as to 
+smaller time regimes. It is found that the hourly pattern is repeated: 
+maximum consumption occurs from 9 a.m. to 1 p.m., coinciding with the 
+periods of highest occupancy of classes; in contrast, the lowest con­
+sumption is measured on weekends, and in the winter months. Although 
+there are differences between the pavilions, the one that consumes the 
+most hosts the largest number of students and equipment. The second 
+highest consumption is registered in the pavilion that houses a large part 
+of the servers of the research groups and, therefore, of the cooling 
+equipment. The high consumption bases previously detected above are 
+located in this pavilion (section 3.1.3). These bases consume 10 and 15 
+Table 1 
+Devices of the sensorization network for the dynamic characterization of EPCC.  
+Trademark/ 
+brand 
+Communication 
+Energy 
+supply 
+Parameter 
+Accuracy 
+RAY STH 
+WiFi 
+(Reading 
+every 30’) 
+2 battery 
+LR14 
+Temperature 
+Humidity 
+± 0.5 ⁰C 
+± 3 % 
+RAY STC 
+CO2 
+± 3% ppm 
+EcoWin 
+(self-made) 
+WiFi 
+(Reading 
+every 30’) 
+Rechargeable 
+lithium 
+battery 
+18650 
+Temperature 
+Humidity 
+Windows 
+opening 
+± 0.5 ⁰C 
+± 3 % 
+On/Off 
+Circutor 
+Wibeee 
+WiFi 
+85...265 AC 
+(direct from 
+ATS) 
+Electricity 
+consumption 
+Voltage 2 
+% 
+Electricity 
+2 % 
+Circutor 
+CVM-B150 
+ModBus Rs-485 
+with runway 
+ModBus/TPC 
+85...265 AC/ 
+120...300 DC 
+Voltage 
+Active 
+energy 
+Reactive 
+energy 
+Frequency 
+± 0.2 
+± 0.5S 
+± 1 
+± 0.1 
+B-Meters 
+GMDM-I 
+IWM-PL3 
+By pulses 
+Non- 
+replaceable 
+lithium 
+battery 
+Water 
+consumption 
+10 l/pulse 
+Itr´on 
+By pulses 
+Out of supply 
+Gas 
+consumption 
+0.1 m3/ 
+pulse 
+Circutor 
+LM25-M 
+ModBus Rs-485 
+with runway 
+ModBus/TPC 
+85...265 AC/ 
+120...300 DC 
+ModBus 
+pulse 
+centralizer 
+1 pulse  
+Fig. 6. Examples of Grafana display panels from the EPCC with temporary data on electricity and water consumption, temperature and humidity and CO2 
+concentration. 
+B. Montalb´an Pozas et al.                                                                                                                                                                                                                     
+
+Sustainable Cities and Society 82 (2022) 103876
+9
+kWh per month, and these levels remain constant every day at any time 
+(Fig. 8). 
+The strategies are related to the increasing monitoring in a sectorized 
+manner in the two pavilions with the highest consumption base, as this 
+will provide more significant savings. It is proposed to add occupancy 
+sensors in them and increase controlling sensors to switch off equipment 
+outside working hours. Since the outdoor air temperature is usually low 
+enough, another proposal is to reduce cooling consumption in the server 
+room through ventilation.  
+• Water consumption indicators: data for the last three years show a 
+substantial average annual difference with respect to what is being 
+billed (4,213 m3 from 2009 to 2015 compared to 1,503 m3 from 
+2017 to 2019). This difference can be attributed to major 
+Fig. 7. Viewing EPCC spatial data in Mapbox.  
+Table 2 
+Data indicators and statistical metrics: general, consumption and IEQ parameters.   
+INDICATORS 
+2017 
+2018 
+2019 
+Mean (standard 
+deviation) 
+GENERAL 
+No. of water/electricity/temperature & humidity/CO2/equipment 
+sensors 
+Total no. of system sensors/ evolution (1) 
+Total no. of system variables/ evolution (1) 
+Mean no. of records per variables/ evolution (1) 
+12/18/46/4/ 
+0 
+83 / - 
+16 / - 
+940775 / - 
+14/28/45/4/33 
+130 / +56 % ↑ 
+182 / +1037 % ↑ 
+2251177/ +139% 
+↑ 
+13/30/53/4/33 
+139 / +7 % ↑ 
+248 / +36 % ↑ 
+2035685/-10% 
+↓ 
+13/25/48/4/22 
+117 
+149 
+1742545 
+CONSUMPITION 
+Annual electricity (MWh)/ evolution (1) 
+Monthly mean electricity (kWh/m2)/(kWh/p)/(MWh/(m2/p))/ 
+evolution (1) 
+653 
+2.8/ 33.4/ 4.5 
+581 ↓ 
+2.5/ 31.8/ 3.8 ↓ 
+542 ↓ 
+2.3/ 31.6/ 3.3 ↓ 
+592 (56.2) 
+2.5/ 32.3/3.9 
+No. of hours with connected devices after working hours (3) 
+No. of total measurements hours (3) 
+Percentage of hours of connected devices/ evolution (1) 
+- 
+- 
+- 
+46296 
+115962 
+40 % 
+57362 
+160677 ↑ 
+36 % / -4 % ↓ 
+51829/7824 
+138320/31618 
+38 % 
+Annual water (m3)/ evolution (1) 
+Monthly mean water (l/p), daily average (l/p) 
+2105 
+107.8/ 3.6 
+1228 ↓ 
+67.2/ 2.2 ↓ 
+1178 ↓ 
+68.7/ 2.3 ↑ 
+1503/522 
+81.2/2.7 
+Annual natural gas (MWh) (4)/ evolution (1) 
+Monthly mean natural gas (kWh/m3) / (kWh/p) / (MWh/(m2/p)) (4) 
+836 
+1.9/73.5/ 
+10.9 
+1048 ↑ 
+2.8/ 98.3/ 12.8 ↑ 
+1016 ↓ 
+2.3/101.6/11.6 
+↓ 
+967/114 
+2.3/ 91.1/11.8 
+IEQ (5) 
+No. of hours in thermal discomfort in winter (<21 ºC) 
+No. of total measurements hours (collected by sensors) 
+Percentage of hours in thermal discomfort in winter/ evolution (1) 
+37367 
+57774 
+65 % / - 
+46044 
+63015 ↑ 
+73 % / +8 % ↑ 
+42779 
+62688 ↓ 
+68 % / -5 % ↓ 
+42063/4383 
+61159/2936 
+69 % 
+No. of hours in thermal discomfort in summer (>25 ºC) 
+No. of total measurements hours (collected by sensors) 
+Percentage of hours in thermal discomfort in summer/ evolution (1) 
+40978 
+61391 
+67 % / - 
+25128 
+54328 ↓ 
+46 % / -20 % ↓ 
+39329 
+68293 ↑ 
+58 % / +11 % ↑ 
+3514/8714 
+61337/6982 
+57 % 
+No. of hours in humid discomfort (<30 o >70 %) 
+No. of total measurements hours (collected by sensors) 
+Percentage of hours in humid discomfort/ evolution (1) 
+55625 
+147840 
+38 % 
+41461 
+146076 ↓ 
+28 % / -10 % ↓ 
+61500 
+168588 ↑ 
+36 % / +8 % ↑ 
+5286/10301 
+154168/12519 
+34 % 
+No. of data with poor air quality (CO2 >1000 ppm) 
+No. of total valid measurements hours (collected by sensors) 
+Percentage of hours with poor air quality/ evolution(1) 
+996 
+11604 
+8 % / - 
+1005 
+9443 
+11 % / 3 % ↑ 
+824 
+8387 
+10 % / 1 % ↓ 
+932/102 
+9811/1639 
+9.6 % 
+The occupancy considered is theoretical (enrolled students and workers), no holidays or days when the center is closed have been considered. 
+↑ ↓ the record is higher or lower than the previous year, red when the evolution is unfavorable, green when this is favorable. 
+(1) Of each year compared to the preceding year. 
+(2) Standard deviation is calculated on the annual mean. 
+(3) Monday to Friday from 10 pm to 8 am, including closed and vacation periods (Christmas, Easter and August). 
+(4) These data were obtained from invoices and not from sensorization. 
+(5) Monday to Friday from 8am to 10pm, excluding closing periods and vacations (Christmas, Easter and August). The hourly data corresponds to the mean of data 
+taken in that time slot. 
+B. Montalb´an Pozas et al.                                                                                                                                                                                                                     
+
+Sustainable Cities and Society 82 (2022) 103876
+10
+breakdowns in the campus network that should be repaired. More­
+over, consumption decreased by half in the first year with respect to 
+the global indicators. This drop may be due to the alerts and cam­
+paigns carried out (section 3.4). The daily average is 2.7 liters of 
+water per person. Peaks are detected from 11 a.m. to 4 p.m., and due 
+to cleaning activity from 6 a.m. onwards. The lowest consumption is 
+measured in August and December, coinciding with the lowest 
+electricity consumption. In contrast, highest consumption occurs in 
+May and October. The pavilion hosting the cafeteria presents the 
+highest water consumption. There is a large difference in overall 
+consumption between the pavilions; however, the consumption per 
+person remains constant. In addition, hidden breakdowns or leaks 
+occur quite frequently, represented in the graph by horizontal lines 
+maintained over time. Monitoring has contributed to locate these 
+incidents in space and in real time (Fig. 9). As a strategy, it is pro­
+posed to continue programming alerts to locate and repair water 
+faults in real time.  
+• Gas consumption indicators: there are no data from sensors. 
+Consequently, the data from invoices focused on the last three 
+years are used again. It is found that the total annual consumption 
+continues to rise. The average is 967 MWh, with a high dispersion 
+of results, indicating a high variability each year. The monthly 
+average also rises (from 1.9 in 2017 to 2.3 kWh/m3 in 2019). There 
+is no direct correlation between consumption and the greater or 
+lesser severity of winter temperatures. As shown in surveys, users’ 
+comfort did not change either. Consumption increased by 25% 
+from 2017 to 2018, as did the discomfort hours. However, 2018 
+was not colder than the previous year. The same pattern is 
+repeated from 2018 to 2019. It should be noted that the system is 
+not automated, and the heating is manually controlled by the 
+center´s clerk.  
+• Hygrothermal indicators: the comfort range needs to be taken into 
+account. The hygrothermal comfort range, for which the PPD 
+(predicted percentage of dissatisfied) is below 10 %, considers the 
+optimal temperature between 20◦C and 24◦C in winter, and be­
+tween 23◦C and 26◦C in summer (Ministry of Industry Energy and 
+Tourism. Spanish Government., 2007; Technical committee 
+AEN/CTN 100, 2007). Regarding optimal relative humidity, 
+values range between 25 % and 60 % (Technical committee 
+AEN/CTN 100, 2007); or between 30 % and 70 % (Ministry of 
+Industry Energy and Tourism. Spanish Government., 2007), in 
+both seasons. The indicators show that in winter, even with heat­
+ing systems, 69% of the total average hours’ present thermal 
+discomfort (< 21 ºC). In summer, thermal discomfort (>25 ºC) 
+amounts to 57% of the total average hours. There is no cooling 
+system in the sensorized spaces, nor shading or ventilation systems 
+or awareness in users’ habits. 
+The graphs show a large oscillation between day and night. Tem­
+perature lowers on weekends in winter when the heating is turned off. 
+Higher temperatures are measured in the rooms located to the east in the 
+morning and to the west in the afternoon. Air stratification presents 
+higher values on the top floor (Fig. 10). Humidity in the EPCC does not 
+exceed the 70 % limit, but it is sometimes below 20% in the warm period 
+of the year. 
+The strategy includes an automated system that acts on the radiators’ 
+on and off set points depending on the indoor and outdoor environ­
+mental operating conditions, occupancy, the feeling of comfort of the 
+users, and weather forecasts, adapting the consumption in every emit­
+ting equipment. Regarding summer temperatures, it is necessary to in­
+crease night ventilation. 
+Therefore, it is proposed to install and automate elements of pro­
+tection and capture of solar radiation in openings by means of blinds, 
+awnings or gratings. In addition, it is necessary to work with human 
+behavior and the acquisition of good habits in the operation of windows 
+and blinds. 
+Fig. 8. Examples of Grafana dashboard with visualization adapted to the building manager with data on electricity consumption from monitoring: hourly graphs of 
+2019 according to buildings, according to months and historical evolution from October 2016 to November 2020. 
+Fig. 9. Examples of Grafana dashboard with visualization adapted to the building manager with data on water consumption from monitoring: graphs by buildings 
+daily, hourly (where a water leakage is displayed) and evolution of the year 2018. 
+B. Montalb´an Pozas et al.                                                                                                                                                                                                                     
+
+Sustainable Cities and Society 82 (2022) 103876
+11
+- CO2 concentration indicators: this with respect to IAQ is considered 
+acceptable at 800 ppm, low at 1000 ppm, and being 1500 ppm the 
+maximum level of comfort conditions (Ministry of Industry Energy 
+and Tourism. Spanish Government., 2007), or 1200 ppm (800 ppm 
+above outdoor conditions) (Technical committee AEN/CTN 100, 
+2007). EPCC has only four sensors installed: two in classrooms, one 
+in a meeting room and the last one in the cafeteria. During the three 
+years analyzed, an average of 9.6 % of the occupied hours exceeded 
+the 1000 ppm concentration. 
+In addition, significant infiltrations can be seen in the sharp peaks of 
+the graph. The periods of highest concentration correspond to class 
+hours. Without ventilation actions, the concentration drops sharply to 
+the base value of 380 ppm ( 
+The proposed strategy is to install a mechanical ventilation system 
+that allows the renewal of indoor air through the set points generated by 
+the CO2 meters. It also calls for raise user’s awareness through the 
+system. 
+3.4. EPCC control and actuation system design 
+The control and actuation systems that have been implemented 
+respond to the strategies described in the previous section. The strate­
+gies advocate awareness campaigns to enhance user’s participation. 
+Actuators in the form of alerts, alarms, valves and gratings have also 
+been included. Following these actions, new indicators have been ob­
+tained. All these measures will continue to allow validation in the iter­
+ation of the method. 
+The average annual number of interactions on Twitter is 439, and the 
+trend goes upward each year. In addition, the average annual number of 
+people participating in the campaigns is 279. The average number of 
+annual water alerts is 1454 (Table 3). 
+3.4.1. Campaigns 
+On the one hand, data visualization boards have been displayed on 
+screens located in common areas (Image 1, Fig. 12). Boards have been 
+presented in a simple, visual way and in real time. Information has been 
+adapted to all users (Image 2, Fig. 12). On the other hand, messages have 
+been spread thanks to social networks. In addition, surveys with QR 
+codes have been carried out. Both resources have used awareness and 
+persuasion techniques to encourage participation and change of habits 
+towards building efficiency. The following campaigns have been carried 
+out: 
+Fig. 10. Grafana dashboard with visualization adapted to the building manager with the evolution of some rooms’ temperature of one of the pavilions in 2018 with 
+annual graphs and from winter and summer period (including comfort limits according to (Technical committee AEN/CTN 100, 2007)). 
+Fig. 11. Grafana dashboard with visualization adapted to the building manager with the evolution of CO2 concentration in March and April 2018 (including IAQ 
+limits according to (Ministry of Industry Energy and Tourism. Spanish Government., 2007)). 
+B. Montalb´an Pozas et al.                                                                                                                                                                                                                     
+
+Sustainable Cities and Society 82 (2022) 103876
+12
+• Electricity consumption: tweets showing the renewable energy 
+captured in the photovoltaic panels, and the contribution to the 
+building were published (Tweet 1, Fig. 2).  
+• Water consumption: wheel graphs with red/green scales according 
+to today’s overall consumption compared to yesterday’s were 
+displayed. Graphs also have information on personal daily con­
+sumption to encourage individual action (Image 2, Fig. 12) Tweets 
+with real-time consumption messages of some events and break­
+downs were sent as well (Tweet 2, Fig. 2).  
+• Hygrothermal comfort: through 3D images of the buildings with 
+indoor and outdoor environmental data in real time for each sen­
+sorized room, as well as information on the comfort ranges ac­
+cording to the climatic period (Image 3, Fig. 12); and through 
+tweets recommending the operation of the blinds according to 
+each period of the year (Tweets 3 and 4, Fig. 13), as well as comfort 
+surveys with QR codes.  
+• CO2 concentration: scale wheels of different colors were used. 
+They included messages on air quality and pieces of advice on 
+ventilation (Image 4, Fig. 12). 
+3.4.2. Actuators   
+• Waer alerts: as of December 5th, 2017, an action protocol with 
+water consumption alerts was designed and implemented in Gra­
+fana. It detects a higher value than usual during a certain period in 
+any of the buildings. It sends a warning via email and Telegram to 
+the EPCC clerks. This has improved response times to breakdowns 
+and failures in the supply system. The annual evolution of water 
+consumption is decreasing (section 3.3) since this alert exists, the 
+most common cases occur with open toilet tanks (example of 
+failure in Fig. 9). In the same way, other alerts can be programmed 
+with respect to electrical, gas consumption or discomfort.  
+• Thermostatic radiator valves: they were installed in the radiators 
+of the highest occupancy pavilion (MClimate Vicki LoRaWAN). 
+These smart thermostatic radiator valves control and monitor 
+temperature individually in each space from a distance. Their 
+heating power can be adjusted separately. Depending on the 
+metabolic activity calculated in each space adaptive comfort pa­
+rameters have been programmed adjusting the opening of the 
+valves and optimizing energy consumption. 
+3.5. Iterative system optimization 
+As a result of the first iteration of the methodology, a prototype has 
+been proposed and is being developed. It consists of a smart system for 
+control and automation. The analysis of data allows the algorithms 
+implementation in the control system which activates the adequate 
+heating operation. The prototype is currently being designed to improve 
+indicators regarding energy savings, thermal comfort and air quality, 
+and adjustment of occupancy and operation. Therefore, the automation 
+and prior monitoring system will control the building operation and act 
+on the facility. 
+Table 3 
+Data indicators and statistical metrics: campaigns and alerts.   
+INDICATOR / 
+PARAMETER 
+2017 
+2018 
+2019 
+Mean 
+CAMPAIGNS 
+No. of interactions 
+on twitter/ 
+evolution (1) 
+241 
+381/ 
++58% ↑ 
+695/ 
++82% ↑ 
+439 
+No. of people 
+participating in 
+campaigns/ 
+evolution (1) 
+187 
+354/ 
++89% ↑ 
+295/ 
+-17% ↓ 
+279 
+ALERTS 
+No. of water alerts/ 
+evolution (1) 
+106 
+(from 
+05/12/ 
+17) 
+1482 
+1,427/ 
+-4% ↓ 
+1,454 
+(1)  
+↑ ↓ The record is higher or lower than previous year, red when the evolution is 
+unfavorable, green when it is favorable. 
+(1) Of each year compared to the preceding year. 
+(2) Only the last two years have been taken into account. 
+Fig. 12. Data visualization board in a public space on EPCC and Grafana dashboards adapted to general user: visualization of water consumption, comfort and 
+IAQ data. 
+Fig. 13. Examples of campaign messages on social networks: electricity and water consumption and IEQ parameters.  
+B. Montalb´an Pozas et al.                                                                                                                                                                                                                     
+
+Sustainable Cities and Society 82 (2022) 103876
+13
+Once the prototype is finished, the existing information will be 
+expanded. New sensors and actuators could be added to the system. 
+Together with the existing ones, these devices would incorporate new 
+environmental and consumption data to the InfluxDB and Neo4j data­
+bases. That way, they complete the available information that will be 
+subsequently visualized through Grafana. In addition, new visualiza­
+tions will be designed on this website. Moreover, new accesses and 
+processes will be incorporated into the Grafana server (phase 3). The 
+building will be diagnosed again. New indicators will be obtained, and 
+they will help analyze how the system is working. New strategies will be 
+then generated from these indicators (phase 4). Thanks to this proced­
+ure, it will be possible to validate the implemented system and make 
+proposals for control and actuation (phase 5). Once these proposals are 
+introduced, they will reiterate the third and successive rounds of the 
+methodology. 
+4. Conclusion 
+The experience obtained in the application of this methodology 
+represents a step forward introducing automation in existing buildings 
+towards their transformation into smart ones, and with this, the adap­
+tation and resilience of the building stock towards the current re­
+quirements of decarbonization. Thus, at present, the building 
+performance is being gradually optimized through the application and 
+validation of improvement strategies by using information technologies 
+in maintenance and management of in-use facilities. 
+The main theoretical and practical implications of the methodology 
+are the following: 
+- Implementing social inmotics to promote a correct interaction of 
+the building with its users, training them to reduce both the consump­
+tion of natural resources, and greenhouse gas emissions as well as, to 
+improve IEQ. Likewise, occupants’ involvement has been encouraged 
+thus some of them have changed their habits according to their user 
+profile. Learning the correct habits in public buildings enhances subse­
+quent application to the private sphere, and therefore to the domestic 
+one as well. In this way, social inmotics is employed as the way to 
+control and manage integral building automation by the users 
+themselves.   
+• Monitoring in real time is considered essential; so that, any query 
+according to any conditions can be made.  
+• The correct choice of the monitoring devices, the software for a 
+correct flow data, and the structure of the IS are necessary to 
+guarantee the projection of results in the future.  
+• The prior characterization and evaluation of the building and its 
+users is considered fundamental for the proper customized design 
+of the IS, which should strongly serve as a basis for any further 
+extension of the system.  
+• Developing the case study in a campus allows for continuous 
+improvement in a progressive manner by using it as a prototype for 
+research, but the findings could be applied to any other building.  
+• Using key performance indicators measuring and continuously 
+validating the strategies’ implementation as well as optimizing the 
+methodology effectiveness is successfully supporting the decision 
+making.  
+• The IS must be scalable (which can be implemented in part or 
+whole buildings at the urban level towards smart city or smart 
+territory, as well as continuously adapting to new technologies 
+and/or situations), adaptable (according to needs in time, use and/ 
+or existing regulations at any given moment), incremental (in each 
+iteration) and open source (without dependence on any pro­
+prietary system),  
+• This methodology can be used in any existing building (regardless 
+of the type of use and size), and any environmental conditions with 
+other requirements (variables such as solar radiation, noise, 
+polluted outdoor air, etc.) with a low-cost investment. Although 
+some of the procedures, like installation of sensors and actuators, 
+databases integration, visualization design or general processes 
+follow-up, require human resources; they are in continuous evo­
+lution and some of them will be made automatically in a near 
+future.  
+• It can be applicable by users who are not familiar with reading 
+graphs due to the fact that dashboards can be designed with 
+visualization adapted to different usage profiles. 
+As future work, in the final version of the methodology, the adjusted 
+building model could be connected to specific simulators to evaluate 
+different situations, and to prediction models through machine learning 
+in artificial intelligence, using for example digital twins. 
+One issue to keep in mind is that, in future climate change, the en­
+ergy demand profiles, which were not accounted for in the initial design 
+of the buildings, will significantly vary. In this way, systems will have to 
+be readapted necessarily, an action that can be carried out by applying 
+this methodology. Furthermore, these updated indicators may be used 
+by any Administrations or building managers to compare the efficiency 
+of public or private buildings and make decisions in order to address 
+urban regeneration and adaptation to climate change. 
+Declaration of Competing Interest 
+The authors declare that they have no known competing financial 
+interests or personal relationships that could have appeared to influence 
+the work reported in this paper. 
+Acknowledgements 
+This research has been made possible thanks to the projects: 
+SMARTPOLITECH UNEX13-1E-1716 (Intelligent energy efficiency sys­
+tem for the School of Technology), from the Infrastructures call of the 
+Ministry of Economy and Competitiveness (2013-2016); EFIPUBLIC 
+IB16128 (Social immotics for the efficient use of public buildings), from 
+the call for Research Projects in Public R&D&I Centres, from the Min­
+istry of Economy and Infrastructures of the Regional Government of 
+Extremadura and the European Regional Development Fund of the EU 
+(2017-2020); and INNOINVEST 0605_INNOINVEST_4_E (Promotion of 
+business investment in innovation of energy products for buildings), of 
+the Operational Programme EP-INTERREG V A Spain Portugal (POC­
+TEP) (2019- 2021). This publication has been translated thanks to 
+funding granted by the Ministry of Economy, Science, and Digital 
+Agenda from the Regional Government of Extremadura and by the Eu­
+ropean Regional Development Fund of the EU through the reference 
+grant GR18032. 
+References 
+Ahmad, M. W., Mourshed, M., Mundow, D., Sisinni, M., & Rezgui, Y. (2016). Building 
+energy metering and environmental monitoring – A state-of-the-art review and 
+directions for future research. Energy and Buildings, 120, 85–102. https://doi.org/ 
+10.1016/J.ENBUILD.2016.03.059 
+Alam, K. M., & El Saddik, A. (2017). C2PS: A digital twin architecture reference model 
+for the cloud-based cyber-physical systems. IEEE Access, 5, 2050–2062. https://doi. 
+org/10.1109/ACCESS.2017.2657006 
+Alghamdi, A., & Shetty, S. (2016). Survey toward a smart campus using the internet of 
+things. In Proceedings - 2016 IEEE 4th International Conference on Future Internet of 
+Things and Cloud, FiCloud 2016 (pp. 235–239). https://doi.org/10.1109/ 
+FiCloud.2016.41 
+Allab, Y., Pellegrino, M., Guo, X., Nefzaoui, E., & Kindinis, A. (2017). Energy and comfort 
+assessment in educational building: Case study in a French university campus. Energy 
+and Buildings. https://doi.org/10.1016/j.enbuild.2016.11.028 
+Almeida, L. M. M. C. E., Tam, V. W. Y., & Le, K. N. (2021). Users’ building optimal 
+performance manual. Cleaner and Responsible Consumption, 2, 100009. https://doi. 
+org/10.1016/j.clrc.2021.100009 
+´Alvarez, M., Raposo, J. F., Miranda, M., Bello, A. B., & Barbero, M. (2019). Desarrollo del 
+SmartCampus de Montegancedo (UPM) basado en el modelo de las Infraestructuras 
+de Datos Espaciales. Informes de La Construcci´on, 71(555), 307. https://doi.org/ 
+10.3989/ic.66252 
+B. Montalb´an Pozas et al.                                                                                                                                                                                                                     
+
+Sustainable Cities and Society 82 (2022) 103876
+14
+American Society of Heating and Air-Conditioning Engineers (ASHRAE). (2020). 2020 
+ASHRAE Handbook Systems and Equipment. Retrieved from https://www.ashrae. 
+org/about/news/2020/2020-ashrae-handbook-focuses-on-systems-and-equipment. 
+Aslam, S., Iqbal, Z., Javaid, N., Khan, Z., Aurangzeb, K., & Haider, S. (2017). Towards 
+Efficient Energy Management of Smart Buildings Exploiting Heuristic Optimization 
+with Real Time and Critical Peak Pricing Schemes. Energies, 10. https://doi.org/ 
+10.3390/en10122065. https://doi.org/doi.org/. 
+Bamodu, O., Xia, L., & Tang, L. (2017). An indoor environment monitoring system using 
+low-cost sensor network. Energy Procedia, 141, 660–666. https://doi.org/10.1016/J. 
+EGYPRO.2017.11.089 
+Bonci, A., Carbonari, A., Cucchiarelli, A., Messi, L., Pirani, M., & Vaccarini, M. (2019). 
+A cyber-physical system approach for building efficiency monitoring. Automation in 
+Construction, 102, 68–85. https://doi.org/10.1016/j.autcon.2019.02.010 
+Buitelaar, E., Moroni, S., & De Franco, A. (2021). Building obsolescence in the evolving 
+city. Reframing property vacancy and abandonment in the light of urban dynamics 
+and complexity. Cities, 108, Article 102964. https://doi.org/10.1016/j. 
+cities.2020.102964 
+Burgas, L., Melendez, J., Colomer, J., Massana, J., & Pous, C. (2015). Multivariate 
+statistical monitoring of buildings. Case study: Energy monitoring of a social housing 
+building. Energy and Buildings, 103, 338–351. https://doi.org/10.1016/j. 
+enbuild.2015.06.069 
+Cao, X., Dai, X., & Liu, J. (2016). Building energy-consumption status worldwide and the 
+state-of-the-art technologies for zero-energy buildings during the past decade. Energy 
+and Buildings, 128, 198–213. https://doi.org/10.1016/j.enbuild.2016.06.089 
+Chaudhari, N., Bhadoria, R. S., & Prasad, S. (2017). Information Handling and Processing 
+Using Enterprise Service Bus in Service-Oriented Architecture System. Proceedings - 
+2016 8th International Conference on Computational Intelligence and Communication 
+Networks, CICN 2016, 418–421. https://doi.org/10.1109/CICN.2016.88 
+Ciuffoletti, A. (2018). Low-Cost IoT: A Holistic Approach. Journal of Sensor and Actuator 
+Networks, 7(2), 19. https://doi.org/10.3390/jsan7020019 
+D’Agostino, D., Cuniberti, B., & Bertoldi, P. (2017). Energy consumption and efficiency 
+technology measures in European non-residential buildings. Energy and Buildings, 
+153, 72–86. https://doi.org/10.1016/J.ENBUILD.2017.07.062 
+European Commission. (2016). Urban agenda for the EU. Retrieved April 28, 2021, from 
+https://ec.europa.eu/info/eu-regional-and-urban-development/topics/cities-and 
+-urban-development/urban-agenda-eu_es. 
+European Commission. (2020). 2 050 long-term strategy | Climate Action. Retrieved May 
+6, 2021, from https://ec.europa.eu/clima/policies/strategies/2050_en. 
+Eurostat. (2020). Energy, transport and environment statistics — 2020 edition - Products 
+Statistical Books. Retrieved from https://ec.europa.eu/eurostat/en/web/products- 
+statistical-books/-/ks-dk-20-001. 
+Federation of European Heating, V. and, & Air Conditioning Associations (REHVA). 
+(2019). REHVA Guidebook 29 Improving Building Performance through Technical 
+Monitoring and Commissioning. Retrieved from https://www.rehva.eu/hvac-gui 
+debook-repository/rehva-guidebook-29. 
+Fern´andez-Caram´es, T. M., & Fraga-Lamas, P. (2019). Towards next generation teaching, 
+learning, and context-aware applications for higher education: A review on 
+blockchain, IoT, Fog and edge computing enabled smart campuses and universities. 
+Applied Sciences (Switzerland), (21), 9. https://doi.org/10.3390/app9214479 
+Fortes, S., Santoyo-Ram´on, J., Palacios, D., Baena, E., Mora-García, R., Medina, M., …, & 
+Barco, R. (2019). The Campus as a Smart City: University of M´alaga Environmental, 
+Learning, and Research Approaches. Sensors, 19(6), 1349. https://doi.org/10.3390/ 
+s19061349 
+Gilman, E., Tamminen, S., Yasmin, R., Ristimella, E., Peltonen, E., Harju, M., …, & 
+Pirttikangas, S. (2020). Internet of Things for Smart Spaces: A University Campus 
+Case Study. Sensors, 20(13), 3716. https://doi.org/10.3390/s20133716 
+Grafana Labs. (2020). The leading open source software for time series analytics. 
+Retrieved December 29, 2019, from http://grafana.org. 
+Hong, T., Yan, D., D’Oca, S., & Chen, C (2017). Ten questions concerning occupant 
+behavior in buildings: The big picture. Building and Environment, 114, 518–530. 
+https://doi.org/10.1016/J.BUILDENV.2016.12.006 
+InfluxData. (2019). InfluxDB. Retrieved December 29, 2019, from https://docs.influ 
+xdata.com/influxdb/v1.7/. 
+Instituto de Ciencias de la Construcci´on y Consejo Superior de Investigaciones 
+Científicas. (n.d.). Monitorizaci´on y evaluaci´on de la habitabilidad, calidad del aire y 
+eficiencia energ´etica de los edificios. Experiencias en Espa˜na (2020th ed.). 
+International Energy Agency. (2020). Buildings. Retrieved May 6, 2021, from https:// 
+www.iea.org/topics/buildings. 
+Dakheel, Joud Al, Pero, Claudio Del, & Niccol`oAste, F. L (2020). Smart Buildings 
+Features and Key Performance Indicators: A Review. Sustainable Cities and Society, 
+105919. https://doi.org/10.1016/j.jeconbus.2020.105919 
+Khalid, A., Javaid, N., Guizani, M., Alhussein, M., Aurangzeb, K., & Ilahi, M. (2020). 
+Towards Dynamic Coordination Among Home Appliances Using Multi-Objective 
+Energy Optimization for Demand Side Management in Smart Buildings. IEEE Access, 
+6. https://doi.org/10.1109/ACCESS.2018.2791546 
+Khoshbakht, M., Gou, Z., & Dupre, K. (2018). Energy use characteristics and 
+benchmarking for higher education buildings. Energy and Buildings, 164, 61–76. 
+https://doi.org/10.1016/J.ENBUILD.2018.01.001 
+Kim, J., Hong, T., Kong, M., & Jeong, K. (2020). Building occupants’ psycho- 
+physiological response to indoor climate and CO2 concentration changes in office 
+buildings. Building and Environment, 169, Article 106596. https://doi.org/10.1016/j. 
+buildenv.2019.106596 
+Langevin, J., Gurian, P. L., & Wen, J. (2015). Tracking the human-building interaction: A 
+longitudinal field study of occupant behavior in air-conditioned offices. Journal of 
+Environmental Psychology, 42, 94–115. https://doi.org/10.1016/J. 
+JENVP.2015.01.007 
+Martins, P., Lopes, S. I., da Cruz, A. M. R., & Curado, A. (2021). Towards a smart & 
+sustainable campus: An application-oriented architecture to streamline digitization 
+and strengthen sustainability in academia. Sustainability (Switzerland), 13(6), 3189. 
+https://doi.org/10.3390/su13063189 
+Melzi, F. N., Same, A., Zayani, M. H., & Oukhellou, L. (2017). A dedicated mixture model 
+for clustering smart meter data: Identification and analysis of electricity 
+consumption behaviors. Energies, 10(10), 1446. https://doi.org/10.3390/ 
+en10101446 
+Ministerio de Fomento Gobierno de Espa˜na. (2017). Estrategia a largo plazo para la 
+rehabilitaci´on energ´etica en el sector de la edificaci´on en Espa˜na ERESEE 2017. Madrid.  
+Ministry of Industry Energy and Tourism. Spanish Government. (2007). Regulation of 
+Thermal Installations in Buildings., 207. BOE. de 29/08/2007 Sec 1 §. 
+Montalb´an Pozas, B., Amigo Gamero, I., Domínguez S´anchez, A., & Bustos García De 
+Castro, P. (2020). A methodology to improve energy efficiency and comfort 
+conditions with low-cost ICTs in rural public buildings. Sustainable Cities and Society, 
+102156. https://doi.org/10.1016/j.scs.2020.102156. https://doi.org/https://doi. 
+org/. 
+Montalb´an Pozas, B., Bustos García de Castro, P., Barrena García, M., S´anchez 
+Domínguez, A., García Rodríguez, P., Del Río P´erez, M, & University of Cantabria. 
+(2018). Improving energy efficiency in public buildings through social inmotics. 
+Rehabend 18, Construction Pathology. C´aceres: Rehabilitatiion Technology and 
+Heritage Management.  
+Neo4j, I. (2021). Neo4j. Retrieved December 29, 2019, from https://neo4j.com/. 
+Nú˜nez, P., Barroso, S., Muriel, B., Lucas, M., Montalb´an, B., & Bustos, P. (2020). Sistema 
+de informaci´on del sistema Cyber-Físico SmartPoliTech. Monitorizaci´on y evaluaci´on 
+de la habitabilidad. calidad del aire y eficiencia energ´etica de los edificios, 2020th ed., 
+pp. 49–58. 
+Pan, S., Wang, X., Wei, S., Xu, C., Zhang, X., Xie, J., … de Wilde, P. (2017). Energy waste 
+in buildings due to occupant behaviour. Energy Procedia, 105, 2233–2238. https 
+://doi.org/10.1016/J.EGYPRO.2017.03.636. 
+Papantoniou, S., Mangili, S., & Mangialenti, I. (2017). Using Intelligent Building Energy 
+Management System for the Integration of Several Systems to one Overall 
+Monitoring and Management System. Energy Procedia, 111, 639–647. https://doi. 
+org/10.1016/j.egypro.2017.03.226 
+Park, J. Y., Ouf, M. M., Gunay, B., Peng, Y., O’Brien, W., Kjærgaard, M. B., & Nagy, Z. 
+(2019). A critical review of field implementations of occupant-centric building 
+controls. Building and Environment, 165, Article 106351. https://doi.org/10.1016/J. 
+BUILDENV.2019.106351 
+Priyanka Jain, A. G. (2018). Review of IoT Market and Open Source Technologies in IoT. 
+International Journal of Engineering Research in Computer Science and Engineering 
+(IJERCSE), 5(2), 0–5. 
+Sanchez, A. S., & Oliveira, K. P. S. (2018). Internet of Things for a Smart Campus On Line 
+Monitoring of Water Consumption in University Buildings. International Journal of 
+Engineering Research And, V7(03). https://doi.org/10.17577/ijertv7is030187 
+Sharmin, T., Gül, M., Li, X., Ganev, V., Nikolaidis, I., & Al-Hussein, M. (2014). 
+Monitoring building energy consumption, thermal performance, and indoor air 
+quality in a cold climate region. Sustainable Cities and Society, 13, 57–68. https://doi. 
+org/10.1016/J.SCS.2014.04.009 
+Stazi, F., Naspi, F., & D’Orazio, M (2017). A literature review on driving factors and 
+contextual events influencing occupants’ behaviours in buildings. Building and 
+Environment, 118, 40–66. https://doi.org/10.1016/J.BUILDENV.2017.03.021 
+Stopps, H., & Touchie, M. F. (2020). Managing thermal comfort in contemporary high- 
+rise residential buildings: Using smart thermostats and surveys to identify energy 
+efficiency and comfort opportunities. Building and Environment, 173. https://doi.org/ 
+10.1016/j.buildenv.2020.106748 
+Sun, K., & Hong, T. (2017). A simulation approach to estimate energy savings potential of 
+occupant behavior measures. Energy and Buildings, 136, 43–62. https://doi.org/ 
+10.1016/j.enbuild.2016.12.010 
+Technical committee AEN/CTN 100. (2007). UNE-EN 15251:2008. Indoor environmental 
+input parameters for design and assessment of energy performance of buildings addressing 
+indoor air quality, thermal environment, lighting and acoustics. 
+The European Parliament and the Council of the European Union. Directive 2000/60/EC 
+of the European Parliament and of the Council of 23 October 2000 establishing a 
+framework for Community action in the field of water policy., (2000). 
+The European Parliament and the Council of the European Union. Directive (EU) 2018/ 
+844 of the European Parliament and of the Council of 30 May 2018 amending Directive 
+2010/31/EU on the energy performance of buildings and Directive 2012/27/EU on 
+energy efficiency., (2018). 
+Vellei, M., Natarajan, S., Biri, B., Padget, J., & Walker, I. (2016). The effect of real-time 
+context-aware feedback on occupants’ heating behaviour and thermal adaptation. 
+Energy and Buildings, 123, 179–191. https://doi.org/10.1016/J. 
+ENBUILD.2016.03.045 
+Wang, L., & Zheng, D. (2020). Integrated analysis of energy, indoor environment, and 
+occupant satisfaction in green buildings using real-time monitoring data and on-site 
+investigation. Building and Environment, 182, Article 107014. https://doi.org/ 
+10.1016/j.buildenv.2020.107014 
+Xiao, F., & Fan, C. (2014). Data mining in building automation system for improving 
+building operational performance. Energy and Buildings, 75, 109–118. https://doi. 
+org/10.1016/J.ENBUILD.2014.02.005 
+Zato Service Bus. (2021). Retrieved April 28, 2021, from https://zato.io/. 
+B. Montalb´an Pozas et al.                                                                                                                                                                                                                     

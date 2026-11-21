@@ -1,0 +1,2085 @@
+IEEE TRANSACTIONS ON ENGINEERING MANAGEMENT, VOL. 69, NO. 3, JUNE 2022
+639
+Resilience of Cyber-Enabled Electrical Energy and
+Water Distribution Systems Considering
+Infrastructural Robustness Under Conditions of
+Limited Water and/or Energy Availability
+Scott Zuloaga
+, Student Member, IEEE, Puneet Khatavkar, Larry Mays, and Vijay Vittal
+, Fellow, IEEE
+Abstract—New metrics and a new methodology for determining
+system infrastructural–operational resilience are presented for the
+optimal real-time operation of two critical interdependent infras-
+tructure systems—the water distribution systems (WDS) and the
+electric power system (EPS) under critical conditions of limited
+water and/or limited electrical energy resulting from extreme
+drought or electric grid failure, respectively. Operational resilience
+(OR) and infrastructural resilience are deﬁned. The integrated re-
+silience computation method is presented and utilizes results from
+a combined optimization–simulation framework, which involves
+capturing the interactions and associated dynamics between the
+EPS and WDS. A realistic example of the WDS and EPS is used to
+demonstrate the application of the resilience concepts to assess the
+interdependent systems’ performance.
+Index Terms—Electric power system (EPS), extended time-
+domain simulations, infrastructural resilience (IR), operational
+resilience (OR), real-time operations, water distribution systems
+(WDS), water energy nexus.
+NOMENCLATURE
+Terms
+ceil
+Ceiling function rounds up to the next
+highest integer.
+LOLn,t
+Loss of load, bus n, time period t.
+Manuscript received February 15, 2019; revised June 20, 2019; accepted
+August 22, 2019. Date of publication September 18, 2019; date of current
+version February 21, 2022. This work was supported in part by the U.S. National
+Science Foundation (NSF) under Project 029013-0010 and Award 1541026,
+in part by CRISP Type 2–Resilient Cyber-Enabled Electric Energy and Water
+Infrastructures: Modeling and Control under Extreme Mega Drought Scenarios,
+and in part by the National Science Foundation Graduate Research Fellowship
+Program under Grant 026257-001. Review of this manuscript was arranged by
+Department Editor T. Hong. (Corresponding author: Scott Zuloaga.)
+S. Zuloaga and V. Vittal are with the School of Electrical, Computer, and
+Energy Engineering, Arizona State University, Tempe, AZ 875706 USA (e-mail:
+szuloaga@asu.edu; vijay.vittal@asu.edu).
+P. Khatavkar was with the School of Sustainable Engineering and the Built
+Environment, Tempe, AZ 85281 USA. He is now with Stantec Consulting Inc.,
+Sacramento, CA 95816 USA (e-mail: puneet.khatavkar@stantec.com).
+L. Mays is with the School of Sustainable Engineering and the Built
+Environment, Arizona State University, Tempe, AZ 875706 USA (e-mail:
+mays@asu.edu).
+Color versions of one or more of the ﬁgures in this article are available online
+at http://ieeexplore.ieee.org.
+Digital Object Identiﬁer 10.1109/TEM.2019.2937728
+dAdjxf,n,t
+Load reduction amount, xfࢠ{sf, mf},
+bus n, time t, from consumer survey
+results.
+LOLn,t
+Loss of load, bus n, time period t.
+mfn
+Fraction of multifamily (mf) homes in
+residential component of load, bus n.
+Pl,max
+Rate
+A
+MVA
+limit,
+transmission
+element l.
+Pl,t
+Active
+power
+ﬂow,
+transmission
+element l, time period t.
+Pload,nt
+Real power demand, bus n, time
+period t.
+sfn
+Fraction of single-family (sf) homes in
+residential component of load at bus n.
+sl
+Transmission line index function cal-
+culation parameter, summing length.
+TLg,t
+Cooling water storage tank level,
+generator g, time-period t.
+WDS
+Water distribution system.
+t
+Simulation time period.
+z
+Index for service area in WDS.
+Z
+Total number of service areas in the
+system.
+θz,t
+Penalty function for not satisfying
+demand for service area z at time t.
+Rn,tim
+P ,low
+Binary indication function for low
+pressures.
+Rn,tim
+P ,high
+Binary indication function for high
+pressures.
+Dsat,z,t
+Satisﬁed demand multiplier for zone z
+at time t.
+Dreq,z,t
+Requested demand multiplier for zone
+z at time t.
+f
+Index for performance function.
+n
+Index node in the WDS.
+tim
+Index for real time of optimization–
+simulation implementation.
+Pn,t
+Pressure at node n and time t.
+Ps,low
+System safe lower pressure bound.
+Plow
+System lower pressure bound.
+Ps,upper
+System safe upper pressure bound.
+0018-9391 © 2019 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+640
+IEEE TRANSACTIONS ON ENGINEERING MANAGEMENT, VOL. 69, NO. 3, JUNE 2022
+Pupper
+System upper pressure bound.
+Pump
+Index for pump number.
+Powpump,t
+Power consumed by pump at time t.
+Pow(available)pump,t
+Power available for consumption at
+time t.
+WDS Index Functions
+Rn,tim
+P
+Pressure bounds index function, node
+n.
+Rpump,t
+Pow
+Power availability index function.
+Rz,t
+Dem
+Demand satisfaction index function,
+zone z.
+EPS Index Functions
+Rg
+CW
+Cooling water index function, genera-
+tor g.
+Rn
+DS
+Overall
+demand
+supplied
+index
+function, bus n.
+Rn
+PL
+WDS pump demand supplied index
+function, bus n.
+Rl
+TL
+Transmission line thermal limit index
+function, branch l.
+Rn
+V
+Voltage index function, bus n.
+WDS Operational Resilience Measures of Performance (RMP)
+ResRn,tim
+P
+,t
+RMP for pressure bounds function at
+time t.
+ResRpump,tim
+Pow
+,t
+RMP for power availability function at
+time t.
+ResRz,tim
+Dem ,t
+RMP for demand satisfaction at time t.
+ResWDS,TOT(t)
+Overall WDS operational resilience at
+time t.
+EPS Operational RMP
+ResRn
+V ,t
+RMP for voltage, time period t.
+ResRl
+TL,t
+RMP for transmission lines, time
+period t.
+ResRg
+CW,t
+RMP for cooling water supply, time
+period t.
+ResRn
+DS,t
+RMP for overall demand supplied, time
+period t.
+ResRn
+PL,t
+RMP for WDS pump demand supplied,
+time period t.
+ResEPS,TOT(t)
+Overall EPS operational resilience at
+time t.
+WDS Infrastructural Robustness Metrics
+MConn,n
+WDS connectivity metric for node n.
+Mbet,n
+WDS betweenness metric for node n.
+Mdemand,z
+WDS demand priority metric for zone
+z.
+MdemAdj,z
+WDS demand adjustment metric for
+zone z.
+EPS Infrastructural Robustness Metrics
+MED,n
+EPS connectivity metric for bus n.
+MEB,l
+EPS betweenness metric for element l.
+MEFF,n
+EPS efﬁciency metric for bus n.
+WDS IOR Functions
+RRn,tim
+P
+,t
+Final resilience value for pressure,
+IOR-based calculation, and time t.
+RRpump,tim
+Pow
+,t
+Final resilience value for pump power,
+IOR-based calculation, and time t.
+RRz,tim
+Dem ,t
+Final resilience value for demand
+satisfaction,
+IOR-based
+calculation,
+and time t.
+EPS IOR Functions
+RRn
+V ,t
+Final resilience value for voltage, IOR-
+based calculation, and time t.
+RRl
+TL,t
+Final resilience value for transmission
+elements, IOR-based calculation, and
+time t.
+RRn
+DS,t
+Final resilience value for overall de-
+mand satisﬁed, IOR-based calculation,
+and time t.
+RRn
+PL,t
+Final resiliencevaluefor pumpdemand
+supplied, IOR-based calculation, and
+time t.
+Total IOR Values
+RTOT(t)
+Combined WDS and EPS IOR measure
+of performance.
+ResEPS,IND
+EPS independent IOR terms: voltage,
+transmission line, and overall load
+supplied.
+ResEPS,INTR
+EPS interdependent IOR terms: ther-
+moelectric cooling water supplied and
+WDS pump load supplied.
+ResWDS,IND
+WDS independent IOR term: pressure.
+ResWDS,INTR
+WDS
+interdependent
+IOR
+terms:
+pump power availability and demand
+satisfaction.
+IOR Quantiﬁcation Metrics
+MROB
+Metric quantifying system robustness
+to disturbance.
+MRAPI,DP
+Metric quantifying system ability to
+limit the rate of impact by disturbance.
+MRAPI,RP
+Metric quantifying system ability to
+rapidly recover from disturbance.
+MRA
+Metric
+quantifying
+system
+ability
+to
+reach
+predisturbance
+resilience
+value.
+MTAPL
+Metric quantifying performance loss of
+system during disturbance.
+MTOT
+Metric
+quantifying
+overall
+system
+response to disturbance.
+Weights
+wov, wotl, wocw
+Weights
+associated
+with
+voltage,
+transmission
+element,
+and
+cooling
+water.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+ZULOAGA et al.: RESILIENCE OF CYBER-ENABLED ELECTRICAL ENERGY AND WATER DISTRIBUTION SYSTEMS
+641
+wods, wopl
+Overall demand supplied and WDS
+pump
+demand
+supplied
+terms,
+respectively, for EPS OR,
+wop, wopow, wodem
+Weights
+associated
+with
+pressure,
+pump power, and demand satisfac-
+tion terms, respectively, for WDS OR
+calculation,
+w1, w2
+Weights associated with the inde-
+pendent and interdependent terms,
+respectively, for IOR.
+wv, wtl, wcw, wds, wpl
+Weights associated with voltage, trans-
+mission element, cooling water, over-
+all demand supplied, and WDS pump
+demand supplied terms, respectively,
+for EPS IOR.
+wp, wpow, wdem
+Weights
+associated
+with
+pressure,
+pump power, and demand satisfaction
+terms, respectively, for WDS IOR.
+I. INTRODUCTION
+T
+HE electric power system (EPS) and the water distribution
+system (WDS) are two operationally interdependent criti-
+cal infrastructure systems that have been recognized and studied
+in broad generalities for some time. The main dependence of the
+EPS on the WDS is the water required for the cooling cycle of
+thermoelectric power generation. The main dependence of the
+WDS on the EPS is the electric power needed for pumping water
+from a source to the treatment plant and end-user through the
+WDS. The interdependencies become critical under conditions
+oflimitedwaterand/orelectricityavailability.Theoptimization–
+simulation framework [1] used for this article accounts for these
+interdependencies. If power plant cooling water demands are not
+met, then the EPS may fail to supply adequate electric power for
+WDS pumping stations leading to a cascading failure of both
+systems.
+This article presents new metrics and a new methodology for
+computation of infrastructural–operational resilience (IOR) for
+real-time operations of WDS and EPS under critical conditions
+of limited water and/or limited electrical energy resulting from
+extreme drought or electric grid failure. IOR is calculated by
+weighting the operational resilience (OR) with the appropriate
+infrastructural resilience (IR) metrics. The methodology for the
+resilience calculations is depicted in Fig. 1 and considers the
+impacts of both reduced water availability and electric power
+supply. The computation presented involves calculations that
+capture the robustness of a systems’ structural conﬁguration as
+well as the operating parameters.
+A. Deﬁnition of OR and IR for WDS and EPS Systems
+1) Resilience of Critical Infrastructure Systems: Increasing
+attention had been paid to resilience calculations for critical
+infrastructure systems. The US National Infrastructure Advi-
+sory Council broadly deﬁnes resilience [2] with four distinct
+characteristics in the context of critical infrastructure systems.
+1) Robustness—encompasses the ability of a system to
+remain operable after contingencies occur.
+Fig. 1.
+Resilience computation methodology.
+2) Resourcefulness—the ability to manage disasters.
+3) Rapid recovery—the ability to manage disasters, limit the
+impact, and return to predisaster operating conditions.
+4) Adaptability within the system and its operating proce-
+dures and policies to improve the robustness and recovery
+characteristics for future events.
+A few notable deﬁnitions of resilience of an engineered sys-
+tem are given in [3]–[7]. The EPS and the WDS are inherently
+reliable in their operation and resilient to disturbances that
+impact the systems due to the extensive and thorough design
+and planning procedures of the two systems. However, metrics
+that capture interdependent quantities within each system and
+methods by which to calculate those metrics have not been
+previously explored.
+2) Resilience of the WDS: OR of WDS is deﬁned as how
+quickly the system recovers from not meeting acceptable pres-
+sure levels. Aydin et al. [8] deﬁned OR as the ratio of the number
+of times a satisfactory performance follows an unsatisfactory
+performance and the number of times an unsatisfactory perfor-
+mance occurs within the system. A few deﬁnitions of resilience
+for WDS network structure and operations have been reported
+in the literature. In [6], [9]–[15], different deﬁnitions for WDS
+design and operations are presented. Shin et al. [16] investigated
+the deﬁnitions of quantitative resilience measures for WDSs in
+detail. Recently, a new methodology for the computation of OR
+for WDS has been presented [17]. Most of the studies in the
+literature focus on the resilience-based design of WDS except
+for a couple of studies in [8] and [18], which are based on OR of
+WDS. OR is deﬁned as the capacity of an engineered system to
+absorb disturbances and reorganize while undergoing change
+so as to still retain essentially the same function, structure,
+identity, and feedbacks [5], [9]. This article uses the deﬁnition
+of OR given by Aydin et al. [8] for developing a real-time
+resilience assessment methodology for WDS operations under
+emergency conditions. An unsatisfactory performance would
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+642
+IEEE TRANSACTIONS ON ENGINEERING MANAGEMENT, VOL. 69, NO. 3, JUNE 2022
+result when one of the performance conditions, such as pressure
+requirements, is not met.
+3) Resilience of the EPS: In [19], the potential beneﬁts re-
+sulting from the enhancement of system performance in the
+face of extreme events are highlighted. Recent work in [20] has
+offered resilience metrics and a framework to quantify resilience
+in power systems. The authors presented measures of resilience
+that were characterized using the results of case studies of trans-
+mission line operation under high winds. Nan and Sansavini [21]
+provided similar metrics and a general framework to calculate
+overall system resilience of interdependent infrastructures from
+speciﬁed measures of performance.
+4) Behavior of RMP: These measures of performance exam-
+ine system behavior as functions of time before, during, and after
+system disturbances. The severity of a disturbance is measured
+by the degree to which the measure of performance drops, how
+fast it both drops and recovers, and to what value the measure
+settles at. These metrics are adequate to study the desired high
+impact, low probability extreme events that correspond directly
+with the terms outlined above for deﬁning system resilience.
+B. Previous Studies on Real-Time Operations of WDS and EPS
+A few studies have reported on the real-time optimization
+of WDS and EPS controls considering water–energy nexus
+interactions. Fang and Chen [22] investigated the links between
+WDS and energy systems for a city. Vakilifard et al. [23] pro-
+vided a detailed literature review for techniques and approaches
+for optimization of WDS considering water–energy nexus. An
+optimization model for real-time operations of water–energy
+nexus systems was presented in [24]. The model considered
+optimization of pump schedules during power outages but did
+not use a WDS simulation model. Oikonomou and Parvania [25]
+presented a methodology for optimal coordinated controls of
+WDS and EPS considering minimization of operational costs for
+both the systems. The study does not consider WDS operations
+for demand satisfaction under emergency conditions or simula-
+tion of real-time WDS operations. The methodology presented
+herein considers optimization–simulation of real-time opera-
+tions of WDS under emergency conditions of limited power
+and/or water availability interfaced with an OR computation
+methodology for performance assessment.
+II. OPTIMIZATION–SIMULATION APPROACH
+The IOR methodology was applied using the results from
+an optimization–simulation model application developed for
+extended time-period WDS–EPS operations [1]. The power
+system control optimization was implemented by a combination
+of unit commitment (UC) for determining the ON/OFF status of
+all the generators and a modiﬁed dc optimal power ﬂow (OPF)
+for determining generator output set-points. The power system
+network simulation for the operational time-frame simulations
+was accomplished by the use of time-series power ﬂows. The
+water system optimization–simulation was accomplished using
+an extended period simulation coupled with a genetic algorithm
+(GA) solution methodology for a control optimization model.
+The water system and the power system were interfaced by al-
+ternatively exchanging data between the power system and water
+Fig. 2.
+Internet-worked simulation overview.
+network simulations via a program control overlay developed in
+python. Fig. 2 depicts an overview of this concept. The relevant
+simulation data exchanged between the power system and wa-
+ter network simulations included EPS network conﬁgurations,
+pump electric power consumption as an identiﬁable component
+of power system loads, and thermal generation cooling water
+requirements, which were used as node demands within the
+water system. The temporal dependence of the WDS on the
+EPS is accomplished through the modiﬁcation of the operating
+conditions in the EPS and vice versa. The spatial relationship
+between the two systems is accounted for by placing those loads
+or demands at the desired nodes or buses within the EPS and
+WDS.
+All the models for the optimization and control of the EPS
+were solved via implementation with AMPL [26]. The complete
+EPS network solution that obtained the net active and reactive
+power injections as well as the voltage magnitudes and angles
+at each bus was obtained using GE’s PSLF software [27].
+The EPANET software [28] was used for the extended period
+simulation of the WDS being analyzed, whereas a MATLAB
+toolkit [29] was used to implement the genetic algorithm and to
+interface the WDS simulation with the optimization procedure.
+The objective of the optimization model (genetic algorithm)
+used for optimal real-time WDS operations is to minimize
+the difference between the requested demands (Dreq,z,t) and
+satisﬁed demands (Dsat,z,t).
+EPANET is a demand-driven simulation model that always
+meets the demands irrespective of pressures at nodes in the
+WDS. The solutions may have negative pressures at certain
+nodes for operations where enough water is not pumped to meet
+the water demands. For every time-step in the simulation, an
+iterative process is conducted to avoid such conditions. The
+iterative process consists of an optimization model solved using
+a GA providing a new set of decision variables (including
+satisﬁed demand multipliers and pump controls) to EPANET,
+and a simulation is performed based on these new decision vari-
+ables. A negative pressure penalty function with a large penalty
+weight is used in the reduced optimization model to exclude
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+ZULOAGA et al.: RESILIENCE OF CYBER-ENABLED ELECTRICAL ENERGY AND WATER DISTRIBUTION SYSTEMS
+643
+EPANET solutions with negative pressures. The ﬁnal solution
+fromtheoptimization–simulationcanneverincludeanoperation
+schedulethatresultsinnegativepressures.Adetaileddescription
+of the optimization–simulation methodology is given in [30].
+The overall real-time operation of the WDS is described as
+follows.
+1) Update all pump status from electrical energy input from
+EPS and update WDS input data (tank levels, status of
+valves, and ﬂows).
+2) Run the WDS optimization–simulation model to deter-
+mine the pump operations and demand pattern given the
+scenario deﬁned availability of water and electrical energy
+input from the EPS.
+3) Provide the outputs of pump power consumption and
+cooling water ﬂow to generators for the correct hour to
+the EPS.
+The overall real-time operation of the EPS is described as
+follows.
+1) Update topology (bus and branch status) from the scenario
+contingency deﬁnition.
+2) Update
+WDS-related
+quantities
+(pump
+loads
+and
+generator node water ﬂows).
+3) Optimize the EPS model to determine the UC and unit
+dispatch using the results from 1 and 2.
+4) Calculate updated cooling water requirements and make
+policy adjustments.
+5) Provide pump nodes electric supply availability and new
+generator node cooling water demands to the WDS.
+III. OR INDEX FUNCTIONS FOR WDS AND EPS
+OR is a weighted metric that accounts for the pressure, pump
+power, and demand satisfaction for WDS; voltage, transmission
+line thermal limits, thermoelectric generation cooling water, and
+load supply for the EPS. Index functions are deﬁned as indices
+that allow for the current system conditions to be gauged in terms
+of the selected operational parameters. The index functions for
+both WDS and EPS are deﬁned in this section.
+A. WDS: Pressure Function
+Pressure bounds are an important performance assessment
+criterion for WDS operations. During emergency conditions,
+water demands maybesatisﬁedat lower pressures thangenerally
+acceptable. Lower pressure bound violations represent a partial
+failure of the WDS since prolonged lower pressure bound vio-
+lations could be a public health safety hazard. Similarly, water
+demands satisﬁed at pressures higher than the upper pressure
+bounds may lead to failure of WDS components or household
+faucets. Therefore, from an OR perspective, satisfaction of pres-
+sure bounds is an important consideration for the demands that
+can be satisﬁed.
+A low-pressure function Rn,tim
+P ,low has a value of 1 when node
+pressures are above the safe lower limit of Ps,low and a value of
+0 for pressures lower than the extreme limit Plow. The pressure
+function is allocated a value (between 0 and 1) based on its
+deviationfromthePs,low,betweenPlow andPs,low.Thedecision
+conditions for low-pressure indication function for nodes n and
+simulation time tim are as follows:
+If Pn,tim ≤Plow,
+then Rn,tim
+P ,low = 0
+Else, if Pn,tim > Plow and Pn,tim ≤Ps,low,
+then Rn,tim
+P,low = min
+
+0,
+Pn,tim −Plow
+Ps,low −Plow
+
+.
+(1)
+For pressures higher than the safe limit of Ps,upper, a high-
+pressure indication function Rn,tim
+P,high has a value of 1 when
+node pressures are below Ps,upper, whereas the function value
+is 0 for pressures higher than the extreme limit of Pupper. The
+pressure function is allocated a value between (0 and 1) based
+on its deviation from the safe limit of Ps,upper if the pressure
+lies between Ps,upper and Pupper. The decision conditions for
+high-pressure indication function (Rn,tim
+P ,high) for nodes n and
+simulation time tim are as follows:
+If Pn,tim ≥Pupper then Rn,tim
+P ,high = 0
+Else, if Pn,tim ≥Ps,upper and Pn,tim < Pupper,
+then Rn,tim
+P ,high = max
+
+0,
+ Pupper −Pn,tim
+Pupper −Ps,upper
+
+.
+(2)
+A combined function Rn,tim
+P
+for pressures is deﬁned as
+follows:
+If Rn,tim
+P ,low = 0 or Rn,tim
+P ,high = 0,
+then Rn,tim
+P
+= 0
+Else, Rn,tim
+P
+=
+Rn,tim
+P ,low + Rn,tim
+P ,high
+2
+.
+(3)
+B. WDS: Power Availability Function
+Animportant aspect of schedulingpumpoperations is toavoid
+electric power availability upper bound violations. For improved
+OR, compliance with the electric power availability is one of the
+major contributing factors. Each pumping station in the WDS
+is equipped with a back-up power generator system (primarily
+diesel generation). The optimization–simulation model used for
+WDS pump controls penalizes use of these generators due to
+reliability concerns during emergency conditions. The aim of the
+control optimization is to operate the WDS pumps within the
+available power from the PDS to meet the water demands. The
+function for pump power, Rpump,t
+Pow
+, for all pumps and times t is
+considered to be binary (0, 1). The function has a value of 1 for
+the pumps complying with the power availability. The function
+assumes a value of 0 when the power availability is not satisﬁed.
+The decision rule for the power compliance function is given by
+If Powpump, t> Pow(available)pump,t, then Rpump,t
+Pow
+= 0
+If Powpump, t ≤Pow(available)pump,t, then Rpump,t
+Pow
+= 1.
+(4)
+C. WDS: Demand Satisfaction Function
+The function for demand satisfaction is given by
+Dsat, z, t
+Dreq, z, t ,
+which is an output from the optimization–simulation model. The
+values of the function show the extent to which the requested
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+644
+IEEE TRANSACTIONS ON ENGINEERING MANAGEMENT, VOL. 69, NO. 3, JUNE 2022
+TABLE I
+PARAMETERS FOR BUS VOLTAGE RESILIENCE INDEX FUNCTION
+demands are satisﬁed. The function for demand satisfaction is
+given as
+Rz,t
+Dem = Dsat,z,t
+Dreq,z,t
+.
+(5)
+D. EPS Introduction
+The following quantities are used for calculating the OR index
+function values:
+1) bus voltage magnitude;
+2) line thermal limits;
+3) thermoelectric cooling water demand satisfaction;
+4) load (overall) supply satisfaction;
+5) load (WDS pump) supply satisfaction.
+The terms in italics above denote quantities that capture
+resilience in terms of explicit interdependencies between the
+two systems. Each of these ﬁve quantities is evaluated for every
+iteration (time period) within the simulation.
+E. EPS: Voltage Index Function
+Power system bus voltage magnitudes are maintained within a
+small range of values during normal system operation. Because
+electrical equipment is designed for operation at certain rated
+voltages, therefore operation under conditions that differ greatly
+from the rated speciﬁcations can have adverse effects. These
+effects can include insulation breakdown for equipment that is
+operated at voltage levels that are too high. The index function
+relating the operational performance of the power system to bus
+voltages is therefore deﬁned to have a value of 1 for voltages
+within a small, nominal operating range. Outside of this range,
+the resilience is assumed to decrease as the deviation away
+from the nominal operating conditions is increased and reach
+0 at some point. Following the description mentioned above
+and using the values for thresholds, minimum, and maximum
+voltages given in Table I, the resilience index function for bus
+voltage magnitude is deﬁned mathematically as follows (in
+terms of a piecewise linear function describing the thresholds
+in Table I):
+Rn
+V =
+⎧
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎨
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎩
+0
+Vn < Vmin
+13.3 · Vn −12
+Vmin ≤Vn ≤Vthr,min
+1
+Vthr,min ≤Vn ≤Vthr,max
+−13.3 · Vn + 14.67
+Vthr,max ≤Vn ≤Vmax
+0
+Vmax < Vn
+.
+(6)
+F. EPS: Transmission Line Thermal Limit Index Function
+Similar to the voltage magnitudes in the power system, the
+transmission lines are designed to be operated under speciﬁc
+rated current magnitude levels. The reason for this is that the
+equipment, consisting of conductors, terminating equipment,
+such as transformers, and protection equipment, all have thermal
+ratings and operation of these equipment above these tempera-
+turescancausepermanentdamagetosomeofthemostexpensive
+components in the power system. In addition, transmission lines
+will sag under increasing current (and therefore temperatures),
+which can cause regulatory issues regarding minimum clearance
+criteria as well as pose a potential hazard for objects beneath the
+transmission lines.
+Because power is proportional to current, lines are normally
+given several different maximum apparent power operating lim-
+its. These include the familiar normal, continuous Rate A MVA
+equipment rating as well as the emergency, Rate C MVA limit.
+Because there is ﬂexibility on the magnitude of power ﬂow on a
+line, a moving average of the line ﬂow is calculated and used for
+the transmission line thermal limit index function, deﬁned as
+Rl
+TL = min
+
+1,
+Pl,max · sl
+	t−1
+r=t−sl Pl,r
+
+.
+(7)
+G. EPS: Thermoelectric Generation Cooling Water
+Index Function
+Thermoelectric generation requires water for the cooling cy-
+cle in the process of converting the heated working ﬂuid from
+steam back to water via heat transfer. The closed-loop cooling
+cycle introduces losses through drift, blowdown, and evapora-
+tion. So, water is needed to “make-up” for the amount lost and
+represents a key dependence of the power system on the water
+system. Generation owners meet this need through external
+sources, such as a municipal water utility as well as by water that
+is stored onsite. Since the amount of onsite storage for cooling
+water is normally substantial [15], it is reasonable to assume that
+the levels of the water in the onsite tanks will not change vary
+rapidly. The index function relating system performance to the
+amount of cooling water that is being supplied is related to a
+conservative estimate of the storage tank level with a piecewise
+linear form as follows:
+Rg
+CW =
+ceil
+
+TLg,t
+TLg,initial · 10
+
+10
+.
+(8)
+This formulation of the index function gives a slight lag in
+the function’s value with respect to changes in the water storage
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+ZULOAGA et al.: RESILIENCE OF CYBER-ENABLED ELECTRICAL ENERGY AND WATER DISTRIBUTION SYSTEMS
+645
+TABLE II
+SUBCATEGORIES SURVEYED FOR USAGE IN EPS AND WDS DOMAINS
+tank level. This characterizes the desired behavior of tracking
+the tank level but also ignoring small ﬂuctuations in tank level.
+H. EPS: Load Supplied (Overall) Index Function
+The goal of power system operation is to satisfactorily supply
+the requested electrical power demands of consumers while sat-
+isfying constraints related to the quality of the power delivered.
+A resilience measure along these lines is formulated in order to
+quantify how well the system demands were met under extreme
+system operating conditions. Based on consumer surveys [31],
+consumers are willing to adjust their demands depending on
+the perceived weather conditions. These consumers are also
+observed to have different levels of willingness to change their
+consumption based on the knowledge of how the water and
+power systems interact as well as whether the curtailment of the
+usage of water and energy is mandatory or not. For representa-
+tion of this fact within this resilience calculation, the bus loads
+are decomposed into representative percentages for industrial,
+commercial, and residential components. Within the residential
+load component, it is further subdivided into single-family (sf)
+and multifamily (mf) elements based on recent census data for
+Arizona [32].
+An example of how incorporation of this consumer data will
+affect the load curve over time is demonstrated below. The
+consumer survey data regarding the change in usage of water
+and electricity was collected for subcategories of each domain,
+as shown in Table II. These subcategories represent the major
+end-uses of electricity and water for the residential sector in
+the United States. A scenario corresponding to a chronic water
+shortage was then selected from the consumer survey results,
+and the proportion of electricity usage that consumers would be
+willing to curtail is used to calculate the amount that would still
+be used. This was then weighted against a given subcategory’s
+proportion of the total energy use in the US and aggregated
+in order to give the demand adjustment factors for the peak
+hours surveyed, as shown in Table III. The interpretation of these
+demand adjustment factors is that consumers would be willing
+Fig. 3.
+Demand adjustment factor LMF curves.
+to reduce their overall consumption by a factor equal to these
+values in the corresponding hour.
+These values were then used to alter the nominal value of
+load multiplier factors (LMF) at any given time period for the
+load buses. The new LMF for the single-family or multifamily
+components of the load is given by the product of the nominal
+LMF curve and the demand coefﬁcient (sf or mf) at that hour.
+For the hours that are not peak hours and hence no demand
+coefﬁcient is given, an estimate that the demand adjustment is
+equal to the average of the peak hours was used. The plots at
+the top of Fig. 3 show the nominal LMF and the adjusted LMF,
+assuming percentages of single-family and multifamily houses
+as stated above and assuming that residential loads are one-third
+of the total load. The plot at the bottom of Fig. 3 shows the LMF
+factor corresponding to multifamily and single-family homes.
+With the previous values deﬁned and examined, the resilience
+index function for overall load satisfaction can now be deﬁned
+and is expressed as follows:
+Rn
+DS = ceil ((Pload,nt −LOLn,t)
+−(Pload,nt −sfn · d Adjsf,t −mfn · d Adjmf,t))
+= ceil (sfn · d Adjsf,t + mfn · d Adjmf,t −LOLn,t) .
+(9)
+The ﬁrst term is the present bus load less any load that is
+lost and the second term is a best case load assuming that the
+present demand is adjusted by a decrease in value equal to the
+reduction in consumption by consumers. From this, the function
+is assigned a value of 1 if the actual load (less any lost) is greater
+thanthebestcaseconsumeradjustedloadandzeroiftheopposite
+is true.
+I. EPS: Load Supplied (WDS Pumps) Index Function
+In an effort to further capture the operational interdependen-
+cies between the water and electric systems, an additional index
+function is deﬁned, which is related to the satisfaction of the
+pump load directly serving the WDS. In contrast to the previous
+load metric, this metric does not consider any consumer survey
+data but instead directly generates a one or a zero based on
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+646
+IEEE TRANSACTIONS ON ENGINEERING MANAGEMENT, VOL. 69, NO. 3, JUNE 2022
+TABLE III
+PEAK HOUR DEMAND COEFFICIENTS FOR SINGLE-FAMILY AND MULTIFAMILY HOMES
+whether the pump demand is satisﬁed or not. The resilience
+function is mathematically given as follows:
+Rn
+PL =
+
+1, PLdemand = PLsupply
+0, PLdemand > PLsupply
+(10)
+where PLdemand is the active power demand that would have
+been requested, and PLsupply is the value determined by
+the scenario deﬁnition (e.g., PLdemand = PLsupply with no
+contingency).
+IV. COMPUTATION OF OPERATIONAL RESILIENCE
+The deﬁnition for OR for an engineered system for each index
+function f in the WDS and EPS at time t is calculated as
+Resf,t = # of times satisfactory follows unsatisfactory
+# of times unsatisfactory occurs
+. (11)
+This article uses this deﬁnition of OR for deriving the equa-
+tions for OR under emergency conditions. Unsatisfactory op-
+eration is deﬁned as the resilience index function value being
+less than that function’s value in the previous simulation hour
+(and satisfactory operation denoted by an increase in the index
+function’s value). The measure of performance is deﬁned for
+real values between 0 and 1.
+A. WDS: Operational System Resilience
+The overall resilience for time t is a normalized (real value
+between 0 and 1) weighted sum of the pressure, power, and
+demand resiliencies
+ResWDS,TOT (t)
+=
+
+wopResRn,tim
+P
+,t + wopowRespow,t + wodem Resdemands,t
+
+(wop + wopow + wodem)
+(12)
+where wop, wopow, and wodem are weights associated with pres-
+sure, power, and demand satisfaction resilience, respectively.
+The values of these weights are determined using sensitivity
+analyses for a WDS. The weights (wop, wopow, and wodem) are
+determined through a sensitivity analysis for each application of
+the IOR methodology. The sensitivity analyses are performed
+for all terms involved in WDS IOR computation. The value
+of weights to be used for a particular term depend upon the
+relative importance of the penalty term and the magnitude of
+the numeric value of the term. Parameters considered for the
+sensitivity analyses are the value of the objective function,
+number of pressure bound violations, number of power bound
+violations, and the number of switch constraint violations. The
+optimization model is tested for a range of values for each
+of the penalty weights and a combination of penalty weights
+yieldingtheminimumobjectivefunctionvalue,andleastamount
+of bound violations for pressures, power, and water quality is
+chosen for the application.
+B. EPS: Operational Resilience
+The overall system resilience at time t is then calculated as a
+normalized weighted sum of the voltage, thermal limit, cooling
+water, demand supplied (overall), and demand supplied (WDS
+pumps) resilience values
+ResEPS,TOT (t) =
+
+wovResRn
+V ,t + wotlResRl
+TL,t
++ wocwResRg
+CW,t + wodsResRn
+DS,t + woplResRn
+PL,t
+ 
+(wov + wotl + wocw + wods + wopl)
+(13)
+wv, wtl, wcw, wds, and wpl are weights associated with volt-
+age, transmission elements, cooling water demand satisfactions,
+overall demand satisﬁed, and WDS pump demand satisfaction,
+respectively.
+C. WDS: Pressure Resilience
+Resilience for the upper and lower pressure bound function
+(Rn,tim
+P
+) deﬁned in (3) is formulated using (11). The resilience
+for pressure bound satisfaction function at time t is given as
+follows:
+ResRn,tim
+P
+,t =
+ N
+
+n
+T
+
+tim
+max
+
+0, Rn,tim
+P
+−Rn,tim–1
+P
+ 
+ 
+
+# of times Rn,tim
+P
+< 1
+
+t.
+(14)
+Rn,tim
+P
+is the function of pressure bound satisfaction deﬁned
+in (2) and (3) for simulation time tim and node n.
+D. WDS: Power Consumption Resilience
+Resilience for power availability function (Rpump,t
+Pow
+) de-
+ﬁned in (4) is formulated using (11). The resilience for power
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+ZULOAGA et al.: RESILIENCE OF CYBER-ENABLED ELECTRICAL ENERGY AND WATER DISTRIBUTION SYSTEMS
+647
+availability function at time t is given as follows:
+ResRpump,tim
+Pow
+,t
+=
+PUMP
+
+pump
+T
+
+tim
+max
+
+0, Rpump,tim
+Pow
+−Rpump,tim–1
+Pow
+
+ 
+
+# of times Rpump,tim
+Pow
+= 0
+
+t
+(15)
+Rpump,tim
+Pow
+is the function of power availability deﬁned in (4)
+for simulation time tim and pump.
+E. WDS: Demand Satisfaction Resilience
+Resilience for demand satisfaction function (Rz,t
+Dem) deﬁned
+in (5) is formulated using (11). The resilience for demand
+satisfaction function at time t is given as follows:
+ResRz,tim
+Dem ,t =
+ Z
+
+z
+T
+
+tim
+max
+
+0,Rz,tim
+Dem −Rz,tim–1
+Dem
+
+ 
+
+# of times Rz,tim
+Dem < 1
+
+t.
+(16)
+Rz,tim
+Dem is the function of demand satisfaction at simulation
+time tim and zone z.
+F. EPS: Voltage Resilience
+The resilience measure of performance for bus voltages is
+formulated using (11) and the bus voltage index function (Rn
+V )
+given in (6) for each time t of the simulation and is calculated
+as follows:
+ResRn
+V ,t =
+ NB
+
+n=1
+max(0,Rn
+V (t) −Rn
+V (t −1) )
+
+ 
+ NB
+
+n=1
+ceil(Rn
+V (t −1) −Rn
+V (t) )
+
+.
+(17)
+Rn
+V (t) is the voltage magnitude resilience index function at
+bus n in time period t.
+G. EPS: Transmission Line Thermal Limit Resilience
+The measure of performance for transmission line thermal
+limits is formulated using (11) and the thermal limit index
+function (Rl
+TL) given in (7) for each time t of the simulation
+and is calculated as follows:
+ResRl
+TL,t =
+ NL
+
+l=1
+max(0,Rl
+TL (t) −Rl
+TL (t −1) )
+
+ 
+ NL
+
+l=1
+ceil(Rl
+TL (t −1) −Rl
+TL (t) )
+
+.
+(18)
+Rl
+TL(t) is the thermal limit resilience index function of ele-
+ment l in time-period t.
+H. EPS: Thermoelectric Generation Cooling Water Resilience
+The measure of performance for the thermoelectric genera-
+tion’s cooling water supply is then formulated using (11) and
+the cooling water index function (Rg
+CW) given in (8) value for
+each time t in the simulation as follows:
+ResRg
+CW,t =
+ NG
+
+g=1
+max(0,Rg
+CW (t) −Rg
+CW (t −1) )
+
+ 
+ NG
+
+g=1
+ceil(1 −Rg
+CW (t) )
+
+.
+(19)
+Rg
+CW(t) is the thermoelectric generation cooling water index
+function for the generator g in time period t. In summary, this
+formulation quantiﬁes the resilience with respect to cooling
+water as a piecewise linear function based on the ratio between
+the present onsite cooling water to the initial tank level (based
+on a two week supply).
+I. EPS: Load Supplied (Overall) Resilience
+The resilience measure of performance related to the supplied
+demand at time t is then formulated using (11) and the overall
+load supplied index function (Rn
+DS) given in (9) and can be
+calculated as follows:
+ResRn
+DS,t =
+NBL
+
+n=1
+max(0, Rn
+DS (t) −Rn
+DS (t −1))
+
+ 
+NBL
+
+n=1
+ceil(Rn
+DS (t −1) −Rn
+DS (t))
+
+.
+(20)
+J. EPS: Load Supplied (WDS Pumps) Resilience
+The resilience measure of performance related to the supplied
+demand of pump loads in the WDS at time t is then formulated
+using (11) and the WDS pump load supplied index function
+(Rn
+PL) given in (10) and can be calculated as follows:
+ResRn
+PL,t =
+NPL
+
+n=1
+max(0, Rn
+PL (t) −Rn
+PL (t −1))
+
+ 
+NPL
+
+n=1
+ceil(1 −Rn
+PL (t))
+
+(21)
+and Rn
+PL(t) is the overall load supplied index function of pump
+load n in time period t.
+V. INFRASTRUCTURAL ROBUSTNESS METRICS
+Robustness is the inherent capability of a system to resist
+failures. This capability is an intrinsic property of a system based
+on its structure and conﬁguration. This article considers metrics
+for computation of the system level robustness based on system
+structural conﬁguration. The robustness metrics for the WDS
+and EPS are deﬁned in the following sections. The EPS metrics
+are based upon those deﬁned in [33] and [34].
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+648
+IEEE TRANSACTIONS ON ENGINEERING MANAGEMENT, VOL. 69, NO. 3, JUNE 2022
+A. WDS: Connectivity Metric
+Connectivity of a node in a WDS is deﬁned as the number
+of links (ln) that are connected to a node n and characterizes
+the system interconnection and the degree of redundancy of the
+system components. The connectivity metric is given as
+MConn,n = card (ln)
+(22)
+where MConn,n is the number of links connected to a node n,
+and ln is the set of links (including pipes, pumps, and valves)
+connected to node n.
+B. WDS: Betweenness Metric
+The betweenness metric gives the robustness associated with
+the functionality of the links connected to a certain node. This
+metric is based on the type (pipe, pump, or valve) and size
+(diameter for pipe/valves or ﬂow for pumps) of the connecting
+links. The betweenness metric scores the nodes based on the
+functional importance of the connecting links for WDS opera-
+tions. A functionality factor (αl) for link l is deﬁned as a function
+of the link’s type and size. For pipes, αl is based on the size of
+the pipe and is calculated as the ratio of the diameter of pipe l
+divided by the maximum diameter of all L pipes in the WDS.
+For pumps, αl is based on the maximum possible ﬂow from
+the pump and given as the ratio of the ﬂow of a given pump
+divided by the maximum ﬂow in any of the WDS pumps. The
+betweenness metric for a node n in a WDS is derived as
+Mbet,n =
+
+l(n)
+αl
+(23)
+where Mbet,n is the betweenness metric for node n.
+C. WDS: Demand Priority Metric
+Demand priority is an important robustness parameter during
+extreme water shortage and limited electric power availability
+conditions. A demand pattern is deﬁned for each service area in
+a WDS. The demand priority metric is simply a priority weight
+given to each service area z to ensure robustness with respect to
+demand satisfaction at higher priority service areas. The demand
+priority metric (Mdemand,z) values are assigned a noninteger
+value between 0 and 1 for each service area in the system
+depending on the type of demands (residential, commercial,
+industrial, or cooling water for power plants) in the service area.
+D. WDS: Demand Adjustment Metric
+Satisfaction of water demands in a WDS is an important
+requirement during normal and emergency operating conditions.
+For extreme drought and electrical outage scenarios, a part of
+the water demand at certain service areas may not be satis-
+ﬁed. In such conditions, the willingness of the consumers to
+reduce the water consumption helps in operating the WDS to
+supply the required water to priority locations, such as hospitals,
+public utilities, or ﬁre stations. The demand adjustment metric
+(Mdem Adj,z)givestheextenttowhichthepopulationinaservice
+area is willing to adjust their demands in an event of short-
+and long-term water and electric power shortage. This metric
+is derived from extensive surveys conducted in Arizona for
+single-family units and multifamily units [31]. For every service
+area z in the system, two metrics are deﬁned for single-family
+units (dAdjsf,t) and multifamily units (dAdjmf,t) based on the
+proportion of single-family units and multifamily units present.
+E. EPS: Connectivity Metric
+The connectivity metric for a bus is determined by the
+impedance of the lines connected to it. This metric will be used
+as a weight in order to properly account for the importance
+of an individual bus within the overall bus voltage resilience
+calculation. The metric is deﬁned as follows:
+MED,n =
+
+1 −
+
+m
+pnm · log (pnm)
+
+ 
+m
+wnm
+(24)
+where the weight of the edge, wnm, is the weight of a transmis-
+sion line (edge) and is assigned a value equal to the primitive
+impedance of the transmission element, and pnm is deﬁned as
+the weight wnm divided by the sum of all weights.
+F. EPS: Betweenness Metric
+Similar to the connectivity measure above but for a trans-
+mission line (edge) rather than a bus (node), the betweenness
+metric captures the importance of a given transmission line in
+the resilience calculation for thermal limits. The calculation for
+the extended betweenness for a transmission element l is given
+as follows:
+MEB,l =
+
+
+g
+
+d
+Cg,dPTDFl,g,d
+
+(25)
+where Cg,d is the minimum ratio for all lines of the quantity
+Pmax,l, the maximum active power across transmission element
+l, and the power transfer distribution factor from generator g to
+load d across line l.
+G. EPS: Efﬁciency Metric
+The efﬁciency metric uses the electrical distance between
+generators and a load to determine how important a given load is
+in the calculation of its resilience value. Deﬁning the equivalent
+impedance between generator g and load n as follows:
+Zn
+g = zgg −2zgn + znn
+(26)
+where the zij values are the ijth entry in the bus impedance
+matrix, and the efﬁciency metric for the load at bus n can be
+calculated as follows:
+MEFF,n =
+1
+Ng
+
+g
+1
+Zn
+g
+.
+(27)
+VI. IOR COMPUTATIONS
+A. WDS: Pressure IOR
+The pressure IOR considering infrastructural robustness met-
+rics for connectivity and betweenness at time t is given as
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+ZULOAGA et al.: RESILIENCE OF CYBER-ENABLED ELECTRICAL ENERGY AND WATER DISTRIBUTION SYSTEMS
+649
+follows:
+RRn,tim
+P
+,t =
+ N
+
+n
+T
+
+tim
+
+MConn,n
+	N
+n MConn,n
+
+ 
+Mbet,n
+	N
+n Mbet,n
+
+×max
+
+0, Rn,tim
+P
+−Rn,tim–1
+P
+ 
+# of times Rn,tim
+P
+<1
+
+t.
+(28)
+B. WDS: Power Consumption IOR
+The functionality factor for pumps (αpump) is considered
+for computing the IOR for power consumption at time t as
+follows:
+RRpump,tim
+Pow
+,t =
+PUMP
+
+pump
+T
+
+tim
+
+αpump
+	PUMP
+pump αpump
+
+× max
+
+0,
+Rpump,tim
+Pow
+−Rpump,tim–1
+Pow
+ 
+
+# of times Rpump,tim
+Pow
+= 0
+
+t .
+(29)
+C. WDS: Demand Satisfaction IOR
+Demand priority and demand adjustment metrics are consid-
+ered for computation of the demand satisfaction IOR. A math-
+ematical function g{demandz,t} is used to determine whether
+the satisﬁed demand (Dsat) is within the demand adjustment
+metric for a certain zone. The mathematical function is given as
+follows:
+g {demandz,t} = max
+
+0, Dsat,z,t
+Dreq,z,t
+−mfnzd Adjmf,t
+−sfnzd Adjsf,t
+
+(30)
+where mfnz and sfnz are ratios of multifamily units and
+single-family units in service area z, respectively.
+The computation for demand satisfaction resilience is as
+follows:
+if g {demandz,t} = 0,
+then dsz,t = 0
+if g {demandz,t} > 0,
+then dsz,t = Dsat,z,t
+Dreq,z,t
+.
+(31)
+The IOR for WDS demand satisfaction is given as
+RRz,tim
+Dem ,t =
+Z
+
+z
+
+Mdemand, z
+	Z
+z Mdemand, z
+
+dsz,t .
+(32)
+D. WDS: System IOR
+The total system IOR is computed as a weighted sum aver-
+age of the infrastructural–operational resiliencies for pressure,
+power consumption, and demand satisfaction as follows:
+RWDS,TOT (t)
+=
+wp RRn,tim
+P
+,t + wpowRRpump,tim
+Pow
+,t + wdem RRz,tim
+Dem ,t
+wp + wpow + wdem
+.
+(33)
+E. EPS: Voltage IOR
+Resilience for bus voltages in the IOR context is calculated
+by weighting the operation bus voltage resilience value with the
+connectivity metric expressed as follows:
+RRn
+V ,t =
+ NB
+
+n=1
+
+1 −
+
+m
+pnm · log (pnm)
+
+·
+
+m
+wnm
+
+· max(0, Rn
+V (t) −Rn
+V (t −1))
+
+ 
+·
+ NB
+
+n=1
+ceil(Rn
+V (t −1) −Rn
+V (t) )
+
+.
+(34)
+F. EPS: Transmission Line Thermal Limit IOR
+The IOR value for transmission line thermal limit resilience is
+calculated by weighting the operational thermal limit resilience
+with the extended betweenness metric
+RRl
+TL,t =
+NL
+
+l=1
+
+
+g
+
+d
+Cg,dPTD Fl,g,d
+
+
+max
+
+0, Rl
+TL (t)−Rl
+TL (t−1)
+
+
+ 
+ NL
+
+l=1
+ceil(Rl
+TL (t −1) −Rl
+TL (t))
+
+.
+(35)
+G. EPS: Load Supplied IOR
+Both the load supplied operational resilience values (overall
+and WDS pumps) are weighted at each node according to the
+proposed electrical efﬁciency metric
+RRn
+DS,t =
+NBL
+
+n=1
+
+1
+Ng
+
+g
+1
+Zn
+g
+
+max(0, Rn
+DS (t)−Rn
+DS (t−1))
+
+ NBL
+
+n=1
+ceil(Rn
+DS (t −1) −Rn
+DS (t))
+
+(36)
+for the load supplied (overall) IOR and
+RRn
+PL,t =
+NPL
+
+n=1
+
+1
+Ng
+
+g
+1
+Zn
+g
+
+max(0, Rn
+PL (t)
+−Rn
+PL (t −1))
+
+  NPL
+
+n=1
+ceil (1 −Rn
+PL (t))
+
+(37)
+for the load (WDS pumps) IOR.
+H. EPS: System IOR
+The overall EPS IOR, REPS,TOT(t), is then calculated at each
+time period t as a normalized weighted sum of the voltage,
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+650
+IEEE TRANSACTIONS ON ENGINEERING MANAGEMENT, VOL. 69, NO. 3, JUNE 2022
+TABLE IV
+WDS AND EPS RESILIENCE QUANTITY SUMMARY
+thermal limit, cooling water, demand supplied (overall), and
+demand supplied (WDS pumps) IOR values
+REPS,TOT (t) =
+
+wvRRn
+V ,t + wtlRRl
+TL,t + wcwRRg
+CW,t
++ wdsRRn
+DS,t + wplRRn
+PL,t
+ 
+(wv + wtl + wcw + wds + wpl) .
+(38)
+VII. COMBINED CALCULATIONS
+A. Combined IOR Computation
+For the two interdependent infrastructure systems, the cal-
+culation of the IOR terms compose what are recognized as
+quantities pertaining solely to the operation of that particular
+system (EPS or WDS), f(RIND), as well as quantities concerned
+explicitly with the interdependent operation of the two systems,
+f(RINTR). Table IV summarizes the independent and interde-
+pendent quantities. The total resilience for the two systems at
+each time period can be calculated as follows:
+RTOT (t) = f(ResEPS,IND) + f(ResEPS,INTR)
++ f(ResWDS,IND) + f(ResWDS,INTR)
+= f(ResIND) + f(ResINTR)
+=
+
+w1
+
+RRn
+V ,t + RRl
+TL,t + RRn
+DS,t + RRn,tim
+P
+,t
+
++ w2
+
+RRg
+CW,t + RRn
+PL,t + RRpump,tim
+Pow
+,t
++ RRz,tim
+Dem ,t
+ 
+(w1 + w2)
+(39)
+where the weights for the interdependent (w2) and independent
+(w1) terms can be determined through sensitivity analysis or by
+a decision maker.
+B. Quantiﬁcation Framework for IOR
+Resilience of interdependent systems, such as the WDS and
+EPS, can be quantiﬁed using four metrics [21], including sys-
+tem robustness (40), resourcefulness of the operational control
+(43), recovery rapidity and recovery ability (41) and (42), and
+adaptability. A quantity also used to capture these behaviors is
+the time averaged performance loss (44). The plot in Fig. 4,
+modiﬁed from [21], shows a hypothetical resilience measure of
+performance value (IOR) and denotes the key points that will be
+used in the quantifying metrics below.
+Fig. 4.
+IOR versus time (modiﬁed from [21]).
+Robustness of a system is the measure of capability of its
+absorptive capability. Robustness in terms of IOR is given by
+the minimum value of IOR between the time at which the
+disturbance phase starts, tDS, and when the recovery ends, tRE,
+as follows:
+MROB = min (RTOT (t) , tDS < t < tRE) .
+(40)
+Rapidity and performance loss are metrics used to quantify
+the disruption caused to the system performance during a certain
+disruptive phase. Rapidity is computed using measures in both
+thedisturbancephaseandtherecoveryphaseandisdeﬁnedusing
+the average slope of the IOR. The performance loss is deﬁned
+as the total reduction in IOR value during the disruption phase
+MRAPI,DP = RPrD −RDuD
+tDE −tDS
+(41)
+MRAPI,RP = RPoD −RDuD
+tRS −tRE
+(42)
+MRA =
+
+RPoD −MROB
+RPrD −MROB
+
+(43)
+MTAPL =
+
+(RPrD −RTOT (t)) dt
+tRE −tDS
+.
+(44)
+Finally, the total resilience metric integrates the above-
+mentioned ﬁve metrics (40)–(44)
+MTOT = MROB · MRAPI,RP
+MRAPI,DP
+·
+MRA
+MTAPL
+.
+(45)
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+ZULOAGA et al.: RESILIENCE OF CYBER-ENABLED ELECTRICAL ENERGY AND WATER DISTRIBUTION SYSTEMS
+651
+Fig. 5.
+Spatial relationship between EPS and WDS.
+VIII. APPLICATION EXAMPLE
+A. Example EPS
+The example power system was a modiﬁed version of the
+IEEE 14 bus system [35], which is shown in Fig. 5. The mod-
+iﬁcations included the addition of representative distribution
+systems [36] to which the water system pumping station loads
+were mapped. Data for the distribution systems were generated
+fromtheIEEE34-bustestdistributionsystem[37].Theapproach
+taken here is equivalent to modeling the voltages for voltage lev-
+els at and above the subtransmission system for all of the system,
+except where the critical interdependencies of the power system
+with the water system lie. Fig. 5 shows how the one-line-diagram
+of the 14-bus system and the two additional distribution systems
+were mapped spatially to the water system and vice versa. In
+order to create time varying system loads, historical load data
+[38] were normalized and used as LMF within the test system.
+The short-term security constrained UC for each hour was run
+every 24 h during the simulation using the next 24 LMF’s, which
+had their indices offset according to the current time period in the
+simulation. Fig. 6 shows the LMF pattern that was used for the
+power system. Given the extreme drought scenario that is being
+simulated, an LP model that takes into consideration generation
+unit operational constraints, recent cooling water demands, and
+onsite storage tank level for determining the current maximum
+active power output of a given unit was utilized.
+B. Example WDS
+The example water system is a hypothetical WDS modeling
+demands from two cities and the power system described above.
+Fig. 6.
+LMF for one-month simulation.
+Cooling water is supplied to the power plants in the WDS from
+both a freshwater source and a reclaimed water source (shown
+in Fig. 5). This cooling water is pumped to each power plant
+through a freshwater pumping station and a reclaimed water
+pumping station. The WDS control optimization–simulation
+model attempts to maximize the supply of reclaimed water for
+power plants. City 1 has four service areas with a total base
+demand of 30 000 gpm. City 2 has ﬁve service areas with a total
+base demand of 25000 gpm. A total of 17 freshwater pumps
+(WP) and 11 reclaimed water pumps (RWP) serve the overall
+WDS. Cooling water demands for power plants, on an hourly
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+652
+IEEE TRANSACTIONS ON ENGINEERING MANAGEMENT, VOL. 69, NO. 3, JUNE 2022
+TABLE V
+PUMPS AFFECTED BY EPS CONTINGENCY SCENARIO
+TABLE VI
+NUMERICAL RESULTS FOR IOR QUANTIFICATION METRICS
+Fig. 7.
+Trends of water availability.
+basis, are input to the WDS optimization–simulation model from
+the EPS optimization–simulation model. Each power plant in
+the system is equipped with onsite water storage equivalent to a
+two-week average water consumption.
+C. Application Scenario
+The scenario considered for the example application has
+a combination of water and power contingencies. The water
+contingency experienced by the water system is representative of
+drought conditions that would result in limited water availability
+for extended periods of time (> 2 weeks). Fig. 7 shows the trends
+in the system level water availability. The power contingency
+under consideration consists of several extended periods (black
+sky events) where two pumping stations (freshwater pumping
+station at power plant 1 and reclaimed water pumping station
+for power plant 2) experienced an outage. Table V contains the
+summary of the pumps that experienced the power contingency,
+whereas Fig. 8 shows the hours during which the power outages
+at pumping stations occurred.
+Fig. 8.
+Pump outage hours.
+Fig. 9.
+IOR for EPS and WDS, combined with contingency overlay.
+IX. RESULTS
+Fig. 9 shows the trends of WDS IOR [using (33)], EPS
+IOR [using (38)], and combined IOR [using (39)] for both the
+independent and interdependent functions. The shaded areas in
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+ZULOAGA et al.: RESILIENCE OF CYBER-ENABLED ELECTRICAL ENERGY AND WATER DISTRIBUTION SYSTEMS
+653
+Fig. 10.
+Independent and interdependent IOR quantities versus time.
+the WDS IOR graph show the contingency periods due to limited
+water availability (see Fig. 7), whereas the shaded areas in the
+EPS IOR graph show the contingency periods due to power
+outages of the pumps shown in Table V. The shaded areas in the
+combined IOR graph depict contingency periods due to limited
+water and/or power outage during the total simulation period
+of 672 h. The values of weights used for the independent (w1)
+and interdependent functions (w2) were 1 and 5, respectively.
+The trends of EPS and WDS IOR are observed to decline from
+simulation times slightly before the contingency start time of
+72 h due to the data processing of the IOR (a moving average)
+used to postprocess the results. The lag observed in the decline
+of EPS IOR compared with WDS IOR is due to the EPS being
+more resilient to limited water availability on account of the
+onsite cooling water storage at the power plants. The EPS and
+WDS IOR follow similar trends during the later phases of the
+simulation. The WDS is observed to recover from the reduced
+IOR values at the end of the simulation period even though pump
+power outages still persist. This is because during the last 48 h
+of the simulation, there is no shortage of available water. Thus,
+it is noted that the effect of the pump power outages is mitigated
+in the WDS as the simulation progresses.
+Fig. 10 shows the independent, f(ResIND), and interdepen-
+dent, f(ResINTR), IOR values for the 672-h simulation of
+combinedoperationsofWDSandEPSwithnormalizingweights
+on all terms equal to one. The shaded areas in the ﬁgure depict
+contingency periods due to limited water availability and/or
+power outages. Decrease in the interdependent IOR value was
+observed during the contingency periods, whereas the decrease
+in independent IOR value is seen to be much smaller, in compar-
+ison, throughout the simulation. It is also noted that the effect
+of the second round of severe contingencies beginning in hour
+336 on the IOR values is not as severe as the effect of the
+ﬁrst contingency that occurs in hour 72, demonstrating that the
+implemented control strategies effectively attenuate the impact
+of the second contingency and manoeuvre the interdependent
+systems to the new system operating conditions prior to hour
+336. The beneﬁt this article offers in considering separate com-
+putations for independent and interdependent IOR quantities
+with appropriate weights is evident from the fact that the decline
+in the IOR value captured by the interdependent IOR quantities
+Fig. 11.
+IOR with linear approximation for metric application.
+is not observed in the independent IOR quantities. A sensitivity
+analysis was performed for the weights of independent and in-
+terdependent IOR quantities, which allows for the consideration
+of the effect that each quantity has on the overall IOR value.
+It was observed that increasing the interdependent IOR weight
+(w2) beyondtenhas adiminishingeffect ontheoverall resilience
+value (with the independent IOR weight w1 remains constant)
+as the ﬁnal IOR value is dominated by the interdependent terms,
+f(ResINTR).
+Fig. 11 shows the ﬁnal IOR value, (39), using interdependent
+quantities weight w2 = 5 and independent quantities weight
+w1 = 1, along with a linear approximation of that curve. The
+linear approximation and accompanying visuals are shown to
+aid in understanding the application of the metrics shown in
+(40)–(45). Three disturbance periods are identiﬁed due to the
+contingency scenarios used in both networks. The encircled
+numbers in the plot draw attention to the beginning of each
+period, with the disturbance and recovery phase for the ﬁrst
+disturbance period explicitly shown. Table VI contains the nu-
+merical values for the quantities discussed in the quantiﬁcation
+framework section. The low recovery phase slope, captured by
+MRAPI,RP, in disturbance period 2 as compared with distur-
+bance period 1 results in the lower MTOT for disturbance period
+2. The relative decrease in the new steady-state value of IOR
+(MRA) for disturbance period 2 as compared with 1 explains the
+increase in this value for disturbance 2. The lower time averaged
+performance loss, MTAPL, for period 2 as compared with 1 is
+due to reasons just mentioned, and the larger value of MTAPL
+for period 3 as compared with periods 1 and 2 results from the
+ﬁnal IOR value being greater than the initial value. Finally, even
+though period 3 has a lower minimum IOR value, MROB, the
+faster recovery in IOR, MRAPI,RP, combined with the much
+larger MRA and much lower MTAPL values result in the drastic
+difference in ﬁnal, MTOT.
+X. CONCLUSION
+The performance of the WDS and EPS under conditions
+of limited water availability and/or electric power outages is
+an important consideration for the design and operation of
+both systems, especially as the signiﬁcance of considering their
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+654
+IEEE TRANSACTIONS ON ENGINEERING MANAGEMENT, VOL. 69, NO. 3, JUNE 2022
+interdependent operation becomes critical in such scenarios.
+This article presented a mathematical formulation for resilience
+calculations of the two systems, which accounts for operational
+and infrastructural considerations for each of the two systems
+as well as identiﬁed interdependencies in their operation. The
+new methodology for resilience computation, which has both of
+these considerations, were named IOR.
+The IOR computational method presented in this article pro-
+vided for the inclusion of IOR calculations within a previously
+developed extended time-period integrated EPS–WDS simula-
+tion optimization framework. The IOR computation method-
+ology (shown in Fig. 1) was applied to a regional level WDS
+coupled with a corresponding EPS. Results of the application of
+this computation methodology for the example systems show the
+ability to capture system resilience when modeling short-term
+and long-term electric power outages and drought scenarios.
+This optimization–simulation framework used in conjunction
+with the methodology for IOR computation would allow utili-
+ties the ability to analyze real-time performance and facilitate
+decision making. In addition, the IOR methodology could be
+applied to forecasted, extreme, megadrought scenarios for more
+accurate system simulations and anticipatory policy making.
+The IOR computation methodology presented in this article
+does not consider component failures in either system in the
+computation procedure.
+Because the resilience calculations for the test systems shown
+are not computationally expensive (total calculation time of
+1.37s for EPS + 1.90s for WDS = 3.27s total), it seems
+that the IOR computation methodology could be used for
+both postsimulation as well as real-time EPS–WDS perfor-
+mance assessment. Therefore, future work will involve applica-
+tion of the developed IOR computation methodology to larger
+WDS and EPS test systems. The scalability of the proposed
+metrics is currently being investigated for larger test systems
+and will be incorporated in future research. Moving the ap-
+plication toward larger, more realistic test systems also war-
+rants the inclusions of a developed middleware architecture,
+which emulates the supervisory control and data acquisition
+(SCADA) communication that would be necessary for data
+exchange between the two networks.
+ACKNOWLEDGMENT
+Any opinions, ﬁndings and conclusions or recommendations
+expressed in this material are those of the authors and do not
+necessarily reﬂect the views of the National Science Foundation.
+REFERENCES
+[1] S. Zuloaga, P. Khatavkar, L. W. Mays, and V. Vittal, “Interdependent
+electric and water infrastructure modeling, optimization and control,”
+IET Energy Systems Integration., Under Review, 2019.
+[2] A. R. Berkeley III and M. Wallace, “A framework for establishing
+critical infrastructure resilience goals: Final report and recommenda-
+tions,” Nat. Infrastruct. Advisory Council, DHS, Washington, D.C., USA,
+2010.
+[3] C. Folke, “Resilience: The emergence of a perspective for social–
+ecological systems analyses,” Global Environ. Change, vol. 16, no. 3,
+pp. 253–267, 2006.
+[4] M. Bruneau et al., “A framework to quantitatively assess and enhance
+the seismic resilience of communities,” Earthq. Spectra, vol. 19, no. 4,
+pp. 733–752, 2003.
+[5] B. Walker, C. S. Holling, S. R. Carpenter, and A. Kinzig, “Resilience,
+adaptability and transformability in social-ecological systems,” Ecol. Soc.,
+vol. 9, no. 2, 2004.
+[6] A. Pandit and J. C Crittenden, “Index of network resilience (INR) for urban
+water distribution,” in Proc. Criti. Infrastruct. Symp., 2012, pp. 1–12.
+[7] S. Hosseini, K. Barker, and J. E. Ramirez-Marquez, “A review of deﬁni-
+tions and measures of system resilience,” Reliab. Eng. Syst. Saf., vol. 145,
+pp. 47–61, 2016.
+[8] N. Y. Aydin, L. Mays, and T. Schmitt, “Sustainability assessment of
+urban water distribution systems,” Water Resour. Manag., vol. 28, no. 12,
+pp. 4373–4384, 2014.
+[9] J. M. Blackmore and R. A. Plant, “Risk and resilience to enhance sustain-
+ability with application to urban water systems,” J. Water Resour. Plan.
+Manag., vol. 134, no. 3, pp. 224–233, 2008.
+[10] T. Hashimoto, J. R. Stedinger, and D. P. Loucks, “Reliability, resiliency,
+and vulnerability criteria for water resource system performance evalua-
+tion,” Water Resour. Res., vol. 18, no. 1, pp. 14–20, 1982.
+[11] R. Baños, J. Reca, J. Martínez, C. Gil, and A. Márquez, “Resilience indexes
+for water distribution network design: A performance analysis under de-
+mand uncertainty,” Water Resour. Manag., vol. 25, no. 10, pp. 2351–2366,
+2011.
+[12] B. Zhuang, K. Lansey, and D. Kang, “Resilience/availability analysis of
+municipal water distribution system incorporating adaptive pump opera-
+tion,” J. Hydraul. Eng., vol. 139, no. 5, pp. 527–537, 2013.
+[13] M. Herrera, E. Abraham, and I. Stoianov, “A graph-theoretic framework
+for assessing the resilience of sectorised water distribution networks,”
+Water Resour. Manag., vol. 30, no. 5, pp. 1685–1699, 2016.
+[14] K. Diao, C. Sweetapple, R. Farmani, G. Fu, S. Ward, and D. Butler, “Global
+resilience analysis of water distribution systems,” Water Res., vol. 106,
+pp. 383–393, 2016.
+[15] S. Ma, B. Chen, and Z. Wang, “Resilience enhancement strategy for
+distribution systems under extreme weather events,” IEEE Trans. Smart
+Grid, vol. 9, no. 2, pp. 1442–1451, Mar. 2018.
+[16] S. Shin et al., “A systematic review of quantitative resilience measures for
+water infrastructure systems,” Water, vol. 10, no. 2, pp. 1–25, 2018.
+[17] P. Khatavkar and L. W. Mays, “Resilience of water distribution systems
+during real-time operations under limited water and/or energy availability
+conditions,” J. Water Resour. Plan. Manag., vol. 145, no. 10, 2019,
+Art. no. 04019045.
+[18] N. Aydin, L. Mays, and T. Schmitt, “Technical and environmental sustain-
+ability assessment of water distribution systems,” Water Resour. Manag.,
+vol. 28, no. 13, pp. 4699–4713, 2014.
+[19] ExecutiveOfﬁceofthePresident,“Economicbeneﬁtsofincreasingelectric
+grid resilience to weather outages,” U.S. Dept. Energy’s Ofﬁce Electricity
+Deliv. Energy Rel., White House Ofﬁce Sci. Technol., Washington, D.C.,
+USA, 2013.
+[20] M. Panteli, P. Mancarella, D. Trakas, E. Kyriakides, and N. Hatziagyriou,
+“Metrics and quantiﬁcation of operational and infrastructure resilience in
+power systems,” IEEE Trans. Power Syst., vol. 32, no. 6, pp. 4732–4742,
+Nov. 2017.
+[21] C. Nan and G. Sansavini, “A quantitative method for assessing resilience
+of interdependent infrastructures,” Rel. Eng. Syst. Saf., vol. 157, pp. 35–53,
+2017.
+[22] D. Fang and B. Chen, “Linkage analysis for the water–energy nexus of
+city,” Appl. Energy, vol. 189, no. C, pp. 770–779, 2017.
+[23] N. Vakilifard, M. Anda, P. A. Bahri, and G. Ho, “The role of water-energy
+nexus in optimising water supply systems—Review of techniques and
+approaches,” Renewable Sustain. Energy Rev., vol. 82, pp. 1424–1432,
+2018.
+[24] Q. Li, S. Yu, A. Al-Sumaiti, and K. Turitsyn, “Modeling and co-
+optimization of a micro water-energy nexus for smart communities,” in
+Proc. IEEE PES Innov. Smart Grid Technol. Conf. Eur., 2018, pp. 1–5.
+[25] K. Oikonomou and M. Parvania, “Optimal coordination of water distribu-
+tion energy ﬂexibility with power systems operation,” IEEE Trans. Smart
+Grid, vol. 10, no. 1, pp. 1101–1110, Sep. 2019.
+[26] R. Fourer, D. M. Gay, and B. W. Kernighan, “A modeling language for
+mathematical programming,” Manage. Sci., vol. 36, no. 5, pp. 519–554,
+1990.
+[27] S. Barnes, R. D’Aquila, and B. Thomas, PSLF User Manual, General
+Electric (GE), Schenectady, NY, USA, 2011.
+[28] L. A. Rossman, EPANET 2 Users Manual, Nat. Risk Manag. Res. Lab.,
+US Environ. Protection Agency, Cincinnati, OH, USA, 2000.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:38 UTC from IEEE Xplore.  Restrictions apply. 
+
+ZULOAGA et al.: RESILIENCE OF CYBER-ENABLED ELECTRICAL ENERGY AND WATER DISTRIBUTION SYSTEMS
+655
+[29] D. G. Elíades, M. Kyriakou, S. Vrachimis, and M. M. Polycarpou,
+“EPANET-MATLAB toolkit: An open-source software for interfacing
+EPANET with MATLAB,” in Proc. 14th Int. Conf. Comput. Control Water
+Ind., 2016, pp. 1–8.
+[30] P. Khatavkar and L. W. Mays, “Model for real-time operations of wa-
+ter distribution systems under limited electrical power availability with
+consideration of water quality,” J. Water Resour. Plan. Manag., vol. 144,
+no. 11, pp. 1–8, 2018.
+[31] V. S. Y. Kwan, E. S. Naidu, and M. T. Bixter, “Controlling environmental
+crisis appraisal through knowledge, vividness, and timing,” J. Environ.
+Psychol., vol. 61, pp. 93–100, 2019.
+[32] U.S. Census Bureau, “Census of housing,” U.S. Dep.. Commerce.
+[Online]. Available: https://www.census.gov/hhes/www/housing/census/
+histcensusofhsg.html, Accessed: 2018.
+[33] E. Bompard, R. Napoli, and F. Xue, “Analysis of structural vulnerabilities
+in power transmission grids,” Int. J. Crit. Infrastruct. Prot., vol. 2, no. 1,
+pp. 5–12, 2009. [Online]. Available: http://www.caiso.com/planning/
+Pages/ReliabilityRequirements/Default.aspx#Historical
+[34] E. Bompard, E. Pons, and D. Wu, “Analysis of the structural vulnerability
+of the interconnected power grid of continental europe with the integrated
+power system and uniﬁed power system based on extended topological
+approach,” Int. Trans. Elect. Energy Syst., vol. 23, no. 5, pp. 620–637,
+2013.
+[35] “IEEE 14-bus system,” Illinois Center for a Smarter Electric Grid,
+Univ. Illinois Urbana-Champaign, Urbana, IL, USA, 2018. [Online].
+Available: http://icseg.iti.illinois.edu/ieee-14-bus-system
+[36] Recommended Electrical Network Design for Efﬁcient Plant and Energy
+Operations, Schneider Elect., Rueil-Malmaison, France, 2012.
+[37] K. P. Schneider et al., “Analytic considerations and design basis for the
+IEEE distribution test feeders,” IEEE Trans. Power Syst., vol. 33, no. 3,
+pp. 3181–3188, May 2018.
+[38] “Reliability
+requirements,”
+California
+ISO.
+[Online].
+Available:
+http://www.caiso.com/planning/Pages/ReliabilityRequirements/Default.
+aspx#Historical, Accessed: 2017.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:25:38 UTC from IEEE Xplore.  Restrictions apply. 

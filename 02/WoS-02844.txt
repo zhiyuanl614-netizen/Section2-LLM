@@ -1,0 +1,1524 @@
+Reliability Engineering and System Safety 259 (2025) 110950
+Available online 20 February 2025
+0951-8320/© 2025 Elsevier Ltd. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+Cascading failure analysis of interdependent water-power networks based 
+on functional coupling
+Yang Li , Mingyuan Zhang *
+Department of Construction Management, Dalian University of Technology, Dalian, Liaoning 116024, China
+A R T I C L E I N F O
+Keywords:
+Water supply network
+Electric power network
+Cascading failure
+Functional coupling
+Earthquake
+A B S T R A C T
+Due to the increasing interdependence and interconnection, the water supply network (WSN) and electric power 
+network (EPN) face a higher risk of cascading failures. Existing studies mainly focus on the cascading failures of 
+the single network but rarely on the interdependent water-power networks (IWPN) under earthquakes. There­
+fore, combined with the physical operation characteristics, this paper proposes a cascading failure analysis 
+method for interdependent water-power networks based on functional coupling. First, we define the functional 
+coupling relationships between the IWPN and establish a topology model of the IWPN. Subsequently, the joint 
+probability and functional coupling strength are introduced to determine the failure probability of coupled 
+components in the WSN and EPN. The initial failure components are determined by a random method. Then, the 
+node load function and line capacity function are introduced as the judgment conditions of cascading failure of 
+the WSN and EPN, respectively. The cascading failure transmission process of the WSN and EPN is further 
+conducted based on the dynamical flow model. Further, a calculation method for the functional loss of the WSN 
+and EPN is proposed. Finally, the proposed methodology is applied to the coupling WSN of a certain city and 
+IEEE118 node network. The results show that cascading failures in the IWPN spread wider than a single network 
+and cause more serious functional losses. The findings of this work would have important implications for 
+formulating disaster prevention and mitigation measures and seismic performance improvement strategies for 
+interdependent infrastructure networks.
+1. Introduction
+The WSN and EPN are typical representatives of the urban infra­
+structure networks, and play a vital role in daily production and life and 
+post-disaster recovery and reconstruction. The earthquake damage data 
+over the years show that the damage to the WSN and EPN will inevitably 
+lead to extremely serious consequences. For instance, after the Hokkaido 
+earthquake in Japan on September 6, 2018, power facilities were 
+damaged, resulting in an almost nationwide blackout that lasted for two 
+days. Eventually, the road transportation network was paralyzed, the 
+water supply network was temporarily closed, and the airport was sus­
+pended. The cascading failures of the infrastructure networks under 
+earthquakes caused losses of approximately $2.759 billion. On February 
+6, 2023, an Mw 7.8 earthquake hit Turkey, followed by another Mw 7.5 
+earthquake after nine hours. It caused severe damage to infrastructure 
+networks, including transportation networks, power distribution net­
+works, and water supply networks, thereby seriously impeding post- 
+earthquake emergency response and reconstruction work. Ultimately, 
+the number of casualties was approximately 60,000 and the combined 
+direct economic losses incurred by Turkey and Syria were estimated at 
+$100 billion [1]. Traditional earthquake damage research on the WSN 
+and EPN usually only conducts reliability or resilience analysis on a 
+single system, ignoring the interdependent relationships between the 
+two networks. However, the WSN and EPN are highly correlated and 
+complexly coupled. For example, water plants require an electricity 
+supply to maintain normal operation, and electric pumps lift water to 
+higher ground or floors, which also requires an electricity supply; 
+cooling water systems also play an important role in the operation of 
+power plants or nuclear power plants. Due to increasingly complicated 
+interdependences and dynamic network load distribution in the IWPN, a 
+small localized disturbance could trigger domino effects, causing 
+large-scale system failure propagation. This recursive circumstance is 
+called cascading failures, which can be disastrous, and even affect mil­
+lions of people with inestimable costs [2,3]. Therefore, the interdepen­
+dent relationships between the WSN and EPN cannot be ignored. 
+In-depth research on the cascading failure process of the IWPN under 
+* Corresponding author.
+E-mail addresses: ly2021dg@mail.dlut.edu.cn (Y. Li), myzhang@dlut.edu.cn (M. Zhang). 
+Contents lists available at ScienceDirect
+Reliability Engineering and System Safety
+journal homepage: www.elsevier.com/locate/ress
+https://doi.org/10.1016/j.ress.2025.110950
+Received 15 January 2024; Received in revised form 28 January 2025; Accepted 19 February 2025  
+
+Reliability Engineering and System Safety 259 (2025) 110950
+2
+earthquake damage is of great significance to improving the disaster 
+resilience of the urban infrastructure networks.
+To explore the above catastrophic phenomena in IWPN, it is first 
+necessary to explore the method of establishing interdependent re­
+lationships between the WSN and EPN. According to existing research, 
+the research on the interdependence of infrastructure networks is rela­
+tively mature. Rinaldi et al explored the challenges and complexities of 
+infrastructure interdependencies from six important dimensions, 
+including type of interdependencies, infrastructure environment, 
+coupling and response behavior, type of failure, infrastructure charac­
+teristics, and state of operations [4]. This work argued that only through 
+reasonable modeling and simulation methods can we fully understand 
+and analyze the interdependencies of infrastructure networks. After­
+ward, a large number of modeling and simulation methods targeting the 
+interdependencies between infrastructure networks emerged in the ac­
+ademic community. Through literature reviews, Ouyang [5] summa­
+rized the modeling methods of interdependencies, which can be roughly 
+divided into the following categories: empirical approaches (such as 
+empirically-based risk analyses [6]), systems dynamic-based approaches 
+[7], economic theory-based approaches (such as the Leontief 
+input-output model [8,9]), agent-based approaches (such as the Aspen 
+[10] and SMART II [11] projects led by Sandia National Laboratory and 
+Argonne National Laboratory in the United States), and network-based 
+approaches (such as topology-based methods [12] and flowed-based 
+methods [13]). In recent years, new methods for modeling in­
+terdependencies have emerged one after another [14,15]. Sharma et al 
+[16] 
+presented 
+a 
+novel 
+classification 
+for 
+infrastructure 
+in­
+terdependencies that is consistent with their mathematical modeling 
+based on their ontological and epistemological dimensions. The 
+dimension of ontology classifies the interdependencies based on when 
+and how certain interdependencies exist. The dimension of episte­
+mology classifies the interdependencies in consistency with the mathe­
+matical models used to capture them. The above models and methods 
+characterize the interdependencies of infrastructure networks from 
+different perspectives and deepen our understanding of the mechanisms 
+of interdependency. In fact, the intuitive representation and computa­
+tional convenience of network graphs make network-based approaches 
+one of the mainstream methods in the field of infrastructure system 
+research. In a network model, nodes represent infrastructure system 
+facilities and structures, while connections represent the interactive 
+relationships between infrastructure system facilities and structures 
+[17]. Network-based approaches emphasize the topological structure 
+and flow of infrastructure networks, use network connections to intui­
+tively represent various interdependencies, and can use mature graph 
+theory and complex network theory to develop quantitative analysis 
+tools. Therefore, a large number of interdependent infrastructure 
+modeling studies have adopted network-based approaches.
+Key technological, economic, and regulatory changes have greatly 
+altered the relationships between infrastructure networks. Intelligent 
+technologies have led to a significant increase in the interconnectivity 
+and complexity of infrastructure with generally greater centralization of 
+control. When disasters occur, such interdependencies will trigger 
+cascading effects, greatly increasing the impact of disasters on infra­
+structure networks. Over the past decade, research on cascading failures 
+of interdependent infrastructure networks has increased extensively, 
+aiming to analyze the disaster propagation mechanism in detail and take 
+effective measures to block it and reduce losses. Cascading failure is a 
+potentially destructive process that causes local or small faults to spread 
+within and between systems through the interconnected relationships 
+between system components, and may cause serious system losses and 
+affect the integrity of the infrastructure system [18]. Compared with 
+other phenomena of infrastructure system damage, cascading failure 
+emphasizes the continuous dynamic propagation process of failures and 
+effectively represents the actual performance degradation of infra­
+structure networks. For instance, Rahnamay-Naeini and Hayat [19] 
+proposed a novel interdependent Markov-chain framework that enabled 
+capturing interdependencies between two critical infrastructures with 
+the ultimate goal of predicting their resilience to cascading failures and 
+characterizing the effects of interdependencies on system reliability. Wu 
+et al [20] combined statistical methods to build a cascading failure 
+propagation model based on discrete-time dynamical systems. The 
+failure probability of a certain unit was determined by the state of the 
+unit at the last moment. The conditional probability of cascading fail­
+ures between units was used to express the cascading relationship. 
+Furthermore, the propagation rule of failure probability should satisfy 
+the probability measure. Obviously, these studies cannot simulate the 
+network flow changes of real interdependent infrastructure networks 
+during the cascading failure process. The reason is that it did not 
+consider the physical operational characteristics of real infrastructure 
+networks, such as hydraulic models of water supply systems, power flow 
+models of power systems, traffic flow models of transportation systems, 
+and so on. For real infrastructure systems, considering the changes in 
+network flows during cascading failures can better reflect the functional 
+loss of infrastructure systems. Subsequently, Guidotti et al [21] pre­
+sented a probabilistic approach to modeling network resilience that 
+considered dependency on other networks and that incorporates both 
+physical damage and network functionality to estimate system recovery 
+as a function of time. Xiao et al [22] presented a framework and method 
+for assessing the seismic resilience of interdependent lifeline networks. 
+This framework considers the bidirectional interdependence of lifeline 
+networks and introduces the concept of limited recovery to exemplify 
+the difference in performance between pre and post-disaster. The per­
+formance or functionality of the above studies considers the network 
+flow of infrastructure systems. Moreover, the above studies also consider 
+the direct physical damage of earthquakes to network components and 
+the initial cascading effects between networks caused by in­
+terdependencies. However, these cascading effects are instantaneous. In 
+infrastructure systems, due to the capacity or threshold limitations of 
+component network flows, such cascading effects will continue, causing 
+more serious functional losses.
+As for the WSN and EPN, they are highly correlated and complexly 
+coupled. In existing research, interdependency modeling of the water- 
+power network is also mostly done using network-based approaches 
+[23,24]. When disasters occur, the damage to the water or power 
+network is more severe due to their interdependence, mainly because of 
+the cascading effect. Despite extensive studies on the cascading failures 
+in interdependent infrastructure networks, there are few studies on 
+cascading failures for the IWPN. Zhang et al developed a more realistic 
+cascading failure model to explore the vulnerability of interdependent 
+power-water networks [25]. Moreover, Lee et al [26] proposed a 
+Bayesian network-based seismic damage estimation method for power 
+and potable water supply system. However, the above approaches 
+ignore the failure modes and failure mechanisms of system structural 
+components under specific disasters. Furthermore, the physical opera­
+tion characteristics of the WSN and EPN are also ignored, which could 
+largely overestimate the disaster resistance capacity of the network. In 
+response to these shortcomings, Pournaras et al [24] conducted 
+cascading failures in interconnected power-to-water networks. Based on 
+power and water flow dynamic simulation, the impact of power 
+cascading failures on shortages of water supply was revealed. Although 
+the physical operation characteristics of the system are emphasized, the 
+above research only analyzes the impact of the EPN failure on the WSN, 
+that is, one-way cascading failure propagation. In fact, the physical 
+connection and functional dependence between the WSN and EPN are 
+bidirectional. Specifically, the water plant or reservoir provides cooling 
+water to the power plant. Therefore, in this way, it is possible to analyze 
+whether failures of interconnected components in a WSN or EPN may be 
+transmitted through components to disrupt the operation of the EPN or 
+WSN.
+On the other hand, in the context of frequent earthquakes, great 
+achievements on seismic damage of a single WSN or EPN have been 
+made [27,28]. However, there are limitations in the cascading failures of 
+Y. Li and M. Zhang                                                                                                                                                                                                                            
+
+Reliability Engineering and System Safety 259 (2025) 110950
+3
+the IWPN under earthquake scenarios. Given the above research gap, 
+this paper takes the IWPN as the research object and proposes a 
+cascading failure analysis method based on functional coupling. Firstly, 
+this paper defines the functional coupling relationships between the 
+WSN and EPN from the perspective of the functional supply and demand 
+relationship of system components and establishes the topology model 
+of the IWPN based on graph theory. Later, the seismic fragility analysis 
+[29] is employed to determine the probability of different damage states 
+of components, and the failure probability of coupled components 
+caused by earthquake damage and dependency relationships is calcu­
+lated by the joint probability method, where the functional coupling 
+strength is defined to represent the possibility of failure transmission. 
+Next, the initial failure components are determined by a random 
+method. More importantly, the above initial failure components are 
+used as the staged starting point of cascading failure, and the node load 
+function and line capacity function are introduced as the judgment 
+conditions for cascading failure of water network nodes and power 
+network lines. The subsequent failure transmission process in the WSN 
+and EPN is further simulated based on dynamic network flow. On this 
+basis, the supply loss rate and link loss rate are introduced as functional 
+evaluation indicators to analyze the changes in the overall functional 
+loss of the system caused by this failure transmission. In order to verify 
+the applicability and feasibility of this method, this paper combines case 
+studies to compare the functional losses of the WSN and EPN with and 
+without functional coupling relationships under different earthquake 
+scenarios. In addition, since the functional coupling strength and 
+tolerance threshold are not a definite value, this paper implements a 
+sensitivity analysis and obtains the influence of the above parameters on 
+the functional loss of the WSN and EPN under different earthquake 
+scenarios. Overall, the main contribution of this paper is to apply 
+physical operation characteristics and functional coupling relationships 
+to study the cascading effects of the IWPN under earthquakes, which can 
+efficiently improve the accuracy of loss estimation of bidirectional 
+interdependent infrastructure networks.
+The remainder of this paper is organized as follows. In Section 2, we 
+define the functional coupling relationships between the IWPN, and the 
+IWPN topology model is established. Based on the hydraulic model and 
+DC power flow model, the cascading failure analysis of the WSN and 
+EPN is conducted by considering the tolerance capacity of water 
+network nodes and power network lines. Further, a calculation method 
+for functional loss of the WSN and EPN is proposed. Section 3 presents a 
+case study where cascading failure simulation results and sensitivity 
+analysis results are provided. Section 4 discusses the research results. 
+Finally, Section 5 draws some concluding remarks and points out future 
+research directions.
+2. Methodology
+There are various types and quantities of unit components in urban 
+WSN and EPN, along with a wide range of geographical distribution. 
+Under the action of an earthquake, one component of the WSN or EPN 
+(such as the water plant, pumping station, power plant, substation, etc.) 
+is damaged, which could cause damage to other components in the 
+system. In addition, due to the interdependence between the WSN and 
+EPN, damage may affect the operation of the other network. Therefore, 
+this paper proposes a method for analyzing the cascading effect of the 
+IWPN under earthquakes. The flowchart of specific idea is shown in 
+Fig. 1, including three steps: (1) establishing a topological structure 
+model of the IWPN; (2) analyzing the cascading failure process of the 
+IWPN; (3) calculating the post-earthquake functional losses of the WSN 
+and EPN.
+2.1. Topology Structure of the IWPN
+To represent mathematically a generic infrastructure, or multiple 
+systems of infrastructure, it is possible to model them as networks [30]. 
+Based on the fundamental concepts of graph theory, a generic network is 
+defined by the set of nodes or vertices and the set of links or edges that 
+connect the nodes. In this paper, the WSN is displayed as GW(
+VW,EW)
+. 
+VW =
+(
+vW
+1 , vW
+2 , ⋯, vW
+N1
+)
+is the set of N1 nodes, which contain water plants, 
+water towers, and users. EW =
+(
+eW
+1 , eW
+2 , ⋯, eW
+N2
+)
+is the set of N2 links, 
+which denote pumping stations and pipelines of the WSN. The EPN is 
+expressed as GH(
+VH, EH)
+. VH =
+(
+vH
+1 , vH
+2 , ⋯, vH
+M1
+)
+is the set of M1 nodes, 
+which represent power plants, substations, and users. EH =
+(
+eH
+1 , eH
+2 , ⋯,
+eH
+M2
+)
+is the set of M2 links, which show transmission and distribution 
+lines of the EPN (Table 1).
+From the perspective of functional supply and demand, the inter­
+dependent relationships between the WSN and EPN is established in this 
+paper. Specifically, there is a certain connection between a component i 
+of the WSN and a component j of the EPN, and the status of component i 
+may affect component j [4]. This paper analyzes the functional coupling 
+relationships between the WSN and EPN, which is consistent with the 
+concept of functional interdependence proposed by Zhang and Peeta 
+[31], namely, the functional realization of a network requires the input 
+of the associated network. Generally speaking, two networks with 
+functional coupling relationships are first topologically dependent on 
+each other. When one network is interrupted, the cascading failure will 
+occur in itself or the associated network due to the function trans­
+ferability. For instance, the operation of the pumping station in the WSN 
+depends on an electric power supply. When the EPN is damaged, the 
+pumping station could fail to function. Table 1 shows the functional 
+coupling relationships between the WSN and EPN. As for the EPN, the 
+power plant is regarded as the functional coupled component, because 
+its normal operation requires the cooling water from water plants or 
+pools. And the function transfer direction is from a water plant or pool to 
+a power plant, that is, when the water plant or pool is damaged, the 
+function of the power plant will be weakened or failed. In terms of the 
+WSN, the functional coupled component is the water plant and pumping 
+station. Specifically, the stable electric power supply from the substation 
+can ensure the normal operation of the water plant and pumping station, 
+and the function transfer direction is from a substation to a water plant 
+or pumping station.
+A modeling framework of multiple infrastructure networks [31] is 
+adopted to establish the functional coupling relationships between the 
+IWPN. Fig. 2 shows a schematic diagram of the IWPN topology structure.
+2.2. Cascading Failure Analysis of the IWPN
+2.2.1. Initial Trigger Judgment of Cascading Failures
+The degree of damage to each component of the WSN and EPN is 
+closely associated with seismic parameters. The earthquake intensity 
+table of the “Seismic ground motion parameters zonation map of China” 
+(GB18306–2015) [32] is adopted to determine the seismic shaking pa­
+rameters. Subsequently, the Hazus Earthquake Model Technical Manual 
+(Hazus 5.1) [29] released by FEMA is used to obtain the fragility curve of 
+each component of the WSN and EPN. Through the seismic fragility 
+curve, the probability of different damage states of each component 
+under different earthquake scenarios can be determined. In order to 
+simplify the calculation, the damage states of each component in the 
+WSN and EPN are divided into two types, namely, normal functional 
+status and failure functional status. According to the “Guideline for 
+evaluation of seismic resilience assessment of urban engineering sys­
+tems” (RISN-TG041–2022) [33], this paper defines that components 
+reaching a moderate damage level cannot operate normally, which in­
+dicates functional failure. A random number between 0 and 1 is used to 
+judge the functional failure of each component. When the functional 
+failure probability of the component exceeds a random number, the 
+component fails.
+2.2.2. Functional Failure Analysis of Coupled Components
+In this paper, the joint probability is introduced to determine the 
+Y. Li and M. Zhang                                                                                                                                                                                                                            
+
+Reliability Engineering and System Safety 259 (2025) 110950
+4
+Fig. 1. Flowchart of cascading failure analysis method of the IWPN.
+Y. Li and M. Zhang                                                                                                                                                                                                                            
+
+Reliability Engineering and System Safety 259 (2025) 110950
+5
+failure probability of coupled components. Moreover, the functional 
+coupling strength is proposed to analyze the possibility of component 
+functional failure transmission between different networks, which is 
+described in detail as follows.
+A. Joint Probability. According to the description in Section 2.1, the 
+functional failure of the coupled component u in the WSN W under the 
+action of earthquakes originates from two situations: (1) the direct 
+damage of the coupled component u is caused by the earthquake, which 
+is recorded as an event Wsei
+u , and its occurrence probability is expressed 
+as P
+(
+Wsei
+u
+)
+. (2) the functional failure of component v in the EPN H that 
+component u depends on is transmitted to component u, which is 
+recorded as an event Wcas
+u , and its occurrence probability is denoted as 
+P
+(
+Wcas
+u
+)
+. In terms of the failure of the coupled component u, that is, the 
+event Wu, a joint probability model [34] is introduced to represent the 
+occurrence probability of the event P(Wu), as shown in Eq. (1). Com­
+bined with the above analysis, the event Wu can be regarded as the union 
+of the event Wsei
+u and the event Wcas
+u . 
+P(Wu) = P
+(
+Wsei
+u
+⋃
+Wcas
+u
+)
+(1) 
+And then, Eq. (1) can be further equivalent to: 
+P(Wu) = P
+(
+Wsei
+u
+)
++ P
+(
+Wcas
+u
+)
+−P
+(
+Wsei
+u ∩Wcas
+u
+)
+(2) 
+The damage events of component u and component v are indepen­
+dent of each other, so Eq. (2) can be converted to: 
+P(Wu) = P
+(
+Wsei
+u
+)
++ P
+(
+Wcas
+u
+)
+−P
+(
+Wsei
+u
+)
+∗P
+(
+Wcas
+u
+)
+(3) 
+where the failure probability P
+(
+Wsei
+u
+)
+of component u is determined 
+according to Section 2.2.1. The calculation method of P
+(
+Wcas
+u
+)
+is shown 
+as in Eq. (4). 
+P
+(
+Wcas
+u
+)
+= P
+(
+Wcas
+u |Hv
+)
+P(Hv)
+(4) 
+In Eq. (4), the cascading failure probability P
+(
+Wcas
+u
+)
+of component u is 
+computed as the product of the failure probability P(Hv) of component v 
+and the conditional probability P
+(
+Wcas
+u |Hv
+)
+of the associated failure of 
+component u under the condition that component v fails. It is indicated 
+that the cascading failure event Wcas
+u of component u is caused by the 
+failure of component v in the EPN. P(Hv) is the failure probability of 
+component v. If component v has a functional coupling relationship with 
+other components, then P(Hv) is solved according to Eq. (1); otherwise, 
+P(Hv) is the initial functional failure probability of component v under 
+earthquake damage. Referring to existing research [35], the conditional 
+probability P
+(
+Wcas
+u |Hv
+)
+is equivalent to the coupling strength Φuv be­
+tween component u and component v, as described in the next section.
+B. Functional Coupling Strength. The functional coupling strength Φuv is 
+defined as the possibility of functional failure transmission between 
+component u and component v, and the transmission direction is from 
+component u to component v. The value of Φuv is assumed as follows. 
+Φuv =
+⎧
+⎨
+⎩
+0
+none coulping
+0 ∼1
+weak coulping
+1
+strong coupling
+(5) 
+when Φuv = 0, it means that there is no coupling relationship between 
+component u and component v, namely, when the function of compo­
+nent u fails, the failure will not be passed to component v. When 
+0 < Φuv < 1, it is indicated that there is coupling relationship between 
+component u and component v. Specifically, when Φuv is close to 0, it 
+shows that the coupling relationship is relatively loose, and the failure 
+effect of component u is less likely to be transmitted to component v. 
+When Φuv is close to 1, it suggests that the stronger the coupling rela­
+tionship, the easier it is for the failure effect of component u to be 
+transmitted to component v, resulting in functional failure of component 
+v. When Φuv is equal to 1, the two components are strongly coupled, that 
+is, the functional failure of component u will inevitably lead to the 
+functional failure of component v.
+2.2.3. Cascading Failure Analysis of the WSN
+According to the above descriptions, the initial functional failure 
+probability of components, including reservoirs, water towers, and 
+pumping stations, is obtained. In addition, it is assumed that pipeline 
+damage under earthquake action is a random independent event and 
+obeys Poisson distribution along the length of the pipeline [36]. 
+Therefore, the probability of pipeline damage from earthquakes is 
+described in Eq. (6). 
+Pb,l = 1 −e(−RRl⋅Ll)
+(6) 
+where Pb,l is the probability of pipeline l being damaged; Ll is the length 
+of pipeline l; RRl denotes the average seismic damage rate of pipeline l, 
+which is calculated using the fitting method of existing seismic motion 
+data and damage data of pipelines [37], as shown in Eq. (7). D is the 
+diameter of pipeline l. 
+ln(RRl) =
+{
+1.84⋅ln(PGV) −9.40
+Ductile iron pipe(D < 600mm)
+1.41⋅ln(PGV) −8.19
+Steel pipe(riveted joints, D ≥600mm)
+(7) 
+Two damage states of the pipeline include breakage and leakage. 
+Surveys showed that 80% of the damage status of pipelines after the 
+earthquake was leakage, and 20% was breakage [29]. Referring to 
+existing research, it is assumed that the leakage probability of the 
+pipeline is 5 times the breakage probability, and a random number be­
+tween 0 and 1 is used to judge the damage state of the pipeline. Under 
+the action of earthquakes, a large number of pipelines are damaged, 
+Table 1 
+The functional coupling relationships between the WSN and EPN.
+Infrastructure 
+network
+Functional 
+coupled 
+component
+Functional coupling 
+relationship
+Function 
+transfer 
+direction
+EPN
+Power plant
+The operation of the 
+power plant requires 
+cooling water from water 
+plants or pools
+Water plant/ 
+pool→ Power 
+plant
+WSN
+Water plant
+The operation of the 
+water plant requires 
+electric power supply 
+from the substation
+Substation→ 
+Water plant
+Pumping 
+station
+The operation of the 
+pumping station requires 
+electric power supply 
+from the substation
+Substation→ 
+Pumping station
+Fig. 2. Schematic diagram of the IWPN topology.
+Y. Li and M. Zhang                                                                                                                                                                                                                            
+
+Reliability Engineering and System Safety 259 (2025) 110950
+6
+which results in the system being in a low-pressure operating state. In 
+such a circumstance, the water demand of some nodes cannot be fully 
+satisfied. It is widely known that the actual water distribution volume of 
+a node is closely related to the node pressure. According to the node flow 
+continuity equation, if the node pressure is reduced to meet the fixed 
+water demand, the hydraulic adjustment calculation result will show 
+node negative pressure, which is not consistent with the actual situation. 
+Therefore, Wagner’s model [37] is adopted to calculate the actual water 
+distribution volume for the post-earthquake hydraulic analysis of the 
+WSN, and the calculation method is given in Eq. (8). In addition, the 
+post-earthquake hydraulic model of the WSN [38] is utilized to perform 
+hydraulic adjustment calculation. The hydraulic model of the WSN is 
+established according to the damage status of the pipeline. Specifically. 
+when the pipeline is broken, two virtual pools are added at the pipeline 
+disconnection position. When the damaged state of the pipeline is in 
+leakage, a diffuser is added at the pipeline damaged location. Adding the 
+hydraulic model into the pre-earthquake and modifying the 
+pre-earthquake topology to form the post-earthquake topological 
+structure of the WSN. Further, the epanet2.dll function in Epanet is 
+called to perform the hydraulic calculation of the WSN. 
+Qact
+k
+=
+⎧
+⎪
+⎪
+⎪
+⎪
+⎪
+⎨
+⎪
+⎪
+⎪
+⎪
+⎪
+⎩
+0
+Pk ≤Pmin
+k
+Qreq
+k̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅
+Pk −Pmin
+k
+Pser
+k −Pmin
+k
+√
+Pmin
+k
+< Pk < Pser
+k
+Qreq
+k
+Pser
+k ≤Pk
+(8) 
+where Qact
+k and Qreq
+k denote the actual distribution volume and demand 
+volume of node k, respectively. Pk is the water pressure of node k; Pmin
+k 
+and Pser
+k represents the minimum and the service water pressure of node 
+k, respectively.
+After the earthquake, initial damage occurs to each component, 
+including the pool, water tower, pumping station, and pipeline. In this 
+circumstance, the service water pressure of most nodes cannot be 
+satisfied, indicating that these nodes lose service functions. It is obvious 
+that too low nodal pressure will cause flow interruption and water 
+outage, so a specific minimum water pressure range (minimum bearing 
+capacity) should be maintained to ensure a stable water supply. 
+Therefore, node failure is regarded as the inability of a component in the 
+WSN to provide sufficient flow or pressure to meet demand. In this 
+paper, the minimum water pressure of a node is defined as the lowest 
+value of the nodal pressure designed for the WSN, that is, the minimum 
+bearing capacity of the node is proportional to the initial pressure [39]. 
+The calculation method is presented as follows: 
+Pmin
+k
+= (1 −αk)Pser
+k
+(9) 
+where αk is the tolerance value of node k, and the range is 0~1. The 
+larger the value of αk is, the lower the probability of node failure.
+To sum up, the cascading failure process of the WSN is summarized 
+as follows: 
+Step 1: Obtain the basic information of the WSN, and calculate the 
+initial water pressure of each node.
+Step 2: Adopt the seismic fragility to obtain the probability of 
+different damage states of components and estimate the functional 
+failure of components using randomness method.
+Step 3: Introduce the joint probability and functional coupling 
+strength to obtain failure probability of coupled components and 
+estimate the functional failure of the coupled components using 
+randomness method.
+Step 4: Build a post-earthquake hydraulic model when the pipeline 
+leaks or breaks. If a node fails, it is considered that the upstream and 
+downstream pipelines connected to the failed node are broken, and a 
+hydraulic model of the broken pipeline is constructed similarly.
+Step 5: Call the epanet2.dll package in the Epanet toolkit to perform 
+hydraulic adjustment to obtain the node pressure. Then the Wagner’s 
+model is used to conduct the post-earthquake hydraulic calculation 
+to obtain the water distribution volume.
+Step 6: Introduce the node load function to judge the new failure 
+components. If the node pressure is less than the minimum bearing 
+capacity range, the node is regarded as a new failed node and returns 
+to step 4; otherwise, the cascading failure process of the WSN ends.
+2.2.4. Cascading Failure Analysis of the EPN
+Power flow is the main state variable that describes the dynamic 
+process of electric energy transmission and distribution. The large-scale 
+change of power flow is reflected as the cascading failure process in the 
+EPN. It is an efficient prior research method to establish a large-scale 
+power outage accident model through power flow equations and study 
+the causes, propagation speed, and scope of cascading failures by 
+examining power flow dynamics. The DC power flow equation only 
+considers the distribution of active power flow in the EPN, and has the 
+advantages of fast calculation and no convergence problems. The main 
+purpose of this paper is to analyze the occurrence and propagation 
+process of cascading failures in the EPN after earthquakes and obtain the 
+changes in load node power. Therefore, the DC power flow equation is 
+used to calculate the functional loss of the EPN after earthquakes.
+In the DC power flow model, the following assumptions about the 
+actual EPN are made. (1) The node voltage usually runs near the rated 
+voltage, that is, Ui ≈Uj ≈1; (2) The phase angle difference between the 
+two ends of the branch is very small, namely, θij ≈0; (3) The impedance 
+ratio of the ultra-high voltage power network line is very small, that is, 
+rij ≈0.
+Ignoring the parallel branches in the EPN, the active power flow 
+equation of the branch lij (DC power flow equation) can be approximated 
+as: 
+⎧
+⎪
+⎨
+⎪
+⎩
+Pij = −b
+ʹ
+ij
+(
+θi −θj
+)
+=
+(
+θi −θj
+)
+xij
+Qij = 0
+(10) 
+where Pij and Qij are the active power and reactive power of branch lij, 
+respectively. bʹ
+ij = −
+1/xij, xij is the branch reactance.
+According to Kirchhoff’s law, the current balance equation of the 
+node i is computed as: 
+PSP
+i
+=
+∑
+j∈i,j∕=i
+Pij =
+∑
+j∈i,j∕=i
+θi −θj
+xij
+, i = 1, 2, ⋯, n
+(11) 
+where PSP
+i is the injected active power of node i; n is the number of nodes. 
+Eq. (11) is further converted into matrix form, namely, the actually used 
+DC power flow equation is shown as follows. 
+PSP = Bθ
+(12) 
+where PSP represents the active injection power matrix; B is the n × n 
+order nodal admittance matrix, and its diagonal elements and non- 
+diagonal elements are expressed as follows, respectively. 
+⎧
+⎪
+⎪
+⎪
+⎪
+⎪
+⎨
+⎪
+⎪
+⎪
+⎪
+⎪
+⎩
+Bii =
+∑
+j∈i,j∕=i
+1
+xij
+Bij = −1
+xij
+(13) 
+The cascading failure process of the EPN is closely related to the post- 
+earthquake damage status of each component. The main components, 
+power plants, substations, loads, and transmission and distribution lines, 
+constitute the EPN. Therefore, in order to analyze the cascading failure 
+process of the EPN, it is first necessary to determine the initial functional 
+failure of each component in the EPN, and the calculation method is 
+Y. Li and M. Zhang                                                                                                                                                                                                                            
+
+Reliability Engineering and System Safety 259 (2025) 110950
+7
+described in Section 2.2.1. In the EPN, the successive failures of trans­
+mission lines are the main driving factors for the cascading failure 
+propagation. Thus, transmission lines are selected as the research com­
+ponents of cascading failure in this paper. Each transmission line in the 
+EPN is equipped with a relay. When the current in the transmission line 
+exceeds the capacity limit and continues for a long time, the overcurrent 
+relay will protect the transmission line and cause it to trip. Therefore, it 
+is assumed that the transmission line capacity Ci is proportional to the 
+initial power flow fi(0), and the formula is as follows: 
+Ci = (1 + βi)fi(0)
+(14) 
+where βi (0 < βi ≤1) represents the tolerance parameter of transmission 
+line i. When the power flow of a transmission line exceeds the line ca­
+pacity, the transmission line is disconnected.
+In summary, the detailed cascading failure process of the EPN is 
+listed as follows. 
+Step 1: Obtain the basic information of the EPN, solve the DC power 
+flow model, and calculate the initial power flow fi(0) of the trans­
+mission line i.
+Step 2: Adopt the seismic fragility to obtain the failure probability of 
+each component and use randomness method to estimate the func­
+tional failure of each component.
+Step 3: Introduce the joint probability and functional coupling 
+strength to obtain failure probability of coupled components and use 
+randomness method to estimate the functional failure of coupled 
+components.
+Step 4: Remove malfunctioning components and update the network 
+topology.
+Step 5: Determine the connectivity of the remaining EPN. If the 
+connected group contains the source node, go to the next step; 
+otherwise, the cascading failure process of the EPN ends.
+Step 6: Calculate the transmission flow of the line in the current 
+connected group according to the DC power flow equation.
+Step 7: Introduce line capacity function to judge new failure com­
+ponents. If the transmission traffic of the line exceeds the trans­
+mission capacity, the line is regarded as a new failed component and 
+returns to step 4; otherwise, the cascading failure process of the EPN 
+ends.
+Combined with the descriptions in Section 2.2.1-2.2.4, the cascading 
+failure process of the IWPN is concluded as: Firstly, the earthquake 
+causes damage to the WSN and EPN components, and the seismic 
+fragility is used to determine the probability of different damage states 
+of the components. As for the uncoupled component, the functional 
+failure probability is defined as the probability of reaching or exceeding 
+the moderate damage state; while the functional failure probability of 
+the coupled component is the probability of functional damage caused 
+by seismic damage and cascading effects, as calculated in Eqs. (1)-(5). 
+Specifically, when the function of a water plant or pumping station 
+coupled to a substation fails, the joint probability and functional 
+coupling strength is used to determine the probability of functional 
+failure of the water plant or pumping station. When the function of a 
+power plant coupled with a water plant or pool fails, the functional 
+failure probability of the power plant is determined in the same way. 
+And further, the functional failure of any component is determined by 
+randomness method. Subsequently, the water distribution volume of 
+each node in the WSN and the load of each node in the EPN are calcu­
+lated based on the hydraulic model and DC power flow model. Through 
+Eq. (9) and (14), the new failure component can be yielded to update the 
+topology structure of the WSN and EPN, respectively. By repeating the 
+above failure determination process until there are no new functional 
+failure components in the IWPN, the cascading failure is terminated.
+2.3. Functional Loss Calculation of the WSN and EPN
+Water and power supply services originate from the WSN and EPN to 
+ensure people’s production and life. Thus, from the perspective of supply 
+and demand, the supply loss rateFDSR
+loss and link loss rate FLSR
+loss are proposed 
+to represent the functional loss of any network. The former refers to the 
+ratio between the actual supply of node and the demand; the latter is the 
+ratio of the number of links in a failure state after cascading failure to the 
+initial number of links. Due to the random nature of earthquake damage, 
+the Monte Carlo method is used for simulation calculations. The average 
+value of supply loss rate and link loss rate of the WSN and EPN are taken 
+as the final functional loss calculation results. Therefore, the calculation 
+formula is as follows. 
+DSR =
+∑m
+i=1Qk
+i
+∑m
+i=1Qi
+(15) 
+LSR = Lk
+n
+(16) 
+FDSR
+loss = 1 −
+1
+N
+∑
+N
+k=1
+DSR
+(17) 
+FLSR
+loss = 1 −
+1
+N
+∑
+N
+k=1
+LSR
+(18) 
+where Qk
+i and Qi are the actual supply and demand of the ith node in any 
+network in the kth simulation, respectively; Lk is the number of surviving 
+links in any network in the kth simulation; DSRand LSR are the demand 
+satisfaction rate and the connectivity rate of any network, respectively. 
+m and n are the number of nodes and links in any network, respectively; 
+N is the number of Monte Carlo simulations.
+3. Case Study
+3.1. Basic Information
+To show the applicability and feasibility of the proposed methodol­
+ogy, a city’s water supply network and the IEEE 118 node network were 
+selected to conduct a case study. Functional loss results for the WSN and 
+EPN with and without coupling relationships were calculated under four 
+earthquake scenarios, respectively. Meanwhile, a sensitivity analysis of 
+the functional loss of the WSN and EPN with and without coupling re­
+lationships to the functional coupling strength and tolerance parameter 
+was performed. According to the "The Chinese seismic intensity scale" 
+(GB/T 17,742–2020) [40], the seismic intensity in this paper contains 
+VI, VII, VIII, and IX, and the corresponding peak ground accelerations 
+are 0.06, 0.15, 0.3, and 0.6g, respectively. Moreover, the probability of 
+different damage states of each component in the WSN and EPN under a 
+certain earthquake scenario can be determined based on the Hazus 
+Earthquake Model Technical Manual (Hazus 5.1). In addition, the 
+number of Monte Carlo simulations is set to 1000, and the minimum and 
+service water pressure of node k are Pmin
+k
+= 0m and Pser
+k
+= 10m, 
+respectively. The tolerance values in the WSN and EPN are assumed as 
+0.5 and 0.5, respectively.
+3.2. Topology Model of the IWPN
+Fig. 3 illustrates the topological structure of a city’s WSN coupled 
+with the IEEE 118-node network. The WSN contains 4 water source 
+nodes (Junction 50, 51, 52, 53) with total water heads of 76.95, 74.31, 
+83.58, and 81.98m, respectively, 49 user demand nodes, and 78 pipe­
+lines. The Hazen-Williams roughness coefficient of the first pipe section 
+is 80, that of the 44th, 45th, 46th, and 49th pipe sections is 90, and that 
+of the remaining pipe sections is 120. In addition, it is assumed that for 
+Y. Li and M. Zhang                                                                                                                                                                                                                            
+
+Reliability Engineering and System Safety 259 (2025) 110950
+8
+pipelines with a diameter greater than 600 mm, the pipe material is steel 
+pipe (riveted joint); for pipelines with a diameter less than 600 mm, the 
+pipe material is ductile iron pipe. More information about the WSN can 
+be found in the literature [38]. The IEEE 118-node network includes 118 
+buses, 19 generators, 35 synchronous capacitors, 64 load nodes, and 186 
+lines (including 9 transformers). The detailed parameters come from the 
+case information in the MATPOWER software. Nine transformers are 
+assumed as the substations in this paper, and the information is listed in 
+Table 2.
+As shown in Fig. 3, the IWPN contains 12 pairs of functional coupling 
+elements. In the WSN, there are functional coupling relationships be­
+tween reservoirs or pumping stations and substations, that is, the sub­
+station provides power supply to the reservoir or pumping station. 
+Assuming that a coupling relationship between the substation and 
+reservoir is weak. The functional coupling strength Φsr is set to 0.5, and 
+the function transfer direction is from the substation to the reservoir. In 
+other words, when the substation fails, there is a 50% possibility that the 
+failure will be transmitted to the reservoir, causing the reservoir to fail. 
+Fig. 3. Topological Model of the IWPN.
+Y. Li and M. Zhang                                                                                                                                                                                                                            
+
+Reliability Engineering and System Safety 259 (2025) 110950
+9
+In this case, the functional coupling node pairs composed of the sub­
+station and the reservoir are (S1, R50), (S2, R51), (S7, R52), and (S5, 
+R53). Subsequently, it is defined that there is a strong coupling rela­
+tionship between the substation and the pumping station, and the 
+functional coupling strength Φsp is set to 1. The function transfer di­
+rection is from the substation to the pumping station. The functional 
+coupling node pairs consisting of the substation and the pumping station 
+are (S4, P1), (S3, P2), (S8, P3), and (S6, P4). In the EPN, there is a 
+functional coupling relationship between the power plant and the water 
+user, that is, the WSN needs to provide cooling water for the power 
+plant. It is assumed that there is a weak coupling relationship between 
+the power plant and the water user. The functional coupling strength Φjg 
+is 0.75, and the function transfer direction is from the water user to the 
+power plant. Similarly, there is a 75% possibility of passing the failure of 
+the water user to the power plant. The functional coupling node pairs 
+composed of the water user and the power plant are (J39, G10), (J40, 
+G49), (J42, G66), and (J23, G80).
+3.3. Cascading Failure Simulation of the IWPN
+3.3.1. Cascading Failure Results
+Based on the description in Section 2.2, the cascading failure simu­
+lation of the IWPN includes two modules, the coupled WSN simulation 
+module and the coupled EPN simulation module. The former adopted 
+Wagner’s model and the epanet2.dll package to perform hydraulic ad­
+justments to calculate the node water volume. Further, the node load 
+function was introduced to reflect the cascading failure propagation 
+effect. The latter utilized the DC power flow model to calculate the 
+Table 2 
+The substation information.
+From bus
+To bus
+Substation
+8
+5
+S1
+26
+25
+S2
+30
+17
+S3
+38
+37
+S4
+63
+59
+S5
+64
+61
+S6
+65
+66
+S7
+68
+69
+S8
+81
+80
+S9
+Fig. 4. Failure propagation results under different PGA.
+Y. Li and M. Zhang                                                                                                                                                                                                                            
+
+Reliability Engineering and System Safety 259 (2025) 110950
+10
+transmission flow of the line, and the cascading failure propagation 
+process was determined through the improved MATCASC model and the 
+line capacity function. Under the above four seismic scenarios, the 
+cascading failure simulations of the coupled WSN and EPN were 
+implemented by the Monte Carlo method, with a number of 1000. In 
+order to illustrate the representative results, this paper selected the re­
+sults with the most failure propagation stages among 1000 simulations 
+for visualization, as shown in Fig. 4. The propagation stages of cascading 
+failure in the WSN were 6, 6, 6, and 3, respectively; while in the EPN 
+they were 12, 13, 7, and 3, respectively. For the first three earthquake 
+scenarios, there were relatively more cascading failure propagation 
+stages in the WSN and EPN. The reason is that with the increase of PGA, 
+the number of initial triggering components of cascading failure grad­
+ually increased. When PGA=0.6g, failure propagation stages in the two 
+networks decreased. The main reason is that the initial damage caused 
+by earthquakes to components is catastrophic, which may lead to large- 
+scale system failure or collapse, and cascading effect transmissions 
+dropped sharply. Fig. 5 shows the spatial distribution results of cascade 
+failures under four earthquake scenarios. Among them, when PGA=0.06 
+and 0.15g, the spatial distribution of failure pipelines in the WSN was 
+relatively scattered, and the failure transmission lines in the EPN were 
+mainly distributed in the upper part of the network diagram. When 
+Fig. 5. Space distribution diagram of cascading failure under different PGA.
+Y. Li and M. Zhang                                                                                                                                                                                                                            
+
+Reliability Engineering and System Safety 259 (2025) 110950
+11
+PGA=0.3 and 0.6g, the failure links in the WSN and EPN occupied 
+almost the entire network, which indicated that the network functional 
+loss was very serious. Overall, there were significantly more failed links 
+in the EPN than in the WSN, showing that the EPN was much more 
+damaged than the WSN.
+3.3.2. Functional Loss Calculation
+Table 3 summarizes the comparative results in functional loss of the 
+WSN and EPN with and without functional coupling relationships. From 
+a vertical perspective, as the PGA increased, the functional loss of the 
+WSN and EPN with or without functional coupling relationships grad­
+ually increased. Taking the ENP as an example, when PGA=0.06g, the 
+supply loss rates of the coupled and uncoupled EPN were 0.478 and 
+0.072, respectively, and the link loss rates were 0.443 and 0.073, 
+respectively. When PGA increased to 0.6g, the supply loss rate and link 
+loss rate both increased to 1.000 and 0.953, respectively. From a hori­
+zontal perspective, the functional loss of the coupled WSN and EPN was 
+higher than that of the uncoupled WSN and EPN, and that of the EPN 
+was more obvious. For instance, when PGA=0.15g, the supply loss rate 
+and link loss rate of the coupled WSN were 0.085 and 0.152, respec­
+tively, which were greater than that of the uncoupled WSN. Results were 
+similar for the EPN. It can be inferred that the coupled WSN and EPN 
+suffered greater losses under earthquake scenarios, and the cascading 
+failure range spread wider. In addition, as the PGA increased, the dif­
+ference in functional loss between the WSN and EPN with or without 
+functional coupling relationships gradually decreased. The major reason 
+is that the initial damage caused by the earthquake to components 
+gradually becomes serious and the functional loss gradually increases. In 
+this circumstance, regardless of whether there is a functional coupling 
+relationship, the cascading failure propagation effect in the network is 
+not obvious.
+3.4. Sensitivity Analysis
+To further analyze the impact of functional coupling strength and 
+tolerance parameter on cascading failure of the WSN and EPN, this paper 
+conducted a sensitivity analysis of functional losses of the WSN and EPN 
+to functional coupling strength and tolerance under four different 
+earthquake scenarios. When conducting a sensitivity analysis of func­
+tional coupling strength, it is assumed that the functional coupling 
+strength between the reservoir and the substation ranges from 0 to 1, 
+with a step size of 0.02. The functional coupling strength between the 
+pumping station and the substation is 1. The tolerance of each demand 
+node is 0.5. In the EPN, the functional coupling strength between the 
+power plant and the water demand node is set to 0~1, with a step size of 
+0.02. The tolerance of each transmission line is 0.2. When implementing 
+sensitivity analysis of tolerance, the tolerance value range of each water 
+demand node in the WSN is set to 0~1, with a step size of 0.02. The 
+functional coupling strength between the reservoir and the substation is 
+0.5, and that of the pumping station and the substation is 1. In the EPN, 
+the tolerance of each transmission line ranges from 0 to 1, with a step 
+size of 0.02, while the functional coupling strength between the power 
+plant and the water demand node is 0.5.
+3.4.1. Sensitivity Analysis of Functional Loss to Functional Coupling 
+Strength
+Fig. 6 shows the sensitivity change trend of functional loss of the 
+coupled WSN and EPN to functional coupling strength under four 
+different earthquake scenarios. Overall, the functional coupling strength 
+between the reservoir and the substation had little impact on the func­
+tional loss of the coupled WSN. A more obvious impact on the functional 
+loss of the coupled EPN originated from the functional coupling strength 
+between the power plant and the water demand node. As the PGA 
+increased, the impact of functional coupling strength on the EPN func­
+tional loss gradually reduced. Specifically, as shown in Fig. 6 (a), with 
+the increase of PGA, both the supply loss rate and the link loss rate of the 
+WSN gradually increased. The change in functional coupling strength 
+had almost no obvious impact on the link loss rate, but affected the 
+supply loss rate slightly. As for the EPN, as shown in Fig. 6 (b), as the 
+PGA increased, the supply loss rate and link loss rate also gradually 
+increased. In addition, when PGA=0.06g, as the functional coupling 
+strength between the power plant and the water demand node 
+increased, the supply loss rate and link loss rate gradually increased, 
+indicating that the functional loss was highly sensitive to changes in the 
+functional coupling strength. When the PGA was greater than or equal to 
+0.15g, the supply loss rate and link loss rate changed slightly, suggesting 
+that the sensitivity of functional loss to the change of functional coupling 
+strength gradually reduced. The main reason is that the initial damage of 
+the earthquake to the coupled EPN could be relatively serious, while the 
+functional coupling strength has little effect on the cascading failure of 
+the EPN, resulting in a decreased sensitivity to functional loss.
+3.4.2. Sensitivity Analysis of Functional Loss to Tolerance
+Regarding the sensitivity analysis of functional loss to tolerance, 
+numerical simulations of the functional loss changes of the WSN and 
+EPN with and without functional coupling relationships under four 
+different earthquake scenarios were implemented. In the numerical 
+simulation without functional coupling relationships, except for the 
+functional coupling strength, other parameters remain consistent with 
+the settings with functional coupling relationships. Fig. 7 exhibits the 
+sensitivity change results of the functional loss of the WSN and EPN with 
+or without functional coupling relationships to the tolerance. The 
+dashed line represents the results of the coupled networks, and the solid 
+line displays that of the uncoupled networks. Overall, the functional 
+losses of the coupled WSN and EPN were more serious than those of the 
+uncoupled networks. Specifically, as shown in Fig. 7 (a), with the in­
+crease of PGA, both the link loss rate and supply loss rate of the WSN 
+gradually increased; while the tolerance of each water demand node had 
+almost no impact on the link loss rate, but had a slight impact on the 
+supply loss rate. In Fig. 7 (b), as the PGA increased, the link loss rate and 
+supply loss rate of the coupled and uncoupled EPN also gradually 
+increased. In addition, when PGA=0.06g, 0.15g, and 0.3g, as the 
+Table 3 
+Comparison in functional loss of the WSN and EPN with or without functional coupling relationships.
+Metric
+EPN
+WSN
+FDSR
+loss
+FLSR
+loss
+FDSR
+loss
+FLSR
+loss
+PGA/g
+FC
+NFC
+FC
+NFC
+FC
+NFC
+FC
+NFC
+0.06
+0.478
+0.072
+0.443
+0.073
+0.083
+0.076
+0.049
+0.048
+0.15
+0.721
+0.678
+0.650
+0.637
+0.085
+0.081
+0.152
+0.148
+0.3
+0.932
+0.919
+0.774
+0.772
+0.222
+0.192
+0.332
+0.328
+0.6
+1.000
+1.000
+0.953
+0.953
+0.327
+0.315
+0.671
+0.670
+Note: FC denotes that there are functional coupling relationships between the EPN and WSN; NFC denotes that there is no functional coupling relationship between the 
+EPN and WSN.
+Y. Li and M. Zhang                                                                                                                                                                                                                            
+
+Reliability Engineering and System Safety 259 (2025) 110950
+12
+tolerance of the transmission line increased, the link loss rate and the 
+supply loss rate of the coupled and uncoupled EPN gradually decreased. 
+When PGA=0.6g, little effect on the functional loss of the coupled and 
+uncoupled EPN originated from the tolerance of each transmission line, 
+indicating that the sensitivity of functional loss to changes in the toler­
+ance reduced. The major reason may be that the initial damage of the 
+earthquake to the EPN is relatively serious, while the tolerance has little 
+effect on the cascading failure of the EPN, resulting in a reduced sensi­
+tivity to functional loss. Further, when PGA=0.06g, the functional loss 
+of the coupled EPN was significantly higher than that of the uncoupled. 
+In the other three earthquake scenarios, there was little difference in the 
+degree of functional loss between the coupled and uncoupled EPN.
+4. Discussion
+According to the cascading failure simulation results in Section 3.3, it 
+can be reasonably concluded that the cascading failure propagation 
+range of the coupled WSN and EPN is wider and the functional losses are 
+more serious than that of the uncoupled networks. In addition, it can be 
+seen from Fig. 4 that compared with the WSN, more cascading failure 
+propagation stages and a larger failure propagation dimension occurred 
+in the EPN under four different earthquake scenarios. It also can be 
+observed from Table 3 that the supply loss rate and link loss rate of the 
+coupled WSN and EPN were higher than that of the uncoupled networks, 
+and as the PGA increased, the difference in functional loss between the 
+coupled and uncoupled network gradually decreased. Based on the 
+sensitivity analysis results in Section 3.4, it can be concluded that the 
+functional coupling strength had almost no impact on the link loss rate 
+of the WSN and affected the supply loss rate slightly. For the EPN, a 
+significant impact on the functional loss came from the functional 
+coupling strength when PGA = 0.06g. Under the other three earthquake 
+scenarios, there is almost no impact on the functional loss. Wang et al 
+pointed out that there were differences in component tolerance of 
+infrastructure networks, depending on network characteristics, oper­
+ating mechanisms, etc., and the impact on the propagation path of 
+system cascading failures was also different [41]. This conclusion is 
+consistent with the results of the sensitivity analysis of functional loss to 
+different system tolerances in this paper. It can be seen from Fig. 7 that 
+the node tolerance had almost no impact on the link loss rate of the WSN 
+and a small impact on the supply loss rate, indicating that the functional 
+loss was weakly sensitive to node tolerance. The transmission line 
+tolerance had a significant impact on the link loss rate and supply loss 
+Fig. 6. Sensitivity Analysis of Functional Loss to Functional Coupling Strength.
+Y. Li and M. Zhang                                                                                                                                                                                                                            
+
+Reliability Engineering and System Safety 259 (2025) 110950
+13
+rate of the EPN, suggesting that functional loss was highly sensitive to it.
+In conclusion, it can be inferred that the impact of functional 
+coupling strength and component tolerance on the cascading failure and 
+functional loss of the IWPN cannot be ignored. Otherwise, the evalua­
+tion results of post-earthquake network functional loss will be seriously 
+underestimated. The results of this study can improve understanding of 
+cascading failure propagation modeling methods in the WSN and EPN 
+that accurately consider the functional coupling relationships between 
+the two networks. It is worth noting that the proposed method can 
+provide a theoretical reference for identifying and considering system 
+functional coupling relationships in the process of network topology 
+modeling and cascading failure modeling of interdependent infrastruc­
+ture systems. In addition, a better understanding of the in­
+terdependencies between the WSN and EPN can be obtained for system 
+managers, operations, and emergency personnel, which will help accu­
+rately estimate the impact of earthquakes on the IWPN. It is conducive to 
+establishing a better decision support system for the design, construc­
+tion, and maintenance of the WSN and EPN, and improving the system’s 
+prevention and response capabilities to disasters.
+5. Conclusion
+As the urban typical infrastructure system, the WSN and EPN ensure 
+the stable development of the urban socio-economy and people’s pro­
+duction and life. Under earthquakes, minor system localized damage 
+may cause large-scale system failure propagation due to the interde­
+pendence between the two networks. Moreover, it may also bring 
+disastrous consequences to the city. Therefore, this paper conducts 
+cascading failure analysis for the IWPN under earthquake scenarios. 
+First, from the perspective of the functional supply and demand rela­
+tionship of system components, this paper defined the functional 
+coupling relationships between the WSN and EPN and established the 
+topological structure of the IWPN based on complex network methods. 
+Subsequently, the fragility analysis was used to determine the proba­
+bility of different damage states of components. The joint probability 
+and functional coupling strength were introduced to calculate the failure 
+Fig. 7. Sensitivity Analysis of Functional Loss to Tolerance.
+Y. Li and M. Zhang                                                                                                                                                                                                                            
+
+Reliability Engineering and System Safety 259 (2025) 110950
+14
+probability of coupled components. And then, the node load function 
+and line capacity function were introduced as the judgment conditions 
+for cascading failure of water network nodes and power network lines, 
+respectively. The cascading failure process of the WSN and EPN was 
+conducted based on the dynamical flow model. Further, a calculation 
+method for the functional loss of the WSN and EPN was proposed. 
+Finally, taking the coupling WSN of a certain city and IEEE 118-node 
+network as an example, the Monte Carlo method was used to simulate 
+the cascading failure process of the WSN and EPN with and without 
+functional coupling relationships under four different earthquake sce­
+narios. Moreover, sensitivity analysis was conducted on the functional 
+coupling strength and tolerance threshold to obtain the functional loss 
+impact of WSN and EPN. The results showed that cascading failures in 
+the IWPN spread wider and caused more serious functional losses. In 
+addition, under four earthquake scenarios, the functional loss of the 
+WSN was weakly sensitive to the functional coupling strength and node 
+load. However, the sensitivity of the functional loss of the EPN to 
+functional coupling strength and link capacity was observable. But as 
+the PGA increased, the sensitivity was gradually weakened.
+Universally, the proposed cascading failure analysis method can be 
+applied to other infrastructure networks. Taking the IWPN as the 
+research objects, complex network methods are used to construct the 
+topological model and the functional coupling relationships from the 
+perspective of the functional supply and demand relationship of system 
+components are considered. Therefore, for different infrastructure net­
+works, the mutual coupling relationships between system components 
+and physical connections as well as their functions should be further 
+analyzed. In addition, the tolerance of the WSN and EPN in this research 
+is a set value. For one thing, existing research has analyzed its resistance 
+to cascading failures in the WSN and EPN. For another, the main purpose 
+of this article is to reveal the cascading failure rules of the post- 
+earthquake IWPN considering physical operational characteristics, 
+analyze the impact of functional coupling relationships on the propa­
+gation of cascading failures in the WSN and EPN, and further quantify 
+the functional loss of the two networks. Therefore, the tolerance value 
+can be further determined based on the physical operation conditions of 
+the specific infrastructure system.
+From the perspective of functional coupling relationship and disaster 
+spread, the cascading failure analysis and functional loss quantification 
+of the WSN and EPN under earthquakes are carried out. It can provide 
+support for cascading failure modeling research on multi-layer inter­
+dependent infrastructure systems, and provide certain references for 
+formulating disaster prevention and reduction measures and seismic 
+performance improvement strategies for interdependent infrastructure 
+networks. In future research, it can be expanded from the following 
+aspects: 1) carry out cascading failure analysis on the WSN and EPN of 
+different sizes, conduct comparative analysis on different coupled net­
+works under earthquakes of the same magnitude, and propose targeted 
+seismic performance improvement strategies. 2) expand double-layer 
+infrastructure networks into multi-layer infrastructure networks, 
+including transportation networks, gas networks, etc., to handle 
+cascading failures of multi-layer interdependent infrastructure net­
+works, and provide support for improving the disaster prevention and 
+reduction capabilities of urban infrastructure networks.
+CRediT authorship contribution statement
+Yang Li: Writing – original draft, Software, Methodology, Formal 
+analysis, Data curation. Mingyuan Zhang: Writing – review & editing, 
+Supervision, Funding acquisition, Conceptualization.
+Declaration of competing interest
+The authors declare that they have no known competing financial 
+interests or personal relationships that could have appeared to influence 
+the work reported in this paper.
+Acknowledgments
+This work was supported by the National Key R&D Program of China 
+(No. 2023YFC3805202) and the National Natural Science Foundation of 
+China (No. 52278485).
+Data availability
+Data will be made available on request.
+References
+[1] Fan X, Zhang L, Wang J, Ren Y, Liu A. Analysis of faulting destruction and water 
+supply pipeline damage from the first mainshock of the February 6, 2023 Türkiye 
+earthquake doublet. Earthq Sci 2024;37:78–90. https://doi.org/10.1016/j. 
+eqs.2023.11.004.
+[2] Buldyrev SV, Parshani R, Paul G, Stanley HE, Havlin S. Catastrophic cascade of 
+failures in interdependent networks. Nature 2010;464:1025–8. https://doi.org/ 
+10.1038/nature08932.
+[3] Zhou J, Coit DW, Felder FA, Tsianikas S. Combined optimization of system 
+reliability improvement and resilience with mixed cascading failures in dependent 
+network systems. Reliab Eng Syst Saf 2023;237:109376. https://doi.org/10.1016/ 
+j.ress.2023.109376.
+[4] Rinaldi SM, Peerenboom JP, Kelly TK. Identifying, understanding, and analyzing 
+critical infrastructure interdependencies. IEEE Control Syst Mag 2001;21:11–25. 
+https://doi.org/10.1109/37.969131.
+[5] Ouyang M. Review on modeling and simulation of interdependent critical 
+infrastructure systems. Reliab Eng Syst Saf 2014;121:43–60. https://doi.org/ 
+10.1016/j.ress.2013.06.040.
+[6] Utne IB, Hokstad P, Vatn J. A method for risk modeling of interdependencies in 
+critical infrastructures. Reliab Eng Syst Saf 2011;96:671–8. https://doi.org/ 
+10.1016/j.ress.2010.12.006.
+[7] Franchina L, Carbonelli M, Gratta L, Crisci M, Perucchini D. An impact-based 
+approach for the analysis of cascading effects in critical infrastructure. Int J Crit 
+Infrastructures 2011;7:73–90.
+[8] Santos JR, Haimes YY, Lian C. A framework for linking cybersecurity metrics to the 
+modeling of macroeconomic interdependencies. Risk Anal 2007;27:1283–97. 
+https://doi.org/10.1111/j.1539-6924.2007.00957.x.
+[9] Haimesl YY, Jiang P. Leontief-based model of risk in complex interconnected 
+infrastructures. J Infrastruct Syst 2001;7:1–12.
+[10] Basu N, Pryor R, Quint T. ASPEN : A microsimulation model of the economy. 
+Comput Econ 12 1998;12:223–41.
+[11] Approach S, Mahmood A, Montagna F. Making lean smart by using system-of- 
+systems’ approach. IEEE Syst J 2013;7:537–48. https://doi.org/10.1109/ 
+JSYST.2013.2244801.
+[12] Johansson J, Hassel H. An approach for modelling interdependent infrastructures 
+in the context of vulnerability analysis. Reliab Eng Syst Saf 2010;95:1335–44. 
+https://doi.org/10.1016/j.ress.2010.06.010.
+[13] Ii EEL, Mitchell JE, Wallace WA. Restoration of services in interdependent 
+infrastructure systems : A network flows approach. IEEE Trans Syst Man, Cybern 
+Part C Appl Rev 2007;37:1303–17.
+[14] Sun W, Bocchini P, Davison BD. Overview of interdependency models of critical 
+infrastructure for resilience assessment. Nat Hazards Rev 2022;23:1–14. https:// 
+doi.org/10.1061/(ASCE)NH.1527-6996.0000535.
+[15] Mitsova D. Integrative interdisciplinary approaches to critical infrastructure 
+interdependency analysis. Risk Anal 2021;41:1111–7. https://doi.org/10.1111/ 
+risa.13129.
+[16] Sharma N, Nocera F, Gardoni P. Classification and mathematical modeling of 
+infrastructure interdependencies. Sustain Resilient Infrastruct 2021;6:4–25. 
+https://doi.org/10.1080/23789689.2020.1753401.
+[17] Holden R, Val D V, Burkhard R, Nodwell S. A network flow model for 
+interdependent infrastructures at the local scale. Saf Sci 2013;53:51–60. https:// 
+doi.org/10.1016/j.ssci.2012.08.013.
+[18] Valdez LD, Shekhtman L, La Rocca CE, Zhang X, Buldyrev SV, Trunfio PA, et al. 
+Cascading failures in complex networks. J Complex Netw 2020;8:cnaa013. https:// 
+doi.org/10.1093/comnet/cnaa013.
+[19] Rahnamay-naeini M, Hayat MM. Cascading failures in interdependent 
+infrastructures : an interdependent Markov-chain approach. IEEE Trans Smart Grid 
+2016;7:1997–2006. https://doi.org/10.1109/TSG.2016.2539823.
+[20] Wu Y, Chen Z, Zhao X, Gong H, Su X, Chen Y. Propagation model of cascading 
+failure based on discrete dynamical system. Reliab Eng Syst Saf 2021;209:107424. 
+https://doi.org/10.1016/j.ress.2020.107424.
+[21] Guidotti R, Chmielewski H, Unnikrishnan V, Gardoni P, Mcallister T, De Lindt J 
+Van, et al. Modeling the resilience of critical infrastructure : the role of network 
+dependencies. Sustain Resilient Infrastruct 2016;9689:1–16. https://doi.org/ 
+10.1080/23789689.2016.1254999.
+[22] Xiao Y, Zhao X, Wu Y, Chen Z, Gong H. Seismic resilience assessment of urban 
+interdependent lifeline networks. Reliab Eng Syst Saf 2022;218:108164. https:// 
+doi.org/10.1016/j.ress.2021.108164.
+[23] Oikonomou K, Parvania M, Member S. Optimal coordinated operation of 
+interdependent power and water distribution systems. IEEE Trans Smart Grid 
+2020;11:4784–94.
+Y. Li and M. Zhang                                                                                                                                                                                                                            
+
+Reliability Engineering and System Safety 259 (2025) 110950
+15
+[24] Pournaras E, Taormina R, Galelli S, Kooij R. Cascading failures in interconnected 
+power-to-water networks. Perform Eval Rev 2020;47:16–20.
+[25] Zhang Y, Yang N, Lall U. Modeling and simulation of the vulnerability of 
+interdependent power-water infrastructure networks to cascading failures. J Syst 
+Sci Syst Eng 2016;25:102–18. https://doi.org/10.1007/s11518-016-5295-3.
+[26] Lee S, Choi M, Lee HS, Park M. Bayesian network-based seismic damage estimation 
+for power and potable water supply systems. Reliab Eng Syst Saf 2020;197:106796. 
+https://doi.org/10.1016/j.ress.2020.106796.
+[27] Hou B, Huang J, Miao H, Zhao X, Wu S. Seismic resilience evaluation of water 
+distribution systems considering hydraulic and water quality performance. Int J 
+Disaster Risk Reduct 2023;93:103756. https://doi.org/10.1016/j. 
+ijdrr.2023.103756.
+[28] Liu X, Xie Q, Liang H, Zhang X. Post-earthquake recover strategy for substations 
+based on seismic resilience evaluation. Eng Struct 2023;279:115583. https://doi. 
+org/10.1016/j.engstruct.2022.115583.
+[29] Federal emergency management agency. Hazus earthquake model technical 
+manual. Washington DC: 2022.
+[30] Guidotti R, Gardoni P, Rosenheim N. Integration of physical infrastructure and 
+social systems in communities’ reliability and resilience analysis. Reliab Eng Syst 
+Saf 2019;185:476–92. https://doi.org/10.1016/j.ress.2019.01.008.
+[31] Zhang P, Peeta S. A generalized modeling framework to analyze interdependencies 
+among infrastructure systems. Transp Res Part B Methodol 2011;45:553–79. 
+https://doi.org/10.1016/j.trb.2010.10.001.
+[32] General administration of quality supervision I and Q of the PR of C. Seismic 
+ground motion parameters zonation map of china. Standardization Administration 
+of the People’s Republic of China; 2015.
+[33] Guideline for evaluation of seismic resilience assessment of urban engineering 
+systems. Research Institute of Standards and Norms Ministry of Housing and 
+Urban-Rural Development; 2022.
+[34] Zhao XD, Chen ZL, Xu JH, Tang HZ. Seismic vulnerability of urban double-layer 
+interdependent lifeline network. J Zhejiang Univ (Eng Sci) 2020;54:767–77. 
+https://doi.org/10.3785/j.issn.1008-973X.2020.04.016.
+[35] Wu J, Due˜nas-Osorio L. Calibration and validation of a seismic damage 
+propagation model for interdependent infrastructure systems. Earthq Spectra 2013; 
+29:1021–41. https://doi.org/10.1193/1.4000160.
+[36] Yoon S, Lee YJ, Jung HJ. Flow-based optimal system design of urban water 
+transmission network under seismic conditions. Water Resour Manag 2020;34: 
+1971–90. https://doi.org/10.1007/s11269-020-02541-4.
+[37] Wagner JM, Shamir U, Marks DH. Water distribution reliability: simulation 
+methods. J Water Resour Plan Manag 1988;114:276–94. https://doi.org/10.1061/ 
+(asce)0733-9496(1988)114:3(276).
+[38] Han Z, Ma D, Hou B, Wang W. Post-earthquake hydraulic analyses of urban water 
+supply network based on pressure drive demand model. Sci Sin Technol 2019;49: 
+351–62. https://doi.org/10.1360/N092017-00429.
+[39] Shuang Q, Zhang M, Yuan Y. Node vulnerability of water distribution networks 
+under cascading failures. Reliab Eng Syst Saf 2014;124:132–41. https://doi.org/ 
+10.1016/j.ress.2013.12.002.
+[40] Standardization administration of the People’s republic of China. Chin Seismic 
+Intens scale. 2020.
+[41] Wang F, Magoua JJ, Li N, Fang D. Assessing the impact of systemic heterogeneity 
+on failure propagation across interdependent critical infrastructure systems. Int J 
+Disaster Risk Reduct 2020;50:101818. https://doi.org/10.1016/j. 
+ijdrr.2020.101818.
+Y. Li and M. Zhang                                                                                                                                                                                                                            

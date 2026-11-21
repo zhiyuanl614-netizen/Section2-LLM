@@ -1,0 +1,1977 @@
+Journal of Cleaner Production 462 (2024) 142648
+Available online 25 May 2024
+0959-6526/© 2024 The Author(s). Published by Elsevier Ltd. This is an open access article under the CC BY license (http://creativecommons.org/licenses/by/4.0/).
+Contents lists available at ScienceDirect
+Journal of Cleaner Production
+journal homepage: www.elsevier.com/locate/jclepro
+An integrated model with interdependent water storage for optimal resource
+management in Energy–Water–Food Nexus
+Muhammad Babar Rasheed a,b,∗, María D. R-Moreno a
+a Universidad de Alcalá, Escuela Politécnica Superior, ISG, Alcalá de Henares, Spain
+b University of Gloucestershire, Cheltenham, GL53 0QA, UK
+A R T I C L E
+I N F O
+Handling Editor: Kathleen Aviso
+Keywords:
+Power flow
+Water flow
+Water storage
+Food network
+Locational marginal pricing
+A B S T R A C T
+With the rapid increase in population and the industrial revolution, the demand for clean energy and water
+has substantially increased, underscoring their importance for sustainable economic development. Although
+energy and water infrastructures are often viewed as separate and uncoupled due to distinct processes in power
+generation and water production, they are fundamentally interlinked within their respective domains. This
+necessitates a strong coupling to optimally manage power and water resources simultaneously. To address this,
+a joint optimization algorithm has been developed to manage the supply-side resources of the Energy–Water–
+Food Nexus (EWFN), including the power, water, food, cogeneration, and storage networks. A mathematical
+model is first developed to dispatch clear power, potable water, and storage resources, considering constraints
+related to supply, demand, production, flow, and ramping. Additionally, the integration of a water storage
+facility alleviates binding constraints, enabling flat production to reduce costs and CO2 emissions. The proposed
+methodology also allows for the real-time quantification of production costs, energy mix, reserve and curtailed
+capacities, and energy imbalances. This methodological extension to EWFN includes flexible resources within
+the grid’s portfolio to promote cleaner production, ensuring that the required amount of water is consumed
+across all sectors. Finally, the proposed algorithm is tested on freely available datasets, demonstrating that
+the co-dispatch of energy and water resources in the presence of constraints leads to optimal generation and
+distribution of power and water without heavily relying on a single-product plant.
+1. Introduction
+The relentless surge in the global population, advancements in the
+industrial sector, and the pressing concerns of climate change have
+significantly magnified the challenges in optimally utilizing power and
+water resources to cater to escalating demands (Rogers, 2013; Averyt
+et al., 2013). The quest for sustainable development in both residential
+and commercial sectors increasingly hinges on the availability of green,
+carbon-neutral energy sources and access to potable water (Kanyerere
+et al., 2018). In recent times, there has been a heightened focus on the
+interconnected infrastructure of energy, water, and food networks, a
+concept encapsulated in the Energy–Water–Food Nexus (EWFN) (Probst
+et al., 2024). Traditionally, the systems that deliver power and water,
+catering to diverse sectors including residential, commercial, food pro-
+cessing, and agriculture (Al-Ansari et al., 2017), have been viewed as
+distinct entities. Yet, the reality presents a more integrated scenario
+where these infrastructures are inherently coupled (Peña-Torres et al.,
+2024), functioning synergistically (Farid and Lubega, 2013; Lubega and
+Farid, 2014).
+∗Corresponding author at: Universidad de Alcalá, Escuela Politécnica Superior, ISG, Alcalá de Henares, Spain.
+E-mail address: muhammad.rasheed@uah.es (M.B. Rasheed).
+Recognizing the intertwined nature of these systems (as detailed in
+Table 1), it becomes evident that the energy and water infrastructures
+necessitate a unified approach to optimization. This is essential to
+efficiently supply both energy and water resources, not only to resi-
+dential and commercial zones but also to the agricultural sector, which
+is crucial for food production. Accordingly, this study introduces a
+comprehensive joint optimization program that addresses the combined
+supply dynamics of power, water, and food. This program includes
+aspects of power generation, water supply, cogeneration, and water
+storage facilities (Li et al., 2018). This initiative builds on foundational
+concepts, integrating generation, flow, demand, ramping, and storage
+considerations. It extends them to embrace the challenges and oppor-
+tunities presented by the energy–water–food nexus (Ngammuangtueng
+et al., 2023).
+The overall objective is to manage the available sources (thermal,
+hydel, solar, renewable, water storage, etc.) without requiring exces-
+sive investments in the existing infrastructure (Li et al., 2018). This
+involves predicting both power generation and consumption behavior
+https://doi.org/10.1016/j.jclepro.2024.142648
+Received 25 April 2022; Received in revised form 15 May 2024; Accepted 21 May 2024
+
+Journal of Cleaner Production 462 (2024) 142648
+2
+M.B. Rasheed and M.D. R-Moreno
+Nomenclature
+Number Sets
+𝑖
+power plant index
+𝑗
+water plant index
+𝑘
+cogeneration plant index
+𝑡
+total no. of hours (t = 24)
+𝑛𝑝𝑝
+total no. of power plants
+𝑛𝑐𝑝
+total no. of cogeneration plants
+𝑛𝑤𝑝
+total no. of water plants
+𝑡
+total no. of hours (t = 24)
+Parameters
+𝜇
+variable representing congestion
+𝜌
+density of fluid
+𝜎𝑣
+water level of water storage plant
+𝐺
+gravity
+𝐻
+height of water storage plant
+𝑣𝐚
+Water volume in tank
+𝑚𝑤
+Total number of water pipes
+𝐻𝑠
+Pressure head at water outlet
+𝜎𝑣
+Water balance constraint
+𝜔𝑎𝑏
+Speed of water pump
+𝑠
+Water storage facility
+𝑠
+Volume of water in tank
+𝜂𝑡,𝑢
+Energy conservation efficiency
+𝑝
+Cost of supplied energy
+𝑎𝑏
+Head gain at nodes
+𝑥𝑐𝑘𝑝
+power from coproduction plant
+𝐴𝑎𝑏, 𝐵𝑎𝑏, 𝐶𝑎,𝑏
+Water pump parameters
+𝑥𝑐𝑘𝑤
+water from coproduction plant
+𝐿𝑎𝑏
+Water pipe head loss
+𝐹𝑎𝑏
+Water flow in pipes
+𝑑𝑎𝑏
+Diameter of water pipe
+𝓁𝑎𝑏
+Length of water pipe
+𝐻𝑗
+Head at node 𝑗
+𝑆𝑎𝑏
+Darcy friction factor
+𝛿
+Power angle
+𝐸𝑡,𝑢
+Energy consumption of water pump
+𝐵𝑖,𝑗
+bus susceptance matrix
+
+Set of water pipes
+𝑅𝑡𝑢
+resistance coefficient of water pipes
+𝑄
+water flow capacity
+𝑃ℎ
+hydraulic power of pump
+𝑋𝜎𝑣
+water released by water storage plant
+𝐼𝑤𝑗𝑡
+incidence matrix-water network
+𝐼𝑐𝑘𝑦
+incidence matrix-cogeneration network
+𝐼𝑝𝑖𝑦
+incidence matrix-power network
+and reduction in CO2 emission using advanced optimization & con-
+trol (Rasheed and R-Moreno, 2021), and data analytics techniques.
+Secondly, a joint optimization model for co-dispatch of water and
+power (Santhosh et al., 2013) is developed subject to production,
+demand, transmission, process, ramping, and storage constraints. Fur-
+thermore, the inclusion of power, water and storage facilities helped
+to alleviate the binding constraints to obtain the balanced generation
+of power and water with minimum cost (Farid and Lubega, 2013).
+Furthermore, the joint optimization algorithm is designed to achieve
+Limits
+𝐺𝑒𝑛𝑃𝑃
+min. limit of power plants
+𝐺𝑒𝑛𝑃𝑃
+max. limit of power plants
+𝐺𝑒𝑛𝑊𝑃
+min. capacity limit of water plants
+𝐺𝑒𝑛𝑊𝑃
+max. limit of water plants
+𝐺𝑒𝑛𝐶𝑃𝑃
+min. power limit of cogeneration plants
+𝐺𝑒𝑛𝐶𝑃𝑃
+max. power limit of cogeneration plants
+𝐺𝑒𝑛𝐶𝑃𝑊
+min. water limit of cogeneration plants
+𝐺𝑒𝑛𝐶𝑃𝑊
+max. water limit of cogeneration plants
+𝑃𝐹𝑙𝑜𝑤
+min. power flow limit
+𝑃𝐹𝑙𝑜𝑤
+max. power flow limit
+𝑊𝐹𝑙𝑜𝑤
+min. water flow limit
+𝑊𝐹𝑙𝑜𝑤
+max. water flow limit
+𝑊𝑆𝑡𝑜𝑟𝑒𝜎𝑣
+min. limit on water storage plant
+𝑊𝑆𝑡𝑜𝑟𝑒𝜎𝑣
+max. limit on water storage plant
+𝑅𝑅𝑃𝑖
+ramp-up ratio of power plant
+𝑅𝑅𝑃𝑗
+ramp-up ratio of water plant
+𝑟𝑘
+lower limit on coproduction ratio
+𝑟𝑘
+upper limit on coproduction ratio
+𝑅𝑅𝐶𝑃𝑘
+ramp-up ratio of coproduction plant
+𝑅𝑅𝐶𝑊𝑘
+ramp-up ratio of coproduction plant
+𝜔𝑎𝑏
+Min. speed of water pump
+𝜔𝑎𝑏
+Max. speed of water pump
+𝑣𝐚
+Max. water volume
+𝑠
+Max. water storage limit
+Other Symbols
+𝐶𝑝𝑖(𝑥𝑝𝑖)
+cost function of power plants
+𝐶𝑤𝑗(𝑥𝑤𝑗)
+cost function of water generation plants
+𝐶𝑐𝑘(𝑥𝑐𝑘𝑝,𝑐𝑘𝑤)
+cost function of cogeneration plants
+𝐶𝐺
+total cost of object function
+𝑥𝑐𝑘
+cost function of cogeneration plants
+𝐿
+Lagrangian of optimal flow problem
+𝑃𝐷
+power demand
+𝐷𝑤
+water demand
+𝑛
+water flow exponent
+𝐹𝑡𝑢
+flow of power from node 𝑖−𝑗
+𝑃𝑔𝑖,𝑚𝑎𝑥
+maximum power generation
+𝑃𝑔𝑖,𝑚𝑖𝑛
+minimum power generation
+𝑄𝑡𝑢
+flow of water from node 𝑡−𝑢
+𝐻𝑡
+𝑡th nodal head
+𝑥𝑝𝑖
+cost function of power generation plants
+𝑚𝑤
+total no. of pipes
+𝑡𝑑
+temperature difference
+𝑃𝑔𝑖
+power generation from 𝑖plants
+𝛿𝑖
+phase angle at bus 𝑖
+the optimal results systematically. It can serve as a base model to set the
+control points upon which the single-product plants can also achieve
+optimal control. In addition, the proposed work explicitly considers and
+includes water storage which may serve as an intermediate mode of
+storage for residential & industrial heating, power generation, and/or
+electric vehicle charging. For this purpose, the standard IEEE 30 bus
+network (Shahidehpour et al., 2015) and the UK-based Hanoi water
+network (Ghobadian and Mohammadi, 2023) are considered. This was
+challenging due to the limits on altering the existing infrastructure sys-
+tem beyond the degree of freedom. This task is efficiently done through
+combining energy and water generation (i.e., cogeneration) facilities
+
+Journal of Cleaner Production 462 (2024) 142648
+3
+M.B. Rasheed and M.D. R-Moreno
+Table 1
+Supply and demand sides coupling of EWFN.
+Power supply
+Power demand
+Water supply
+cogeneration
+– Pumped water
+– Thermal desalination
+– Water distribution
+– Hydroelectric
+– Wastewater recycling
+Water demand
+Thermal power generation facilities
+Residential, industrial and commercial use of water
+heating & cooling of water
+Food industry
+– Wastewater recycling
+– Processing
+– Heating & cooling, storing
+due to their dependence. Finally, the three tasks mentioned above are
+integrated to finalize the design, architecture, and implementation of
+EWFN-based optimal resource management for a sustainable future.
+The proposed EWFN nexus system model represents a ground-
+breaking approach with far-reaching impacts on industry, government,
+residents, academia, and research organizations, as well as the Gulf Co-
+operation Council (GCC) countries (Al-Adwani et al., 2023). This model
+provides a benchmark for industries to manage resources through green
+production facilities, energy mix, and sustainable food production tech-
+niques. It enables a cyclical use of resources, where water from power
+generation and power from water production are efficiently utilized,
+alongside storage facilities for both. This system also supports sustain-
+able food production by optimizing agricultural practices and reducing
+waste. Government bodies and research institutes are encouraged to use
+this model to develop both short-term and long-term policies for better
+utilization of existing infrastructures, with necessary modifications.
+This is crucial as the world rapidly shifts towards green and clean gener-
+ation (Tao et al., 2020), transmission, storage, and use of energy (Teng
+et al., 2019), water, and food resources. For instance, the European
+hydrogen pipeline infrastructure, a vast project linking countries for
+a common cause, and the GCC’s plans to balance supply and demand
+through an energy mix by 2050, exemplify such initiatives (Zaiter et al.,
+2023).
+This strategy, heavily reliant on integrating distributed and al-
+ternative energy resources, including storage facilities and hydrogen
+(Schröder et al., 2021), also extends to sustainable food production
+and distribution methods. The energy mix under this new strategy
+will include clean coal, natural gas, nuclear energy, water facilities,
+solar and wind power, biofuels, and storage facilities, complemented by
+sustainable agricultural practices. Moreover, the transition from tradi-
+tional generation facilities to renewables, considering the health and
+environmental benefits, could yield significant annual savings, rang-
+ing from 1–3.7 billion USD by 2030 (Mueller, 2023). This transition
+also positively impacts the residential sector through the provision of
+affordable, green energy, and promotes sustainable food consumption
+patterns.
+This proposed work extends our previous research (Schoonenberg
+and Farid, 2022), which presented a joint optimization program for
+the supply side of Energy–Water–Food Nexus (EWFN) couplings, as
+delineated in Refs. Rasheed and R-Moreno (2021) and illustrated in
+Fig. 1. The initial part is focused on the modeling of Direct Current
+Optimal Power Flow (DCOPF) and Optimal Water Flow (OWF), which
+is further developed in this study. Previously, line limits, power genera-
+tion, water production limits, and capacity constraints were considered.
+In this extension, it is observed that including process constraints, line
+limits, ramping limits, water storage facilities, continuity relationships,
+water pipes models, water junction model, and water pump model sig-
+nificantly improves the performance of the nexus system while reducing
+overall costs. Additionally, this paper integrates food processing units
+into the IEEE 30 bus system at nodes 5&29 (Fig. 2), allowing for a more
+holistic scheduling of the optimal utilization of power, water, storage,
+and food processing facilities. This integration addresses the high-
+cost implications of relying only on single-product plants. Moreover,
+this study has also incorporated Locational Marginal Pricing (LMP) to
+reflect changes in total costs needed to meet the additional demand
+requirements of the next unit. The final optimization algorithm has
+been implemented on datasets from Hanoi, UK (Ghobadian and Mo-
+hammadi, 2023), and the modified IEEE 30-bus network (Shahidehpour
+et al., 2015), with specific attention to the water requirements of the
+food industry as obtained from Ellis et al. (2009). The inclusion of food
+processing units offers a comprehensive view of the EWFN dynamics,
+enabling a more efficient and sustainable management of resources
+across the energy, water, and food sectors.
+The rest of the paper is organized as follows. Section 2 presents a
+thorough review of the relevant literature on the Energy–Water–Food
+Nexus (EWFN), laying the groundwork for the study. Section 3 details
+the system model developed for this research. In Section 4 previous
+components are integrated into a unified optimization framework. The
+simulation setup and the results of applying our joint optimization
+model are elaborated in Section 5, demonstrating the model’s effec-
+tiveness in reducing CO2 emissions and operational costs. Section 6
+concludes and proposes directions for future research.
+2. Relevant literature on nexus
+This section elucidates the foundational literature surrounding the
+joint optimization of multiple plants within the realms of power, wa-
+ter, and other essential sectors. The concept of jointly optimizing
+power generation and water production facilities has seen significant
+evolution over the decades, transitioning from focusing on singular
+plant optimization to embracing the complexities of multi-plant opera-
+tions (Tao et al., 2020). Traditionally, models have primarily addressed
+the optimization challenges of individual plants without integrating a
+unified problem formulation (Li et al., 2018). However, recent inves-
+tigations have shifted towards the strategic planning and modeling of
+hybrid-energy systems encompassing standalone setups, yet with less
+emphasis on their operational and control aspects (Trifkovic et al.,
+2013). In an innovative approach undertaken by Lambton College in
+Sarnia, ON, Canada, a dual-layered optimization and control algorithm
+has been developed. This method strategically manages distributed
+energy resources, including wind, solar PV, and hydrogen storage, by
+considering dynamic load demands as a crucial system input.
+To address the integrated challenges posed by coupled problems,
+Schoonenberg and Farid (2022) have proposed a hetero-functional
+graph-theoretic approach engineering model with minimum cost flow
+optimization. This model, rooted in Petri-net-based representations,
+undergoes a transformation into a canonical quadratic form to simplify
+computational demands, showcasing its applicability in managing the
+complex integrations within the hydrogen-natural gas European net-
+work. Similarly, Xiao et al. (2017) introduced a framework designed
+for local energy markets, facilitating the trade between hydrogen and
+energy. This setup includes a diverse range of stakeholders from load to
+hydrogen vehicles and storage units, employing an iterative decentral-
+ized method to optimize the trading process, thereby mitigating peak
+load demands.
+Expanding upon these foundational works, Mingfei Ben (Ban et al.,
+2017) and Teng et al. (2019) discuss the architectural framework
+within an electricity, heat, and hydrogen-based multi-energy storage
+system using distributed energy resources and a hydrogen storage
+system. This work is dedicated to significantly enhancing grid flexibility
+through electricity, heat, hydrogen energy conversion, and storage sys-
+tems. The combined optimization problem was formulated and solved
+
+Journal of Cleaner Production 462 (2024) 142648
+4
+M.B. Rasheed and M.D. R-Moreno
+Fig. 1. Topology of the symmetric food–energy–water nexus.
+by using an optimal collaborative control theory with the objective of
+cost reduction. Guangsheng Pan et al. (2020), proposed an electricity-
+hydrogen integrated energy system planning model with hydrogen
+production and storage technologies. This model explicitly considers
+power to heat and hydrogen and seasonal hydrogen storage models
+with all associated constraints. The objective is to handle the inte-
+gration challenges through the combination of stochastic & robust
+optimization techniques. Similar work is proposed to share the re-
+sources in a coupled energy system with power-to-gas and plug-in
+hybrid electric and hydrogen vehicles (PH2EVs) aggregators. Sun and
+Harrison (2021), develop a supply chain planning model for H2 that
+determines the least-cost mix of generation, transmission, compression,
+and storage, facilities to meet H2 demand coupled with the power
+system. Furthermore, the authors incorporate the flexible scheduling of
+trucks and pipelines to carry the H2 to serve for transmission and/or
+storage resources to manage the H2 production/supply/demand across
+space and time. The work by Sun and Harrison (2021) is dedicated to
+managing the load demand of hydrogen vehicles in a coupled energy
+system with the consideration of renewable energy resources. This is
+because the distributed renewable energy resources pose a serious chal-
+lenge to the electricity network in the form of intermittent uncertainty,
+which is handled through on-site hydrogen production and storage.
+An economic dispatch model for the day-ahead market of an inte-
+grated port energy system considering hydrogen is proposed by Wang
+et al. (2021), since, the ports are the major source of energy consump-
+tion and CO2 emission. This model includes electricity, natural gas,
+heat, hydrogen, and renewable energy resources. Hydrogen produced
+through the water electrolysis is used to power the thermal plants;
+while the surplus hydrogen capacity can be stored, used, and converted
+into natural gas through a methanation reaction. Although, this is a
+great coupled model that manages the dispatch problem in a day-
+ahead fashion; however, it is difficult to manage all the resources
+efficiently with less complexity. The work reported by Haggi et al.
+(2021) has proposed a multi-objective risk-based optimization model
+to schedule the hydrogen production from water electrolysis, storage,
+fuel cell, and fueling of hydrogen vehicles. This framework includes
+integrated demand response, reactive power support from hydrogen
+systems, and photovoltaic-based renewable energy to provide cheap
+and interruption-free energy for the electrolysis process. Lin et al.
+(2021) present another work regarding transmission expansion plan-
+ning to promote the hydrogen electrolysis process. Water electrolysis is
+an energy-intensive task that can be performed by either a carbon-based
+conventional energy source or a carbon-free renewable energy source.
+In this context, that work identifies that the nonlinear water electrolysis
+process can be formulated as a feasible region that consists of two
+subregions. A convex optimization problem is formulated that is solved
+using mixed-integer nonlinear and later linear programming through
+relaxing the master problem. Supply chain planning of hydrogen pro-
+duction, transmission, storing, and compression to meet the demand
+is studied by He et al. (2021). Hydrogen supply through trucks and
+pipelines is modeled allowing them to manage or shift the hydrogen
+demand and production across space and time. Later, this hydrogen net-
+work is coupled with the electricity network through demand response
+(DR) pricing programs. Another similar work reported by Tao et al.
+(2020) is dedicated to solving the energy sharing problem in a coupled
+electricity and hydrogen network with the objective of social welfare
+maximization. This study reveals that, unlike energy storage unit in-
+tegration that has a high cost, power-to-gas and plug-in-hybrid and
+hydrogen-vehicle aggregators are new coupling points. Zarei (2020)
+presents a comprehensive survey on a holistic approach to address
+the security challenges in EWFN. The proposed three-fold schemes
+jointly optimize the EWFN by integrating multi-objective reservoirs
+and irrigation ponds to fulfill water demand. This work focused on
+modeling and optimizing the water sources to meet short and long-term
+requirements. However, this work does not focus on the optimal pro-
+duction and utilization of power. Another work proposed by Norouzi
+(2022) presents a systematic approach to analyze the interconnection
+issues in EWFN.
+From the discussion above, it is observed that clean energy and
+potable water are basic resources that are always required to fulfill
+current and future needs in such a way as to promote sustainability.
+However, this is only possible if electric power is generated with
+reduced CO2 emissions and supplies potable water with reduced waste.
+Previously, these demands are fulfilled through independent water and
+power networks. In contrast, these are now considered as an interlinked
+network of networks where single and/or multi-products are obtained
+from within the single facility. On the other hand, with recent devel-
+opments in renewable energy and hydrogen technologies, the nexus
+approach is gaining popularity as carbon-free energy can be produced
+without heavily relying on fossil fuel-based resources and thus can be
+used in water networks. Although, there has been extensive work done
+by different authors in energy–water and energy–water–food nexus
+domains; however, to the author’s knowledge, there is no explicit work
+dealing with the joint optimization framework of power, water, and
+food networks with water storage facility. In addition, the existing lit-
+erature does not explore the generation, demand, process, storage, and
+congestion constraints, simultaneously. Thus, a technique/mechanism
+that can treat all the plants with equity is required. Then, this technique
+could be used as a benchmark for the optimization of power and heat
+plants. Table 2 summarized some relevant research works based on
+their approaches and methodology to achieve the required objectives. It
+is also clear from the discussion that numerous works are being devel-
+oped for EWFN in managing the demand and/or supply-side resources,
+however, the supply-side coupling with the modeling and integration
+
+Journal of Cleaner Production 462 (2024) 142648
+5
+M.B. Rasheed and M.D. R-Moreno
+Table 2
+A comparison of the literature within the nexus framework.
+Ref.
+Nexus
+Technique
+Objective
+Limitation/Research
+Gap
+Supply-side
+coupling
+Demand-side
+coupling
+Al-Ansari et al.
+(2017)
+EWFN
+Life cycle assessment
+(LCA)methodology
+∙Integration of greenhouse
+gas control
+∙waste to power technologies
+∙Evaluate the environmental
+impact of...
+∙a hypothetical food product
+system
+∙Biomass integrated
+gasification
+∙combined cycle
+∙Carbon capture sub-system
+∙Global warming is reduce
+80%
+EWFN coupling for
+food processing and
+delivery system is
+only evaluated
+✗
+✓
+Zaiter et al.
+(2023)
+EWFN
+∙A holistic approach
+∙NLP
+Power generation cost
+minimization
+Water network
+modeling, storage
+integration, ramping
+limits, continuity
+relationship are not
+considered
+✓
+✗
+Zarei (2020)
+EWFN
+Tinn-Shuan approach is used
+Water security challenges
+This work
+theoretically
+addressed the
+security challenges
+✗
+✗
+Uen et al. (2018)
+EWFN
+∙A holistic three-fold scheme
+∙Multi-objective optimization
+∙Non-dominated sorting II
+∙Max. hydropower output
+∙Max. reservoir storage
+∙Simulate long-term water
+shortage rate
+Power generation,
+optimization and
+utilization needs
+more attention
+✓
+✗
+Norouzi (2022)
+EWFN
+Dynamic system model
+Analysis of factor affecting
+EWFN
+Theoretical
+framework
+✗
+✗
+Santhosh et al.
+(2013)
+EWN
+∙A holistic approach
+∙NLP
+Generation cost minimization
+Ramping limits,
+storage facility,
+water networks
+modeling are not
+considered
+✓
+✗
+Santhosh
+Apoorva and
+Youcef-Toumi
+(2014)
+EWN
+∙A holistic approach
+∙NLP
+Power generation cost
+minimization
+Line limits and
+water networks
+modeling are not
+considered
+✓
+✗
+Proposed
+EWFN
+∙A holistic approach
+∙NLP
+∙Joint-optimization
+∙Power generation cost
+minimization
+∙Supply–demand balance
+∙Global optimality
+∙Optimal resource utilization
+Food network
+modeling, demand
+variations, real-time
+demand profiles,
+dynamic factors,
+wastewater
+treatment, and
+carbon capture
+modeling are still
+missing
+✓
+✗
+of water with storage networks are yet to be explored further. In this
+context, the proposed work has significant importance and impact on
+supply-side resource management.
+3. System model
+This section discusses the proposed system model (Fig. 2) to de-
+velop optimization-based control strategies to manage the supply side
+resources with the objective of cost and CO2 reductions. Fig. 1 describes
+the topology of the food–energy–water nexus that includes four power
+generation plants, three cogeneration plants, one water production
+plant, and two water storage facilities, respectively. The proposed
+system model is adopted from our previous work (Rasheed and R-
+Moreno, 2021) and modified to include the water storage facilities, line
+& ramping limits, water system models, coupling strategies, and power
+& water flow constraints. In the considered IEEE 30 bus system, four
+power plants are located at nodes 2, 3, 8, 13, and three cogeneration
+plants are placed at nodes 2, 6, 10. The water supply reservoir from the
+Hanoi water distribution network (Fig. 3) is placed at node 1, where
+it also provides the water to the power system node 11. The water
+storage units are located at nodes 14, & 21, respectively. The food
+processing units are located at nodes 5 and 29. In this way, the power,
+water, and cogeneration plants are integrated as cyber–physical and
+nexus systems (Coulbeck, 1980; Salomons, 2010) to meet the demand
+in various sectors. Consequently, the water network delivers water
+to the power, cogeneration, and food networks. Similarly, the power
+network supplies power to the water, cogeneration and water networks.
+Furthermore, the cogeneration plants provide both the power and
+water, simultaneously and are generally cheaper than single product
+power and water plants. Before delving into details, it is pertinent to
+outline the interrelation of these components within our system model.
+The foundation is built on optimizing the flows of power and water,
+addressing the efficiency and sustainability of these critical resources.
+Direct Current Optimal Power Flow (DCOPF) and Optimal Water Flow
+(OWF) models form the core, setting the stage for the detailed explo-
+ration of infrastructure and operational components crucial for Nexus’s
+functionality. This includes models for water junctions, pipes, and
+especially water storage facilities, which play a pivotal role in ensuring
+
+Journal of Cleaner Production 462 (2024) 142648
+6
+M.B. Rasheed and M.D. R-Moreno
+Fig. 2. The modified IEEE standard 30 bus system topology including the power and
+cogeneration plants. The modified 30-bus system includes the cogeneration facilities at
+nodes 2, 6, 10.
+the resilience and adaptability of the water supply system. Additionally,
+the energy consumption and associated costs of water distribution
+are scrutinized, highlighting the economic dimensions of the Nexus.
+Economic and environmental considerations are woven throughout the
+model, with locational marginal pricing bringing into focus the balance
+between cost-efficiency and environmental impact.
+3.1. Direct current optimal power flow (DCOPF)
+Optimal Power Flow (OPF) methods have advanced to overcome
+inherent limitations associated with line loading and power flows in
+traditional Economic Dispatch (ED) models. Therefore, it is essential
+to integrate transmission and distribution constraints into optimization
+models. Incorporating limits on power transmission networks not only
+enhances power system stability but also contributes to the reduction of
+generation and transmission losses (Leeton et al., 2010). The simplified
+and deterministic nature of DCOPF models is particularly valued for
+their analytical and computational benefits (Stott et al., 2009).
+This study employs a widely used DCOPF problem formulation
+based on the system topology, aiming to minimize the total cost of
+power generation while meeting operational constraints. The formula-
+tion incorporates the following components:
+• Objective Function: minimizes the total cost of power generation
+across all periods and plants.
+𝑚𝑖𝑛𝐶𝑝𝑖(𝑥𝑝𝑖) =
+𝑇∑
+𝑡=1
+𝑛𝑝𝑝
+∑
+𝑖=1
+{𝐶𝑝𝑖,𝑡(𝑥𝑝𝑖,𝑡)}
+(1)
+Here, 𝐶𝑝𝑖,𝑡(𝑥𝑝𝑖,𝑡) represents the cost function for power generation
+at plant 𝑖at time 𝑡, with 𝑥𝑝𝑖,𝑡indicating the generation amount.
+• Power Balance Constraint: ensures the balance between power
+generation and demand at each time interval, adherence to gen-
+eration capacity limits, and power flow limits.
+𝑃𝑔𝑖,𝑡−𝑃𝐷𝑖,𝑡=
+𝑚𝑝
+∑
+𝑦=1
+{𝐵𝑦𝑧(𝛿𝑦−𝛿𝑧)} , ∀𝑡∈𝑇,
+(2)
+Fig. 3. The modified layout of the water distribution network obtained from Hanoi,
+UK (Ghobadian and Mohammadi, 2023). In the modified layout, two water storage
+facilities are integrated at nodes 14 & 21.
+where 𝑃𝑔𝑖,𝑡and 𝑃𝐷𝑖,𝑡denote the generation and demand, respec-
+tively, and 𝐵𝑦𝑧is the bus incidence matrix.
+• Generation Capacity Constraints: maintains generation within
+min and max limits.
+𝑃𝑔𝑖,𝑡≤𝑃𝑔𝑖,𝑡≤𝑃𝑔𝑖,𝑡, ∀𝑡∈𝑇,
+(3)
+• Power Flow Limits: constraints on power flow through transmis-
+sion lines to prevent overloading.
+𝑝𝑦𝑧,𝑡≤𝑝𝑦𝑧,𝑡(𝐵𝑦𝑧(𝛿𝑦−𝛿𝑧)) ≤𝑝𝑦𝑧,𝑡, ∀𝑡∈𝑇,
+(4)
+• Reference Bus and Voltage Magnitude: standardizes phase angle
+measurements and voltage levels across the network. It con-
+strained that the power angle at the reference bus is zero and the
+voltages at power network nodes are fixed at 1 per unit in the
+DCOPF setting.
+𝑎𝑛𝑔𝑙𝑒(𝛿= 0), & |𝑉𝑖| = 1(𝑝.𝑢),
+(5)
+In the DCOPF model, the indices represent different entities within
+the energy system, denoted by 𝑖, 𝑗, and 𝑘indexes, corresponding to
+power plants, water facilities, and cogeneration facilities, respectively.
+The cost functions associated with operating power plants (𝐶𝑝𝑖(𝑥𝑝𝑖)),
+water facilities (𝐶𝑤𝑗(𝑥𝑤𝑗)), and cogeneration facilities (𝐶𝑐𝑘(𝑥𝑐𝑘𝑝,𝑐𝑘𝑤)) are
+integral to the objective function.
+Given this context, the objective function of Eq (1) has been ex-
+tended to also consider the costs associated with water production and
+cogeneration processes:
+𝑚𝑖𝑛𝐶𝑡𝑜𝑡𝑎𝑙(𝑥𝑝𝑖, 𝑥𝑤𝑗, 𝑥𝑐𝑘𝑝,𝑐𝑘𝑤)
+=
+𝑇∑
+𝑡=1
+( 𝑛𝑝𝑝
+∑
+𝑖=1
+𝐶𝑝𝑖,𝑡(𝑥𝑝𝑖,𝑡) +
+𝑛𝑤𝑝
+∑
+𝑗=1
+𝐶𝑤𝑗,𝑡(𝑥𝑤𝑗,𝑡) +
+𝑛𝑐𝑝
+∑
+𝑘=1
+𝐶𝑐𝑘,𝑡(𝑥𝑐𝑘𝑝,𝑡, 𝑥𝑐𝑘𝑤,𝑡)
+)
+(6)
+This expanded objective function aims to minimize the total cost
+of operation, considering not only the generation of power but also
+the production of water and the operation of cogeneration facilities
+that simultaneously produce power and water. The indices 𝑛𝑝𝑝, 𝑛𝑤𝑝,
+and 𝑛𝑐𝑝denote the number of power plants, water facilities, and co-
+generation plants, respectively. This comprehensive approach ensures
+that the optimization considers the intertwined nature of energy and
+water resources, reflecting the complex dynamics of modern integrated
+energy systems.
+3.2. Optimal water flow
+This study’s water distribution system includes a network of pipes,
+pumps, supply reservoirs, junctions, pressure valves, and storage tanks.
+To streamline the model, pumps and valves are categorized as specific
+
+Journal of Cleaner Production 462 (2024) 142648
+7
+M.B. Rasheed and M.D. R-Moreno
+types of pipes, each with a single point for water flow control. This
+system is represented as a directed graph = (, ), where denotes
+the nodes – including tanks, reservoirs, and junctions – and represents
+the directed pipes connecting these nodes, indicated as (𝑎𝑏, 𝑏𝑎).
+3.3. Model of water junctions
+The water network comprises junctions (𝑗), with 𝑗belonging to
+the set 𝐽where (|𝑗| = 𝐽). Dynamic water demand at these junctions,
+𝐷𝑤𝑡(measured in m3∕s), varies over the time interval 𝑡and is applied
+accordingly for each 𝑗∈𝐽. It also assumed the 𝐷𝑡
+𝑤𝑡is known for 𝑗∈𝐽
+over 𝑡∈𝑇. The notation 𝑎𝑏refers to a pipe facilitating the flow 𝑄𝑎𝑏
+from node 𝑎to 𝑏, with each pipe ensuring unidirectional water flow
+within the network. The model prioritizes maintaining flow continuity
+and balancing supply with demand, alongside managing pressure losses
+throughout the network. This equilibrium at any junction 𝑗∈𝐽is
+expressed as:
+𝐷𝑡
+𝑤𝑎=
+𝑛𝑤
+∑
+𝑎=1
+(
+∑
+𝑎∈𝑓𝑖𝑛(𝑏)
+𝑄𝑡
+𝑎𝑏+
+∑
+𝑐∈𝑓𝑜𝑢𝑡(𝑏)
+𝑄𝑡
+𝑏,𝑐
+)
+, ∀𝑗= 1, … , 𝑚𝑤,
+(7)
+where nodes 𝑎∈𝑓𝑖𝑛(𝑏) supply water to, and 𝑐∈𝑓𝑜𝑢𝑡(𝑏) transport water
+from, junction 𝑏. The overall water flow balance, crucial for network
+stability, is determined by:
+𝐹𝑎𝑏=
+𝑛𝑤
+∑
+𝑎=1
+{𝑄𝑎𝑏+ 𝐷𝑤𝑎}, ∀𝑗∈𝑚𝑤,
+(8)
+indicating 𝐹𝑎𝑏as the net flow, with 𝑚𝑤as the total number of wa-
+ter pipes. Pressure loss across pipes, an essential factor for system
+operation, follows the relationship:
+𝐻𝑎−𝐻𝑏= 𝑅𝑎𝑏𝑄𝑎|𝑄𝑏|𝑛−1,
+(9)
+with the operator maintaining pressure at each junction to satisfy
+minimum head requirements. Let 𝐻𝑡
+𝑏denotes the current pressure head
+to satisfy the required minimum head level 𝐻𝑡
+𝑏at time 𝑡:
+𝐻𝑡
+𝑏≥𝐻𝑡
+𝑏,
+(10)
+Further, water flow calculation is simplified as:
+𝑄𝑎𝑏=
+𝐻𝑎−𝐻𝑏
+𝑅0.54
+𝑎𝑏|𝐻𝑎−𝐻𝑏|0.46 .
+(11)
+The minimum pressure head to ensure adequate water flow is:
+𝐻𝑗,𝑡≥𝐻𝑗, ∀𝑗∈𝑚𝑤, & 𝑡∈𝑇,
+(12)
+with the chosen value of 𝑛critically influencing pressure head loss cal-
+culations. The Hazen–Williams and Darcy–Weisbach formulas, with 𝑛=
+1.852, are commonly used for this purpose (Haktanır and Ardıçlıoğlu,
+2004).
+3.4. Model of water pipes
+The calculation of head loss in water pipes (𝑎𝑏) at each time interval
+𝑡employs the Darcy–Weisbach equation:
+𝐿𝑡
+𝑎𝑏= 𝑓𝑎𝑏× (𝑄𝑡
+𝑎𝑏)2
+(13)
+Here, 𝑓𝑎𝑏represents a non-negative friction factor, defined as 𝑓𝑎𝑏=
+𝑓𝑎𝑏𝓁𝑎𝑏
+2𝑑𝑎𝑏𝑆2
+𝑎𝑏𝑔≥0, where 𝓁𝑎𝑏and 𝑑𝑎𝑏are the length and diameter of the pipe
+(in meters), respectively, 𝑔stands for the acceleration due to gravity (in
+m∕s2), and 𝑆𝑎𝑏indicates the pipe’s cross-sectional area. This equation
+quantifies the energy loss due to friction as water flows through a pipe.
+Pressure at each node must adhere to specific limits, ensuring safe
+operational conditions:
+0 ≤𝐻𝑗≤𝐻𝑗
+(14)
+where 𝐻𝑗and 𝐻𝑗denote the minimum and maximum pressure head
+at node 𝑗during time 𝑡. These constraints apply universally across
+junctions 𝐽, with 𝐇= 𝐻𝑗|𝑗∈𝐽representing the array of minimum
+head pressures, and 𝐃= 𝐷𝑤𝑡|𝑗∈𝐽encompassing the water demands.
+Water storage dynamics are modeled through the balance of tank
+volumes over time:
+𝑣𝑡
+𝑎= 𝑣𝑡−1
+𝑎
++ 𝐹𝑡
+𝑎𝑏
+(15)
+0 ≤𝑣𝑡
+𝑎≤𝑣𝑡
+𝑎
+(16)
+Eq. (16) establishes the permissible volume range within a tank, with
+𝑣𝑡
+𝑎specifying the maximum capacity at time 𝑡. This framework ensures
+the continuity and adequacy of water supply while accounting for the
+physical laws governing fluid motion and system constraints.
+3.5. Energy consumption & Cost of pump
+Pumps are categorized within the pipeline network, identified by
+the set where each pipe, denoted by (𝑎𝑏∈), can function as a pump.
+These pumps facilitate head gain at node (𝑎𝑏) over time 𝑡, represented as
+𝑡
+𝑎𝑏. Considering variable-speed pumps enhances the model’s flexibility,
+allowing for precise control over water supply. The head gain due to
+pump operation is calculated by:
+𝑡
+𝑎𝑏= 𝐴𝑎𝑏(𝑄𝑡
+𝑎𝑏)2 + 𝐵𝑎𝑏𝑄𝑡
+𝑎𝑏𝜔𝑡
+𝑎𝑏+ 𝐶𝑎𝑏(𝜔𝑡
+𝑎𝑏)2
+(17)
+Here, 𝜔𝑡
+𝑎𝑏, 𝜔𝑡
+𝑎𝑏, and 𝜔𝑡
+𝑎𝑏represent the actual, minimum, and maximum
+speeds of the pump, with 𝐴𝑎𝑏, 𝐵𝑎𝑏, and 𝐶𝑎𝑏being the pump-specific
+parameters evaluated at nominal conditions.
+𝜔𝑡
+𝑎𝑏≤𝜔𝑡
+𝑎𝑏≤𝜔𝑡
+𝑎𝑏, ∀𝑡∈𝑇
+(18)
+Eq. (18) shows the upper and lower limits of the pump, while the
+net power to drive a hydraulic pump requires (i) mass flow rate, (ii)
+liquid density, and (iii) differential height. Let 𝐸𝑡
+𝑡,𝑢denotes the energy
+consumption of a hydraulic pump over time 𝑡, which is calculated as
+(Eq. (19)):
+𝐸𝑡
+𝑎𝑏=
+1
+𝜂𝑎𝑏
+(
+𝜌× 𝑔× ℎ× 𝑡
+𝑎𝑏×
+𝑛𝑤
+∑
+𝑎=1
+𝑄𝑡
+𝑎𝑏+ 𝐷𝑤𝑎
+)
+(19)
+where 𝜌is the fluid density (kg∕m3), 𝑔is the acceleration due to gravity
+(m∕s2), ℎis the vertical lift or height (m), and 𝜂𝑎𝑏denotes the pump’s
+energy efficiency, assumed constant over time 𝑡. The total energy cost
+for pumping, 𝑡
+𝑝, integrating real-time energy pricing 𝛽𝑡, is given by:
+𝑡
+𝑝= 𝛽𝑡
+[
+1
+𝜂𝑎𝑏
+(
+𝜌× 𝑔× ℎ× 𝑡
+𝑎𝑏×
+𝑛𝑤
+∑
+𝑎=1
+𝑄𝑡
+𝑎𝑏+ 𝐷𝑤𝑎
+)]
+(20)
+This equation calculates the pumping system’s operational cost, factor-
+ing in the dynamic pricing from electricity markets, thereby enabling
+an efficient allocation of resources based on real-time cost assessments.
+3.6. Water storage model
+This work integrates the water storage facility 𝑠as a node within
+the network. The volume of water within 𝑠at time 𝑡, denoted by
+𝑡
+𝑠, plays a crucial role in maintaining the system’s water balance. The
+dynamics of water storage, including inflow and outflow, contribute to
+the balance and are subject to constraints ensuring the volume remains
+within operational bounds. Eq. (21) describes the water volume’s tem-
+poral progression, factoring in the net flow – the difference between
+inflow and outflow – over period 𝑡. The subsequent Eq. (22) ensures
+the volume at any given time adheres to predefined limits, to safeguard
+against overflow or depletion.
+𝑡
+𝑠= 𝑡−1
+𝑠+
+(
+∑
+𝑎∈𝑓𝑖𝑛(𝑏)
+𝑄𝑡
+𝑎𝑏−
+∑
+𝑐∈𝑓𝑜𝑢𝑡(𝑏)
+𝑄𝑡
+𝑏,𝑐
+)
+(21)
+
+Journal of Cleaner Production 462 (2024) 142648
+8
+M.B. Rasheed and M.D. R-Moreno
+𝑡
+𝑠≤𝑡
+𝑠≤𝑡
+𝑠
+(22)
+Additionally, the model accounts for the pressure head at 𝑠, which
+fluctuates in response to changing storage volumes and demand. This
+relationship is encapsulated by:
+𝐻𝑡
+𝑠−𝐻𝑡−1
+𝑠=
+(
+∑
+𝑎∈𝑓𝑖𝑛(𝑏)
+𝑄𝑡
+𝑎𝑏−
+∑
+𝑐∈𝑓𝑜𝑢𝑡(𝑏)
+𝑄𝑡
+𝑏,𝑐
+)
+(23)
+Here, Eq. (23) illustrates how the pressure head adjusts with net
+water flow, highlighting the storage facility’s adaptive capacity to meet
+demand or accommodate surplus supply.
+4. Problem formulation
+This section synthesizes the problem formulation that integrates the
+diverse components, explained in the previous section, into a unified
+framework for optimization, marked by specific operational constraints
+that ensure system balance and resource optimization. It is developed
+considering three network types as discussed in Section 2. The objective
+function is designed to manage network flows within the nexus domain,
+incorporating water storage facilities, line limits, constraints, and LMP.
+The primary goal of the primal problem formulation is to minimize the
+operational costs associated with power and water plants.
+𝑚𝑖𝑛
+𝑇∑
+𝑡=1
+𝐶𝐺,𝑡(𝑥𝑝𝑖, 𝑥𝑤𝑗, 𝑥𝑐𝑘)
+=
+𝑇∑
+𝑡=1
+{ 𝑛𝑝𝑝
+∑
+𝑖=1
+𝐶𝑝𝑖,𝑡(𝑥𝑝𝑖) +
+𝑛𝑤𝑝
+∑
+𝑗=1
+𝐶𝑤𝑗,𝑡(𝑥𝑤𝑗) +
+𝑛𝑐𝑘
+∑
+𝑘=1
+𝐶𝑐𝑘,𝑡(𝑥𝑐𝑘𝑝,𝑐𝑘𝑤) +
+𝑛𝑠
+∑
+𝑠=1
+𝐶𝑠
+}
+(24)
+where, 𝐶𝑝𝑖(𝑥𝑝𝑖) denotes the cost functions of the 𝑖th power generation
+plant, 𝐶𝑤𝑗(𝑥𝑤𝑗) is the cost coefficients of 𝑗th water production plant,
+and , 𝐶𝑐𝑘(𝑥𝑐𝑘𝑝,𝑐𝑘𝑤) is the cost functions of 𝑘th cogeneration plant, re-
+spectively. In this work, the quadratic cost functions are used in their
+respective decision variables as given (Eq. (25)):
+𝐶𝑝𝑖,𝑡(𝑥𝑝𝑖) = 𝑎2𝑖𝑥2
+𝑝𝑖+ 𝑎1𝑖𝑥𝑝𝑖+ 𝑎0𝑖𝑤𝑝𝑖,𝑡
+𝐶𝑤𝑗,𝑡(𝑥𝑤𝑗) =
+(
+𝑎2𝑘𝑥2
+𝑤𝑗+ 𝑎1𝑗𝑥𝑤𝑗+ 𝑎0𝑗𝑤𝑐𝑤𝑗,𝑡
+)
+−𝑐𝑠,𝑡
+𝐶𝑐𝑘,𝑡(𝑥𝑐𝑘𝑝,𝑐𝑘𝑤) = 𝑎11𝑘𝑥2
+𝑐𝑘𝑝+ 𝑎22𝑘𝑥2
+𝑐𝑘𝑤+
+(
+𝑎12𝑘𝑥𝑐𝑘𝑝𝑥𝑐𝑘𝑤−𝑐𝑠,𝑡
+)
++ 𝑎1𝑘𝑥𝑐𝑘𝑝+
+(
+𝑎2𝑘𝑥𝑐𝑘𝑤−𝑐𝑠,𝑡
+)
++ 𝑎0𝑘𝑤𝑐𝑘𝑝,𝑡
+(25)
+In Eq. (25), the variable 𝑤denotes the state of power 𝑥𝑝𝑖, water 𝑥𝑤𝑗and
+cogeneration 𝑥𝑐𝑘𝑝,𝑐𝑘𝑤facilities. In the cogeneration power and water
+networks, the additional water storage constraint 𝑐𝑠,𝑡is included.
+The objective function (Eq. (24)) has associated constraints in power,
+water, and cogeneration networks, respectively. Where the power flow
+balance Eq. (26) is modified to specifically include the cogeneration
+and storage facilities:
+𝑃𝐷𝑖−
+{ 𝑛𝑐𝑝
+∑
+𝑘=1
+𝐼𝑐𝑘𝑦𝑥𝑐𝑘𝑝−
+𝑛𝑝𝑝
+∑
+𝑖=1
+𝐼𝑝𝑖𝑦𝑥𝑝𝑖+
+𝑚𝑝
+∑
+𝑦=1
+𝐵𝑦𝑧(𝛿𝑦−𝛿𝑧)
+}
+0 =
+∀𝑦= 1, … , 𝑚𝑝.
+(26)
+where, 𝐼𝑐𝑘𝑦and 𝐼𝑝𝑖𝑦denote incidence matrices for water and power
+networks and 𝑚𝑝denotes the number of lines in power distribution
+network.
+0 = 𝐷𝑤𝑎−
+( 𝑛𝑐𝑝
+∑
+𝑘=1
+𝐼𝑐𝑘𝑡𝑥𝑐𝑤𝑘−
+𝑛𝑤𝑝
+∑
+𝑗=1
+𝐼𝑤𝑗𝑡𝑥𝑤𝑗+
+𝑚𝑤
+∑
+𝑎=1
+𝐹𝑎𝑏+
+𝑛𝑠𝑝
+∑
+𝑠=1
+𝑠
+)
+∀𝑦= 1, … , 𝑚𝑤.
+(27)
+Similarly, the cogeneration plants add the water balance equation
+(Eq. (27)), which denotes the water supply and demand balance expres-
+sion including the coproduction and water storage system. In contrast,
+𝑚𝑤denotes the number of lines in the water distribution network.
+𝐷𝑤𝑎=
+{
+𝐷𝑝𝑖
+𝑤𝑎,𝑡+ 𝐷𝑤𝑗
+𝑤𝑎,𝑡+ 𝐷𝑐𝑘𝑝
+𝑤𝑎,𝑡+ 𝐷𝑐𝑘𝑤
+𝑤𝑎,𝑡+ 𝐷𝑠
+𝑤𝑎,𝑡
+}
+,
+∀𝑡∈𝑇, 𝑖∈𝑚𝑝, 𝑗∈𝑚𝑤, 𝑘∈𝑚𝑐𝑝.
+(28)
+where, Eq. (28) denotes the total water demand at power, water,
+cogeneration and storage plants, respectively.
+𝑤𝑝𝑖,𝑡= (𝑢𝑝𝑖,𝑡−𝑣𝑝𝑖,𝑡+ 𝑤𝑝𝑖,𝑡−1
+) + (𝑢𝑝𝑠,𝑡−𝑣𝑝𝑠,𝑡+ 𝑤𝑝𝑠,𝑡−1
+) , ∀𝑖∈𝑛𝑝𝑝, 𝑡∈𝑇.
+(29)
+Here, 𝑢denotes the state-up, 𝑣denotes the shut-down, and 𝑤denotes
+the ON/OFF states of all generation facilities, respectively. In Eq. (29),
+the expression (𝑢𝑝𝑖,𝑡−𝑣𝑝𝑖,𝑡+ 𝑤𝑝𝑖,𝑡−1
+) denotes the switching states of
+the power generation plant, while the expression (𝑢𝑝𝑠,𝑡−𝑣𝑝𝑠,𝑡+ 𝑤𝑝𝑠,𝑡−1
+)
+denotes the switching states of water storage facilities. However, this
+work does not include the power storage faculties.
+𝑤𝑤𝑗,𝑡= (𝑢𝑤𝑗,𝑡−𝑣𝑤𝑗,𝑡+ 𝑤𝑤𝑗,𝑡−1
+) +
+(
+𝑢𝑠,𝑤𝑗,𝑡−𝑣𝑠,𝑤𝑗,𝑡+ 𝑤𝑠,𝑤𝑗,𝑡−1
+)
+,
+∀𝑗∈𝑛𝑤𝑝, 𝑠∈𝑛𝑠𝑝, 𝑡∈𝑇.
+(30)
+In Eq. (30), the expression (𝑢𝑤𝑗,𝑡−𝑣𝑤𝑗,𝑡+ 𝑤𝑤𝑗,𝑡−1
+) denotes the switching
+states of water generation plant, while the expression
+(
+𝑢𝑠,𝑤𝑗,𝑡−𝑣𝑠,𝑤𝑗,𝑡
++𝑤𝑠,𝑤𝑗,𝑡−1
+)
+denotes the switching states of water storage facility.
+𝑤𝑐𝑘,𝑡= (𝑢𝑐𝑘𝑝,𝑡−𝑣𝑐𝑘𝑝,𝑡+ 𝑤𝑐𝑘𝑝,𝑡−1
+) +
+(
+𝑢𝑠,𝑐𝑘𝑝,𝑡−𝑣𝑠,𝑐𝑘𝑝,𝑡+ 𝑤𝑠,𝑐𝑘𝑝,𝑡−1
+)
++, …
+(𝑢𝑐𝑘𝑤,𝑡−𝑣𝑐𝑘𝑤,𝑡+ 𝑤𝑐𝑘𝑤,𝑡−1
+) +
+(
+𝑢𝑠,𝑐𝑘𝑤,𝑡−𝑣𝑠,𝑐𝑘𝑤,𝑡+ 𝑤𝑠,𝑐𝑘𝑤,𝑡−1
+)
+,
+∀𝑘∈𝑛𝑐𝑘, 𝑠∈𝑛𝑠𝑝, 𝑡∈𝑇.
+(31)
+Finally, the Eq. (31) denotes the switching states of generation and stor-
+age facilities in cogeneration power and water networks, respectively.
+𝑢𝑝𝑖,𝑡+ 𝑣𝑝𝑖,𝑡= 1, ∀𝑖∈𝑛𝑝𝑝, 𝑡∈𝑇.
+(32)
+𝑢𝑤𝑗,𝑡+ 𝑣𝑤𝑗,𝑡= 1, ∀𝑗∈𝑛𝑤𝑝, 𝑡∈𝑇.
+(33)
+𝑢𝑐𝑘𝑝,𝑗,𝑡+ 𝑣𝑐𝑘𝑝,𝑗,𝑡= 1, ∀𝑗∈𝑛𝑐𝑘𝑝, 𝑡∈𝑇.
+(34)
+𝑢𝑐𝑘𝑤,𝑗,𝑡+ 𝑣𝑐𝑘𝑤,𝑗,𝑡= 1, ∀𝑗∈𝑚𝑐𝑘𝑤, 𝑡∈𝑇.
+(35)
+𝑢𝑠,𝑡+ 𝑣𝑠,𝑡= 1, ∀𝑠∈𝑛𝑠𝑝, ∀𝑡∈𝑇.
+(36)
+Where, Eqs. (32), (33), (34), (35) and (36) ensure that dispatchable
+generation facilities, combined power plants (32), water plants (33),
+cogeneration plants ((34), (35)) and storage resources (36) that are
+simultaneously dispatched are not allowed to start-up 𝑢𝑝𝑖= 1 and/or
+shut-down 𝑣𝑝𝑖= 1, at the same time to ensure supply–demand balance.
+4.1. Power & Water generation limits
+The optimization objective aims to reduce total operational costs
+while adhering to generation capacity limits for power, water, co-
+generation, and storage systems. These constraints ensure the system
+operates within its capacity, enhancing stability and efficiency across
+the network. The generation and storage limits are formally defined as:
+𝐺𝑒𝑛𝑃𝑃≤𝑋𝑝≤𝐺𝑒𝑛𝑃𝑃,
+𝐺𝑒𝑛𝑊𝑃≤𝑋𝑤≤𝐺𝑒𝑛𝑊𝑃,
+𝐺𝑒𝑛𝐶𝑃𝑃≤𝑋𝑐𝑝𝑝≤𝐺𝑒𝑛𝐶𝑃𝑃,
+𝐺𝑒𝑛𝐶𝑃𝑊≤𝑋𝑐𝑝𝑤≤𝐺𝑒𝑛𝐶𝑃𝑊,
+𝐺𝑒𝑛𝑠≤𝑋𝑠≤𝐺𝑒𝑛𝑠.
+(37)
+Eq. (37) establishes the permissible operational bounds for power
+generation (𝑋𝑝), water production (𝑋𝑤), cogeneration of power (𝑋𝑐𝑝𝑝),
+
+Journal of Cleaner Production 462 (2024) 142648
+9
+M.B. Rasheed and M.D. R-Moreno
+cogeneration of water (𝑋𝑐𝑝𝑤), and water storage capacity (𝑋𝑠). These
+constraints are critical for maintaining a balanced and stable pro-
+duction environment, minimizing the risk of operational failures and
+ensuring a reliable supply of power and water.
+4.2. Flow limits
+Flow limits for power and water within the network are essential
+for operational stability and efficiency, as outlined below:
+𝑃𝐹𝑙𝑜𝑤𝑖𝑗≤𝐵𝑖𝑗(𝛿𝑖−𝛿𝑗) ≤𝑃𝐹𝑙𝑜𝑤𝑖𝑗
+𝑊𝐹𝑙𝑜𝑤𝑡𝑢≤𝑄𝑡𝑢≤𝑊𝐹𝑙𝑜𝑤𝑡𝑢.
+(38)
+These constraints, crucial for minimizing transmission losses as dis-
+cussed in Section 4.1, regulate the flow between nodes to ensure it
+remains within safe and efficient operational bounds; thereby sup-
+porting the system’s overall production capacity and adherence to
+environmental standards.
+4.3. Storage limit & Continuity relation
+Beyond flow limits, water storage facilities are subject to capacity
+constraints to ensure supply continuity and demand fulfillment:
+𝑆𝑡𝑜𝑟𝑒𝑠≤𝑠(𝑡) ≤𝑆𝑡𝑜𝑟𝑒𝑠
+∀𝑡, ∀𝑣= 1...𝑛𝑣.
+(39)
+Moreover, the continuity of water storage operations is maintained as
+follows:
+𝑠(𝑡) = 𝑠(𝑡−1) −𝑋𝑠(𝑡)
+∀𝑡, ∀𝑣= 1...𝑛𝑣.
+(40)
+4.4. Initial conditions
+The initial condition of water storage facility is taken as a constraint
+in Eq. (41).
+𝑠(𝑡) = 0 ∀𝑡, ∀𝑣= 1...𝑛𝑣.
+(41)
+These limits (Eqs. (39), (40), (41)) are flexible and may be adjusted
+over time according to water generation and demand variations. These
+are also helpful for short, medium, or long-term water management
+goals.
+4.5. Coproduction process limits
+Coproduction process limits in terms of combined power and water
+generation facilities are given as:
+𝑟𝑘≤
+𝑥𝑐𝑘𝑝
+𝑥𝑐𝑘𝑤
+≤𝑟𝑘
+(42)
+Eq. (42) is not used to control the power and water flows to the cogen-
+eration plants. Instead, this expression is used for the safe operation
+of cogeneration facilities and allows the plants to automatically adjust
+their limits based on the requirements.
+4.6. Ramping limits
+Ramping limits of the three types of generation facilities are given
+as;
+[
+𝑅𝑅𝑃𝑖
+]
+≤𝑥𝑝𝑖(𝑡) −𝑥𝑝𝑖(𝑡−1) ≤
+[
+𝑅𝑅𝑃𝑖
+]
+, ∀𝑖= 1...𝑛𝑝𝑝
+(43)
+[
+𝑅𝑅𝑊𝑗
+]
+≤𝑥𝑤𝑗(𝑡) −𝑥𝑤𝑗(𝑡−1) ≤
+[
+𝑅𝑅𝑊𝑗
+]
+, ∀𝑗= 1...𝑛𝑤𝑝
+(44)
+[
+𝑅𝑅𝐶𝑃𝑘
+𝑅𝑅𝐶𝑃𝑘
+]
+≤𝑥𝑐𝑘𝑝(𝑡) −𝑥𝑐𝑘𝑝(𝑡−1) ≤
+[
+𝑅𝑅𝐶𝑃𝑘
+𝑅𝑅𝐶𝑃𝑘
+]
+, ∀𝑖= 1...𝑛𝑐𝑘𝑝
+(45)
+[
+𝑅𝑅𝐶𝑊𝑘
+𝑅𝑅𝐶𝑊𝑘
+]
+≤𝑥𝑐𝑘𝑤(𝑡) −𝑥𝑐𝑘𝑤(𝑡−1) ≤
+[
+𝑅𝑅𝐶𝑊𝑘
+𝑅𝑅𝐶𝑊𝑘
+]
+, ∀𝑖= 1...𝑛𝑐𝑘𝑤
+(46)
+[
+𝑅𝑅𝑠
+]
+≤𝑥𝑠(𝑡) −𝑥𝑠(𝑡−1) ≤
+[
+𝑅𝑅𝑠
+]
+, ∀𝑖= 1...𝑛𝑠
+(47)
+Eqs. ((43), (44), (45), and (47)) denote ramping limits to give prefer-
+ences to the generation plants to meet the power and water demand
+requirements.
+5. Simulation setup
+The system model (outlined in Section 3) is applied to test cases
+involving power, water and food processing units based on the datasets
+(Tables 3, 4, 5, 6, 7). These datasets were selected for their variability
+in power and water demand, accurately reflecting real-world usage pat-
+terns, and for demonstrating the demand ratio of power to water over
+time 𝑡. Fig. 4 presents the demand profiles for power and water over 𝑡.
+To manage peak demands, the model includes two water storage facil-
+ities at nodes 2&6. For implementation, the integration of the General
+Algebraic Modeling System (GAMS) and MATLAB tools is employed.
+GAMS facilitates optimization using the CONOPT solver, renowned for
+its capability to manage large-scale optimization problems, whereas
+MATLAB is utilized for efficient data management and visualization
+purposes. The results section is further divided into two sections. The
+Section 5.1 discusses about the power and water generation profiles
+along with the cogeneration relationships. The Section 5.2 provides
+the details about the cost, storage, LMP and nodal cost of the power
+generation network, respectively.
+5.1. Results
+In Fig. 5, the power generation profiles over 24 h are shown,
+while Fig. 6 gives the water generation profiles under various ramping
+limit configurations over time 𝑡. These visualizations highlight that the
+ratio of power and water generation is not only impacted by demand
+ratios and specified upper and lower bounds but also by ramping limit
+settings towards minimizing total costs and meeting optimality criteria.
+Improper ramping configurations may result in higher costs due to
+non-optimal utilization of generation and production capacities. This
+is particularly notable as the demand profiles and variations analyzed
+in this study tend to yield more sophisticated optimization outcomes
+compared to commonly used demand profiles. Within the proposed
+model, coproduction facilities are always used as primary sources for
+meeting power and water demand, while individual power and water
+plants are typically included to address peak demand scenarios.
+In Fig. 6, the water capacity utilized by both water and cogeneration
+networks is shown, highlighting the adaptation of generation profiles
+based on specified upper and lower bounds and ramping limits. For
+instance, as shown in Fig. 6(b), setting the water production limit to
+zero leads to an increased reliance on cogeneration facilities for water
+generation. Fig. 6(a, b) demonstrates an increased output from the
+water production facility, with cogeneration facilities serving as the pri-
+mary option during operations. In cases where these conditions are not
+met, the optimization algorithm rearranges production schedules based
+on cost functions and process constraints. Further details regarding the
+calculation for power demand requirements are provided in Section 3.5.
+In addition, Fig. 6 highlights water storage levels, represented by black
+and red dotted lines in the web-based version, indicating a moderate
+quantity of water storage capacity.
+In Fig. 7, the rationale behind prioritizing coproduction units as
+the ‘‘first choice’’ in response to fluctuating water and power demands
+over time (𝑡) is highlighted. This strategy enables cogeneration facilities
+to operate at full capacity while maintaining product ratios, thereby
+minimizing overall costs. The profiles also illustrate power and water
+demand set points varying from 2 to 9 MW∕m3 in alignment with the
+demand ratio, while cogeneration facilities exhibit set points ranging
+from 2 to 12 MW∕m3. These values may adjust based on demand
+dynamics and ramping modifications, with water and power plants
+
+Journal of Cleaner Production 462 (2024) 142648
+10
+M.B. Rasheed and M.D. R-Moreno
+Fig. 4. Power and water demand requirements over 24 h time.
+Table 3
+Plant and cost data (Rasheed and R-Moreno, 2021).
+Plants
+Indices
+Max power
+(MW)
+Max water
+(m3/h)
+Min Power
+(MW)
+Min water
+(m3/h)
+Power
+𝑖1
+6.8
+0
+1.5
+0
+Power
+𝑖2
+3.0
+0
+0.5
+0
+Power
+𝑖3
+6.5
+0
+0.5
+0
+Power
+𝑖4
+6.5
+0
+1.5
+0
+Coproduction
+𝑘1
+6.5
+140
+0
+0
+Coproduction
+𝑘2
+2.8
+100
+1.5
+0
+Coproduction
+𝑘3
+2.8
+140
+0
+0
+Water
+𝑗1
+0
+180
+0
+0
+Table 4
+Coproduction plant cost coefficients (Rasheed and R-Moreno, 2021).
+Cost coefficient terms
+𝐴11
+𝐴12
+𝐴22
+𝐴1
+𝐴2
+𝐴0
+Coproduction unit 1
+44,330
+3546
+7093
+1.106
+4.426
+737.4
+Coproduction unit 2
+78,810
+6305
+126.1
+1.475
+5.901
+737.4
+Coproduction unit 3
+1773
+141.9
+283.7
+2.213
+8.851
+737.4
+Table 5
+Power plant cost coefficients (Rasheed and R-Moreno, 2021).
+Cost coefficient terms
+𝐴1
+𝐴2
+𝐴0
+𝑃𝑔1
+57,140
+9999.5
+0
+𝑃𝑔2
+57,140
+22,856.56
+0
+𝑃𝑔3
+85,710
+1428.5
+0
+𝑃𝑔4
+85,710
+1428.5
+0
+Table 6
+Water plant cost coefficients (Rasheed and R-Moreno, 2021).
+Cost coefficient terms
+𝐴1
+𝐴2
+𝐴0
+Water generation unit
+18,341.94
+0
+104.2805
+Table 7
+Water demand in food processing industry (Ellis et al., 2009).
+Sr. No.
+Product
+Min. water
+usage (m3/t)
+Max. water
+usage (m3/t)
+1
+Beer
+9.08
+14.53
+2
+Milk products
+9.08
+18.16
+3
+Meat packing
+13.62
+18.16
+4
+Bread
+1.81
+3.64
+5
+Whisky
+54.50
+72.67
+6
+Green beans
+45.42
+64.35
+7
+Peaches and pears
+13.62
+18.16
+8
+Fruits and vegetables
+3.64
+31.79
+serving as ‘‘second choice’’ during peak demand periods to optimize
+cost efficiency. However, without careful adjustment of ramping lim-
+its, there could be a risk of incurring higher costs due to inefficient
+Fig. 5. Power generated by the single product power, water & cogeneration plants and
+the demand profile over 24 h period.
+operation, either from overreliance on a single product or no-optimal
+use of a single cogeneration facility.
+Fig. 8 shows the energy obtained from power facilities over 24 h,
+demonstrating the operation within upper and lower limits while
+meeting demand through coordinated co-dispatch. Notably, the power
+plants located at nodes 6 and 13 experience significant utilization,
+particularly during high-peak demand periods later in the day. In
+contrast, the plants located at nodes 2 and 3 observe moderate use,
+with demand partially met by by-product generation facilities. Simi-
+larly, Fig. 9 highlights water production profiles from single-product
+water facilities and storage units, which are co-dispatched to satisfy
+water demand for potable use and power generation. These profiles
+established bounds and constraints, ensuring that generation capacities
+and demand requirements are met without exceeding limits.
+Fig. 10 shows the water production profile from cogeneration
+plants, which are co-dispatched to fulfill demand capacity require-
+ments. Typically, these plants operate at maximum capacity to serve
+
+Journal of Cleaner Production 462 (2024) 142648
+11
+M.B. Rasheed and M.D. R-Moreno
+Fig. 6. Water generation and demand profiles against different settings of ramping limits over 24 h period.
+Fig. 7. The demand relation between the power and water for the coproduction over 24 h period.
+Fig. 8. Total power generated from different power generation units located at nodes 2, 3, 8 and 13 (Fig. 2) over the period of 24 h., (at y-axis).
+
+Journal of Cleaner Production 462 (2024) 142648
+12
+M.B. Rasheed and M.D. R-Moreno
+Fig. 9. Water generated from single product water and storage units attached at nodes 1, 14 and 21 over the period of 24 h. The capacity at negative hours represents the surplus
+water that is stored in the water storage facilities to alleviate the pressure on cogeneration facilities during peak demand hours.
+Fig. 10. Water production profiles of different water coproduction units over 24 h.
+as the primary source for meeting demand. Additionally, any surplus
+capacity is conserved in integrated storage tanks. This strategy allevi-
+ates demand pressure during peak hours, reducing the need to depend
+on more expensive generation resources, and thereby lowering overall
+costs.
+The power and water demand profiles are based on observations
+from real-time test cases, reflecting typical consumption patterns. For
+instance, industrial activities, which intensify in the afternoon, lead to
+significant peaks in power demand. As depicted in Fig. 4, these peaks
+predominantly occur from hour 10 (ℎ10) to hour 16 (ℎ16), whereas the
+lowest power demand is observed in the early hours, specifically from
+hour 1 (ℎ1) to hour 3 (ℎ3).
+Similarly, water demand exhibits distinctive peaks at several points
+during the day: an initial surge around hour 6 (ℎ6), with further
+increases from hour 10 (ℎ10) to hour 16 (ℎ16) and extending to hour 18
+(ℎ18). The early morning peak corresponds to water usage for irrigation,
+highlighting the agricultural sector’s impact. The later spikes are at-
+tributable to increased consumption within industrial and commercial
+sectors.
+5.2. Section-II: Storage & Power generation costs
+Fig. 11 presents an analysis of hourly costs associated with power,
+water, and cogeneration plants, showcasing the cost dynamics under
+different operational strategies and constraints. The illustration under-
+scores the variability in costs, particularly emphasizing the heightened
+expenses encountered during peak demand periods. Additionally, it
+highlights the relatively higher cost burden shouldered by coproduction
+plants, despite a generally uniform cost structure across various types
+of facilities. Fig. 11(a) illustrates the optimal cost scenario obtained
+through efficient utilization of generation and production facilities.
+Similarly, Fig. 11(b) demonstrates higher costs due to ramping con-
+straints on cogeneration facilities, highlighting the financial impact
+of operational limitations. To address demand requirements, the opti-
+mization program prioritized single-product water production facilities,
+ensuring full utilization of cogeneration facilities within imposed con-
+straints. Fig. 11(c) demonstrates a cost reduction achieved by setting
+lower ramping limits to zero and increasing upper ramping limits,
+resulting in water obtained primarily from single-product facilities
+with minimal intake from by-product facilities. While this strategy
+
+Journal of Cleaner Production 462 (2024) 142648
+13
+M.B. Rasheed and M.D. R-Moreno
+Fig. 11. Cost incurred by different power and cogeneration plants for 24 h.
+Fig. 12. The amount of water capacity stored in units 1 &2 profile over 24 h.
+decreased total costs, it led to suboptimal utilization across all plants.
+The water storage profile over 24 h is shown in Fig. 12. According
+to the mathematical model, the storage begins from zero as an initial
+condition and grows during the periods (i.e., ℎ11 to ℎ19) of low demand.
+From ℎ1 to ℎ10, the quantity of stored water is high due to low demand
+and vice versa. The stored water could be used when water demand
+is higher, since, the water usage from storage plants is dependent on
+two factors: (i) the diameter of the pipe, and (ii) the water flow rate.
+However, the capacity of water storage plants is quite high. Fig. 13
+shows the comparison of energy usage in power and water networks,
+respectively.
+In the water network, energy from the power network (specifi-
+cally, node 28 as shown in Fig. 2) powers a water pump. This pump
+operates on minimal energy during peak demand hours, leading to
+lower power consumption in comparison to the continuous operation of
+power plants. Fig. 14 illustrates the LMPs at different buses (nodes) af-
+fected by congestion on transmission lines. Without incorporating limits
+on transmission lines, power networks exhibit uniform prices across
+nodes. Contrarily, under DCOPF conditions, where line resistance is as-
+sumed to be negligible, LMPs are determined based on congestion costs
+through the use of shift factors, highlighting the impact of transmission
+limitations on pricing dynamics.
+Fig. 15 shows power generation costs at each bus within a modified
+IEEE standard bus system topology, reflecting dynamic trends in load
+demand and the contribution of co-generation capacity from dual-
+product plants. These plants are co-dispatched, impacted by both nodal
+Fig. 13. A comparison of power consumed by power and water pumping networks.
+Fig. 14. LMP of the modified IEEE 30 bus network. The LMPs shown here are taken
+randomly to visualize the nodal cost when the demand requirement changes.
+and overall pricing in the power network. Additionally, Table 8 gives
+cost and CO2 emission profiles for power, water, and cogeneration
+plants, operated according to various water supply scenarios. Variabil-
+ity in cogeneration plant costs arises from changes in water supply
+across network nodes (nodes 1-5), requiring reliance on single-product
+power and water plants, which are generally more expensive, with
+costs ranging between 1.96𝐸03–3.10𝐸05. Table 8 further highlights
+operational settings of water and cogeneration plants, emphasizing the
+
+Journal of Cleaner Production 462 (2024) 142648
+14
+M.B. Rasheed and M.D. R-Moreno
+Fig. 15. Individualized nodal (at x-axis) cost profile of different power generation units over the period of 24 h., (at y-axis).
+Table 8
+A comparison of the cost ($) and CO2 emissions at various settings.
+Setting
+Power plants
+Cogeneration plants
+Water plant
+Total cost
+% increase
+CO2/kg
+% increase
+P1
+P2
+P3
+P3
+Cogen. 1
+Cogen. 2
+Cogen. 3
+W1
+Power
+Water
+Power
+Water
+Power
+Water
+1
+6.52E+5
+2.82E+5
+9.43E+5
+9.74E+5
+7.70E+5
+3.60E+3
+8.11E+5
+8.73E+3
+1.27E+6
+6.01E+3
+3.35E+5
+3,209,000
+7,669,510
+2
+6.52E+5
+2.82E+5
+9.43E+5
+9.74E+5
+7.70E+5
+7.05E+5
+8.11E+5
+5.23E+5
+1.27E+6
+3.23E+5
+2.99E+7
+34,300,000
+3.10E+5
+81,977,000
+968.869
+3
+6.52E+5
+2.82E+5
+9.43E+5
+9.74E+5
+7.70E+5
+0.00E+0
+8.11E+5
+1.09E+4
+1.27E+6
+7.47E+3
+2.99E+7
+32,772,000
+2.95E+5
+78,325,080
+921.253
+4
+6.52E+5
+2.82E+5
+9.43E+5
+9.74E+5
+7.70E+5
+0.00E+0
+8.11E+5
+2.28E+4
+1.27E+6
+0.00E+0
+5.31E+5
+34,05,000
+1.96E+3
+8,137,950
+6.10782
+5
+6.52E+5
+2.82E+5
+9.43E+5
+9.74E+5
+7.70E+5
+1.14E+4
+8.11E+5
+0.00E+0
+1.27E+6
+2.29E+4
+1.63E+6
+4,513,000
+1.30E+4
+10,786,070
+40.6357
+efficiency of the proposed model (Setting-1, Fig. 11a), which achieves
+lower costs and CO2 emissions.
+Setting 2 demonstrates that if the water supply at cogeneration
+plant-3 is reduced, the demand capacity is met through cogeneration
+plant-1. However, increased capacity production at cogeneration plant-
+3 increased its cost, resulting in higher total cost and carbon emissions.
+Setting 3 reveals that reducing the water supply at cogeneration plant-
+1 to zero boosts water utilization at cogeneration plant-3, leading to
+elevated costs and carbon emissions. Similarly, settings 4 and 5 depict
+increased costs of cogeneration plants due to decreased water supply to
+cogeneration plants 1–3. Additionally, heavy reliance on single-product
+power and water plants incurs increased costs and CO2 emissions
+ranging from 6%–969% based on the power and water demand ratio.
+The table underscores that the proposed algorithm operates at optimal
+set points to minimize potential costs and CO2 emissions.
+6. Conclusions
+In this study, an advanced Energy–Water–Food Nexus (EWFN)
+model is developed for the co-dispatch of power, water, and storage
+capacities, integrating flow limits into the optimization framework.
+Building upon previous research, this model introduces enhancements
+such as water storage units, ramping constraints, and continuity rela-
+tionships, which were notably absent in earlier studies. These additions
+effectively address the limitations of former models, particularly in
+terms of flow limits, storage facilities, water junction models, and LMPs.
+The proposed model has minimized total costs across power, water, and
+cogeneration plants, incorporating a comprehensive set of constraints
+related to generation, demand, processing, storage, transmission, and
+continuity. Our evaluation, utilizing a dataset spanning power, water,
+and food networks, focused on a hypothetical system comprising four
+power plants, one pure water plant, three cogeneration plants, and a
+storage facility. Our findings underscore a significant role for cogenera-
+tion and combined power and water plants in managing initial demand,
+overshadowing single-product plants due to their higher operational
+costs. A notable impact is observed on water storage facilities in
+reducing total costs, highlighting dual utility in both power and wa-
+ter networks. The joint optimization algorithm successfully optimized
+generation resources by selecting optimal set points within the defined
+constraints. However, it also raised critical concerns regarding the
+challenges of integration within the co-optimization framework.
+The integration and optimization strategies developed in this study
+have significant implications for advancing cleaner production tech-
+nologies. By enabling more efficient use of resources and reducing op-
+erational costs and carbon emissions, the model promotes the broader
+adoption of cleaner technologies in various sectors. The dual util-
+ity of water storage facilities not only optimizes resource manage-
+ment but also encourages the adoption of integrated solutions that
+are environmentally sustainable and economically viable. Additionally,
+the successful application of cogeneration highlights the potential for
+these technologies to replace more resource-intensive systems, further
+fostering a shift towards cleaner production methods.
+Future advancements of the proposed model will focus on enhanc-
+ing cross-sector synergies and resilience under climate change. The
+main goal will be to explore sustainable circular economy strategies,
+where integration and interdependencies among sectors are leveraged
+for mutual benefit, such as using agricultural waste in bioenergy pro-
+duction or recycling water resources. Simultaneously, the model will
+be adapted to assess and mitigate the impacts of climate change,
+integrating climate projections to understand potential disruptions and
+developing adaptive and dynamic strategies for extreme weather events
+and long-term climatic shifts. By doing so, the model will not only
+provide a comprehensive framework for sustainable resource manage-
+ment but also ensure resilience in the face of evolving environmental
+challenges, thus contributing to global sustainability efforts.
+
+Journal of Cleaner Production 462 (2024) 142648
+15
+M.B. Rasheed and M.D. R-Moreno
+CRediT authorship contribution statement
+Muhammad Babar Rasheed: Writing – review & editing, Writing
+– original draft, Visualization, Validation, Software, Methodology, For-
+mal analysis, Data curation, Conceptualization. María D. R-Moreno:
+Writing – review & editing, Writing – original draft, Investigation,
+Funding acquisition, Formal analysis, Conceptualization.
+Declaration of competing interest
+The authors declare that they have no known competing finan-
+cial interests or personal relationships that could have appeared to
+influence the work reported in this paper.
+Data availability
+No data was used for the research described in the article.
+Acknowledgments
+This project has received funding from the European Union Horizon
+2020 research and innovation programme under the Marie Sklodowska-
+Curie grant agreement No 754382, GOT ENERGY TALENT.
+References
+Al-Adwani, A., Karnib, A., Elsadek, A., Al-Zubari, W., 2023. Scenario-based assess-
+ment of the water-energy-food nexus in Kuwait: Insights for effective resource
+management. Comput. Water Energy Environ. Eng. 13, 38–57.
+Al-Ansari, T., Korre, A., Nie, Z., Shah, N., 2017. Integration of greenhouse gas control
+technologies within the energy, water and food nexus to enhance the environmental
+performance of food production systems. J. Clean. Prod. 162, 1592–1606.
+Averyt, K., Macknick, J., Rogers, J., Madden, N., Fisher, J., Meldrum, J., Newmark, R.,
+2013. Water use for electricity in the united states: An analysis of reported and
+calculated water use information for 2008. Environ. Res. Lett. 8, 015001.
+Ban, M., Yu, J., Shahidehpour, M., Yao, Y., 2017. Integration of power-to-hydrogen
+in day-ahead security-constrained unit commitment with high wind penetration. J.
+Mod. Power Syst. Clean Energy 5, 337–349.
+Coulbeck, B., 1980. Dynamic simulation of water distribution systems. Math. Comput.
+Simulation 22, 222–230.
+Ellis, M., Dillich, S., Margolis, N., 2009. Industrial Water Use and Its Energy Implica-
+tions, Prepared By Energetics Incorporated for the Us Department of Energy. Office
+of Energy Efficiency and Renewable Energy, Office of Industrial Technologies,
+Washington, DC.
+Farid, A.M., Lubega, W.N., 2013. Powering & watering agriculture: Application of
+energy-water nexus planning. In: 2013 IEEE Global Humanitarian Technology
+Conference. GHTC, IEEE, pp. 248–253.
+Ghobadian, R., Mohammadi, K., 2023. Optimal design and cost analysis of water
+distribution networks based on pressure-dependent leakage using nsga-ii. Appl.
+Water Sci. 13, 92.
+Haggi, H., Sun, W., Fenton, J.M., Brooker, P., 2021. Risk-averse cooperative operation
+of pv and hydrogen systems in active distribution networks. IEEE Syst. J. 16,
+3972–3981.
+Haktanır, T., Ardıçlıoğlu, M., 2004. Numerical modeling of Darcy–Weisbach friction
+factor and branching pipes problem. Adv. Eng. Softw. 35, 773–779.
+He, G., Mallapragada, D.S., Bose, A., Heuberger, C.F., Gençer, E., 2021. Hydrogen
+supply chain planning with flexible transmission and storage scheduling. IEEE
+Trans. Sustain. Energy 12, 1730–1740.
+Kanyerere, T., Tramberend, S., Levine, A.D., Mokoena, P., Mensah, P., Chingombe, W.,
+Goldin, J., Fatima, S., Prakash, M., 2018. Water futures and solutions: Options to
+enhance water security in Sub-Saharan Africa. Syst. Anal. Approach Complex Glob.
+Chall. 93–111.
+Leeton, U., Uthitsunthorn, D., Kwannetr, U., Sinsuphun, N., Kulworawanichpong, T.,
+2010. Power loss minimization using optimal power flow based on particle
+swarm optimization. In: ECTI-CON2010: The 2010 ECTI International Confernce on
+Electrical Engineering/Electronics, Computer, Telecommunications and Information
+Technology. IEEE, pp. 440–444.
+Li, Q., Yu, S., Al-Sumaiti, A.S., Turitsyn, K., 2018. Micro water–energy nexus: Optimal
+demand-side management and quasi-convex hull relaxation. IEEE Trans. Control
+Netw. Syst. 6, 1313–1322.
+Lin, W., Yang, Z., Yu, J., Li, W., 2021. Transmission expansion planning with feasible
+region of hydrogen production from water electrolysis. IEEE Trans. Ind. Appl. 58,
+2863–2874.
+Lubega, W.N., Farid, A.M., 2014. An engineering systems model for the quantitative
+analysis of the energy-water nexus. In: Complex Systems Design & Management:
+Proceedings of the Fourth International Conference on Complex Systems Design &
+Management CSD & M 2013. Springer, pp. 219–231.
+Mueller, T., 2023. When policy entrepreneurs drift between levels: The creation of the
+international renewable energy agency. Global Policy 14, 588–599.
+Ngammuangtueng, P., Nilsalab, P., Chomwong, Y., Wongruang, P., Jakrawatana, N.,
+Sandhu, S., Gheewala, S.H., 2023. Water-energy-food nexus of local bioeconomy
+hub and future climate change impact implication. J. Clean. Prod. 399, 136543.
+Norouzi, N., 2022. Presenting a conceptual model of water-energy-food nexus in iran.
+Curr. Res. Environ. Sustain. 4, 100119.
+Pan, G., Gu, W., Lu, Y., Qiu, H., Lu, S., Yao, S., 2020. Optimal planning for electricity-
+hydrogen integrated energy system considering power to hydrogen and heat and
+seasonal storage. IEEE Trans. Sustain. Energy 11, 2662–2676.
+Peña-Torres, D., Boix, M., Montastruc, L., 2024. Multi-objective optimization and
+demand variation analysis on a water energy food nexus system. Comput. Chem.
+Eng. 180, 108473.
+Probst, E., Fader, M., Mauser, W., 2024. The water-energy-food-ecosystem nexus in the
+danube river basin: Exploring scenarios and implications of maize irrigation. Sci.
+Total Environ. 914, 169405.
+Rasheed, M.B., R-Moreno, M.D., 2021. The energy-water-food nexus architecture for the
+optimal resource allocation. In: 2021 IEEE PES Innovative Smart Grid Technologies
+Europe. ISGT Europe, IEEE, pp. 1–5.
+Rogers, J., 2013. Water-smart power: Strengthening the us electricity system in a
+warming world.
+Salomons, E., 2010. Watering-Water Distribution System Design and Analysis. EPANET,
+pp. 1–10.
+Santhosh, A., Farid, A.M., Youcef-Toumi, K., 2013. Optimal network flow for the supply
+side of the energy-water nexus. In: 2013 IEEE International Workshop on Intelligent
+Energy Systems. IWIES, IEEE, pp. 155–160.
+Santhosh Apoorva, A.M.F., Youcef-Toumi, K., 2014. Real-time economic dispatch for
+the supply side of the energy-water nexus. Appl. Energy 122, 42–52.
+Schoonenberg, W.C., Farid, A.M., 2022. Hetero-functional network minimum cost flow
+optimization: A hydrogen–natural gas network example. Sustain. Energy Grids
+Netw. 31, 100749.
+Schröder, J., Jörling, K., Reshma Carmel Francy, F., von Zitzewitz, E., Zangerl, K.,
+2021. The role of hydrogen for the energy transition in the uae and germany a
+joint study by the emirati-german energy partnership.
+Shahidehpour, M., Bartucci, C., Patel, N., Hulsebosch, T., Burgess, P., Buch, N., 2015.
+Streetlights are getting smarter: Integrating an intelligent communications and
+control system to the current infrastructure. IEEE Power Energy Mag. 13, 67–80.
+Stott, B., Jardim, J., Alsaç, O., 2009. Dc power flow revisited. IEEE Trans. Power Syst.
+24, 1290–1300.
+Sun, W., Harrison, G.P., 2021. Active load management of hydrogen refuelling stations
+for increasing the grid integration of renewable generation. IEEE Access 9,
+101681–101694.
+Tao, Y., Qiu, J., Lai, S., Zhao, J., 2020. Integrated electricity and hydrogen energy
+sharing in coupled energy systems. IEEE Trans. Smart Grid 12, 1149–1162.
+Teng, Y., Wang, Z., Li, Y., Ma, Q., Hui, Q., Li, S., 2019. Multi-energy storage system
+model based on electricity heat and hydrogen coordinated optimization for power
+grid flexibility. CSEE J. Power Energy Syst. 5, 266–274.
+Trifkovic, M., Sheikhzadeh, M., Nigim, K., Daoutidis, P., 2013. Modeling and control
+of a renewable hybrid energy system with hydrogen storage. IEEE Trans. Control
+Syst. Technol. 22, 169–179.
+Uen, T.S., Chang, F.J., Z.Y.T.W., 2018. Exploring synergistic benefits of water-food-
+energy nexus through multi-objective reservoir optimization schemes. Sci. Total
+Environ. 134, 88–93.
+Wang, X., Huang, W., Wei, W., Tai, N., Li, R., Huang, Y., 2021. Day-ahead optimal
+economic dispatching of integrated port energy systems considering hydrogen. IEEE
+Trans. Ind. Appl. 58, 2619–2629.
+Xiao, Y., Wang, X., Pinson, P., Wang, X., 2017. A local energy market for electricity
+and hydrogen. IEEE Trans. Power Syst. 33, 3898–3908.
+Zaiter, I., Ramadan, M., Bouabid, A., El-Fadel, M., Mezher, T., 2023. Potential
+utilization of hydrogen in the uae’s industrial sector. Energy 128108.
+Zarei, M., 2020. The water-energy-food nexus: A holistic approach for resource security
+in Iran, Iraq, and Turkey. Water-Energy Nexus 3, 81–94.

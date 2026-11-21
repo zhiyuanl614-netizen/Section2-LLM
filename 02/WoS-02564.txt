@@ -1,0 +1,1339 @@
+Research papers
+Conjunctive optimal design of water and power networks
+Tomer Shmaya a,*, Avi Ostfeld b
+a Faculty of Civil and Environmental Engineering, Technion - Israel Institute of Technology, Haifa 32000, Israel
+b Civil and Environmental Engineering, Technion – Israel Institute of Technology, Haifa 32000, Israel
+A R T I C L E I N F O
+Keywords:
+Water distribution systems
+Power grids
+Optimal design
+Water-Energy nexus
+A B S T R A C T
+Water distribution systems (WDS) and power grids (PG) are critical infrastructure systems that are vital to all 
+human activity. As such, their quality of service is of great importance for economic, environmental, and human 
+welfare reasons. Although traditionally being analyzed separately, the two systems are interconnected and can 
+mutually affect one another. In order to utilize the potential benefits that the two systems can produce for each 
+other, their design and operation should be analyzed conjunctively. In this paper, a conjunctive optimal design 
+approach for water and power networks is presented, with the objective of finding the dimensions of the systems’ 
+facilities that will result in minimal overall costs, for both design and operation. The model is formulated and 
+implemented on two example applications using an off-the-shelf nonlinear solver by MATLAB and compared to 
+the optimal design of the independent WDS. A sensitivity analysis is performed to provide validity to the ob­
+tained results. The conjunctive design is compared to the design of an independent WDS to emphasize the effect 
+of including the PG in the optimization problem. Results show a clear link between the availability of renewable 
+energy and sizing of WDS components. The design of the independent WDS leads to the violation of PG con­
+straints, which are satisfied when including both systems under a single optimization model, demonstrating the 
+importance of a holistic design approach.
+1. Introduction
+Water distribution systems (WDSs) are a collection of hydraulic el­
+ements such as pumps, pipes, tanks, and valves, designed to convey 
+water from sources to consumers. The behavior of the system is deter­
+mined by physical laws of mass and energy conservation; water de­
+mands; and its layout. The optimal design problem of WDS is the task of 
+sizing certain elements in the system such that would satisfy its con­
+straints, such as the supply of nodal demand, minimal pressure, and 
+water quality standards, and result in an optimal objective value, 
+traditionally set as minimal total construction and operation cost 
+(Perelman and Ostfeld 2007).
+Designing an optimal water distribution network presents a multi­
+faceted challenge that requires careful consideration of hydraulic per­
+formance, cost efficiency, and sustainability. Engineers must balance the 
+complex interactions between pipe diameters, network topology, and 
+operational constraints to ensure reliable water supply and efficient 
+system operation. Factors such as pressure requirements, flow rates, 
+water quality standards, and resilience to external disruptions further 
+complicate the design process. Optimization involves minimizing both 
+capital and operational costs while maximizing system reliability and 
+resilience to future demands and uncertainties. The variables that are 
+considered in such optimal design problems are traditionally pipe di­
+ameters, tank volumes and pumping station capacities.
+Due to the non-linear and non-convex relationship between flow and 
+head in WDS, and the use of discrete diameter sizes, the problem is 
+regarded as highly complex (Bragalli et al., 2011) and found to be NP- 
+Hard (Yates et al., 1984). Linear programming techniques can be uti­
+lized (Alperovits and Shamir 1977) to minimize costs while satisfying 
+constraints on pipe diameters, flow rates, and pressure requirements. 
+During the 1980′s and 1990′s several non-linear solution methods have 
+been developed such as enumerations (Gessler 1985) and decomposition 
+(Fujiwara and Khang 1990, Eiger et al. 1994). Over the past three de­
+cades, a significant amount of research has concentrated on the devel­
+opment and application of heuristic methods to solve the optimal design 
+problem. Those methods can allow the efficient exploration of large 
+solution spaces, which are tackled as part of the optimal design problem. 
+Among those methods are genetic algorithms (Savi´c and Walters, 1997), 
+simulated annealing (Zoppou and Reed 2001), shuffled from leap al­
+gorithm (Eusuff and Lansey 2003), differential evolution algorithm 
+* Corresponding author.
+E-mail address: tomer.shmaya@campus.technion.ac.il (T. Shmaya). 
+Contents lists available at ScienceDirect
+Journal of Hydrology
+journal homepage: www.elsevier.com/locate/jhydrol
+https://doi.org/10.1016/j.jhydrol.2024.131932
+Received 25 March 2024; Received in revised form 28 June 2024; Accepted 24 August 2024  
+Journal of Hydrology 643 (2024) 131932 
+Available online 3 September 2024 
+0022-1694/© 2024 The Author(s). Published by Elsevier B.V. This is an open access article under the CC BY-NC-ND license ( http://creativecommons.org/licenses/by- 
+nc-nd/4.0/ ). 
+
+(Suribabu 2009), particle swarm optimization (Montalvo et al. 2008), 
+ant colony optimization (Ostfeld and Tubaltzev 2008) and whale opti­
+mization algorithm (Ezzeldin and Djebedjian 2020). Several examples 
+also exist for the combination of analytical methods with heuristic ones 
+(Zheng et al. 2014, Reca et al. 2017).
+Power grids (PGs) are networks of transmission lines, substations, 
+transformers, and distribution points designed to deliver electricity from 
+power plants to consumers. Designing an optimal power grid is a com­
+plex challenge that requires balancing numerous factors to ensure effi­
+ciency, reliability, and sustainability. Engineers must consider 
+geographical factors such as terrain and population distribution, as well 
+as economic variables like cost-effectiveness and scalability. The grid 
+must be robust enough to handle peak demands while also integrating 
+renewable energy sources effectively to reduce environmental impact. 
+Furthermore, technological advancements in energy storage and trans­
+mission play a crucial role in enhancing grid resilience and stability. 
+Achieving an optimal design involves navigating these multifaceted 
+considerations to create a system that meets current and future energy 
+needs efficiently and sustainably. Traditionally, decision variables for 
+the power grid optimal design problem are generator capacities, sizes of 
+energy storage facilities (Yang et al. 2020), transmission line sizes 
+(Khalil and Ismail 2006), and the integration of renewable energy 
+sources (Garni et al. 2018; Majidi et al. 2022). A similar problem which 
+is often tackled in research is the problem of power grid expansion, 
+dealing with the planning of an additional section of the grid (Kim and 
+Hur 2021, You et al. 2016). These problems are deemed mathematically 
+complex, due to the non-linear and non-convex nature of the power flow 
+equations (Lavaei and Low 2010). Common methods used to overcome 
+the computational challenges are linear and quadratic programming 
+(Fortenbacher and Demiray 2019), second-order cone programming 
+(Baradar et al. 2013), semidefinite programming (Molzahn et al. 2013), 
+along with many other relaxation and approximation methods (Molzahn 
+and Hiskens 2019).
+The link between the systems has been studied from various per­
+spectives (Hamiche et al. 2016), with most work linking WDSs and PGs 
+concerned with their joint operation (Oikonomou and Parvania 2019; 
+Takahashi et al. 2017; Sun et al. 2018). Hari et al. (2023) have consid­
+ered a joint expansion problem, designing storage and generation fa­
+cilities for the conjunctive system. In their work, they define the 
+objective as maximizing the demand that is supplied by the system, 
+rather than the traditional minimal cost objective. However, the 
+network considered there is quite simplistic and does not consider loops, 
+multiple water consumers, or multiple storage and pumping facilities, 
+which can significantly complexify the problem. Yao et al. (2023) pro­
+posed an optimal design problem of WDS under uncertainty, combining 
+the uncertainty in water demand with uncertainty of solar power 
+availability. A behind-the-meter (BTM) component was also designed as 
+part of the work to support the supply of power to the WDS. The PG itself 
+and its constraints were not considered. They found that while robust­
+ness of the solution is improved, the design of a solar component did not 
+affect the sizing of components inside the WDS. Yao et al. (2021) sug­
+gested to optimally design water tanks in the system to enhance the 
+flexibility of the power system and to improve water quality. In their 
+work they do consider the PG’s structure and constraints, but the 
+problem focuses on tanks rather than the design of the entire system, and 
+without any decision variables on the PG side.
+This paper proposes a conjunctive optimal design problem, 
+combining the design of a WDS and a PG to explore ways in which the 
+sizing of components in one system affects the other and the operational 
+policies of both systems. On the WDS side, capacities of storage and 
+pumping facilities are determined, and on the PG side – the capacity of a 
+solar field is determined. This paper is aimed to provide two main 
+contributions to existing literature. The first is the very presentation and 
+mathematical formulation of the conjunctive design problem, which 
+represents a relatively novel and more holistic approach to water re­
+sources management, taking into consideration the explicit modelling of 
+adjacent and interconnected systems (in this case, a power system), as 
+opposed to the traditional approach which usually considers merely the 
+WDS standpoint. Hopefully, this will spark a discussion about the joint 
+examination of those two interconnected infrastructure systems. The 
+second contribution lies in the analysis of the results, which clearly 
+shows how those two systems depend on and even constrain one 
+another. The joint analysis provides unique and often counterintuitive 
+insights into the link between different components in those systems and 
+proposes ways to design them together in a way that takes advantage of 
+those links.
+The rest of the paper is organized as follows: section 2 includes a 
+mathematical formulation of the conjunctive design problem; section 3
+details the solution of two example applications, including sensitivity 
+analyses; and section 4 includes the conclusions of the work. The work 
+has the potential to help design better infrastructure in the future, which 
+in turn will increase the systems’ efficiency, reduce operational costs, 
+and environmental impact.
+2. Problem formulation
+The formulation of the conjunctive design problem is brought here, 
+comprising all constraints and decision variables that form each of the 
+two problems of WDS optimal design and PG optimal design.
+2.1. Decision variables
+Since a system’s operation is highly dependent on its design, the 
+operational costs must be considered as part of the problem’s objective 
+(as will be discussed further in the Objective function sub-section). 
+Hence, the decision variables include also operational decisions and 
+could be divided into two categories – design variables, and operational 
+variables.
+The design decision variables for the conjunctive design problem are: 
+Pmax[kW] −
+pumping capacities of all pumping stations in the WDS; 
+Vs[m3] −
+storage capacities of all tanks in the WDS; SF[MW] −
+solar 
+field capacities of all solar fields to be constructed and connected to the 
+PG. The operational decision variables are: Q[m3/hr] −flows in all links 
+in the WDS; H[m] −
+heads in all nodes in the WDS; n[rpm] – pump 
+rotation speeds in all pumps in the WDS; pin[p.u], qin[p.u] −
+active and 
+reactive power generation quantities at all generators in the PG; p[p.u], 
+q[p.u] −
+active and reactive power at all buses in the PG, respectively; 
+v[p.u] −
+voltages at all buses of the PG. As opposed to the design de­
+cision variables, the operational decision variables are to be determined 
+for each timestep of the optimization horizon.
+Fig. 1 shows the water and power demand patterns that were used, 
+along with a solar generation curve that limits the amount of power that 
+could be generated at any given hour of the day (Jahid et al. 2018).
+2.2. Constraints
+The optimal design problem includes the following constraints on the 
+WDS side, which constitute node mass conservation (1), tank continuity 
+(2), tank closure (3), pump curve (4), link energy conservation (5), node 
+head bounds (6), pump rotation speed bounds (7), and non-negative 
+pump flow (8), and head (9): 
+AT • Qt = dt ∀t ∈T
+(1) 
+Ht
+tank,s = Ht−1
+tank,s + Qt
+tank,s • Δt
+αtank,s
+∀t ∈T ∀s ∈S
+(2) 
+H24
+tank,s ≥0.95 • H0
+tank,s∀s ∈S
+(3) 
+Ht
+p,l = apumps,l •
+( nt
+p,l
+nmax
+)2
+−bpumps,l •
+(
+Qt
+p,l
+)2
+∀l ∈L ∀t ∈T
+(4) 
+T. Shmaya and A. Ostfeld                                                                                                                                                                                                                    
+Journal of Hydrology 643 (2024) 131932 
+2 
+
+A • Ht = −RQt|Qt|
+0.852 −A0 • H0 + Apumps • Ht
+p ∀t ∈T
+(5) 
+Ht
+min ≤Ht ≤Ht
+max ∀t ∈T
+(6) 
+nt
+min ≤nt
+p,l ≤nt
+max ∀t ∈T ∀l ∈L
+(7) 
+Qt
+p,l ≥0 ∀t ∈T ∀l ∈L
+(8) 
+Ht
+p,l ≥0 ∀t ∈T ∀l ∈L
+(9) 
+where: AT is the network’s incidence matrix; d is vector of nodal de­
+mands; Htank,s is the total head of water in tank s [m]; Qtank,s is the flow of 
+water in the pipe connected to tank s [m3/hr]; Δt is the length of a 
+timestep [hr]; αtank,s is the cross-section area of tank s [m2]; H0
+tank,s is a 
+given initial condition for the head of tank s; H24
+tank,s is the elevation of 
+tank s at the end of the simulation period [m]; R is a column vector of 
+pipe resistances; A0 is a matrix with elements {0,1}, which defines the 
+columns corresponding to the sources in the graph matrix; H0 is a col­
+umn vector containing the values of constant heads at the sources [m]; 
+Apumps is a matrix containing pump links indicators inside the WDS, used 
+to adjust the dimensions of matrix Ht
+p; ◦is the Hadamard product (ele­
+mentwise multiplication); apumps,l and bpumps,l are the curve coefficients of 
+pump l; nt
+p,l is the pump speed of pump l; nmax is the maximum pump 
+speed [rpm]; Hmin and Hmax are vectors of the upper and lower head 
+bounds at the nodes [m]; and nmin and nmax are the minimum and 
+maximum pump rotation speeds, respectively.
+This formulation is novel in the sense that it allows formulating the 
+problem as a non-linear program (NLP), instead of the well-known 
+mixed-integer non-linear program (MINLP) formulation, as it is usu­
+ally modelled in other studies found in the literature. The optimal 
+operation problem of WDS is categorized as an MINLP, as it required the 
+use of integer variables to correctly model the operation of pumps. When 
+a pump is off, the result is a disconnection of a source from the network. 
+In that case, (5) will require the inclusion of integer variables. When 
+using variable speed pumps, modelling such a disconnection could be 
+achieved without the use of integer variables. A pump will be considered 
+off when pump flow is equal to zero. The pump rotation speed variable 
+will then act as a free variable to adjust the head at the pump’s down­
+stream node, virtually allowing the pump to function as a valve and 
+regulate a virtual head gain along the pump.
+The inclusion of variable speed pumps allows formulating the 
+problem as a continuous non-linear problem and helps avoid the 
+employment of binary variables, although the inclusion of regular 
+pumps (i.e., single speed pumps) would significantly reduce the solution 
+space on one hand, while limiting the flexibility of the WDS design and 
+operation on the other hand, which is essential for presenting the ability 
+to adjust the WDS operation to the operation of the PG in this particular 
+work.
+On the PG side, the problem includes the following constraints, 
+which constitute the relationship between power flow and voltage drop 
+along transmission lines, bus power balance, generation limits, and 
+voltage magnitude bounds: 
+Ym = 1
+2
+(
+emeT
+mY + YHemeT
+m
+)
+∀m ∈M
+(10) 
+Ym = j
+2
+(
+emeT
+mY −YHemeT
+m
+)
+∀m ∈M
+(11) 
+pt
+m = (vt)
+H • Ym • vt ∀m ∈M ∀t ∈T
+(12) 
+qt
+m = (vt)
+H • Ym • vt ∀m ∈M ∀t ∈T
+(13) 
+pt
+m = pt
+in,m −pt
+L,m −
+1
+FOC
+∑
+l∈L
+(
+Im,l •
+γHt
+p,lQt
+p,l
+ηp
+)
+(14) 
+qt
+m = qt
+in,m −qt
+L,m −
+1
+FOC
+∑
+l∈L
+(
+Im,l • αqp
+γHt
+p,lQt
+p,l
+ηp
+)
+(15) 
+pin,k≤pt
+in,k ≤pin,k∀t ∈T
+(16) 
+pin,k = SFk • SGC ∀k ∈m*
+(17) 
+(
+v
+)2
+≤(vt)
+H • Mm • vt ≤(v)2 ∀m ∈M ∀t ∈T
+(18) 
+vt
+1 = vref ∀t ∈T
+(19) 
+where: Y is the power grid’s admittance matrix; em is a standard basis 
+vector containing 1 in the mth element; m is the bus index; M is set of 
+buses in the grid; t is the timestep; ( • )H is the complex-conjugate 
+transpose; pt
+in,m and qt
+in,m are the active and reactive power generated 
+at bus m, respectively; pt
+L,m and qt
+L,m are the active and reactive loads, 
+respectively; Im,l is an indicator parameter indicating which buses are 
+connected to pumps in the grid; γ is water specific weight [N/m3]; Ht
+p,l is 
+the pump head gain [m]; Qt
+p,l is the pump flow [m3/sec]; αqp is the 
+pump’s active and reactive ratio; ηp is the pump efficiency; FOC is the 
+factor of conversion, converting pump power from metric units into the 
+p.u. unit system, set here as 1 [MW/p.u.]; m* is the index corresponding 
+to the bus where solar power generators are installed; pin,k and pin,k are 
+the lower and upper generation bounds for generator k, respectively; 
+SGC is the solar generation curve, presented in Fig. 1; v and v are the 
+lower and upper voltage bounds, respectively; Mm is a matrix defined by 
+the standard basis vectors, such that Mm = em • eT
+m; and vref is the voltage 
+value defined for the reference bus.
+Fig. 1. Demand patterns (a) and solar profile for solar generator (b) (Jahid et al. 2018).
+T. Shmaya and A. Ostfeld                                                                                                                                                                                                                    
+Journal of Hydrology 643 (2024) 131932 
+3 
+
+2.3. Objective function
+Usually, the objective function of optimal WDS design problems is 
+defined as the minimal cost of both operation and construction derived 
+from the design. In this paper, the results of two different problems will 
+be presented and compared: the first being an optimal design problem of 
+an independent WDS, with its results imposed on the power grid as a 
+given load; and the second being the conjunctive optimal design prob­
+lem, when both systems are designed simultaneously. Here, both the 
+objective function of the independent WDS design problem and the 
+objective function of the conjunctive design problem will be presented. 
+When formulating the independent design problem, energy tariffs were 
+not considered for the operation of pumps. Those tariffs are usually the 
+result of an optimization done by the PG operators. It was the authors’ 
+goal to present a reasonable comparison between the solutions to the 
+two design problems, and therefore the decision was made not to 
+consider energy tariffs. This matter is addressed in more detail in the 
+conclusion section. The objective function of the independent problem 
+comprises of the cost of constructing all pumping stations and tanks in 
+the system. Those costs can be calculated by the following expressions: 
+PUCC = CPUMP
+270 • ηp
+∑
+npumps
+l=1
+max(H1
+p,l • Q1
+p,l, ⋯, HT
+p,l • QT
+p,l)
+(20) 
+TCC =
+∑
+ntanks
+s=1
+UTCs • max(H1
+tanks,s, ⋯, HT
+tanks,s)
+(21) 
+where PUCC is pump construction cost [MU]; CPUMP is unit pump cost 
+of pump construction [MU/hp]; TCC is tank construction cost [MU]; 
+UTCs is unit water level cost of tank s[MU/m].
+And the objective function for the independent design problem is 
+given in (22): 
+Z1 = minTCC + PUCC
+(22) 
+For the conjunctive design problem, two cost components are added to 
+the objective – the cost of generating power, and the cost of constructing 
+a solar field. Those are given by the following expressions: 
+PGC =
+(∑
+t∈T
+∑
+k∈K
+ak
+(
+pt
+in,k
+2)
++ bk(pt
+in,k) + ck
+)
+• AD • APGPV
+(23) 
+SFC = w •
+(∑nsolargenerators
+k=1
+SFk
+)
+(24) 
+where PGC is power generation cost [MU]; ak[MU/p.u2] bk[MU/p.u] 
+and ck[MU] are generation cost coefficients of generator k; AD is annual 
+duration [days]; APGPV is annual power generation present value co­
+efficient; SFCC is solar field construction cost [MU]; and w is the solar 
+field construction cost coefficient [MU/MW].
+And the objective function for the conjunctive design problem is 
+given in (25): 
+Z2 = minTCC + PUCC + PGC + SFCC
+(25) 
+Table 1 details the cost parameters that were used. Where WDS cost 
+parameters are based on Ostfeld (2005).
+3. Example applications
+The conjunctive optimal design problem was applied here to two 
+illustrative examples – one relatively simple, and another slightly more 
+complex – for the purpose of testing the effectiveness of the approach on 
+different scales. In both examples, the same water and power demand 
+patterns presented in Fig. 1a, along with the solar generation profile in 
+Fig. 1b, were used. Tanks were assumed to have a constant cross-section 
+area, and therefore the volume decision variable was replaced with the 
+tank’s maximal level. An initial condition was set for the tanks to be full 
+at the beginning of the system’s simulation. The model was coded using 
+YALMIP optimization package through MATLAB, which is a MATLAB 
+package that allows the straightforward formulation of optimization 
+problems (YALMIP, 2023). Although the problem is quite complex, the 
+examples presented below did not require any intervention in the so­
+lution process of the development of a solution strategy, and they were 
+simply solved using IPOPT local solver, with a 64-bit Intel i7 4-core CPU 
+at 2.00 GHz and 8-GB RAM. The optimization horizon was set to equal 
+24 h. However, since the problem is highly complex, timestep length was 
+set to 3 h, resulting in a solution for 8 timesteps.
+3.1. Illustrative example I
+Example I comprise of a four-node WDS, with one tank located at 
+node 4 and one pump, which is supplied with power by a three-bus 
+power grid that contains one conventional generator that is located at 
+bus 1. The system layout is presented in Fig. 2.
+The WDS and power grid attributes are given below in Table 2.
+3.1.1. Results
+The results of the base run are reported in Table 3, and they are 
+compared to the results of the optimal design of the independent WDS.
+Combining the two systems under one optimization model has an 
+impact. The results show a difference in tank volume, with a slight 
+difference in pumping capacity between the independent optimal design 
+and the conjunctive optimal design. A drop in total cost is observed in 
+Table 1 
+Cost parameters used for objective functions in 
+the optimal design problem (Ostfeld 2005).
+Parameter
+Value
+ak[MU]
+5
+bk[MU]
+50
+ck[MU]
+10
+AI[%]
+5
+TPLD
+40
+APPV
+10.04
+CPUMP
+1,000
+UTC
+20,000
+AD[days]
+365
+APGPV[-]
+0.9524
+w[MU/W]
+0.08
+MU – money units.
+Fig. 2. Example I – system layout (left – power grid with a conventional 
+generator at bus 1, a solar generator at bus 2, and an external load at bus 3; 
+right – WDS).
+T. Shmaya and A. Ostfeld                                                                                                                                                                                                                    
+Journal of Hydrology 643 (2024) 131932 
+4 
+
+the conjunctive approach compared to the independent one, with the 
+most prominent reduced cost component being power generation cost. 
+Evidently, allowing the construction of a solar generation field leads to a 
+reduction in conventional generation, which translates directly into a 
+reduction in generation cost, but is transformed into an investment in 
+solar field construction. Nonetheless, the sum of solar field construction 
+and conventional generation costs is still less than power generation 
+costs in the independent design. The sustainable energy source 
+encourages higher pumping capacity, which in result leads to a smaller 
+tank size. This can be interpreted as a direct link between the type of 
+power source to the optimal capacities of the different facilities inside 
+the water system.
+Fig. 3 presents the WDS optimal operation policy derived from the 
+obtained optimal design, including pump power demand (Fig. 3a) and 
+tank level (Fig. 3b).
+The operational policies obtained in each of the considered problems 
+seem quite similar (Fig. 3a and 3b). The larger tank size obtained in the 
+independent problem helps to slightly reduce pump power demand 
+during the morning and noon, when both power and water demands 
+peak. The tank volume is not fully utilized as a result of both the nodal 
+head constraint, which is binding at 17:00 in node 2, and the closure 
+constraint in Equation (3), which forces the pump to operate in higher 
+capacity to fill it and makes it less attractive to empty the tank.
+Fig. 4 compares the PG operation policies obtained by the indepen­
+dent and conjunctive optimal design problems. Depicted are the power 
+generation quantities (Fig. 4a and 4c) and voltage amplitudes at all 
+buses of the PG (Fig. 4b and 4d).
+It can be observed in Fig. 4c that although the solar capacity is 
+chosen to be 3.3 MW, the actual solar generation does not exceed 2 MW. 
+As mentioned, the solar capacity variable is multiplied by the solar 
+generation curve presented in Fig. 1b to create the solar generation 
+limit. Therefore, constructing a 3.3 MW capacity solar field will allow 
+the system to generate enough solar power required during off-peak 
+hours, such as morning and evening.
+As can be observed in Fig. 4b the independent optimal design pro­
+duces an infeasible solution from the standpoint of the power grid, as 
+minimal voltage bound constraints cannot be satisfied. This result 
+highlights the importance of the conjunctive approach and advocates for 
+the consideration of intertwined systems when designing a water dis­
+tribution system.
+3.1.2. Sensitivity analysis
+To test the model and its validity, a sensitivity analysis comprising of 
+7 scenarios was conducted. This analysis was applied only to the 
+conjunctive problem. In each of the scenarios, a slight modification was 
+made to one of the parameters in the base run, as presented in Table 4. 
+The scenarios were designed to highlight different aspects of the prob­
+lem and they way that they would influence it. The magnitudes of the 
+modifications were set randomly.
+The results of the sensitivity analysis are presented in Fig. 5, and 
+include the tank volume (5a), pumping capacity (5b), solar capacity (5c) 
+and objective value (5d).
+Widening the pipe diameters in scenario 1, demonstrating the effect 
+of including pipe diameters in the optimization, is expected to lead to 
+reduced power demand in the WDS, as the energy dissipation in pipes is 
+reduced. We can observe that pumping capacity in fact reduces, along 
+with tank volume, shrinking to 3,940, which is less than half the value 
+Table 2 
+Example I – system attributes.
+System
+Component
+Attribute
+Value
+Water distribution 
+system
+Link
+Diameter [mm]
+400
+Roughness [-]
+110
+Length [km]
+3
+Node
+Base water demand 
+[m3/hr]
+800
+Pressure demand [m]
+30
+Elevation [m]
+0
+Tank
+Elevation [m]
+30
+Diameter [m]
+36
+Tank link
+Diameter [mm]
+500
+Length [km]
+0.5
+Pump
+η [−]
+0.85
+Curve coefficients
+200; 1 × 10-5
+Rotation speed range 
+[rpm]
+[0,50]
+αpq [-]
+1
+3
+Power grid
+Transmission 
+line
+Impedance [p.u.]
+0.1j
+Capacitor
+Admittance [p.u.]
+0.008j
+Bus
+Minimum voltage 
+bound [p.u.]
+0.95
+Maximum voltage 
+bound [p.u.]
+1.05
+Reference bus
+Reference voltage [p. 
+u.]
+1
+Load
+Base power demand [p. 
+u./hr]
+2.8653 +
+1.2244j
+Table 3 
+Example I – independent and conjunctive design results comparison.
+Independent
+Conjunctive
+Tank volume [m3]
+9,706
+9,281
+Pumping station capacity [kW]
+359
+366
+Solar field capacity [MW]
+−
+3.3
+Pumping station construction cost [MU]
+488,323 (31 %)
+497,460 (35 %)
+Tank construction cost [MU]
+190,721 (12 %)
+182,370 (13 %)
+Power generation cost [MU]
+919,215 (58 %)
+493,471 (34 %)
+Solar field construction cost [MU]
+−
+265,995 (18 %)
+Total cost [MU]
+1,598,260
+1,439,296
+Parenthesized – percent out of total cost.
+Fig. 3. Example I – comparison of operation results obtained for pump (a) and tank (b) by independent and conjunctive optimal design.
+T. Shmaya and A. Ostfeld                                                                                                                                                                                                                    
+Journal of Hydrology 643 (2024) 131932 
+5 
+
+obtained in the base run, and the smallest value out of all examined 
+scenarios. Due to the system being of a small scale, the tank operates in 
+tight coordination with the pump, and as pump head gain is reduced, so 
+does tank level – being the two components that govern the distribution 
+of energy in the system. As the conjunctive design problem is already 
+quite complex, pipe diameters were omitted as decision variables, and it 
+was the authors’ decision to concentrate on energy facilities in the WDS 
+and PG. However, it should be mentioned here that the result of scenario 
+1 demonstrate the importance of including diameters in the design 
+problem. Modifying water base demand, demonstrating a scenario of 
+increased water demand by a factor of 1.2 due to population growth, 
+results in the highest tank volume and pumping capacity out of all 
+scenarios. To deal with the increase in water demand, a higher capacity 
+pumping station must be constructed, along with a larger tank, to bal­
+ance energy costs. No change is observed in solar capacity, leading to the 
+conclusion that it is more expensive to increase the solar capacity than to 
+conventionally generate the difference in power. This result means that 
+a population growth that would lead to increased water demand is likely 
+to not be translated in larger renewable energy capacity in the PG. 
+Reducing base power demand in scenario 3 results in a slight reduction 
+of tank volume and a slight rise in pump capacity. The most prominent 
+effect of this modification is a reduction of approximately 700 kW in 
+solar capacity and a drop in objective value. A similar trend is observed 
+after reducing line impedance to 0.05j, to demonstrate the effect of 
+including transmission line material in the optimization (equivalent to 
+WDS pipe diameters), although in this case the drop in solar capacity is 
+less prominent. Reducing the line impedance results in less power being 
+lost along transmission lines, and in turn allows to generate less power to 
+satisfy the demand. Reducing the strain on the power grid allows for 
+larger quantities of power to flow to the pump, and a reduction in tank 
+volume is observed as a result. This result emphasizes that an improved 
+PG could significantly benefit the operation of the WDS and save costs in 
+design. In scenario 5, a fourth water consumer is connected to the WDS 
+by closing the loop 1–3-4, to demonstrate an expansion of the WDS. The 
+total water consumption is kept as is, but is now equally split between 
+the four consumers. A reduction in both tank size and pumping capacity 
+is observed, with no change in solar capacity. A likely explanation for 
+this result is that due to the additional pipes in the system, the distri­
+bution of flow leads to reduced longitudinal head loss, in a similar logic 
+to the result of scenario 1. This result further advocates for the inclusion 
+Fig. 4. Example I results −
+(a) independent generation (b) independent voltage magnitudes (c) conjunctive generation (d) conjunctive voltage magnitudes.
+Table 4 
+Example I – sensitivity analysis scenarios (cells highlighted in grey contain the modified parameter in each scenario).
+Scenario
+1
+2
+3
+4
+5
+6
+7
+Pipe diameters [mm]
+600 
+600 
+600 
+750
+400 
+400 
+400 
+500
+400 
+400 
+400 
+500
+400 
+400 
+400 
+500
+400 
+400 
+400 
+500
+400 
+400 
+400 
+500
+400 
+400 
+400 
+500
+Water base demand [m3/hr]
+800
+960
+800
+800
+800
+800
+800
+Power base demand [MW]
+2.8653 +
+1.2244j
+2.8653 +
+1.2244j
+2.2922 +
+0.9795j
+2.8653 +
+1.2244j
+2.8653 +
+1.2244j
+2.8653 +
+1.2244j
+2.8653 +
+1.2244j
+Line impedance [p.u.]
+0.1j
+0.1j
+0.1j
+0.05j
+0.1j
+0.1j
+0.1j
+Number of consumers
+3
+3
+3
+3
+4
+3
+3
+Service pressure [m]
+30
+30
+30
+30
+30
+20
+30
+Solar field construction cost [MU/ 
+W]
+0.08
+0.08
+0.08
+0.08
+0.08
+0.08
+0.004
+T. Shmaya and A. Ostfeld                                                                                                                                                                                                                    
+Journal of Hydrology 643 (2024) 131932 
+6 
+
+of pipe diameters as part of the optimization problem. Lowering service 
+pressure to 20 m, to demonstrate a relaxation of pressure constraints, as 
+done in scenario 6, seems to lead to the same trend – a reduction in tank 
+size and pumping capacity, with no significant change in solar capacity. 
+This result demonstrates the dominant influence that pressure con­
+straints impose on the design and shows that results could significantly 
+change based on the system’s scale and designation. The three scenarios 
+addressing energy parameters in the WDS – scenarios 1, 5 and 6, all 
+result in the lowest values of tank size and pumping power, with the 
+same value of solar capacity as obtained in the base run. In scenario 7, 
+reducing the cost of solar field construction to 0.004 MU per W to 
+demonstrate the availability of a more efficient renewable energy source 
+results in a steep rise in solar capacity, and a rise in pumping capacity as 
+a result. We now obtain much higher tank size and pumping capacity 
+compared to scenario 1, in which the objective value is the same. This 
+result indicates how beneficial the development of cheaper and more 
+efficient power sources can be, and their potential to improve WDS 
+design.
+3.2. Illustrative example II
+Example II is slightly more complex compared to Example I. It 
+comprises of a nine-node WDS with 11 pipes, two tanks located in nodes 
+8 and 9, and two pumps placed on links 1 and 2. A 14-bus PG supplies 
+the pumps with power, along with 6 other demand buses along the PG. 
+Similar to example I, the PG includes one conventional generator located 
+at bus 1, and a solar generation field to be constructed and connected to 
+bus 2. The system layout is presented in Fig. 6. The existence of multiple 
+pumping stations and multiple tanks allows higher flexibility in the 
+design and operation, which significantly enlarges the solution space 
+and complexifies the problem. Furthermore, this would allow the ex­
+amination of trade-offs between different zones inside the WDS, and will 
+enable to observe how each of them is affected by the power grid. On the 
+PG side, more power consumers and transmission lines result in a more 
+complex optimal power flow problem, which would also influence the 
+complexity of the conjunctive problem and help gain meaningful 
+insights into the design of the joint system.
+The attributes of the WDS and the PG are given in Table 5.
+In this example, the 24-hour optimization was divided into 3-hour 
+long timesteps (meaning – a total of 8 timesteps), due to the 
+complexity and difficulty of achieving a solution for a 24-timestep long 
+optimization. Since the focus of this study is the optimal design of the 
+two systems, the operational decisions can be grossly estimated with 
+longer time steps that relax the computational challenge.
+3.2.1. Results
+The solution of the conjunctive optimal design problem is brought in 
+Table 6, alongside a comparison to the solution of the independent 
+optimal design problem.
+The two tanks and two pumps in the WDS seem to respond differently 
+to the connection of the PG to the optimization problem. Compared to 
+the results of the independent design problem, the size of tank 8 is 
+×
+Fig. 5. Example I – sensitivity analysis results. *BR – base run.
+Fig. 6. Example II – system layout (left – 14 bus power grid with a conventional 
+generator at bus 1, solar generator at bus 2, and power consumers at buses 
+3,7,8,12,13,14; right – WDS).
+T. Shmaya and A. Ostfeld                                                                                                                                                                                                                    
+Journal of Hydrology 643 (2024) 131932 
+7 
+
+reduced, while the size of tank 9 is slightly increased; the capacity of 
+pump 1 is reduced, and the capacity of pump 2 is increased. This result 
+reflects the effect of the system’s structure – as water demand is larger in 
+the top area of the WDS, it would be more beneficial to invest in the 
+construction of pump 2 and tank 9, which are located more adjacent to 
+the center of demand. Another factor is the power grid itself – pump 1 is 
+connected to bus 9, which lies further away from the generators in the 
+power grid. Therefore, the voltage drop between the generators and bus 
+9 is more significant, which makes it less attractive to supply power to 
+pump 1, and encourages the system to rely on pump 2, which is more 
+adjacent to power generation components. This analysis is supported by 
+Figs. 7 and 8, which respectively show the WDS and PG operational 
+policies obtained by the design, and compare the operation suggested by 
+the independent solution and the conjunctive solution.
+The conjunctive solution seems to allow a more efficient operation of 
+tank 9, emptying it completely twice a day (Fig. 7d). Although we can 
+observe that pump 2 is more dominant in the operation and operates at a 
+higher capacity (Fig. 7b), pump 2 is turned off during the night hours 
+and pump 1 is responsible for filling the tanks to meet their closure 
+constraint at the end of their operational cycle (Fig. 7a).
+The same phenomenon that was presented in example I occurs here – 
+the optimal design obtained for the WDS is not feasible from the PG 
+standpoint, and a solar generator must be constructed to satisfy voltage 
+magnitude constraints (Fig. 8b and 8d). In this case, the conjunctive 
+solution produces a more expensive solution compared to the solution of 
+the independent problem. This result stems from the combination of the 
+dominance of solar power generation inside the power grid and the 
+voltage boundaries. In this case study, solar generation constitutes a 
+smaller percentage out of the total power demand in the PG, and while it 
+does reduce power generation costs quite dramatically, it is not able to 
+reduce them to the point where the total cost is reduced below the in­
+dependent solution total cost. Although not constructing a solar field at 
+all is deemed a cheaper solution, voltage constraints cannot be satisfied 
+this way, which forces its construction and creates a more expensive 
+solution, which satisfies all constraints.
+In the independent solution, no generator is connected to bus 2 and 
+therefore there is no power generation there (Fig. 8a). As opposed to the 
+results of example I, now we can observe that the solar capacity is 
+exploited to its fullest, reaching the maximal value of 2.09 MW at 12:00 
+(Fig. 8c).
+3.2.2. Sensitivity analysis
+A more limited sensitivity analysis was performed to gain a slightly 
+deeper insight into the interaction between the different components in 
+this system. The examined scenarios are detailed in Table 7.
+The results of the sensitivity analysis are shown in Fig. 9. *BR – base 
+run.
+Scenarios 1 and 2 examined the solution’s sensitivity to solar field 
+construction cost. When solar field construction cost is reduced, we do 
+not observe a significant change in results. When the cost increases, 
+however, we see a reduction in the size of tank 8; an increase in size of 
+tank 9; a reduction in pumping capacity of pump 1; and an increase in 
+capacity of pump 2. This result validates the analysis that was previously 
+presented, about the effects the different components have on the 
+operation, and their relationship with the availability of sustainable 
+power. We can also notice a 70-kW reduction in solar capacity, as a 
+result of increased construction cost. The third scenario examines a 
+different configuration of the system, where pump 2 is connected 
+directly to bus 2, where the solar field is located. We obtained the same 
+results as we did in scenario 2 but are now able to operate with a much 
+smaller solar field. This result demonstrates the magnitude of the in­
+fluence that both the voltage constraints and the loss of power along 
+transmission lines have on the optimal solution.
+4. Conclusion
+This paper presents the novel concept of conjunctively optimizing 
+the design of a water distribution system and a power grid. The opti­
+mization problem is formulated such that the decision variables are 
+storage and pumping capacities on the WDS side, and solar generation 
+capacity on the power grid side. The conjunctive problem comprises of 
+all constraints forming each of the two independent design problems, 
+and the two systems are linked through the WDS’s pump power demand.
+The concept is applied to two illustrative examples. The results of the 
+conjunctive optimal design problems are compared to the results of the 
+optimal design of the independent WDS, and the impact of the 
+connection of the power grid to the WDS optimal design problem is 
+noticeable. The inclusion of voltage constraints in the problem reveals 
+the inability of the power grid to operate under the independent WDS 
+optimal design requirements and forces the connection of the grid to a 
+sustainable power source. The availability of a sustainable power source 
+in the system influences the design of storage and pumping components 
+in the WDS, favoring the upgrading of pumping stations at the expense 
+of storage volume – a somewhat counterintuitive result that advocates 
+for the importance of the conjunctive approach. The examination of two 
+illustrative examples casts light on the complexity of the problem and 
+the inner mechanisms that are at play. Analyzing the results of example I 
+Table 5 
+Example II – system attributes.
+System
+Component
+Attribute
+Value
+Water distribution 
+system
+All links
+Diameter [mm]
+300
+Roughness [-]
+120
+Links 3,4,5,6,7,9
+Length [km]
+2
+Link 8
+4
+All nodes
+Pressure demand [m]
+30
+Elevation [m]
+0
+Nodes 4,5
+Base water demand 
+[m3/hr]
+150
+Node 6
+300
+Node 7
+400
+Tanks
+Diameter [m]
+20
+Hmin [m]
+40
+Tank links (10, 11)
+Diameter [mm]
+400
+Length [km]
+0.4
+Pumps
+η [−]
+0.85
+Curve coefficients
+200; 1 ×
+10-5
+Rotation speed range 
+[rpm]
+[0,50]
+αpq [-]
+1
+3
+Power grid
+Transmission line
+Impedance [p.u.]
+0.006 +
+0.01j
+Bus
+Voltage magnitude 
+[p.u.]
+1
+Reference bus
+Minimum voltage 
+bound [p.u.]
+0.95
+Maximum voltage 
+bound [p.u.]
+1.05
+Loads (buses 
+3,7,8,12,13,14)
+Base power demand 
+[p.u./hr]
+0.5 +
+0.35j
+Table 6 
+Example II – independent and conjunctive design results comparison.
+Independent
+Conjunctive
+Tank 8 vol [m3]
+1,514
+1,402
+Tank 9 vol [m3]
+300
+320
+Pumping station 1 capacity [kW]
+69.6
+46.7
+Pumping station 2 capacity [kW]
+159.3
+185.5
+Solar field capacity [MW]
+−
+2.09
+Pumping stations construction cost [MU]
+311,070 (43 %)
+315,471 (41 %)
+Tank construction cost [MU]
+115,360 (16 %)
+108,792 (14 %)
+Power generation cost [MU]
+292,971 (41 %)
+176,089 (23 %)
+Solar field construction cost [MU]
+−
+166,833 (22 %)
+Total cost [MU]
+719,402
+767,185
+Parenthesized – percent out of total cost.
+T. Shmaya and A. Ostfeld                                                                                                                                                                                                                    
+Journal of Hydrology 643 (2024) 131932 
+8 
+
+Fig. 7. Example II – comparison of operation results obtained for pumps (a,b) and tanks (c,d) by independent and conjunctive designs.
+Fig. 8. Example II – (a) independent generation (b) independent voltage magnitudes (c) conjunctive generation (d) conjunctive voltage magnitudes.
+T. Shmaya and A. Ostfeld                                                                                                                                                                                                                    
+Journal of Hydrology 643 (2024) 131932 
+9 
+
+could be considered a simple task, since the system includes only one 
+tank and one pump, but as the system is of a slightly larger scale the 
+relationship between components can become quite complex, even 
+when looking at a relatively small system such as the one brought as 
+example II. The different components respond differently to the 
+connection of a sustainable source to the system, based on their adja­
+cency to demand nodes and their connections to the power grid. The PG 
+configuration favors the employment pumps located in the proximity of 
+generation epicenters. Storage facility volumes inside the WDS are in 
+turn affected by this based on their proximity to pumps, as they must 
+operate in coordination with pump head gains. Regarding the cost, no 
+clear trend was observed, as the conjunctive approach is able to reduce 
+cost for example I but is not able to do the same for example II. As power 
+generation is the most dominant component in the objective, it is 
+evident that the dominance of the renewable energy source inside the 
+power grid is responsible for the ability to reduce the total cost. 
+Approximating the dominance of a renewable energy source in the PG is 
+therefore a step that should be taken before the application of this 
+conjunctive model, in order to assess whether total cost could be 
+reduced.
+A sensitivity analysis that was performed helped establish and vali­
+date the obtained results, and to also gain novel insights into the opti­
+mality of the obtained solution. It was observed that pipe diameters, 
+along with transmission lines, could be very significant decision vari­
+ables in this problem, and their inclusion could provide more deep and 
+interesting insight.
+An issue that required the authors’ attention is the basis for com­
+parison between the independent design and the conjunctive design. 
+Usually, the operation of WDS takes into consideration energy tariffs for 
+pumps. Those tariffs are imposed on the WDS by the PG operators. Since 
+the design and operation of the PG are also being solved as part of the 
+conjunctive approach, the incorporation of those energy tariffs in the 
+conjunctive problem would defeat the purpose of this work – here, the 
+model is intended to be solved all at once, simultaneously, rather than in 
+stages (optimizing the design and operation of the PG, obtaining energy 
+tariffs for the WDS, and then optimizing the operation of the WDS with 
+respect to the obtained tariffs), in order to utilize the interdependency 
+between the systems.. In this work, we resolved this matter by assuming 
+that a single operator oversees the operation of both the WDS and the 
+PG. This assumption allows to neglect pump energy tariffs and only 
+consider power generation costs from the standpoint of the PG. Although 
+it is rarely the case in reality, it does allow us to present a relatively 
+beneficial comparison in this work. Another option could be performing 
+a calculation of energy tariffs in a dynamic way, during the optimiza­
+tion. This option is much more complex. It requires a focus on the 
+methods that are used for the determination of energy tariffs by PG 
+operators and regarded by the authors as out of the scope of this paper. 
+That said, the incorporation of energy tariffs does require more attention 
+and poses a significant challenge that could be the focus for future work.
+The optimization problem presented here is solved by IPOPT, an off- 
+the-shelf non-linear solver. As the networks get more complex, the 
+process of obtaining a solution this way would get more difficult, and at 
+some point, perhaps impractical. Nonetheless, applying this conjunctive 
+approach to case studies of a larger scale will help better understand the 
+magnitude of their interdependency on optimal design of such systems, 
+and is imperative for advancing the field of infrastructure operation and 
+management. An additional work that’s currently being carried out is 
+the development of a tailored solution method, that would allow the 
+application of the conjunctive approach to larger case studies, and will 
+shed light on new insights with respect to the scale of the problem.
+As mentioned throughout this manuscript, the work presented here 
+constitutes a first step in the direction of a more holistic approach for 
+water distribution systems analysis, specifically with a focus on their 
+relationship with the power grid. There are several suggestions that 
+could be of use for future work that would expand the idea that was 
+brought here. Widening the range of decision variables, to include pipe 
+diameters, transmission line materials and even batteries for power 
+storage in the power grid side would significantly complexify the 
+problem, and is likely to generate rich insight into the interdependencies 
+between the systems. The addition of decision variables is also likely to 
+require more sophisticated and computationally complex solution 
+approach, such as branch and bound, decomposition techniques like 
+outer approximation (OA), heuristics or sequential quadratic program­
+ming (SQP).Testing the model on a much larger scale systems is an 
+interesting direction as well, which will require a closer look at the 
+problem formulation in order to develop new and tailored solution 
+methods. The development of such methods could be another research 
+direction in and of itself, to allow for a more suitable optimization 
+approach and provide robustness to the optimization process. In pur­
+suing any of these directions, different objectives could be considered 
+such as robustness, resilience or even water quality standards. A multi- 
+objective problem could be tackled, and the competition between those 
+different objective functions could be presented as a pareto front, to 
+demonstrate the limitations of the conjunctive approach. Different as­
+pects of uncertainty could also be examined, using different methods to 
+solve the operation part of the problem in a more realistic way, such as 
+robust optimization, folding horizon and predictive control models.
+Funding
+The Bernard M. Gordon Centre for Systems Engineering at the 
+Technion provided valuable support for this study. Additionally, a grant 
+from the United States-Israel Binational Science Foundation (BSF) sup­
+ported this research.
+CRediT authorship contribution statement
+Tomer Shmaya: Writing – original draft, Methodology, Formal 
+analysis, Data curation, Conceptualization. Avi Ostfeld: Writing – re­
+view & editing, Supervision, Funding acquisition, Formal analysis, 
+Conceptualization.
+Table 7 
+Example II – sensitivity analysis scenarios.
+Scenario
+1
+2
+3
+Solar field construction cost coefficient [MU/W]
+0.06
+0.10
+0.08
+Pump 2 bus connection
+4
+4
+2
+Fig. 9. Example II – sensitivity analysis results.
+T. Shmaya and A. Ostfeld                                                                                                                                                                                                                    
+Journal of Hydrology 643 (2024) 131932 
+10 
+
+Declaration of competing interest
+The authors declare that they have no known competing financial 
+interests or personal relationships that could have appeared to influence 
+the work reported in this paper.
+Data availability
+Data will be made available on request.
+References
+Alperovits, E., Shamir, U., 1977. Design of optimal water distribution systems. Water 
+Resour. Res. 13 (6), 885–900. https://doi.org/10.1029/wr013i006p00885.
+Baradar, M., Hesamzadeh, M.R., Ghandhari, M., 2013. Second-Order cone programming 
+for optimal power flow in VSC-Type AC-DC grids. IEEE Trans. Power Syst. 28 (4), 
+4282–4291. https://doi.org/10.1109/tpwrs.2013.2271871.
+Bragalli, C., D’Ambrosio, C., Lee, J., Lodi, A., Toth, P., 2011. On the optimal design of 
+water distribution networks: a practical MINLP approach. Optim. Eng. 13 (2), 
+219–246. https://doi.org/10.1007/s11081-011-9141-7.
+Eiger, G., Shamir, U., Ben-Tal, A., 1994. Optimal design of water distribution networks. 
+Water Resour. Res. 30 (9), 2637–2646. https://doi.org/10.1029/94wr00623.
+Eusuff, M.M., Lansey, K.E., 2003. Optimization of water distribution network design 
+using the shuffled frog leaping algorithm. J. Water Resour. Plan. Manag. 129 (3), 
+210–225. https://doi.org/10.1061/(asce)0733-9496(2003)129:3(210.
+Ezzeldin, R.M., Djebedjian, B., 2020. Optimal design of water distribution networks 
+using whale optimization algorithm. Urban Water J. 17 (1), 14–22. https://doi.org/ 
+10.1080/1573062x.2020.1734635.
+Fortenbacher, P., Demiray, T., 2019. Linear/quadratic programming-based optimal 
+power flow using linear power flow and absolute loss approximations. Int. J. Electr. 
+Power Energy Syst. 107, 680–689. https://doi.org/10.1016/j.ijepes.2018.12.008.
+Fujiwara, O., Khang, D.B., 1990. A two-phase decomposition method for optimal design 
+of looped water distribution networks. Water Resour. Res. 26 (4), 539–549. https:// 
+doi.org/10.1029/wr026i004p00539.
+Garni, H.Z.A., Awasthi, A., Ramli, M.A., 2018. Optimal design and analysis of grid- 
+connected photovoltaic under different tracking systems using HOMER. Energ. 
+Conver. Manage. 155, 42–57. https://doi.org/10.1016/j.enconman.2017.10.090.
+Gessler, J., 1985. Pipe network optimization by enumeration. Computer Applications in 
+Water Resources 572–581. https://cedb.asce.org/CEDBsearch/record.jsp?doc 
+key=0044995.
+Hamiche, A.M., Stambouli, A.B., Flazi, S., 2016. A review of the water-energy nexus. 
+Renew. Sustain. Energy Rev. 65, 319–331. https://doi.org/10.1016/j. 
+rser.2016.07.020.
+Hari, S.K.K., Zamzam, A.S., Tasseff, B., Bent, R., Barrows, C.W., 2023. Joint expansion 
+planning of power and water distribution networks. arXiv (Cornell University).
+Jahid, A., Monju, K.H., Hossain, M.S., Hossain, M.F., 2018. Hybrid power supply 
+solutions for off-grid green wireless networks. Int. J. Green Energy 16 (1), 12–33. 
+https://doi.org/10.1080/15435075.2018.1529593.
+Khalil, D., Ismail, Y., 2006. Optimum sizing of power grids for IR drop. IEEE. https://doi. 
+org/10.1109/iscas.2006.1692627.
+Kim, G., Hur, J., 2021. Probabilistic modeling of wind energy potential for power grid 
+expansion planning. Energy 230, 120831. https://doi.org/10.1016/j. 
+energy.2021.120831.
+Lavaei, J., Low, S.H., 2010. Convexification of optimal power flow problem. In: 48th 
+Annual Allerton Conference on Communication, Control, and Computing (allerton), 
+pp. 223–232. https://doi.org/10.1109/ALLERTON.2010.5706911.
+Majidi, M., Rodríguez-García, L., Mosier, T., Parvania, M., 2022. Coordinated operation 
+of pumped-storage hydropower with power and water distribution systems. Int. J. 
+Electr. Power Energy Syst. 142, 108297 https://doi.org/10.1016/j. 
+ijepes.2022.108297.
+Molzahn, D.K., Hiskens, I.A., 2019. A survey of relaxations and approximations of the 
+power flow equations. Foundations and Trends in Electric Energy Systems 4 (1–2), 
+1–221. https://doi.org/10.1561/3100000012.
+Molzahn, D.K., Holzer, J.T., Lesieutre, B.C., DeMarco, C.L., 2013. Implementation of a 
+Large-Scale optimal power flow solver based on semidefinite programming. IEEE 
+Trans. Power Syst. 28 (4), 3987–3998. https://doi.org/10.1109/ 
+tpwrs.2013.2258044.
+Montalvo, I., Izquierdo, J., P´erez, R., Tung, M.M., 2008. Particle Swarm Optimization 
+applied to the design of water supply systems. Comput. Math. Appl. 56 (3), 769–776. 
+https://doi.org/10.1016/j.camwa.2008.02.006.
+Oikonomou, K., Parvania, M., 2019. Optimal coordination of water distribution energy 
+flexibility with power systems operation. IEEE Trans. Smart Grid 10 (1), 1101–1110. 
+https://doi.org/10.1109/tsg.2018.2824308.
+Ostfeld, A., 2005. Optimal design and operation of multiquality networks under unsteady 
+conditions. J. Water Res.Planning and Management 131 (2), 116–124. https://doi. 
+org/10.1061/(asce)0733-9496(2005)131:2(116.
+Ostfeld, A., Tubaltzev, A., 2008. Ant colony optimization for least-cost design and 
+operation of pumping water distribution systems. J. Water Resour. Plan. Manag. 134 
+(2), 107–118. https://doi.org/10.1061/(asce)0733-9496(2008)134:2(107.
+Perelman, L., Ostfeld, A., 2007. An adaptive heuristic cross-entropy algorithm for 
+optimal design of water distribution systems. Eng. Optim. 39 (4), 413–428. https:// 
+doi.org/10.1080/03052150601154671.
+Reca, J., Martínez, J., L´opez, R., 2017. A hybrid water distribution networks design 
+optimization method based on a search space reduction approach and a genetic 
+algorithm. Water 9 (11), 845. https://doi.org/10.3390/w9110845.
+Savi´c, D., Walters, G.A., 1997. Genetic algorithms for Least-Cost design of water 
+distribution networks. J. Water Resour. Plan. Manag. 123 (2), 67–77. https://doi. 
+org/10.1061/(asce)0733-9496(1997)123:2(67.
+Sun, X., Luo, J., Xie, J., 2018. Multi-Objective optimization for reservoir operation 
+considering water diversion and power generation objectives. Water 10 (11), 1540. 
+https://doi.org/10.3390/w10111540.
+Suribabu, C.R., 2009. Differential evolution algorithm for optimal design of water 
+distribution networks. J. Hydroinf. 12 (1), 66–82. https://doi.org/10.2166/ 
+hydro.2010.014.
+Takahashi, S., Koibuchi, H., Adachi, S., 2017. Water supply operation and scheduling 
+system with electric power demand response function. Procedia Eng. 186, 327–332. 
+https://doi.org/10.1016/j.proeng.2017.03.257.
+YALMIP. (2023, June 22). YALMIP. [Software] https://yalmip.github.io/.
+Yang, B., Wang, J., Chen, Y., Li, D., Zeng, C., Chen, Y., Guo, Z., Shu, H., Zhang, X., Yu, T., 
+Sun, L., 2020. Optimal sizing and placement of energy storage system in power grids: 
+a state-of-the-art one-stop handbook. J. Storage Mater. 32, 101814 https://doi.org/ 
+10.1016/j.est.2020.101814.
+Yao, Y., Li, C., Xie, K., Tai, H., Hu, B., Niu, T., 2021. Optimal design of water tank size for 
+power system flexibility and water quality. IEEE Trans. Power Syst. 36 (6), 
+5874–5888. https://doi.org/10.1109/tpwrs.2021.3081724.
+Yao, J., Wu, W., Simpson, A.R., Rismanchi, B., 2023. Water distribution system design 
+integrating behind-the-meter solar under long-term uncertainty. Sustain. Cities Soc. 
+98, 104844 https://doi.org/10.1016/j.scs.2023.104844.
+Yates, D.F., Templeman, A.B., Boffey, T.B., 1984. The computational complexity of the 
+problem of determining least capital cost designs for water supply networks. Eng. 
+Optim. 7 (2), 143–155. https://doi.org/10.1080/03052158408960635.
+You, S., Hadley, S.W., Shankar, M., Liu, Y., 2016. Co-optimizing generation and 
+transmission expansion with wind power in large-scale power 
+grids—implementation in the US Eastern Interconnection. Electr. Pow. Syst. Res. 
+133, 209–218. https://doi.org/10.1016/j.epsr.2015.12.023.
+Zheng, F., Simpson, A.R., Zecchin, A.C., 2014. Coupled binary linear programming- 
+differential evolution algorithm approach for water distribution system 
+optimization. J. Water Resour. Plan. Manag. 140 (5), 585–597. https://doi.org/ 
+10.1061/(asce)wr.1943-5452.0000367.
+Zoppou, C., Reed, M., 2001. Water distribution network design optimization: simulated 
+annealing approach. J. Water Resour. Plan. Manag. 127 (1), 69–70. https://doi.org/ 
+10.1061/(asce)0733-9496(2001)127:1(69.
+T. Shmaya and A. Ostfeld                                                                                                                                                                                                                    
+Journal of Hydrology 643 (2024) 131932 
+11 

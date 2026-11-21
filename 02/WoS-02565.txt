@@ -1,0 +1,1448 @@
+Research article
+Conjunctive optimal operation of water and power networks
+Tomer Shmaya a,*, Mashor Housh b, Filippo Pecci c, Kyri Baker d, Joseph Kasprzyk d, 
+Avi Ostfeld e
+a Faculty of Civil and Environmental Engineering, Technion - Israel Institute of Technology, Haifa, 32000, Israel
+b Department of Natural Resources and Environmental Management, University of Haifa, Haifa, 3498838, Israel
+c Andlinger Center for Energy and the Environment, Princeton University, United States
+d Civil and Environmental Engineering, University of Colorado, Boulder, United States
+e Civil and Environmental Engineering, Technion – Israel Institute of Technology, Haifa, 32000, Israel
+A R T I C L E I N F O
+Keywords:
+Water distribution systems
+Optimal operation
+Optimal power flow
+Water-energy nexus
+A B S T R A C T
+Water distribution systems (WDSs) are designed to convey water from sources to consumers. 
+Their operation is a main concern for engineers, researchers, and practitioners and is subject to 
+demand, pressure, and quality constraints. Pumping stations require power to pump water and 
+keep system pressure at a desired level. On the other hand, power is generally supplied through 
+power grids (PGs), which require optimal operation while satisfying operational constraints, such 
+as generation limits, power consumption, and voltage constraints. Since the two infrastructure 
+systems are interconnected, decision-makers could benefit from a holistic approach that would 
+allow solving the two operational optimization problems together as one conjunctive problem. 
+This paper presents the full mathematical formulation of the conjunctive optimization problem, 
+including a novel modelling approach for the operation of a variable speed pump, which does not 
+include integer variables for pump status, thus allowing to solve the model as a non-linear pro­
+gramming (NLP) problem. The formulation is applied to two illustrative case studies, and the 
+results are compared to the optimal operation of the independent WDS. The inclusion of the PG in 
+the optimization problem is observed clearly in the results and influences them quite signifi­
+cantly. WDS operation is shown adjust to the PG constraints, and the application of the 
+conjunctive model results in a cost reduction rate of more than 10 % for both case studies.
+1. Introduction
+1.1. Background
+The challenges posed by significant population and urban growth, climate change and depletion of energy sources have placed a 
+heavy burden on the design and management of infrastructure systems. As natural resources dwindle at an alarming rate, the need to 
+address these challenges becomes even more urgent. Besides developing new and more efficient technologies and finding alternative 
+resources to rely on, smart operation and management of existing resources and infrastructure systems are crucial for battling this 
+global crisis. Water Distribution Systems (WDS) and power grids are among the most critical systems to serve the modern human 
+population. Better management of those systems could be key to a better future on the planet [1].
+* Corresponding author.
+E-mail address: tomer.shmaya@campus.technion.ac.il (T. Shmaya). 
+Contents lists available at ScienceDirect
+Heliyon
+journal homepage: www.cell.com/heliyon
+https://doi.org/10.1016/j.heliyon.2024.e39136
+Received 12 May 2024; Received in revised form 25 August 2024; Accepted 8 October 2024  
+Heliyon 10 (2024) e39136 
+Available online 10 October 2024 
+2405-8440/© 2024 The Authors. 
+Published by Elsevier Ltd. 
+This is an open access article under the CC BY-NC-ND license 
+( http://creativecommons.org/licenses/by-nc-nd/4.0/ ). 
+
+WDSs form the bedrock of essential infrastructure, designed to ensure the secured conveyance of water from sources to consumers. 
+These systems distribute water in varying quantities to different consumers, which requires an operational policy – a decision 
+regarding the quantity of water that should be pumped or stored, and the amount of energy that should be injected into the system at 
+every operational step. An optimal operation policy is one that leads to a desired outcome or objective value. Among various possible 
+operational objectives, water utilities aim to minimize water loss [2], energy cost [3,4], and/or environmental impact [5]. WDS can be 
+used to supply water continuously, or intermittently, depending on consumer demands [6]. This study, however, will consider only 
+WDS that supply water in a continuous and uninterrupted manner.
+In a similar manner, power grids are large-scale networks that connect power plants to power consumption centers. They are 
+designed to satisfy varying power demands under different operational and technological constraints (e.g., maintaining a specific 
+voltage). Often, the power grid is fed by several power sources. These sources are located at different ends of the grid and have different 
+limitations on the amount of power and availability time periods. Power injected into the system can originate in different sources, 
+such as fossil fuels, coal, wind, pumped hydro-storage, thermal or solar [7]. Due to all the reasons mentioned above, power grids 
+require continuous operation, monitoring and balancing of supply and demand.
+Owing to the interdependency between the water and the power systems, our research presents a novel approach to the conjunctive 
+optimization of WDS and power grids, a topic that has begun to garner attention in the literature [8,9]. These studies have made 
+significant contributions to the field; however, they do not account for the detailed modeling of energy flow within the power grid, 
+particularly the physical relationships between voltages and power flow, which are crucial for ensuring the stability and efficiency of 
+the integrated system. Our paper addresses this critical gap by incorporating detailed modelling of the AC power grid, including both 
+active and reactive power as functions of complex voltages and the admittance matrix of the power system. This approach provides a 
+deeper understanding of the joint operational challenges and regulatory mechanisms essential for the holistic optimization of inter­
+connected water and power networks.
+The model formulated in this paper is applied to two illustrative case studies that help demonstrate the developed methodology. 
+Furthermore, a comparison between the optimal operations of the conjunctive problem and the decoupled water network is presented 
+to highlight the benefits of the conjunctive operation.
+1.2. Literature review
+The research and study of the optimal operation of WDS date back to the 1970’s. Shamir [10] has addressed the issue of a changing 
+load on the distribution system and proposed a methodology for optimal operation under those conditions. Following Shamir [10], a 
+dynamic programming solution was developed by Sterling and Coulbeck [11]. Many different approaches were since then suggested, 
+such as linear programming [12], non-linear heuristic methods [13], genetic algorithms [14] and analytical methods [15,16]. More 
+recent efforts concentrate on developing methods to deal with the increased complexity of the optimization problem, partly stemming 
+from the inclusion of water quality considerations. Those methods are highly innovative and include the use of metamodeling [17], 
+machine learning and surrogate modelling [18] and automatic clustering [19]. Similarly, optimal operation of power grids is an active 
+research topic. In this research field, the problem is known as the optimal power flow (OPF) problem [20]. In the OPF problem, the task 
+is to seek the optimal amount of power to be generated subject to demand constraints and physical constraints of the power grid. An 
+objective function, such as minimizing cost or losses throughout the grid, is used to derive the optimal solution [21]. Several methods 
+have been used to solve the OPF problem, including linearization [22] and different relaxation methods [23], [24], among many others 
+[25], [26], [27]. A major challenge that researchers and practitioners are considering is the integration of renewable energy sources in 
+the power grid, such as solar and wind. By the end of 2019, installed capacity of wind power reached 651 GW worldwide [28]. The 
+growing dominance of these renewable power sources poses challenges for the operation of power grids and is a research topic of high 
+relevance.
+In light of the above, a rich body of literature exists on the operation of WDSs and power grids. However, despite the two systems 
+being strongly coupled, they are handled separately in most studies, and their relationship and impact on each other still constitute a 
+research field that is in its infancy.
+Drinking water and wastewater pumping account for 2 % of the power consumption in the United States, and power costs typically 
+constitute 40 % of the total operational costs of WDS [29]. The potential benefits of exploring the relationship between those two 
+systems are widely recognized, specifically in operation and management [30]. They include, among other benefits, gaining flexibility, 
+sustainability, and reliability, while reducing operation costs. This advocates the need for analysis and examination of the relationship 
+between those two critical infrastructure systems.
+In recent years, several studies have been conducted to investigate the coupled optimization of power and water systems. Koh et al. 
+[31] examined the relationship of a reservoir system with the power grid. By creating a hard-coupling modelling framework, they 
+showed that the water system improves the integration of renewable energy sources in the power grid. Pereira-Cardenal et al. [32] 
+optimized a joint regional water-power system, focusing on a regional irrigation system. These two studies considered water systems 
+used for power generation and agricultural purposes, rather than drinking water distribution infrastructure. Zamzam et al. [33] have 
+suggested an optimal operation problem with the objective of minimizing operation costs, which include the operation cost of the 
+power system, the cost of using distributed energy sources, and the cost of operating the water network. The authors assumed given 
+energy prices for the water operator and did not acknowledge that those prices are subject to the solution of the OPF problem. 
+Moreover, the constraints regarding the WDS consider fixed flow directions, which is usually not the case in real systems. The con­
+straints are then relaxed using successive convex approximations. The results presented in that paper do not include the operation of 
+the considered storage inside the WDS, which underlines the focus on power systems and power grid perspective rather than on WDS 
+T. Shmaya et al.                                                                                                                                                                                                       
+Heliyon 10 (2024) e39136 
+2 
+
+analysis.
+Stuhlmacher and Mathieu [34] formulated a problem with the objective of minimizing operation costs and maximizing revenue 
+due to pump flexibility. In this discussed study, the number of timesteps in the simulation is 3, which is relatively low considering 
+operational conditions tend to change more frequently. The authors also assumed that the pump flow is regulated by opening and 
+closing valves connected to the pumps; this regulation is rarely employed in real-life systems, since it wastes valuable hydraulic head 
+produced by the pumps.
+Ayyagari et al. [35] have considered a similar co-optimization problem of water and power networks. Several aspects can 
+distinguish our work from theirs. The objective considered was a minimization of active power losses along transmission lines in the PG 
+and pump power in the WDS, as opposed to cost. Although those objectives are often used, operation cost is a far more common 
+objective for operators. Additionally, this paper offers a wider analysis, presenting two case studies of different scales with sensitivity 
+analysis scenarios, and a solution for the original non-linear problem formulation, as opposed to the employment of approximation 
+methods. DallAnese et al. [36] have looked at an optimal power flow problem in a power distribution network containing renewable 
+energy sources, but have not considered combining the connection to a water distribution system to their power network.
+Oikonomou et al. [37] suggested revealing energy prices to the WDS operators one day in advance, to allow them the optimization 
+of their operation, the solution of which will then be sent back to the power system operators. This approach is the common one used in 
+practice for WDS operation and will be presented in this paper as a means for comparison to the solution of the conjunctive operation. 
+Oikonomou and Parvania [38] added to the same WDS treatment and desalination plants and included the energy consumption of 
+those plants as part of the cost calculation in their objective. In both studies, the only available power source is conventional gen­
+erators. Majidi et al. [39] added a pumped-storage hydropower unit to the WDS as a sustainable energy source that can help reduce the 
+power generated by conventional generators. The problem was formulated as a mixed-integer non-linear programming (MINLP) 
+problem, and the solution method included the formulation of piecewise linear approximations of the non-linear constraints. The three 
+mentioned studies presented three similar WDS layouts that differ by minor modifications. Several issues regarding this layout and 
+design come to mind when examining them from a WDS analysis perspective. The system is branched, which does not represent well 
+the complexity of a WDS. Furthermore, links connected in series meant to convey the same flow do not have identical diameters, which 
+is not realistic and causes unnecessary increased head loss. In addition, pumps are connected in series, which will often require co­
+ordination of their operation and is not preferred.
+Putri et al. [8] proposed a predictive control algorithm for the interconnected water and power system, applying it to a real-world 
+system. Their results pointed to the significant benefits of the approach - saving capital, reducing carbon footprint and allowing 
+smoother operation of the system. Bhatraj et al. [9] presented an optimization model for both the design and operation of a renewable 
+energy based microgrid coupled with water supply systems, demonstrating how clean energy could be utilized to increase the effi­
+ciency of the water system, in terms of energy use. Although constituting as significant contributions to the field, those studies do not 
+consider the detailed modelling of the power grid [8,9], specifically the inclusion of power flow equations. Nonetheless, the detailed 
+modelling of those two networks is crucial for revealing their optimal operation.
+This paper offers several contributions to the topic of conjunctive optimal operation of WDS and power grids. Firstly, all mentioned 
+studies were conducted by power system experts, which resulted in inaccurate hydraulic modelling of the WDS and lacked the input of 
+water distribution experts. This study is aimed at highlighting the WDS operation and the way in which it is affected by the coupling 
+with the power grid, and therefore presents a more accurate modelling of the WDS, which allows flow directions to change throughout 
+the operation, rather than using fixed flow directions, which is unrealistic. This addition is significant, as it dramatically enlarges the 
+solution space. Secondly, this study offers a broad sensitivity analysis, which allows for a more thorough analysis of the trade-offs 
+taking place inside the system. Lastly, the analysis dedicated to the results in this paper focuses not only on the way that the two 
+systems improve the operation of one another, but also on the way they constrain one another - a perspective that was not applied in 
+previous studies, to the best of our knowledge.
+2. Methodology
+This section is dedicated to mathematically formulating the full conjunctive optimal operation problem of a WDS coupled with a 
+power grid. The full formulation is detailed below, and includes the decision variables, the objective function and constraints. The 
+formulation is followed by a sub-section suggesting a novel modelling approach to overcome the need of binary variables to model the 
+operation of variable speed pumps. Thus, the obtained problem is a non-linear programming (NLP) problem, containing only 
+continuous variables, which allows the employment of a non-linear solver. The formulation was coded using YALMIP optimization 
+modelling language [40], a MATLAB© toolbox that allows the formulation and solution of optimization problems. The solutions were 
+obtained using IPOPT and FMINCON solvers.
+2.1. Decision variables
+Generally, an optimal operation problem requires the determination of several quantities, which then dictate the physical state of 
+the entire system. For example, the determination of pump rotation speed and flow will dictate the flow distribution and nodal heads 
+inside the WDS. However, the solution method chosen for dealing with the problem (a numerical non-linear solver) requires the 
+calculation of derivatives using numerical approximations, which requires the inclusion of all calculated quantities as dependent 
+decision variables for the determination of a progression direction in the search space.
+Therefore, the decision variables for the conjunctive optimal operation problem include all decision variables from the two separate 
+T. Shmaya et al.                                                                                                                                                                                                       
+Heliyon 10 (2024) e39136 
+3 
+
+operation problems: pin – the generated active power at all generators in the grid [p.u.]; qin – the generated reactive power at all 
+generators in the grid [p.u.]; p – the active power at all buses in the grid [p.u.]; q – the reactive power at all buses in the grid [p.u.]; Q – 
+flows in all pipes of the WDS [m3/h]; H – heads in all nodes of the WDS [m]; Hp – pump head gain for all pumps in the WDS [m]; Qp – 
+pump flow for all pumps in the WDS [m3/h]; np – pump rotation speed for all pumps in the WDS (which are all variable speed pumps) 
+[rpm]; Zp - pump status (binary); ΔHv – head drop in a closed pump [m]. All decision variables are to be determined for every timestep 
+of the simulation, which can be set to any desired value based on the operational requirements of the system and the computational 
+capabilities.
+2.2. Objective function
+Dynamic energy production costs are not explicitly considered when optimizing the operation of the independent WDS. These are 
+implicitly imposed on water utilities as electricity tariffs after the operation of the power grid is determined. In order to allow a 
+meaningful comparison between the solutions of the two independent systems and the conjunctive operation problems, the objective 
+function considered for the operation of the independent WDS was defined as the minimization of total power consumption of pumps: 
+min
+∑
+t∈T
+∑
+l∈L
+Pt
+l
+(1) 
+where: t is the timestep [hours]; l is the pump index in the WDS; L is the set of pumps; Pt
+l is pumping power [kW] for pump l ∈L; and T 
+is a set of the simulation timesteps. The solution of this cost-free problem is then inserted into the independent optimization of the 
+power grid as a static load, in order to determine its operational cost, which can then be compared with the solution of the conjunctive 
+problem.
+For the conjunctive operation problem, the objective function minimizes power generation costs, from the standpoint of the power 
+grid. Power generation cost is traditionally described by a quadratic expression, which takes into account the cost of using the 
+generator, cost of generation and fuel costs [41]. The resulting objective function for the conjunctive operation problem is: 
+min
+∑
+t∈T
+∑
+k∈K
+akpt
+in,k
+2 + bkpt
+in,k + ck
+(2) 
+where: ak, bk and ck are the cost coefficients for the conventional generator k; K is the set of conventional generators connected to the 
+power grid; pt
+in,k is the active power generated by generator k.
+2.3. Constraints
+The nonlinear constraints of the power grid are presented below, which include the physical constraints and the mathematical 
+relationships between the different variables and parameters in the system. The formulation is presented according to the bus injection 
+model, which allows representing alternating current (AC) power flow equations in a quadratic and convenient form.
+Power grids convey power using alternating current (AC). Alternating current is an electrical current that changes its magnitude 
+and direction in a periodic manner, as opposed to direct current (DC), which flows in constant magnitude and direction. In the AC 
+system, power, current, voltage and impedance are all mathematically represented by complex numbers. The real part of the power is 
+referred to as active power, and the imaginary part is referred to as reactive power. Those two power components affect each other and 
+must satisfy power flow equations, as will be described in this formulation. All buses in the power grid are connected through 
+transmission lines, each having an impedance value. The admittance matrix defines the connectivity of the power grid and gives 
+information about the total impedance connected between every two buses.
+The following equations define the active and reactive power as a function of complex voltages and the admittance matrix of the 
+power system [33]: 
+pt
+m = (vt)
+H • Ym • vt ∀m ∈M ∀t ∈T
+(3) 
+qt
+m = (vt)
+H • Ym • vt ∀m ∈M ∀t ∈T
+(4) 
+where: m is the bus index; M is set of buses in the grid; t is the timestep; ( • )H is the complex-conjugate transpose; Ym and Ym are 
+matrices defined by the power grid admittance matrix in the following way, according to the bus injection model: 
+Ym = 1
+2
+(
+emeT
+mY + YHemeT
+m
+)
+∀m ∈M
+(5) 
+Ym = j
+2
+(
+emeT
+mY −YHemeT
+m
+)
+∀m ∈M
+(6) 
+where: em is a standard basis vector containing 1 in the (m)th element; and Y is the power grid’s admittance matrix.
+Next, we define the active and reactive power balance at all buses. The power balance calculation is different in buses where pumps 
+are connected, as they are considered controlled loads, and their power demand are defined as variables for the optimization process. 
+T. Shmaya et al.                                                                                                                                                                                                       
+Heliyon 10 (2024) e39136 
+4 
+
+For each m ∈M,t ∈T , we have: 
+pt
+m = pt
+in,m −pt
+L,m −
+1
+FOC
+∑
+l∈L
+(
+Im,l •
+γHt
+p,lQt
+p,l
+ηp
+)
+(7) 
+qt
+m = qt
+in,m −qt
+L,m −
+1
+FOC
+∑
+l∈L
+(
+Im,l • αqp
+γHt
+p,lQt
+p,l
+ηp
+)
+(8) 
+where: pt
+in,m and qt
+in,m are the active and reactive power generated at bus m, respectively; pt
+L,m and qt
+L are the active and reactive loads, 
+respectively; Im,l is a binary parameter indicating which buses are connected to pumps in the grid; γ is water specific weight [N/m3]; 
+Ht
+p,l is the pump head gain [m]; Qt
+p,l is the pump flow [m3/h]; αqp is the pump’s active and reactive ratio; and ηp is the pump efficiency. 
+We assume a constant efficiency and a constant ratio between the pump’s active and reactive power [34].
+FOC is the factor of conversion, converting pump power from metric units into the p.u. unit system. Pump power is measured in 
+Watts on the water distribution side, while calculations on the power grid side are carried out in the dimensionless p.u. (per-unit) 
+system. To convert Watts into p.u., a factor of conversion was chosen. The value of this factor was calculated using the pump power 
+expression, using the minimal service pressure, the sum of nodal daily base demands, and efficiency of 100 %.
+In the discussed problem sustainable energy sources are considered a part of the power grid, and therefore constraints are required 
+regarding their availability and generation ability. Equation (9) defines the upper bound for the sustainable energy source, which was 
+chosen to be a solar power one for the purposes of this work: 
+pt
+in,m* ≤pt
+solar∀t ∈T
+(9) 
+where: m* is the index corresponding to the bus where solar power generators are installed; and pt
+solar is the maximum potential solar 
+power generation at timestep t.
+The operation must guarantee stable voltage values at all buses in power grids. As such, Equation (10) bounds the voltage 
+magnitude between a minimum and maximum predetermined limit: 
+(vmin)2 ≤(vt)
+H • Mm • vt ≤(vmax)2 ∀m ∈M ∀t ∈T
+(10) 
+where: vmin and vmax are the minimal and maximal voltage boundaries, respectively. Mm is a matrix defined by the standard basis 
+vectors, such that Mm = em • eT
+m.
+Equations (3)–(10) define the power flow constraints. Next, we define the constraints for the WDS, which are consistent with 
+traditional and well-known hydraulic modelling [42]. Equations (11) and (12) extract the pump’s head and flow out of the head and 
+flow vectors, respectively: 
+Ht
+p,l =
+(
+AHpumps,l • Ht)
+• Zt
+p,l ∀l ∈L ∀t ∈T
+(11) 
+Qt
+p,l =
+(
+AQpumps,l • Qt)
+• Zt
+p,l ∀l ∈L ∀t ∈T
+(12) 
+where: AHpumps,l is a row vector with elements {0, 1, −1} that selects the head gain of pump l out of the vector H; Zt
+p,l the pump ON/OFF 
+status represented as 1 (ON) and 0 (OFF); and AQpumps,l is a row vector with elements {0, 1} that selects the flow of pump l out of the 
+vector Q.
+This model is concerned with systems containing only variable speed pumps. As such, pump flow-head relationship is modelled in 
+equation (13): 
+Ht
+p,l = apumps,l •
+( nt
+p,l
+nmax
+)2
+−bpumps,l •
+(
+Qt
+p,l
+)2
+∀l ∈L ∀t ∈T
+(13) 
+where: apumps,l and bpumps,l are the curve coefficients of pump l; nt
+p,l is the pump speed of pump l; and nmax is the maximum pump speed 
+[rpm].
+Equation (14) defines the storage tank elevation [m], and Equation (15) defines the incoming\outcoming flow in the link connected 
+to the tank: 
+Ht
+tank,s = AHtanks,s • Ht ∀t ∈T ∀s ∈S
+(14) 
+Qt
+tank,s = AQtanks,s • Qt ∀t ∈T ∀s ∈S
+(15) 
+where: Htank,s is the elevation of storage tank s; Qtank,s is the flow in the link connected to tank s; S is the total number of tanks in the 
+WDS; AHtanks,s and AQtanks,s are known row vectors with elements {0, 1} that select the head and flow of the tank; respectively.
+Equation (16) defines the water balance in the tank. 
+T. Shmaya et al.                                                                                                                                                                                                       
+Heliyon 10 (2024) e39136 
+5 
+
+Ht
+tank,s = Ht−Δt
+tank,s + Qt
+tank,s • Δt
+αtank,s
+∀t ∈T ∀s ∈S
+(16) 
+where: Δt is the length of a timestep [hr], and αtank,s is the cross-section area of tank s [m2]. H0
+tank,s is a given initial condition for the 
+elevation of tank s.
+The duration of the simulation is 24 h. The water level trajectory is assumed to be periodical. Therefore, Equation (17) is added to 
+the formulation to ensure the periodic nature of the tank elevation. According to that constraint, each tank must be filled to 95 % of its 
+initial level at the end of the simulation: 
+H24
+tank,s ≥0.95 • H0
+tank,s∀s ∈S
+(17) 
+where: H24
+tank,s is the elevation of tank s at the end of the simulation period [m].
+Equation (18) defines the constraints of water balance in the WDS junctions: 
+AT • Qt = dt ∀t ∈T
+(18) 
+where: AT is the network’s incidence matrix, and d is vector of nodal demands.
+Equation (19) defines the energy balance in the WDS links: 
+A • Ht = −R ∘Qt ∘|Qt|
+0.852 −A0 • H0 + AT
+Qpumps
+[
+Ht
+pZt
+p −ΔHt
+v
+(
+1 −Zt
+p
+)]
+∀t ∈T
+(19) 
+where: R is a column vector of pipe resistances; |Q|0.852 is the elementwise absolute value of the vector raised to the power of 0.852; A0 
+is a matrix with elements {0,1}, which defines the columns corresponding to the sources in the graph matrix; H0 is a column vector 
+containing the values of constant heads at the sources [m]; AQpumpsϵR|L|xpipes is a matrix that collects the row vectors AQpumps,l as defined in 
+equation (12); Ht
+p is a column vector containing the pump head gains Ht
+p,l; Zt
+p is a column vector containing the pump status Zt
+p,l; ΔHt
+v is a 
+column vector containing the head loss in a closed pump; 1 is a column vector of ones; and ∘ is the Hadamard product (elementwise 
+multiplication).
+In typical WDSs the head at all nodes is subject to minimum and maximum head constraints, which reflect the minimum pressure 
+limitations for preventing physical damage to hydraulic components in the system, or for limiting water loss. As such, these bounds are 
+defined in Equation (20): 
+≤Ht ≤Ht
+max ∀t ∈T
+(20) 
+where: Hmin and Hmax are vectors of the upper and lower head bounds at the nodes [m].
+Equations (21)–(24) define the feasible values for the pump status, flow, head, and speed respectively: 
+Fig. 1. Modelling of variable speed pumps.
+T. Shmaya et al.                                                                                                                                                                                                       
+Heliyon 10 (2024) e39136 
+6 
+
+Zt
+p,l ∈{0, 1} ∀t ∈T ∀l ∈L
+(21) 
+Qt
+p,l ≥0 ∀t ∈T ∀l ∈L
+(22) 
+Ht
+p,l ≥0 ∀t ∈T ∀l ∈L
+(23) 
+nt
+min ≤nt
+p,l ≤nt
+max ∀t ∈T ∀l ∈L
+(24) 
+where: nmin and nmax are the minimum and maximum pump rotation speeds, respectively. Along with Equations (13) and (19), ex­
+pressions 21–24 constitute the full modelling of variable speed pumps operation in the WDS.
+The presented formulation forms the full model of WDS operation using variable speed pumps, which results in a mixed-integer 
+non-linear programming problem that is often computationally difficult to solve, especially for large-scale networks. The following 
+section suggests a modelling approach that allows to overcome this difficulty.
+2.4. Overcoming the need for binary variables
+Fig. 1 demonstrates different possible states the system could attain, according to the classic modelling of variable speed pumps, as 
+described in Eq. (19).
+The valve located between the pump and the network is aimed at correcting the model according to the desired hydraulic behavior 
+of the system. At the event in which the pump is on, water will flow from the source in the direction of the network; the binary variable 
+Zp,l will equal to 1; pump head gain will attain a positive value; and the valve will be open, so no significant change in total head will be 
+observed along it, as shown in Fig. 1a.
+At the event in which the pump is off, the source would be disconnected from the rest of the network, and the head gain along the 
+pump will equal to zero. The binary variable Zp,l will equal to 0, and the free variable ΔHv, representing the valve head loss, will come 
+into play. The valve will be closed, to represent a disconnection between the pump and the network. In such a case, the hydraulic head 
+inside the network will be determined by the inner hydraulics of the water network, forcing ΔHv to acquire the difference in head (i.e., 
+head loss) between the network and the source. If the hydraulic head in the network is greater than that at the source node, water will 
+flow from the network in the direction of the source and will then be blocked by the valve (Fig. 1b). If the hydraulic head in the network 
+is lesser than that at the source, water will flow from the source in the direction of the network and will then be blocked by the valve as 
+well (Fig. 1c).
+The claim presented here is that under several practical engineering assumptions, the same effect can be achieved without the use 
+of the variables ΔHv and Zp,l, which constitute the classic hydraulic modelling of variable speed pumps operation. By using the 
+expression of Eq. (13), Eq. (19) could be reformulated as: 
+A • Ht = −R ∘Qt ∘|Qt|
+0.852 −A0 • H0 + Ht
+p ∀t ∈T
+(25) 
+By imposing this modification upon the model, the pump rotation speed nt
+p functions as a free variable when the pump is off. This 
+means that the pump head gain would be constrained between the values of zero and apump, which is the pump’s shut-off head: 
+0 ≤apumps •
+( nt
+p
+nmax
+)2
+−bpumps •
+(
+Qt
+p
+)2
+≤apump
+(26) 
+The scenario shown in Fig. 1a would cause no modelling inaccuracies, since the pump is on and the relationship between flow and 
+head is satisfied. In that case, the pump is expected to operate within its head gain bounds.
+In the scenario shown in Fig. 1b, the pump is off, and the hydraulic head inside the network is greater than that at the source. The 
+pump rotation speed will then act as a free variable, adjusting itself to whatever value necessary to make up for the difference in 
+hydraulic head between the source and the network, similarly to ΔHv. Theoretically, the hydraulic head inside the network could 
+surpass the value of apump, causing a modelling problem. However, it is reasonable to assume that the hydraulic head in the network 
+will not be larger than the pump’s shut-off head. From an engineering standpoint, it would not be realistic to design a water distri­
+bution system that includes locations to which water could not be pumped. When designing a pumping station, the design should 
+account for all critical points in the system, including storage units. Therefore, the assumption that the upper bound of the pump head 
+gain does not constrain the inner hydraulics of the system when the pump is off is practical and is not expected to result in incorrect 
+modelling.
+In the scenario shown in Fig. 1c, the pump is also off, and the hydraulic head in the network is lesser than that at the source. In such 
+a case, water will flow from the source towards the network. To model this correctly, the pump head gain would have to attain a 
+negative value. As mentioned earlier, the pump head gain is constrained above zero, meaning this situation could lead to inaccurate 
+modelling. However, it is safe to assume that the hydraulic head inside the network will be greater than the head at the source, since 
+pumps are designed to increase the hydraulic head in water distribution systems. From the standpoint of WDS design, it would not be 
+preferable to locate a pump at a point where the head at the discharge node could be lower than that at the source. The need to add 
+pumps to a system stems from the requirement to increase the hydraulic head inside the network, meaning the discussed scenario is 
+practically very unlikely, and the pump head gain will be positive in most, if not all, hydraulicly feasible scenarios.
+T. Shmaya et al.                                                                                                                                                                                                       
+Heliyon 10 (2024) e39136 
+7 
+
+In both scenarios 1b and 1c, the pump is modelled as if it operates against a static water column. As such, it could be inferred that it 
+requires power. However, by calculating pump power using the expression shown as part of Eq. (7), we assume pump power to be zero 
+if pump flow is zero, which is the case for both scenarios 1b and 1c.
+The assumptions discussed above are meant to provide engineering reasoning for the presented modelling approach, which allows 
+the omission of binary variables to model variable speed pump status, thus avoiding a MINLP problem, allowing to solve an NLP 
+problem instead.
+The model was formulated and solved under several main assumptions: solar energy is the only sustainable energy source available 
+in the grid. It is free but limited in quantity and availability. This assumption helps understand the particular effects of solar energy on 
+the conjunctive operation problem; minimal and maximal pressure heads are 30 [m] and 80 [m] respectively; The simulation length is 
+24 h, with a timestep of 1 h; the tank operation is periodic, which allows the solution to be implemented as a policy in a periodic 
+manner; the only objective is power generation cost, to allow for a more intuitive analysis of the results; external power loads are static, 
+in order to underline the effect of the WDS operation on the power grid; all water nodes are represented by the same demand pattern.
+Eventually, the conjunctive optimization problem to be solved could be summarized as follows: 
+f
+(
+pt
+in,k
+)
+∀k ∈K ; ∀t ∈T Minimize
+(27) 
+subject to: 
+g
+(
+pt
+in,m, qt
+in,m, pt
+m, qt
+m, vt
+m, Ht, Qt, nt
+p,l
+)
+= 0 ; ∀m ∈M ; ∀l ∈L ; ∀t ∈T 
+h
+(
+pt
+in,m, Ht)
+≤0 ; ∀m ∈M ; ∀l ∈L ; ∀t ∈T 
+|vmin| ≤⃒⃒vt
+m⃒⃒≤|vmax| ∀m ∈M ; ∀t ∈T 
+nt
+min ≤nt
+p,l ≤nt
+max ∀l ∈L ; ∀t ∈T 
+Hmin ≤Ht ≤Hmax ∀t ∈T 
+where g is a matrix containing all equality constraints; and h is a matrix containing all inequality constraints of the problem.
+3. Illustrative case studies
+The conjunctive optimal operation problem was considered for two illustrative case studies. In both cases, the pumps in the WDS 
+are supplied with power through a power grid containing two generators: a conventional one, and a sustainable (solar) one, which is 
+available during a limited period of the day and bounded in the amount of power it is able to generate. Both case studies are relatively 
+small scaled, due to the nature of the solution method and the limited capability of the non-linear solver used. The goal of these case 
+studies is to illustrate how the inclusion of the power grid in the model affects the optimal operation of the WDS. For each of the case 
+studies, the simulation period was set to 24 h, with a timestep length of 1 h.
+The effort to obtain a solution included the use of two non-linear solvers – IPOPT and FMINCON, which use numerical approxi­
+mations for evaluating derivatives. When optimizing the operation of the independent WDSs, both solvers were able to converge to the 
+same solution, whereas when solving the conjunctive problems, only FMINCON was capable of achieving an optimal solution. This is 
+Fig. 2. Case study I – system layout and solar profile.
+T. Shmaya et al.                                                                                                                                                                                                       
+Heliyon 10 (2024) e39136 
+8 
+
+due to the significantly increased size of the conjunctive operation problem, both in number of variables and constraints. The de­
+pendency between the two systems widens the search space dramatically. Several initial points were used, some of which led to 
+infeasible points while the others converged to the same solution as presented below. The case studies were solved using a 64-bit Intel 
+i7 4-core CPU at 2.00 GHz and 8-GB RAM.
+3.1. Illustrative case study I
+Fig. 2a presents the layout of illustrative case study I. The system comprises of a water distribution system with one loop connecting 
+three consumers, one pump and a storage tank. The demand multipliers for the consumers throughout the simulation period and the 
+water distribution system attributes are presented in Fig. 3 and Table 1, respectively. The pump is supplied with power from bus 1 of 
+the power grid, which includes 3 buses, 3 transmission lines, 3 capacitors, 2 generators at buses 1 and 2 and an external load at bus 3. 
+All properties for the power grid are presented in Table 2. The generator at bus 1 is a conventional one, meaning it is available all day 
+long and is not constrained in the amount of power which is able to produce. The generator at bus 2 is assumed to be a solar energy- 
+based power generator. The power produced at this generator is only available during a limited period of time during the day (when 
+solar energy is available), and the amount of power it is able to produce is limited. The daily solar energy availability profile is shown in 
+Fig. 1b. The layout presented in Fig. 2, water demand profile presented in Fig. 3 and all properties in Tables 1 and 2 constitute the data 
+used for the base run of this illustrative case study.
+The goal of this relatively simple illustrative case study is to gain a general understanding about the mechanisms that are at play 
+between the different components in the system. The simple structure of the system allows to analyse the results more intuitively and 
+introduce different load scenarios and parameter modifications that can later be projected or tested on larger models.
+After the formulation, an optimal solution was obtained using FMINCON solver. The solver was used several times using different 
+initial points, that led to the same optimal solution. The solver generated an optimal solution after 443 iterations with a running time of 
+157.8 s. The objective function value for the obtained optimal solution is $47,488.
+Fig. 4 presents the results of the base run – the pump power demand (4a) and the tank elevation (4b) throughout the day. The results 
+are compared with a solution for the independent operation of the water network, when it is not coupled with the power grid.
+It is evident from Fig. 4 that the combination of the two optimization problems yields a significantly different solution for the 
+operation of the water distribution network. When the water distribution system is solved independently, the constraint for the tank 
+elevation becomes binding, as shown in Fig. 4b. The volume in the tank is exploited in an optimal way – all stored water in the tank is 
+consumed, which reduces the pump’s speed and saves power. In order to meet the closure constraint for the tank, pump power is 
+increased during the night. When the water network is operated conjunctively with the power grid, the system aims to minimize power 
+generation costs at the conventional generator, which leads to accounting for power availability at the solar-powered generator. As a 
+result, it is no longer optimal to empty the tank completely. Instead of the pump power being the parameter influencing the most on the 
+objective, the exploitation of solar energy becomes the most prominent factor. The availability of solar power dictates the time periods 
+in which the tank should be filled, and as a result – when pump power demand should peak. Since pump power peaks at noon, the 
+pump can operate under reduced power demand during the evening and night, as shown in Fig. 4a.
+Fig. 5 shows the pump status obtained in each of the solutions.
+It can be observed that the pump is operating most hours of the day, as is also shown in Fig. 4a. However, there is a slight difference 
+during early morning hours. Since the tank is set to be full at the beginning of the simulation, using its contents is favoured over 
+pumping during that period. When the WDS is solved independently, larger amounts of stored water could be exploited, as discussed 
+above, which allows for the pump to stay shut for a longer period of time during the morning hours. When operated conjunctively, the 
+system aims to keep the tank level at a higher level in order to not invest power in the filling of the tank, which encourages pumping to 
+start earlier.
+To test the different relationships and influences between components in the system, a sensitivity analysis was conducted. The 
+Fig. 3. Water demand pattern.
+T. Shmaya et al.                                                                                                                                                                                                       
+Heliyon 10 (2024) e39136 
+9 
+
+Table 1 
+Case study I – water distribution system properties.
+Component
+Attribute
+Value
+Source
+Elevation[m]
+0
+Pipes
+Length [km]
+3
+Diameter [mm]
+600
+Hazen-Williams coefficient [−]
+110
+Nodes
+Demand [m3/day]
+8000
+Elevation [m]
+0
+Hmin [m]
+30
+Hmax [m]
+1000
+Pump
+Head gain range [m]
+[0, 200]
+η [ −
+]
+0.85
+apump
+200
+bpump
+0.00001
+nmin [rpm]
+0
+nmax [rpm]
+50
+αpq [−]
+0.33
+Tank
+Lpipe [km]
+0.5
+αtank [m2]
+1000
+Hmin [m]
+35
+Hmax [m]
+42
+H0
+tank [m]
+42
+Table 2 
+Case study I – power grid properties.
+Component
+Attribute
+Value
+Transmission line
+Impedance [p.u.]
+0.1j
+Capacitor
+Admittance [p.u.]
+0.055j
+Bus 1 (reference)
+Voltage magnitude [p.u.]
+1
+Buses 2,3
+Voltage magnitude lower bound [p.u.]
+0.95
+Voltage magnitude upper bound [p.u.]
+1.05
+Generator 1
+Availability time period
+Continuous
+Active power upper bound [p.u.]
+–
+Reactive power upper bound [p.u.]
+–
+Generator 2
+Availability time period
+9:00–17:00
+Active power upper bound [p.u.]
+4
+Reactive power upper bound [p.u.]
+–
+Load
+Active power demand [p.u.]
+2.8653
+Reactive power demand [p.u.]
+1.2244
+Fig. 4. Case study I – base run results.
+T. Shmaya et al.                                                                                                                                                                                                       
+Heliyon 10 (2024) e39136 
+10 
+
+analysis should offer logical explanations to processes occurring inside the system and help to better understand the results of the base 
+run. The analysis includes 8 different scenarios, in every one of which a modification was made to the model. In scenarios 1–4 the 
+modifications are made to parameters related to the power grid, whereas in scenarios 5–8 the modifications are made to parameters 
+related to the water network. The ranges of parameter modifications were determined by a trial-and-error approach, aiming to impose 
+a modification that would result in a significant enough response from the system, and would allow a valuable analysis. All modifi­
+cations made for the different analyses are presented in Table 3.
+Fig. 6 presents sensitivity analysis results obtained for cases 1–4 described in Table 3. The results include the pump power demand 
+(6a), tank elevation (6b) and active power generation at buses 1 (6c) and 2 (6d). In most cases, the different modifications did not have 
+an impact on the general shape of the graphs, meaning the solutions were somewhat similar in their nature. The differences occurred 
+mainly in the extreme points of the curves, which represent the limits of the operation and the proximity of the solution to the 
+constraints.
+In scenario 1, which is represented by the colour yellow, the cost coefficients are modified to illustrate a scenario in which energy 
+production is cheaper, when the linear component is more prominent in the objective than the quadratic one. As a result, the obtained 
+solution seems to resemble the solution that was obtained for the independent WDS – pump power demand is almost on a monotonic 
+rise (Fig. 6a); tank elevation drops to 37m (Fig. 6b), and stays relatively static throughout most of the operation, meaning that water 
+supply relies mainly on pumping directly from the water source. Although it can be traced in the pump power curve (Fig. 6a), the 
+magnitude of solar power availability on the operation is restrained dramatically, as can be observed in Fig. 6c as well. The pumping 
+peak is lowered significantly since it is not worthwhile to invest energy in filling the tank during the day – the pumping is adjusted to 
+supply the entire water demand in the system, without any contribution from the tank. From 19:00 onward, we can observe that pump 
+power is higher compared to all the other scenarios – larger quantities of water must be pumped into the tank in order to meet its 
+closure constraint.
+In scenario 2, which is represented by the colour grey, the amount of available solar power is increased, to represent a more 
+efficient solar generator, or a system which is located in different climate conditions. Although the maximum available solar gener­
+ation is 6 p.u., the solution does not suggest generation of more than 4.35 p.u. (Fig. 6d). This is due the voltage constraint at bus 2, 
+which does not allow for it to exceed 1.05 p.u. Therefore, a more efficient (or larger) generator or a location which seem to have more 
+direct sunlight might not have a significant advantage in cases where there is a limiting factor within the power system itself. The 
+increased solar power availability allows the generation at bus 1 to decrease (Fig. 6c), and also affects the operation of the pump - 
+Fig. 5. Case study I – base run results - pump status chart.
+Table 3 
+Case study I – sensitivity analysis scenarios.
+Parameter
+Base run
+S.A. 1
+S.A. 2
+S.A. 3
+S.A. 4
+S.A. 5
+S.A. 6
+S.A. 7
+S.A. 8
+Generation cost 
+parameters
+a = 100
+a¼10
+a = 100
+a = 100
+a = 100
+a = 100
+a = 100
+a = 100
+a = 100
+b = 200
+b¼500
+b = 200
+b = 200
+b = 200
+b = 200
+b = 200
+b = 200
+b = 200
+c = 10
+c = 10
+c = 10
+c = 10
+c = 10
+c = 10
+c = 10
+c = 10
+c = 10
+Solar generation pattern 
+multiplier
+4
+4
+6
+4
+4
+4
+4
+4
+4
+External power load [p. 
+u.]
+p = 2.8653
+p = 2.8653
+p = 2.8653
+p¼2.0653
+p¼0
+p = 2.8653
+p = 2.8653
+p = 2.8653
+p = 2.8653
+q = 1.2244
+q = 1.2244
+q = 1.2244
+q = 1.2244
+q¼0
+q = 1.2244
+q = 1.2244
+q = 1.2244
+q = 1.2244
+Tank elevation [m]
+35
+35
+35
+35
+35
+40
+35
+35
+35
+Tank cross-section area 
+[m2]
+1000
+1000
+1000
+1000
+1000
+1000
+500
+1000
+1000
+Service pressure [m]
+[30,30,30]
+[30,30,30]
+[30,30,30]
+[30,30,30]
+[30,30,30]
+[30,30,30]
+[30,30,30]
+[37,37,37]
+[30,30,30]
+Number of water 
+consumers
+3
+3
+3
+3
+3
+3
+3
+3
+4
+Single consumer daily 
+water demand [m3/ 
+day]
+8000
+8000
+8000
+8000
+8000
+8000
+8000
+8000
+6500
+T. Shmaya et al.                                                                                                                                                                                                       
+Heliyon 10 (2024) e39136 
+11 
+
+Fig. 6. Case study I – sensitivity analysis results – WDS response.
+Fig. 7. Case study I – sensitivity analysis results – power grid response.
+T. Shmaya et al.                                                                                                                                                                                                       
+Heliyon 10 (2024) e39136 
+12 
+
+during the maximum solar power production hours, the pump operation is temporarily flattened, which leads to higher power con­
+sumption in proximity to the pumping peak. It can be observed that during the evening, when solar power availability reduces and 
+finally ends, the system converges back to the same behavior obtained in the base run.
+Scenarios 3 and 4 are represented by the colours green and brown, respectively. In those two scenarios, the external load at bus 3 of 
+the power grid is reduced and eliminated, respectively, to examine the changes in the solution in a case where the pump is a more 
+dominant power consumer. When the external load is reduced, the voltage constraint which prevents the pump from receiving more 
+power is relaxed. More power can now flow to the pump, which creates a slightly higher pump power peak compared to the base run 
+solution (Fig. 6a). Although the pump consumes more power in this scenario, the total amount of active power demand is lower 
+compared to the base run, which is reflected by the power generation curve in bus 1 (Fig. 6c). Since solar generation is free, the 
+decrease of active power demand shifts the power generation curve at bus 1 significantly down, and no changes are observed in the 
+generation at bus 2 (Fig. 6d). The elimination of external power load results in the pump being the only power consumer in the system, 
+which allows for more flexibility in the grid operation. This can be observed by the pump beginning to operate at a much higher power, 
+which results in a longer, flattened, and reduced peak (Fig. 6a), and in the tank operating far above its minimal elevation. As opposed 
+to scenario 2, now the solar energy source is able to supply the entire power demand of the system during its availability window, 
+which leads to shutting down the generator at bus 1 (Fig. 6c). This means that between 9:00–20:00 the system operates without any 
+cost.
+Fig. 7 presents sensitivity analysis results obtained for scenarios 5–8 described in Table 3. As shown in the figure, the results include 
+the pump power demand (7a), tank elevation (7b) and active power generation at buses 1 (7c) and 2 (7d).
+Generally, compared to those that were made to the power grid parameters, the modifications made to the water distribution 
+system parameters have an effect of a lower magnitude on the conjunctive operation, but do help gaining several insights.
+In scenario 5, which is represented by a navy-blue colour, the tank minimum elevation was raised from 35m to 40m, in order to test 
+whether such a design modification has an effect on the system’s operation. Raising the tank’s elevation requires investing larger 
+amounts of power for pumping, as the pump works against an increased hydraulic head. This higher power demand can be observed in 
+Fig. 7a, as well as in Fig. 7c, where the power generation curve is above the solution for the base run. Although shifted upward, the 
+shape of the tank operation curve does not change significantly.
+In scenario 6, represented by light-blue colour, the tank cross-section area was reduced from 1000 m2 to 500 m2, resulting in the 
+reduction of tank volume from 7000 m3 to 3500 m3. This was done in order to examine the effects of a reduced storage capacity on the 
+system’s operation. The modification results in the tank exploited fully, emptying completely by 10:00 (Fig. 7b). The optimal operation 
+of the tank helps to reduce pump power demand, as can be observed in Fig. 7a. The peak is significantly lowered, and almost the entire 
+curve is shifted down compared to the base run. The reduction of the tank’s cross-section area translated into the pump being able to 
+affect the tank elevation more easily, using reduced flow rates. This helps to better coordinate the operations of the pump and the tank, 
+which reflects on the power generation as lower power demand – the lowest out of scenarios 5–8 (Fig. 7c).
+In scenario 7, which is represented by the colour purple, the effect of consumer service pressure on the operation were tested, by 
+increasing the required pressure from 30m to 37m for all nodes.
+The effect is quite dramatic, as can be observed in all sub-figures of Fig. 7. The sharp fluctuations observed in Fig. 7a and c, it can be 
+understood that the solution is somewhat unstable - the high service pressure pushes the system to its limits. The system is not able to 
+function under the previously obtained operational policy, as the service pressure forces higher voltage amplitudes during the 
+Fig. 8. Case study I – sensitivity analysis objectives.
+T. Shmaya et al.                                                                                                                                                                                                       
+Heliyon 10 (2024) e39136 
+13 
+
+afternoon, which results in the spreading of water pumping across the entire day (Fig. 7a). The reduction of pump power during the 
+afternoon leads to solar power not being fully exploited (Fig. 7c), and for the generator at bus 1 to be shut off. As can be observed in 
+Fig. 7b, the operation of the tank changes significantly. Service pressure at node 3 now constrains the tank elevation from going below 
+37m, and its contents are steadily exploited all day long, until it is starts filling up for the next morning at 23:00.
+In scenario 8, which is represented by the colour red, a fourth water consumer was connected to the network by closing a loop 
+through nodes 1 and 3. The daily water demand of each consumer was altered as well, to equal 6500 m3/day instead of 8000 m3/day. 
+This modification aims to demonstrate an extension of the WDS, as well as a change in the distribution of population along the WDS. 
+For most hours of the day, pump power is higher than that obtained in the base run (Fig. 7a). The tank elevation behavior is slightly 
+impacted – the lowest elevation at 10:00 is increased (Fig. 7b). As total water demand increases, it is evidently preferred to operate 
+with higher pumping power than exploit larger amount of stored water. The increased pumping power demand is reflected in Fig. 7c as 
+well, where the generation curve is shifted upward, and remains above the curve obtained in the base run for the entire simulation 
+period.
+Fig. 8 is a column chart showing the objective function value obtained for each of the sensitivity analysis scenarios that were 
+performed.
+The lowest power generation costs are obtained for scenarios 3 and 4, in which the external power load at bus 3 is reduced and 
+eliminated, respectively. Since this load is static throughout the simulation, it amounts to a significant amount of power over the course 
+of 24 h, which explains the most dramatic drop in objective value. As expected, a more powerful and efficient solar generator will help 
+reduce overall generation costs as well, as shown in scenario 2. The increase of tank elevation and service pressure in scenarios 5 and 7 
+are the most expensive scenarios – a results that illustrates how sensitive the problem is to hydraulic conditions, and further amplifies 
+the potential benefit of tying the two operational problems together.
+3.2. Illustrative case study II
+Fig. 9 depicts the layout of illustrative case study II. The system is inspired by the one presented by Cohen et al. [43] with several 
+modifications. The system comprises of a water distribution system containing 9 nodes, 4 of which are demand nodes and 2 are tanks, 
+at nodes 8 and 9. The system is fed with water from two sources (10, 11) through two pumps (Pump 1, Pump 2), which are supplied 
+with power by a 14-bus power grid. In this grid, pumps 1 and 2 constitute buses 9 and 4, respectively. The power grid consists of 14 
+buses (out of which 6 require power supply), 14 transmission lines and 2 generators at buses 1 and 2. Bus 1 is the reference bus, with a 
+voltage amplitude of 1 p.u. and an angle of 0. Similarly to illustrative case study I, the generator at bus 1 is a conventional one and can 
+produce power all throughout the day, whereas the availability and generation limits of generator 2 are subject to the curve presented 
+in Fig. 2. All technical properties of the water distribution system and the power grid in illustrative case study II are presented in 
+Tables 4 and 5, respectively. All properties shown in Tables 4 and 5 constitute the data used for the base run of this illustrative case 
+study.
+The purpose of this particular case study is to perform a similar analysis on a slightly more complex system, containing more 
+pumps, more storage tanks and a larger grid, which will pose a more complex power flow problem. The goal was to present a case study 
+which on the one hand would be more complex, and help gain some additional insights about the problem, but on the other hand 
+would be feasible to solve using the same solution method. Since this problem is solved using a non-linear solver, the size of problems 
+that could be solved is limited.
+Fig. 9. Case study II – system layout.
+T. Shmaya et al.                                                                                                                                                                                                       
+Heliyon 10 (2024) e39136 
+14 
+
+Figs. 10–12 present the results for illustrative case study II – Fig. 10 containing the results for the WDS operation; Fig. 11 containing 
+a pump status chart; and Fig. 12 containing the results for the power grid operation. The results for the WDS include a comparison to 
+the optimal operation of the independent water network. The conjunctive problem is relatively complex, and in order to shorten 
+running time and ensure convergence, the solution for the independent WDS was used as a starting point for the conjunctive opti­
+mization problem, deriving an initial solution for the power grid from it. Fig. 10 includes pump power demands for pumps 1 and 2 
+(Fig. 10a and b, respectively) and the tank elevations at tanks 8 and 9 (Fig. 10c and d, respectively). The solution was obtained after 
+408 iterations with a running time of 1605.8 s, and an objective function value of $49,063.
+Similar differences between the independent WDS and the conjunctive system operational policies are observed in Fig. 10, as 
+discussed for illustrative case study I. In the independent operation, the water stored in the tanks is supplied to the consumers, which 
+forces pump power to peak during the evening and night in order to fill the tanks for the next morning. The tanks cannot be fully 
+exploited during the conjunctive operation, since emptying them beyond a certain elevation would result in increased power demand 
+for pumping and a more costly solution.
+Despite the two pumps being completely identical, difference in their power demand magnitude is prominent in the results 
+(Fig. 10a and b). This difference stems from the structure of the WDS, their positioning relative to the water consumers and their 
+positions inside the power grid. Pump 1 is adjacent to demand node 7, where the base demand is equal to 400 m3/h, whereas pump 2 is 
+more adjacent to nodes 4, 5 and 6, which have total base demand of 600 m3/h. The operation policy would therefore be to prefer 
+conveying more water from source 11, and less from source 10, which leads to this imbalance in pump usage, which is observed both 
+for the WDS independent operation and the conjunctive operation results.
+Inside the power grid, most demand-bearing buses are located in the bottom part, which leads to a significant voltage drop along 
+transmission line 5–10, that acts as a bottleneck. This voltage-drop increases as power flowing through this transmission line grows. 
+Reducing the power load of the grid’s bottom part would ease this voltage-drop and is possible by reducing the only controllable 
+Table 4 
+Case study II – water distribution system properties.
+Component
+Attribute
+Value
+Sources
+Elevation [m]
+0
+Demand nodes 4,5
+Demand [m3/day]
+3600
+Demand node 6
+7200
+Demand node 7
+9600
+All nodes
+Elevation [m]
+0
+Hmin [m]
+30
+Hmax [m]
+80
+Pipes 3,4,5,6,7,9
+Length [km]
+2
+Pipe 8
+4
+Pipes 10,11
+0.4
+Pipes 3,4,5,6,7,8,9
+Diameter [mm]
+600
+Pipes 10,11
+750
+All pipes
+Hazen-Williams coefficient
+120
+Pumps
+Head gain range [m]
+[0, 200]
+η [ −
+]
+0.85
+apump
+200
+bpump
+0.00001
+nmin [rpm]
+0
+nmax [rpm]
+50
+αpq [−]
+0.33
+Tanks
+αtank [m2]
+490
+Hmin [m]
+30
+Hmax [m]
+40
+Table 5 
+Case study II – power grid properties.
+Component
+Attribute
+Value
+Transmission line
+Impedance [p.u.]
+0.003 + 0.01j
+Bus 1 (reference)
+Voltage magnitude [p.u.]
+1
+Buses 2-14
+Voltage magnitude lower bound [p.u.]
+0.95
+Voltage magnitude upper bound [p.u.]
+1.05
+Generator 1
+Availability time period
+Continuous
+Active power upper bound [p.u.]
+–
+Reactive power upper bound [p.u.]
+–
+Generator 2
+Availability time period
+9:00–17:00
+Active power upper bound [p.u.]
+4
+Reactive power upper bound [p.u.]
+–
+Load (buses 3,7,8,12,13,14)
+Active power demand [p.u.]
+0.5
+Reactive power demand [p.u.]
+0.175
+T. Shmaya et al.                                                                                                                                                                                                       
+Heliyon 10 (2024) e39136 
+15 
+
+demand bus in that part, which is pump 1 at bus 9. The power demand of bus 9 is therefore constrained by the minimum voltage bound 
+imposed on the power grid. This conclusion is validated by Fig. 12c, where the voltage at bus 8, located further down of bus 9, nears 
+0.95 p.u. at 12:00 and 13:00. The effect of the solar power availability is observed clearly in Fig. 10a and b. Pump power demand is 
+shifted from the evening hours towards the morning and noon, with power demand of pump 1 exceeding the peak obtained by the WDS 
+independent operation by 31 %.
+Fig. 11 shows the pump scheduling solution. As discussed in the previous case study, during the independent WDS operation pump 
+are able to stay shut for longer periods of time due to the intensified exploitation of stored water. However, in this case study, pump 1 
+nearly shuts off in the midst of the simulation of the conjunctive system, rather than in the beginning and end. This happens precisely 
+when solar power ceases to be available. Pumping decreases considerably in pump 1 from 19:00 onward, and barely contributes to the 
+operation. Along with the increase of peak pump power demand discussed in the previous passage, this result ties together relevance of 
+certain pumping units in the WDS with different types of power sources – by substituting a conventional power source for a sustainable 
+Fig. 10. Case study II – base run results - WDS.
+Fig. 11. Case study II – base run results – pump status chart.
+T. Shmaya et al.                                                                                                                                                                                                       
+Heliyon 10 (2024) e39136 
+16 
+
+one, pumping units seem to show varying contribution to the operation.
+A sensitivity analysis comprising 3 different scenarios was conducted to test the behavior of the model. Table 6 contains the 
+modifications made to the base run in each scenario. Generally, in the first and second scenarios the water and power demands were 
+respectively increased and decreased, and in the third scenario the solar generation capacity was increased.
+Figs. 13 and 14 present the results for the sensitivity analysis scenarios, compared with the results for the base run. The results were 
+divided into 2 parts – the response of the WDS components for the modifications in Fig. 13 (pump powers and tank elevations), and the 
+response of the power generators in Fig. 14.
+The expected outcome of an increase in water demand, as imposed in scenario 1 (blue), is that pumps will be required to convey 
+larger amounts of water, which will lead to an increase in their power demand as well. This can be observed in Fig. 13a and b, as well as 
+in Fig. 14a - the increase of water demand results in a significant increase of power generation in bus 1. Pump power demand peaks 
+increase in 15 % and 13 % for pumps 1 and 2, respectively, after imposing a 20 % increase in total water demand. Tank elevations are 
+affected as well, as larger quantities of stored water are used for supply, since more power must be generated, and the tanks help relieve 
+some of the load imposed on the pumps.
+The decrease of total power demand inside the grid in scenario 2, which is represented by the colour grey, results in an expected 
+decrease in power generation compared to the base run (Fig. 14a), as the entire curve is shifted downward and keeps its original shape. 
+In this case, it also results in different trends for pump power demand – the peak of pump power decreases in 16 % for pump 1, and 
+increases in 17 % for pump 2, after imposing a 50 % decrease of total power demand. This decrease in static power loads allows for 
+more power to flow towards the pumps, which intensifies the previously discussed effect of pumps’ location inside the WDS - pump 2 is 
+able to account for a larger percentage of the water supply, at the expense of pump 1. However, this changes at 17:00, when power 
+demand increases and exceeds the solution obtained in the base run for pump 1 and decreases for pump 2. The availability of solar 
+power creates a tradeoff between two time-periods in the simulation – the period in which it is available, and the period in which it is 
+not. When pump power increases during the period in which solar power is available, it means less power will be required to be 
+invested in the period when solar power isn’t available. Since opposite trends are observed for the peak pump power demands, op­
+posites trends are observed during the evening and nighttime as well.
+The increased magnitude of solar power availability in scenario 3, which is represented by the colour yellow, also amplifies 
+previously discussed trends. Here, the operation relies largely on solar power available between 8:00–19:00. Generation at bus 1 is 
+halted during that period (Fig. 14a), along with pump 1 (Fig. 13a), and pump 2 consumes most of the generated power. The increased 
+pumping results in a larger percentage of unused stored water, with tank elevations remaining at their highest values out of all sce­
+narios (Fig. 13a-b). Moreover, tank 8 remains full for a straight 6-h period – all of which supports the conclusion that larger amounts of 
+sustainable energy reduce the necessity of storage. Although 10 p.u. of solar power is available during the peak hours, only 7 p.u. is 
+Fig. 12. Case study II – base run results - power grid.
+T. Shmaya et al.                                                                                                                                                                                                       
+Heliyon 10 (2024) e39136 
+17 
+
+Table 6 
+Case study I – sensitivity analysis scenarios.
+Parameter
+Base run
+S.A. 1
+S.A. 2
+S.A. 3
+Total water demand [m3/day]
+24,000
+28,800
+24,000
+24,000
+External power load at each bus [p.u.]
+0.5 + 0.175i
+0.5 + 0.175i
+0.25 þ 0.0875i
+0.5 + 0.175i
+Solar generation pattern multiplier
+4
+4
+4
+10
+Fig. 13. Case study II - sensitivity analysis results – WDS response.
+Fig. 14. Case study II – sensitivity analysis results – power grid response.
+T. Shmaya et al.                                                                                                                                                                                                       
+Heliyon 10 (2024) e39136 
+18 
+
+actually generated (Fig. 14b), due to the binding voltage constraint inside the power grid. This voltage constraint causes the pump 
+operation curves to look somewhat similar to the power generation curves, as if each of the generators is solely responsible for sup­
+plying each of the pumps. This result reveals a strong dependency between the generators and the pumps in the system when less solar 
+power is available, or when one of the generators is out of order.
+Objective function values for the sensitivity analysis scenarios of illustrative case study II are shown in Fig. 15.
+The different scenarios present different trends for objective function value, increasing for scenario 1 and decreasing for scenarios 2 
+and 3. The objective value was expected to grow for scenario 1, as intensifying the load on the system requires the investment of an 
+increased amount of resources in order to supply the demand. After increasing the water load by 20 %, the increase in objective value is 
+14 %. This result means that the conjunctive operation is beneficial, considering the power generation cost function is quadratic. As 
+mentioned in the sensitivity analysis discussion for case study I, those static power loads amount to a significant percentage of the 
+power consumption throughout the simulation, and reducing them has a direct effect on the objective value. But as was observed in the 
+analysis of Figs. 13 and 14, these loads affect the flexibility of the water distribution system operation and therefore have a second- 
+order influence on the objective as well. The reduction in objective function value is greater for scenario 2 compared to scenario 3, 
+where more solar power is available. Developing sustainable energy sources would be a meaningful and noble contribution to the 
+optimal operation of those infrastructure system, but such a result implies that investing in the upgrade of a water system to better suit 
+the growing population and control its loads could achieve significant results from the power grid side, which may not have been 
+expected.
+Table 7 provides a comparison of run data for the solutions of the conjunctive and independent problems, for the two examined case 
+studies.
+Table 7 helps grasp the level of complexity of each of the problems. In illustrative case study I, the WDS optimal operation problem 
+includes more decision variables than the OPF problem, although the number of constraints is lower. Illustrative case study II presents 
+a different scenario, where the power grid requires more decision variables and more constraints as well. The WDS problem requires 
+significantly more computation time, which is a result of the formulation of the problem. The power flow problem was formulated 
+using the bus injection model, which allows to formulate the problem as a quadratic programming problem. The WDS problem, 
+however, was formulated explicitly as a non-linear problem.
+As mentioned in the methodology section, the objective value of the two independent problems solution was obtained by solving 
+the optimal operation of the WDS, with the objective of minimizing pump power, and then inserting the solution as known loads to the 
+OPF problem. As the conjunctive operation problem is far more complex than either of the sub-problems, it can be observed in Table 7
+that its solution requires significantly higher number of iterations and a longer running time, which exceed the combined number of 
+iterations and running times for the solutions of the independent optimization problems.
+Fig. 16 presents reduction rates of total power generation cost as a result of solving the conjunctive operation problem, compared to 
+solving the two problems separately, for each of the illustrative case studies, as presented in the previous section. In order to calculate 
+the power generation cost for the independent WDS, the optimal solution obtained for the independent WDS was inserted as a known 
+load into the power grid, and the power grid operation was then optimized, meaning that this solution was virtually obtained in two 
+stages, as opposed to the conjunctive model which was solved all at once.
+4. Conclusions
+In this study, the problems of optimal WDS operation and optimal power flow are combined into one joint optimization problem. 
+This conjunctive model is fully formulated and applied on two illustrative case studies, for which it is solved using a built-in MATLAB© 
+solver. The problem formulation contains a unique formulation of the pump scheduling problem as an NLP problem, which affects the 
+entire optimization problem and helps avoid a MINLP problem. In these two illustrative case studies, a power grid containing a 
+conventional generator and a sustainable energy source is supplying a WDS with power for pumping purposes. The objective of the 
+Fig. 15. Case study I – sensitivity analysis objectives.
+T. Shmaya et al.                                                                                                                                                                                                       
+Heliyon 10 (2024) e39136 
+19 
+
+conjunctive operation is minimizing power production costs. The obtained results reveal a complex relationship between the two 
+systems, which influences the optimal operation of the WDS. This effect is prominently observed by the comparison of the conjunctive 
+optimal operation to the optimal operation of the two independent systems, as was presented for the two illustrative case studies.
+The goal of case study I was to examine the solution on a very simple system, so trends could be relatively prominent and clear to 
+trace. The goals of case study II were to slightly complexify the examined system, allow for a more flexible operation and broaden the 
+solution space, inorder to understand how it would affect the optimal operational policy. These goals were to be achieved while 
+maintaining a system that is feasible to solve in reasonable running times, considering the non-linear solver that was used as part of the 
+solution method. While both case studies are relatively small scaled, their examination and analysis were kept mainly qualitative, 
+focusing on the different trade-offs and interrelationships between components such as pumps, tanks, sustainable power generators 
+and conventional power generators. This was done in order to draw general conclusions about the nature of the conjunctive operation, 
+which would be beneficial for larger and more realistic infrastructure systems, such as the location of a pumping unit inside the power 
+grid, the manner in which pump power peaks could change depending on the type of generators in the power grid, or the very idea of 
+considering the operational costs of the power grid when developing an optimal operation policy for the WDS.
+The considered objective function, presented in equation (2), is commonly used for generator cost. As such, along with the 
+mathematical cost, it represents the environmental impact and operational cost of using a power generator, and therefore serves as a 
+meaningful basis for comparison. The suggested conjunctive solution results in reduced total power generation costs of 11.35 % and 
+14.58 % for case studies I and II compared with the two-staged solution. With objective value reduction rates exceeding 10 %, this 
+result highlights the potential and significance of combining the two models together, and moreover, the importance of a holistic 
+approach to solving operation problems. The consideration of both networks at the same time allows the trade-offs between the 
+different components, which were discussed throughout the paper, to come into effect, and for the algorithm to take advantage of those 
+trade-offs.
+One of the purposes of this paper is to provide more generic and accurate modelling of the WDS compared to other studies that 
+considered joint management (e.g., flow direction, tank location, etc.). The NLP pump scheduling formulation provided here is suitable 
+for systems using variable speed pumps, and relies on reasonable, practical and sensible engineering assumptions. The formulation 
+allows avoiding a mixed-integer non-linear programming problem, which can be computationally impractical to solve.
+The two networks pose significant mathematical challenges and complexities, and future work should focus on different optimi­
+zation methods and solution approaches, such as bi-level optimization, mixed-integer non-linear programming and multi-objective 
+Table 7 
+Comparison of run data.
+Case 
+study
+Run
+Decision 
+variables
+Equality 
+constraints
+Inequality 
+constraints
+Total number of 
+constraints
+Runtime 
+[sec]
+No. of 
+iterations
+Objective 
+value [$]
+I
+Independent system – 
+WDS optimal operation
+239
+216
+24
+240
+2.9
+41
+53,569
+Independent system – 
+OPF
+178
+144
+144
+288
+0.2
+16
+Conjunctive optimal 
+operation
+417
+360
+168
+528
+157.8
+443
+47,488
+II
+Independent system – 
+WDS optimal operation
+528
+480
+48
+528
+24.9
+87
+57,437
+Independent system – 
+OPF
+706
+672
+672
+1344
+0.5
+24
+Conjunctive optimal 
+operation
+1234
+1152
+720
+1872
+1605.8
+408
+49,063
+Fig. 16. Cost reduction rates.
+T. Shmaya et al.                                                                                                                                                                                                       
+Heliyon 10 (2024) e39136 
+20 
+
+optimization. As mentioned, the results were obtained using a built-in MATLAB© solver. Although in both examined case studies the 
+power generation costs managed to be reduced, as the problem grew, it became more challenging for the solver, which is reflected by 
+the increased number of iterations and computation time. As such, the direct use of built-in solvers might not be suitable for large-scale 
+real-life power grids or water distribution networks. This paper is aimed mainly at presenting an approach of a conjunctive operation 
+and identifying its advantages. Future work will be dedicated to developing better solution methods that would take advantage of the 
+problem characteristics and allow us to apply this concept to much larger networks. That said, it is important to mention that this 
+conjunctive approach is would best suit systems of a regional scale, as those systems are usually fitting for the non-linear formulation 
+that was presented, and more importantly, pumping stations would play a more significant role inside the power grid, thus enabling a 
+significant cost reduction to benefit operators.
+As water quality is a major challenge in WDS operation, future work could also look into the effects of such an approach on water 
+quality, as it may pose additional challenges or even damage water quality.
+Many possible research directions are also available on the power grid side. One pf them could be the inclusion of various power 
+grid components such as switches and transformers, which could make the problem much more complex and make the operation more 
+flexible. Another is the inclusion of different power sources such as hydroelectric generators or wind, which may pose different 
+challenges to the operation of the entire system. The inclusion of power quality constraints is also an interesting direction, which would 
+limit the magnitude of voltage and current fluctuations.
+CRediT authorship contribution statement
+Tomer Shmaya: Writing – original draft, Methodology, Investigation, Formal analysis, Conceptualization. Mashor Housh: 
+Writing – review & editing, Methodology, Data curation, Conceptualization. Filippo Pecci: Writing – review & editing, Methodology. 
+Kyri Baker: Writing – review & editing, Supervision, Methodology, Data curation. Joseph Kasprzyk: Writing – review & editing, 
+Supervision. Avi Ostfeld: Writing – review & editing, Supervision, Funding acquisition.
+Data availability
+Data of power grid loads from The Power Flow Problem [44] and data of WDS from Optimal Operation of Multi-Quality Water 
+Supply Systems – II: The Q-H Model (Cohen et al., 2000) were used in the creation of this manuscript. MATLAB© version 2019b was 
+used for coding the optimization problems and obtaining solutions. YALMIP package (an open-source software package, available at 
+https://yalmip.github.io/) was used for coding the optimization problem into MATLAB©. EPANET 2.2 was used for generating an 
+initial solution for the WDS (available at https://www.epa.gov/water-research/epanet). Data associated with this study has not been 
+deposited into a publicly available repository, but will be available upon request.
+Declaration of competing interest
+The authors declare that they have no known competing financial interests or personal relationships that could have appeared to 
+influence the work reported in this paper.
+Acknowledgements
+Special assistance from JNF, Israel, enabled the completion of this research. The Bernard M. Gordon Centre for Systems Engineering 
+at the Technion provided valuable grant for this study. Additionally, a grant from the United States-Israel Binational Science Foun­
+dation (BSF) support this research. The Israeli Ministry of Environmental Protection and the Israeli Ministry of Science are also 
+acknowledged for their contributions to this study. The second author received grant from the Israeli Science Foundation (ISF) grant.
+References
+[1] J. Dai, S. Wu, G. Han, J. Weinberg, X. Xie, X. Wu, X. Song, B. Jia, W. Xue, Q. Yang, Water-energy nexus: a review of methods and tools for macro-assessment, 
+Appl. Energy 210 (2018) 393–408, https://doi.org/10.1016/j.apenergy.2017.08.243.
+[2] O. Giustolisi, D.B. Laucelli, L. Berardi, Operational optimization: water losses versus energy costs, J. Hydraul. Eng. 139 (4) (2013) 410–423, https://doi.org/ 
+10.1061/(asce)hy.1943-7900.0000681.
+[3] D. Fooladivanda, J.A. Taylor, Energy-Optimal pump scheduling and water flow, IEEE Transactions on Control of Network Systems 5 (3) (2018) 1016–1026, 
+https://doi.org/10.1109/tcns.2017.2670501.
+[4] P. Jowitt, G. Germanopoulos, Optimal pump scheduling in Water-Supply networks, J. Water Resour. Plann. Manag. 118 (4) (1992) 406–422, https://doi.org/ 
+10.1061/(asce)0733-9496(1992)118:4(406.
+[5] C. Stokes, A.R. Simpson, H.R. Maier, A computational software tool for the minimization of costs and greenhouse gas emissions associated with water 
+distribution systems, Environ. Model. Software 69 (2015) 452–467, https://doi.org/10.1016/j.envsoft.2014.11.004.
+[6] B. Guragai, T. Hashimoto, K. Oguma, S. Takizawa, Data logger-based measurement of household water consumption and micro-component analysis of an 
+intermittent water supply system, J. Clean. Prod. 197 (2018) 1159–1168, https://doi.org/10.1016/j.jclepro.2018.06.198.
+[7] A. Panda, U. Mishra, An environmental optimal power flow framework of hybrid power systems with pumped hydro storage, J. Clean. Prod. 391 (2023) 136087, 
+https://doi.org/10.1016/j.jclepro.2023.136087.
+[8] S. Putri, F. Moazeni, J. Khazaei, Predictive control of interlinked water-energy microgrids, Appl. Energy 347 (2023) 121455, https://doi.org/10.1016/j. 
+apenergy.2023.121455.
+[9] A. Bhatraj, E. Salomons, M. Housh, An optimization model for simultaneous design and operation of renewable energy microgrids integrated with water supply 
+systems, Appl. Energy 361 (2024) 122879, https://doi.org/10.1016/j.apenergy.2024.122879.
+T. Shmaya et al.                                                                                                                                                                                                       
+Heliyon 10 (2024) e39136 
+21 
+
+[10] U. Shamir, Optimal design and operation of water distribution systems, Water Resour. Res. 10 (1) (1974) 27–36, https://doi.org/10.1029/wr010i001p00027.
+[11] M. Sterling, B. Coulbeck, Technical NOTE. A dynamic programming solution to optimization OF pumping costs, Proc. Inst. Civ. Eng. 59 (4) (1975) 813–818, 
+https://doi.org/10.1680/iicep.1975.3642.
+[12] M. Olshansky, S. Gal, Optimal Operation of a Water Distribution System, IBM, Haifa, Israel, 1988, p. 52. Technical Rep. No. 88.239.
+[13] L.E. Ormsbee, S.L. Reddy, Nonlinear heuristic for pump operations, J. Water Resour. Plan. Manage. 121 (4) (1995) 302–309.
+[14] D.A. Savic, G.A. Walters, Genetic algorithms for leastcost design of water distribution networks, J. Water Resour. Plann. Manag. 123 (2) (1997) 67–77.
+[15] E. Price, A. Ostfeld, Graph theory modeling approach for optimal operation of water distribution systems, J. Hydraul. Eng. 142 (3) (2016), https://doi.org/ 
+10.1061/(asce)hy.1943-7900.0001099.
+[16] E. Salomons, M. Housh, Practical real-time optimization for energy efficient water distribution systems operation, J. Clean. Prod. 275 (2020) 124148, https:// 
+doi.org/10.1016/j.jclepro.2020.124148.
+[17] D.R. Broad, G.C. Dandy, H.R. Maier, Water distribution system optimization using metamodels, J. Water Resour. Plann. Manag. 131 (3) (2005) 172–180, 
+https://doi.org/10.1061/(asce)0733-9496(2005)131:3(172.
+[18] I. Daniel, G.R. Abhijith, L. Kadinski, A. Ostfeld, A. Cominola, A machine learning-based surrogate model for coupled hydraulic and water quality simulation in 
+water distribution networks, in: World Environmental and Water Resources Congress, 2023, pp. 817–830.
+[19] F. Fiedler, A. Cominola, S. Lucia, Economic nonlinear predictive control of water distribution networks based on surrogate modeling and automatic clustering, 
+IFAC-PapersOnLine 53 (2) (2020) 16636–16643, https://doi.org/10.1016/j.ifacol.2020.12.793.
+[20] D. Sun, B. Ashley, B. Brewer, A. Hughes, W. Tinney, Optimal power flow by Newton approach, IEEE Trans. Power Apparatus Syst. PAS-103 (10) (1984) 
+2864–2880, https://doi.org/10.1109/tpas.1984.318284.
+[21] S. Zamzam Ahmed, Kyri Baker, Learning optimal solutions for extremely Fast AC optimal power flow. 2020 IEEE International Conference on Communications, 
+Control, and Computing Technologies for Smart Grids (SmartGridComm), 2020.
+[22] J. Sun, L. Tesfatsion, Dc Optimal Power Flow Formulation and Solution Using Quadprogj, Iowa State University, Tech. Rep, 2006.
+[23] H. Hijazi, C. Coffrin, P.V. Hentenryck, Convex quadratic relaxations for mixed-integer nonlinear programs in power systems, Mathematical Programming 
+Computation 9 (3) (Sep 2017) 321–367, https://doi.org/10.1007/s12532-016-0112-z [Online]. Available:.
+[24] R.A. Jabr, Radial distribution load flow using conic programming, IEEE Trans. Power Syst. 21 (3) (Aug 2006) 1458–1459.
+[25] C. Crozier, K. Baker, Data-driven Probabilistic Constraint Elimination for Accelerated Optimal Power Flow, IEEE Power & Energy Society General Meeting 
+(PESGM), 2022, https://doi.org/10.1109/pesgm48719.2022.9916838, 2022.
+[26] S. Mukherjee, A. Recio, C. Douligeris, Optimal power flow by linear programming based optimization, IEEE (2003), https://doi.org/10.1109/ 
+secon.1992.202407.
+[27] A.G. Bakirtzis, Genetic algorithm solution to the economic dispatch problem, IEE Proceedings 141 (4) (1994) 377, https://doi.org/10.1049/ip-gtd:19941211.
+[28] M.Z. Oskouei, B. Mohammadi-Ivatloo, M. Abapour, M. Shafiee, J.M. Guerrero, Techno-economic and environmental assessment of the coordinated operation of 
+regional grid-connected energy hubs considering high penetration of wind power, J. Clean. Prod. 280 (2021) 124275, https://doi.org/10.1016/j. 
+jclepro.2020.124275.
+[29] Energy Efficiency for Water Utilities, US EPA, 2022, March 30. https://www.epa.gov/sustainable-water-infrastructure/energy-efficiency-water-utilities.
+[30] X. Cai, K. Wallington, M. Shafiee-Jood, L. Marston, Understanding and managing the food-energy-water nexus – opportunities for water resources research, Adv. 
+Water Resour. 111 (2018) 259–273, https://doi.org/10.1016/j.advwatres.2017.11.014.
+[31] R. Koh, J. Kern, S. Galelli, Hard-coupling water and power system models increases the complementarity of renewable energy sources, Appl. Energy 321 (2022) 
+119386, https://doi.org/10.1016/j.apenergy.2022.119386.
+[32] S. Pereira-Cardenal, B. Mo, A. Gjelsvik, N. Riegels, K. Arnbjerg-Nielsen, P. Bauer-Gottwein, Joint optimization of regional water-power systems, Adv. Water 
+Resour. 92 (2016) 200–207, https://doi.org/10.1016/j.advwatres.2016.04.004.
+[33] A.S. Zamzam, E. Dall’Anese, C. Zhao, J.A. Taylor, N.D. Sidiropoulos, Optimal water–power flow-problem: formulation and distributed optimal solution, IEEE 
+Transactions on Control of Network Systems 6 (1) (2019) 37–47, https://doi.org/10.1109/tcns.2018.2792699.
+[34] A. Stuhlmacher, J.L. Mathieu, Chance-constrained water pumping to manage water and power demand Uncertainty in distribution networks, Proc. IEEE 108 (9) 
+(2020) 1640–1655, https://doi.org/10.1109/jproc.2020.2997520.
+[35] K.S. Ayyagari, S. Wang, N. Gatsis, A.F. Taha, M. Giacomoni, Co-Optimization of interdependent water and power distribution networks. https://doi.org/10. 
+1109/isgt49243.2021.9372197, 2021.
+[36] E. DallAnese, K. Baker, T. Summers, Chance-Constrained AC Optimal power flow for distribution systems with renewables, IEEE Trans. Power Syst. 32 (5) 
+(2017) 3427–3438, https://doi.org/10.1109/tpwrs.2017.2656080.
+[37] K. Oikonomou, M. Parvania, S.J. Burian, Integrating water distribution energy flexibility in power systems operation, IEEE Trans. Smart Grid 11 (6) (2017), 
+https://doi.org/10.1109/pesgm.2017.8274374.
+[38] K. Oikonomou, M. Parvania, Optimal coordinated operation of interdependent power and water distribution systems, IEEE Trans. Smart Grid 11 (6) (2020) 
+4784–4794, https://doi.org/10.1109/tsg.2020.3000173.
+[39] M. Majidi, L. Rodriguez-Garcia, T. Mosier, M. Parvania, Coordinated operation of pumped-storage hydropower with power and water distribution systems, Int. 
+J. Electr. Power Energy Syst. 142 (2022) 108297, https://doi.org/10.1016/j.ijepes.2022.108297.
+[40] YALMIP, Yalmip, Software (2023, June 22). https://yalmip.github.io/.
+[41] J. Kravits, K. Baker, J. Kasprzyk, A.S. Stillwell, Assessing Trade-Offs between Water, Emissions, and Cost in Multi-Objective Optimal Power Flow, IEEE Power & 
+Energy Society General Meeting (PESGM), 2022, https://doi.org/10.1109/pesgm48719.2022.9917158, 2022.
+[42] E. Todini, S. Pilati, A Gradient Algorithm for the Analysis of Pipe Networks, 1988, pp. 1–20. https://dl.acm.org/citation.cfm?id=61053.
+[43] Dani Cohen, Uri Shamir, Gideon Sinai, Optimal operation of multi-quality water supply systems-II: the Q-H model, Eng. Optim. 32 (6) (2000) 687–719, https:// 
+doi.org/10.1080/03052150008941318.
+[44] J.D. McCalley, Iowa State University, 2013. https://home.engineering.iastate.edu/~jdm/ee553-Old/PowerFlow.doc. The Power Flow Problem.
+T. Shmaya et al.                                                                                                                                                                                                       
+Heliyon 10 (2024) e39136 
+22 

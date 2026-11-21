@@ -1,0 +1,1508 @@
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 40, NO. 4, JULY 2025
+2819
+Resilience Assessment of Urban Power Network
+Considering Multi-Stage Electrical-Water
+Fault Propagation
+Qingxin Shi
+, Member, IEEE, Yilu Yan
+, Student Member, IEEE, Wenxia Liu
+, Member, IEEE,
+Bo Zeng
+, Member, IEEE, Zhuning Wang, and Fangxing Li
+, Fellow, IEEE
+Abstract—Multi-voltage-levelurbanpowernetwork(UPN)isthe
+basis for other infrastructure networks, especially water distribu-
+tion network (WDN). Compared with other networks, UPN is more
+vulnerabletoextremeevents,includingextremeweathereventsand
+deliberate attacks. The affection of UPN fault on WDN displays
+complex multi-stage characteristics. This paper ﬁrst proposes a
+comprehensive tri-stage model of electrical-water fault propaga-
+tion, including the electrical-water network connection model, the
+reduced-order hydraulic network model, and the water supply
+model of customers. Second, a scenario selection method and two
+resilience assessment indices are proposed. The indices measure the
+resistive capability of UPN considering the fault propagation effect.
+Finally, the proposed model and assessment method are veriﬁed
+by a simpliﬁed real-world urban power and water network based
+on the selected typical fault scenarios. The resilience assessment
+method helps electrical utilities to identify critical components
+of UPN and to make optimal decisions for long-term component
+hardening and short-term post-disaster restoration.
+Index Terms—Resilience assessment, urban power network,
+water distribution network, fault propagation, extreme event.
+NOMENCLATURE
+A. Notation Associated With Electric Power Network
+Parameters and Sets
+i, j, ΩEN
+Index and set of nodes in the high-voltage
+system.
+ΩENF ⊂ΩEN
+Set of faulted substations.
+(i, j), ΩEB
+Index and set of branches in high-voltage sys-
+tem.
+Manuscriptreceived30May2023;revised22January2024and19April2024;
+accepted 24 June 2024. Date of publication 10 September 2024; date of current
+version 20 June 2025. This work was supported in part by the National Natural
+Science Foundation under Grant 52307094 and in part by the Fundamental
+Research Funds for the Central Universities under Grant 2023JC008. Paper
+no. TPWRS-00830-2023. (Corresponding author: Wenxia Liu.)
+Qingxin Shi, Wenxia Liu, and Bo Zeng are with the State Key Labora-
+tory of Alternate Electrical Power System With Renewable Energy Sources,
+North China Electric Power University, Beijing 102206, China (e-mail: li-
+uwenxia001@163.com).
+Yilu Yan is with the State Grid Suzhou Electric Company, Suzhou 215000,
+China.
+Zhuning Wang is with the Beijing Municipal Institute of City Planning &
+Design, Beijing 100032, China.
+Fangxing Li is with the Department of Electrical and Computer Engineering,
+The University of Tennessee, Knoxville, TN 37996 USA.
+Color versions of one or more ﬁgures in this article are available at
+https://doi.org/10.1109/TPWRS.2024.3420114.
+Digital Object Identiﬁer 10.1109/TPWRS.2024.3420114
+ΩEBF ⊂ΩEB
+Set of faulted high-voltage branches.
+h, ΩENi
+Index and set of load nodes of the i-th substa-
+tion.
+s, S
+Index and set of fault scenarios.
+Bij
+Admittance of branch (i, j).
+zij,t
+Switching state of branch (i, j) at t, zij,t = 1 if
+closed.
+P G
+i,t
+Power output of generator at node i at t.
+P D
+i,t
+Load demand at node i at t.
+ΔP D
+i,t
+Load reduction at node i at t.
+P D
+ci
+Average load demand per customer at node i.
+xe
+i, XS
+Binary parameter and set of substation state,
+xe
+i = 1 if the substation is in operation, 0 if it
+is faulted.
+vw
+Wind speed of a hurricane.
+wd
+Flood depth in the substation.
+bij
+Admittance of branch (i, j).
+Pi-h
+Power demand of node h.
+Lh
+Distance of medium-voltage line from the sub-
+station to node h.
+Variables
+Pij,t
+Real power ﬂow of branch (i, j) at time t.
+ρS
+Probability of substation transformer fault.
+ρMVL
+Probability of medium-voltage distribution
+line fault.
+B. Notation Associated With Water Network
+Parameters and Sets
+i, j, ΩWN
+Index and set of nodes in water network.
+(i, j), ΩWB
+Index and set of branches in water network.
+ΩWP
+Set of branches with water pump.
+ΩWR(l)
+Set of branches in the l loop of the water
+network.
+π(i) / c(i)
+Set of parent/children nodes of node i.
+xP
+i , XP
+Binary parameter and set of water pump states,
+xP
+i = 1 if the pump is in operation, 0 if it quits
+operation.
+W T
+i , WT
+Water plant output of node i and set of W T
+i .
+W D
+i , WD
+Water demand of node i and set of W D
+i .
+I
+Identical matrix.
+yi, Y
+Ground elevation at node i and set of yi.
+HP
+ij, HP
+Water head gain of pump (i, j) and set of HP
+ij.
+0885-8950 © 2024 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:16:53 UTC from IEEE Xplore.  Restrictions apply. 
+
+2820
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 40, NO. 4, JULY 2025
+Hst
+Required urban service water head.
+lij
+Length of water branch (i, j).
+Cij
+Equivalent frictional coefﬁcient of branch (i,
+j).
+βij
+Set of water demand node along branch (i, j).
+LPl
+Set of branches in the l-th loop of the WDN.
+ΔHF
+Average water head loss per ﬂoor.
+Hst / H1F
+Standard service water head for the 6th/1st
+ﬂoor.
+Variables
+Hi, H
+Service (free) water head of node i and set of
+Hi.
+ΔHij, ΔH
+Water head loss of branch (i, j) and set of ΔHij.
+Wij
+Water ﬂow from i to j (m3/s).
+NCi,t/ΔNCi,t
+Number of all/affected customers at node i.
+I. INTRODUCTION
+City is the political, economic, science and technology, and
+cultural center of a region and even a country. The infrastruc-
+tural networks, such as electrical power, water, natural gas, and
+communication, are the basis for the normal operation of the
+city. In particular, power system failure not only affects different
+typesofcustomersbutalsocausesmalfunctionofothernetworks
+[1], [2]. The concept of "power system resilience” is introduced
+to assess its ability to withstand and recover from signiﬁcant
+damages caused by natural disasters (e.g., hurricanes, ﬂoods) or
+deliberate attacks [3], [4], [5].
+With global climate change, extreme weather events tend to
+be more frequent than before [6], [7]. One type is hurricane
+or torrential rain that occurs in summer. For example, the
+Zhengzhou 7.20 torrential rain in 2021, China, destroyed over
+500 overhead lines. Water treatment plants and pump stations
+stopped operation due to power outages [8]. Over 1.2 million
+customers lost power and/or water supply for at least one day.
+The second is snow and ice coating that occurs in winter, such
+as the Texas snowstorm in February 2021, the United States.
+Over 3.6 million customers lost power supply in this event. The
+power outage also led to water outages in some regions [1], [9].
+Although water distribution pipelines are hardly damaged in
+those disaster events, severe power outages lead to a cascading
+effect in the water distribution network (WDN), which contains
+a lot of electrical-driven components [10]. Eventually, the out-
+of-service of electricity and water in residential, commercial,
+and public-service customers cause a wide social pandemic [11].
+Therefore, the resilience assessment of the urban power network
+(UPN) should consider electrical-water fault propagation, which
+serves as a guideline for utility companies to efﬁciently recover
+both electricity and water supply after extreme events.
+The vulnerable component identiﬁcation is an essential mea-
+sure of the “withstanding” aspect of the system’s resilience. It
+means the percentage of system function loss that is caused by
+one or several component failures [12]. From the perspective of
+complex network theory, a critical node or region of the WDN
+canbeidentiﬁedbytheweightedsumofitsstructuralimportance
+and functional importance [13], [14]. Reference [15] proposed
+a vulnerability assessment method of industrial WDN using
+the dynamic inoperability input-output model. Overall, those
+works were focused on fault propagation within the WDN by
+specifying a faulted branch or faulted node. In disaster scenarios,
+however, the large-scale water outage is not caused by damage to
+water pipelines, but by a decrease in service water pressure due
+to water pump outages [16]. Therefore, the resilience assessment
+should be established on a hydraulic model of the WDN.
+The operational interdependency of electrical-water coupled
+networks was addressed by many studies. The ﬁrst is about the
+optimal energy ﬂow [17], [18], [19] and cooperative planning
+of an electrical-water coupled network in normal operating
+condition [20], [21], [22], [23]. The purpose is to minimize
+the operating cost while serving the electrical and water load.
+Reference [21] proposed a mixed-integer nonlinear model of
+water-energy nexus with the objective of minimizing the oper-
+ating cost of water pumps and electrical generators. The study
+in [22], [23] co-optimized usual electric loads and water pump
+loads considering the baseline demand of electricity and water
+customers. An optimization model was developed in [24] to
+promote the economic operation of coupled electrical-water
+networks considering the water ﬂow dynamics. The second
+problem is on the post-disaster restoration of power distribution
+system considering electrical-water interdependency. Reference
+[10] proposed a restoration strategy of power distribution net-
+works by dispatching the power consumption of water pumps
+and gas compressors. The study in [25] presents metrics of
+infrastructural–operational resilience (IOR) for real-time oper-
+ations of WDN and power distribution system under extreme
+conditions of serious drought or electric grid failure. Based
+on the network interdependency, a set of metrics was intro-
+duced to measure the sensitivity of water load loss regarding
+electricity loss [12]. In addition to the single-directional fault
+propagation, the study in [26] proposed a unit commitment
+method of thermoelectric power plants considering the fuel and
+water cost under drought events. However, the existing models
+in [10], [12], [25], [26] cannot represent the practical fault
+propagation mechanism because they simplify the WDN to be a
+radial structure or ignore the multi-voltage-level characteristics
+of UPN. To our best knowledge, the urban-level electrical-
+water fault propagation has not been modeled in existing
+literatures.
+Considering the fault propagation from UPN to WDN, this
+paper proposes a resilience assessment method of UPN. The
+method identiﬁes vulnerable components in UPN according to
+its cascading effects. The innovations are as follows.
+r A tri-stage fault propagation model is proposed to
+accurately quantify the impact of the UPN fault on the
+transmission function of the WDN. The stages include
+the electrical-water network coupling model, the hydraulic
+computation model, and the water supply model. Consid-
+ering the huge number of nodes, a dimension reduction
+method of WDN is proposed to simplify its topological and
+energyﬂowmodelsoftheWDNforhydrauliccomputation.
+r Based on the fault propagation model, the paper introduces
+two UPN resilience metrics in terms of function curve
+and sensitivity. Considering customers’ usual demand for
+electricity and water supply, the quantity of electrical/water
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:16:53 UTC from IEEE Xplore.  Restrictions apply. 
+
+SHI et al.: RESILIENCE ASSESSMENT OF UPN CONSIDERING MULTI-STAGE ELECTRICAL-WATER FAULT PROPAGATION
+2821
+TABLE I
+COMPARISON BETWEEN DIFFERENT ENERGY NETWORK
+Fig. 1.
+Illustration of urban electrical-water interdependent network.
+shortage is normalized in terms of equivalent customers.
+Therefore, the metrics describe the hierarchical correla-
+tion between the UPN disturbance and the affected end
+users and help decision-makers to allocate the emergency
+resources for a more efﬁcient post-disaster restoration.
+The remaining sections of this paper are organized as follows.
+Section II describes the characteristics of urban electrical-water
+networks in topological and physical aspects. Section III pro-
+poses the tri-stage model for the quantiﬁcation of the electrical-
+water fault propagation principle. Section IV proposes the sce-
+nario generation algorithm and resilience assessment metrics of
+UPN considering the electrical-water interdependency. The case
+studies are presented in V. Section VI concludes the whole paper
+and introduces future research directions.
+II. OVERVIEW OF ELECTRICAL-WATER NETWORK
+INTERDEPENDENCY
+T
+HE UPN and WDN are both energy ﬂow networks with
+topology characteristics and physical characteristics. The
+comparison between their operating principles is the basis for
+fault propagation modeling, as summarized in Table I.
+A. Network Topology
+Fig. 1 illustrates the general coupling relation between the
+UPN and WDN. The red dashed arrows indicate that the oper-
+ation of WDN components (e.g., pump station, water treatment
+plant) depend on the power supply from UPN. Two networks
+are overviewed as follows.
+r Power transmission/distribution network: The UPN is a
+local transmission network that consists of multiple voltage
+levels. High-voltage transmission (HVT) network (e.g.,
+220 kV in China, 115/138/230 kV in U.S.) constitutes
+the backbone of the network, which receives the external
+power injection from hundreds of kilometers away. The
+high-voltage distribution (HVD) network (e.g., 110 kV
+in China, 69 kV in U.S.) distributes the power within a
+region of the city. The medium-voltage distribution (MVD)
+network (e.g., 10 kV in China, 13/26 kV in U.S.) directly
+connects to the service transformer of a building or com-
+munity.
+r Water distribution network: The diameter of water
+pipelines ranges from 50 mm to 2000 mm [16]. The
+electrical-water coupling component includes water treat-
+ment plant (WTP) and water pump station (WPS) that
+are directly supplied by MVD system [16]. The WTP
+consumeselectricityforpurifyingthewater,whiletheWPS
+maintains a sufﬁcient water head. Also, high buildings
+are installed with multi-level pumps for the water supply.
+Although 88% of the treatment facilities are equipped
+with backup generators, their fuel storage can only sustain
+for 1-2 hours, which is much shorter than the time for
+post-disaster power system restoration.
+Due to a huge number of nodes in each network, it is not
+feasible to model each physical node of the network. This paper
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:16:53 UTC from IEEE Xplore.  Restrictions apply. 
+
+2822
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 40, NO. 4, JULY 2025
+considers the large-scale community as the minimal load node
+in both UPN and WDN.
+B. Electrical-Water Fault Propagation
+The UPN is more vulnerable to extreme weather events (e.g.,
+hurricane, ice coating, torrential rain) because overhead power
+lines are more likely to be damaged than underground water
+pipelines [27]. Consequently, the WDN operation is affected
+by the power outage. On the other hand, although the thermal
+power plants consume a pure water, they build the water purify
+equipment or supplied by special pipeline instead of absorbing
+water from the WDN [28]. Therefore, it is reasonable to study the
+single-direction electrical-water fault propagation for resilience
+assessment of UPN with the assumption that the WDN is not
+damaged by extreme weather.
+III. MODELING OF ELECTRICAL-WATER FAULT PROPAGATION
+This section proposes a tri-stage model to describe the
+electrical-water fault propagation principle.
+A. Overview of Electrical-Water Cascading Fault
+The UPN fault affects water customers in three stages. First,
+the damage in the substation or overhead lines leads to the outage
+of coupling elements (WPS and pumps in building). Second,
+the absence of a water pump causes a decline in nodal water
+head. Finally, customers in buildings lose their water supply.
+Hence, the tri-stage electrical-water fault propagation model can
+be expressed by three independent functions.
+XP = fF 2P
+
+XS
+(1)
+H = fP 2H
+
+XP 
+(2)
+W D = fH2D
+
+XS, H
+
+(3)
+In this study, the minimal node in UPN is HVT or HVD
+substation. Therefore, the failure state XS indicates that either
+the substation or the distribution line connecting the substation
+and WPS is faulted. Functions fF2P, fP2H, and fH2D will be
+studied in Section III-B–III-D, respectively.
+B. Modeling of Urban Power Network in Fault Condition
+1) System Operation Principle: This section proposes a
+model to characterize the impact of calculate the N-k fault on the
+load loss and the operation of pumps (function fF2P). Generally,
+an UPN is partially served by the internal thermal power plant
+and partially by an external transmission system. The load loss
+is determined by three factors, including the economic dispatch
+of thermal power plants, network reconﬁguration, and optimal
+load shedding [29]. The modeling of UPN consists of meshed
+HVT networks, substations, and HVD networks. Based on the
+input parameters of line fault states (zij), the simpliﬁed economic
+dispatch model is given by (4)–(12).
+min .
+
+i∈ΩEN
+
+cG
+i P G
+i,t + cD
+i ΔP D
+i,t
+
+, ∀t
+(4)
+0 ≤P G
+i,t ≤¯P G
+i , i ∈ΩEN
+(5)
+0 ≤ΔP D
+j,t ≤P D
+j , i ∈ΩEN
+(6)
+θref = 0
+(7)
+N
+
+j=1
+bijθj = P G
+i,t −
+
+P D
+i,t −ΔP D
+i,t
+
+, i ∈ΩEN
+(8)
+−M(1−zij)≤Pij−bij (θi−θj)≤M(1−zij), ij ∈ΩEB
+(9)
+−P max
+ij
+zij,t ≤Pij,t ≤P max
+ij
+zij,t, ∀ij ∈ΩEB
+(10)
+zij = 0, ij ∈ΩEBF
+(11)
+
+ij∈ΩEBLk
+zij ≤zN
+k , ij ∈ΩEB
+(12)
+The objective function (4) minimizes the total cost of genera-
+torsandloadshedding.Constraint(5)enforcestheoutputlimitof
+generator units. The load shedding limit is given by (6). The DC
+power ﬂow equation is adopted to model the power ﬂow under
+N-k fault scenario, as given by (7)–(10). Equation (7) specify
+the voltage angle of the reference bus. Constraint (8) represents
+the bus power balance. Note: only a small portion of nodes are
+installed with generator units; If there is no generator, PG j,t is
+set to be 0. Equation (9) represents the branch power ﬂow, which
+is relaxed if the branch is open. Equation (10) restricts the upper
+limit of the branch power ﬂow. If branch (i, j) is faulted, then
+Pij,t = 0. Equation (11) restricts the status of faulted branches.
+Equation (12) indicates that the HVD network maintains radial
+structure by opening a switch in loop k. The load shedding is
+converted to the number of affected customers, given by (13).
+ΔNCE
+i,t = ΔP D
+i,t
+P Dc
+i
+(13)
+A substation is de-energized if it is not supplied by the
+upstream system. Furthermore, the substation is identiﬁed as
+not being able to support the WTP if it is de-energized or the
+local power supply is lower than the WTP load, as given by (14).
+XS(t) = {xS
+i,t|xS
+i,t = 0 if P L
+i,t −ΔP L
+i,t<P W P S
+i
+,
+xS
+i,t = 1 otherwise}
+(14)
+2) Electrical-Water Network Connection: The function fF2P
+depends on the connection relationship between the UPN and
+WPSs. The operating state of WPSs is given by (15).
+xP
+m = min
+
+1,
+
+i∈ΩEN
+ϕmi · xS
+i
+
+, i ∈ΩW P
+(15)
+where ϕmi = 1 if there is a power supply path from substation i
+to the WPS m, ϕmi = 0 otherwise. If the WPS is served by one or
+two substations, then 
+i∈ΩEN ϕmi = 1 or 
+i∈ΩEN ϕmi = 2.
+The equation can be written in a matrix format.
+XP = min
+
+I, ΦXS
+(16)
+where Φ is the power supply incidence matrix that consists of
+ϕmi. If the WPS is connected to a single substation, it loses
+power supply once it is de-energized. If it is connected to double
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:16:53 UTC from IEEE Xplore.  Restrictions apply. 
+
+SHI et al.: RESILIENCE ASSESSMENT OF UPN CONSIDERING MULTI-STAGE ELECTRICAL-WATER FAULT PROPAGATION
+2823
+Fig. 2.
+Substation power supply path of the coupling element.
+substations, it loses power supply only if both substations are
+de-energized.
+We use a numerical example to illustrate the coupling rela-
+tionship between substations and WPSs. As shown in Fig. 2, the
+system consists of four WPSs and six substations. The blue solid
+curve and the green dashed curve represent the water pipeline
+and distribution lines, respectively. Assume substations {5, 6}
+are faulted. The incidence matrix is
+Φ =
+⎡
+⎢⎢⎣
+0
+1
+0
+1
+0
+0
+0
+1
+0
+0
+1
+0
+0
+0
+0
+0
+0
+1
+0
+0
+1
+0
+0
+0
+⎤
+⎥⎥⎦, XS = [1, 1, 1, 1, 0, 0]T
+Then, the operating states of WPSs are determined.
+XP = min
+
+[1, 1, 1, 1]T , [2, 1, 0, 1]T 
+= [1, 1, 0, 1]T
+It is observed that P3 quits operation.
+C. Modeling of Water Distribution Network
+Function fP2H is based on comprehensive hydraulic modeling
+of WDN. The water pump promotes the kinetic energy of water
+so that it can overcome the resistance of pipelines and reach
+end-user nodes with sufﬁcient water head.
+1) Water Pipeline and Node: According to the hydraulic
+theory, the total mechanical energy of a per-unit mess of water
+is called the water head (in meters). Generally, we consider the
+evenly-distributed, constant-speed water ﬂow from position i
+to j. The Energy Equation of Water Flow describes the energy
+change of the per-unit mess of water from position i to j [16]:
+yi + Hi = yj + Hj + ΔHij
+(17)
+In a meshed WDN, the water ﬂow depends on both the nodal
+water demand and the branch water head loss. According to
+Chézy Formula, the water head loss in the circle-intersection
+pipeline is expressed by (18) [16]. The absolute value sign
+indicates the uncertainty of ﬂow direction in a meshed network.
+ΔHij = Cijleq
+ij Wij |Wij|
+(18)
+where Cij is related to the diameter and material of the pipeline.
+Substituting (17) into (18) gives
+Hi −Hj + yi −yj = Cijleq
+ij Wij |Wij|
+(19)
+Fig. 3.
+Aggregation of branch WDN: (a) Real pipeline; (b) simpliﬁed pipeline.
+where the equivalent length of the pipeline (leq
+ij ) combines the
+frictional head loss and the local head loss. The detailed method
+for calculating leq
+ij is presented in Appendix. If branch (i, j)
+contains a WPS, the water ﬂow equation is given by (20).
+Hi −Hj + yi −yj + xP
+mΔHP
+ij = Cijleq
+ij Wij |Wij|
+(20)
+The water demand point is considered as a node in the
+network. The water ﬂow balance of node j is given by (21).
+
+i∈π(j)
+Wij −
+
+k∈c(j)
+Wjk = W T
+j −W D
+j
+(21)
+For most of the nodes, W T
+j = 0 because there is no WTP.
+2) Network Topology Reduction: The WDN contains a huge
+number of pipelines. Generally, the modeling of urban-level
+WDN only considers main pipelines (e.g., diameter ≥400 mm)
+and reduces the branch pipelines to water demand nodes. The
+“node” is identiﬁed by the cross of two main pipelines. This
+subsection proposes a method for WDN reduction.
+r The water demand nodes along a main pipeline are aggre-
+gated and placed at the starting node and ending node as
+virtual demand nodes.
+r Multiple T-type crosses with local water head loss can be
+aggregated to frictional water head loss with an equivalent
+length.
+An example is shown in Fig. 3 to illustrate the above principle.
+A large number of small-diameter pipelines are connected to
+serve the end users. Only i and j can be regarded as nodes
+in the main WDN. In large-scale WDN, the total water de-
+mand along pipeline (i, j) is much smaller than its ﬂow, that
+is W +
+i ≥
+p∈βij Wp,ij. Thus, it is reasonable to aggregate the
+water demand and local head loss along the pipeline (i, j), given
+by (22) [30].
+⎧
+⎪
+⎨
+⎪
+⎩
+W eq
+i
+= 0.5 
+p∈βij
+Wp,ij
+W eq
+j
+= 0.5 
+p∈βij
+Wp,ij
+(22)
+If a virtual node is connected with multiple branches (e.g.,
+node j in Fig. 3), the total water demand of node j is obtained by
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:16:53 UTC from IEEE Xplore.  Restrictions apply. 
+
+2824
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 40, NO. 4, JULY 2025
+adding all virtual water demand, given by (23).
+Wj =
+
+l∈π(j)∪c(j)
+W eq
+l
+(23)
+Additionally, the details for aggregating local head loss can
+be found in Appendix.
+3) Electrical-Driven Pumps: Electrical-driven water pumps
+are adopted to boost the water head. If the WPS operates in
+constant power mode, the hydraulic characteristics of a WPS is
+given by (24) [30].
+ΔHP
+ij = HP e −
+α
+N 2
+P W 2
+ij
+if xP
+m = 1, m ∈ΩW P
+Wij = 0
+if xP
+m = 0, m ∈ΩW P
+(24)
+where HPe is the static water lift, Np is the number of parallel
+pumps. Furthermore, in the variable-power mode, the power
+consumption of water pumps (P P
+ij ) is a quadratic function of
+the water ﬂow, given by (25).
+P P
+ij = γ1W 2
+ij + γ2Wij
+(25)
+where γ1 and γ2 are coefﬁcients of the function.
+4) Hydraulic Computation of Meshed Network: The hy-
+draulic computation of meshed network is to solve nonlinear
+(26)–(28). Equation (26) and (27) are matrix formations of (20)
+and (21), respectively. Equation (28) expresses the sum of the
+water head in loops of the WDN.
+AT H + Y + HP = ΔH
+(26)
+AW = W T −W D
+(27)
+BΔH= 0
+(28)
+where A is the |ΩWN|×|ΩWB| node-branch incidence matrix of
+the water network, 0 is the vector of all-zero elements. Aki =
+1 if node k the starting node of branch i; Aki = −1 if node k
+the ending node of branch i; Aki = 0 if node k does not belong
+to branch i. B is the incidence matrix of the loops. Since the
+term ΔH in (26) is a quadratic equation with an absolute sign,
+the hydraulic equations cannot be directly solved. The general
+approach is an iterative-based adjustment method, as introduced
+below [31].
+Step 1: Specify the constant water heads of source nodes
+(WTPs). Also, specify the initial ﬂow of |ΩWB| −|ΩWN|
+branches and solve (27) for the branch ﬂow vector W.
+Step 2: Calculate the sum of water head loss in a loop.
+ΔHl =
+
+ij∈ΩRl
+ΔHij =
+
+ij∈ΩRl
+Cijleq
+ij
+
+W (0)
+ij
+2
+(29)
+If ΔHl is larger than the error tolerance (e.g., 0.1m), then go to
+Step 3, otherwise stop.
+Step 3: According to Hardy Cross Algorithm, calculate the loop
+corrective ﬂow (ΔW (0)
+ij ) and add ΔW (0)
+ij
+to the initial value
+(W (0)
+ij ), as given by (30) and(31).
+ΔW (0)
+ij
+= −
+ΔH(0)
+ij
+
+ij∈Rl
+2H(0)
+ij
+Cijleq
+ij
+(30)
+W (1)
+ij
+= W (0)
+ij
++ ΔW (0)
+ij
+(31)
+Then, return to Step 2.
+Step 4: When Step 2 converges, the branch ﬂow is also deter-
+mined. Calculate the set of water head (H) from the water
+plants to downstream nodes according to (26). Finally, the
+propagation function fP2H is obtained.
+D. Aggregated Modeling of Water User
+A WDN node represents a community or a building. If the
+nodal water head falls below the required water head, customers
+on the high ﬂoors of the building may lose water supply. This
+correlation can be modeled by an explicit function fH2D, which
+is related to the height and water supply type of buildings. This
+study establishes fH2D by differentiating low buildings (≤6
+ﬂoor) and high-rise buildings (> 6 ﬂoor), respectively. Two
+assumptions are made to simplify the model of building water
+supply.
+r The number of customers is evenly distributed on each
+ﬂoor.
+r The building water pumps and other electrical loads are
+supplied by the same service transformer. Also, there is no
+backup power source in the building.
+1) LowBuildings: Generally,Hi isdesignedforthefullwater
+supply of low buildings without built-in pumps [32]. According
+to (18) and(19), the water head loss in proportional to the height
+of the vertical pipeline. Therefore, if Hi < Hst, then ΔNCi is
+estimated by (32). Note: the index i is omitted in (32) because
+they correspond to the same node in the WDN.
+ΔNCi = NCW
+i
+N F
+i
+· max
+
+N F
+i −
+Hi−H1F
+ΔHF
+
+, 0
+
+, i∈ΩW N
+(32)
+where ⌊.⌋is the rounding down sign, ΔHF = (Hst −H1F )/6
+represents the water head loss per ﬂoor. For example, Hi = 23
+m, Hst = 28m, H1F = 10 m, NF = 5, and NCi = 3600. Thus,
+⌊(23 −10)/3⌋= 4 indicates that Hi can satisfy the water supply
+of 1 ∼4 ﬂoors. Then, ΔNCi = (3600/5)·max(5 – 4, 0) = 720.
+2) High-Rise Buildings: Since the service water head is de-
+signed to supply the 6th ﬂoor or below, the high-rise building
+is equipped with a building pump to boost the water to above
+6th ﬂoors, as shown in Fig. 4 [32]. The affected customers of
+the lowest 6 ﬂoors is calculated in the same way as those of low
+buildings, while affected customers above the 6th ﬂoor depends
+on the working status of building pumps. Then, ΔNCi can be
+calculated by (33).
+ΔNCi = NCW
+i
+6
+max
+
+6 −
+Hi −H1F
+ΔHF
+
+, 0
+
++
+
+1 −xBP
+i
+ NCW
+i
+
+N F
+i −6
+
+6
+(33)
+where xBP
+t
+is the status of the building pump, xBP
+t
+= 1 if the
+pump is in operation and 0 otherwise.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:16:53 UTC from IEEE Xplore.  Restrictions apply. 
+
+SHI et al.: RESILIENCE ASSESSMENT OF UPN CONSIDERING MULTI-STAGE ELECTRICAL-WATER FAULT PROPAGATION
+2825
+Fig. 4.
+Water supply in high-rise buildings.
+IV. RESILIENCE ASSESSMENT FRAMEWORK
+This section proposes a resilience assessment method of UPN
+based on the electrical-water fault propagation model. The UPN
+resilience is measured by its function loss and cascading effect
+under a sufﬁcient number of representative fault scenarios.
+A. UPN Fault Scenario Generation
+The power supply path from power plants to customers in-
+cludes HVT/HVD lines, MVD lines, and substations. The fault
+of any element may terminate the power supply path. This
+paper considers the fault scenarios in HVD and MVD levels
+in combined hurricane and rainfall weather, which is based
+on the empirical fragility model of components. Considering
+the large number of HVD substations, it is necessary to select
+representative fault scenarios according to their probability and
+impact [33].
+1) Fragility of Substations: The substation is likely to be
+tripped when the transformer is inundated in strong rainfall. The
+fragility curve shows a substation’s failure probability versus
+the water depth under ﬂood scenarios. An empirical function is
+expressed by (34) [34].
+ρS
+i =
+⎧
+⎨
+⎩
+0
+wd < 0.3m
+0.434wd −0.134
+0.3m ≤wd < 2.6m
+1
+wd ≥2.6m
+(34)
+wd is determined by the regional rain precipitation amount and
+terrain of this substation.
+2) Fragility of Overhead Lines: The overhead line is vulner-
+able to strong wind. This study considers a simpliﬁed fragility
+model, in which the fault probability is ﬁtted by a power function
+of wind speed based on the historical raw data [35]. The fault
+probability of an overhead line is
+ρMV L = aL(vw)c
+(35)
+where a and c are empirical parameters, L is the line length. a
+and c are different in high voltage overhead lines and medium
+voltage ones, respectively. A set of typical parameters are a =
+2.2 × 10−17/km and c = 9.91 [35].
+3) Aggregation of MVD System: On the preliminary that the
+upstream supply path of an HVD is normal, the downstream
+load can be supplied only if the substation transformer and the
+MVD line is normal (shown in Fig. 5(a)). This study proposes
+Fig. 5.
+Supply path of end customers: (a) Original network; (b) aggregated
+MVD.
+a center-of-load point (CLP) via a weighting average of line
+distance to calculate the overall probability of line fault (shown
+in Fig. 5(b)). The line distance from a substation to CLP (LCLP)
+is deﬁned as:
+LCLP =
+
+h∈ΩENi PhLh
+
+h∈ΩENi Ph
+(36)
+Substitute (35) into (36) gives the fault probability of the ag-
+gregated MVD network. In coastal areas, the hurricane, accom-
+panied by strong rainfall, is likely to cause both line faults and
+substation faults. Therefore, the fault probability of MVD-level
+supply path (ρSMV
+i
+) is
+ρSMV
+i
+= 1 −
+
+1 −ρS
+i
+ 
+1 −ρMV L
+i
+
+(37)
+4) Disaster Scenario Generation: Without losing generality,
+the disaster scenario s is deﬁned as a combination of the set of
+faulted substations and the set of faulted branches, given by (38).
+ΩEF s = {ΩENF,s, ΩEBF,s}
+(38)
+The ﬁrst step is to sample the faulted substation set. In an
+electrical-water coupling network, the impact of a substation
+fault is measured by the weighted sum of different types of loads
+within the power supply area. We introduce a three-dimensional
+fault feature index (ψi) to quantify the probability and impact
+of MVD power supply path failure.
+ψi =
+
+ρSMV
+i
+, ψE
+i , ψW
+i
+
+=
+
+ρSMV
+i
+, P D
+i ,
+
+i∈ΩENi
+P W P
+i
+
+(39)
+For example, ψi = (0.16, 35MW, 4.8MW) indicates that
+substation i supplies 35MW electrical load and 4.8MW water
+pump load, while the probability of losing these loads is 0.16. If
+there is no WPS supplied by the substation, then ψW
+i
+= 0. Based
+on the speciﬁed thresholds of ψi, we select critical substations by
+eliminating those with low failure probability or low importance.
+ΩENF s = {i1, · · · , iKSs| ψE
+i > ψE, ψW
+i
+> ψW ,
+ρSMV
+i
+> ρSMV
+i
+, KN ≤KNs ≤KN
+
+(40)
+where KNs is the number of faulted substations in scenario s,
+KN and KN are the speciﬁed threshold according to the total
+number of nodes in an UPN.
+The second step is to generate the faulted branch set. This
+study considers a N-k branch faults that occurs in heavy-loaded
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:16:53 UTC from IEEE Xplore.  Restrictions apply. 
+
+2826
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 40, NO. 4, JULY 2025
+Fig. 6.
+Function curve of an electrical-water interdependent network.
+branches.
+ΩEBF s =
+
+(i1, j1), · · · , (iKBs, jKBs)|Pij,t ≥P ij,
+KB ≤KBs ≤KB
+
+(41)
+where KBs is the number of faulted HVD branches in scenario
+s, KB and KB are the speciﬁed threshold according to the
+network dimension, zij = 0 if (i, j) ∈ΩEBF,s.
+Finally, the above procedure is conducted repetitively to ob-
+tain the fault scenario set that is caused by the speciﬁed intensity
+of an extreme weather event.
+B. Resilience Assessment Metrics
+The resilience assessment of UPN is to measure the impact of
+typical disaster scenarios on both electricity and water customers
+based on the fault propagation model [12]. As visualized in
+Fig. 6, with the progress of electrical load restoration, the WDN
+gradually recovers to the normal state. The unserved electrical
+load (in MW) and water loads (in m3/s) are not comparable.
+Therefore, it is reasonable to use the number of affected cus-
+tomers to quantify the function curve of UPN and WDN, as
+given by (42).
+⎧
+⎨
+⎩
+ΔNCE
+t,s =
+
+i∈ΩEN
+ΔNCE
+i,t,s, tE0 ≤t ≤tEn
+ΔNCW
+t,s =
+
+i∈ΩW N
+ΔNCW
+i,t,s, tW 0 ≤t ≤tW n
+(42)
+Two metrics are proposed to measure the impact of UPN fault
+on the operation of both networks. The ﬁrst one is a sequential
+function curve under a particular fault scenario, and the second
+one is a comparison between the degradations UPN and WDN
+under a set of typical fault scenarios.
+1) Scenario-Based Function Degradation: After severe dis-
+asters, some customers suffer electricity outages, some suffer
+water outages and some suffer both. The indices RW
+s,t/RE
+s,t is
+deﬁned as the ratio of served electrical/water customers. They
+present a time-of-use function degradation of UPN / WDN under
+Fig. 7.
+UPN resilience assessment considering electrical-water fault propaga-
+tion.
+a particular fault scenario.
+⎧
+⎨
+⎩
+RE
+s,t = 1 −
+ΔNCE
+t,s
+NCE , s ∈S
+RW
+s,t = 1 −
+ΔNCW
+t,s
+NCW , s ∈S
+(43)
+2) Relative Impact of UPN Disruptions on WDN Operation:
+This matrix measures the sensitivity of WDN function degrada-
+tion to the component fault of UPN in the mid-event state [12],
+which is calculated by:
+RIE2W =
+
+s∈S
+ΔNCW
+t,s
+
+s∈S
+ΔNCE
+t,s
+, max(tEe, tW e)≤t≤min(tEr, tW r)
+(44)
+The RIE2W values larger than one indicates a higher degrada-
+tion on the WDN compared to the UPN, and values lower than
+one indicates a less dependent operation of the WDN to meet
+the water demand despite the UPN degradation.
+Based on the proposed fault propagation model, scenarios
+generation method, and resilience metrics, we summarize the
+resilience assessment method of UPN in Fig. 7. In each scenario,
+the sequential simulation of an electrical-water coupled network
+is conducted considering the degradation and restoration of
+UPN. Meanwhile, the impact on WDN is estimated by the
+proposed tri-stage fault propagation model. First, the states of
+WPS and building pumps are determined. Then, the nodal water
+head is calculated and the number of affected customers is
+determined. With the progress of UPN restoration, the number of
+supplied water customer is also estimated. Finally, two resilience
+metrics are obtained and the substation vulnerability can be
+identiﬁed accordingly.
+V. CASE STUDIES
+Thissectionpresentscasestudiesonareal-worldurbaninfras-
+tructure test system. The computational tasks are performed on
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:16:53 UTC from IEEE Xplore.  Restrictions apply. 
+
+SHI et al.: RESILIENCE ASSESSMENT OF UPN CONSIDERING MULTI-STAGE ELECTRICAL-WATER FAULT PROPAGATION
+2827
+Fig. 8.
+Real-world urban electrical-water coupled network: (a) High voltage
+electrical network; (b) main water network.
+a personal laptop computer with an Intel Core i7 Processor (2.20
+GHz) and 16-GB RAM. The optimization model is implemented
+via the Matlab-based IBM ILOG CPLEX Optimization Studio
+V12.8.0.
+A. System Description
+This study considers a real-world UPN and WDN in a coastal
+city in China. There is a total number of 625.45 thousand
+customers. The approximate geographical diagrams for UPN
+and WDN are presented in Fig. 8(a) and (b), respectively. The
+UPN consists of 41 nodes (30 HVT substations and 11 HVD
+substations) and 50 lines with a daily peak load of 3281 MW. The
+WDN consists of 151 nodes, 196 branches, and 7 WPSs (labeled
+as P1 ∼P7) with a total daily water demand of 154.8 thousand
+m2. In the WDN, 398.0 thousand customers are located at the 1 ∼
+6 ﬂoors and their water supply can be guaranteed by the service
+water head. The WDN is divided into ﬁve zones (labeled as Z1
+TABLE II
+PARAMETERS OF WDN
+TABLE III
+UPN FAULT SCENARIOS
+∼Z5) according to the average ground elevation that is marked
+in Fig. 8(b). The parameters of WPSs are listed in Table II , in
+which pumps P2 and P6 are connected to two substations and
+others are connected to one substation. Furthermore, there are
+three WTPs. Two WTPs are located at the southernmost of the
+city and one at the northeast part.
+Considering a hurricane event in the UPN, the spatial distri-
+bution of wind speed ranges from 32 m/s to 38 m/s, and ﬂood
+depth ranges from 0.4 m to 1.5 m. Then, critical UPN branches
+and substations are selected according to the proposed fragility
+models in Section IV-A. Considering N – KB (2 ≤KB ≤5)
+branch faults and N – KN (2 ≤KN ≤4) substation faults, we
+select 11 typical fault scenarios based on the proposed method,
+as listed in the 2nd and 3rd columns of Table III (The label
+of nodes and branches are shown in Fig. 8(a)). The affected
+WPSs are obtained by the proposed functions fF2P, as listed
+in the 4th column. Note: the 3rd column only includes the
+substations that are de-energized by ﬂood. Other substations that
+are islanded by branch faults are not listed. Take scenario 8 as an
+example, Branches {7, 8, 14, 18, 31} are faulted. Consequently,
+substations {2, 8, 9, 10, 11} are de-energized because they are
+disconnected from UPN. Meanwhile, substations {14, 30, 33}
+are de-energized because the main transformer or secondary
+feeder is faulted. Finally, the total set of de-energized substations
+is {2, 8, 9, 10, 11, 14, 30, 33}. According to the fault propagation
+model, P5 and P6 quit operation because they lose the upstream
+power supply.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:16:53 UTC from IEEE Xplore.  Restrictions apply. 
+
+2828
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 40, NO. 4, JULY 2025
+Fig. 9.
+Zonal average water heads in typical fault scenarios.
+B. Simulation Result
+1) Water Head and Affected Customers: Based on the status
+of WPSs in 11 scenarios, the nodal water head is obtained by
+fP2H. Then, the average water head of all scenarios are presented
+in Fig. 9, in which the “Base” bar indicates that all WPSs
+normally operates. The simulation time for the tri-stage fault
+propagation of each scenario ranges from 0.2 to 0.3 second.
+Overall, it can be observed that the contribution of each WPS to
+the zonal average water head differs signiﬁcantly. The result is
+analyzed as follows.
+r Scenarios with small water head decrease: The similarity in
+scenarios 1, 4, 7 and 10 is that the water head only decrease
+a small portion in Z1 and Z2. Hence, these two zones are
+not sensitive to pumps P1, P2 and P4. In scenarios 1 and
+10, the water head of Z3 and Z4 even increase by a little
+portion. This is because P2 and P4 mainly boosts the water
+head for Z5 and their effect contradict with other WPSs
+that are located at the southern part of the WDN.
+r Scenarios with large water head decrease: In most sce-
+narios, there is a signiﬁcant decrease of water head. In
+particular, the similarity in scenarios 3, 5, 6 and 8 is that
+the average water head of Z4 decreases below 10 m and
+P5 quits operation. Thus, there is an obvious correlation
+between these two events. The signiﬁcant water head de-
+crease occurs for two reasons: 1) the high-elevation zone
+Z4 is a receiving end of the WDN, and 2) the water head
+of Z4 highly relies on P5 that locates at the main water
+delivery path to this zone. Therefore, in the meshed WDN,
+some zones are sensitive to one or two WPS due to the
+ground elevation and the network topology.
+According to function fP2H, the number of affected customers
+depends on both the water head and the height of the building.
+Take scenarios 8 as an example, the number of unserved water
+customers in each zone is shown in Fig. 10. We can observe that
+Fig. 10.
+Vertical distribution of unserved water customer (in scenario 8).
+Fig. 11.
+Spatial distribution of affected water node (in scenario 8).
+in Z4, the low water head causes a large percentage of customer
+to lose water supply (89%).
+2) System Function Curve: The system function curve il-
+lustrates the coupling between UPN and WDN in multiple
+operating states. Take Scenario 8 as an example, three WPSs
+stop operation due to UPN faults. Then, the number of affected
+water customers is estimated by the fault propagation model.
+The spatial distribution is visualized in Fig. 11. In this ﬁgure,
+those nodes where there is more than 1000 affected customers
+are marked with hollow circle. At each time step, we obtain the
+electrical load loss by using the optimal load shedding model
+(in (4)–(12)). The time-of-use function curve UPN and WDN is
+demonstrated in Fig. 12, indicating their resistive and recovery
+capability under a speciﬁed UPN fault scenario.
+In Scenario 8, P6 and P5 are assumed to be restored at t
+= 7 and t = 10, respectively. The number of served customers
+can be simulated based on the fault propagation model. Thus,
+the milestones of the system restoration are marked in the
+ﬁgure. When t = 3 ∼6, both P5 and P6 stop operation due
+to power outage and only 350 out of 625 thousand customers
+have water supply. At t = 7, around 150 customers restore water
+supply because P6 starts operation. This result indicates a high
+sensitivity of P6 in the resilience curve of WDN. At t = 10, P5
+is restored so that water heads of all nodes recover to normal
+value. However, the water supply of high-rise buildings is not
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:16:53 UTC from IEEE Xplore.  Restrictions apply. 
+
+SHI et al.: RESILIENCE ASSESSMENT OF UPN CONSIDERING MULTI-STAGE ELECTRICAL-WATER FAULT PROPAGATION
+2829
+Fig. 12.
+Resilience curve of electrical-water network considering the fault
+propagation (in scenario 8).
+TABLE IV
+ELECTRICAL-WATER LOAD LOSS UNDER FAULT SCENARIOS
+restored until the power supply path (including HVD and MVD
+branches) to this building is restored. In the restorative period (t
+= 3 ∼16), this study adopts an empirical scheduling of UPN
+restoration. The restoration of WDN synchronizes with UPN
+even if it is not damaged under the extreme weather event.
+Therefore, the resilience curve in Fig. 12 suggests that the
+de-energized substations which supply WPSs should be restored
+in higher priority under the event. Furthermore, if multiple UPN
+branches/substations are faulted, the electric utility company
+should make an optimal plan of UPN restoration to enhance the
+resilience curves RW
+s,t and RE
+s,t. However, the detailed technique
+is beyond the scope of this paper and left for future works.
+3) Relative Impact of UPN Fault on WDN: In comparison
+with the resilience curve, the relative impact measures the
+mid-event system resilience in the scenario dimension. In this
+study, the mid-event period of each scenario is assumed to be
+t = 4 ∼6 (the same as Fig. 12). The loss of electrical load
+and water load of 11 typical scenarios are obtained by the fault
+propagation model, as listed in Table IV . In some scenarios
+(e.g., 7 and 10), the affected water customers are much fewer
+than affected electrical customers for two reasons: 1) in areas
+with low buildings, the impact of water head decrease is not
+signiﬁcant; 2) only a small portion of high buildings suffer
+power outage. In other scenarios (e.g., 5 and 8), the loss of water
+customers is larger than electrical customers because the water
+head is seriously reduced by the power outage (shown in Fig. 9).
+Finally, according to (44), RIE2W = 1.018 for the 11 typical
+scenarios. This index reﬂects the impact UPN interruption on
+WDN under stochastic scenarios. The reason for high RIE2W
+is that the UPN fault causes more WPSs and building pumps
+to quit operation. According to the result in Table IV, RIE2W
+in Scenarios 5 and 9 is much larger than others. Meanwhile,
+substation #14 is de-energized in both scenarios. Therefore,
+the substation 14 (supplying P5) is a critical node in UPN and
+branches 13 and 18 (connecting to node 14) are critical branches
+from the aspect of electrical-water fault propagation.
+In summary, the power utilities are suggested to harden the
+power supply path of WPSs (P4, P5 and P6) and install more
+emergency generators to reduce the impact of UPN fault on
+WDN.
+VI. CONCLUSION
+This paper proposes an integrated resilience evaluation
+method of UPN considering its function correlation with WDN.
+The tri-stage fault propagation model is ﬁrst proposed to ac-
+curately quantify the impact of multi-dimensional UPN fault
+on the horizontal and vertical distribution of affected water
+customers. The fault propagation model illustrates the water
+customers’ internal dependency on UPN. This is the ﬁrst con-
+tribution of the paper. The typical fault scenarios are selected
+according to their fragility feature and impacts. Based on the
+affected water load and electrical load that are normalized to
+be comparable, resilience metrics are proposed to quantify the
+time-of-use function curve of UPN and the impact of UPN
+fault on WDN. The case study on real-world UPN and WDN
+indicatesthesensitivityofWDNinterruptionwiththeUPNfault.
+Furthermore, the study extends the concept of power system
+resilience considering the correlation between power system and
+other infrastructure networks. The resilience assessment result
+is an essential guidance for the resilience-oriented planning and
+post-extreme-event restoration of UPNs.
+With the consideration of the power supply dependency of
+WDN, the optimal UPN restoration scheduling will be the future
+research direction.
+APPENDIX
+The water head loss consists of frictional water head loss and
+local water head loss.
+ΔHij = ΔHf,ij + ΔHc,ij
+(45)
+ΔHf,ij = λlij
+D
+v2
+2g
+(46)
+ΔHc,ij = ζC
+v2
+2g
+(47)
+where ΔHf,ij is the frictional water head loss, ΔHc,ij is the local
+water head loss, vi is the water ﬂow speed of at I, λ is related
+to the diameter and material of the pipeline, ζC is an empirical
+coefﬁcient [16]. To simplify the hydraulic computation, a virtual
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:16:53 UTC from IEEE Xplore.  Restrictions apply. 
+
+2830
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 40, NO. 4, JULY 2025
+pipeline with frictional water loss (lc) is adopted to represent the
+local loss, given by (48) and (49).
+ζC
+v2
+2g = λlc
+D
+v2
+2g
+(48)
+lc = ζCD/λ
+(49)
+where λ is the friction coefﬁcient of the pipeline, D is the diam-
+eter of the pipeline (m), ζC is the local water head coefﬁcient.
+Substituting (46) and (48) to (45) gives (50).
+ΔHij = λ (lij + lc)
+D
+v2
+2g =
+λleq
+ij
+D
+v2
+2g
+(50)
+where the equivalent length of pipeline leq
+ij = lij + lc. In hydraulic
+computation, utility companies pay attention to water ﬂow in-
+stead of water velocity. The water ﬂow of the circle pipeline is
+v = 4W/(πD2). Thus, (50) is reformulated to (18).
+ΔHij = Cleq
+ij W 2
+ij
+(51)
+where the equivalent frictional coefﬁcient (C) of the water
+pipeline is:
+C =
+8λ
+π2gD5
+(52)
+leq
+ij = lij + |βij| lc
+(53)
+where βij is the set of water demand nodes along line (i, j),
+ζC = 0.1 for the T-type cross pipeline [16].
+REFERENCES
+[1] J. W. Busby et al., “Cascading risks: Understanding the 2021 winter
+blackout in Texas,” Energy Res. Social Sci., vol. 77, 2021, Art. no. 102106.
+[2] E. Pournaras et al., “Cascading failures in interconnected power-to-water
+networks,” ACM SIGMETRICS Perform. Eval. Rev., vol. 47, no. 4.
+pp. 16–20, 2020.
+[3] President’s Council of Economic Advisers & U.S. Dept. Energy’s Ofﬁce of
+Electricity & Energy Reliability, “Economic beneﬁts of increasing electric
+grid resilience to weather outages,” U.S. Dept. Energy, Executive Ofﬁce
+President, Washington, DC, USA, Rep., 2013. Accessed: Apr. 18, 2025.
+[Online]. Available: https://www.energy.gov/sites/prod/ﬁles/2013/08/f2/
+Grid%20Resiliency%20Report_FINAL.pdf
+[4] “Enhancing distribution resiliency: Opportunities for applying innova-
+tive technologies,” Elect. Power Res. Inst., Palo Alto, CA, USA, Rep.
+1026889, Jan. 2013. Accessed: Apr. 18, 2025. [Online]. Available: https:
+//restservice.epri.com/publicdownload/000000000001026889/0/Product
+[5] H. Han et al., “Security constrained distributed transaction model for mul-
+tiple prosumers,” CSEE J. Power Energ. Syst., vol. 10, no. 2, pp. 834–843,
+Mar. 2024.
+[6] M. Huang et al., “Increasing typhoon impact and economic losses due
+to anthropogenic warming in Southeast China,” Sci. Rep., vol. 12, 2022,
+Art. no. 14048.
+[7] C. Lin et al., “An online resilience assessment method for islanded distri-
+bution systems considering uncertainty of intermittent RESs and loads,”
+Energy Rep., vol. 8, pp. 639–649, 2022.
+[8] Z. Tao and L. Han, “Emergency response, inﬂuence and lessons in the 2021
+compound disaster in Henan Province of China,” Int. J. Environ. Resource
+Public Health, vol. 19, no. 1, 2022, Art. no. 488.
+[9] R. Oxner, “Texans now face a water crisis after enduring days without
+power,” 2021. [Online]. Available: https://www.texastribune.org/2021/02/
+19/texas-water-power-outages/
+[10] J. Li et al., “Resilience-motivated distribution system restoration con-
+sidering electricity-water-gas interdependency,” IEEE Trans. Smart Grid,
+vol. 12, no. 6, pp. 4799–4812, Nov. 2021.
+[11] C. Zhao, N. Li, and D. Fang, “Criticality assessment of urban interdepen-
+dent lifeline systems using a biased PageRank algorithm and a multilayer
+weighted directed network model,” Int. J. Crit. Infrastructure Protection,
+vol. 22, pp. 100–112, 2018.
+[12] L. Rodriguez-Garcia, M. M. Hosseini, T. M. Mosier, and M. Parva-
+nia, “Resilience analytics for interdependent power and water distribu-
+tion systems,” IEEE Trans. Power Syst., vol. 37, no. 6, pp. 4244–4257,
+Nov. 2022.
+[13] F. Wang et al., “Emergency repair scope partition of city water distribution
+network: A novel approach considering the node importance,” Water
+Resource Manage., vol. 31, pp. 3779–3794, 2017.
+[14] M. Zhang et al., “Framework of identifying the critical region in water dis-
+tribution network for reinforcement strategy from preparation resilience,”
+Sustainability, vol. 12, no. 21, Nov. 2020, Art. no. 9247.
+[15] Y. Zhang et al., “Industrial water network vulnerability analysis using
+dynamic inoperability input-output model,” J. Environ. Manage., vol. 314,
+Jul. 2022, Art. no. 115015.
+[16] L. W. Mays, Water Resources Engineering. Hoboken, NJ, USA: Wiley,
+2010.
+[17] A. S. Zamzam, E. Dall’Anese, C. Zhao, J. A. Taylor, and N. D. Sidiropou-
+los, “Optimal water–power ﬂow-problem: Formulation and distributed
+optimal solution,” IEEE Trans. Control Netw. Syst., vol. 6, no. 1, pp. 37–47,
+Mar. 2019.
+[18] K. Oikonomou and M. Parvania, “Optimal coordination of water distribu-
+tion energy ﬂexibility with power systems operation,” IEEE Trans. Power
+Syst., vol. 10, no. 1, pp. 1101–1110, Jan. 2019.
+[19] A. Stuhlmacher and J. L. Mathieu, “Chance-constrained water pumping
+to manage water and power demand uncertainty in distribution networks,”
+Proc. IEEE, vol. 108, no. 9, pp. 1640–1655, Sep. 2020.
+[20] J. Najaﬁet al., “Resilience improvement planning of power-water distri-
+bution systems with multiple microgrids against hurricanes using clean
+strategies,” J. Cleaner Prod., vol. 223, pp. 109–126, 2019.
+[21] Q. Li, S. Yu, A. S. Al-Sumaiti, and K. Turitsyn, “Micro water–energy
+nexus: Optimal demand-side management and quasi-convex hull relax-
+ation,” IEEE Trans. Control Netw. Syst., vol. 6, no. 4, pp. 1313–1322,
+Dec. 2019.
+[22] A. Belmondo Bianchi et al., “Distribution robust water-based demand
+side management in power transmission networks,” Sustain. Energy, Grids
+Netw., vol. 36, 2023, Art. no. 101232.
+[23] P. Lai, C. Courcoubetis, L. Duan, and S. Galelli, “Economic con-
+trols for smart water distribution networks undergoing supply fail-
+ures,” IEEE Trans. Netw. Sci. Eng., vol. 8, no. 1, pp. 555–574,
+Jan.–Mar. 2021.
+[24] Y. Yao, C. Li, H.-M. Tai, and C. Shao, “Modeling of water transfer delay
+for optimal operation of integrated electrical-water system,” IEEE Trans.
+Power Syst., vol. 38, no. 1, pp. 331–348, Jan. 2023.
+[25] S. Zuloaga, P. Khatavkar, L. Mays, and V. Vittal, “Resilience of cyber-
+enabled electrical energy and water distribution systems considering in-
+frastructural robustness under conditions of limited water and/or energy
+availability,” IEEE Trans. Eng. Manage., vol. 69, no. 3, pp. 639–655,
+Jun. 2022.
+[26] S. Zuloaga and V. Vittal, “Integrated electric power/water distribution
+system modeling and control under extreme mega drought scenarios,”
+IEEE Trans. Power Syst., vol. 36, no. 1, pp. 474–484, Jan. 2021.
+[27] M. Kitaura and M. Miyajima, “Damage to water supply pipelines,” Soils
+Foundations, vol. 36, pp. 325–333, Jan. 1996.
+[28] Water Use for Electric Power Generation, EPRI, Palo Alto, CA: 2008,
+1014026. Accessed: Apr. 18, 2025. [Online]. Available: https://www.epri.
+com/research/products/1014026
+[29] T. Ding et al., “Multi-stage distributionally robust stochastic dual dynamic
+programming to multi-period economic dispatch with virtual energy stor-
+age,” IEEE Trans. Sustain. Energy, vol. 13, no. 1, pp. 146–158, Jan. 2022.
+[30] X. Yan and S. Liu, Water Distribution and Drainage System. Beijing,
+China: Architecture & Building Press, 2014.
+[31] T. M. Walsk et al., Advanced Water Distribution Modeling and Manage-
+ment. Exton, PA, USA: Bentley Inst. Press, 2007.
+[32] B. S. Rajkumar and A. Nielsen, “Water distribution in high rise buildings,”
+2010. Accessed: Apr. 18, 2025. [Online]. Available: https://api.grundfos.
+com/literature/Grundfosliterature-6400727.pdf
+[33] M. Movahednia, A. Kargarian, C. E. Ozdemir, and S. C. Hagen, “Power
+grid resilience enhancement via protecting electrical substations against
+ﬂood hazards: A stochastic framework,” IEEE Trans. Ind. Informat.,
+vol. 18, no. 3, pp. 2132–2143, Mar. 2022.
+[34] D. Sánchez-Muñoz et al., “Electrical grid risk assessment against ﬂooding
+in barcelona and bristol cities,” Sustainability, vol. 12, no. 4, Jan. 2020,
+Art. no. 1527.
+[35] S. Dunn et al., “Fragility curves for assessing the resilience of electricity
+networks constructed from an extensive fault database,” Natural Hazards
+Rev., vol. 19, no. 1, Feb. 2018, Art. no. 04017019.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:16:53 UTC from IEEE Xplore.  Restrictions apply. 
+
+SHI et al.: RESILIENCE ASSESSMENT OF UPN CONSIDERING MULTI-STAGE ELECTRICAL-WATER FAULT PROPAGATION
+2831
+QingxinShi(Member,IEEE)receivedtheB.S.degreefromZhejiangUniversity,
+Hangzhou, China, in 2011, the M.Sc. degree from the University of Alberta,
+Edmonton, AB, Canada, in 2014, and the Ph.D. degree from the University
+of Tennessee, Knoxville, TN, USA, in 2019. He is currently an Associate
+Professor with the School of Electrical and Electronic Engineering, North China
+Electric Power University, Beijing, China. His research interests include demand
+response,powersystemfrequencyregulation,andresilienturbanpowernetwork.
+Yilu Yan (Student Member, IEEE) received the B.S. and M.Sc. degrees from
+North China Electric Power University, Baoding Campus, and Beijing Campus,
+China, in 2021 and 2024, respectively. He is currently an Engineer with State
+Grid Suzhou Electric Company. His research interests include the vulnerability
+analysis of interdependent electrical and water system.
+Wenxia Liu (Member, IEEE) received the B.S. degree in radio technology from
+the Nanjing University of Science and Technology, Nanjing, China, in 1990, and
+the M.S. degree from the Northeast Electrical Power University, Jilin, China, in
+1995, and the Ph.D. degree in electrical engineering and automation from North
+China Electrical Power University, Beijing, China, in 2009. She is currently
+a Professor with the School of Electrical and Electronic Engineering, North
+China Electrical Power University, Beijing, China. Her research interests include
+risk assessment in power system, power system dispatch, and management
+automation.
+Bo Zeng (Member, IEEE) received the B.S. and Ph.D. degrees in electrical
+engineering from North China Electric Power University (NCEPU), Beijing,
+China, in 2009 and 2014, respectively. He is currently an Associate Professor
+with School of Electrical and Electronic Engineering, NCEPU. His research
+interests include integrated energy system optimization and power distribution
+system planning.
+Zhuning Wang received the B.S. degree from Tsinghua University, Beijing,
+China, in 2014, and the M.Sc. degree from Seoul National University, Seoul,
+South Korea, in 2016. She is currently working toward the Ph.D. degree from
+North China Electric Power University, Beijing, China. She is currently an En-
+gineer with the Beijing Municipal Institute of City Planning & Design, Beijing,
+China. Her research interests include infrastructure planning, power system
+planning, energy planning, reliability and resilience, vulnerability analysis, and
+electricity market.
+Fangxing Li (Fellow, IEEE) received the B.S.E.E. and M.S.E.E. degrees from
+Southeast University, Nanjing, China, in 1994 and 1997, respectively, and the
+Ph.D. degree from Virginia Polytechnic Institute and State University, Blacks-
+burg, VA, USA, in 2001. He is currently the James McConnell Professor with
+The University of Tennessee (UT), Knoxville, TN, USA. His research interests
+include renewable energy integration, demand response, power markets, power
+system control, and power system computing.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:16:53 UTC from IEEE Xplore.  Restrictions apply. 

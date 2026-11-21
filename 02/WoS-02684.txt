@@ -1,0 +1,2250 @@
+Received 27 May 2024, accepted 11 June 2024, date of publication 19 June 2024, date of current version 27 June 2024.
+Digital Object Identifier 10.1109/ACCESS.2024.3416809
+Novel Market-Based Mechanism for Flexibility
+Provision by Water Distribution Networks
+to Power Systems
+A. BELMONDO BIANCHI
+1, (Student Member, IEEE), M. A. PARDO
+2,
+T. ALSKAIF
+3, (Senior Member, IEEE), H. H. M. RIJNAARTS1,
+AND S. SHARIAT TORBAGHAN1, (Senior Member, IEEE)
+1Department of Environmental Technology, Wageningen University and Research, 6708 PB Wageningen, The Netherlands
+2Department of Civil Engineering, University of Alicante, 03690 Alicante, Spain
+3Department of Information Technology, Wageningen University and Research, 6708 PB Wageningen, The Netherlands
+Corresponding author: A. Belmondo Bianchi (alessio.belmondobianchidilavagna@wur.nl)
+This work was supported in part by the Research Program AquaConnect, funded by the Dutch Research Council [Nederlandse Organisatie
+voor Wetenschappelijk Onderzoek (NWO)] under Grant-ID P19-45, in part by public and private partners of the AquaConnect Consortium
+and coordinated by Wageningen University and Research, in part by the Research Project ‘‘DESarrollo de herramientas de optimización
+para reducir los consumos ENergéticos y de emisiones en REdes de Distribución de Agua a presión (DESENREDA)’’ through the
+2021 call ‘‘Estancias de Movilidad en el Extranjero Jose Castillejo’’ of the Ministerio de Universidades under Grant CAS21/00085, and in
+part by the project ‘‘Hi-Edu Carbon’’ Erasmus Plus Program, Key Action and Action Type under Grant KA22021 and Grant
+2021-1-SK01-KA220-HED-000023274.
+ABSTRACT
+Large-scale integration of renewable energy sources with their intermittent output is
+introducing new challenges for system operators. The challenge arises from imperfect wind and solar
+forecasts that lead to deviations in electricity production in real time. This has urged system operators to
+explore new sources of flexibility including the water sector. Along with these advancements, municipalities
+are becoming increasingly interested in coordinating water and energy systems in urban areas. This study
+introduces a novel market-based mechanism for harnessing flexibility from an integrated water and power
+system. The mechanism is formulated as a data-driven distribution robust chance-constrained program.
+It coordinates the operation of flexible power generators and water pumps through affine policies, regulating
+the participation of flexible assets in day-ahead and real-time market segments. Water flows are approximated
+through a novel convex hull-based relaxation technique. This results in a second-order cone program
+that allows the power system operator to leverage demand-side flexibility from the water network. The
+fluctuating water demands, derived from direct consumption measurements, are considered to ensure
+seamless integration with renewable energy sources. The water distribution network is explored for its
+potential to offer flexibility services, such as demand response to the power network. The mechanism is
+tested on a real case study in Alicante, Spain, to determine effective water-energy regulation policies and
+identify potential cost savings.
+INDEX TERMS Demand-side flexibility, distribution robust chance constraints, market-based mechanism,
+water-energy coordination, wind-solar energy.
+NOMENCLATURE
+Abbreviations
+ADMM
+Alternating direction method of multipliers.
+CC
+Chance-constraint.
+DA
+Day-ahead.
+The associate editor coordinating the review of this manuscript and
+approving it for publication was Wencong Su
+.
+DC −OPF
+Direct current optimal power flow.
+DR
+Demand-response.
+DRCC
+Distribution robust chance-constraint.
+KW
+Kilowatt.
+KWh
+Kilowatt-hour.
+MAE
+Mean absolute error.
+MCP
+Market-clearing price.
+MISOCP
+Mixed-integer second-order cone program.
+VOLUME 12, 2024
+ 2024 The Authors. This work is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 License.
+For more information, see https://creativecommons.org/licenses/by-nc-nd/4.0/
+86869
+
+A. Belmondo Bianchi et al.: Novel Market-Based Mechanism for Flexibility Provision
+PN
+Power network.
+PV
+Photovoltaic.
+PVC
+Polyvinyl chloride.
+QCQP
+Quadratically-constrained
+quadratic program.
+RES
+Renewable energy sources.
+RT
+Real-time.
+SBSP
+Scenario-based stochastic programming.
+SO
+System operator.
+SOC
+Second-order cone.
+SOCP
+Second-order cone program.
+WN
+Water network.
+Number sets
+R
+Real numbers.
+D
+Conventional power loads.
+E
+Pressurized water pipes.
+G
+Conventional generators.
+J
+Water network junctions.
+L
+Power lines.
+N
+Power buses.
+P
+Centrifugal variable speed pumps.
+R
+Water reservoirs.
+S
+Elevated water storage tanks.
+T
+Number of time slots.
+W
+Renewable power generators.
+Z
+Number of random variables.
+5
+Ambiguity set.
+Symbols
+ℵi,j,t
+Relative rotational speed of pump (i, j) at
+time t.
+αe,t, βu,t
+Flexibility offered by generator e and
+pump u at time t.
+˘
+Symbol denoting uncertainty-dependent
+counterparts of the decision variables.
+1href ,DA, 1hDA
+Reference and actual pressure head gain
+of pump (i, j) at time t in DA (Algorithm
+1).
+1href ,RT , 1hRT
+Reference and actual pressure head gain
+of pump (i, j) at time t in RT (Algorithm
+1).
+1t
+Vector of random forecast errors at time
+t.
+δi,j,t
+Adjustment factor for change in power
+consumption of pump (i, j) at time t.
+ϵ
+Violation probability level for individual
+DRCCs.
+ϵ
+′
+Measure of confidence in the SOC refor-
+mulation of DRCCs.
+γt
+Aggregated forecast error of renewable
+generators at time t.
+EP
+Expectation operator under probability
+distribution P.
+P
+Worst-case distribution of uncertainty
+selected from the ambiguity set 5.
+µ5
+Mean vector of forecast errors.
+ωi,t
+Forecast error of renewable generator i at
+time t.
+φT
+Transpose vector of ones.
+6
+Covariance matrix of forecast errors.
+6t
+the t-th diagonal sub-matrix of the covari-
+ance matrix 6 at time t.
+τ
+Length of time step t.
+θn,t
+Voltage angle of bus n at time t.
+ℵi,j, ℵi,j
+Relative minimum and maximum rotational
+speeds of pump (i, j).
+f n,m, f n,m
+Lower and upper power flow limits through
+line (n, m).
+Hend
+s
+, Hend
+s
+User-selected minimum and maximum level
+of storage tank s at the end of the simulation
+(t = end).
+PD
+l,t, PD
+l,t
+Lower and upper bounds for conventional
+load l at time t.
+PG
+e , PG
+e
+Lower and upper bounds for conventional
+power generator e.
+PW
+w,t, PW
+w,t
+Lower and upper bounds for renewable
+generator w at time t.
+Qi,j, Qi,j
+Minimum and maximum flow through
+pipe/pump (i, j) at time t.
+ϒ
+Threshold percentage for termination condi-
+tion of Algorithm 1.
+ζ s
+i,j,t, ζ p
+i,j,t
+Auxiliary variables for SOC relaxation of
+friction head losses and pump energy con-
+sumption.
+As
+Cross-sectional area of storage tank s.
+ai,j, bi,j, ci,j
+Hydraulic parameters of pump (i, j).
+Bn,m
+Susceptance of power line (n, m).
+CG
+e
+Marginal production cost of generator e.
+CAv
+e , CAv
+u
+Availability cost of generator e and pump u.
+E0
+Base voltage of the power system.
+Fi,j
+Fixed part of Darcy-Weisbach equation for
+pipe (i, j).
+g, ρ, ηi,j
+Gravitational acceleration, density of water,
+and efficiency of pump (i, j).
+hj,t, hr,t, hs,t
+Pressure head in junction j, reservoir r and
+storage tank s at time t.
+mi,j,t
+Auxiliary variable for the McCormick relax-
+ation of bilinear term (i, j) at time t.
+pD
+l,t
+Power demand of conventional load l at time
+t.
+pG
+e,t
+Power produced by generator e at time t.
+pP
+u,t
+Power demand of pump load u at time t.
+Pi,j,t
+Energy consumption of pump (i, j) at time t.
+qL
+i,j,t, qU
+i,j,t
+Lower and upper water flow bounds for the
+McCormick envelope.
+r0
+i,j, r1
+i,j
+Parameters defining the convex envelope of
+the friction head losses for pipe (i, j).
+UD
+l
+Bid of conventional load l.
+UP
+u
+Bid of pump load u.
+xi,j, yi,j, zi,j
+Empirical parameters describing the energy
+consumption of pump (i, j).
+86870
+VOLUME 12, 2024
+
+A. Belmondo Bianchi et al.: Novel Market-Based Mechanism for Flexibility Provision
+dj,t
+Water demand in junction j at time t.
+fn,m,t
+Power flow from bus n to bus m at time
+t.
+H0
+j , Hj, Hj
+Elevation,
+minimum
+and
+maximum
+pressure head in junction j.
+H0
+s , h0
+s, Hs, Hs
+Elevation and initial, minimum and
+maximum level in storage tank s.
+pW
+w,t
+Power produced by renewable generator
+w at time t.
+qi,j,t
+Water flow from node i to node j at
+time t.
+I. INTRODUCTION
+Global energy demand is increasing, with projections up to
+2040 indicating an annual economic growth rate of 3.4% and
+an anticipated rise of approximately 30% [1]. Alongside this
+demand surge, the integration of Renewable Energy Sources
+(RES), such as wind and solar, in power networks is posing
+challenges due to their variability and location-dependence,
+complicating power flow control and network stability [2],
+[3]. To address these challenges, System Operators (SO) must
+develop cost-efficient approaches to manage the uncertainties
+associated with the rise in RES, including exploring new
+sources of flexibility. One potential source of flexibility is the
+water sector.
+The water sector constitutes a vital infrastructure that
+accounts for approximately 4% of global electricity con-
+sumption [1], [4]. Water and wastewater treatment plants,
+which use 25-30% of total water-related energy consump-
+tion [5], incur significant electricity costs, particularly in
+pumping drinking water, which can represent up to 50%
+of operational costs [6]. Given the environmental concerns,
+escalating energy costs, and advancements in renewable
+energy technologies, the integration of RES in power systems
+is gaining momentum [7]. This shift is also being considered
+by operators of water and electricity networks, although it
+introduces uncertainty. Flexibility becomes crucial in this
+context, referring to the ability of systems to adapt to
+changing conditions and ensure reliable and efficient power
+and water supply [8]. In the water sector, flexibility entails
+sustaining operations during challenging scenarios by storing
+water in intermediate reservoirs to ensure continuous water
+supply despite fluctuations in energy or water sources.
+In the power sector, flexibility involves adjusting load
+and generation through methods such as flexible genera-
+tion, Demand-response (DR), energy storage, and sector
+integration [9], [10].
+The competitive advantage of the Water Network (WN)
+lies in its abundant flexibility capacity, which results from
+over-sized asset capacities and large inertia resulting from
+water reserves. Therefore, although the water network has
+rather a small energy footprint, it has abundant flexibility
+at its disposal which makes it an important candidate
+for providing flexibility services to the power systems as
+a DR provider [11]. From the water system viewpoint,
+addressing the energy intensity of water distribution networks
+is crucial for reducing their cost and environmental impact.
+In this context, enhancing sector integration presents the
+dual potential of furnishing flexibility to the Power Network
+(PN) and fostering enhanced energy efficiency and resilience
+within the WN. The coordination between water and power
+networks is crucial for a dependable and sustainable supply
+of resources under changing conditions and challenges.
+Researchers have worked to improve pressurized water
+networks in cities by reducing water usage [12], managing
+infrastructure [13], lowering pressure [14], and cutting energy
+costs. Literature has investigated the energy footprint in the
+urban water cycle, ranging from 0.21 to 4.07 kWh/m3 [15].
+The amount varies based on factors such as location, water
+source, climate, and treatment methods. Similar efforts have
+been undertaken in power networks to optimize electricity
+transmission and distribution systems and enhance overall
+efficiency. These include, implementing smart grids and
+demand response mechanisms [16], integrating RES [17],
+reducing energy losses [18], improving grid stability
+and resilience [19], forecasting and managing electricity
+loads [20], and ensuring power quality and voltage regula-
+tion [21]. The above studies aim to address resource use effi-
+ciency, mitigate operational costs, and promote sustainability
+within their respective infrastructures. However, research
+concerning the development of coordination mechanisms for
+integrated power and water networks remains limited. Such
+an integrated approach holds great significance for achieving
+even greater economic efficiency and optimizing resource
+utilization across interconnected urban systems.
+Models and technologies have been proposed to explore
+synergies between the water and energy sectors. Hydraulic
+tanks have been identified as efficient devices for water and
+energy storage [22], while pumps and turbines offer further
+opportunities for synergy [23], [24]. Moreover, consistent
+water flow and minimal pump operation can reduce energy
+consumption in pressurized water networks [25]. However,
+modelling integrated power and water networks presents
+considerable challenges because of the non-convex nature of
+both power and water physics. Focusing on the WN only,
+the model developed by [26] is a Mixed-integer Second-order
+Cone Program (MISOCP) designed for energy-optimal pump
+scheduling and water flow, demonstrating the capacity to
+enhance energy efficiency within the water sector. A follow-
+up work in [27] demonstrated the potential for using water
+supply networks for harvesting renewable energy. However,
+these models assumed fixed electricity prices and overlooked
+the dynamics of the PN, thus failing to account for the impacts
+that the water network’s operation may have on the PN and
+vice versa.
+Integrated energy and water modelling can be challenging
+due to the non-linear and non-convex nature of both power
+and water flows as well as the non-linear operating profile
+of water pumps. In this regard, [28] formulates an integrated
+power and water coordination mechanism as a non-convex
+Quadratically-constrained Quadratic Program (QCQP). The
+VOLUME 12, 2024
+86871
+
+A. Belmondo Bianchi et al.: Novel Market-Based Mechanism for Flexibility Provision
+model optimizes controllable assets across both networks.
+They propose a distributed optimal solution approach for the
+optimal water-power flow problem based on the alternating
+direction method of multipliers (ADMM). In [29], the authors
+introduced a quasi-convex hull relaxation technique for
+the optimal water-power flow problem and developed a
+coordination mechanism for demand-side management in the
+PN. They demonstrated that grid flexibility could benefit
+from controllable water pump loads. However, these models
+did not consider the inherent uncertainties in power and water
+networks, such as uncertainties associated with power and
+water demands, as well as RES generation.
+The work in [30] proposed a chance-constrained power and
+water coordination mechanism that incorporates pumps as
+flexible loads in the PN. Their study accounts for demand
+uncertainties (such as power loads and water demands)
+but not supply uncertainties (such as RES generation).
+The probabilistic chance constraints (CC) are approximated
+using the scenario-based stochastic programming (SBSP)
+approach. This approach requires a large number of scenarios
+to achieve a good representation of the uncertainty, which
+can be computationally intensive to simulate. In a follow-up
+work [31], the authors derived the analytical reformulation
+of the CC for the integrated power-water flow problem.
+While this approach is computationally tractable, it requires
+assumptions on the underlying probability distribution which
+is often unknown.
+The work presented in [32] introduces an adaptive
+robust water pumping problem aimed at managing power
+demand uncertainty while providing voltage support and
+frequency regulation. Their findings suggest that the adaptive
+robust approach, when compared to the conventional robust
+approach, is less conservative. However, a notable drawback
+is its reliance on known uncertainty distributions, which
+may not be known in practice. Additionally, the sequential
+formulation utilized to solve the adaptive robust optimization
+problem fails to capture the trade-offs between the cost of
+pump scheduling in the Day-ahead (DA) market and the
+profits from frequency regulation services in the Real-time
+(RT) market. Another limitation of the works presented
+in [30], [31], and [32] is the use of a linear function
+to model pump power consumption, which is suitable
+for fixed-speed pumps. However, fixed-speed pumps are
+constrained to a limited range of operating points, thereby
+limiting their flexibility when compared to variable-speed
+pumps. In cases where variable-speed pumps are employed,
+such as in [33], they are modelled using piecewise linear
+approximations. Researchers acknowledge that this approach
+tends to introduce computational complexity, especially in
+large-scale systems.
+The aforementioned studies aim to optimize controllable
+assets in both power and water networks but often fall
+short of capturing their dynamics and uncertainties. These
+studies frequently overlook electricity market dynamics,
+assuming fixed prices and neglecting crucial aspects such as
+DA and RT market segments. Therefore, a comprehensive
+formulation and modelling approach is necessary to study
+decision-making in integrated power and water networks,
+incorporating their dynamics in both DA and RT markets.
+These two segments of the power market offer the adequate
+price signals that are crucial for a DR program, such as the
+WN, to perform a successful market-based energy arbitrage.
+The intended problem formulation should account for the
+physical characteristics of both networks and the financial
+considerations associated with operating the two sectors.
+As such, it should provide decision solutions with techno-
+economic interpretations, resolving operational challenges
+arising from short-term uncertainties.
+This study proposes a novel market-based coordination
+mechanism for integrated power and water networks, con-
+sidering short-term scheduling and operation. We assume
+that flexibility is sourced by flexible generators and variable-
+speed pumps (operating as flexible loads). The proposed
+model seeks to maximize utility in the power sector while
+maintaining flexibility to address potential power imbalances
+in RT. At the same time, it seeks to ensure the reliable
+operation of the WN. We consider wind and solar power
+forecasts as the sources of uncertainty. The problem is
+formulated as a Data-driven Distribution Robust Chance-
+constrained program (DRCC). Convex approximations and
+affine control policies are employed for computational
+traceability, resulting in a Second-order Cone Program
+(SOCP). The innovation lies in formulating a DRCC
+program for integrated power and water networks with
+uncertainty in RES generation. As a sequel to our previous
+work [34], an improved relaxation technique is proposed for
+friction head losses and pump energy consumption functions.
+In addition, we develop a novel iterative solution algorithm
+to capture the dynamics of variable speed pumps. The
+model identifies synergies between interdependent power
+and water networks and suggests a market participation
+mechanism for flexible water pumps in the power system.
+This study provides valuable insights for utility operators
+and practitioners during the planning and operation phases
+of power and water networks. The contributions of the paper
+can be summarized as follows:
+1) Proposes a novel market-based coordination mecha-
+nism for procuring flexibility from the water network.
+This mechanism allows for effectively procuring flex-
+ibility from the water system to contain imbalances
+caused by imperfect wind and solar forecasts in the
+power network.
+2) Formulates
+the
+problem
+as
+a
+novel
+augmented
+distribution-robust chance-constrained market clearing
+problem, operating within a centralized and fully
+competitive market set-up.
+3) Introduces a novel convex relaxation technique and
+iterative solution algorithm to convexity water network
+hydraulic constraints to enhance problem tractability.
+The rest of the paper is organized as follows. Section II
+presents the problem formulation. Section III discusses the
+solution methodology. Section IV introduces the case study.
+86872
+VOLUME 12, 2024
+
+A. Belmondo Bianchi et al.: Novel Market-Based Mechanism for Flexibility Provision
+Section V discusses the numerical results. Section VI presents
+the conclusions and the future work.
+II. MATERIAL AND METHODS
+A. MODELLING ASSUMPTIONS
+The WN is described as a directed graph comprising nodes
+I and edges E, with nodes categorized as junctions (j ∈J ),
+reservoirs (r ∈R), or elevated storage tanks (s ∈S), such
+that I = J ∪R∪S. Reservoirs are considered infinite water
+sources, while tanks have finite volumes. Compensation or
+head tanks, serving as storage units for both water and
+energy, offer a means of water storage. As a result, water
+can be pumped into these tanks during specific intervals and
+subsequently discharged, harnessing gravitational potential
+energy, at later times. The WN edges represent water pipes
+and variable speed pumps (i, j) ∈P with P ⊂E.
+On the power side, a PN is considered, comprising power
+lines L and nodes N with uncontrollable loads l
+∈D,
+controllable pump loads u
+∈
+P, conventional power
+generating units e ∈G, and RES w ∈W. The study
+assumes that water pumps, along with storage tanks, act as
+flexible loads in the PN. Moreover, power generators can
+function as flexible assets by adjusting power production
+within operational limits. In this context, flexibility is defined
+as the capability of adjusting generation or consumption
+levels in response to changes in RES availability. Given
+our focus on flexible power generators, such as gas-fired
+power plants, we do not consider the ramp-up and down
+limits of these generators in our analysis. These flexible units
+can adjust their operations, allowing them to provide the
+necessary support to the grid without being constrained by
+ramp rates.
+The PN modelling approach adopts a linearized DC Opti-
+mal Power Flow (DC-OPF) formulation, assuming voltage
+magnitudes close to 1 per unit, neglecting power losses, and
+considering small resistance compared to reactance. It must
+be noted that the linearized DC-OPF formulation of the
+power system is sub-optimal. However, we believe that our
+approach has significant merits for the following reasons.
+Firstly, the reactive power consumption of electric motors
+is not priced in the current electricity market structure [35].
+Therefore, our focus is on active power, aligning with the
+objectives of this study and current economic considerations.
+Secondly, including nonlinear reactive power constraints
+would make the problem significantly more challenging,
+both mathematically and computationally [36]. Since we
+aim to investigate the potential of an integrated water and
+power network in managing uncertainty in renewable power
+generation within an electricity market setup, we believe our
+power network modelling approach is sufficiently accurate
+for the current study.
+The model focuses on wind and solar power production as
+the sources of uncertainty. Wind and solar forecast scenarios
+are obtained from the forecasting tool RESGen [37] as
+depicted in Figure 1. Based on several generated scenarios,
+FIGURE 1. Wind and solar data obtained from RESGen. The shaded area
+captures varying wind and solar power forecast scenarios. The point
+forecast is depicted by the black line.
+uncertainty is represented using a moment-based ambiguity
+set. This set characterizes the uncertainty arising from
+forecast errors in DA wind and solar power predictions.
+Following previous studies [38], [39], the forecast errors
+are assumed to follow an unknown multivariate probability
+distribution. To encompass the overall system uncertainty,
+a vector of random variables 1 = [ω1,1, ω2,1, . . . , ωi,t] ∈RZ
+is defined, where i and t represent specific space and time
+dimensions. The moment-based ambiguity set 5 contains
+all probability distributions described by known parameters,
+namely the mean (µ5) and covariance (65) of the forecast
+errors:
+5 = P ∈50(RZ) : EP[1] = µ5, EP[11T ] = 65.
+The expectation with respect to the probability distribution
+is denoted by EP, and the transpose operator is represented
+by T . It is assumed that the mean is zero and the covariance
+matrix can be estimated from empirical data of wind and solar
+forecast errors. The total deviation from the DA forecast of
+wind turbines and Photovoltaic (PV) panels at a given time is
+determined by the dot product of the unit vector φT and the
+forecast error vector 1t, where a non-negative value indicates
+a shortage of RES during RT operation compared to the DA
+point forecast.
+In this study, we have opted for the DRCC approach
+because of its specific advantages over SBSO. Firstly, the
+DRCC approach does not require assumptions about the
+underlying probability distribution, making it suitable for
+cases where errors from imperfect forecasting algorithms
+may lack a specific probability distribution. Secondly, the
+DRCC approach is computationally more efficient than
+scenario-based stochastic programming. The main differ-
+ences between SBSO and DRCC lie in uncertainty modelling,
+solution approach, and computational burden. SBSO relies on
+identifying the underlying probability distribution of random
+variables, such as wind and solar forecasts, and involves
+solving numerous scenarios projected from the identified
+probability distribution using techniques like Monte Carlo
+simulation or scenario trees. This process can become
+computationally expensive as uncertain factors increase or
+VOLUME 12, 2024
+86873
+
+A. Belmondo Bianchi et al.: Novel Market-Based Mechanism for Flexibility Provision
+scenarios become more complex, especially when variables
+are interdependent or in dynamic optimization cases.
+In contrast, DRCC defines an uncertainty set encompass-
+ing possible random variable realizations and optimizes an
+objective considering the worst-case realization within this
+set, leading to a solution that satisfies constraints with a
+certain probability. The computational complexity of DRCC
+depends on the chosen uncertainty set and the specific
+optimization algorithm. Although DRCC may yield more
+conservative solutions, it outperforms SBSO in computa-
+tional efficiency for large problems with many random
+variables, complex scenarios, poorly defined uncertainty,
+or when risk assessment is not intended. For detailed
+comparisons of SBSO and DRCC for different problems and
+system sizes, we refer to [40], [41], and [42].
+B. MATHEMATICAL FORMULATION OF THE PROBLEM
+The proposed DRCC program is formulated as follows (1)-
+(21). The objective function (1) follows a min-max structure,
+minimizing the total social cost of the power system
+while drawing uncertainty from the worst-case probability
+distribution. As such, the problem also maximizes the
+expected social cost that could occur due to worst-case
+uncertainty realization.
+MinMax
+0,P∈5
+EP
+ X
+t∈T
+X
+e∈G
+CG
+e (pG
+e,t) −
+X
+l∈D
+UD
+l pD
+l,t −
+X
+u∈P
+UP
+u pP
+u,t
+
+(1)
+s.t. hr,t = H0
+r,t r ∈R, t ∈T
+(2)
+X
+i∈NinJ
+qi,j,t −
+X
+k∈NoutJ
+qj,k,t = dj,t j ∈J , t ∈T
+(3)
+hs,t −h0
+s = τ
+As
+ X
+i∈Nins
+qi,s,t −
+X
+j∈Nouts
+qs,j,t
+
+s ∈S, t = 1
+(4)
+hs,t −hs,t−1 = τ
+As
+ X
+i∈Nins
+qi,s,t −
+X
+j∈Nouts
+qs,j,t
+
+s ∈S, t > 1
+(5)
+hi,t −hj,t = Fi,j(qi,j,t)2 (i, j) ∈E, t ∈T
+(6)
+hj,t −hi,t = ai,jq2
+i,j,t + bi,jqi,j,t + ci,j (i, j) ∈P, t ∈T
+(7)
+Pi,j,t = gρτ
+ηi,j
+(hj,t −hi,t)qi,j,t (i, j) ∈P, t ∈T
+(8)
+minP
+P∈5 [Hj + H0
+j ≤hj,t ≤Hj + H0
+j ] ≥(1 −ϵ)
+j ∈J , t ∈T
+(9)
+minP
+P∈5 [Hs + H0
+s ≤hs,t ≤Hs + H0
+s ] ≥(1 −ϵ)
+s ∈S, t ∈T
+(10)
+minP
+P∈5 [Hend
+s
+≤hs,t ≤Hend
+s
+] ≥(1 −ϵ) s ∈S, t = end
+(11)
+minP
+P∈5 [Qi,j ≤qi,j,t ≤Qi,j] ≥(1 −ϵ) (i, j) ∈E, t ∈T
+(12)
+minP
+P∈5 [Qi,j ≤qi,j,t ≤Qi,j] ≥(1 −ϵ) (i, j) ∈P, t ∈T
+(13)
+PD
+l,t ≤pD
+l,t ≤PD
+l,t l ∈D, t ∈T
+(14)
+PW
+w,t ≤pW
+w,t ≤PW
+w,t w ∈W, t ∈T
+(15)
+X
+e∈ψGn
+pG
+e,t +
+X
+w∈ψWn
+pW
+w,t =
+X
+l∈ψDn
+pD
+l,t
++
+X
+u∈ψPn
+pP
+u,t +
+X
+m∈n
+fn,m,t n ∈N, t ∈T
+(16)
+fn,m,t = E2
+0Bn,m(θn,t −θm,t) (n, m) ∈L, t ∈T
+(17)
+θn,t = 0 n = ref , t ∈T
+(18)
+pP
+u,t = Pi,j,t u ∈ψP
+i,j, (i, j) ∈P, t ∈T
+(19)
+minP
+P∈5 [PG
+e ≤pG
+e,t ≤PG
+e ] ≥(1 −ϵ) e ∈G, t ∈T
+(20)
+minP
+P∈5 [f n,m ≤fn,m,t ≤f n,m] ≥(1 −ϵ) (n, m) ∈L, t ∈T
+(21)
+0=hi,t,hr,t,qi,j,t,hs,t,Pi,j,t,pD
+l,t,pW
+w,t,pG
+e,t,pP
+u,t,fn,m,t,θn,t is the set of opti-
+misation decision variables. Objective (1) minimizes the total
+expected social cost of the power system. Parameters UD
+l ,
+UP
+u , and CG
+e represent the estimated bids of conventional
+load l, pump load u, and the marginal production cost of
+generator e, respectively. The objective function excludes
+power generation from wind and solar power producers as it
+assumes zero marginal production cost for RES. Additionally,
+water pump bids UP
+u are set at the maximum auction price
+(i.e., price cap or the bid with the highest price) to ensure full
+dispatch of pump loads for water supply-demand matching at
+all times.
+Constraints (2)-(13) delineate the WN. Constraint (2)
+enforces a fixed head at the reservoir, where variable hr,t
+denotes the pressure head at reservoir r at time t. The flow
+balance in the network is maintained through constraint (3),
+which ensures that at any junction j and time t, the total
+inflow minus the total outflow equals the water demand,
+denoted by the variable dj,t. The variable qi,j,t represents
+the water flow from node i to node j at time t. The tank
+level equations are described by constraints (4) and (5),
+governing the change in the level of storage tank s over
+time t represented by the variable hs,t. The parameters τ
+and As are the time step and cross-sectional area of the tank,
+respectively. Constraint (6) accounts for the pipe friction head
+loss in the network. The variables hi,t and hj,t represent the
+pressure head at nodes i and node j at time t, respectively.
+Parameter Fi,j is the fixed, flow-independent part of the
+Darcy-Weisbach equation. Pump hydraulic head gain is
+captured by constraint (7), where parameters ai,j, bi,j, and ci,j
+describe the hydraulic behaviour of pump (i, j). Constraint (8)
+defines the pump energy consumption (Pi,j,t) as a function
+of pump head gain and flow rate. Parameters ρ, g, and
+86874
+VOLUME 12, 2024
+
+A. Belmondo Bianchi et al.: Novel Market-Based Mechanism for Flexibility Provision
+ηi,j, denote the density of water, gravitational acceleration,
+and efficiency of pump (i, j), respectively. Constraints (9),
+(10), and (11) define the pressure head limits and minimum
+and maximum tank levels. Parameters H0
+j , Hj, Hj, Hs and
+Hs provide elevation, head, and tank level upper and lower
+limits. Parameters Hend
+s
+and Hend
+s
+provide the desired minimum
+and maximum tank level at the end of the time horizon.
+Constraints (12) and (13) define the pipe and pump flow
+limits. Parameters Qi,j and Qi,j represent the minimum and
+maximum flow through a pipe or pump (i, j).
+Constraints
+(14)
+to
+(21)
+delineate
+the
+PN.
+Con-
+straints (14) and (15) establish the limits for load and RES
+generation. They ensure that the power produced by wind
+or solar farms (pW
+w,t), and the electricity demand from loads
+(pD
+l,t) are within the specified bounds at each time period t.
+The parameters PD
+l,t and PD
+l,t represent the upper and lower
+limits for electricity demand, respectively, while PW
+w,t and
+PW
+w,t represent the limits for wind or solar power generation.
+Constraint (16) represents the power balance in the network.
+It ensures that the total power generated by generators and
+RES, along with the electricity demand from loads and
+power consumed by water pumps (pP
+u,t), is balanced with
+the power flow in the transmission lines fn,m,t at each time
+period t. Constraint (17) defines the power flow from bus n
+to bus m at time t. The variable fn,m,t represents the power
+flow between nodes n and m. Parameter Bn,m represents the
+susceptance of the transmission line connecting these nodes
+and E0 represents the base voltage magnitude, assumed to
+be close to one per unit. Constraint (18) enforces a fixed
+voltage angle at the slack node. The variable θn,t represents
+the voltage angle at bus n at time t. Constraint (19) couples
+the pump power consumption Pi,j,t from constraint (8) with
+the pump load on the PN pP
+u,t. Constraint (20) defines the
+limits for conventional generation. It ensures that the power
+output from conventional generators (pG
+e,t) remains within the
+specified upper and lower bounds given by parameters PG
+e,t
+and PG
+e,t. Constraint (21) defines the power flow limit through
+the transmission lines. It ensures that the power flow between
+nodes n and m remains within the specified upper and lower
+bounds f n,m and f n,m. Note that inequalities (9)-(13), (20),
+and (21) are modelled as DRCCs. This implies that at the
+optimal solution, the probability of meeting each constraint
+is modelled to have a confidence level of at least (1)-ϵ).
+The DRCC program (1)-(21) is currently computationally
+intractable. Firstly, it contains an unknown and potentially
+infinite number of variables and constraints due to its
+probabilistic nature. Secondly, it involves nonlinear and
+non-convex constraints (6), (7), and (8). Regarding infinite
+dimensionality, by utilizing affine control policies, convex
+approximations, and duality theory, DRCC problems can be
+analytically reformulated as deterministic convex problems
+across various ambiguity sets [43]. Regarding nonlinear
+water network constraints, several studies have employed
+linearization and convex relaxation techniques. Convex
+models can provide a simplified yet accurate representation of
+the behaviour of complex systems under certain conditions,
+which is why they are widely used in engineering and systems
+analysis [44]. Their key advantages include simplicity,
+stability analysis, and fast simulation. References [29], [33],
+and [45] employed linearization terms for common water
+pressurized system parameters, including head losses in
+pipelines, pressure head increases of pumps, and pump power
+consumption functions. These studies confirmed the accuracy
+and computational efficiency of the convex relaxation and
+linearization methods. In this study, we develop a novel
+solution algorithm leveraging linearizations and convex
+relaxations specifically tailored to model the water network
+within the DRCC framework. We believe this novel method
+accurately captures the dynamics of the water system.
+The analytical reformulation of DRCCs is discussed in
+Section II-C. The linearization and convex relaxation of non-
+convex constraints are presented in Section II-D. The final
+problem formulation and solution procedure are discussed in
+Section III.
+C. ANALYTICAL REFORMULATION OF PROBABILISTIC
+DRCCS
+In the first step towards computational tractability, we adopt
+recourse actions to represent the behaviour of flexible assets,
+characterizing their response in RT as affine functions of
+uncertainty. Specifically, as linear functions of aggregated
+wind and solar forecast errors. The RT response is calculated
+in the expectation for the worst-case distribution of RES
+forecast errors EP in the ambiguity set 5. The recourse
+actions are modelled via linear decision rules using the
+random vector 1 ∈RZ. The market operator is requesting
+these recourse actions to regulate the flexibility response in
+the coupled power and water network. This includes flexible
+generators, water pumps and associated power and water
+flows. We focus on the stochastic water flow variable as
+an example to demonstrate the concept of affine response
+to uncertainty. Water flow through pipes can be adjusted
+in response to uncertainty realization in RT. We model this
+behaviour as follows:
+˜qi,j,t = qi,j,t + (φT 1t)˘qi,j,t (i, j) ∈(E ∪P), t ∈T .
+(22)
+In (22), ˜qi,j,t represents the total stochastic water flow
+through pipe or pump (i, j) at time t. It comprises two
+components: the nominal water flow qi,j,t and the uncertainty-
+dependent water flow ˘qi,j,t. The latter denotes the participa-
+tion factor of water flow (i, j) in compensating for the total
+wind and solar power mismatch φT 1t at time t.
+Assuming an affine response to uncertainty and zero
+mean
+forecast
+error,
+we
+analytically
+reformulate
+the
+DRCCs as Second-Order Cone (SOC) constraints fol-
+lowing the approach described in [46]. Let us define
+(φT 1t)˘q:=
+q
+1−ϵ
+ϵ ||˘q P 1/2||2, which for the sake of brevity we
+write as
+ϵ′γt ˘q where
+ϵ′:=
+q
+1−ϵ
+ϵ
+and
+˘qγt:=||˘q P 1/2||2. Then
+constraint (12) can be reformulated with the following SOC
+constraints:
+Qi,j −qi,j,t ≤ϵ′˘qγt (i, j) ∈(E ∪P), t ∈T
+(23)
+VOLUME 12, 2024
+86875
+
+A. Belmondo Bianchi et al.: Novel Market-Based Mechanism for Flexibility Provision
+FIGURE 2. Convex approximations of the hydraulic system.
+(a) Darcy-Weisbach equation: solid line for true curve, dashed line for the
+linear segment, shaded area for the feasible domain. (b) Variable speed
+pump: solid lines for the actual curve, dashed lines for linear
+approximation, and shaded region for the feasible domain.
+Qi,j −qi,j,t ≥ϵ′˘qγt (i, j) ∈(E ∪P), t ∈T .
+(24)
+A similar procedure is adopted to reformulate the other
+probabilistic DRCCs of the program (1)-(21). The analytical
+reformulation of DRCCs enables a representation of the
+infinite-dimensional probabilistic problem into an equivalent
+deterministic problem. However, this approach does not
+suffice to make the problem computationally tractable.
+The problem still contains nonlinear and non-convex con-
+straints (6), (7), and (8). A novel procedure to convexify these
+constraints is explained in Section II-D.
+D. CONVEX RELAXATION OF HYDRAULIC CONSTRAINTS
+Friction head losses in water pipes are commonly described
+using the non-convex Darcy-Weisbach equation (6). This
+is an equality constraint which models head losses as
+a quadratic function of the flow rate. To address this
+non-convexity, we follow the approach presented by [29]
+where constraint (6) is reformulated as the intersection
+of a convex function and a linear function such that
+Fi,j˜q2
+i,j,t≤˜hi,t−˜hj,t≤r0
+i,j+r1
+i,j˜qi,j,t. This reformulation enables us to
+model the feasible region, enclosed between the resulting
+convex set, as shown in Figure 2a. Under the assumption
+of affine response to uncertainty, we describe this convex
+set by defining uncertainty-dependent and independent
+counterparts as follows:
+hi,t −hj,t ≥Fi,jq2
+i,j,t (i, j) ∈E, t ∈T
+(25)
+hi,t −hj,t ≤r0
+i,j + r1
+i,jqi,j,t (i, j) ∈E, t ∈T
+(26)
+φT 1t(˘hi,t −˘hj,t) ≥(φT 1t)Fi,j2qi,j,t ˘qi,j,t
++ (φT 1t)2Fi,j˘q2
+i,j,t (i, j) ∈E, t ∈T
+(27)
+˘hi,t −˘hj,t ≤r1
+i,j˘qi,j,t (i, j) ∈E, t ∈T .
+(28)
+Parameters r0
+i,j and r1
+i,j denote the y-intercept and slope
+of the linear function, respectively. Notably, inequality (27)
+introduces new bilinear and quadratic terms. To enhance
+the convexity of (27), a novel hybrid method is proposed.
+This approach combines a McCormick relaxation technique
+applied to the bilinear term qi,j,t ˘qi,j,t and a Second-Order
+Cone (SOC) relaxation applied to the quadratic term ˘q2
+i,j,t.
+In this context, we define the following parameters: qL
+i,j,t and
+˘qL
+i,j,t represent the estimated lower bounds of variables qi,j,t
+and ˘qi,j,t respectively; qU
+i,j,t and ˘qU
+i,j,t represent the estimated
+upper bounds of variables qi,j,t and ˘qi,j,t respectively. The
+auxiliary variable mi,j,t describes the McCormick envelope.
+To simplify the quadratic term, we replace ˘q2
+i,j,t with the
+auxiliary variable ζ s
+i,j,t and introduce one additional Second
+Order Cone (SOC) constraint (32). This reformulation
+results in a tractable representation of constraint (27)
+for (i, j) ∈E, t ∈T as follows:
+φT 1t(˘hi,t −˘hj,t)
+≥(φT 1t)Fi,j2mi,j,t + (φT 1t)2Fi,jγi,j,t
+(29)
+mi,j,t ≥max{(qL
+i,j,t ˘qi,j,t + qi,j,t ˘qL
+i,j,t −qL
+i,j,t ˘qL
+i,j,t),
+(qU
+i,j,t ˘qi,j,t + qi,j,t ˘qU
+i,j,t −qU
+i,j,t ˘qU
+i,j,t}
+(30)
+mi,j,t ≤min{(qU
+i,j,t ˘qi,j,t + qi,j,t ˘qL
+i,j,t −qU
+i,j,t ˘qL
+i,j,t),
+(qL
+i,j,t ˘qi,j,t + qi,j,t ˘qU
+i,j,t −qL
+i,j,t ˘qU
+i,j,t)}
+(31)
+˘q2
+i,j,t ≤ζ s
+i,j,t.
+(32)
+Next, we focus on approximating the pump hydraulic
+curve (7). Variable speed pumps are commonly characterized
+by quadratic functions of the flow rate, representing the
+pressure head gain of pump (i, j) at time t. Constraint (7)
+poses computational challenges as it is nonlinear and non-
+convex. Moreover, the hydraulic behaviour of a variable-
+speed pump is significantly affected by its operating speed.
+The first pump affinity law states that the flow rate of
+a pump is directly proportional to its rotational speed,
+while the head it generates is proportional to the square
+of the rotational speed. Consequently, a factor denoted as
+ℵi,j,t≤ℵi,j,t≤ℵi,j,t is used to adjust the hydraulic curve as follows:
+˜hj−˜hi=ai,j˜q2
+i,j+ℵi,j,tbi,j˜qi,j+ℵ2
+i,j,tci,j. Here, ℵi,j,t is the relative speed,
+defined as the ratio between the actual operational speed
+and the nominal pump speed. Parameters ℵi,j,t and ℵi,j,t
+correspond to the lower and upper bounds of this ratio,
+establishing the feasible pump operating region. Adopting a
+comparable strategy as in [29] and [30], the upper and lower
+pump’s hydraulic functions are approximated through a linear
+model such that ℵ2
+i,j,tci,j+ℵi,j,tb′
+i,j˜qi,j≤˜hj−˜hi≤ℵ2
+i,j,tci,j+ℵi,j,tb′
+i,j˜qi,j as
+shown in Figure 2b. By expanding the linear pump’s
+hydraulic functions to both their nominal and uncertainty-
+dependent
+parts,
+we
+derive
+constraints
+(33)-(36)
+as
+follows:
+hj,t −hi,t ≤ℵ2
+i,j,tc′
+i,j + ℵi,j,tb′
+i,jqi,j,t (i, j) ∈P, t ∈T
+(33)
+hj,t −hi,t ≥ℵ2
+i,j,tc′
+i,j + ℵi,j,tb′
+i,jqi,j,t (i, j) ∈P, t ∈T
+(34)
+hj,t −hi,t + φT 1t(˘hj,t −˘hi,t)
+≤ℵ2
+i,j,tc′
+i,j + ℵi,j,tb′
+i,j(qi,j,t + φT 1t ˘qi,j,t) (i, j)
+∈P, t ∈T
+(35)
+86876
+VOLUME 12, 2024
+
+A. Belmondo Bianchi et al.: Novel Market-Based Mechanism for Flexibility Provision
+FIGURE 3. Convex approximations of pump power consumption. (a) The
+feasible hydraulic region with three operating points at different speeds
+and fixed flow rate. (b) Convex approximation of energy consumption
+curve for the three different operating speeds: real power curve (solid),
+linear cut (dashed), feasible region (grey).
+hj,t −hi,t + φT 1t(˘hj,t −˘hi,t)
+≥ℵ2
+i,j,tc′
+i,j + ℵi,j,tb′
+i,j(qi,j,t + φT 1t ˘qi,j,t) (i, j)
+∈P, t ∈T .
+(36)
+The values of b′
+i,j, c′
+i,j, ℵi,j,t, and ℵi,j,t are reliant on the
+distinctive attributes of the chosen water pump (i, j) and
+can be computed based on pump characteristic curves and
+technical data sheets.
+Next, we focus on approximating the pump power
+consumption expression. The power needed to operate the
+electric motor of a variable-speed pump is modelled as a
+function of pump flow and pressure head gain, as given in
+equation (8), which is non-convex. Further, it is known that
+the power required by a variable speed pump is proportional
+to the cube of the pump operating speed. Let us consider a
+variable speed pump which must deliver a specific water flow
+qi,j to the system. Depending on the pump operating speed,
+this flow can be supplied at different pressures (hj −hi) as
+shown in Figure 3a.
+For known pump operating speed, equation (8) can
+be expressed as a concave quadratic function of the
+flow rate of the form
+˜Pi,j,t=ℵi,j,txi,j˜q2
+i,j,t+ℵ2
+i,j,tyi,j˜qi,j,t+ℵ3
+i,j,tzi,j.
+Following the convex hull relaxation approach as above,
+this is modelled as the intersection of a concave func-
+tion and a linear function such that
+ℵ2
+i,j,ty′
+i,j˜qi,j,t+ℵ3
+i,j,tz′
+i,j
+≤˜Pi,j,t ≤ℵi,j,txi,j˜q2
+i,j,t+ℵ2
+i,j,tyi,j˜qi,j,t+ℵ3
+i,j,tzi,j as shown in Figure 3b.
+By expanding this expression to describe both uncertainty-
+dependent and independent terms, we obtain constraints (37)-
+(40) as follows:
+Pi,j,t ≤ℵi,j,txi,jq2
+i,j,t
++ ℵ2
+i,j,tyi,jqi,j,t + ℵ3
+i,j,tzi,j (i, j) ∈P, t ∈T
+(37)
+Pi,j,t ≥ℵ2
+i,j,ty′
+i,jqi,j,t + ℵ3
+i,j,tz′
+i,j (i, j) ∈P, t ∈T
+(38)
+˘Pi,j,t ≤˘ℵi,j,t2xi,j˘qi,j,tqi,j,t
++ (φT 1t) ˘ℵi,j,txi,j˘q2
+i,j,t + ˘ℵ2
+i,j,tyi,j˘qi,j,t (i, j)
+∈P, t ∈T
+(39)
+˘Pi,j,t ≥˘ℵ2
+i,j,ty′
+i,j˘qi,j,t (i, j) ∈P, t ∈T .
+(40)
+The empirical parameters xi,j, yi,j, y′
+i,j, zi,j, z′
+i,j, associated
+with water pump (i, j), are determined from technical data
+sheets, leveraging the specific attributes of the pump. Factor
+˘ℵi,j,t denotes the ratio between the uncertainty-dependent
+operational speed and the nominal pump speed. It is evident
+that constraint (39) involves bilinear and quadratic compo-
+nents and is therefore still non-convex. Extending the novel
+hybrid methodology outlined above, McCormick relaxation
+is employed to linearize the bilinear term qi,j,t ˘qi,j,t. The
+quadratic term ˘q2
+i,j,t is approximated using SOC relaxation,
+resulting in a convex representation of constraint (39) for
+(i, j) ∈P, t ∈T as follows:
+˘Pi,j,t ≤˘ℵi,j,t2xi,jmi,j,t + (φT 1t) ˘ℵi,j,txi,jζi,j,t + ˘ℵ2
+i,j,tyi,j˘qi,j,t
+(41)
+mi,j,t ≥max{(qL
+i,j,t ˘qi,j,t + qi,j,t ˘qL
+i,j,t −qL
+i,j,t ˘qL
+i,j,t),
+(qU
+i,j,t ˘qi,j,t + qi,j,t ˘qU
+i,j,t −qU
+i,j,t ˘qU
+i,j,t)}
+(42)
+mi,j,t ≤min{(qU
+i,j,t ˘qi,j,t + qi,j,t ˘qL
+i,j,t −qU
+i,j,t ˘qL
+i,j,t),
+(qL
+i,j,t ˘qi,j,t + qi,j,t ˘qU
+i,j,t −qL
+i,j,t ˘qU
+i,j,t)}
+(43)
+˘q2
+i,j,t ≤ζ p
+i,j,t.
+(44)
+Parameters qL
+i,j,t, ˘qL
+i,j,t, qU
+i,j,t
+and ˘qU
+i,j,t
+represent the
+estimated upper and lower bounds of variables qi,j,t and ˘qi,j,t
+respectively; mi,j,t and ζ p
+i,j,t serve as auxiliary variables within
+the McCormick relaxation and SOC relaxation, respectively.
+III. SOLUTION APPROACH
+A. DRCC PROGRAM REFORMULATION
+The complete reformulation of the program is presented
+herein, assuming an affine response to uncertainty and
+utilizing the analytical reformulation of DRCCs and the
+convex relaxations and approximations outlined in Sec-
+tion II-C and II-D. Under the assumption of zero mean
+forecast error, the optimisation problem simplifies to a
+minimization problem. This is because, within the ambiguity
+set, any probability distribution will lead to the same worst-
+case expectation. Therefore, the worst-case distribution is
+determined solely by its covariance. The reformulated DRCC
+problem takes the following form.
+Min
+4,P∈5
+X
+t∈T
+X
+e∈G
+CG
+e (pG
+e,t) −
+X
+l∈D
+UD
+l pD
+l,t −
+X
+u∈P
+UP
+u pP
+u,t
+
++
+X
+e∈G
+CAv
+e αe,t +
+X
+u∈ψP
+CAv
+u βu,t
+
+(45)
+s.t. ˘hr,t = 0 r ∈R, t ∈T
+(46)
+X
+i∈NinJ
+˘qi,j,t −
+X
+k∈NoutJ
+˘qj,k,t = 0 j ∈J , t ∈T
+(47)
+˘hs,t = τ
+As
+ X
+i∈Nins
+˘qi,s,t −
+X
+j∈Nouts
+˘qs,j,t
+
+s ∈S, t = 1
+(48)
+VOLUME 12, 2024
+86877
+
+A. Belmondo Bianchi et al.: Novel Market-Based Mechanism for Flexibility Provision
+˘hs,t −˘hs,t−1 = τ
+As
+ X
+i∈Nins
+˘qi,s,t −
+X
+j∈Nouts
+˘qs,j,t
+
+s ∈S, t > 1
+(49)
+˘hj,t −˘hi,t ≥Fi,j2mi,j,t + ϵ′γtFi,jζ s
+i,j,t (i, j) ∈E, t ∈T
+(50)
+hj,t −hi,t + ϵ′γt(˘hj,t −˘hi,t) ≤ℵ2
+i,j,tci,j
+−ℵi,j,tb′
+i,j(qi,j,t + ϵ′γt ˘qi,j,t) (i, j) ∈P, t ∈T
+(51)
+hj,t −hi,t + ϵ′γt(˘hj,t −˘hi,t) ≥ℵ2
+i,j,tci,j
+−ℵi,j,tb′
+i,j(qi,j,t + ϵ′γt ˘qi,j,t) (i, j) ∈P, t ∈T
+(52)
+˘Pi,j,t ≤˘ℵi,j,t2xi,jmi,j,t + ϵ′γtℵi,j,txi,jζi,j,t
++ ˘ℵ2
+i,j,tyi,j˘qi,j,t (i, j) ∈P, t ∈T
+(53)
+Hj + H0
+j ≤hj,t ≤Hj + H0
+j j ∈(J ∪S), t ∈T
+(54)
+Hend
+s
+≤hs,t ≤Hend
+s
+s ∈S, t = end
+(55)
+Qi,j ≤qi,j,t ≤Qi,j (i, j) ∈(E ∪P), t ∈T
+(56)
+ϵ′γt ˘hj,t ≥−hj,t + Hj + H0
+j j ∈(J ∪S), t ∈T
+(57)
+ϵ′γt ˘hj,t ≤−hj,t + Hj + H0
+j j ∈(J ∪S), t ∈T
+(58)
+ϵ′γt ˘hs,t ≥−hs,t + Hend
+s
+s ∈S, t = end
+(59)
+ϵ′γt ˘hs,t ≤hs,t + Hend
+s
+s ∈S, t = end
+(60)
+X
+e∈G
+˘pG
+e,t −
+X
+u∈P
+˘pP
+u,t = 1 t ∈T
+(61)
+X
+e∈ψGn
+˘pG
+e,t −
+X
+u∈ψPn
+˘pP
+u,t −
+X
+m∈n
+˘fn,m,t = 0 n
+∈N, t ∈T
+(62)
+PG
+e ≤pG
+e,t ≤PG
+e e ∈G, t ∈T
+(63)
+pG
+e,t + ϵ′γt ˘pG
+e,t ≤PG
+e e ∈G, t ∈T
+(64)
+pG
+e,t + ϵ′γt ˘pG
+e,t ≥PG
+e e ∈G, t ∈T
+(65)
+f n,m ≤fn,m,t ≤f n,m (n, m) ∈L, t ∈T
+(66)
+fn,m,t + ϵ′γt[E2
+0Bn,m( ˘θn,t −˘θm,t)] ≤f n,m (n, m)
+∈L, t ∈T
+(67)
+fn,m,t + ϵ′γt[E2
+0Bn,m( ˘θn,t −˘θm,t)] ≥f n,m (n, m)
+∈L, t ∈T
+(68)
+˘θn,t = 0 n = ref , t ∈T
+(69)
+˘pP
+u,t = ˘Pi,j,t + δi,j,t ˘qi,j,t u ∈ψPi,j, (i, j) ∈P, t ∈T
+(70)
+αe,t ≥
+˘pe,t61/2
+t
+
+2 e ∈G, t ∈T
+(71)
+βu,t ≥
+˘pP
+u,t61/2
+t
+
+2 u ∈ψP, t ∈T
+(72)
+(2) −(5), (14) −(19), (23) −(26), (28)
+(30) −(34), (37), (38), (40), (42) −(44)
+(73)
+Here 4= pD
+l,t, pG
+e,t, ˘pG
+e,t, pW
+w,t, pP
+u,t, ˘pP
+u,t, θn,t, ˘θn,t, fn,m,t, ˘fn,m,t, hi,t,
+˘hi,t, hr,t, qi,j,t, ˘qi,j,t, hs,t, ˘hs,t, Pi,j,t, ˘Pi,j,t, mi,j,t, ζ s
+i,j,t, ζ p
+i,j,t, αe,t, βu,t
+is the set of nominal and uncertainty-dependent optimisation
+decision variables. In (45), CAv
+e
+is the availability cost for
+flexible generators and CAv
+u for pumps. Availability cost refers
+to the expense incurred by the market operator to make
+sure that flexible generators or pumps are prepared to adjust
+their operations near RT. In this research, we assume that
+the availability cost serves as the sole pricing mechanism
+governing deploying flexibility. As such, it represents the
+main source of income for flexible generators and water
+pumps during RT operations. Introducing availability costs
+results in an augmented DA market clearing problem,
+in which the cost of flexibility utilization in RT is externalized
+from the DA social welfare. Variable αe,t and βu,t represent
+the absolute amount of flexibility offered by generators e
+and pumps u at time t, respectively. Notably, constraint (47)
+ensures that uncertainty-dependent water flow differences
+must be equal to zero. Constraints (61) and (62) ensure
+that under uncertainty, total RES mismatches are fully
+compensated, and changes in generation and pump load at
+a node must match changes in power flow across connected
+lines. Constraint (70) sets the uncertainty-dependent pump
+power load on the PN equal to the uncertainty-dependent
+pump power consumption plus a correction factor δi,j,t ˘qi,j,t.
+Constraints (71) and (72) enforce that the absolute amount of
+flexibility offered by generators and pumps must be larger or
+equal to the L2-Norm of the vector of uncertainty-dependent
+generation and pump power load multiplied by the square root
+of the covariance matrix.
+B. ITERATIVE SOLUTION ALGORITHM
+Assuming known DA and RT pump operating speeds,
+program (45)-(73) is convex and therefore computationally
+tractable. However, the optimal pump operating speed
+is currently unknown and must be determined through
+optimisation. We propose to solve the convex optimisation
+problem iteratively, by adjusting the pump relative speed ℵi,j,t
+and ˘ℵi,j,t until a predefined termination condition is met. The
+proposed algorithm leverages known pump properties and
+affinity laws with the convex relaxation and approximations
+developed in this study. Algorithm 1 summarizes the overall
+solution procedure. The algorithm begins by initializing
+the iteration counter (it), the objective value placeholder
+(objit−1) and arrays ℵ, ˘ℵ, and δ of dimensions P, T . Within
+each iteration, it solves program (45)-(73) to determine
+decision vectors q, ˘q, h, ˘q. For each time step t and pump
+i, j, it computes the values of 1href ,DA, 1hDA, 1href ,RT ,
+and 1hRT representing the reference and actual pressure
+head gain in DA and RT, respectively. The relative pump
+operating speed in DA (ℵi,j,t), and RT ( ˘ℵi,j,t) is calculated
+based on pump affinity laws. The relative speeds are used
+to update the pump hydraulic feasibility cuts (37), (38),
+(40) and (53) in the next iteration. The factor δi,j,t is used
+to map the estimated pressure head gain to the minimum
+change in pump power consumption in RT in (70). Then,
+the algorithm checks for convergence based on the relative
+percentage difference in the objective value (obj) compared
+to the previous iteration (objit−1). If the percentage difference
+86878
+VOLUME 12, 2024
+
+A. Belmondo Bianchi et al.: Novel Market-Based Mechanism for Flexibility Provision
+Algorithm 1 Iterative Solution of DRCC Program
+it ←0
+objit−1 ←0
+Initialize arrays: ℵ, ˘ℵand δ of size (P, T )
+while true do
+Solve (45)-(73):
+obj, q, ˘q, h, ˘q ←solution of (45)-(73)
+for t in T do
+for i, j in P do
+1href ,DA ←b′
+i,j · qi,j,t + c′
+i,j
+1hDA ←hj,t −hi,t
+1href ,RT ←b′
+i,j(qi,j,t + 61/2
+t
+· ˘qi,j,t) + c′
+i,j
+1hRT ←hj,t −hi,t + 61/2
+t
+(˘hj,t −˘hi,t)
+ℵi,j,t ←
+q
+1hDA
+1href ,DA
+˘ℵi,j,t ←
+q
+1hRT
+1href ,RT
+δi,j,t ←gρτ
+ηi,j 1hRT
+end for
+end for
+if
+objit−1−obj
+
+|objit−1+ obj|
+2
+· 100 ≤ϒ then
+Break: Optimal solution found
+end if
+it ←it + 1
+objit−1 ←obj
+end while
+FIGURE 4. Schematic overview of the proposed coordination mechanism.
+is below a given threshold (ϒ), the algorithm terminates,
+leading to the solution of the DRCC program.
+C. SOFTWARE DESCRIPTION
+The general overview of the coordination mechanism and
+the internal process of the software is shown in Figure 4.
+The model requires input data including hourly solar and
+wind power generation forecasts, along with representative
+infrastructure data for water and power networks. This
+includes details of the pressurised water system such as
+network topology, reservoirs, tanks, consumption nodes,
+water demand profile and pipeline parameters. PN data
+includes network topology, generation capacity, load profile,
+power line parameters, and market-related factors such as
+FIGURE 5. Top view of the municipality highlighting the complete water
+distribution network.
+bidding curves. Uncertainty is quantified using a set of
+imperfect solar and wind power forecasts. Based on observed
+forecast errors, mean and covariance are computed for the
+next day and used to build the ambiguity set for the DRCC
+program. Utilizing the collected data, the DRCC program
+is solved iteratively via Algorithm 1. The objective function
+maximizes social welfare while reserving enough flexibility
+in the network to compensate for possible power imbalances
+in RT resulting from the worst-case uncertainty realization.
+The results provide insights into hydraulic response, power
+dispatch, flexibility allocation policies, and Market Clearing
+Prices (MCPs).
+IV. CASE STUDY
+We illustrate the applicability of our approach through a case
+study in Spain, specifically focused on a real WN located
+in Alicante Province within the South-Eastern region. The
+population is 1270 inhabitants supplied by 900 connections.
+The network spans 14.61 km of pipes, with 9.5% having
+diameters below 60 mm and 90.5% ranging from 60 to
+150 mm. The pipe composition includes fibre cement
+(38.2%), PVC (13.0%), and polyethylene (48.8%). The
+infrastructure comprises a reservoir at an elevation of 293 m
+and a compensation tank with a diameter of 13.4 m located
+at an elevation of 432.31 m. The tank’s water level fluctuates
+between 0.5 and 3.9 m. The network layout is presented in
+Figure 5.
+The municipality’s daily consumption stands at 718.54
+m3, and no leakage is accounted for in this model.
+Furthermore, adhering to the conditions of our problem,
+there are no instances of unsupplied demands within the
+municipality (amounting to 0%). Pump energy consump-
+tion is 264.15 kWh/day, while the reservoir contributes
+535.75 kWh/day. Both total user demand and hourly modula-
+tion coefficients remain constant throughout the year. In our
+model, we simplify the network by excluding municipal pipes
+located downstream of the compensation tank, leaving five
+nodes connected by four main pipes. As the downstream
+connections are gravity-fed, this simplification does not
+impact the system’s hydraulic behaviour. The PN is based on
+VOLUME 12, 2024
+86879
+
+A. Belmondo Bianchi et al.: Novel Market-Based Mechanism for Flexibility Provision
+FIGURE 6. Power network (left) and water network (right) depicting
+orange lines as power lines, black bars as power buses, conventional and
+renewable generators with respective icons, blue arrows as water pipes,
+empty blue dots as junctions, filled blue dots as water demand points,
+and reservoir, tank, and pump with respective icons.
+a modified 6-Bus System introduced in [47]. It incorporates
+four conventional generators, one small wind turbine with a
+maximum power output of 150 kW, and a community solar
+farm with a maximum power output of 100 kW. The network
+comprises four conventional loads and one pump load with
+a maximum power requirement of 50 kW. Different nodes
+are connected through 11 power lines, with the reference
+bus situated at node 5. An overview of the coupled power
+and water network is given in Figure 6. A set of 1000 wind
+and 1000 solar forecast scenarios is used to estimate the
+covariance matrix of wind and solar forecast errors, following
+the methodology in [37]. The violation probability ϵ is fixed
+at a value of 0.25 for all DRCCs. The availability cost is set to
+0.05 AC/KW for conventional generators (i.e., CAv
+e ) and 0.005
+AC/kW for water pumps (i.e., CAv
+u ).
+V. RESULTS AND DISCUSSION
+All simulations are implemented in Julia v1.5.3, modelled
+with JuMP v0.21.6, and solved with Mosek v1.2.1. The
+problem is solved with an average CPU time of 0.27 seconds
+and 6 iterations, using a laptop with 32GB RAM with a
+Processor Intel(R) Xeon(R) 6 Core(s) running at 2.80GHz.
+A. NUMERICAL RESULTS
+The results show how the power and water network
+would respond to different schedules and probabilities. The
+optimised DA power dispatch schedule is shown in Figure 7,
+achieved by coordinating power and water networks.
+Results show that aggregate load varies throughout the
+day with two major peaks around noon and in the evening
+around 8 PM. A significant portion of the load is fulfilled by
+conventional generators, with the remaining fraction sourced
+from wind and solar. RES generation is subject to fluctuations
+across the 24-hour span, with a relatively larger share of RES
+available between 9 AM and 2 PM as well as between 8 PM
+and 12 PM. The pump load constitutes a small percentage of
+the overall load and remains comparably constant throughout
+the day. The MCPs, calculated through the dual variable
+associated with the power balance constraint (16), vary
+between a minimum of 0.10 AC/KWh between 4 and 6 AM,
+and a maximum of 0.13 AC/KWh between 6 and 7 PM.
+FIGURE 7. Scheduled DA power dispatch: conventional power loads (blue
+area), pump loads (yellow area), conventional generation (black line), and
+market clearing price (red dashed line).
+FIGURE 8. Scheduled DA water flows: water demand (blue line), pump
+flow (yellow line), tank volume (black dashed line), flow surplus (green
+area) and flow deficit (orange area).
+Changes in MCP are driven by the bidding parameters, the
+availability of RES, and the aggregated load on the PN.
+Figure 8 presents the DA schedule for the WN. The water
+demand exhibits significant variations throughout the day,
+with a minimum of 8 m3/h between 3 and 4 AM, and a
+maximum of 52 m3/h at 8 AM. The pump supplies water to
+the system, while the water flow fluctuates between 25 m3/h
+(1 - 3 AM) and 36 m3/h (7 AM). During specific intervals, the
+pump provides more water than the actual municipal demand,
+leading to a surplus of water that is stored in the compensation
+tank. Consequently, the tank’s volume increases. Conversely,
+when the pumps supply less water than demanded, a deficit
+arises, causing the sourcing of water from the tank, which
+results in diminishing the tank’s volume. The storage tank’s
+volume varies between a maximum of 300 m3 at 5 AM and
+a minimum of approximately 222 m3 at 10 PM, remaining
+within the feasible limits defined by the specific tank
+dimensions. The dynamic fluctuations in tank volume show
+86880
+VOLUME 12, 2024
+
+A. Belmondo Bianchi et al.: Novel Market-Based Mechanism for Flexibility Provision
+FIGURE 9. Allocation of flexibility reserves: conventional generators
+(grey) and water pumps (green) are assigned flexibility reserves. The red
+line represents the worst-case RES deviation in RT, while the blue line
+illustrates the dynamic pump flow adjustments in response to uncertainty.
+a negative correlation with MCPs. When MCPs are low,
+the storage tank volume is high, and vice versa. This trend
+aligns with instances of a comparatively low aggregated load
+on the PN and high availability of RES. These findings
+underscore the effectiveness of smart water system operation
+in its capacity as a DR provider, emphasizing its potential to
+enhance economic efficiency.
+Next to the DA schedule, flexible generators and water
+pumps are assigned dynamic flexibility policies during the
+RT stage. These policies compensate for unforeseen RES
+deviations under worst-case conditions. This ensures enough
+flexibility reserves, necessary for maintaining stability in
+both power and water networks during RT. As depicted
+in Figure 9, the distribution of these flexibility reserves
+is illustrated with generators shown in grey and pumps
+in green. The heights of the bars show the size of
+flexibility contributed to each asset. Positive generation
+reserves denote increased power production, while positive
+pump reserves signify curtailed power consumption. The
+aggregate flexibility from generators and pumps must align
+with the RES power deviation depicted by the red line.
+This ensures a complete compensation of power deviations.
+Results show that generators contribute a substantial portion
+of the RES deviation, ranging from 73% (9 AM - 1 PM)
+to 100% of the total RES mismatch from 1 to 7 AM and
+4 to 7 PM. Pump-driven flexibility, constrained by pump
+size and hydraulic limitations, is comparatively lower, but
+still significant. From 1 to 6 AM and 4 to 7 PM, the water
+pump increases its flow (blue line), consequently increasing
+energy consumption. Conversely, from 9 AM to 1 PM
+and 8 to 12 PM, the pump reduces its flow and thus, its
+power consumption. These outcomes unveil a time-sensitive
+bidirectional response pattern in water pumps. Logically,
+during the time intervals of 1 to 6 AM and 4 to 7 PM, the
+increased water flow results in additional water being stored
+in the compensation tank. This surplus water is subsequently
+FIGURE 10. Model sensitivity across scenarios with varied availability
+costs.
+used to enable load reduction by the pump during alternate
+periods. This mechanism enables the water system to adapt
+its operations, providing RT flexibility while maintaining the
+security of the water supply.
+B. SENSITIVITY ANALYSIS
+To gain deeper insight into the model’s behaviour, a one-
+factor-at-a-time sensitivity analysis is conducted. We exam-
+ine the influence of altering different parameters on the
+optimal solution. Specifically, the analysis focuses on varying
+availability costs, varying constraint violation probability
+level ϵ, and varying hydraulic conditions. Figure 10 illustrates
+the model’s sensitivity to varying availability costs (i.e.,
+CAv
+e
+for flexible generators and CAv
+u
+for pumps) ranging
+from 0.005 to 0.05 AC/KW. For instance, in scenario G5P50,
+the availability cost is 0.005 AC/KW for generators (G) and
+0.05 AC/KW for pumps (P). The model is evaluated across
+multiple metrics: objective function value (upper left), social
+welfare (lower left), generator revenue (upper right), and
+pump energy cost (lower right). Results show a reduction
+in the objective function value as the availability costs
+of flexible generators increase. Social welfare, defined as
+the difference between the benefit of consumption and the
+cost of production, maintains a constant pattern across all
+scenarios. Nevertheless, it shows a higher value in scenarios
+G5P5, G25P5, and G50P5. Generator revenue, defined as
+the sum of the revenue from DA electricity sales and
+RT flexibility services, displays a positive correlation with
+increasing generator availability costs. This suggests that
+generators are required to engage in RT flexibility services
+under all scenarios, indicating that the flexibility capacity
+of water pumps alone is insufficient to compensate for the
+RES mismatch entirely. Finally, instances of lower pump
+availability costs correspond to lower pump energy expenses,
+defined as the cost of purchasing energy in DA minus the
+revenue from flexibility service in RT. This suggests potential
+VOLUME 12, 2024
+86881
+
+A. Belmondo Bianchi et al.: Novel Market-Based Mechanism for Flexibility Provision
+FIGURE 11. Model sensitivity to different violation probability levels.
+cost savings for the WN when providing flexibility at reduced
+cost rates. Though the model shows sensitivity to various
+availability costs, it is based on the specific economic and
+physical parameters of the system under study. These findings
+should not be generalised but approached as specific to the
+particular case.
+Next, we examine the model sensitivity to different choices
+of the parameter ϵ, which determines the level of violation
+probability associated with CC. Figure 11 illustrates the
+change in the objective function value across varying values
+of ϵ. Notably, the objective function value increases from
+555 AC/day to 576 AC/day as the violation probability level
+rises (Figure 11). This suggests that when a higher constraint
+violation probability is allowed, the system can incur lower
+costs associated with flexibility and thus achieve higher social
+welfare. In practice, higher constraint violation probability
+means that the SO has a higher degree of freedom in choosing
+the best schedule for the DA stage. However, this trade-off
+leads to a reduction in the system’s confidence in dealing with
+uncertainty in RT, referred to as robustness. A point already
+established in [25] is that as one approached the maximum
+injected flow level into a pressurised water distribution
+network, the energy efficiency improved. However, this
+was accompanied by an increased likelihood of failing to
+deliver water at the specified threshold pressure (25 m)
+and encountering unsupplied demands. The results show the
+substantial impact of the parameter ϵ on the optimal solution.
+Therefore, its selection should be done carefully, in relation
+to the specific context of the application and the precise needs
+of the end-user.
+Finally, we investigate the model sensitivity to different
+hydraulic heads. We define three distinct scenarios in which
+the static pressure head is varied. The static head is defined
+as the elevation difference between the reservoir and the
+compensation tank. The static head is progressively increased
+from 140 m (representing the real case) to 200 m and 250 m,
+denoted as scenarios H140, H200, and H250, respectively.
+Figure 12 shows alterations in the model response concerning
+FIGURE 12. Sensitivity of Model to different Hydraulic Conditions. The
+top graph shows the flexibility allocation on the primary axis and the
+change in flow rate in RT on the secondary y-axis. The bottom graph
+illustrates the relative pump operating speed in DA and RT.
+flexibility provision under varying hydraulic heads (top) and
+shifts in relative pump operating speeds between DA and RT
+(bottom). The results indicate that although the flexibility
+provided by the generators and water pumps is affected by
+different hydraulic heads, the overall trend over time remains
+stable in all scenarios. The higher the static head, the greater
+the pump’s flexibility. The increase in flexibility potential
+is because of changes in pump operating speed associated
+with different hydraulic heads. Relative pump speed (ℵi,j)
+increases from an average of 0.65 in scenario H140 to an
+average of 0.9 in scenario H250. As the pump’s operating
+speed increases, its feasible operational range shifts vertically
+(see Figure 3), thereby influencing the pump’s ability to adapt
+water flow during RT operations, and therefore its energy
+consumption. Results suggest that different hydraulic heads
+have a significant influence on the pump operating conditions
+and resulting capacity to deliver flexibility. Hence, selecting
+an appropriate variable speed pump is critical to ensuring an
+optimal degree of operational flexibility.
+To assess the implications of implementing the second-
+order cone reformulation for water flows, we examine the
+Mean Absolute Error (MAE) resulting from the convex
+relaxation applied to constraints describing friction head
+losses in DA (25) and RT (27), as well as constraints related to
+pump energy consumption in DA (37) and RT (39). The MAE
+quantifies the slack resulting from the convex relaxations.
+It measures the average absolute difference between the
+outcomes of the original non-convex constraint and the
+relaxed constraint. This offers insight into the gap between the
+optimal solution of the non-convex problem and the solution
+obtained through convex relaxation. Importantly, MAE is
+expressed in the original units of the constraint, thereby
+preserving its inherent physical interpretation. The MAE is
+examined for different availability costs and hydraulic head
+scenarios as previously defined.
+86882
+VOLUME 12, 2024
+
+A. Belmondo Bianchi et al.: Novel Market-Based Mechanism for Flexibility Provision
+TABLE 1. Mean Absolute Error (MAE) introduced by second-order cone
+formulation of water flows under different availability costs and hydraulic
+heads.
+The results, presented in Table 1, show variations in
+the MAE across different constraints, availability costs
+and hydraulic head scenarios. Notably, the MAE remains
+consistently low, indicating that the slack introduced by the
+convex relaxations stays within acceptable limits. Across
+varying availability cost scenarios, the MAE for all con-
+straints decreases as the availability cost of the pump (P)
+increases. Conversely, when the pump provides greater
+flexibility due to lower availability costs, the MAE also
+increases, aligning with the model’s assumptions. This
+pattern suggests that higher availability costs lead to a more
+accurate approximation.
+Across different hydraulic head scenarios, constraints
+(25) and (37), which correspond to DA constraints, demon-
+strate a declining trend in MAE values with increasing
+hydraulic head. Differently, constraints (27) and (39), cor-
+responding to RT operation, show an opposite trend. As the
+hydraulic head increases, the MAE increases as well. This
+trend is logical since a higher hydraulic head corresponds
+to greater pump flexibility potential, as shown in Figure 12,
+leading to a larger MAE in these constraints. The overall
+performance underscores the reliability of the employed
+methodology in approximating water flow constraints across
+various conditions. The observed low MAE values collec-
+tively indicate that the model’s predictions closely match
+actual constraint values, thus strengthening its potential
+for practical applications across scenarios characterized by
+varying availability costs and hydraulic head settings.
+C. REFLECTION
+The sensitivity analysis provided valuable insights into the
+model’s behaviour under diverse conditions. It highlighted
+the significant influence of flexible generator availability
+costs on economic performance, while the impact of pump
+availability costs was relatively minor. However, it’s notable
+that water pumps offer less flexibility compared to generators
+due to the small scale of the water network. Expanding the
+water network could potentially increase flexibility and its
+economic impact on the power system. Exploring varying
+constraint violation probability levels (ϵ) revealed a trade-
+off between cost reduction and system robustness, similar
+to findings in [39] and [46]. These underscore the impor-
+tance of balancing cost efficiency with system resilience
+by carefully considering constraint violation probabilities.
+Additionally, sensitivity analysis to different hydraulic con-
+ditions emphasized the influence of static pressure heads on
+flexibility provision and pump operations. This highlights
+the importance of selecting appropriate pump configurations
+to optimize operational flexibility under varying hydraulic
+conditions. Furthermore, the assessment of MAE resulting
+from convex relaxation indicated the reliability of the
+methodology in approximating non-convex constraints across
+various scenarios. However, these findings are specific to
+the system’s characteristics, necessitating further analysis of
+different water network infrastructures for generalization.
+Finally, it is worth mentioning that the scalability of the
+proposed approach has not been examined. However, we note
+that the proposed mathematical programming problem is
+a SOCP. One important advantage of SOCPs is their
+computational efficiency compared to non-convex programs.
+For SOCPs, the globally optimal solution can be computed
+in polynomial time for a wide range of problem types and
+sizes, as discussed in [48]. Our previous work [34] further
+supports this notion. We investigated a similar problem in
+a relatively larger system, using an IEEE 24-bus reliability
+test system and a water network with 20 nodes. Our results
+demonstrated that these types of convex problems can be
+solved efficiently at this scale. However, when modelling
+larger systems, the error introduced by convex relaxations
+may increase. Therefore, conducting additional analysis on
+even larger systems would further strengthen these findings,
+providing opportunities for future research.
+VI. CONCLUSION
+This study presents a novel market-based mechanism for
+the integrated scheduling of power and water networks.
+The model is formulated as a distribution robust chance-
+constrained optimisation problem. It optimises flexible
+resources to make up for imperfect renewable energy
+forecasts. The approach maximises utility in the power
+sector and compensates for power deviations in real-time
+while ensuring a stable water supply to the community.
+Simultaneously, it seeks to enhance the storage of water (and
+energy) in the head and/or compensation tanks. We introduce
+a novel relaxation technique to handle the non-convexity
+arising from the WN constraints. Further, we propose a novel
+iterative solution algorithm to estimate the variable speed
+pump behaviour. This method simplifies the study of water
+networks for more efficient modelling and optimisation of
+power and water networks. Adopting a look-ahead strategy,
+this approach leads to a network-aware and resilient day-
+ahead scheduling solution for power and water networks.
+Notably, the outcomes underscore the successful harnessing
+of WN flexibility by the power system. As such, the proposed
+coordination mechanism enhances the overall utility and
+system-wide resilience without impacting water end-users.
+This tool helps utility managers and practitioners plan and
+operate power and water networks more effectively. In future
+VOLUME 12, 2024
+86883
+
+A. Belmondo Bianchi et al.: Novel Market-Based Mechanism for Flexibility Provision
+work, we will investigate the scalability of our approach by
+testing it on larger power and water network sizes and finer
+time resolutions. Further, we aim to investigate optimal pump
+selection, optimal tank sizing, and integrated power and water
+network investment planning. Additionally, we will investi-
+gate the flexibility of other water infrastructural components,
+such as pumps-as-turbines (PATs) and desalination plants.
+Finally, we will investigate the impact of different uncertainty
+sources such as stochastic power loads and water demands.
+REFERENCES
+[1] World Energy Outlook 2017, IEA, 2017.
+[2] A. Ramos, C. De Jonghe, V. Gómez, and R. Belmans, ‘‘Realizing the smart
+grid’s potential: Defining local markets for flexibility,’’ Utilities Policy,
+vol. 40, pp. 26–35, Jun. 2016.
+[3] M. G. Simões, R. Roche, E. Kyriakides, S. Suryanarayanan, B. Blunier,
+K. D. McBee, P. H. Nguyen, P. F. Ribeiro, and A. Miraoui, ‘‘A comparison
+of smart grid technologies and progresses in Europe and the U.S.,’’ IEEE
+Trans. Ind. Appl., vol. 48, no. 4, pp. 1154–1162, Jun. 2012.
+[4] World Energy Outlook 2019, Int. Energy Agency, 2019.
+[5] V. G. Gude, ‘‘Energy and water autarky of wastewater treatment and power
+generation systems,’’ Renew. Sustain. Energy Rev., vol. 45, pp. 52–68,
+May 2015.
+[6] G. Kumar and B. W. Karney, ‘‘Electricity usage in water distribution
+networks,’’ in Proc. IEEE Canada Electr. Power Conf., Oct. 2007,
+pp. 97–102.
+[7] N. Melián-Martel, B. del Río-Gamero, and J. Schallenberg-Rodríguez,
+‘‘Water cycle driven only by wind energy surplus: Towards 100% renew-
+able energy islands,’’ Desalination, vol. 515, Nov. 2021, Art. no. 115216.
+[8] R. Heffron, M.-F. Körner, J. Wagner, M. Weibelzahl, and G. Fridgen,
+‘‘Industrial demand-side flexibility: A key element of a just energy
+transition and industrial development,’’ Appl. Energy, vol. 269, Jul. 2020,
+Art. no. 115026.
+[9] S. S. Torbaghan, G. Suryanarayana, H. Höschle, R. D’hulst, F. Geth,
+C. Caerts, and D. Van Hertem, ‘‘Optimal flexibility dispatch problem using
+second-order cone relaxation of AC power flows,’’ IEEE Trans. Power
+Syst., vol. 35, no. 1, pp. 98–108, Jan. 2020.
+[10] S. Shariat Torbaghan, M. Madani, P. Sels, A. Virag, H. Le Cadre,
+K. Kessels, and Y. Mou, ‘‘Designing day-ahead multi-carrier markets
+for flexibility: Models and clearing algorithms,’’ Appl. Energy, vol. 285,
+Mar. 2021, Art. no. 116390.
+[11] H. Meschede, ‘‘Increased utilisation of renewable energies through
+demand response in the water supply sector—A case study,’’ Energy,
+vol. 175, pp. 810–817, May 2019.
+[12] D. Sauri, ‘‘The decline of water consumption in Spanish cities: Structural
+and contingent factors,’’ Int. J. Water Resour. Develop., vol. 36, no. 6,
+pp. 909–925, Nov. 2020.
+[13] J. Willet, K. Wetser, J. E. Dykstra, A. B. Bianchi, G. H. P. Oude Essink,
+and H. H. M. Rijnaarts, ‘‘WaterROUTE: A model for cost optimization of
+industrial water supply networks when using water resources with varying
+salinity,’’ Water Res., vol. 202, Sep. 2021, Art. no. 117390.
+[14] A. D. Gupta and K. Kulat, ‘‘Leakage reduction in water distribution system
+using efficient pressure management techniques. Case study: Nagpur,
+India,’’ Water Supply, vol. 18, no. 6, pp. 2015–2027, Dec. 2018.
+[15] M. Wakeel and B. Chen, ‘‘Energy consumption in urban water cycle,’’
+Energy Proc., vol. 104, pp. 123–128, Dec. 2016.
+[16] D. Azari, S. S. Torbaghan, H. Cappon, M. Gibescu, K. Keesman, and
+H. Rijnaarts, ‘‘Assessing the flexibility potential of the residential load in
+smart electricity grids—A data-driven approach,’’ in Proc. 14th Int. Conf.
+Eur. Energy Market (EEM), Jun. 2017, pp. 1–6.
+[17] J. Ostergaard, C. Ziras, H. W. Bindner, J. Kazempour, M. Marinelli,
+P. Markussen, S. H. Rosted, and J. S. Christensen, ‘‘Energy security
+through demand-side flexibility: The case of Denmark,’’ IEEE Power
+Energy Mag., vol. 19, no. 2, pp. 46–55, Mar. 2021.
+[18] M.-A. Hamidan and F. Borousan, ‘‘Optimal planning of distributed gen-
+eration and battery energy storage systems simultaneously in distribution
+networks for loss reduction and reliability improvement,’’ J. Energy
+Storage, vol. 46, Feb. 2022, Art. no. 103844.
+[19] N. Bhusal, M. Abdelmalak, M. Kamruzzaman, and M. Benidris, ‘‘Power
+system resilience: Current practices, challenges, and future directions,’’
+IEEE Access, vol. 8, pp. 18064–18086, 2020.
+[20] T. Hong, P. Pinson, Y. Wang, R. Weron, D. Yang, and H. Zareipour,
+‘‘Energy forecasting: A review and outlook,’’ IEEE Open Access J. Power
+Energy, vol. 7, pp. 376–388, Oct. 2020.
+[21] S.-E. Razavi, E. Rahimi, M. S. Javadi, A. E. Nezhad, M. Lotfi, M. Shafie-
+khah, and J. P. S. Catalão, ‘‘Impact of distributed generation on protection
+and voltage regulation of distribution systems: A review,’’ Renew. Sustain.
+Energy Rev., vol. 105, pp. 157–167, May 2019.
+[22] M. Á. Pardo, R. Cobacho, and L. Bañón, ‘‘Standalone photovoltaic direct
+pumping in urban water pressurized networks with energy storage in tanks
+or batteries,’’ Sustainability, vol. 12, no. 2, p. 738, Jan. 2020.
+[23] F. J. Navarro-González, M. Á. Pardo, H. E. Chabour, and T. Alskaif,
+‘‘An irrigation scheduling algorithm for sustainable energy consump-
+tion in pressurised irrigation networks supplied by photovoltaic mod-
+ules,’’ Clean Technol. Environ. Policy, vol. 25, no. 6, pp. 2009–2024,
+Aug. 2023.
+[24] H. M. Ramos, R. Silva Santos, P. A. López-Jiménez, and M. Pérez-
+Sánchez, ‘‘Multi-objective optimization tool for PATs operation in water
+pressurized systems,’’ Urban Water J., vol. 19, no. 6, pp. 558–568,
+Jul. 2022.
+[25] M. A. Pardo, F. J. Navarro-González, and Y. Villacampa, ‘‘An algorithm
+to schedule water delivery in pressurized irrigation networks,’’ Comput.
+Electron. Agricult., vol. 201, Oct. 2022, Art. no. 107290.
+[26] D. Fooladivanda and J. A. Taylor, ‘‘Energy-optimal pump scheduling and
+water flow,’’ IEEE Trans. Control Netw. Syst., vol. 5, no. 3, pp. 1016–1026,
+Sep. 2018.
+[27] D. Fooladivanda, A. D. Domínguez-García, and P. W. Sauer, ‘‘Utilization
+of water supply networks for harvesting renewable energy,’’ IEEE Trans.
+Control Netw. Syst., vol. 6, no. 2, pp. 763–774, Jun. 2019.
+[28] A.
+S.
+Zamzam,
+E.
+Dall’Anese,
+C.
+Zhao,
+J.
+A.
+Taylor,
+and
+N. D. Sidiropoulos, ‘‘Optimal water–power flow-problem: Formulation
+and distributed optimal solution,’’ IEEE Trans. Control Netw. Syst., vol. 6,
+no. 1, pp. 37–47, Mar. 2019.
+[29] Q. Li, S. Yu, A. S. Al-Sumaiti, and K. Turitsyn, ‘‘Micro water–
+energy nexus: Optimal demand-side management and quasi-convex hull
+relaxation,’’ IEEE Trans. Control Netw. Syst., vol. 6, no. 4, pp. 1313–1322,
+Dec. 2019.
+[30] A. Stuhlmacher and J. L. Mathieu, ‘‘Water distribution networks as flexible
+loads: A chance-constrained programming approach,’’ Electric Power Syst.
+Res., vol. 188, Nov. 2020, Art. no. 106570.
+[31] A. Stuhlmacher and J. L. Mathieu, ‘‘Uncertainty-aware methods for
+leveraging water pumping flexibility for power networks,’’ 2022,
+arXiv:2207.04943.
+[32] A. Stuhlmacher and J. L. Mathieu, ‘‘Flexible drinking water pumping
+to provide multiple grid services,’’ Electric Power Syst. Res., vol. 212,
+Nov. 2022, Art. no. 108491.
+[33] M. J. Al-Mubarak and A. J. Conejo, ‘‘Storing freshwater versus storing
+electricity in power systems with high freshwater electric demand,’’
+J. Modern Power Syst. Clean Energy, vol. 12, no. 2, pp. 323–333, 2024.
+[34] A. Belmondo Bianchi, J. Willet, H. H. M. Rijnaarts, and S. Shariat
+Torbaghan, ‘‘Distribution robust water-based demand side management
+in power transmission networks,’’ Sustain. Energy, Grids Netw., vol. 36,
+Dec. 2023, Art. no. 101232.
+[35] A. Potter, R. Haider, G. Ferro, M. Robba, and A. M. Annaswamy, ‘‘A
+reactive power market for the future grid,’’ Adv. Appl. Energy, vol. 9,
+Feb. 2023, Art. no. 100114.
+[36] L. Yang, Y. Xu, H. Sun, and W. Wu, ‘‘Tractable convex approximations
+for distributionally robust joint chance-constrained optimal power flow
+under uncertainty,’’ IEEE Trans. Power Syst., vol. 37, no. 3, pp. 1927–1941,
+May 2022.
+[37] J. E. B. Iversen and P. Pinson, ‘‘RESGen: Renewable energy scenario
+generation platform,’’ in Proc. IEEE Power Eng. Soc. Gen. Meeting,
+Aug. 2016, pp. 1–20.
+[38] F. Pourahmadi and J. Kazempour, ‘‘Distributionally robust generation
+expansion planning with unimodality and risk constraints,’’ IEEE Trans.
+Power Syst., vol. 36, no. 5, pp. 4281–4295, Sep. 2021.
+[39] A. Ratha, A. Schwele, J. Kazempour, P. Pinson, S. S. Torbaghan, and A.
+Virag, ‘‘Affine policies for flexibility provision by natural gas networks
+to power systems,’’ Electr. Power Syst. Res., vol. 189, Dec. 2020,
+Art. no. 106565.
+86884
+VOLUME 12, 2024
+
+A. Belmondo Bianchi et al.: Novel Market-Based Mechanism for Flexibility Provision
+[40] A. Arrigo, C. Ordoudis, J. Kazempour, Z. De Grève, J.-F. Toubeau,
+and F. Vallée, ‘‘Wasserstein distributionally robust chance-constrained
+optimization for energy and reserve dispatch: An exact and physically-
+bounded formulation,’’ Eur. J. Oper. Res., vol. 296, no. 1, pp. 304–322,
+Jan. 2022.
+[41] B. K. Poolla, A. R. Hota, S. Bolognani, D. S. Callaway, and A. Cherukuri,
+‘‘Wasserstein distributionally robust look-ahead economic dispatch,’’
+IEEE Trans. Power Syst., vol. 36, no. 3, pp. 2010–2022, May 2021.
+[42] L. Roald and G. Andersson, ‘‘Chance-constrained AC optimal power
+flow: Reformulations and efficient algorithms,’’ IEEE Trans. Power Syst.,
+vol. 33, no. 3, pp. 2906–2918, May 2018.
+[43] G. A. Hanasusanto, V. Roitch, D. Kuhn, and W. Wiesemann, ‘‘A
+distributionally robust perspective on uncertainty quantification and
+chance constrained programming,’’ Math. Program., vol. 151, no. 1,
+pp. 35–62, Jun. 2015.
+[44] C. D’Ambrosio, A. Lodi, S. Wiese, and C. Bragalli, ‘‘Mathematical
+programming techniques in water network optimization,’’ Eur. J. Oper.
+Res., vol. 243, no. 3, pp. 774–788, Jun. 2015.
+[45] K. Oikonomou and M. Parvania, ‘‘Optimal participation of water
+desalination plants in electricity demand response and regulation markets,’’
+IEEE Syst. J., vol. 14, no. 3, pp. 3729–3739, Sep. 2020.
+[46] L. Roald, F. Oldewurtel, B. Van Parys, and G. Andersson, ‘‘Security
+constrained optimal power flow with distributionally robust chance
+constraints,’’ 2015, arXiv:1508.06061.
+[47] A. J. Wood, B. F. Wollenberg, and G. B. Sheblé, Power Generation,
+Operation, and Control. Hoboken, NJ, USA: Wiley, 2013.
+[48] S. P. Boyd and L. Vandenberghe, Convex Optimization. Cambridge, U.K.:
+Cambridge Univ. Press, 2004.
+A. BELMONDO BIANCHI (Student Member,
+IEEE) received the M.S. degree in biosystems
+engineering with a specialization in environmen-
+tal technology from Wageningen University and
+Research, Wageningen, The Netherlands, in 2020,
+where he is currently pursuing the Ph.D. degree
+with the Department of Environmental Technol-
+ogy. His research focuses on developing inte-
+grated water and electricity resource coordination
+mechanisms. His research interests include water
+technologies, power and energy systems, electricity markets, mathematical
+programming, and stochastic optimization.
+M. A. PARDO received the M.S. degree in
+hydraulic engineering and the Ph.D. degree in
+industrial engineering from the Universidad Polit
+nica de Valencia, in 2008 and 2010, respectively.
+He has been an Associate Professor with the
+Department of Civil Engineering, University of
+Alicante, since 2011. With over a decade of
+teaching experience, he specializes in hydraulic
+engineering, energy optimization in pressure dis-
+tribution networks, solar energy applications in
+water systems, water reuse, and sustainable water infrastructure manage-
+ment. He has contributed to numerous international and national research
+projects, collaborating with industry and earning recognition through
+research awards.
+T. ALSKAIF (Senior Member, IEEE) received the
+M.Sc. degree in computer and electrical engineer-
+ing from Damascus University, Damascus, Syria,
+in 2011, and the Ph.D. degree in computer archi-
+tecture from the Statistical Analysis of Networks
+and Systems Research Group, Universitat Politec-
+nica de Catalunya, Barcelona, Spain, in 2016. He is
+currently an Assistant Professor with the Informa-
+tion Technology Group, Wageningen University
+and Research, Wageningen, The Netherlands. His
+research interests include different problems in smart grids, including smart
+energy systems design, energy markets, and smart integration of distributed
+energy resources, with an emphasis on using mathematical modeling and
+optimization and artificial intelligence.
+H.
+H.
+M.
+RIJNAARTS
+received the M.S.
+and Ph.D. degrees from Wageningen University
+and Research, Wageningen, The Netherlands, in
+1987 and 1994, respectively. Since September
+2009, he has held the position of a Profes-
+sor of environment and water technology with
+the Sub-Department of Environmental Technol-
+ogy, Wageningen University and Research. As a
+renowned academic, he contributes significantly
+to the field of environmental technology. He is
+also the Director of Wageningen Institute for Environmental and Climate
+Research (WIMEK) and holds memberships on the boards of Deltares
+and the Institute for Advanced Metropolitan Solutions (AMS). His
+research interests include advanced biological and physical-chemical water
+technologies, sustainable water cycles, energy-efficient water management
+technologies, and environmental sustainability.
+S. SHARIAT TORBAGHAN (Senior Member,
+IEEE) received the M.Sc. degree in electrical
+engineering from the Chalmers University of
+Technology, Gothenburg, Sweden, in 2008, and
+the Ph.D. degree in electrical engineering from
+Delft University of Technology, Delft, The Nether-
+lands, in 2015. He is currently an Assistant
+Professor with the Environmental Technology
+Group, Wageningen University and Research,
+Wageningen, The Netherlands. His research inter-
+ests include renewable-based energy systems modeling, infrastructure
+planning in a green economy, energy economics, applied statistics,
+optimization theory, and their applications in energy system management and
+analysis.
+VOLUME 12, 2024
+86885

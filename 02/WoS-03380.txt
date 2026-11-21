@@ -1,0 +1,1979 @@
+ 
+Contents lists available at ScienceDirect
+Applied Energy
+journal homepage: www.elsevier.com/locate/apen
+ 
+Robust learning-enabled voltage control for water–electricity systems under 
+incomplete topology and parameter information
+Jicheng Zhang a, b, Jiajia Chen a, b,∗, Dechang Yang c, Cong Liu d
+a Shandong Provincial Key Laboratory of New Power Distribution & Utilization Technology and Equipment, Shandong University of Technology, Zibo 255000, Shandong 
+Province, China
+b School of Electrical and Electronic Engineering, Shandong University of Technology, Zibo 255000, Shandong Province, China
+c College of Information and Electrical Engineering, China Agricultural University, Beijing, China
+d NOVA, Information Management School, Nova University of Lisbon, 1070-312 Lisbon, Portugal
+H I G H L I G H T S
+• Develops a unified learning-control framework for water-electricity systems under incomplete information.
+• Enables online joint identification of grid topology and hydraulic parameters via nested convex body chasing.
+• Designs robust MPC with a dynamic buffer for safe voltage and hydraulic-head regulation.
+• Achieves reliable operation with only 0.0322 kV voltage violations under severe uncertainties.
+A R T I C L E  I N F O
+Keywords:
+Water–electricity coupled systems
+Topology uncertainty
+Parameter uncertainty
+Robust voltage control
+Nested convex body chasing
+A B S T R A C T
+Water–electricity coupled systems play a vital role in the integrated management of energy and water resources, 
+improving resource efficiency and system resilience. However, frequent topological switching, communication 
+gaps, and time-varying electrical couplings severely challenge voltage stability. This paper develops a unified 
+learning-control framework for water–electricity coupled systems under incomplete topology and parameter in­
+formation, aiming to achieve robust voltage control while improving voltage stability and hydraulic safety. A 
+nested convex body chasing algorithm enables joint online identification, while a robust model predictive con­
+troller with a dynamic buffer term compensates for estimation errors and disturbances. Theoretical guarantees 
+are provided via finite bounds on constraint violations under worst-case conditions. The proposed method is val­
+idated on a coupled system consisting of a Southern California Edison 56-bus power distribution network and a 
+15-node water distribution network. Simulation results demonstrate that, even under the challenging case where 
+both the power-grid topology and the WDN parameters are completely unknown, the proposed method largely 
+maintains system-wide voltages within the prescribed safety limits. The average voltage–violation magnitude 
+over the entire dispatch horizon is only 0.0322 kV, showing a clear improvement over the no control and two-
+stage control strategies. Meanwhile, the WDN experiences no hydraulic-head violations and retains an average 
+hydraulic-head safety margin of 16.679 m. 
+1 . Introduction
+Water–electricity coupled systems are critical infrastructures that 
+enable synergistic management of energy and water resources, improv­
+ing regional resource efficiency and enhancing the resilience of both 
+grids and water supply networks. With increasing integration of dis­
+tributed energy resources (DERs), such as inverter-based generation, 
+energy storage, and flexible loads, opportunities for more sustainable 
+and economical power systems continue to expand [1]. However, their 
+intermittent and rapidly fluctuating outputs, often on timescales of sec­
+onds to minutes, challenge conventional voltage regulation, which relies 
+on slow mechanical switching devices and faces operational limitations 
+under frequent variations [2]. Moreover, high R/X ratios in distribu­
+tion networks, stochastic renewable generation, and unpredictable loads 
+∗Corresponding author at: Shandong Provincial Key Laboratory of New Power Distribution & Utilization Technology and Equipment, Shandong University of 
+Technology, Zibo 255000, Shandong Province, China.
+ 
+Email address: sdjjchen@163.cn (J. Chen).
+https://doi.org/10.1016/j.apenergy.2026.128483
+Received 28 March 2026; Received in revised form 26 June 2026; Accepted 15 July 2026
+Applied Energy 424 (2026) 128483 
+Available online 21 July 2026 
+0306-2619/© 2026 Elsevier Ltd. All rights are reserved, including those for text and data mining, AI training, and similar technologies. 
+
+J. Zhang, J. Chen, D. Yang et al.
+Nomenclature
+Symbols
+𝑒= (𝑒, 𝑒), 𝑤= (𝑤, 𝑤) Directed graphs of the PDN and WDN
+𝑣(𝑡), ℎ(𝑡) Nodal voltage vector of the PDN and hydraulic-head vector 
+of the WDN
+Θ∗= [𝑹∗𝑿∗] True PDN topology and line-parameter matrix
+Φ∗
+True WDN pipe-resistance parameter matrix̂
+Θ(𝑡), ̂Φ(𝑡) Online estimates of the PDN topology matrix and WDN 
+parameter matrix
+𝑢𝑝(𝑡), 𝑢𝑞(𝑡), 𝑢𝑤(𝑡) Active-power, reactive-power, and water-flow con­
+trol variables
+𝑃pump(𝑡), Π Pump power consumption and pump-to-grid-node map­
+ping matrix
+𝑄(𝑡), 𝑆𝑇(𝑡), 𝑉𝑇(𝑡) Pipe-flow vector, tank charging/discharging flow, 
+and tank water volume
+𝜔𝑣(𝑡), 𝜔𝑤(𝑡) External disturbances on the grid side and water side
+𝜂𝑣, 𝜂𝑤
+Disturbance bounds for the PDN and WDN models
+𝜌𝑣, 𝜌𝑤
+Robust safety radii for PDN and WDN parameter-estimation 
+errors
+𝜉𝑣, 𝜉𝑤, 𝑘𝑣, 𝑘𝑤
+Slack variables and robust buffer terms for voltage and 
+hydraulic-head constraints
+𝛼𝑣, 𝛼𝑝, 𝛼𝑞, 𝛼𝑤, 𝛼𝑇, 𝜆, 𝛽𝑣, 𝛽𝑤
+Weighting coefficients in the RMPC objec­
+tive function
+from electric vehicle charging contribute to voltage instability, resulting 
+in frequent and persistent over- or under-voltage violations that threaten 
+system security and pose severe challenges to the system’s dynamic sta­
+bility [3,4]. In water–electricity coupled systems, these voltage issues are 
+further intertwined with hydraulic operation because pump scheduling 
+directly affects power demand and, in turn, network voltage profiles.
+In practical systems, accurate and up-to-date models are rarely avail­
+able due to limited observability and frequent topology reconfiguration. 
+As a result, control performance can degrade when topology is uncer­
+tain or line parameters vary over time, and similarly, when hydraulic 
+parameters in the WDN are inaccurate. For power distribution networks 
+(PDNs), utilities often possess only partial information regarding their 
+primary and/or secondary networks and associated line impedances [5]. 
+Even when the line infrastructure is known, the currently energized 
+configuration may still be uncertain because switch status changes, ser­
+vice restoration actions, and network reconfiguration are not always 
+promptly recorded in distribution management systems [6]. The in­
+ability to fully grasp topology information causes traditional control 
+methods based on accurate topology to degrade or even fail. Therefore, 
+the design of voltage control methods must be robust to incomplete 
+topology information, enabling them to achieve good control perfor­
+mance even when topology information is missing. To address the above 
+issues, data-driven methods for voltage control under incomplete grid in­
+formation have developed rapidly in recent years. These methods avoid 
+using inaccurate or even erroneous topology information for state es­
+timation and voltage control, reducing the negative impact of model 
+accuracy gaps on control effectiveness [7–10]. However, these data-
+driven methods typically require large amounts of historical operating 
+data to achieve good performance; missing or noisy measurements may 
+degrade the accuracy of model identification and subsequent control 
+decisions [11].
+There are also methods that separate topology estimation from con­
+trol, first using data-driven methods to estimate topology and parameter 
+information, and then performing voltage control based on the gener­
+ated estimates [11–13]. Furthermore, for methods separating topology 
+estimation and control, if the obtained topology is inaccurate, the con­
+troller consistently performing voltage control based on an inaccurate 
+topology may lead to system instability. However, a unified framework 
+that jointly performs online identification and coordinated control using 
+only streaming measurements, without relying on offline calibration or 
+large historical datasets, is still lacking.
+Parallel challenges exist in WDNs, where pipeline parameters such 
+as roughness coefficients are often uncertain due to aging, corrosion, 
+scaling, or structural degradation [14]. Although network connectivity 
+is usually known, accurate hydraulic models still require calibration, 
+which remains challenging under limited sensing and time-varying op­
+erating conditions. Existing calibration approaches, including singular-
+value-decomposition-based methods and response-surface-based rough­
+ness calibration, are mainly developed for offline use and often rely 
+on sufficiently rich historical datasets [15,16]. More recent online hy­
+draulic estimation approaches, such as nonlinear-state-observer-based 
+roughness calibration and extended-Kalman-filter-based state estima­
+tion, improve adaptivity but still target the hydraulic subsystem itself 
+rather than coupled voltage control [17,18]. Consequently, current 
+WDN studies provide limited support for real-time coordinated voltage 
+regulation when hydraulic parameters are also uncertain [19].
+Recent studies have explored the coordinated operation of water–
+electricity coupled systems from different perspectives. For example, 
+some studies regard pumps or water networks as adjustable electric 
+loads [20], investigate uncertainty-aware coordination of water-energy 
+hubs [21], develop joint design methods for renewable microgrids and 
+water supply systems [1], and optimize the operation of energy-water 
+microgrids using intelligent scheduling methods [22]. These studies 
+demonstrate the value of coordinated water–electricity operation in 
+reducing operating costs, improving operational flexibility, and enhanc­
+ing system resilience. However, most existing studies rely on accurate 
+distribution-network topology, line parameters, or calibrated hydraulic 
+models. In practical operation, distribution-network topology may be in­
+complete or not updated in time because of switching operations, fault 
+restoration, and network reconfiguration, while WDN pipe parameters 
+may deviate from their nominal values due to aging, corrosion, and 
+limited sensing measurements.
+As the operational complexity of water–electricity coupled systems 
+increases, learning-based methods have been introduced to improve 
+real-time decision-making capability. For example, deep reinforcement 
+learning has been used for islanded energy-water microgrid operation 
+by treating the water supply system as a virtual energy-storage resource 
+with operational flexibility [22]; machine-learning models have been de­
+veloped for the economic dispatch of islanded water-energy microgrids 
+to approximate complex optimization models and reduce online compu­
+tational burden [23]; and data-driven methods have also been applied 
+to economic dispatch and distributed energy management of grid-
+connected water-energy microgrids [24]. In broader integrated energy 
+systems, online data-stream modeling [25], fast probabilistic energy-
+flow analysis [26], multi-agent reinforcement learning [27], coupled-
+feature extraction and multitask learning [28], deep reinforcement 
+learning [29], and graph representation learning [30] have been used for 
+modeling, forecasting, dispatch, and energy management. Nevertheless, 
+these studies mainly focus on economic operation, load forecasting, 
+energy-flow calculation, or dispatch acceleration, while closed-loop 
+safety control under simultaneous uncertainty in distribution-network 
+topology, line parameters, and WDN pipe parameters remains insuffi­
+ciently addressed.
+Consequently, a unified framework is still lacking for water–
+electricity coupled systems that can implement control under incomplete 
+information while providing theoretical safety guarantees. The pro­
+posed unified learning-control framework synchronously performs grid-
+topology identification, WDN pipeline-parameter estimation, and robust 
+Applied Energy 424 (2026) 128483 
+2 
+
+J. Zhang, J. Chen, D. Yang et al.
+Table 1 
+Comparison between the proposed method and representative existing stud­
+ies.
+Reference
+Sources of uncertainty
+System domain
+Solution methodology
+(Grid topology / Line 
+parameters / Pipeline 
+resistance)
+(PDN / WDN / 
+Coupled)
+(Online / Robust / 
+Provable)
+[7]
+× / ✓ / ×
+✓ / × / ×
+✓ / × / ×
+[8]
+✓ / × / ×
+✓ / × / ×
+✓ / × / ×
+[9]
+× / ✓ / ×
+✓ / × / ×
+✓ / ✓ / ×
+[10]
+× / ✓ / ×
+✓ / × / ×
+✓ / × / ×
+[11]
+× / ✓ / ×
+✓ / × / ×
+× / × / ×
+[12]
+× / ✓ / ×
+✓ / × / ×
+× / × / ×
+[13]
+✓ / × / ×
+✓ / × / ×
+× / × / ×
+[17]
+× / × / ✓
+× / ✓ / ×
+✓ / × / ×
+[20]
+× / × / ×
+✓ / ✓ / ✓
+× / ✓ / ✓
+[31]
+× / × / ×
+✓ / ✓ / ✓
+× / × / ×
+[32]
+× / × / ×
+✓ / × / ×
+✓ / × / ×
+[33]
+× / × / ×
+✓ / × / ×
+✓ / × / ×
+[34]
+× / × / ×
+✓ / × / ×
+✓ / ✓ / ×
+[35]
+× / ✓ / ×
+✓ / × / ×
+✓ / ✓ / ×
+This work
+✓ / ✓ / ✓
+✓ / ✓ / ✓
+✓ / ✓ / ✓
+Note: ✓ indicates that the corresponding item is considered or included, 
+whereas × indicates otherwise.
+control decision-making within the same closed loop. It can estimate 
+incomplete topology and parameter information online and directly 
+embed the estimates into RMPC, thereby avoiding the adverse impact 
+of estimation errors caused by the separation between identification 
+and control in conventional two-stage frameworks, while enhancing 
+voltage and hydraulic-head safety. To more clearly position the proposed 
+method relative to representative existing studies, Table 1 summarizes 
+the main differences in terms of uncertainty sources, system scope, and 
+methodological properties.
+1.1 . Research gaps
+Reliable voltage regulation in water–electricity coupled systems is 
+essential for safe and interdependent operation. This task is critically 
+challenged by concurrent uncertainties from both unknown or misiden­
+tified grid topology in PDN and uncalibrated or time‑varying hydraulic 
+parameters in WDN. Existing control and identification methods lack the 
+ability to handle these coupled uncertainties in a unified, real‑time, and 
+theoretically assured manner. The literature specifically highlights three 
+salient gaps:
+(1) Prior voltage control frameworks for water–electricity coupled 
+systems typically assume that either the grid topology or WDN 
+parameters are fully known, or at most, consider uncertainty in 
+only one of the two systems. A unified control framework capable 
+of simultaneously handling grid-topology uncertainty and WDN 
+parameter uncertainty remains insufficiently developed. This lim­
+itation prevents safe and stable operation when information from 
+both systems is partially or completely unavailable.
+(2) Existing identification and control strategies are typically im­
+plemented in separate stages. Topology estimation, parameter 
+calibration, and control decision-making are often performed 
+sequentially, and many data-driven methods rely heavily on of­
+fline training or large volumes of historical data. This separation 
+weakens adaptability in dynamically changing operating con­
+ditions and may propagate estimation errors directly into the 
+control loop. Thus, real-time joint identification methods that 
+avoid offline calibration and large historical datasets are still 
+needed.
+(3) Although robust or chance-constrained optimization has been 
+applied to uncertain water–electricity operation, existing stud­
+ies rarely provide rigorous finite-step safety guarantees under 
+simultaneous topology uncertainty, hydraulic-parameter uncer­
+tainty, and external disturbances. In particular, finite worst-case 
+bounds on voltage and hydraulic head violations are still unavail­
+able in the literature on coupled real-time control. As a result, 
+the finite-step safety performance of coupled real-time control 
+remains theoretically undercharacterized.
+1.2 . Contributions
+To bridge these gaps, this paper proposes a unified online learning-
+based robust control framework for voltage regulation in water–
+electricity coupled systems under incomplete topology and parameter 
+knowledge. The main contributions are threefold:
+(1) We develop a novel collaborative control framework that simul­
+taneously accounts for both power grid topology uncertainty and 
+water network pipeline parameter uncertainty. This addresses a 
+key limitation of existing studies, which usually assume that one 
+or both subsystems are fully known, and thus enables safe and 
+stable operation under incomplete system information.
+(2) We introduce a data-driven nested convex body chasing (NCBC) 
+algorithm for the joint real-time identification of grid topology 
+and hydraulic parameters. This method synchronously refines 
+compact uncertainty sets for the grid impedance matrix and 
+pipeline resistance coefficients without requiring offline calibra­
+tion or exact models. This enables adaptive learning of coupled 
+system parameters under time-varying operating conditions.
+(3) We design an RMPC scheme enhanced with a dynamic robust 
+buffer term to compensate for estimation errors and external 
+disturbances. The proposed controller coordinates active and re­
+active power injections together with hydraulic control actions 
+to maintain voltage and hydraulic head safety under coupled 
+uncertainty. Finite upper bounds on voltage and hydraulic-head 
+violations are further derived to provide worst-case safety guar­
+antees.
+The remainder of this paper is organized as follows. Section 2 de­
+velops the linearized mathematical models for both PDN and WDN. 
+Section 3 details the proposed online learning-based robust control 
+framework, including the NCBC algorithm and robust optimization. 
+Section 4 provides a rigorous theoretical analysis of the system’s safety 
+guarantees. Section 5 presents the simulation results and a comprehen­
+sive comparative analysis. Finally, Section 6 concludes the paper.
+2 . Model
+This section outlines the mathematical models for PDN and WDN, 
+which serve as the basis for subsequent online learning and control 
+design under incomplete system information. For PDN, a linearized 
+voltage model is derived from the DistFlow equations. For WDN, a lin­
+ear approximation of hydraulic dynamics is obtained by applying the 
+Hazen–Williams formula with successive linear approximation (SLA). 
+These formulations are detailed in the following subsections.
+2.1 . Power distribution network model
+PDN is modeled as a radial system represented by a directed graph 
+𝑒= (𝑒, 𝑒), where 𝑒= {0, 1, 2, … , 𝑛𝑒} denotes the set of buses (with 
+bus 0 representing the substation), and 𝑒⊂𝑒× 𝑒 describes the con­
+nectivity of the lines. Under a radial topology, each bus 𝑗∈𝑁𝑒⧵{0} has 
+a unique parent bus. The relationship between power flow and voltage 
+is described by the DistFlow model [36]. By neglecting line losses, the 
+DistFlow model can be linearized as follows:
+𝑣= 𝑅∗(𝑝𝑐+ 𝑝𝑒) + 𝑋∗(𝑞𝑐+ 𝑞𝑒) + 𝑣0𝟏𝑛𝑒
+(1)
+where 𝑣0 denotes the squared voltage magnitude at the substation; 𝟏𝑛𝑒 is 
+an all-ones vector of length 𝑛𝑒. The net active and reactive power injec­
+tions at bus 𝑗 can be decomposed into controllable and uncontrollable 
+components: 𝑝𝑐 and 𝑞𝑐 represent the controllable parts, while 𝑝𝑒 and 𝑞𝑒
+Applied Energy 424 (2026) 128483 
+3 
+
+J. Zhang, J. Chen, D. Yang et al.
+represent the uncontrollable ones. Water pumps are treated as electrical 
+loads and are included in 𝑝𝑒. Specifically, 𝑝𝑒 can be further decomposed 
+as 𝑝𝑒(𝑡) = 𝑝0
+𝑒(𝑡) −Π𝑃pump(𝑡), where 𝑝0
+𝑒(𝑡) denotes the uncontrollable net 
+active-power injection excluding water pumps, 𝑃pump(𝑡) denotes pump 
+power consumption, and Π is the mapping matrix between water pumps 
+and grid buses. The matrices 𝑅∗ and 𝑋∗∈𝕊𝑛𝑒
++ are symmetric positive 
+definite matrices determined by the topology and line parameters, with 
+elements defined as:
+𝑅∗
+𝑖𝑗= 2
+∑
+ℎ,𝑘∈𝑖∩𝑗
+𝑟ℎ𝑘,
+𝑋∗
+𝑖𝑗= 2
+∑
+ℎ,𝑘∈𝑖∩𝑗
+𝑥ℎ𝑘
+(2)
+where 𝑖 denotes the unique path from bus 0 to bus 𝑖. The set 𝑖∩𝑗
+represents the overlapping portion of the paths from bus 0 to buses 𝑖 and 
+𝑗. Since branch resistances and reactances satisfy 𝑟𝑖𝑗, 𝑥𝑖𝑗> 0, both 𝑅∗
+and 𝑋∗ are positive definite matrices. Define the external voltage term 
+excluding pump loads as 𝑣0
+ext(𝑡) = 𝑅∗𝑝0
+𝑒(𝑡) + 𝑋∗𝑞𝑒(𝑡) + 𝑣0𝟏𝑛𝑒. Substituting 
+it into (1) yields
+𝑣(𝑡) = 𝑅∗𝑝𝑐(𝑡) + 𝑋∗𝑞𝑐(𝑡) −𝑅∗Π𝑃pump(𝑡) + 𝑣0
+ext(𝑡).
+(3)
+To formulate the voltage state-update relation, we define the control 
+variables and disturbance term as follows. Let the active-power control 
+variable be 𝑢𝑝(𝑡) = 𝑝𝑐(𝑡+ 1) −𝑝𝑐(𝑡), the reactive-power control variable 
+be 𝑢𝑞(𝑡) = 𝑞𝑐(𝑡+ 1) −𝑞𝑐(𝑡), and the pump power increment be Δ𝑃pump(𝑡) =
+𝑃pump(𝑡+ 1) −𝑃pump(𝑡). By integrating the active-power control effect, 
+𝑢′
+𝑝(𝑡) = 𝑢𝑝(𝑡) −ΠΔ𝑃pump(𝑡) denotes the net active-power control incre­
+ment, and the control vector is further stacked as 𝑢𝑣(𝑡) = [𝑢′
+𝑝(𝑡); 𝑢𝑞(𝑡)]. The 
+grid disturbance term is defined as 𝜔𝑣(𝑡) = 𝑣0
+ext(𝑡+ 1) −𝑣0
+ext(𝑡), which cap­
+tures voltage fluctuations caused by variations in uncontrollable loads, 
+renewable generation, measurement errors, and other external factors. 
+We assume that this disturbance is bounded, i.e., ‖𝜔𝑣(𝑡)‖∞≤𝜂𝑣, where 
+𝜂𝑣∈[0,̄ 𝜂𝑣] and the upper bound ̄𝜂𝑣 is known. Denoting the unknown 
+grid topology matrix as Θ∗= [𝑅∗𝑋∗], combining these definitions with
+(3) gives the voltage state-update equation:
+𝑣(𝑡+ 1) = 𝑣(𝑡) + Θ∗𝑢𝑣(𝑡) + 𝜔𝑣(𝑡).
+(4)
+2.2 . Water distribution network model
+WDN is represented by a directed graph 𝑤= (𝑤, 𝑤), where 
+𝑤= {1, 2, … , 𝑛𝑤} denotes the set of nodes, 𝑛𝑤 denoting the total num­
+ber of nodes. The set of pipes 𝑤 includes both ordinary pipes and pipes 
+equipped with pumps. The hydraulic head at each node forms the vec­
+tor ℎ∈ℝ𝑛𝑤, and the pipe flow rates form the vector 𝑄∈ℝ|𝑤|. Due 
+to wall friction, head loss occurs along each pipe. For ordinary pipes, 
+this loss is commonly described by the Hazen–Williams formula, which 
+captures the nonlinear dependence of head loss on flow rate and pipe 
+resistance. For an ordinary pipe connecting nodes 𝑖 and 𝑗, the head loss 
+can be expressed as:
+ℎ𝑖−ℎ𝑗= 𝜅𝑖𝑗⋅𝑄𝑖𝑗|𝑄𝑖𝑗|𝛽−1
+(5)
+where ℎ𝑖 and ℎ𝑗 denote the hydraulic heads at nodes 𝑖 and 𝑗, respectively; 
+𝜅𝑖𝑗 denotes the resistance coefficient of pipe (𝑖, 𝑗); 𝑄𝑖𝑗 represents the flow 
+rate in pipe (𝑖, 𝑗); and 𝛽 indicates the exponent in the Hazen–Williams 
+formula, reflecting the nonlinear effect of turbulent friction.
+To facilitate online learning and convex optimization, the nonlinear 
+head–flow relation must be linearized. This is achieved using SLA. By 
+choosing an operating flow rate 𝑄𝑖𝑗,0, and performing a first-order Taylor 
+expansion, the following linearized expression is obtained:
+ℎ𝑖𝑗≈𝜅𝑖𝑗𝑄𝛽
+𝑖𝑗,0(1 −𝛽) + 𝜅𝑖𝑗𝛽𝑄𝛽−1
+𝑖𝑗,0 𝑄𝑖𝑗
+(6)
+Converting the above equation into a linear approximation model 
+with respect to the flow rate variation Δ𝑄𝑖𝑗= 𝑄𝑖𝑗−𝑄𝑖𝑗,0 gives:
+Δℎ𝑖𝑗= 𝑀(𝑄𝑖𝑗,0) ⋅Φ ⋅Δ𝑄𝑖𝑗
+(7)
+where 𝑀(𝑄𝑖𝑗,0) is a time-varying diagonal matrix determined by the 
+operating point flow rate, and Φ is a constant diagonal matrix whose 
+diagonal elements represent the resistance coefficients of each pipe.
+For pipes equipped with pumps, the head characteristics are deter­
+mined by the pump head-flow curve. For a pump installed on pipe (𝑖, 𝑗), 
+the relationship between the pump head ℎpump
+𝑖𝑗
+ and flow rate 𝑄𝑖𝑗 can be 
+expressed as:
+ℎpump
+𝑖𝑗
+= ℎ0,𝑖𝑗−𝑆𝑖𝑗𝑄𝛾
+𝑖𝑗
+(8)
+where ℎpump
+𝑖𝑗
+ is the head gain between nodes 𝑖 and 𝑗; ℎ0,𝑖𝑗 denotes the 
+pump shutoff head, representing the maximum head at zero flow rate; 
+𝑆𝑖𝑗 represents the pump characteristic coefficient; and 𝛾 indicates the 
+pump curve exponent, typically 𝛾= 2. The pump parameters ℎ0,𝑖𝑗, 𝑆𝑖𝑗, 
+and 𝛾 are assumed to be known design parameters obtainable from man­
+ufacturer specifications. Under normal pumping conditions, the flow 
+rate is constrained to 0 ≤𝑄𝑖𝑗≤(ℎ0,𝑖𝑗∕𝑆𝑖𝑗)1∕𝛾, ensuring ℎpump
+𝑖𝑗
+≥0. 
+Linearizing the pump head equation at the operating point 𝑄𝑖𝑗,0 yields:
+Δℎpump
+𝑖𝑗
+≈−𝑆𝑖𝑗𝛾𝑄𝛾−1
+𝑖𝑗,0 Δ𝑄𝑖𝑗= 𝑀pump(𝑄𝑖𝑗,0)Δ𝑄𝑖𝑗
+(9)
+where 𝑀pump(𝑄𝑖𝑗,0) is a time-varying diagonal matrix with diagonal 
+elements −𝑆𝑖𝑗𝛾𝑄𝛾−1
+𝑖𝑗,0 for pipes with pumps and zero for ordinary pipes.
+In a WDN that includes both pump-induced head gains and pipe fric­
+tion losses, the nodal head variation should be jointly determined by all 
+pump head gains and pipe friction losses along the path from the wa­
+ter source to each node. The WDN considered in this paper is radial; 
+therefore, there exists a unique hydraulic path from the source node to 
+any other node, and all pipes are oriented from the water source toward 
+downstream nodes. We introduce the path matrix 𝑇∈ℝ𝑛𝑤×|𝑤|, where 
+𝑇𝑖,𝑒= 1 if pipe 𝑒 lies on the unique path from the water source to node 𝑖, 
+and 𝑇𝑖,𝑒= 0 otherwise. Hence, the nodal head variation can be expressed 
+as
+Δℎnode = 𝑇Δℎpump
+𝑖𝑗
+−𝑇Δℎ𝑖𝑗.
+(10)
+To obtain a formulation suitable for online parameter learning, 
+substituting (7) and (9) into (10) and reorganizing the equation gives
+𝑇Φ𝑀(𝑄𝑖𝑗,0)Δ𝑄= 𝑇𝑀pump(𝑄𝑖𝑗,0)Δ𝑄−Δℎnode.
+(11)
+This equation serves as the parameter learning formulation for WDN. 
+Here, Δℎnode represents the measured nodal head variation from time 𝑡
+to 𝑡+ 1. The left-hand side is caused by pipe friction losses, whereas the 
+first term on the right-hand side is caused by pump head gains.
+We further express the model in state-update form. Let the water-
+network control input be 𝑢𝑤(𝑡), which represents the feasible flow 
+adjustment induced by pump operation, and introduce the disturbance 
+term 𝜔𝑤(𝑡) to account for unmodeled hydraulic dynamics, water-demand 
+fluctuations, linearization errors, and other external factors. This distur­
+bance is assumed to satisfy ‖𝜔𝑤(𝑡)‖∞≤𝜂𝑤, where 𝜂𝑤∈[0,̄ 𝜂𝑤] and the 
+upper bound ̄𝜂𝑤 is known. Then, the WDN state-update equation can be 
+written as
+ℎ(𝑡+ 1) = ℎ(𝑡) + 𝐵∗𝑢𝑤(𝑡) + 𝜔𝑤(𝑡),
+(12)
+where 𝐵∗= 𝑇(𝑀pump(𝑄𝑖𝑗,0) −Φ∗𝑀(𝑄𝑖𝑗,0)) denotes the hydraulic sensi­
+tivity matrix of the WDN. Here, 𝑡 denotes a generic time step; different 
+time intervals are used for the PDN and WDN.
+To ensure basic hydraulic feasibility of pipe flows, nodal flow conser­
+vation is considered. Let 𝐶∈ℝ(𝑛𝑤−1)×|𝑤| denote the node-pipe incidence 
+matrix excluding the source node, and let 𝑑(𝑡) denote the water-demand 
+vector. Further considering the set of storage tanks  in the WDN, let 
+𝑆𝑇(𝑡) denote the net tank-charging flow vector, where 𝑆𝑇(𝑡) > 0 repre­
+sents tank charging and 𝑆𝑇(𝑡) < 0 represents tank discharging. Let 𝐸𝑇
+denote the mapping matrix between storage tanks and WDN nodes. The 
+nodal flow conservation relation is then given by
+𝐶𝑄(𝑡) = 𝑑(𝑡) + 𝐸𝑇𝑆𝑇(𝑡).
+(13)
+Applied Energy 424 (2026) 128483 
+4 
+
+J. Zhang, J. Chen, D. Yang et al.
+In addition, the storage tank state satisfies the mass conservation 
+relation
+𝑉𝑇(𝑡+ 1) = 𝑉𝑇(𝑡) + 𝑆𝑇(𝑡)Δ𝑡,
+(14)
+where 𝑉𝑇(𝑡) denotes the stored water volume of the tanks and Δ𝑡 is the 
+WDN dispatch time step. To ensure the physical feasibility of storage 
+tanks, their volumes and charging/discharging rates satisfy
+𝑉𝑇≤𝑉𝑇(𝑡+ 1) ≤̄ 𝑉𝑇,
+(15)
+−̄ 𝑆dis
+𝑇
+≤𝑆𝑇(𝑡) ≤̄ 𝑆ch
+𝑇,
+(16)
+where 𝑉𝑇 and ̄𝑉𝑇 denote the lower and upper bounds of tank volume, 
+respectively, and ̄𝑆dis
+𝑇 and ̄𝑆ch
+𝑇 denote the maximum discharging and 
+charging rates of the tanks, respectively. It should be noted that storage 
+tanks are modeled as controllable nodal charging/discharging units in 
+this paper, their influence on nodal hydraulic heads is captured through 
+the nodal flow conservation constraint and the resulting redistribution 
+of pipe flows.
+PDN and WDN are coupled through pump power consumption 𝑃pump, 
+which is a function of pipe flow rate 𝑄𝑖𝑗:
+𝑃pump(𝑄𝑖𝑗) = 𝜌𝑔
+𝜂p
+ℎpump
+𝑖𝑗
+𝑄𝑖𝑗
+(17)
+where 𝜌 is the water density, 𝑔= 9.81 m/s2 is the gravitational accelera­
+tion, 𝜂p is the pump efficiency, and ℎpump
+𝑖𝑗
+ is the pump head. To maintain 
+convexity in the optimization, we define the constant 𝜁= 𝜌𝑔
+𝜂p and per­
+form a first-order Taylor expansion at the operating point 𝑄𝑖𝑗,0 to obtain 
+its linear upper bound:
+𝑃pump(𝑄𝑖𝑗) ≤𝑎p
+𝑖𝑗𝑄𝑖𝑗+ 𝑏p
+𝑖𝑗
+(18)
+{
+𝑎p
+𝑖𝑗= 𝜁[ℎ0,𝑖𝑗−𝑆𝑖𝑗(𝛾+ 1)𝑄𝛾
+0],
+𝑏p
+𝑖𝑗= 𝜁𝑆𝑖𝑗𝛾𝑄𝛾+1
+0
+.
+(19)
+It should be noted that SLA does not assume that the linearized model 
+is exact. The linearization error generated by the WDN equations is in­
+cluded in the water-network disturbance term 𝜔𝑤(𝑡), whereas the impact 
+of the deviation between the linearized pump power and the actual 
+pump power on grid-side active loads is included in the grid disturbance 
+term 𝜔𝑣(𝑡). These effects are further compensated for by the robust buffer 
+terms in RMPC.
+Through SLA, the nonlinear hydraulic relations are reformulated into 
+a convex matrix representation suitable for parameter learning. This 
+modeling framework provides the mathematical basis for the NCBC 
+algorithm introduced in Section 3.
+2.3 . Assumptions
+To clarify the applicability of the proposed method, the following 
+assumptions are made:
+(1) The true grid topology matrix Θ∗ and water-network parame­
+ter matrix Φ∗ belong to known compact convex uncertainty sets 
+𝑣 and 𝑤, respectively. This means that although the exact 
+topology or parameters are unknown, their physically feasible 
+ranges are available. The grid-side disturbance 𝜔𝑣(𝑡) and water-
+side disturbance 𝜔𝑤(𝑡) are bounded, satisfying ‖𝜔𝑣(𝑡)‖∞≤𝜂𝑣 and 
+‖𝜔𝑤(𝑡)‖∞≤𝜂𝑤, respectively.
+(2) Real-time measurements are available for online updating. 
+Specifically, the controller can obtain measurements of nodal 
+voltages, hydraulic heads, control inputs, and flow variations at 
+each dispatch interval, which are used to update the historical 
+dataset and shrink the parameter feasible sets.
+3 . Online learning-based robust control for water–electricity 
+coupled systems
+To address the challenges of incomplete topology and parameter 
+information in coupled PDN and WDN, this section presents an on­
+line learning-based robust control framework. The proposed method 
+performs joint real-time estimation of the grid impedance matrix and 
+pipe resistance parameters, enabling coordinated voltage and hydraulic 
+control under partial system knowledge.
+3.1 . Overview of algorithm framework
+The algorithm integrates a NCBC mechanism for online parame­
+ter learning within an RMPC framework. Key unknown parameters 
+are continuously updated from streaming measurement data, while 
+the controller iteratively solves a robust optimization problem using 
+the latest parameter estimates. This coupled learning-control design 
+ensures operational safety under estimation inaccuracies and external 
+disturbances.
+The online learning-based robust control framework for the water–
+electricity coupled systems consists of two layers: an information learn­
+ing layer and a control decision layer. The learning layer employs the 
+NCBC algorithm to sequentially estimate the grid impedance matrix 
+and the pipe resistance matrix from real-time measurements. Based on 
+these estimates, the decision layer computes coordinated control ac­
+tions through an RMPC formulation. The overall architecture of the 
+online learning-based robust control framework for the water–electricity 
+coupled systems is illustrated in Fig. 1.
+3.2 . Topology and parameter estimation based on NCBC
+The NCBC algorithm forms the core of the information learning 
+layer. It reformulates parameter learning as the problem of tracking a 
+time-varying optimal point over nested convex sets. By sequentially inte­
+grating new measurements, NCBC progressively tightens the uncertainty 
+sets of the grid topology and pipe parameters, steering the estimates 
+toward their true values.
+Define the parameter space for power grid topology as 𝑣= 𝑅× 𝑋
+denoting a compact convex set for the impedance matrix. We assume 
+that both the true topology matrix Θ∗ and the estimate ̂Θ at each time 
+step belong to a known compact convex set 𝑣. At time step 𝑡, the feasible 
+set 𝑃grid
+𝑡
+ is defined as the set of all topology parameters consistent with 
+historical observations. Let the voltage prediction residual be 𝑟𝑣(𝜏) =
+𝑣(𝜏) −𝑣(𝜏−1) −Θ𝑢𝑣(𝜏−1). The feasible set is:
+𝑃grid
+𝑡
+=
+⎧
+⎪
+⎨
+⎪⎩
+(𝑅, 𝑋, 𝜂𝑣)
+|||||||
+‖𝑟𝑣(𝜏)‖∞≤𝜂𝑣,
+𝑣(𝜏) −̂ Θ𝑢𝑣(𝜏−1) ∈ext,
+∀𝜏≤𝑡−1
+⎫
+⎪
+⎬
+⎪⎭
+(20)
+where ext denotes the bounded set of PDN external disturbances.
+The NCBC algorithm updates the convex feasible set by recursively 
+tightening it as new measurements become available. Each observa­
+tion introduces an additional linear constraint, and the updated feasible 
+set is constructed as the intersection of the previous set with the new 
+constraint:
+𝑃grid
+𝑡+1 = 𝑃grid
+𝑡
+∩{‖𝑟𝑣(𝑡+ 1)‖∞≤𝜂𝑣
+}.
+(21)
+Once the latest feasible set 𝑃grid
+𝑡+1 is obtained, the NCBC algorithm 
+computes the revised power grid topology estimate by solving the fol­
+lowing projection problem. Let 𝜃𝑣
+= (̂Θ𝑣,̂ 𝜂𝑣) denote the combined 
+parameter vector. The estimate is then updated as:
+𝜃𝑣(𝑡+ 1) = arg min
+𝜃𝑣∈𝑃grid
+𝑡+1
+‖‖𝜃𝑣−𝜃𝑣(𝑡)‖‖Δ,𝛿𝑣
+(22)
+where ‖⋅‖Δ,𝛿 denotes the joint norm. For a symmetric matrix 𝐴∈𝕊𝑛, the 
+triangular norm is defined as ‖𝐴‖Δ = ‖vech(𝐴)‖2, where vech(𝐴) vector­
+izes the lower triangular part of 𝐴 including the diagonal. For the param­
+eter 𝜃= (𝐴, 𝜂) with weighting parameter 𝛿> 0, the joint norm is ‖𝜃‖Δ,𝛿=
+Applied Energy 424 (2026) 128483 
+5 
+
+J. Zhang, J. Chen, D. Yang et al.
+Fig. 1. Online learning-based robust control framework for water–electricity coupled systems.
+Fig. 2. NCBC algorithm for parameter learning.
+√
+‖𝐴‖2
+Δ + 𝛿2𝜂2. For the PDN matrix Θ = [𝑅𝑋], where 𝑅 and 𝑋 are 
+symmetric matrices, we define ‖Θ‖Δ =
+√
+‖𝑅‖2
+Δ + ‖𝑋‖2
+Δ. Accordingly, 
+the joint norm of 𝜃𝑣= (𝑅, 𝑋, 𝜂𝑣) is ‖𝜃𝑣‖Δ,𝛿𝑣=
+√
+‖𝑅‖2
+Δ + ‖𝑋‖2
+Δ + 𝛿2
+𝑣𝜂2
+𝑣. 
+Eq. (22) determines the optimal estimate 𝜃𝑣(𝑡) within the current feasible 
+set 𝑃grid
+𝑡
+, starting from the prior estimate 𝜃𝑣(𝑡−1). By iteratively reduc­
+ing the feasible set as new observations are incorporated, the topology 
+estimate progressively approaches the true value.
+Similarly, we define the parameter space for WDN as 𝑤= Φ, rep­
+resenting the compact convex set for pipe resistance coefficients. We 
+assume that both the true parameter matrix Φ∗ and the predicted ma­
+trix ̂Φ belong to a known compact convex set Φ. Denoting the hydraulic 
+head prediction residual as 𝑟ℎ(𝜏) = ℎ(𝜏) −ℎ(𝜏−1) −𝐵𝑢𝑤(𝜏−1), the 
+feasible set at time step 𝑡−1 is:
+𝑃water
+𝑡
+=
+⎧
+⎪
+⎨
+⎪⎩
+(Φ, 𝜂𝑤)
+|||||||
+‖𝑟ℎ(𝜏)‖∞≤𝜂𝑤,
+ℎ(𝜏) −̂ 𝐵𝑢𝑤(𝜏−1) ∈ext,
+∀𝜏≤𝑡−1
+⎫
+⎪
+⎬
+⎪⎭
+(23)
+where ext denotes the bounded set of WDN external disturbances. 
+Similar to PDN, the feasible set of WDN is updated as:
+𝑃water
+𝑡+1
+= 𝑃water
+𝑡
+∩{‖𝑟ℎ(𝑡+ 1)‖∞≤𝜂𝑤
+}
+(24)
+Let 𝜃𝑤= (̂Φ,̂ 𝜂𝑤) denote the combined parameter vector for WDN. The 
+corresponding estimation update follows:
+𝜃𝑤(𝑡+ 1) = arg min
+𝜃𝑤∈𝑃water
+𝑡+1
+‖‖𝜃𝑤−𝜃𝑤(𝑡)‖‖Δ,𝛿𝑤
+(25)
+By iteratively tightening the feasible set for water network parameters, 
+the estimated pipe resistance matrix progressively converges toward its 
+true value. The NCBC workflow is illustrated in Fig. 2.
+The NCBC algorithm achieves a competitive ratio of 𝛾(𝑚) in 𝑚-
+dimensional Euclidean space, satisfying:
+𝑇∑
+𝑡=1
+‖‖𝜃𝑡+1 −𝜃𝑡‖‖ ≤𝛾(𝑚) ⋅diam()
+(26)
+Applied Energy 424 (2026) 128483 
+6 
+
+J. Zhang, J. Chen, D. Yang et al.
+For all nested convex body sequences 𝑋1 ⊇𝑋2 ⊇⋯⊇𝑋𝑇. Here, 
+diam() = max𝜃1,𝜃2∈‖‖𝜃1 −𝜃2‖‖Δ,𝛿 denotes the diameter of the compact 
+set ∈𝕊𝑛× ℝ, and 𝜃 represents the power grid parameters 𝜃𝑣= (Θ, 𝜂𝑣)
+or the water network parameters 𝜃𝑤= (Φ, 𝜂𝑤).
+The competitive ratio of NCBC characterizes the efficiency of the op­
+timization process in progressively approximating the true topology and 
+parameters. For the projection-based NCBC algorithm, the competitive 
+ratio is given by 𝛾(𝑚) = 𝜋(𝑚−1)𝑚𝑚∕2. The dimension of the power grid 
+parameter space satisfies 𝑚𝑣= 𝑛𝑒(𝑛𝑒+ 1) + 1, while that of the water net­
+work parameter space is 𝑚𝑤= 𝑛𝑤. The competitive ratio directly affects 
+the convergence rate of parameter estimation and the overall control 
+performance.
+3.3 . Robust optimal control for water–electricity coupled systems
+After obtaining the topology and parameter estimates ̂ Θ(𝑡), ̂ 𝜂𝑣(𝑡), ̂
+Φ(𝑡), and ̂𝜂𝑤(𝑡) through the NCBC algorithm, the controller solves the 
+following robust optimization:
+min
+𝑢𝑝,𝑢𝑞,𝑢𝑤,𝑆𝑇,𝜉𝑣,𝜉𝑤
+𝛼𝑣‖‖̃𝑣Δ‖‖
+2
+2 + 𝜆
+(∑̃
+𝑃pump
+)2
++ 𝛼𝑝‖‖‖̃𝑢𝑝‖‖‖
+2
+2 + 𝛼𝑞‖‖‖̃𝑢𝑞‖‖‖
+2
+2
++ 𝛼𝑤‖‖̃𝑢𝑤‖‖
+2
+2 + 𝛼𝑇‖‖̃𝑆𝑇‖‖
+2
+2 + 𝛽𝑣̃𝜉2
+𝑣+ 𝛽𝑤̃𝜉2
+𝑤
+(27)
+where 𝛼𝑣, 𝛼𝑝, 𝛼𝑞, 𝛼𝑤, 𝛼𝑇 and 𝜆 are weighting coefficients for the individ­
+ual sub-objectives, 𝛽𝑣 and 𝛽𝑤 are penalty weights for the slack variables. 
+Since all terms are normalized, the weights represent the priorities of 
+different operational objectives and can be used to balance safety and 
+economic performance. In engineering applications, these weights can 
+be dynamically adjusted according to operating conditions. Increasing 
+𝛼𝑣 or 𝛽𝑣 prioritizes voltage safety and helps avoid voltage constraint vio­
+lations; increasing 𝛽𝑤 enhances hydraulic-head safety; increasing 𝛼𝑝, 𝛼𝑞, 
+𝛼𝑤 or 𝛼𝑇 suppresses frequent regulation and reduces equipment wear; 
+when both voltage and hydraulic head have sufficient safety margins, in­
+creasing 𝜆 can further reduce pump power consumption. The individual 
+terms in the objective function possess distinct physical meanings and 
+units, and summing them directly would introduce scaling disparities. 
+To balance the contributions of all objectives, each term is normalized 
+as follows:̃
+𝑣Δ =̂ 𝑣−𝑣nom̄
+𝑣−𝑣
+,̃
+𝑃pump =
+𝑃pump
+𝑃ref
+.
+(28)̃
+𝜉𝑣=
+𝜉𝑣̄
+𝑣−𝑣,̃
+𝜉𝑤=
+𝜉𝑤̄
+ℎ−ℎ
+.
+(29)̃
+𝑢𝑝=
+𝑢𝑝̄
+𝑢𝑝−𝑢𝑝
+,̃
+𝑢𝑞=
+𝑢𝑞̄
+𝑢𝑞−𝑢𝑞
+,̃
+𝑢𝑤=
+𝑢𝑤̄
+𝑢𝑤−𝑢𝑤
+,̃
+𝑆𝑇= 𝑆𝑇̄
+𝑆ch
+𝑇
+.
+(30)
+where ̄ 𝑢𝑝−𝑢𝑝, ̄ 𝑢𝑞−𝑢𝑞, and ̄ 𝑢𝑤−𝑢𝑤 denote the adjustable ranges of 
+active power control, reactive power control and water network flow 
+control, respectively; ̄𝑆ch
+𝑇 denotes the maximum tank-charging rate; and 
+𝑃ref denotes the reference pump power.
+Eq. (27) defines the objective function for the robust optimal con­
+trol of the water–electricity coupled system. It consists of four weighted 
+components aimed at minimizing voltage deviations from the nominal 
+profile, reducing total pump energy consumption, limiting the magni­
+tude of control actions, and penalizing constraint violations through 
+slack variables. The optimization is performed subject to the following 
+constraints: ̂
+𝑣(𝑡+ 1) = 𝑣(𝑡) +̂ Θ(𝑡)𝑢𝑣(𝑡)
+(31a)̂
+ℎ(𝑡+ 1) = ℎ(𝑡) +̂ 𝐵(𝑡)𝑢𝑤(𝑡)
+(31b)
+𝑢𝑝≤𝑢𝑝≤̄ 𝑢𝑝,
+𝑢𝑞≤𝑢𝑞≤̄ 𝑢𝑞,
+𝑢𝑤≤𝑢𝑤≤̄ 𝑢𝑤
+(31c)
+𝜉𝑣≥0,
+𝜉𝑤≥0
+(31d)
+𝑣𝟏+ (𝑘𝑣−𝜉𝑣)𝟏≤̂ 𝑣(𝑡+ 1) ≤̄ 𝑣𝟏−(𝑘𝑣−𝜉𝑣)𝟏
+(31e)
+ℎ𝟏+ (𝑘𝑤−𝜉𝑤)𝟏≤̂ ℎ(𝑡+ 1) ≤̄ ℎ𝟏−(𝑘𝑤−𝜉𝑤)𝟏
+(31f)
+where constraints (31a) and (31b) represent the prediction models for 
+PDN and WDN, respectively, using the estimated parameters to predict 
+the system state at the next time step. Constraint (31c) specifies the up­
+per and lower bounds on control variables. Constraint (31d) ensures the 
+non-negativity of slack variables. Constraints (31e) and (31f) enforce 
+the robust safety constraints for PDN and WDN, confining the predicted 
+voltage and hydraulic head within specified ranges. In addition, the op­
+timization problem should satisfy the WDN and storage-tank constraints 
+presented in Section 2.2. Here, 𝑘𝑣 and 𝑘𝑤 are robust buffer terms, dy­
+namic safety margins reserved inside the voltage and hydraulic-head 
+constraint boundaries. They ensure that the actual system states can still 
+satisfy safety constraints even in the presence of estimation errors and 
+external disturbances. When control actions are large or model uncer­
+tainty is strong, the robust buffer terms increase accordingly. As NCBC 
+progressively shrinks the parameter feasible sets and model uncertainty 
+decreases, the buffer terms generally become smaller.
+Once the optimization problem is solved, the optimal control actions 
+𝑢𝑝(𝑡), 𝑢𝑞(𝑡), and 𝑢𝑤(𝑡) are obtained. These control actions are then applied 
+to the physical system to update the controllable active power 𝑝𝑐(𝑡+ 1) =
+𝑝𝑐(𝑡) + 𝑢𝑝(𝑡), reactive power injections 𝑞𝑐(𝑡+ 1) = 𝑞𝑐(𝑡) + 𝑢𝑞(𝑡), and pipe 
+flow rates 𝑄(𝑡+ 1) = 𝑄(𝑡) + 𝑢𝑤(𝑡).
+After implementing the control actions, the resulting system states, 
+namely the grid voltage 𝑣(𝑡+ 1) and nodal hydraulic head ℎ(𝑡+ 1) are 
+measured. The newly generated observation data from PDN (𝑣(𝑡), 𝑣(𝑡+
+1), 𝑢𝑝(𝑡), 𝑢𝑞(𝑡)) and WDN (ℎ(𝑡), ℎ(𝑡+ 1), 𝑄(𝑡)) are appended to the historical 
+dataset for online learning of power grid topology and water network 
+parameters at the next time step. Simultaneously, the linearization co­
+efficients for WDN are updated. That is, for each pump 𝑘∈, the 
+linearization coefficients 𝑎p
+𝑘 and 𝑏p
+𝑘 are recalculated based on the updated 
+flow rates, ensuring an accurate linear representation for the subsequent 
+control iteration.
+4 . Theoretical guarantees for system performance
+This section provides rigorous theoretical guarantees for the pro­
+posed online learning-based robust control strategy under unknown 
+power grid topology and water network parameters. In contrast to 
+prior studies that primarily address single systems, this work develops 
+a unified performance analysis framework tailored to water–electricity 
+coupled systems. We derive joint finite-error bounds for the coupled 
+dynamics and establish provable safety despite uncertainties in grid 
+topology and hydraulic parameters.
+Assume there exist compact convex sets ext ⊂ℝ𝑛𝑒 and ext ⊂ℝ𝑛𝑤, 
+along with positive constants 𝜖𝑣, 𝜖𝑤> 0, such that for all 𝑣ext ∈ext and 
+ℎext ∈ext, there exist feasible controls 𝑢𝑣∈[𝑢𝑣,̄ 𝑢𝑣] and 𝑢𝑤∈[𝑢𝑤,̄ 𝑢𝑤]
+satisfying:
+Θ∗𝑢𝑣(𝑡) + 𝑣ext ∈[𝑣+ (̄𝜂𝑣+ 𝜖𝑣)𝟏,̄ 𝑣−(̄𝜂𝑣+ 𝜖𝑣)𝟏]
+(32)
+𝐵∗𝑢𝑤(𝑡) + ℎext ∈[ℎ+ (̄𝜂𝑤+ 𝜖𝑤)𝟏,̄ ℎ−(̄𝜂𝑤+ 𝜖𝑤)𝟏]
+(33)
+The above assumption represents offline, static control margins that 
+ensure theoretical feasibility of the coupled system. This assumption 
+does not rely on online estimation but follows from worst-case analy­
+sis. It essentially requires that the available control equipment capacity 
+is sufficiently large to maintain safe operation even when worst-case 
+disturbances and maximum parameter errors occur simultaneously.
+To systematically handle uncertainty in the water–electricity coupled 
+systems, we define compact parameter sets 𝑣 and 𝑤 containing all 
+possible power grid topology matrices Θ and water network parameter 
+matrices Φ. Their diameters 𝐷𝑣= diam(𝑣) and 𝐷𝑤= diam(𝑤) quantify 
+the magnitude of the initial uncertainty in power grid topology and wa­
+ter network parameters. The objective of the online learning algorithm is 
+to continually refine these parameter sets by processing streaming input–
+output data, thereby shrinking the uncertainty and improving model 
+accuracy over time.
+Applied Energy 424 (2026) 128483 
+7 
+
+J. Zhang, J. Chen, D. Yang et al.
+In the information learning layer, the NCBC algorithm progressively 
+refines the estimates of grid topology and water network parameters 
+by recursively intersecting the feasible sets that are consistent with his­
+torically observed data in the real system. At each time step, the NCBC 
+algorithm integrates the latest measurements with past data and solves a 
+convex projection problem to update the grid topology estimate 𝜃𝑣(𝑡) and 
+water network parameter estimate 𝜃𝑤(𝑡). In the control decision layer, 
+uncertainty is handled by introducing robust buffer terms 𝑘𝑣 and 𝑘𝑤:
+𝑘𝑣=̂ 𝜂𝑣(𝑡) + 𝜌𝑣
+(
+1
+𝛿𝑣
++ ‖𝑢𝑣‖2
+)
+,
+(34)
+𝑘𝑤=̂ 𝜂𝑤(𝑡) + 𝜌𝑤
+(
+1
+𝛿𝑤
++ ‖𝑢𝑤‖2
+)
+(35)
+The design of these robust buffers ensures safe system operation even 
+in the presence of parameter estimation errors. Defining the parameter 
+errors as:
+Δ𝜃𝑣= ‖‖‖𝜃∗
+𝑣−̂ 𝜃𝑣‖‖‖Δ,𝛿𝑣,
+Δ𝜃𝑤= ‖‖‖𝜃∗
+𝑤−̂ 𝜃𝑤‖‖‖Δ,𝛿𝑤
+(36)
+where 𝜃∗
+𝑣= (𝑅∗, 𝑋∗, 𝜂∗
+𝑣) and 𝜃∗
+𝑤= (Φ∗, 𝜂∗
+𝑤) denote the true parame­
+ters. When the parameter errors satisfy Δ𝜃𝑣≤𝜌𝑣 and Δ𝜃𝑤≤𝜌𝑤, the 
+robust controller guarantees system safety, i.e., 𝑣(𝑡+ 1) ∈[𝑣,̄ 𝑣] and 
+ℎ(𝑡+ 1) ∈[ℎ,̄ ℎ]. This holds for all disturbances satisfying ‖𝜔𝑣(𝑡)‖∞≤𝜂∗
+𝑣
+and ‖𝜔𝑤(𝑡)‖∞≤𝜂∗
+𝑤.
+The robust safety margins 𝜌𝑣 and 𝜌𝑤 quantify the maximum toler­
+able estimation errors in topology and parameters. Provided that the 
+actual estimation errors do not exceed 𝜌𝑣 and 𝜌𝑤, solving the joint water–
+electricity optimization problem using the NCBC-generated estimates 
+within the robust predictive control framework yields optimal control 
+actions that ensure system safety. For the PDN, the robust safety margin 
+is given by:
+𝜌𝑣=
+𝛿𝑣𝜖𝑣
+1 + 𝛿𝑣‖̄𝑢𝑣−𝑢𝑣‖2
+(37)
+where 𝜖𝑣> 0 is the voltage safety margin constant; 𝛿𝑣> 0 is the 
+weighting parameter that reflects the relative emphasis on disturbance 
+estimation; ̄𝑢𝑣 and 𝑢𝑣 are the upper and lower bounds on the power 
+grid control input 𝑢𝑣, representing the available control capability of 
+the PDN. Similarly, the robust safety margin for the WDN is defined as:
+𝜌𝑤=
+𝛿𝑤𝜖𝑤
+1 + 𝛿𝑤‖̄𝑢𝑤−𝑢𝑤‖2
+(38)
+From the preceding theoretical analysis, finite bounds on safety viola­
+tions can be established. For PDN, the cumulative number of voltage 
+violations 𝑁𝑣 over the entire operating period (i.e., the total number of 
+time steps satisfying 𝑣(𝑡) ∉[𝑣,̄ 𝑣]) is finite and satisfies:
+𝑁𝑣≤2𝛾𝑣
+𝜌𝑣
+diam(𝑣× [0,̄ 𝜂𝑣]) + 1
+(39)
+Analogously, for WDN, the cumulative number of hydraulic head viola­
+tions 𝑁𝑤 over the entire operating period (i.e., the total number of time 
+steps satisfying ℎ(𝑡) ∉[ℎ,̄ ℎ]) satisfies:
+𝑁𝑤≤2𝛾𝑤
+𝜌𝑤
+diam(𝑤× [0,̄ 𝜂𝑤]) + 1
+(40)
+In particular, the constant term 1 represents the potential number of 
+violations during the system initialization. The theoretical foundation 
+relies on the observation that each voltage or hydraulic head violation 
+provides additional information about the true system, thereby reduc­
+ing the uncertainty set and accelerating convergence toward the actual 
+parameters. Given that the initial uncertainty is finite and the learning 
+algorithm achieves a bounded competitive ratio, the total number of 
+such violations must also be finite.
+Although PDN and WDN are coupled through pump power, the er­
+ror bounds are derived separately for each subsystem. This is because 
+coupling effects are already captured within the respective disturbance 
+terms 𝜔𝑣(𝑡) and 𝜔𝑤(𝑡). While pump power consumption increases nodal 
+loads and may lead to more frequent voltage violations in the coupled 
+system compared to an isolated grid, the total number of violations will 
+not exceed the established bound 𝑁𝑣. Consequently, the overall safety of 
+the water–electricity coupled systems can be bounded by the sum of the 
+subsystem error counts, i.e., 𝑁total ≤𝑁𝑣+ 𝑁𝑤. This result ensures that, 
+even under simultaneous uncertainties in grid topology and hydraulic 
+parameters, the system can recover to safe operating conditions within 
+a finite number of steps, demonstrating the robustness of the proposed 
+control framework.
+5 . Case study
+This section presents comprehensive numerical simulations to val­
+idate the effectiveness of the proposed online learning-based robust 
+voltage control strategy for water–electricity coupled systems under 
+topology and parameter uncertainties.
+5.1 . Simulation environment and system parameters
+The simulation is conducted on a coupled system consisting of a 
+Southern California Edison (SCE) 56-bus PDN and a 15-node WDN. The 
+simulations are implemented in Python 3.11 and run on a hardware 
+platform equipped with an Intel(R) Core(TM) i7-2400H processor at 
+2.50 GHz over a 24-hour operational period. PDN and WDN exhibit 
+significant differences in physical dynamics and equipment regulation 
+characteristics. The grid side has fast variations at the second-level time 
+scale, whereas the water side is not suitable for frequent regulation [37]. 
+Therefore, a multi-time-scale modeling scheme is adopted: the PDN con­
+trol step is set to 6 s, while the WDN control step is set to 1 h [21]. For the 
+water–electricity coupled system, the key real-time control requirement 
+is that each online computation must be completed within the PDN con­
+trol interval. The average computation time per online simulation step 
+is 1.95 s, which satisfies the requirement for real-time online control. 
+The topology of the coupled water–electricity system is shown in Fig. 3.
+The radial PDN contains 56 buses, with bus 0 as the substation. Buses 
+2, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 19, 20, 23, 25, 26, 32 are equipped 
+with PV inverters that provide reactive power regulation within [𝑢𝑞,̄ 𝑢𝑞]. 
+While PV inverters can jointly regulate active and reactive power, their 
+unidirectional generation and capacity constraints limit operational flex­
+ibility. Therefore, energy storage systems are installed at buses 17, 29, 
+and 41 to provide flexible active power regulation within [𝑢𝑝,̄ 𝑢𝑝]. The 
+voltage safety limits are set to [𝑣,̄ 𝑣] = [0.95, 1.05] p.u., corresponding to 
+squared voltage magnitudes of [11.42, 12.62] kV2. The nominal squared 
+voltage target is 𝑣nom = (12 kV)2.
+WDN is a 15-node tree-structured system with node 1 as the reser­
+voir. It consists of 14 pipes, with flow rates restricted to [0, 3240] m3∕h. 
+Three pumps are installed on pipes (1, 2), (4, 5), and (7, 8). Two storage 
+tanks are located at nodes 10 and 13. Nodes 3, 11, and 15 serve as water 
+demand nodes. The pressure head is constrained to [ℎ,̄ ℎ] = [20, 1000] m.
+Regarding the algorithmic parameters, the weights are tuned to bal­
+ance safety and optimality. Based on the weighting principles described 
+in Section 3.3, the objective-function weights are set as 𝛼𝑣= 1, 𝛼𝑝= 0.5, 
+𝛼𝑞= 0.5, 𝛼𝑤= 0.5, 𝛼𝑇= 0.5 and 𝜆= 0.5. The slack-variable penalty 
+weights are set as 𝛽𝑣= 10 and 𝛽𝑤= 10. Since all objective terms are 
+normalized, the weighting coefficients only reflect the relative priorities 
+among different control objectives rather than absolute physical scales. ̄
+𝜂𝑣 is the disturbance upper bound determined from historical data, 
+which is obtained by adding a 5% safety margin to the true-topology 
+calculation result max𝑡‖𝜔𝑣(𝑡)‖∞= 8.63, yielding ̄𝜂𝑣= 9.06. 𝜖𝑣= 0.1 is the 
+offline safety margin, which is used to further reserve a safety margin 
+beyond the maximum disturbance. 𝛿𝑣= 20 is used to balance the model-
+parameter estimation error and the disturbance-upper-bound estimation 
+error. Similarly, the water-side values are determined as ̄ 𝜂𝑤= 6.00, 
+Applied Energy 424 (2026) 128483 
+8 
+
+J. Zhang, J. Chen, D. Yang et al.
+Fig. 3. Topology of the water–electricity coupled systems.
+𝜖𝑤= 2.0, and 𝛿𝑤= 20. Then, the robust radii 𝜌𝑣 and 𝜌𝑤 are calculated by
+(37) and (38). In the baseline simulations, the active- and reactive-power 
+regulation limits are set as 𝑢𝑝= 𝑢𝑞= −0.2,̄ 𝑢𝑝=̄ 𝑢𝑞= 0.2.
+5.2 . Simulation results and analysis
+First, to further validate the effectiveness of the proposed method 
+under different levels of prior information, the voltage regulation per­
+formance is compared in a linear environment under three scenarios: 
+fully unknown, partially known, and fully known PDN topology infor­
+mation. The comparative results are shown in Fig. 4 and Table 2. To 
+examine the adaptability of the proposed algorithm under the most un­
+favorable information condition, the WDN pipe parameters are assumed 
+to be fully unknown in all three cases. In Fig. 4, the orange lines and 
+buses represent known PDN topology information, the red buses indi­
+cate locations where voltage violations occur, and the blue buses denote 
+pump connection buses. On the PDN side, the entire dispatch horizon 
+consists of 14,400 time steps, with each step lasting 6 s. In Table 2, vio­
+lation instants are defined as the number of PDN dispatch time steps at 
+which the voltage magnitude of at least one bus satisfies 𝑣𝑖(𝑡) ∉[𝑣,̄ 𝑣].
+Under the fully unknown topology scenario, the controller initially 
+lacks PDN connectivity and line-parameter information, while it must 
+also handle pump power fluctuations caused by unknown WDN param­
+eters. Therefore, the voltage regulation task is relatively challenging. In 
+this case, voltage violations occur at 32 buses over a total of 1302 time 
+instants. The maximum upper and lower voltage-violation magnitudes 
+are 0.1139 kV and 0.1182 kV, respectively, and the average violation 
+magnitude is 0.0322 kV. As shown in Fig. 4(a), even under the extreme 
+condition where the information on both the electricity and water sides 
+is fully unknown, the controller can still maintain voltage security dur­
+ing most operating periods. In addition, Fig. 4(a) illustrates the evolution 
+of topology-matrix uncertainty during the learning process. Driven by 
+the NCBC algorithm, both 𝑅 Gap and 𝑋 Gap exhibit an overall decreas­
+ing trend, indicating that the topology estimates continuously approach 
+their true values. The metrics 𝑅 Gap and 𝑋 Gap quantify the differences 
+between the estimated and true topology matrices, and are defined as
+𝑅Gap = ‖‖‖̂𝑅−𝑅∗‖‖‖Δ ,
+𝑋Gap = ‖‖‖̂𝑋−𝑋∗‖‖‖Δ .
+(41)
+Fig. 4(b) presents the simulation results under partially known 
+topology, where the topology and line parameters of buses 0–24 are 
+assumed to be known. The availability of partial prior information sig­
+nificantly reduces the initial uncertainty set and accelerates the topology 
+learning process. Compared with the fully unknown case, the number 
+of buses with voltage violations decreases from 32 to 6. The maxi­
+mum upper voltage–violation magnitude decreases from 0.1139 kV to 
+0.0464 kV, the maximum lower voltage–violation magnitude decreases 
+from 0.1182 kV to 0.0668 kV, and the average violation magnitude de­
+creases from 0.0322 kV to 0.0225 kV. Both the number of violated buses 
+and the violation severity are substantially reduced, indicating that par­
+tial prior information can effectively narrow the spatial range and reduce 
+the severity of voltage violations. In this case, violations are mainly con­
+centrated at a few critical buses and specific disturbance periods rather 
+than appearing as large-scale violations.
+For the fully known topology scenario, as shown in Fig. 4(c), voltage 
+violations are not completely eliminated, but their severity is further 
+reduced. The results show that the total number of voltage–violation 
+time instants decreases to 1160. The maximum upper and lower voltage–
+violation magnitudes decrease to 0.0294 kV and 0.0326 kV, respectively, 
+and the average violation magnitude decreases to 0.0178 kV. These re­
+sults demonstrate that accurate topology information can significantly 
+weaken the adverse impact of model uncertainty on voltage control 
+performance.
+To verify the applicability of the proposed method in a nonlinear 
+environment, additional simulations are carried out, and the results are 
+shown in Fig. 5. The results indicate that, under the fully unknown, 
+partially known, and fully known scenarios, nodal voltages can still be 
+effectively regulated around the safe operating range, and no persis­
+tent large-magnitude voltage violations occur. Moreover, in the fully 
+unknown case, the initial 𝑅 Gap and 𝑋 Gap are relatively large, indi­
+cating that the controller initially lacks accurate knowledge of the PDN. 
+As a result, voltage fluctuations are more pronounced. In contrast, un­
+der the partially known case, the convergence processes of 𝑅 Gap and 
+𝑋 Gap become smoother, and the voltage fluctuation magnitude is fur­
+ther reduced. These results demonstrate that the robust buffer terms in 
+RMPC can compensate for linearization errors, model mismatches, and 
+unmodeled dynamics. Therefore, the controller designed based on the 
+linear approximation model can still remain effective in a more realistic 
+nonlinear system.
+Furthermore, under the premise that the grid topology information 
+is fully unknown, the hydraulic head variations of WDN nodes are ex­
+amined under different prior information levels. The results are shown 
+in Fig. 6 and Table 3. Instead, they are jointly determined by the node 
+elevation and the minimum pressure head ℎ= 20m. The elevations of 
+nodes 7, 11, and 13 are 121 m, 156.65 m, and 124.13 m, respectively. 
+Therefore, the corresponding lower hydraulic-head limits are 141.00 m, 
+176.65 m, and 144.13 m, respectively. On the WDN side, the entire 
+dispatch horizon consists of 24 time steps, with each step lasting 1 h.
+When the WDN parameters are fully unknown, the minimum hy­
+draulic heads at nodes 7, 11, and 13 are 165.89 m, 201.02 m, and 
+148.63 m, respectively, and no hydraulic head violation occurs. Under 
+parameter uncertainty, the controller tends to reserve larger hydraulic-
+head safety margins to offset the influence of parameter-estimation 
+errors. When the WDN parameters are fully known, the minimum hy­
+draulic heads at the three nodes are 153.88 m, 188.99 m, and 148.47 m, 
+respectively. No hydraulic head violation occurs in this case either. 
+However, compared with the fully unknown case, the nodal hydraulic 
+heads are closer to the safety boundaries, and the average hydraulic-
+head margin decreases from 16.679 m to 12.341 m, as shown in Table 4. 
+This result does not indicate a degradation of safety. Instead, it shows 
+that when WDN parameters are more accurate, the controller no longer 
+needs to reserve excessive safety margins for parameter-estimation er­
+rors. Therefore, unnecessary conservative regulation can be reduced 
+Applied Energy 424 (2026) 128483 
+9 
+
+J. Zhang, J. Chen, D. Yang et al.
+Fig. 4. Nodal voltage profiles and topology-learning convergence processes under different topology-knowledge levels in a linear environment.
+Table 2 
+Voltage violation statistics under different prior information levels.
+Metric
+Fully unknown
+Partially known
+Fully known
+Violation instants
+1302
+1286
+1160
+Violated buses
+32
+6
+6
+Max. overvoltage (kV)
+0.1139
+0.0464
+0.0294
+Max. undervoltage (kV)
+0.1182
+0.0668
+0.0326
+Avg. violation (kV)
+0.0322
+0.0225
+0.0178
+while hydraulic-head safety is still guaranteed, leading to a more pre­
+cise control strategy. In addition, Table 4 shows that no hydraulic head 
+violations occur in the entire WDN under either the fully unknown or 
+fully known case, demonstrating that the proposed method still has 
+strong adaptability even when the pipe resistance parameters of the 
+WDN cannot be accurately obtained.
+Fig. 7 illustrates the pump power variation and the impact of pump 
+power modeling on PDN voltage control. Fig. 7(a) shows the pump 
+power profile under unknown WDN parameters. The pump power varies 
+significantly over the entire dispatch horizon, with an average power of 
+172.335 kW and a maximum total peak power of 220.764 kW. As a 
+time-varying load, pump power directly affects nodal voltages. To fur­
+ther illustrate this impact, Fig. 7(b) presents the voltage control results 
+without considering pump power under unknown grid topology. The re­
+sults are compared with those obtained by considering pump power in 
+Table 5.
+Table 5 shows that under unknown grid topology, if pump power is 
+ignored, the total number of voltage–violation time instants increases 
+from 1302 to 1530, and the number of buses with voltage violations in­
+creases from 32 to 36. The maximum upper voltage–violation magnitude 
+increases from 0.1139 kV to 0.1223 kV, while the maximum lower 
+voltage–violation magnitude increases significantly from 0.1182 kV to 
+0.1578 kV. This indicates that ignoring pump power causes the con­
+troller to underestimate the actual load level, making undervoltage more 
+likely when pump-load fluctuations are large. Although the average vi­
+olation magnitude becomes smaller when pump power is ignored, the 
+violations occur more frequently, involve more buses, and exhibit larger 
+extreme violation magnitudes. Therefore, the overall voltage security is 
+worse. These results show that incorporating pump power into the volt­
+age control model enables the controller to anticipate the influence of 
+WDN operation on the PDN, effectively reducing the violation frequency 
+and suppressing severe voltage deviations. This verifies the necessity of 
+explicitly modeling water–electricity coupling.
+Furthermore, to analyze the influence of control resources on voltage 
+regulation performance, the active- and reactive-power control limits 
+are increased from ±0.2 to ±0.3, and simulations are conducted under 
+the three prior-information scenarios. Fig. 8 shows that after the con­
+trol capacity is increased, more regulation resources are available to the 
+controller. Consequently, the voltage regulation ability of the system 
+is significantly enhanced, the voltage fluctuation magnitude is further 
+reduced, and no voltage violations occur during the entire dispatch hori­
+zon. This indicates that, in practical systems, increasing the regulation 
+margins of controllable devices can help enhance the secure opera­
+tion capability of water–electricity coupled systems under topology and 
+parameter uncertainty.
+Finally, to verify the advantages of the proposed unified water–
+electricity learning framework over conventional strategies, the pro­
+posed method is compared with the no control strategy and the two-
+stage control strategy. The results are shown in Fig. 9 and Table 6. The no 
+control strategy applies no active regulation and is used to demonstrate 
+Applied Energy 424 (2026) 128483 
+10 
+
+J. Zhang, J. Chen, D. Yang et al.
+ Bus 2 
+ Bus 4
+ Bus 6
+ Bus 7
+ Bus 9
+ Bus 14
+ Bus 18
+ Bus 20
+ Bus 25
+ Bus 27
+ Bus 30
+ Bus 35
+ Bus 42
+ Bus 52
+1
+3
+2
+4
+8
+7
+10 11 13 15 17 18 19
+21
+20
+5
+6
+22
+23
+24
+25
+27
+26
+28 29 30 31
+33
+32
+34
+41 47 49 51 53
+56
+35
+36 37
+38 39 40
+42
+43
+48
+45
+44
+46
+50 52
+54
+55
+n
+oitats
+b
+u
+S
+9
+12 14 16
+Bus with pump
+1
+3
+2
+4
+8
+7
+10 11 13 15 17 18 19
+21
+20
+5
+6
+22
+23
+24
+25
+27
+26
+28 29 30 31
+33
+32
+34
+41 47 49 51 53
+56
+35
+36 37
+38 39 40
+42
+43
+48
+45
+44
+46
+50 52
+54
+55
+n
+oitats
+b
+u
+S
+9
+12 14 16
+Bus with pump
+1
+3
+2
+4
+8
+7
+10 11 13 15 17 18 19
+21
+20
+5
+6
+22
+23
+24
+25
+27
+26
+28 29 30 31
+33
+32
+34
+41 47 49 51 53
+56
+35
+36 37
+38 39 40
+42
+43
+48
+45
+44
+46
+50 52
+54
+55
+n
+oitats
+b
+u
+S
+9
+12 14 16
+Bus with pump
+Fig. 5. Nodal voltage profiles and topology-learning convergence processes under different topology-knowledge levels in a nonlinear environment.
+Fig. 6. Nodal hydraulic head variation under different levels of WDN parameter knowledge.
+Table 3 
+Hydraulic head statistics under different prior information levels.
+Scenario
+Node
+Lower limit (m)
+Max. (m)
+Min. (m)
+Mean (m)
+Fully unknown
+7
+141.00
+189.31
+165.89
+174.60
+11
+176.65
+224.93
+201.02
+210.04
+13
+144.13
+198.51
+148.63
+174.02
+Fully known
+7
+141.00
+198.88
+153.88
+173.50
+11
+176.65
+234.56
+188.99
+208.98
+13
+144.13
+197.38
+148.47
+173.53
+the necessity of voltage control. The two-stage control strategy first per­
+forms topology identification and then executes voltage control based 
+on the identified model. Comparing this strategy with the proposed 
+Table 4 
+Hydraulic head safety statistics under different prior information levels.
+Metric
+Fully unknown
+Fully known
+Number of nodes with head violations
+0
+0
+Average hydraulic-head margin (m)
+16.679
+12.341
+method highlights the effectiveness of the unified learning-control
+framework.
+Under the no control strategy, pump loads and external loads are 
+directly imposed on the PDN. Due to the lack of active regulation 
+capability, voltage violations are the most severe. Specifically, the to­
+tal number of voltage–violation time instants reaches 10,976, and 44 
+buses experience voltage violations. The maximum upper and lower 
+Applied Energy 424 (2026) 128483 
+11 
+
+J. Zhang, J. Chen, D. Yang et al.
+Fig. 7. Pump power variation and the impact of pump power modeling on voltage control.
+Table 5 
+Impact of pump power modeling on voltage control performance.
+Metric
+With pump power
+Without pump power
+Violation instants
+1302
+1530
+Violated buses
+32
+36
+Max. overvoltage (kV)
+0.1139
+0.1223
+Max. undervoltage (kV)
+0.1182
+0.1578
+Avg. violation (kV)
+0.0322
+0.0189
+voltage–violation magnitudes reach 0.6740 kV and 0.3081 kV, re­
+spectively, and the average violation magnitude is 0.1368 kV. This 
+indicates that, under the combined influence of pump-load integra­
+tion and renewable-generation fluctuations, the natural operation of the 
+system alone cannot guarantee voltage security.
+The two-stage control strategy performs topology identification be­
+fore voltage control, and can reduce the number and magnitude of vio­
+lations to some extent. However, inaccurate topology information may 
+still lead to degraded control performance. Under the two-stage strategy, 
+the total number of voltage–violation time instants is 4273, and 37 buses 
+experience voltage violations. The maximum upper voltage–violation 
+magnitude is 0.3659 kV, while the maximum lower voltage–violation 
+magnitude reaches 0.3926 kV. The average violation magnitude is 
+0.1652 kV. Although the two-stage strategy performs better than the 
+no control strategy, it is still significantly inferior to the proposed 
+method. These results demonstrate that, compared with conventional 
+control methods, the proposed method can maintain superior control 
+performance under incomplete topology and parameter information 
+in water–electricity coupled systems, highlighting its robustness and 
+effectiveness. 
+Fig. 8. Nodal voltage profiles under different topology-knowledge levels with enhanced control capabilities.
+Fig. 9. Comparison of voltage regulation performance under different control strategies.
+Applied Energy 424 (2026) 128483 
+12 
+
+J. Zhang, J. Chen, D. Yang et al.
+Table 6 
+Comparison of voltage regulation performance under different 
+control strategies.
+Metric
+This work
+No control
+Two-stage
+Violation instants
+1302
+10,976
+4273
+Violated buses
+32
+44
+37
+Max. overvoltage (kV)
+0.1139
+0.6740
+0.3659
+Max. undervoltage (kV)
+0.1182
+0.3081
+0.3926
+Avg. violation (kV)
+0.0322
+0.1368
+0.1652
+6 . Conclusion
+This paper proposes a robust voltage control strategy to address 
+the challenges of incomplete power grid topology and water network 
+parameter uncertainty in water–electricity coupled systems. A unified 
+learning framework based on NCBC is established, enabling the joint on­
+line identification of grid topology and pipeline resistance coefficients 
+relying solely on real-time operational data. Building upon this, a robust 
+model predictive controller incorporating a dynamic robust buffer term 
+is designed. Theoretical analysis provides provable safety guarantees by 
+establishing finite upper bounds on the number of voltage and hydraulic 
+head constraint violations, even under worst–case scenarios. Compared 
+with conventional baseline strategies, the proposed approach signifi­
+cantly mitigates the risk of safety constraint violations. The simulation 
+results further confirm the effectiveness of the proposed method under 
+incomplete system information. Even in the extreme case where both 
+the PDN topology and the WDN parameters are completely unknown, 
+the proposed method largely maintains system-wide voltages within the 
+prescribed safety limits. The average voltage–violation magnitude over 
+the entire dispatch horizon is only 0.0322 kV, which is substantially 
+lower than the 0.1368 kV and 0.1652 kV observed under the no control 
+and two-stage control strategies, respectively. Moreover, increasing the 
+available control resources noticeably improves the voltage regulation 
+performance. For the WDN, no hydraulic-head violations are observed 
+under either the fully unknown or fully known parameter setting, with 
+average hydraulic-head safety margins of 16.679 m and 12.341 m, re­
+spectively. These results demonstrate the strong control performance 
+and robustness of the proposed learning-control framework.
+Although the proposed model yields promising results, its applicabil­
+ity is subject to several conditions. First, the method relies on sufficiently 
+reliable communication and accessible measurements; delays, packet 
+losses, or missing observations may hinder the contraction of NCBC 
+feasible sets and compromise control performance. Second, scalability 
+remains a concern, as computational burden and solution time may 
+increase with system size, potentially restricting real-time deployment 
+in large scale water–electricity coupled networks. Future work will be 
+devoted to addressing issues such as incomplete communication and 
+distributed or multi-agent implementation.
+CRediT authorship contribution statement
+Jicheng Zhang: Writing – original draft, Validation, Methodology, 
+Investigation. Jiajia Chen: Writing – review & editing, Supervision, 
+Formal analysis, Conceptualization. Dechang Yang: Writing – review 
+& editing, Formal analysis. Cong Liu: Writing – review & editing.
+Declaration of competing interest
+The authors declare that they have no known competing financial 
+interests or personal relationships that could have appeared to influence 
+the work reported in this paper.
+Acknowledgements
+This work was supported by the National Natural Science Foundation 
+of China (52377110).
+Appendix A . Derivation of pump power linearization
+The active power consumption of a water pump is governed by the 
+following fundamental hydraulic relationship:
+𝑃pump(𝑄𝑖𝑗) = 𝜌𝑔
+𝜂p
+ℎpump
+𝑖𝑗
+𝑄𝑖𝑗
+(A.1)
+where 𝑃pump(𝑄𝑖𝑗) denotes the active power consumed by the pump; 
+𝜌 is the water density; 𝑔 is the gravitational acceleration (typically 
+9.81 m∕s2); 𝜂p represents the pump efficiency; and Δℎ𝑖𝑗 is the pump head, 
+defined as the hydraulic head difference between the outlet node 𝑗 and 
+the inlet node 𝑖.
+Substituting the pump head-flow curve into the power equation and 
+defining the constant coefficient 𝜁= 𝜌𝑔
+𝜂p , we obtain:
+𝑃pump(𝑄𝑖𝑗) = 𝜁
+(
+ℎ0,𝑖𝑗𝑄𝑖𝑗−𝑆𝑖𝑗𝑄𝛾+1
+𝑖𝑗
+)
+(A.2)
+Analysis of the second-order derivative reveals that (𝑃pump(𝑄𝑖𝑗))′′ ≤0, 
+indicating that the pump power function is concave. To incorporate this 
+into a convex minimization framework, a linear upper bound is required 
+to ensure feasibility. Since the tangent line of a concave function serves 
+as a global overestimator, we employ the first-order Taylor expansion at 
+the operating point 𝑄0 as the linear upper bound:
+𝑃pump(𝑄𝑖𝑗) ≤𝑃pump(𝑄0) +
+𝑑(𝑃pump)
+𝑑𝑄𝑖𝑗
+|||||𝑄𝑖𝑗=𝑄0
+(𝑄𝑖𝑗−𝑄0)
+(A.3)
+By calculating the function value 𝑃pump(𝑄0) and its derivative at 𝑄0, 
+and substituting them into the tangent equation, we derive the expanded 
+inequality:
+𝑃pump(𝑄𝑖𝑗) ≤𝜁
+(
+ℎ0,𝑖𝑗𝑄0 −𝑆𝑖𝑗𝑄𝛾+1
+0
+)
++ 𝜁(ℎ0,𝑖𝑗−𝑆𝑖𝑗(𝛾+ 1)𝑄𝛾
+0
+) (𝑄𝑖𝑗−𝑄0)
+(A.4)
+Rearranging the terms yields the final linearized upper bound:
+𝑃pump(𝑄𝑖𝑗) ≤𝜁
+[
+(ℎ0,𝑖𝑗−(𝛾+ 1)𝑆𝑖𝑗𝑄𝛾
+0)𝑄𝑖𝑗+ 𝛾𝑆𝑖𝑗𝑄𝛾+1
+0
+]
+(A.5)
+For simplicity, let 𝑎p
+𝑖𝑗= 𝜁[ℎ0,𝑖𝑗−𝑆𝑖𝑗(𝛾+ 1)𝑄𝛾
+0] denote the power-
+flow slope coefficient, representing the sensitivity of power consumption 
+to flow variations. Furthermore, let 𝑏p
+𝑖𝑗= 𝜁𝑆𝑖𝑗𝛾𝑄𝛾+1
+0
+ denote the con­
+stant power term at the specific operating point. The simplified linear 
+constraint is thus expressed as:
+𝑃pump(𝑄𝑖𝑗) ≤𝑎p
+𝑖𝑗𝑄𝑖𝑗+ 𝑏p
+𝑖𝑗
+(A.6)
+Appendix B . Derivation of upper bound on constraint violations
+This appendix formally presents the complete derivation of the ro­
+bust buffer term and the maximum number of constraint violations 
+discussed in the main text. The derivation relies on the key assumption 
+of offline feasibility conditions stated in the main text, which guaran­
+tee that control measures exist to satisfy safety constraints even under 
+the worst-case external disturbances. Specifically, for any Θ∗∈𝑣 and 
+𝑣ext ∈ext, there exists a control input 𝑢𝑣∈[𝑢𝑣,̄ 𝑢𝑣] such that the result­
+ing voltage 𝑣 falls within a safe interval [𝑣+ 𝜖𝑣𝟏,̄ 𝑣−𝜖𝑣𝟏] equipped with 
+safety margins 𝜖𝑣, 𝜖𝑤> 0. The following derivation primarily focuses on 
+the PDN side; the WDN side follows an identical logic.
+The nodal voltage on the grid side at time step 𝑡 can be expressed as:
+𝑣(𝑡+ 1) = 𝑣(𝑡) + Θ∗𝑢𝑣(𝑡) + 𝜔𝑣(𝑡)
+(B.1)
+where 𝜔𝑣(𝑡) represents the unknown disturbance term satisfying 
+‖𝜔𝑣(𝑡)‖∞≤𝜂∗
+𝑣. At time 𝑡, the NCBC algorithm provides a topology esti­
+mate ̂Θ and a disturbance upper bound estimate ̂𝜂𝑣, yielding the voltage 
+Applied Energy 424 (2026) 128483 
+13 
+
+J. Zhang, J. Chen, D. Yang et al.
+prediction:̂
+𝑣(𝑡+ 1) = 𝑣(𝑡) +̂ Θ𝑢𝑣(𝑡)
+(B.2)
+Subtracting the prediction from the actual voltage yields the predic­
+tion error:
+𝑣(𝑡+ 1) −̂ 𝑣(𝑡+ 1) = (Θ∗−̂ Θ)𝑢𝑣(𝑡) + 𝜔𝑣(𝑡)
+(B.3)
+Applying the triangle inequality, we obtain:
+‖𝑣(𝑡+ 1) −̂ 𝑣(𝑡+ 1)‖∞≤‖(Θ∗−̂ Θ)𝑢𝑣(𝑡)‖∞+ ‖𝜔𝑣(𝑡)‖∞
+(B.4)
+To unify the form, the right-hand side is expressed using a parameter 
+radius. As defined in the main text, the uncertainty parameter and noise 
+upper bound are measured using a weighted joint norm for the estima­
+tion error. From the definition of the joint norm, the noise upper bound 
+component satisfies:
+|𝜂∗
+𝑣−̂ 𝜂𝑣| ≤1
+𝛿𝑣
+‖𝜃∗−̂ 𝜃‖Δ,𝛿𝑣
+(B.5)
+When the estimation error falls within a neighborhood of radius 𝜌𝑣, 
+i.e., ‖𝜃∗−̂ 𝜃‖Δ,𝛿𝑣≤𝜌𝑣, we have:
+𝜂∗
+𝑣≤̂ 𝜂𝑣+ 𝜌𝑣
+𝛿𝑣
+(B.6)
+Consequently,
+‖𝜔𝑣(𝑡)‖∞≤𝜂∗
+𝑣≤̂ 𝜂𝑣+ 𝜌𝑣
+𝛿𝑣
+(B.7)
+For the PDN block matrix Θ = [𝑅𝑋], where 𝑅 and 𝑋 are symmetric 
+matrices, the block triangular norm is defined as
+‖Θ‖2
+Δ = ‖𝑅‖2
+Δ + ‖𝑋‖2
+Δ.
+(B.8)
+Let 𝐸= Θ∗−̂ Θ = [𝐸𝑅𝐸𝑋] and 𝑢𝑣(𝑡) = [𝑢′
+𝑝(𝑡); 𝑢𝑞(𝑡)]. By the triangle 
+inequality and the Cauchy–Schwarz inequality, we have
+‖𝐸𝑢𝑣(𝑡)‖∞= ‖𝐸𝑅𝑢′
+𝑝(𝑡) + 𝐸𝑋𝑢𝑞(𝑡)‖∞
+≤‖𝐸𝑅‖Δ‖𝑢′
+𝑝(𝑡)‖2 + ‖𝐸𝑋‖Δ‖𝑢𝑞(𝑡)‖2
+≤‖𝐸‖Δ‖𝑢𝑣(𝑡)‖2.
+(B.9)
+Therefore,
+‖(Θ∗−̂ Θ)𝑢𝑣(𝑡)‖∞≤‖Θ∗−̂ Θ‖Δ‖𝑢𝑣(𝑡)‖2 ≤𝜌𝑣‖𝑢𝑣(𝑡)‖2.
+(B.10)
+Substituting the derived bounds into the prediction error equation, 
+we obtain that when ‖𝜃∗−̂ 𝜃‖Δ,𝛿𝑣≤𝜌𝑣:
+‖𝑣(𝑡+ 1) −̂ 𝑣(𝑡+ 1)‖∞≤̂ 𝜂𝑣+ 𝜌𝑣
+(
+1
+𝛿𝑣
++ ‖𝑢𝑣(𝑡)‖2
+)
+(B.11)
+Contracting the safety constraints inward by a radius 𝑘𝑣 can offset 
+the deviation caused by disturbances and the joint parameter estimation 
+error. Therefore, the robust buffer term for the PDN side is defined as:
+𝑘𝑣=̂ 𝜂𝑣+ 𝜌𝑣
+(
+1
+𝛿𝑣
++ ‖𝑢𝑣‖2
+)
+(B.12)
+This PDN robust buffer term is consistent with the equation in the 
+main text. In the corresponding robust feasibility constraints, the buffer 
+term similarly takes the form of 𝑘𝑣. Similarly, for the WDN side, we 
+obtain:
+𝑘𝑤=̂ 𝜂𝑤+ 𝜌𝑤
+(
+1
+𝛿𝑤
++ ‖𝑢𝑤‖2
+)
+(B.13)
+Next, we derive the robust safety margin 𝜌𝑣. By the offline feasibility 
+margin assumption, there exists a feasible control such that the system 
+falls within a contracted safety interval with an additional margin 𝜖𝑣
+under the worst-case external disturbance bound ̄𝜂𝑣. The online robust 
+control employs a contraction radius 𝑘𝑣. To ensure that the online con­
+traction does not exceed the maximum contraction allowed by the offline 
+margin, a sufficient condition is:
+𝑘𝑣≤̄ 𝜂𝑣+ 𝜖𝑣
+(B.14)
+Additionally, from 𝜃∈𝑣× [0,̄ 𝜂𝑣], it is known that the online esti­
+mate satisfies ̂𝜂𝑣≤̄ 𝜂𝑣. Substituting the buffer term expression and upper 
+bounding ̂𝜂𝑣 with ̄𝜂𝑣, we obtain that satisfying the following is sufficient:̄
+𝜂𝑣+ 𝜌𝑣
+(
+1
+𝛿𝑣
++ ‖𝑢𝑣‖2
+)
+≤̄ 𝜂𝑣+ 𝜖𝑣
+(B.15)
+which simplifies to ensure the online robust constraint is feasible. To 
+make 𝜌𝑣 independent of time 𝑡, it must hold for all feasible inputs within 
+the control range [𝑢𝑣,̄ 𝑢𝑣]. Thus, we transform the inequality using the 
+bound of the input set:
+𝜌𝑣
+(
+1
+𝛿𝑣
++ ‖̄𝑢𝑣−𝑢𝑣‖2
+)
+≤𝜖𝑣
+(B.16)
+Rearranging the terms yields the final expression for the robust 
+margin:
+𝜌𝑣≤
+𝛿𝑣𝜖𝑣
+1 + 𝛿𝑣‖̄𝑢𝑣−𝑢𝑣‖2
+(B.17)
+Similarly, for WDN side, we have:
+𝜌𝑤≤
+𝛿𝑤𝜖𝑤
+1 + 𝛿𝑤‖̄𝑢𝑤−𝑢𝑤‖2
+(B.18)
+Finally, we derive the upper bound on the number of constraint vi­
+olations. This paper adopts a framework combining NCBC and robust 
+predictive control. The core upper bound on violation counts relies on 
+the property that when the estimation error ‖𝜃∗−̂ 𝜃‖Δ,𝛿𝑣≤𝜌𝑣, the sys­
+tem is guaranteed to be safe. Replacing the generic robust margin 𝜌 with 
+𝜌𝑣 in the competitive ratio theorem, we obtain the upper bound on the 
+number of grid voltage violations:
+𝑁𝑣≤2𝛾𝑣
+𝜌𝑣
+diam(𝑣× [0,̄ 𝜂𝑣]) + 1
+(B.19)
+Similarly for the WDN side, replacing 𝜌 with 𝜌𝑤, we obtain the upper 
+bound on the number of WDN hydraulic head violations:
+𝑁𝑤≤2𝛾𝑤
+𝜌𝑤
+diam(𝑤× [0,̄ 𝜂𝑤]) + 1
+(B.20)
+Data availability
+Data will be made available upon request.
+References
+[1] Bhatraj A, Salomons E, Housh M. An optimization model for simultaneous design 
+and operation of renewable energy microgrids integrated with water supply systems. 
+Appl Energy 2024;361:122879.
+[2] Shi N, Cheng R, Liu L, Wang Z, Zhang Q, Reno MJ. Data-driven affinely adjustable 
+robust volt/var control. IEEE Trans Smart Grid 2023;15(1):247–59.
+[3] Xiong W, Tang Z, Cui X. Distributed data-driven voltage control for active distribu­
+tion networks with changing grid topologies. Control Eng Pract 2024;147:105933.
+[4] Wen Y, Yu W, Fu H, Thotakura NL, Jiang S, Dulal S, Liu Y, Zhu L, Farantatos E. 
+A systematic oscillation source location estimation method for ultra-low frequency 
+and sub-synchronous oscillations in power systems. In: 2025 IEEE Power & Energy 
+Society General Meeting (PESGM). IEEE; 2025. p. 1–5.
+[5] Guo Y, Yuan Y, Wang Z. Distribution grid modeling using smart meter data. IEEE 
+Trans Power Syst 2022;37(3):1995–2004.
+[6] Zhu L, Wu S, Wang Q, Li Y. Progressive identification of distribution network topol­
+ogy based on user-side internet of things device measurement data. IET Gener 
+Transm Distrib 2025;19(1):e70064.
+Applied Energy 424 (2026) 128483 
+14 
+
+J. Zhang, J. Chen, D. Yang et al.
+[7] Huo Y, Li P, Ji H, Yu H, Yan J, Wu J, Wang C. Data-driven coordinated voltage control 
+method of distribution networks with high DG penetration. IEEE Trans Power Syst 
+2022;38(2):1543–57.
+[8] Xiang Y, Lu Y, Liu J. Deep reinforcement learning based topology-aware voltage 
+regulation of distribution networks with distributed energy storage. Appl Energy 
+2023;332:120510.
+[9] Li S, Wu W, Lin Y. Robust data-driven and fully distributed volt/var control for 
+active distribution networks with multiple virtual power plants. IEEE Trans Smart 
+Grid 2022;13(4):2627–38.
+[10] Huo Y, Li P, Ji H, Yu H, Zhao J, Xi W, Wu J, Wang C. Data-driven predictive voltage 
+control for distributed energy storage in active distribution networks. CSEE J Power 
+Energy Syst 2024;10(5):1876–86.
+[11] Xiao M, Xie W, Fang C, Wang S, Li Y, Liu S, Ullah Z, Zheng X, Arghandeh R. 
+Distribution line parameter estimation driven by probabilistic data fusion of D-PMU 
+and AMI. IET Gener Transm Distrib 2021;15(20):2883–92.
+[12] Kapoor S, Wills AG, Hendriks J, Blackhall L. Estimation of distribution grid line 
+parameters using smart meter data with missing measurements. Int J Electr Power 
+Energy Syst 2025;168:110634.
+[13] Liang D, Zeng L, Chiang H-D, Wang S. Power flow matching-based topology identifi­
+cation of medium-voltage distribution networks via AMI measurements. Int J Electr 
+Power Energy Syst 2021;130:106938.
+[14] Zhang H, Liu D, Zhao L, Wang J, Xie S, Liu S, Lin P, Zhang X, Chen C. Review on 
+corrosion and corrosion scale formation upon unlined cast iron pipes in drinking 
+water distribution systems. J Environ Sci 2022;117:173–89.
+[15] Wéber R, Hős C. Efficient technique for pipe roughness calibration and sen­
+sor placement for water distribution systems. J Water Resour Plan Manag 
+2020;146(1):04019070.
+[16] Jun S, Arbesser-Rastburg G, Fuchs-Hanusch D, Lansey K. Response surfaces for 
+water distribution system pipe roughness calibration. J Water Resour Plan Manag 
+2022;148(3):04021105.
+[17] Torres L, Jiménez-Cabas J, Ponsart JC, Theilliol D, Jiménez-Magaña MR, Guzmán 
+JEV. Pipe roughness calibration approach for water distribution network models 
+using a nonlinear state observer. Results Eng 2024;23:102713.
+[18] Bartos M, Thomas M, Kim M-G, Frankel M, Sela L. Online state estimation in 
+water distribution systems via extended Kalman filtering. Water Res 2024;264:
+122201.
+[19] Du K, Yu J, Zheng F, Kapelan Z, Savic D. Decoupling elevation errors from 
+pipe roughness calibration in hydraulic network models. Water Res 2026;290:
+125058.
+[20] Stuhlmacher A, Mathieu JL. Water distribution networks as flexible loads: a chance-
+constrained programming approach. Electr Power Syst Res 2020;188:106570.
+[21] Alhazmi M, Dehghanian P, Nazemi M, Oikonomou K. Uncertainty-informed 
+operation coordination in a water-energy nexus. IEEE Trans Ind Inform 
+2023;19(5):6439–49.
+[22] Ghasemi R, Doko G, Petrik M, Wosnik M, Lu Z, Foster DL, Mo W. Deep reinforcement 
+learning-based optimization of an island energy-water microgrid system. Resour 
+Conserv Recycl 2025;222:108440.
+[23] Raza N, Khazaei J, Moazeni F. Machine learning models for the economic dispatch 
+of islanded micro water-energy systems. Energy Convers Manag 2025;336:119827.
+[24] Iwakin O, Moazeni F, Khazaei J. Data-driven economic dispatch towards opera­
+tional management of distributed energy resources for grid-connected water-energy 
+microgrids. Energy 2025;335:137668.
+[25] Zheng JH, Liang ZT, Li ZG, Wang F, Wu QH. Online coal consumption characteristics 
+fitting for daily economic dispatch using a data-driven hybrid sequential model. Appl 
+Energy 2023;341:121127.
+[26] Zheng JH, Xiao W, Wu C, Li Z, Wang L, Wu QH. A gradient descent direction 
+based-cumulants method for probabilistic energy flow analysis of individual-based 
+integrated energy systems. Energy 2023;265:126290.
+[27] Zheng JH, Liang ZT, Li Y, Li Z, Wu QH. Multi-agent reinforcement learning with 
+privacy preservation for continuous double auction based P2P energy trading. IEEE 
+Trans Ind Inform 2024;20(4):6582–90.
+[28] Wu K, Gu J, Meng L, Wen H, Ma J. An explainable framework for load forecasting 
+of a regional integrated energy system based on coupled features and multi-task 
+learning. Prot Control Mod Power Syst 2022;7:24.
+[29] Hu C, Cai Z, Zhang Y, Yan R, Cai Y, Cen B. A soft actor-critic deep reinforce­
+ment learning method for multi-timescale coordinated operation of microgrids. Prot 
+Control Mod Power Syst 2022;7(1):29.
+[30] Chen X, Yu T, Pan Z, Wang Z, Yang S. Graph representation learning-based residen­
+tial electricity behavior identification and energy management. Prot Control Mod 
+Power Syst 2023;8(2):464–76.
+[31] Alhazmi M, Dehghanian P. Optimal integration of interconnected water and elec­
+tricity networks. IET Gener Transm Distrib 2021;15(14):2033–43.
+[32] Valverde G, Van Cutsem T. Model predictive control of voltages in active distribution 
+networks. IEEE Trans Smart Grid 2013;4(4):2152–61.
+[33] Wang Y, Zhao T, Ju C, Xu Y, Wang P. Two-level distributed volt/var control 
+using aggregated PV inverters in distribution networks. IEEE Trans Power Deliv 
+2020;35(4):1844–55.
+[34] Maharjan S, Khambadkone AM, Peng JC-H. Robust constrained model predic­
+tive voltage control in active distribution networks. IEEE Trans Sustain Energy 
+2021;12(1):400–11.
+[35] Gupta R, Sossan F, Paolone M. Model-less robust voltage control in active distri­
+bution networks using sensitivity coefficients estimated from measurements. Electr 
+Power Syst Res 2022;212:108547.
+[36] Yeh C, Yu J, Shi Y, Wierman A. Online learning for robust voltage control under 
+uncertain grid topology. IEEE Trans Smart Grid 2024;15(5):4754–64.
+[37] Jenks B, Ulusoy AJ, Pecci F, et al. Distributed nonconvex optimization for con­
+trol of water networks with time-coupling constraints. Water Resour Manag 
+2025;39(1):523–46.
+Applied Energy 424 (2026) 128483 
+15 

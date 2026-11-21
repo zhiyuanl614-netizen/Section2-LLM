@@ -1,0 +1,3174 @@
+Computers & Operations Research 144 (2022) 105812
+Available online 2 April 2022
+0305-0548/© 2022 Elsevier Ltd. All rights reserved.
+Contents lists available at ScienceDirect
+Computers and Operations Research
+journal homepage: www.elsevier.com/locate/cor
+Model and solution method for mean-risk cost-based post-disruption
+restoration of interdependent critical infrastructure networks
+Basem A. Alkhaleel a, Haitao Liao b,∗, Kelly M. Sullivan b
+a Department of Industrial Engineering, King Saud University, Riyadh 11421, Saudi Arabia
+b Department of Industrial Engineering, University of Arkansas, Fayetteville, AR 72701, USA
+A R T I C L E
+I N F O
+Keywords:
+Interdependent infrastructure networks
+Post-disruption restoration
+Mixed-integer linear programming
+A B S T R A C T
+Critical infrastructure networks (CINs), such as power grids, water distribution systems, and telecommunication
+networks, are essential for the functioning of society and the economy. As these infrastructure networks are
+not isolated from each other, their functions are not independent and may be vulnerable to disruptive events
+(e.g., component failures, terrorist attacks, natural disasters). For decision makers, how to restore the functions
+of CINs while accounting for interdependencies and various uncertainties becomes a challenging task. In this
+work, we study the post-disruption restoration problem for a system of interdependent CINs under uncertainty.
+We propose a two-stage mean-risk stochastic restoration model using mixed-integer linear programming (MILP)
+with the goal of minimizing the total cost associated with unsatisfied demands, repair tasks, and flow of
+interdependent infrastructure networks. The restoration model considers the availability of limited time and
+resources and provides a prioritized list of components to be restored along with assigning and scheduling them
+to the available network-specific work crews. Additionally, the model features flexible restoration strategies
+including multicrew assignment for a single component and a multimodal repair setting along with the
+consideration of full and partial functioning and dependencies between the multi-network components. The
+proposed model is illustrated using the power and water networks in Shelby County, Tennessee, United States,
+under two hypothetical earthquake scenarios.
+1. Introduction
+1.1. Background
+Modern societies rely on the proper functioning and sustainabil-
+ity of critical infrastructure networks (CINs) such as electric power
+systems, water supply systems, transportation, and telecommunica-
+tions (Karakoc et al., 2019). Therefore, maintaining secure and re-
+silient critical infrastructures (CIs) has become one of the most de-
+manding challenges for governments around the globe, especially in
+the last three decades (White House, 2013; Karagiannis et al., 2017;
+Humphreys, 2019). For instance, the United States (U.S.) federal plan-
+ning documents suggest the importance of addressing CI resilience
+in such a way that reflects its ‘‘interconnectedness and interdepen-
+dency’’ (White House, 2013). Planning for disruptions to CINs has
+shifted recently from emphasizing prevention and protection to cap-
+turing the CIs’ ability to withstand disruptions and quickly recover
+their functions (Hosseini et al., 2016; Humphreys, 2019). This ability
+to withstand, adapt to, and recover from disruptions is referred to as
+∗Corresponding author.
+E-mail address: liao@uark.edu (H. Liao).
+resilience (Barker et al., 2017; Almoghathawi et al., 2019; Humphreys,
+2019).
+CINs are often vulnerable and subject to natural and/or man-made
+disruption events (e.g., earthquakes, hurricanes, and malevolent at-
+tacks), which could impact the CINs’ performance unpredictably and re-
+sult in severe socioeconomic consequences (Almoghathawi et al., 2019;
+Alkhaleel et al., 2022). Indeed, such disruptions become inevitable in
+a modern world featuring growing dynamic and hazardous operating
+environments (Helbing, 2013). Economically, they have caused huge
+economic losses around the globe. In the past 50 years, more than
+22,500 disasters occurred globally impacting about 8 million people
+and costing approximately (in 2019 dollar-adjusted value) $3.7 tril-
+lion (CRED, 2021). Annually, only weather-related outages (excluding
+malevolent attacks and non-weather natural hazards) are estimated to
+have cost the U.S. economy an inflation-adjusted annual average of
+$18 billion up to $70 billion (Executive Office of the President, 2013;
+Campbell and Lowry, 2012).
+Interdependencies among infrastructure networks have become
+more frequent and complex due to the increasing trend of globalization
+https://doi.org/10.1016/j.cor.2022.105812
+Received 18 May 2021; Received in revised form 27 December 2021; Accepted 23 March 2022
+
+Computers and Operations Research 144 (2022) 105812
+2
+B.A. Alkhaleel et al.
+and technological developments (Rinaldi et al., 2001; Saidi et al.,
+2018; Karakoc et al., 2019). However, although interdependencies
+can improve the efficiency of networks functionality, this type of
+complex coordination often causes them to become more vulnerable
+to disruptions (e.g., random failures, malevolent attacks, and natural
+disasters) (Almoghathawi et al., 2021). As a result, a disruption in some
+components of one of the infrastructure networks could trigger a mal-
+function in the undisrupted components of other dependent networks,
+resulting in a series of cascading failures affecting the whole infrastruc-
+ture network system (Karakoc et al., 2019; Little, 2002; Wallace et al.,
+2003; Buldyrev et al., 2010; Eusgeld et al., 2011; Danziger et al., 2016;
+Ouyang, 2014). Although this complex form of interconnectedness of
+infrastructures was acknowledged two decades ago (Amin, 2002), the
+related research on interdependent networks only started quite recently
+as part of resilience engineering applications (Almoghathawi et al.,
+2019; Buldyrev et al., 2010, 2011; Cavdaroglu et al., 2011; Danziger
+et al., 2016).
+The high vulnerability of infrastructure networks against disrup-
+tions and the associated risks of such events have become a critical
+concern for decision makers, especially with the need to account for
+the interdependencies through recovery planning to obtain a realis-
+tic analysis of their performance (Holden et al., 2013). Moreover,
+scheduling the restoration processes separately for interdependent crit-
+ical infrastructure networks (ICINs) without considering their interde-
+pendencies could cause misutilization of resources, waste of time and
+funds, and even might trigger additional inefficiency of distribution
+systems (Baidya and Sun, 2017). However, functional connectivity
+among these CIs is not the only dependency that should be taken into
+account; spatial, cyber, social, and logical interdependencies are other
+interdependency forms that could impact restoration and recovery
+planning (Rinaldi et al., 2001; Min et al., 2007; Sharkey et al., 2015).
+Recent events such as Hurricane Harvey (Force, 2013) and the
+2016 Ecuador earthquake (Meltzer et al., 2019) suggest that not all
+undesired events can be prevented. In these events and many others,
+multiple networked systems including the transportation, power, and
+water networks are impacted (Mendonca et al., 2004; Manuel, 2013;
+Meltzer et al., 2019). Hence, improving recovery planning actions after
+disruptions is an essential part of CIs resilience. That is, resilience can
+be effectively improved by developing optimized plans for promptly
+restoring the disrupted service after the occurrence of a disruptive
+event. In planning ICINs restoration, prioritizing components is key in
+improving the recovery process and system resilience. It is also neces-
+sary to consider the practical significant challenges that face recovery
+actions such as repair times uncertainty and poor access to damaged
+facilities when developing restoration plans (Karagiannis et al., 2017).
+To this end, the development of effective restoration strategies and
+scheduling approaches for CIs post-disruption restoration is typically
+accomplished through optimization approaches. In the literature, there
+are numerous studies in the context of post-disruption CI restoration
+under a mathematical programming framework (Alkhaleel et al., 2022;
+Nurre and Sharkey, 2014; Vugrin et al., 2014; Fang and Sansavini,
+2017; Zhang et al., 2018). Of course, the main goal of such studies is to
+optimize the scheduling process of restoration tasks in order to accel-
+erate the recovery process and improve the overall resilience (Vugrin
+et al., 2014).
+1.2. CIs interdependencies classification
+Infrastructure networks are not isolated from each other, but rather
+they rely on one another in different ways for their proper functioning.
+Hence, they exhibit interdependency, where a pair of infrastructure
+networks are said to be interdependent if there is a bidirectional rela-
+tionship between them through which the state of each infrastructure
+depends on the state of the other (Rinaldi et al., 2001; Peerenboom
+et al., 2002). Interdependencies play a critical role in the resilience of
+CIs by not only contributing to the widespread of failure propagation
+(e.g., cascading failures), but also by either facilitating or complicat-
+ing the entire recovery process (Guidotti et al., 2016). The recovery
+rate of ICIs components depends on several factors which are often
+difficult to understand, model, and predict; hence, this uncertainty
+is reflected on planning the recovery strategy and utilizing related
+resources (Guidotti et al., 2016; Bruneau et al., 2003; Franchin and
+Cavalieri, 2015; Sharma et al., 2017). The need to describe the relation-
+ships among infrastructure systems, and the corresponding propagation
+of system disruptions led to the definition of several classifications of
+the nature of infrastructure interdependencies (e.g., Rinaldi et al., 2001;
+Lee I.I. et al., 2007; Wallace et al., 2003; Zimmerman, 2001; Zhang and
+Peeta, 2011). The classification of Rinaldi et al. (2001) is described as a
+‘‘self-contained classification’’ that is capable of capturing the different
+nature of interdependencies (Ouyang, 2014).
+The interdependencies between infrastructure networks were clas-
+sified by Rinaldi et al. (2001) into four categories:
+• Physical interdependency: an output from an infrastructure network
+is an input to another one and vice versa.
+• Cyber interdependency: if an infrastructure network depends on
+information transmitted through an information infrastructure.
+• Geographical interdependency: if two infrastructure networks are
+affected by the same local disruptive event.
+• Logical interdependency: all other types of interdependencies (e.g.,
+the social or legal link between two CIs).
+Fig. 1 shows the interdependencies between electric power networks
+and other infrastructure networks. Throughout this article, we focus
+on the physical interdependencies among different CINs. Note that the
+physical interdependency defined by Rinaldi et al. (2001) is equiv-
+alent to the so-called functional or input interdependency in other
+classifications (Lee I.I. et al., 2007).
+1.3. Related literature
+There are several modeling, optimization, and simulation tech-
+niques proposed in the literature that consider interdependencies be-
+tween infrastructure networks (see Ouyang, 2014 for a detailed re-
+view). Such techniques can be classified into six categories (Rinaldi,
+2004): (i) aggregate supply and demand tools, where infrastructures
+are linked by their demand for commodities (or services) supplied by
+other infrastructures (e.g., Enayaty Ahangar et al., 2020), (ii) dynamic
+simulations, which examines infrastructures operations, the effects of
+disruptions, and the associated consequences (e.g., Zhang et al., 2016
+(iii) agent-based models, where physical components of infrastructures
+can be modeled as agents allowing the analyses of the operational
+characteristics, the physical states of infrastructures, and the decision-
+making policies involved with infrastructure operations (e.g., Azucena
+et al., 2021). (iv) physics-based models, where physical characteristics
+of CIs can be analyzed with standard engineering techniques such
+as power flow in electric power grids (e.g., Unsihuay et al., 2007)
+(v) population mobility models, where this class of models examines
+the movement of entities (e.g., people following their daily routines)
+through urban regions (e.g., Casalicchio et al., 2009). (vi) Leontief
+input–output models, where Leontief’s model of economic flows can
+be applied to CIs studies (Haimes and Jiang, 2001). Throughout this
+article, the focus will be on the first category with aggregated supply
+and demand tools.
+Post-disruption restoration and recovery problems considering in-
+terdependent critical infrastructures (ICIs) have been addressed in the
+literature through different approaches. Almoghathawi et al. (2021)
+classifies these approaches into two broad categories: (i) infrastructure-
+specific approaches, which consider the physics of different infrastruc-
+tures (e.g., DC power flow model) and hence could be applied on these
+infrastructure networks only, and (ii) general approaches, which could
+be applied to any system of interdependent infrastructure networks.
+Both approaches often fall under the area of combining network design
+
+Computers and Operations Research 144 (2022) 105812
+3
+B.A. Alkhaleel et al.
+Fig. 1. Examples of electric power infrastructure dependencies.
+Source: Adapted from Rinaldi et al. (2001).
+and scheduling problems following the lead of Nurre et al. (2012)
+who introduced the integrated network design and scheduling problem
+(INDS) for restoring a single infrastructure network with the goal of
+maximizing the cumulative maximum flow over time. Other goals
+and problem types of post-disruption recovery can be found in the
+survey article by Çelik (2016) who summarized the work on recover-
+ing networks for humanitarian operations and the different problems
+(decision-making processes) associated with this field of research.
+Regarding the infrastructure-specific approaches for interdependent
+networks restoration, Coffrin et al. (2012) proposed a randomized
+adaptive decomposition approach to solve the problem of restoring
+two physically interdependent infrastructure networks, namely power
+and gas networks. They integrated two network-specific flow models
+(i.e., a linearized DC flow model for the power network and a maximum
+flow model for the gas network) using a mixed-integer programming
+(MIP) approach with the objective of maximizing the weighted sum of
+interdependent demand over the restoration time horizon. However,
+their proposed model did not consider different restoration durations
+for the disrupted components of both networks. Baidya and Sun (2017)
+presented an optimized restoration strategy with the goal of prior-
+itizing the restoration activities between two physically interdepen-
+dent infrastructure networks – power and communication networks –
+considering their physical properties. The proposed approach is for-
+mulated using MIP with the objective of activating every node in
+both networks with the minimum number of activation/energization
+of branches. Tootaghaj et al. (2017) studied the impact of cascading
+disruption on the physically interdependent power grid and communi-
+cation network by considering only disruptions in power networks. As
+a result, they proposed a two-step recovery approach. The first step is
+to avoid further cascades, for which they formulated the minimum cost
+flow assignment problem using linear programming with the objective
+of finding a DC power flow setting that stops the cascading failure at
+minimum cost. The second step is to provide a recovery schedule, for
+which they formulated the recovery problem using MIP – with the goal
+of maximizing the total amount of delivered power over the recovery
+horizon – and solved the problem using heuristic approaches.
+Regarding the general approaches for interdependent infrastructure
+networks restoration, Lee I.I. et al. (2007) proposed an MIP model for
+interdependent layer networks accounting for different interdependen-
+cies between the infrastructure networks. The objective of the model
+is to minimize the flow costs along with the costs of unmet demand.
+Moreover, the model focuses only on determining the set of disrupted
+components (i.e., edges) of the interdependent infrastructure networks
+that need to be recovered to restore the performance of each of the
+infrastructure networks to its pre-disruption functionality level. Hence,
+the proposed model does not specify a threshold time at which edges
+need to be restored nor the assignment of each work crew to restore
+which disrupted component. On the other hand, Gong et al. (2009)
+focused only on the scheduling problem of a predetermined set of
+disrupted components for ICINs with predefined due dates for them.
+They provided an MIP multi-objective restoration planning model to
+find the optimal restoration schedule for disrupted components. They
+proposed a logic-based benders decomposition approach to solve the
+model, whose objective is to minimize the weighted sum of cost,
+tardiness, and makespan associated with the restoration process. Cav-
+daroglu et al. (2011) integrated the two approaches by Lee I.I. et al.
+(2007) and Gong et al. (2009) by providing an MIP model that: (i)
+determines the set of disrupted components (i.e., edges) to be restored,
+(ii) assigns and schedules them to work crews. The model was solved
+using a suggested heuristic solution method. The objective of the
+model is to minimize the total cost of flow, unsatisfied demand, and
+installation and assignment associated with the full restoration of a set
+of infrastructure networks accounting for their interdependencies. In
+addition, Holden et al. (2013) proposed an extended network flow ap-
+proach to simulate the performance of infrastructure networks at a local
+scale (i.e., community scale) considering the physical interdependency
+among them. They provided a linear programming optimization model
+with the goal of finding the optimal performance of the infrastructure
+networks such that the total cost associated with production, storage,
+commodity flow, discharge, and shortage (i.e., unsatisfied demand) is
+minimized. However, the proposed approach by Holden et al. (2013)
+does not explicitly discuss what is the set of disrupted networks com-
+ponents, their restoration durations, their restoration priorities, and the
+availability of work crews. Ouyang and Wang (2015) compared the
+effectiveness of five strategies for joint restoration of interdependent
+infrastructures and applied a Genetic Algorithm (GA) to generate recov-
+ery sequences. Sharkey et al. (2015) studied the restoration of multiple
+ICINs under a centralized decision-making framework and proposed an
+MIP model to solve the problem. Additionally, González et al. (2016)
+proposed an MIP model for optimizing infrastructure systems joint
+restoration considering geographical and physical interdependencies
+between multiple CI systems. Di Muro et al. (2016) studied the re-
+covery problem of the system of ICINs in the presence of cascading
+failures to mitigate its breakdown. They considered the restoration of
+
+Computers and Operations Research 144 (2022) 105812
+4
+B.A. Alkhaleel et al.
+disrupted network components (i.e., nodes) located at the boundary
+of the largest connected component in the functional networks. In
+their study, they tried to reconnect the boundary nodes to the largest
+connected component considering the probability of recovery that halts
+the cascade.
+In recent years, Zhang et al. (2018) optimized the allocation of
+restoration resources for a set of physically interdependent infras-
+tructure networks to enhance their resilience. A genetic algorithm
+was developed to allocate limited resources to interdependent infras-
+tructure networks and to determine the optimal restoration budget
+following a disruptive event. Mooney et al. (2019) proposed a multi-
+objective MIP model that integrates a facilities location problem, that
+determines where resources should be stationed following a disrup-
+tion, and a recovery scheduling problem to optimize the restoration
+process of a system of ICIs. Karakoc et al. (2019) proposed a com-
+munity resilience-driven multi-objective MIP model to schedule the
+restoration process of disrupted components of a system of ICIs with
+emphasis on social vulnerability of communities. Almoghathawi et al.
+(2019) proposed a multi-objective MIP restoration model for systems
+of interdependent infrastructure networks. Their goal was to find the
+minimum-cost restoration strategy of a system of interdependent net-
+works that achieves a certain level of resilience. Ghorbani-Renani
+et al. (2020) proposed a tri-level pre- and post-disruption optimiza-
+tion problem integrating protection, interdiction, and restoration of
+a system of interdependent networks to improve both vulnerability
+and recoverability of the system. Garay-Sianca and Pinkley (2021)
+optimized the restoration of ICIs considering the movement of work
+crews (machines) through a damaged transportation network being
+restored by formulating and solving an MIP model.
+It is worth pointing out that most studies on post-disruption restora-
+tion and recovery of ICINs are based on deterministic assumptions
+such as complete information on restoration resources and duration of
+activities (Alkhaleel et al., 2022). However, the restoration of ICINs is
+complicated by numerous decisions that need to be made in a highly
+uncertain environment (Fang and Sansavini, 2019). Such uncertainty
+is linked to several factors including the availability of restoration
+resources, the time duration for repairing failed components and the ac-
+cessibility to failed components through the underlying transportation
+network (Alkhaleel et al., 2022). Moreover, existing optimization ap-
+proaches do not account for risk measures related to the uncertainty as-
+sociated with the execution of the optimal plan. Just recently, Alkhaleel
+et al. (2022) explored integrating risk to resilience-based restoration
+models; this work showed that it is essential to consider risk-averse
+decision-making, especially in one-shot applications, which are un-
+repeatable, such as post-disruption restoration of ICINs. This paper
+builds upon the previous work by the authors (Alkhaleel et al., 2022);
+however, here, we extend the previous work to ICINs with an un-
+derlying transportation network, explore flexible restoration strategies
+(i.e., multimode repair and multicrew assignments), and integrate costs
+of unsatisfied demand (resilience loss equivalent), repair, and flow into
+the model; with such modifications, we address some of the limitations
+of the previous work such as: (i) the need to choose between either
+a risk-neutral approach, which considers the preference criterion in
+terms of the expectation while comparing the random variables to
+find the best decisions, or a risk-averse alternative, which incorporates
+risk measures into the decision making process, to implement (cannot
+be combined), (ii) assuming binary functional status of each compo-
+nent (either fully functional or disrupted), (iii) preventing concurrent
+restoration of a single component by multiple crews (a single com-
+ponent can only be restored by one crew), (iv) lack of an economic
+measure for a developed plan (e.g., using only a resilience measure can
+cause extra hidden cost in the repair process), (v) unavailability levels
+of different repair modes for failed components (failed components
+need to be fully restored).
+1.4. Overview and research contribution
+In this article, we study the interdependent critical infrastructure
+networks restoration problem (ICINRP), which seeks to minimize the
+total cost associated with unsatisfied demand (resilience loss), repair
+tasks, and network flow by improving the restoration strategy of a
+system of interdependent networks following the occurrence of a dis-
+ruptive event considering limited time and resources availability. The
+goal of this paper is to help decision makers plan for ICIs recovery
+following the occurrence of a disruptive event not only by improving
+the speed of system recovery, but by also linking risk and its importance
+level, assessed by the decision maker, to the restoration plan decisions.
+Accordingly, a two-stage stochastic optimization model using mixed-
+integer linear programming was proposed to solve the ICINRP under
+a mean-risk measure, which combines the risk-neutral and risk-averse
+approaches into one model. The primary objective of the proposed
+model is to determine (i) the set of failed components to be restored,
+(ii) the repair mode for each failed component, (iii) the set of failed
+components for each crew to restore individually or concurrently, (iv)
+the baseline restoration sequence across scenarios for each crew in
+order to minimize the total cost associated with the restoration process
+(i.e., disruption, repair, and flow costs).
+The main contributions of this paper are four-fold. (1) This is
+the first paper that incorporates a mean-risk approach into ICIs post-
+disruption restoration models allowing decision makers to choose a
+risk-averse optimal plan related to a risk importance factor; (2) it
+explores flexible restoration strategies, and partial functioning and
+dependencies under uncertainty; (3) it provides an efficient solution ap-
+proach for solving mean-risk restoration models compared to standard
+solvers; and (4) the proposed model, solution approach, and flexible
+restoration strategies are tested using a realistic case study of a system
+of ICINs in Shelby County, Tennessee (TN), U.S. under two hypothetical
+earthquake scenarios.
+The remainder of this paper is organized as follows. Section 2
+presents the background and methodology pertinent to the developed
+model and summarizes the proposed mathematical formulations. Sec-
+tion 3 provides the solution approach used in this paper. Section 4
+presents a case study on the system of ICINs in Shelby County, TN,
+U.S. to illustrate the use and advantage of the suggested model. Finally,
+concluding remarks and future research directions are provided in
+Section 5.
+2. Methodology and model development
+2.1. Risk measure
+Before introducing the risk measure approach used in developing
+the mean-risk two-stage stochastic model, we first define the general
+form of two-stage stochastic models.
+Definition 2.1. Given a probability space denoted by (𝛺, , ), where
+𝛺is the sample space, is a 𝜎-algebra on 𝛺and is a probability
+measure on 𝛺; for a finite probability space, where 𝛺= {𝜔1, … , 𝜔𝑁
+}
+with corresponding probabilities 𝜋1, … , 𝜋𝑁, the general form of the
+two-stage stochastic linear programming problem is defined as (Birge
+and Louveaux, 2011):
+min
+𝒙∈𝑋E(𝑓(𝒙, 𝜔)) = min
+𝒙∈𝑋𝑐𝑇𝒙+ E(𝑄(𝒙, 𝜉(𝜔)))
+(1)
+where 𝑓(𝒙, 𝜔) = 𝒄𝑇𝒙+ 𝑄(𝒙, 𝜉(𝜔)) is the cost function of the first-stage
+problem and:
+𝑄(𝒙, 𝜉𝑖) = min
+𝒚𝑖
+{(𝒒𝑖)𝑇𝒚𝑖∶𝑳𝑖𝒙+ 𝑾𝑖𝒚𝑖= 𝒉𝑖, 𝒚𝑖≥0
+}
+(2)
+is the second-stage problem corresponding to the realization of the
+random data 𝜉(𝜔) for event 𝜔𝑖, denoted by 𝜉𝑖= (𝒒𝑖, 𝑳𝑖, 𝑾𝑖, 𝒉𝑖) where 𝒙
+and 𝒚are the vectors of first-stage and second-stage decision variables,
+respectively.
+
+Computers and Operations Research 144 (2022) 105812
+5
+B.A. Alkhaleel et al.
+The general two-stage stochastic optimization model is risk-neutral
+(i.e., there is no accounting for risk in the objective function). The main
+goal of such models is to show the effect of incorporating uncertainty
+compared to deterministic ones. However, although solutions to risk-
+neutral models often perform better than deterministic solutions, both
+solutions may be subject to poor performance for certain realizations
+in practice. Such realizations are known as worst-case scenarios in
+the stochastic optimization literature (Birge and Louveaux, 2011). It is
+found that under these high-risk scenarios, risk-neutral solutions often
+perform poorly, especially for CI restoration applications involving both
+social and economic impacts (Alkhaleel et al., 2022). Given the one-
+shot nature of CI restoration and its significant socioeconomic impact,
+it is of interest to consider stochastic models that account for both
+uncertainty and risk when planning restoration; such models are known
+as mean-risk models (Noyan, 2012). Mean-risk models are defined as
+in Definition 2.2:
+Definition 2.2.
+For a specific risk measure 𝜌∶→R, where 𝜌is
+a functional and is a linear space of -measurable functions on the
+probability space (𝛺, , ), a mean-risk function is defined as (Noyan,
+2012):
+min
+𝒙∈𝑋{E(𝑓(𝒙, 𝜔)) + 𝜁𝜌(𝑓(𝒙, 𝜔))}
+(3)
+where 𝜁is a non-negative trade-off coefficient representing the ex-
+change rate of mean cost for risk.
+The change rate of risk 𝜁, hereafter referred to as the risk coeffi-
+cient, is specified by the decision maker according to the assessment
+of the associated risk. Toward stating a mean-risk restoration opti-
+mization model in Section 2.2, we now summarize the Conditional
+Value at Risk (CVaR) as the risk measure (Rockafellar and Uryasev,
+2000; Krokhmal et al., 2002) and recap some results pertinent to the
+developed optimization model.
+Definition 2.3. Let 𝑍denote a loss random variable (the term ‘‘loss’’
+is used here to indicate that larger values are undesirable) with cumu-
+lative distribution function (CDF) 𝐹(⋅). For a given risk level 𝛼∈(0, 1],
+the Value at Risk (VaR) of 𝑍is defined as:
+VaR𝛼(𝑍) = min{𝑡|𝐹(𝑡) ≥𝛼} = min{𝑡|𝑃(𝑍≤𝑡) ≥𝛼}
+(4)
+Thus, for a continuous random variable 𝑍, VaR𝛼[𝑍] is the quantile
+of 𝑍that exceeds the loss with probability 𝛼. The CVaR for 𝑍with
+risk level 𝛼∈[0, 1] is the expected loss given that the loss is at least
+VaR𝛼(𝑍), i.e.:
+CVaR𝛼(𝑍) = E (𝑍|𝑍≥VaR𝛼(𝑍))
+(5)
+It is known that CVaR can also be expressed as the optimal solution to
+the optimization problem:
+CVaR𝛼[𝑍] = min
+𝜂∈R
+{
+𝜂+
+1
+1 −𝛼E [(𝑍−𝜂)+
+]}
+(6)
+where (𝑎)+ ∶= max(𝑎, 0) (Rockafellar and Uryasev, 2000). Combining
+Eqs. (3) and (5), the mean-risk model with a CVaR risk measure can be
+formulated as:
+min
+𝒙∈𝑋
+{E(𝑓(𝒙, 𝜔)) + 𝜁CVaR𝛼(𝑓(𝒙, 𝜔))}
+(7)
+Using the result from Eq. (6), Eq. (7) can be rewritten as:
+min
+𝒙∈𝑋,𝜂∈R
+{
+E(𝑓(𝒙, 𝜔)) + 𝜁
+(
+𝜂+
+1
+1 −𝛼E [(𝑓(𝒙, 𝜔)) −𝜂+
+])}
+(8)
+2.2. Mean-risk two-stage stochastic program formulation
+This section formulates a mean-risk two-stage stochastic program
+for the ICINRP in which the first-stage schedules the restoration of
+failed components for each network using multiple network-specific
+repair crews, chooses the repair mode for each failed component
+(e.g., perfect or imperfect), and determines the fixed restoration cost
+of failed components; and the second-stage determines the resulting
+costs associated with unmet demand and flow for networks under a
+given realization of the random variables (i.e., repair time for each
+component and travel times between components). Rather than to
+optimize explicitly over all random variables, it is common to sample
+scenarios from their joint distribution. Let 𝛺and 𝛹denote the set of
+scenarios and networks, respectively. For a given scenario 𝜔∈𝛺, let
+𝑡𝑡𝑟𝜓
+𝑐𝜔denote the time to repair component (either node or arc) 𝑐∈𝐶
+′𝜓.
+Note that throughout this article we refer to directed (unidirectional)
+edges as arcs and bidirectional ones as edges. For travel times, let 𝑡𝑡𝜓
+𝑐𝑐′
+denote the travel time from component 𝑐∈𝐶
+′𝜓to component 𝑐′ ∈𝐶
+′𝜓
+in the same network. It will also be convenient to define 𝜉(𝜔) as a vector
+specifying the realized values of all random variables in scenario 𝜔.
+An equivalent optimization problem to the mean-risk problem in
+Eq. (8) can be proposed for a finite probability space 𝛺= {𝜔1, … , 𝜔𝑁
+}
+with corresponding probabilities 𝜋1, … , 𝜋𝑁as shown in Remark 2.1:
+Remark 2.1.
+For a finite probability space 𝛺= {𝜔1, … , 𝜔𝑁
+} with
+|𝛺| = 𝑁and corresponding probabilities 𝜋1, … , 𝜋𝑁, an equivalent
+formulation of the mean-risk problem in Eq. (8):
+min
+𝒙∈𝑋,𝜂∈R
+{
+E(𝑓(𝒙, 𝜔)) + 𝜁
+(
+𝜂+
+1
+1 −𝛼E [(𝑓(𝒙, 𝜔)) −𝜂+
+])}
+is the following optimization problem:
+min
+𝒙∈𝑋,𝒚,𝜂∈R
+(1 + 𝜁)𝒄𝑇𝒙+
+|𝛺|
+∑
+𝜔=1
+𝜋𝜔
+(𝒒𝜔
+)𝑇𝒚𝜔+ 𝜁
+(
+𝜂+
+1
+1 −𝛼
+|𝛺|
+∑
+𝜔=1
+𝜋𝜔𝑣𝜔
+)
+(9)
+s.t.
+𝑾𝜔𝒚𝜔= 𝒉𝜔−𝑳𝜔𝒙,
+𝜔= 1, … , |𝛺|,
+(10)
+𝒙∈𝑋,
+(11)
+𝒚𝜔≥0,
+𝜔= 1, … , |𝛺|
+(12)
+𝑣𝜔≥(𝒒𝜔
+)𝑇𝒚𝜔−𝜂,
+𝜔= 1, … , |𝛺|
+(13)
+𝜂∈R, 𝑣𝜔≥0,
+𝜔= 1, … , |𝛺|
+(14)
+The proof of Remark 2.1 can be found in Noyan (2012). This result
+will be used to formulate the ICINs mean-risk two-stage stochastic
+programming problem following the notation.
+2.2.1. Assumptions
+There are several assumptions and considerations for the proposed
+mean-risk optimization model to solve the ICINRP:
+• Each supply node, demand node, and arc in each infrastructure
+network has a known supply capacity, demand, and flow capacity,
+respectively.
+• Each disrupted component in each infrastructure network can be
+restored under different possible repair modes (e.g., perfect and
+imperfect), where each repair mode is related proportionally to
+the restored capacity of the failed component and the restoration
+time.
+• Imperfect node repair proportionally adjusts a restored node’s
+ability to generate supply or consume demand but assumes nodes
+are uncapacitated for incoming and outgoing flow (transshipment
+nodes are only restored in perfect repair mode).
+• Each disrupted component in each network can be restored with
+a different restoration time under each scenario.
+• The flow costs through each arc, unmet demand costs, and
+restoration costs for disrupted components in each infrastructure
+network are known and fixed.
+• Repair times are measured in man-hour units allowing for shorter
+repair times with a higher number of crews allocated.
+• The number of available network-specific work crews for each
+infrastructure network is known.
+
+Computers and Operations Research 144 (2022) 105812
+6
+B.A. Alkhaleel et al.
+2.2.2. Notation
+A summary of notation follows. In addition to the notation already
+defined, the summary defines (i) first-stage binary variables 𝑥𝜓
+𝑐𝑐′𝑘and
+𝑜𝜓
+𝑐𝑦in order to encode a restoration plan and choose repair modes for
+different components (i.e., some disrupted critical components need
+to be fully repaired to restore the performance of the system while
+only imperfect repair is needed for other components), (ii) second-stage
+binary variables 𝜅𝜓
+𝑐𝑘𝑦𝜔(𝑡) and 𝑠𝜓
+𝑐𝜔(𝑡) in order to resolve the status of
+each disrupted component and each crew restoration rate for each time
+period and realized scenario, (iii) second-stage continuous variables
+𝑝𝜓
+𝑐𝑘𝑦𝜔and 𝜄𝜓
+𝑐𝑘𝑦𝜔(𝑡) to mange the assigned restoration task proportion
+of each component to crews and check the completion of these tasks
+under each realized scenario, and (iv) flow variables 𝑓𝜓
+𝑖𝑗𝜔(𝑡) in order to
+facilitate determining the maximum weighted flow for each time period
+and realized scenario. The feasible region of the optimization problem
+is denoted by 𝑋, and the set of decision variables is represented as
+{𝑥, 𝑜, 𝑓, 𝑢, 𝑠, 𝜅, 𝑠𝑡, 𝑝, 𝜄, 𝜂, 𝑣}.
+Parameters & Sets
+𝛹
+Set of infrastructure networks
+𝛶
+Set of interdependent nodes 𝑖and 𝑖′ between
+networks 𝜓and 𝜓′ (𝜓≠𝜓′) where node 𝑖∈𝑉𝜓
+requires node 𝑖′ ∈𝑉𝜓′ to be operational
+((𝑖, 𝜓) ≠(𝑖′, 𝜓′))
+𝐺𝜓(𝑉𝜓, 𝐴𝜓)
+Directed graph consisting of nodes 𝑉𝜓and arcs
+𝐴𝜓for each network 𝜓∈𝛹
+{𝑉𝜓
++ , 𝑉𝜓
+∗, 𝑉𝜓
+−}
+Set of {supply, transshipment, demand} nodes for
+each network 𝜓∈𝛹
+𝑇
+The number of time periods in restoration
+planning
+𝐴
+′𝜓
+Set of failed arcs before restoration (𝐴
+′𝜓⊂𝐴𝜓)
+for each network 𝜓∈𝛹
+𝑉
+′𝜓
+Set of failed nodes before restoration (𝑉
+′𝜓⊂𝑉𝜓)
+for each network 𝜓∈𝛹
+𝐶𝜓
+Set of all components (𝐶𝜓= 𝐴𝜓∪𝑉𝜓) in network
+𝜓∈𝛹
+𝐶
+′𝜓
+Set of all failed components (𝐶
+′𝜓= 𝐴
+′𝜓∪𝑉
+′𝜓) in
+network 𝜓∈𝛹
+𝐾𝜓
+Set of repair crews for each network 𝜓∈𝛹
+𝑌𝜓
+Set of repair modes for each network 𝜓∈𝛹
+𝑃𝑖𝜓
++
+Supply of node 𝑖∈𝑉𝜓
++ per time period for each
+network 𝜓∈𝛹
+𝑃𝑖𝜓
+−
+Demand of node 𝑖∈𝑉𝜓
+−per time period for each
+network 𝜓∈𝛹
+𝑃𝜓
+𝑖𝑗
+Flow capacity of arc (𝑖, 𝑗) ∈𝐴𝜓per time period
+for each network 𝜓∈𝛹
+𝜒𝜓
+𝑦
+Capacity proportion associated with each repair
+mode 𝑦∈𝑌𝜓
+𝑡𝑡𝜓
+𝑐𝑐′𝜔
+Travel time between component 𝑐∈𝐶
+′𝜓and
+𝑐′ ∈𝐶
+′𝜓for each network 𝜓in scenario 𝜔
+𝑡𝑡𝑟𝜓
+𝑐𝜔
+Time to repair component 𝑐∈𝐶
+′𝜓for each
+network 𝜓under each scenario 𝜔
+𝑐𝜓
+𝑟
+Fixed restoration cost for component 𝑐∈𝐶
+′𝜓for
+each network 𝜓
+𝑐𝜓
+𝑑
+Penalty cost of unmet demand in node 𝑗∈𝑉𝜓
+−for
+each network 𝜓
+𝑐𝜓
+𝑓
+Unitary flow cost through arc (𝑖, 𝑗) ∈𝐴𝜓for each
+network 𝜓
+𝜁
+Risk coefficient value representing the risk
+weighted importance chosen by the modeler
+𝛼
+Risk level chosen by the modeler
+Decision Variables
+𝑓𝜓
+𝑖𝑗𝜔(𝑡)
+Flow on arc (𝑖, 𝑗) ∈𝐴𝜓in time 𝑡∈{1 … 𝑇} for
+each scenario 𝜔for each network 𝜓
+𝑓𝜓
+𝑗𝜔(𝑡)
+Total flow reaching demand node 𝑗∈𝑉𝜓
+−in time
+𝑡∈{1 … 𝑇} for each scenario 𝜔
+𝑢𝜓
+𝑖𝜔(𝑡)
+Amount of unmet demand at node 𝑖∈𝑉𝜓
+−in time
+𝑡∈{1 … 𝑇} for each scenario 𝜔
+𝑜𝜓
+𝑐𝑦
+Binary variable indicating whether (𝑜𝜓
+𝑐𝑦= 1) or
+not (𝑜𝜓
+𝑐𝑦= 0) component 𝑐∈𝐶
+′𝜓will be repaired
+under mode 𝑦∈𝑌𝜓
+𝑠𝜓
+𝑐𝜔(𝑡)
+Binary variable indicating whether (𝑠𝜓
+𝑐𝜔= 1) or
+not (𝑠𝜓
+𝑐𝜔= 0) component 𝑐∈𝐶𝜓is functioning at
+time 𝑡∈{0 … 𝑇}
+𝑠𝑡𝜓
+𝑐𝑘𝜔
+Time at which crew 𝑘∈𝐾𝜓begins repairing
+component 𝑐∈𝐶
+′𝜓in scenario 𝜔
+𝑝𝜓
+𝑐𝑘𝑦𝜔
+Continuous variable ∈[0, 1] indicating the
+proportional repair task for each crew 𝑘∈𝐾𝜓in
+restoring component 𝑐∈𝐶
+′𝜓under repair mode
+𝑦∈𝑌𝜓; 0 for no contribution and 1 for full
+restoration by a single crew 𝑘∈𝐾𝜓
+𝜅𝜓
+𝑐𝑘𝑦𝜔(𝑡)
+Binary variable that equals 1 if component
+𝑐∈𝐶
+′𝜓is assigned to crew 𝑘∈𝐾𝜓under repair
+mode 𝑦∈𝑌𝜓and crew 𝑘∈𝐾𝜓restored the
+assigned 𝑝𝜓
+𝑐𝑘𝑦𝜔by time 𝑡∈{0 … 𝑇}; 0 otherwise
+𝑥𝜓
+𝑐𝑐′𝑘
+Binary variable that equals 1 if crew 𝑘∈𝐾𝜓
+repairs component 𝑐∈𝐶
+′𝜓before component
+𝑐′ ∈𝐶
+′𝜓⧵{𝑐}
+𝜄𝜓
+𝑐𝑘𝑦𝜔(𝑡)
+Continuous variable ∈[0, 1] indicating whether
+the proportional restoration task assigned to each
+crew 𝑘∈𝐾𝜓for component 𝑐∈𝐶
+′𝜓under repair
+mode 𝑦∈𝑌𝜓is accomplished by time 𝑡∈{1 … 𝑇}
+𝜂
+Auxiliary variable representing the VaR𝛼
+𝑣𝜔
+Continuous variable representing the second-stage
+costs in scenario 𝜔
+The two-stage mean-risk stochastic optimization model for minimiz-
+ing the expected total cost of the ICINRP follows:
+min
+{𝑥,𝑜,𝑓,𝑢,𝑠,𝜅,𝑠𝑡,𝑝,𝜄,𝜂,𝑣}∈𝑋(1 + 𝜁)
+( ∑
+𝜓∈𝛹
+∑
+𝑦∈𝑌𝜓
+𝑐𝜓
+𝑟𝑜𝜓
+𝑐𝑦𝜒𝜓
+𝑦
+)
++
+|𝛺|
+∑
+𝜔=1
+𝜋𝜔
+∑
+𝜓∈𝛹
+∑
+𝑡∈{1…𝑇}
+( ∑
+𝑖𝑗∈𝐴𝜓
+𝑐𝜓
+𝑓𝑓𝜓
+𝑖𝑗𝜔(𝑡) +
+∑
+𝑗∈𝑉𝜓
+−
+𝑐𝜓
+𝑑𝑢𝜓
+𝑗𝜔(𝑡)
+)
++ 𝜁
+(
+𝜂+
+1
+1 −𝛼
+|𝛺|
+∑
+𝜔=1
+𝜋𝜔𝑣𝜔
+)
+(15)
+s.t.
+∑
+𝑖𝑗∈𝐴𝜓
+𝑓𝜓
+𝑖𝑗𝜔(𝑡) −
+∑
+𝑗𝑖∈𝐴𝜓
+𝑓𝜓
+𝑗𝑖𝜔(𝑡) ≤𝑃𝑖𝜓
++ ,
+∀𝑖∈𝑉𝜓
++ , ∀𝑡∈{1 … 𝑇}, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(16)
+∑
+𝑖𝑗∈𝐴𝜓
+𝑓𝜓
+𝑖𝑗𝜔(𝑡) −
+∑
+𝑗𝑖∈𝐴𝜓
+𝑓𝜓
+𝑗𝑖𝜔(𝑡) = 0, ∀𝑖∈𝑉𝜓
+∗,
+∀𝑡∈{1 … 𝑇}, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(17)
+∑
+𝑖𝑗∈𝐴𝜓
+𝑓𝜓
+𝑖𝑗𝜔(𝑡) −
+∑
+𝑗𝑖∈𝐴𝜓
+𝑓𝜓
+𝑗𝑖𝜔(𝑡) −𝑢𝜓
+𝑖𝜔(𝑡) = −𝑃𝑖𝜓
+−
+,
+∀𝑖∈𝑉𝜓
+−, ∀𝑡∈{1 … 𝑇}, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(18)
+0 ≤𝑢𝜓
+𝑖𝜔(𝑡) ≤𝑃𝑖𝜓
+−, ∀𝑖∈𝑉𝜓
+−, ∀𝑡∈{1 … 𝑇}, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(19)
+0 ≤𝑓𝜓
+𝑖𝑗𝜔(𝑡) ≤𝑠𝜓
+𝑖𝑗𝜔(𝑡)𝑃𝜓
+𝑖𝑗,
+∀𝑖𝑗∈𝐴𝜓, ∀𝑡∈{1 … 𝑇}, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(20)
+0 ≤𝑓𝜓
+𝑖𝑗𝜔(𝑡) ≤𝑠𝜓
+𝑖𝜔(𝑡)𝑃𝜓
+𝑖𝑗, ∀𝑖𝑗∈𝐴𝜓, ∀𝑖∈𝑉𝜓,
+∀𝑡∈{1 … 𝑇}, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(21)
+
+Computers and Operations Research 144 (2022) 105812
+7
+B.A. Alkhaleel et al.
+0 ≤𝑓𝜓
+𝑖𝑗𝜔(𝑡) ≤𝑠𝜓
+𝑗𝜔(𝑡)𝑃𝜓
+𝑖𝑗,
+∀𝑖𝑗∈𝐴𝜓, ∀𝑗∈𝑉𝜓, ∀𝑡∈{1 … 𝑇}, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(22)
+0 ≤𝑓𝜓
+𝑖𝑗𝜔(𝑡) ≤
+∑
+𝑦∈𝑌𝜓
+𝑜𝜓
+𝑖𝑗𝑦𝜒𝜓
+𝑦𝑃𝜓
+𝑖𝑗,
+∀𝑖𝑗∈𝐴′𝜓, ∀𝑡∈{1 … 𝑇}, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(23)
+∑
+𝑖𝑗∈𝐴𝜓
+𝑓𝜓
+𝑖𝑗𝜔(𝑡) −
+∑
+𝑗𝑖∈𝐴𝜓
+𝑓𝜓
+𝑗𝑖𝜔(𝑡) ≤
+∑
+𝑦∈𝑌𝜓
+𝑜𝜓
+𝑖𝑦𝜒𝜓
+𝑦𝑃𝑖𝜓
++ ,
+∀𝑖∈𝑉𝜓
++ ∩𝑉
+′𝜓, ∀𝑡∈{1 … 𝑇}, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(24)
+∑
+𝑖𝑗∈𝐴𝜓
+𝑓𝜓
+𝑖𝑗𝜔(𝑡) −
+∑
+𝑗𝑖∈𝐴𝜓
+𝑓𝜓
+𝑗𝑖𝜔(𝑡) ≥−
+∑
+𝑦∈𝑌𝜓
+𝑜𝜓
+𝑖𝑦𝜒𝜓
+𝑦𝑃𝑖𝜓
+−,
+∀𝑖∈𝑉𝜓
+−∩𝑉
+′𝜓, ∀𝑡∈{1 … 𝑇}, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(25)
+𝑠𝜓
+𝑐𝜔(0) = 0, ∀𝑐∈𝐶
+′𝜓, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(26)
+𝑠𝜓
+𝑐𝜔(0) = 1, ∀𝑐∈𝐶𝜓∖𝐶
+′𝜓, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(27)
+𝜅𝜓
+𝑐𝑘𝑦𝜔(0) = 0, ∀𝑐∈𝐶
+′𝜓, ∀𝑘∈𝐾𝜓, ∀𝑦∈𝑌𝜓, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(28)
+∑
+𝑦∈𝑌𝜓
+𝑜𝜓
+𝑐𝑦≤1, ∀𝑐∈𝐶
+′𝜓, ∀𝜓∈𝛹
+(29)
+𝑜𝜓
+𝑐𝑦𝑡≥𝑠𝑡𝜓
+𝑐𝑘𝜔+ 𝑝𝜓
+𝑐𝑘𝑦𝜔𝜒𝜓
+𝑦𝑡𝑡𝑟𝜓
+𝑐𝜔−𝑀(1 −𝜅𝜓
+𝑐𝑘𝑦𝜔(𝑡)),
+∀𝑐∈𝐶
+′𝜓, ∀𝑡∈{1 … 𝑇}, ∀𝑘∈𝐾𝜓,
+∀𝑦∈𝑌𝜓, ∀𝜓∈𝛹
+(30)
+∑
+𝑘∈𝐾𝜓
+𝑝𝜓
+𝑐𝑘𝑦𝜔= 𝑜𝜓
+𝑐𝑦, ∀𝑐∈𝐶
+′𝜓, ∀𝑦∈𝑌𝜓, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(31)
+𝑠𝜓
+𝑐𝜔(𝑡) ≤𝑠𝜓
+𝑐𝜔(𝑡+ 1) , ∀𝑐∈𝐶𝜓, ∀𝑡∈{0 … 𝑇−1}, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(32)
+𝜅𝜓
+𝑐𝑘𝑦𝜔(𝑡) ≤𝜅𝜓
+𝑐𝑘𝑦𝜔(𝑡+ 1) , ∀𝑐∈𝐶
+′𝜓, ∀𝑡∈{0 … 𝑇−1},
+∀𝑘∈𝐾𝜓, ∀𝑦∈𝑌𝜓, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(33)
+𝑠𝑡𝜓
+𝑐𝑘𝜔+
+∑
+𝑦∈𝑌𝜓
+𝑝𝜓
+𝑐𝑘𝑦𝜔𝜒𝜓
+𝑦𝑡𝑡𝑟𝜓
+𝑐𝜔+ 𝑡𝑡𝜓
+𝑐𝑐′𝜔≤𝑠𝑡𝜓
+𝑐′𝑘𝜔+ 𝑀𝑥𝜓
+𝑐𝑐′𝑘,
+∀𝑐, 𝑐′ ∈𝐶
+′𝜓∶𝑐≠𝑐′,
+∀𝑘∈𝐾𝜓, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(34)
+𝑠𝑡𝜓
+𝑐′𝑘𝜔+
+∑
+𝑦∈𝑌𝜓
+𝑝𝜓
+𝑐′𝑘𝑦𝜔𝜒𝜓
+𝑦𝑡𝑡𝑟𝜓
+𝑐′𝜔+ 𝑡𝑡𝜓
+𝑐′𝑐𝜔≤𝑠𝑡𝜓
+𝑐𝑘𝜔+ 𝑀(1 −𝑥𝜓
+𝑐𝑐′𝑘),
+∀𝑐, 𝑐′ ∈𝐶
+′𝜓∶𝑐≠𝑐′,
+∀𝑘∈𝐾𝜓, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(35)
+𝑠𝑡𝜓
+𝑐𝑘𝜔≥(1 −
+∑
+𝑦∈𝑌𝜓
+𝑜𝜓
+𝑐𝑦)𝑇, ∀𝑐∈𝐶
+′𝜓, ∀𝑘∈𝐾𝜓, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(36)
+𝑠𝜓
+𝑐𝜔(𝑡) ≤
+∑
+𝑘∈𝐾𝜓
+∑
+𝑦∈𝑌𝜓
+𝜄𝜓
+𝑐𝑘𝑦𝜔(𝑡), ∀𝑐∈𝐶
+′𝜓, ∀𝑡∈{1 … 𝑇}, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(37)
+𝜄𝜓
+𝑐𝑘𝑦𝜔(𝑡) ≤𝜅𝜓
+𝑐𝑘𝑦𝜔(𝑡),
+∀𝑐∈𝐶
+′𝜓, ∀𝑡∈{1 … 𝑇}, ∀𝑘∈𝐾𝜓, ∀𝑦∈𝑌𝜓, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(38)
+𝜄𝜓
+𝑐𝑘𝑦𝜔(𝑡) ≤𝑝𝜓
+𝑐𝑘𝑦𝜔, ∀𝑐∈𝐶
+′𝜓,
+∀𝑡∈{1 … 𝑇}, ∀𝑘∈𝐾𝜓, ∀𝑦∈𝑌𝜓, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(39)
+𝜄𝜓
+𝑐𝑘𝑦𝜔(𝑡) ≥𝑝𝜓
+𝑐𝑘𝑦𝜔−(1 −𝜅𝜓
+𝑐𝑘𝑦𝜔(𝑡)),
+∀𝑐∈𝐶
+′𝜓, ∀𝑡∈{1 … 𝑇}, ∀𝑘∈𝐾𝜓, ∀𝑦∈𝑌𝜓, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(40)
+𝑠𝜓
+𝑖𝜔(𝑡) −𝑠𝜓′
+𝑖′𝜔(𝑡) ≤0 ,
+∀(𝑖, 𝑖′) ∈𝛶∶(𝑖, 𝜓) ≠(𝑖′, 𝜓′), ∀𝑡∈{1 … 𝑇}
+(41)
+∑
+𝑖𝑗∈𝐴𝜓
+𝑓𝜓
+𝑖𝑗𝜔(𝑡) −
+∑
+𝑗𝑖∈𝐴𝜓
+𝑓𝜓
+𝑗𝑖𝜔(𝑡) ≤
+∑
+𝑦∈𝑌𝜓
+𝑜𝜓
+𝑖′𝑦𝜒𝜓
+𝑦𝑃𝑖𝜓
++ ,
+∀(𝑖, 𝑖′) ∈𝛶∶(𝑖, 𝜓) ≠(𝑖′, 𝜓′), 𝑖∈𝑉𝜓
++ ,
+∀𝑡∈{1 … 𝑇}, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(42)
+∑
+𝑖𝑗∈𝐴𝜓
+𝑓𝜓
+𝑖𝑗𝜔(𝑡) −
+∑
+𝑗𝑖∈𝐴𝜓
+𝑓𝜓
+𝑗𝑖𝜔(𝑡) ≥−
+∑
+𝑦∈𝑌𝜓
+𝑜𝜓
+𝑖′𝑦𝜒𝜓
+𝑦𝑃𝑖𝜓
+−,
+∀(𝑖, 𝑖′) ∈𝛶∶(𝑖, 𝜓) ≠(𝑖′, 𝜓′), ∀𝑖∈𝑉𝜓
+−,
+∀𝑡∈{1 … 𝑇}, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(43)
+𝑣𝜔≥
+∑
+𝜓∈𝛹
+∑
+𝑡∈{1…𝑇}
+( ∑
+𝑖𝑗∈𝐴𝜓
+𝑐𝜓
+𝑓𝑓𝜓
+𝑖𝑗𝜔(𝑡) +
+∑
+𝑗∈𝑉𝜓
+−
+𝑐𝜓
+𝑑𝑢𝜓
+𝑗𝜔(𝑡)
+)
+−𝜂
+(44)
+𝑥𝜓
+𝑐𝑐′𝑘∈{0, 1}, ∀𝑐∈𝐶
+′𝜓, ∀𝑐′ ∈𝐶
+′𝜓⧵{𝑐}, ∀𝑘∈𝐾𝜓, ∀𝜓∈𝛹
+(45)
+𝑜𝜓
+𝑐𝑦∈{0, 1}, ∀𝑐∈𝐶
+′𝜓, ∀𝑦∈𝑌𝜓, ∀𝜓∈𝛹
+(46)
+𝜅𝜓
+𝑐𝑘𝑦𝜔(𝑡) ∈{0, 1},
+∀𝑐∈𝐶
+′𝜓, ∀𝑡∈{0 … 𝑇}, ∀𝑘∈𝐾𝜓, ∀𝑦∈𝑌𝜓, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(47)
+𝑠𝜓
+𝑐𝜔(𝑡) ∈{0, 1}, ∀𝑐∈𝐶𝜓, ∀𝑡∈{1 … 𝑇}, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(48)
+𝑝𝜓
+𝑐𝑘𝑦𝜔∈[0, 1], ∀𝑐∈𝐶
+′𝜓, ∀𝑘∈𝐾𝜓, ∀𝑦∈𝑌𝜓, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(49)
+𝜄𝜓
+𝑐𝑘𝑦𝜔(𝑡) ∈[0, 1],
+∀𝑐∈𝐶
+′𝜓, ∀𝑡∈{1 … 𝑇}, ∀𝑘∈𝐾𝜓, ∀𝑦∈𝑌𝜓, ∀𝜔∈𝛺, ∀𝜓∈𝛹
+(50)
+𝜂∈R
+(51)
+𝑣𝜔≥0, ∀𝜔∈𝛺
+(52)
+The goal of model (15)–(52) is to determine (i) the set of failed com-
+ponents to be restored, (ii) the repair mode for each failed component,
+(iv) the set of failed components for each crew to restore individually or
+concurrently, and (v) the baseline restoration sequence across scenarios
+for each crew in order to minimize the total cost associated with
+unsatisfied demand (loss of resilience): ∑
+𝑗∈𝑉𝜓
+−𝑐𝜓
+𝑑𝑢𝜓
+𝑗𝜔(𝑡), restoration:
+∑
+𝑦∈𝑌𝜓𝑐𝜓
+𝑟𝑜𝜓
+𝑐𝑦𝜒𝜓
+𝑦, and flow: ∑
+𝑖𝑗∈𝐴𝜓𝑐𝜓
+𝑓𝑓𝜓
+𝑖𝑗𝜔(𝑡) for each network 𝜓∈𝛹.
+Constraints (16)–(18) are flow balance constraints for each network
+𝜓. Constraint (19) ensures that the unsatisfied demand 𝑢𝜓
+𝑖𝜔(𝑡) for each
+demand node 𝑗∈𝑉𝜓
+−does not exceed demand 𝑃𝑖𝜓
+−in every time period.
+Constraints (20)–(22) ensure that the flow on each arc (𝑖, 𝑗) ∈𝐴𝜓in
+each time period does not exceed its capacity if the arc and both of its
+end nodes 𝑖, 𝑗are functioning (flow is 0 if the arc or one of its nodes
+is failed). Constraint (23) ensures that the flow on each arc (𝑖, 𝑗) ∈𝐴
+′𝜓
+in each time period does not exceed its capacity associated with the
+chosen repair mode 𝜒𝜓
+𝑦𝑃𝜓
+𝑖𝑗, where 𝜒𝜓
+𝑦
+is the percentage of capacity
+restored for each component under repair mode 𝑦∈𝑌𝜓. Similarly,
+Constraints (24)–(25) limit the outgoing flow from each failed supply
+node 𝑖∈𝑉𝜓
++ ∩𝑉
+′𝜓and the incoming flow to each failed demand
+node 𝑖∈𝑉𝜓
+−∩𝑉
+′𝜓to the capacities of the nodes associated with the
+chosen repair modes. Constraints (26) and (27) set the initial state of
+components to be 0 for failed components and 1 for other components.
+Similarly, Constraint (28) prevents the completion of failed components
+restoration by time 0. Constraint (29) prevents assigning more than
+one repair mode for each failed component. Constraint (30) ensures
+that crew 𝑘∈𝐾𝜓has completed its task of restoring failed component
+𝑐∈𝐶
+′𝜓under repair mode 𝑦∈𝑌𝜓the assigned proportion 𝑝𝜓
+𝑐𝑘𝑦𝜔by
+time 𝑡∈{1 … 𝑇} if and only if the restoration start time added to the
+task repair time is no more than 𝑡. Note that the restoration time of a
+component as well as its restored capacity depends on the repair mode
+𝑦∈𝑌𝜓; that is, for a repair mode 𝑦∈𝑌𝜓with percentage 𝜒𝜓
+𝑦= %𝑞,
+both capacity and repair time are reduced by %(1 −𝑞). Constraint (31)
+ensures that restoration assignments for each failed component 𝑐∈𝐶
+′𝜓
+to all crews do not exceed the restoration task for that component
+under repair mode 𝑦∈𝑌𝜓. Constraint (32) ensures that components
+for each network 𝜓in 𝐶
+′𝜓remain functioning after being restored,
+and components in 𝐶𝜓∖𝐶
+′𝜓are functioning for the entire restoration
+period. Constraint (33) imposes a similar restriction on the 𝜅𝜓
+𝑐𝑘𝑦𝜔(𝑡)-
+variables; that is, if crew 𝑘∈𝐾𝜓completed the task of repairing
+component 𝑐∈𝐶
+′𝜓by time period 𝑡∈{1 … 𝑇−1}, where 𝜅𝜓
+𝑐𝑘𝑦𝜔(0) =
+𝑠𝜓
+𝑐𝜔(0) at 𝑡= 0 by Constraint (28), then this task remains completed
+by time period 𝑡+ 1. Constraints (34)–(35) manage the restoration
+scheduling process by ensuring that each crew 𝑘∈𝐾𝜓can work on
+repairing at most one component at a time, according to the sched-
+ule specified by the 𝑥𝜓
+𝑐𝑐′𝑘-variables. Relative to Constraints (34)–(35),
+Constraint (36) prevents scheduling non-selected failed components for
+
+Computers and Operations Research 144 (2022) 105812
+8
+B.A. Alkhaleel et al.
+repair throughout the restoration total time 𝑇. Defining 𝑡𝑡𝑟𝜓max
+𝑖𝑗𝜔
+and
+𝑡𝑡𝜓max
+𝑖𝑗𝑖′𝑗′𝜔as the maximum repair time parameter of any failed component
+in each network under all scenarios and the maximum travel time
+parameter between any two failed components in each network under
+all scenarios, 𝑀= |𝐴
+′𝜓|(𝑡𝑡𝑟𝜓max
+𝑖𝑗𝜔
++ 𝑡𝑡𝜓max
+𝑖𝑗𝑖′𝑗′𝜔) is sufficiently large in Con-
+straint (30) and Constraints (34)–(35). Constraints (37)–(40) ensure the
+completion of the restoration process for each selected component 𝑐∈
+𝐶
+′𝜓under repair mode 𝑦∈𝑌𝜓by checking the functional status of each
+failed component at time 𝑡∈{1 … 𝑇} in Constraint (37) based on the
+completion of each crew 𝑘∈𝐾𝜓its assigned task in restoring the failed
+component in Constraints (38)–(40). Specifically, Constraints (38)–(40)
+impose that 𝜄𝜓
+𝑐𝑘𝑦𝜔(𝑡) = 𝑝𝜓
+𝑐𝑘𝑦𝜔𝜅𝜓
+𝑐𝑘𝑦𝜔(𝑡) and Constraint (37) imposes that
+component 𝑐∈𝐶
+′𝜓is only functioning at time 𝑡∈{1 … 𝑇} if the
+cumulative restoration proportion (across all crews) under the selected
+repair mode 𝑦∈𝑌𝜓is 1. Note how Constraint (37) represents the sum
+of the products of 𝑝𝜓
+𝑐𝑘𝑦𝜔and 𝜅𝜓
+𝑐𝑘𝑦𝜔(𝑡) decision variables via 𝜄𝜓
+𝑐𝑘𝑦𝜔(𝑡), and
+that Constraints (38)–(40) are introduced to linearize the bilinear terms
+of the sum. Constraints (41)–(43) are the interdependence constraints
+across networks 𝛶; such constraints ensure that interdependencies be-
+tween networks given by a set of interdependent nodes across networks
+𝛶are respected. In particular, Constraint (41) ensures that a node
+𝑖in network 𝜓that is dependent on node 𝑖′ in network 𝜓′, where
+𝜓≠𝜓′, cannot function before the functioning of node 𝑖′. Similarly,
+Constraints (42)–(43) restrict the capacity of node 𝑖in network 𝜓that
+depends on failed node 𝑖′ in network 𝜓′, where 𝜓≠𝜓′, which is
+restored under repair mode 𝑦∈𝑌𝜓to the proportional capacity 𝜒𝜓
+𝑦
+associated with the chosen repair mode of node 𝑖′. Constraint (44)
+sets 𝜂= VaR𝛼based on the second-stage costs associated with unmet
+demand and flow costs. Constraints (45)–(48) require the 𝑥𝜓
+𝑐𝑐′𝑘-, 𝑜𝜓
+𝑐𝑦-,
+𝜅𝜓
+𝑐𝑘𝑦𝜔(𝑡)-, and 𝑠𝜓
+𝑐𝜔(𝑡) variables to be binary. Constraints (49)–(47) require
+the 𝑝𝜓
+𝑐𝑘𝑦𝜔- and 𝜄𝜓
+𝑐𝑘𝑦𝜔(𝑡) variables to be bounded between 0 and 1. Finally,
+Constraints (51)–(52) require 𝜂to be a real number and 𝑣𝜔variables to
+be positive real numbers.
+2.2.3. Model variants
+Flexible restoration strategies. Compared to a previous work (Alkhaleel
+et al., 2022), the proposed optimization model (15)–(52), referred to as
+the standard model hereafter, addresses some limitations (i.e., restricting
+the restoration of each component to a single crew and allowing only a
+single maximal repair mode) by considering different flexible recovery
+strategies including multicrew (MC) and multimode (MM) restoration
+options. In the former, multiple work crews are allowed to restore a
+single component of the network 𝜓∈𝛹in time 𝑡∈{1 … 𝑇}. Compared
+to a single crew (SC) setting where only one crew is allowed to work
+on a single component (i.e., each component is restored by at most
+one crew), it is expected that the MC approach would improve the
+resilience of the system via minimizing the unsatisfied demand cost,
+especially when critical components are disrupted. Indeed, changing
+between an MC setting and an SC setting in the standard model is
+fairly an easy task. We only need to change the nature of the 𝑝𝜓
+𝑐𝑘𝑦𝜔
+decision variables from a continuous space ∈[0, 1] for the MC setting
+to a binary space ∈{0, 1} for the SC setting. In the latter strategy, each
+failed component is restored to a certain level of capacity associated
+with a repair mode (i.e., for a repair mode with percentage %𝑞, both
+capacity and repair time are reduced by %(1−𝑞)). Compared to a single
+mode (SM) repair setting, this strategy can help reduce the repair time
+of components, especially the ones which do not operate at full capacity
+before disruption. In Section 4, we compare these restoration strategies
+and show the added benefit of incorporating such flexible strategies in
+restoration planning of ICINs under uncertainty.
+Partial functioning and interdependency. In addition to the flexible
+restoration strategies adapted in the standard model, partial func-
+tioning and interdependency (PFI) can be implemented by changing
+the nature of the 𝑠𝜓
+𝑐𝜔(𝑡) decision variables from binary to continuous
+variables bounded between 0 and 1. When partial functioning is imple-
+mented, components can operate at any capacity in time 𝑡∈{1 … 𝑇}
+below either the full capacity (for a perfect repair mode) or the propor-
+tional capacity (for an imperfect repair mode). That is, the binary status
+assumption of components of the interdependent networks (i.e., either
+fully functional or failed) is relaxed. Similarly, partial dependence
+between nodes allows a dependent node to be partially functioning
+if the node or nodes it depends on are partially functioning as well.
+However, if the operational nature of the component prevents it from
+being functional at any partial capacity but instead at only a few
+possible steps (e.g., a power supply station has four generators and can
+only function partially depending on the number of working generators
+at 25%, 50%, 75%, and 100%), then the model can accommodate
+this change by slight modifications. First, define 𝑚𝜓
+𝑐and 𝑚′𝜓
+𝑐𝜔(𝑡) as an
+integer parameter representing the number of units per component and
+an integer decision variable representing the number of operational
+units per component at time 𝑡∈{1 … 𝑇} under scenario 𝜔∈𝛺,
+respectively. Then, by adding a set of constraints of the form:
+𝑚𝜓
+𝑐𝑠𝜓
+𝑐𝜔(𝑡) ≥𝑚′𝜓
+𝑐𝜔(𝑡)
+(53)
+for each component composed of several units and replacing associated
+𝑠𝜓
+𝑐𝜔(𝑡) decision variables in Constraints (20)–(22) with
+𝑚′𝜓
+𝑐𝜔(𝑡)
+𝑚𝜓
+𝑐
+, we allow
+stepwise partial functioning linked to the number of operational units.
+For a system of ICINs that features PFI, it is expected for the system
+to be more resilient than a counterpart the does not feature PFI due
+to the reduction in time between the failed state and the first time the
+disrupted component starts functioning. We compare the PFI setting
+against the binary status of components in Section 4 to show how PFI
+affects restoration planning of ICINs under uncertainty.
+2.3. ICIs resilience metric
+The resilience of a single CI is commonly characterized with re-
+spect to a measure of performance (e.g., flow, connectivity, amount
+of demand satisfied) 𝜑(𝑡) that evolves over time (Henry and Ramirez-
+Marquez, 2012; Hosseini et al., 2016). In this study, the focus is on the
+recovery period after disruption, for which a model that optimizes a
+restoration plan over a finite planning horizon is proposed. Here, we
+consider the resilience metric proposed by Fang et al. (2016) as the
+resilience measure of the restoration plans resulting from the standard
+model. Fang et al. (2016) defines system performance as the maximum
+amount of weighted flow consumed by the demand nodes. Let weights
+𝑤𝜓
+𝑗∈Z+ be assigned to each demand node 𝑗∈𝑉𝜓
+−for network 𝜓∈𝛹.
+These weights are incorporated to enable prioritizing certain types of
+demand nodes (e.g., it is more important to deliver power to a hospital
+than to a residential household). Formally, the performance for network
+𝜓∈𝛹is defined as:
+𝜑𝜓(𝑡) =
+∑
+𝑗∈𝑉𝜓
+−
+𝑤𝜓
+𝑗𝑓𝜓
+𝑗(𝑡)
+(54)
+where 𝑓𝜓
+𝑗(𝑡) is the total flow reaching demand node 𝑗in time period
+𝑡∈{1 … 𝑇}.
+Based on that, the resilience 𝑅𝜓(𝑇) for network 𝜓∈𝛹is defined
+as the cumulative performance restored during the restoration horizon
+normalized by dividing by the cumulative performance that would be
+restored over the same horizon if the system could be restored to pre-
+disruption performance instantaneously. That is, network resilience is
+given by Fang et al. (2016):
+𝑅𝜓(𝑇) =
+∑𝑡=𝑇
+𝑡=1 [∑
+𝑗∈𝑉𝜓
+−𝑤𝑗𝑓𝜓
+𝑗(𝑡) −𝜑𝜓(0)]
+𝑇(∑
+𝑗∈𝑉𝜓
+−𝑤𝑗𝑃𝑗𝜓
+−
+−𝜑𝜓(0))
+,
+𝑇≥1
+(55)
+where ∑
+𝑗∈𝑉𝜓
+−𝑤𝑗𝑃𝑗𝜓
+−
+= 𝜑𝜓(𝑡0) denotes the network performance if not
+affected by the disruption. For one realization 𝜔∈𝛺, 𝑓𝜓
+𝑗𝜔denotes the
+flow into demand node 𝑗∈𝑉𝜓
+−in network 𝜓under scenario 𝜔∈𝛺;
+
+Computers and Operations Research 144 (2022) 105812
+9
+B.A. Alkhaleel et al.
+hence, we can define the resilience 𝑅𝜓(𝑇, 𝜉(𝜔)) of network 𝜓under
+scenario 𝜔∈𝛺as:
+𝑅𝜓(𝑇, 𝜉(𝜔)) =
+∑𝑡=𝑇
+𝑡=1 [∑
+𝑗∈𝑉𝜓
+−𝑤𝜓
+𝑗𝑓𝜓
+𝑗𝜔(𝑡) −𝜑𝜓(0)]
+𝑇(∑
+𝑗∈𝑉𝜓
+−𝑤𝜓
+𝑗𝑃𝑗𝜓
+−
+−𝜑𝜓(0))
+,
+𝑇≥1
+(56)
+Hence, ICIs system resilience is defined by combining each network
+resilience in a total resilience term 𝑅(𝑇, 𝜉(𝜔)) as follows:
+𝑅(𝑇, 𝜉(𝜔)) =
+∑
+𝜓∈𝛹
+𝛾𝜓𝑅𝜓(𝑇, 𝜉(𝜔))
+(57)
+where 𝛾𝜓is the weight of importance for each network 𝜓such that
+∑
+𝜓∈𝛹𝛾𝜓= 1.
+3. Solution approach
+3.1. Scenario generation and reduction
+To ensure a representative set of scenarios for the developed op-
+timization model, a maxi-min Latin hypercube sampling (LHS) tech-
+nique (Wyss and Jorgensen, 1998) is adapted to generate a large
+set of scenarios 𝛺. Using LHS ensures a fair amount of coverage of
+each random variable’s range, and it has been shown to be advan-
+tageous when incorporated within a sample average approximation
+approach (Alkhaleel et al., 2022; Kleywegt et al., 2002; Chen et al.,
+2014). However, stochastic optimization models tend to be intractable
+when the number of generated scenarios is large (Morales et al., 2009).
+One method often used to overcome this obstacle is to reduce the
+number of scenarios such that the resulting problem’s optimal solution
+remains close to the solution of the original optimization problem (Fang
+and Sansavini, 2019; Heitsch and Römisch, 2003; Horejšová et al.,
+2020). To apply a reduction of scenarios, it is common to select
+scenarios based upon a probability distance between the original and
+reduced set of scenarios (Dupačová et al., 2003). The most common
+probability distance used in stochastic optimization is the Kantorovich
+distance, 𝐷𝐾(⋅), defined between two probability distributions 𝑄and 𝑄′
+on 𝛺by the following problem (Rachev, 1991; Dupačová et al., 2003):
+𝐷𝐾
+(𝑄, 𝑄′) = inf
+𝜃
+{∫𝛺×𝛺𝑐(𝜔, 𝜔′) 𝜃(𝑑𝜔, 𝑑𝜔′) ∶∫𝛺𝜃(⋅, 𝑑𝜔′) = 𝑄
+∫𝛺𝜃(𝑑𝜔, ⋅) = 𝑄′}
+(58)
+Problem (58) is known as the Monge–Kantorovich mass transportation
+problem (Rachev, 1991), where 𝑐(𝜔, 𝜔′) is a nonnegative, continuous,
+and symmetric function, often referred to as cost function. The infimum
+is taken over all joint probability distributions defined on 𝛺× 𝛺
+represented by 𝜃(𝜔, 𝜔′) in (58). Note that 𝐷𝐾(⋅) can only be properly
+called Kantorovich distance if function 𝑐(⋅) is given by a norm. When
+𝑄and 𝑄′ are finite distributions corresponding to the initial set of
+scenarios 𝛺and the reduced set of scenarios 𝛺𝑠⊆𝛺, the Kantorovich
+distance can be determined (see Dupačová et al., 2003 for details) by:
+𝐷𝐾
+(𝑄, 𝑄′) =
+∑
+𝜔∈𝛺∖𝛺𝑠
+𝜋𝜔min
+𝜔′∈𝛺𝑠
+𝑐(𝜔, 𝜔′)
+(59)
+where 𝜋𝜔represents the probability of scenario 𝜔in 𝛺(Dupačová et al.,
+2003). Expression (59) can be used to derive several heuristics for gen-
+erating reduced scenario sets that are close to an original set (Morales
+et al., 2009; Dupačová et al., 2003). One well-known algorithm is the
+fast forward selection algorithm (Heitsch and Römisch, 2003). This
+algorithm is an iterative greedy process that starts with an empty
+set; and in each step of the algorithm, a scenario that minimizes the
+Kantorovich distance between the reduced and original sets is selected
+from the set of non-selected scenarios (𝛺∖𝛺𝑠
+), where 𝛺𝑠represents the
+set of selected scenarios. Then, this scenario is included in the reduced
+set 𝛺𝑠. The algorithm terminates either when a pre-specified number
+of scenarios is found or by reaching a pre-defined Kantorovich distance
+threshold (Morales et al., 2009).
+In the fast forward selection algorithm, as described by Heitsch
+and Römisch (2003), the distance between two scenarios 𝜔and 𝜔′ is
+expressed by the function 𝑐(𝜔, 𝜔′) representing the difference between
+pairs of random vectors. The function 𝑐(𝜔, 𝜔′) can be defined based
+upon probability metrics (Dupačová et al., 2003), optimal objective
+function values where first-stage decision variables are fixed (Morales
+et al., 2009), or the wait-and-see objective value for each scenario,
+which has been shown to practically outperform the other two methods
+in restoration modeling (Alkhaleel et al., 2022) and other applica-
+tions (Bruninx, 2014). Here, we use the objective function value 𝑧𝑊𝑆
+𝜔
+of the wait-and-see solution (WS) for each scenario 𝜔∈𝛺(i.e., the
+objective function resulting from solving model (15)–(52) when it is
+populated with 𝜔as its only scenario) to define 𝑐(⋅, ⋅) as follows:
+𝑐(𝜔, 𝜔′) = |||𝑧𝑊𝑆
+𝜔
+−𝑧𝑊𝑆
+𝜔′ |||
+(60)
+The resulting fast forward selection algorithm can be found in Alkhaleel
+et al. (2022).
+3.2. Decomposition algorithm
+Decomposition algorithms are often used for solving continuous
+and mixed-integer large-scale two-stage and multi-stage optimization
+problems (Escudero et al., 2017; Rahmaniani et al., 2017). One of those
+types of algorithms is the well-known Benders decomposition (Benders,
+1962), which is commonly used in the stochastic optimization literature
+to solve the scenario-based resulting mixed-integer linear programs
+(MILPs). Benders decomposition is a variable partitioning technique
+in which a restricted master problem is solved considering only the
+complicating variables of the problem. Such variables are temporarily
+fixed, and the resulting individual or multiple subproblems are solved
+to identify cuts to be added to the restricted master problem. In this
+context, the mean-risk model separates into one linear program per
+scenario 𝜔—forming the subproblem (SP)—in the reduced scenario set
+𝛺𝑠after fixing the binary 𝑜𝜓
+𝑐𝑦- and 𝑠𝜓
+𝑐𝜔(𝑡)-variables.
+Formally, for each scenario 𝜔∈𝛺𝑠, let 𝒛𝜔denote a fixed assignment
+of values to all 𝑜- and 𝑠-variables corresponding to the index 𝜔. The
+resulting SP for scenario 𝜔∈𝛺𝑠is the linear program:
+SP(𝒛𝜔) ∶
+min
+∑
+𝜓∈𝛹
+∑
+𝑡∈{1…𝑇}
+( ∑
+𝑖𝑗∈𝐴𝜓
+𝑐𝜓
+𝑓𝑓𝜓
+𝑖𝑗𝜔(𝑡) +
+∑
+𝑗∈𝑉𝜓
+−
+𝑐𝜓
+𝑑𝑢𝜓
+𝑗𝜔(𝑡)
+)
+(61)
+s.t. (16)–(25) and (42)–(43) for scenario 𝜔
+(62)
+Because SP(𝒛𝜔) is a linear program in which 𝒛𝜔appears only in the
+constraints, the dual of SP(𝒛𝜔) can be formulated as a linear program
+of the form:
+DSP(𝒛𝜔) ∶
+max
+(𝒃𝜔−𝑩𝜔𝒛𝜔
+) 𝒅𝜔
+(63)
+s.t. 𝒅𝜔∈
+(64)
+where 𝒃𝜔is the right-hand side vector of (62), 𝑩𝜔is the left-hand side
+coefficient matrix of (62), 𝒅𝜔is the dual variable vector corresponding
+to constraint (62), and represents the dual feasible region. Let 𝑝
+and 𝑟respectively denote the extreme points and extreme rays of
+, and let 𝜔𝑛
+𝑝
+⊆𝑝and 𝜔𝑛
+𝑟
+⊆𝑟respectively denote a subset of
+the extreme points and extreme rays produced prior to iteration 𝑛of
+Benders decomposition. Using the optimal solutions of DSP(̄𝒛𝑛
+𝜔
+) from
+previous iterations {0 … 𝑛−1}, the restricted master problem (RMP)
+for iteration 𝑛can be formulated as:
+min (1 + 𝜁)
+( ∑
+𝜓∈𝛹
+∑
+𝑦∈𝑌𝜓
+𝑐𝜓
+𝑟𝑜𝜓
+𝑐𝑦𝜒𝜓
+𝑦
+)
++ 𝜆1 + 𝜁𝜆2
+(65)
+s.t.
+𝜆1 ≥
+|𝛺𝑠|
+∑
+𝜔=1
+𝜋𝜔
+(𝒃𝜔−𝑩𝜔𝒛𝜔
+) 𝒅
+𝑖
+𝜔, 𝑖= 0 … 𝑛−1
+(66)
+𝜆2 ≥𝜂𝑖+
+1
+1 −𝛼
+|𝛺𝑠|
+∑
+𝜔=1
+𝜋𝜔𝑣𝑖
+𝜔, 𝑖= 0 … 𝑛−1
+(67)
+
+Computers and Operations Research 144 (2022) 105812
+10
+B.A. Alkhaleel et al.
+𝑣𝑖
+𝜔≥(𝒃𝜔−𝑩𝜔𝒛𝜔
+) 𝒅
+𝑖
+𝜔−𝜂𝑖, ∀𝜔∈𝛺𝑠, 𝑖= 0 … 𝑛−1
+(68)
+0 ≥(𝒃𝜔−𝑩𝜔𝒛𝜔
+) 𝒅
+𝑖
+𝜔, ∀𝜔∈𝛺𝑠, 𝑖= 0 … 𝑛−1
+(69)
+constraints (26)–(41) and (45)–(52)
+where 𝑖denotes the 𝑖th iteration cut generated prior to the current
+iteration related to 𝜔𝑛
+𝑝
+for Constraints (66)–(67) and 𝜔𝑛
+𝑟
+for Con-
+straint (69). Note that Constraint (68) is equivalent to Constraint (44)
+in the standard model. Constraints (66)–(67) and (69) are respectively
+known as optimality cuts and feasibility cuts.
+In the proposed Benders algorithm (Algorithm 1), the first step is
+to set the upper bound, lower bound, and iteration counter at ∞, 0
+and 0, respectively. In iteration 𝑛, RMP is solved first to obtain an
+optimal solution̄ 𝒛𝑛. Lettinḡ 𝒛𝑛
+𝜔denote the partial solution associated
+with the 𝑜- and 𝑠-variables corresponding to the index 𝜔, DSP(̄𝒛𝑛
+𝜔
+) is
+solved (note that since the linear program in (61)–(62) and so its dual
+(63)–(64) are scenario indexed, they can be solved in parallel providing
+multicuts), yielding either an extreme point 𝒅𝜔∈𝑝(if the model
+is solved to optimality) or an extreme ray 𝒅𝜔∈𝑝(if the model is
+concluded to be unbounded). In the former case, 𝒅𝜔is added to 𝜔𝑛
+𝑝
+(i.e., 𝜔,𝑛+1
+𝑝
+←𝜔𝑛
+𝑝
+∪{𝒅𝜔} and 𝜔,𝑛+1
+𝑟
+←𝜔𝑛
+𝑟), resulting in a new
+optimality cut; otherwise, 𝒅𝜔is added to 𝜔𝑛
+𝑟
+(i.e., 𝜔,𝑛+1
+𝑝
+←𝜔𝑛
+𝑝
+and 𝜔,𝑛+1
+𝑟
+←𝜔𝑛
+𝑟
+∪{𝒅𝜔}), yielding a new feasibility cut. The RMP
+objective provides a lower bound to the optimal solution of the original
+problem (15)–(52); furthermore, the dual subproblem DSP(𝒛𝜔
+) always
+has an optimal solution due to the feasibility and boundedness of the
+SP(𝒛𝜔
+), which can be easily proven by showing that the restricting the
+flow under each scenario to 0 provides a feasible solution and that the
+flow is bounded by the capacities of the demand nodes (see Alkhaleel
+et al., 2022 for details). This remark shows that feasibility cuts are
+not needed in the decomposition procedure; therefore, only optimality
+cuts are generated and added to the RMP in each iteration (as shown
+in Algorithm 1) and the convergence of the algorithm is accelerated.
+The optimality gap for this algorithm can be estimated using the upper
+and lower bounds found at each step. That is, the optimality gap is
+calculated as Gap(%) = 𝑈𝐵−𝐿𝐵
+𝑈𝐵
+=̂ 𝜇+ 𝜆∗−(̂𝜇+ 𝜆)̂
+𝜇+ 𝜆∗
+= 𝜆∗−𝜆̂
+𝜇+ 𝜆∗.
+4. Case study
+In this section, we test the proposed mean-risk optimization model
+and solution algorithm, and explore the introduced flexible restoration
+strategies and PFI using a realistic, well-known case in the literature on
+the system of ICINs in Shelby County, TN, U.S. This county, containing
+the city of Memphis, is continually under earthquake hazard due to its
+proximity to the New Madrid Seismic Zone (NMSZ) (González et al.,
+2016; Almoghathawi et al., 2021). Here, we consider two cases similar
+to the hypothetical earthquake scenarios with magnitudes 𝑀𝑤∈{6, 7}
+presented by González et al. (2016).
+4.1. System description
+The system of interdependent networks considered in this study
+consists of two ICINs located in Shelby County, TN: power and water
+as depicted in Fig. 2 (González et al., 2016). The system of networks
+contains 256 network components divided into 109 nodes and 147
+edges. The power network is composed of 60 nodes and 76 edges,
+and the water network is composed of 49 nodes and 71 edges. For
+the water system, storage tanks and large pumps are modeled as
+generation (supply) nodes and pipe intersections are modeled as water
+distribution (demand) nodes (Kim et al., 2007). Moreover, gate stations
+are modeled as power generation (supply) nodes and substations are
+modeled as power distribution (demand) nodes for the power network.
+The actual system, managed by the Memphis Light, Gas, and Water
+(MLGW), is a heterogeneous mix of unidirectional arcs and bidirec-
+tional edges (Kim et al., 2007). However, it can be modeled either as
+Algorithm 1: Benders decomposition algorithm
+Step 0: 𝑈𝐵←∞, 𝐿𝐵←0, iteration counter 𝑛= 0
+Step 1: Solve the RMP (65)–(69) to obtain its optimal solution
+(
+𝒛, 𝜆1, 𝜆2
+)
+and let̂ 𝜇be the optimal first-stage cost and
+𝜆= 𝜆1 + 𝜁𝜆2, 𝐿𝐵←max{𝐿𝐵,̂ 𝜇+ 𝜆}
+Step 2: For each 𝜔∈𝛺𝑠:
+Solve the DSP(𝒛𝜔) to obtain its optimal solution 𝒅
+𝑛
+𝜔and
+objective value (𝒃𝜔−𝑩𝜔𝒛𝜔
+) 𝒅
+𝑛
+𝜔
+End For
+Step 3: Find the 𝛼-quantile 𝜂across all DSP(𝒛𝜔) and associated
+CVaR𝛼function, denoted aŝ 𝜆2:̂
+𝜆2 = 𝜂+
+1
+1−𝛼
+( ∑|𝛺𝑠|
+𝜔=1 𝜋𝜔[(𝒃𝜔−𝑩𝜔𝒛𝜔
+) 𝒅
+𝑛
+𝜔−𝜂]+
+)
+Step 4: Let (𝜂𝑛, 𝑣𝑛
+𝜔) = (𝜂, [(𝒃𝜔−𝑩𝜔𝒛𝜔
+) 𝒅
+𝑛
+𝜔−𝜂]+)
+Step 5: Find the mean-risk function value, denoted as 𝜆∗, of the
+current recourse cost solution:
+𝜆∗= ∑|𝛺𝑠|
+𝜔=1 𝜋𝜔
+(𝒃𝜔−𝑩𝜔𝒛𝜔
+) 𝒅
+𝑛
+𝜔+ 𝜁̂ 𝜆2
+𝑈𝐵←min{𝑈𝐵,̂ 𝜇+ 𝜆∗}
+Step 6: If 𝑈𝐵−𝐿𝐵≤𝜖∶
+⊳𝜖is a predefined tolerance
+Stop and report solution
+Else:
+(a) Add optimality cuts of the form:
+𝜆1 ≥∑
+𝜔∈𝛺𝑠𝜋𝜔
+(𝒃𝜔−𝑩𝜔𝒛𝜔
+) 𝒅
+𝑛
+𝜔
+𝜆2 ≥𝜂𝑛+
+1
+1−𝛼
+∑|𝛺𝑠|
+𝜔=1 𝜋𝜔𝑣𝑛
+𝜔to the RMP
+(b) Add a total number of |𝛺𝑠| Benders optimality cuts
+of the form:
+𝑣𝑛
+𝜔≥(𝒃𝜔−𝑩𝜔𝒛𝜔
+) 𝒅
+𝑛
+𝜔−𝜂𝑛, ∀𝜔∈𝛺𝑠to the RMP
+(c) 𝑛←𝑛+ 1 and go to Step 1
+End If
+a system of directed networks or undirected networks using network
+flow approaches (Ahuja et al., 1993). In this study, we model the
+utility networks as directed networks where directed arcs are modeled
+to send flow in one direction and bidirectional edges are modeled as
+two directed arcs. Note that the flow in power networks is governed by
+physics-based power flow constraints that can be added to the model
+with slight modifications (Alkhaleel et al., 2022). However, since the
+relevant information on power reactance values here is not available,
+such constraints have been omitted in this work (Almoghathawi et al.,
+2021; Morshedlou et al., 2018). Additionally, the functional depen-
+dency considered in this study is unidirectional (i.e., only the water
+network depends on the power network) where each water generation
+node is dependent on at least one power distribution node. Flow units
+per hour are in MWh for the power network and million gallons hourly
+(MGh)×102 or 10kGh for the water network.
+4.2. Uncertainty representation
+The proposed model assumes that the time to repair each compo-
+nent and the travel time between failed components are uncertain,
+but the remaining parameters are deterministic. The remainder of
+this section summarizes the assumed probability distributions for the
+uncertain parameters.
+Let 𝐶′ ⊆𝐶denote the set of disrupted components, and 𝑡𝑡𝑟𝑐denote
+the time to repair of component 𝑐
+∈𝐶
+′𝜓. We assume 𝑡𝑡𝑟𝑐has a
+Weibull distribution – commonly used to model activity times (Ab-
+delkader, 2004) – with scale parameter 𝜈𝑐and shape parameter 𝛽𝑐. The
+probability density function of 𝑡𝑡𝑟𝑐is given by:
+ℎ(𝑡, 𝛽𝑐, 𝜈𝑐) = 𝛽𝑐
+𝜈𝑐
+(
+𝑡
+𝜈𝑐
+)𝛽𝑐−1
+𝑒
+−
+( 𝑡
+𝜈𝑐
+)𝛽𝑐
+, 𝑡≥0
+(70)
+As for travel times, for 𝑐∈𝐶
+′𝜓and 𝑐′ ∈𝐶
+′𝜓, let 𝑡𝑡𝜓
+𝑐𝑐′ denote the
+travel time between components 𝑐and 𝑐′ in network 𝜓. We derive a
+
+Computers and Operations Research 144 (2022) 105812
+11
+B.A. Alkhaleel et al.
+Fig. 2. Graphical representations of the (a) power, (b) water, and (c) combined water
+and power networks in Shelby County, TN.
+Source: Adapted from González et al. (2016).
+deterministic estimate of the travel time from 𝑐to 𝑐′ using a separate
+transportation network.
+In the transportation network, each edge has an associated length
+and speed limit, and its traversal time 𝑑𝑙is estimated assuming it will
+always be possible to travel at the speed limit. The deterministic esti-
+mate of 𝑡𝑡𝜓
+𝑐𝑐′, hereafter denoted as 𝑑𝑡𝑡𝜓
+𝑐𝑐′, is obtained by determining the
+shortest path length between two nodes in the transportation network,
+namely those that are the closest to the midpoint of failed arcs and
+to failed nodes in the utility networks. To represent the uncertainty
+of 𝑡𝑡𝜓
+𝑐𝑐′, we populate a distribution for traversal time of edges in the
+transportation network; given 𝑑𝑙, the random traversal time 𝑑𝑟𝑙is
+distributed according to the probability mass function:
+𝑃(𝑑𝑟𝑙= 𝑡) =
+⎧
+⎪
+⎨
+⎪⎩
+0.3,
+𝑡= 𝑑𝑙
+0.3,
+𝑡= 1.5 𝑑𝑙
+0.4,
+𝑡= 2 𝑑𝑙
+(71)
+and each scenario-indexed 𝑡𝑡𝜓
+𝑐𝑐′𝜔is found by solving the shortest path
+problem as explained. This approach follows other disaster relief and
+emergency response studies with the assumption that random traversal
+times are based on a coefficient multiplication of the transportation
+network constant traversal times (Mete and Zabinsky, 2010; de la Torre
+et al., 2012; Alkhaleel et al., 2022).
+4.3. Parameters and computational information
+Among the hypothetical earthquake scenarios in Shelby County,
+TN presented by González et al. (2016) with different magnitudes,
+assuming different failure probabilities of system components with each
+hypothetical earthquake scenario, we consider two possible scenarios
+with magnitudes 𝑀𝑤
+∈{6, 7} and a similar number of disrupted
+components chosen randomly. Additionally, we consider four different
+risk coefficients (i.e., 𝜁∈{0, 0.5, 1, 2}) associated with each scenario.
+The number of disrupted components for each network, the percentage
+of the total number of components for each network, and the asso-
+ciated performance drop for each network in the system under each
+hypothetical earthquake scenario are summarized in Table 1.
+Regarding repair activities, the shape and scale parameters of the
+Weibull distributed repair time are assumed to be 2 and 5, respectively,
+for all the components. Such assumptions are made following other
+studies in the literature in terms of probability distribution chosen
+and parameters (Fang and Sansavini, 2019). Hence, the mean-time-
+to-repair (MTTR) used in the deterministic model is about 4.43 h. In
+addition, the restoration planning horizon 𝑇is chosen as 20 h, which
+is sufficient to restore the network performance to its original state
+under both cases with the chosen number of work crews for each case
+(total of 4 for case 1 and 5 for case 2 as illustrated in Table 3). For
+possible repair modes for each network, it is assumed that there are
+two repair modes for each network (𝑌𝜓= {1, 2}): (1) perfect repair
+mode (i.e., the component is restored to its full capacity), and (2)
+imperfect repair mode (i.e., the component is restored to 50% of its
+full capacity). Regarding cost parameters, it is assumed that unitary
+flow cost, unitary unsatisfied demand cost, and fixed repair cost per
+component are the same for both networks. For unitary flow cost, we
+use an estimated flow cost of $30 per flow unit, which is equivalent
+to the approximate cost of transmission and distribution of 1 MWh of
+electricity (Fares and King, 2017). For the unsatisfied demand cost, re-
+ferred to as disruption cost hereafter, the average residential cost of one
+MWh of electricity in Shelby County, TN is approximately $97.2; and
+for the water network, the cost per 10k gallon is about $30 (Memphis
+Light, Gas and Water Division (MLGW), 2021). However, the economic
+impact of unsatisfied demand is significantly higher than the cost of
+services. That is, estimates of service interruption vary significantly
+with estimated numbers ranging from $100 up to $100,000 per demand
+unit (Wolfram, 2021). Here, it is estimated to be about $10,000 per
+demand unit based on the Interruption Cost Estimate (ICE) tool funded
+by the Energy Resilience Division of the U.S. Department of Energy’s
+Office of Electricity (OE) for the examined case study area (Laboratory
+and Nexant, 2021). Regarding restoration costs, we assume a fixed
+repair cost per component. However, repair cost per CI component
+can vary significantly from thousand dollars to hundreds of million
+dollars (HDR, 2012; Assad et al., 2020). Nonetheless, a fixed repair cost
+of $500,000 per component was estimated to keep both the flow and
+restoration costs combined lower than the disruption costs to prioritize
+resilience improvement as the main objective. Table 2 summarizes the
+parameters of cost, risk, and repair for each case.
+For the scenario generation process of random variables (i.e., repair
+and travel times), 1000 scenarios are generated for each case. After
+that, the scenario reduction algorithm was used to reduce the number
+of scenarios into a smaller set. The total number of scenarios is reduced
+to 10 scenarios. Solutions to the MILPs used in the scenario reduc-
+tion procedure and the stochastic optimization models were computed
+using CPLEX 12.10 (CPLEX, 2021) and programmed using Python
+
+Computers and Operations Research 144 (2022) 105812
+12
+B.A. Alkhaleel et al.
+Table 1
+Disruption size and performance drop considering the two magnitudes of hypothetical earthquake scenarios.
+Case
+No. of disrupted components
+Disruption percentage
+Performance drop
+Power
+Water
+System
+Power
+Water
+System
+Power
+Water
+System
+Case 1 (𝑀𝑤= 6)
+10
+6
+16
+7.35%
+5.00%
+6.25%
+18.64%
+20.00%
+19.27%
+Case 2 (𝑀𝑤= 7)
+19
+10
+29
+13.97%
+8.33%
+11.33%
+22.13%
+85.64%
+50.87%
+Table 2
+Parameters of cost, risk, and repair for each case of the hypothetical earthquake scenarios.
+Case
+Cost parameters
+Risk parameters
+Repair parameters
+Disruption cost
+(per demand unit)
+Repair cost
+(per component)
+Flow cost
+(per flow unit)
+𝛼
+𝜁
+𝜒𝜓
+𝑦
+𝜈𝑐, 𝛽𝑐
+Case 1 (𝑀𝑤= 6)
+$10,000
+$500,000
+$30
+0.9
+0, 0.5, 1, 2
+𝜒𝜓
+1 = 0.5, 𝜒𝜓
+2 = 1
+5, 2
+Case 2 (𝑀𝑤= 7)
+0.8
+Table 3
+Problem size of different study instances.
+Instance
+No. of
+continuous
+variables
+No. of binary
+variables
+No. of
+constraints
+No. of
+Scenarios
+No. of
+work crews
+(power, water)
+Number of
+repair modes
+(power, water)
+Max
+computational
+time (s)
+Case 1 (𝑀𝑤= 6)
+336,971
+359,372
+503,670
+10
+2,2
+2,2
+21,000
+Case 2 (𝑀𝑤= 7)
+406,511
+428,572
+608,850
+10
+2,3
+2,2
+21,000
+Deterministic (Case 1)
+33,696
+36,182
+51,002
+1
+2,2
+2,2
+1,800
+Deterministic (Case 2)
+40,647
+43,686
+61,043
+1
+2,3
+2,2
+3,600
+3.7 (Python, 2021) on a 3.2 GHz Intel Core i5 iMac machine with 24 GB
+of RAM.
+Regarding solution times and optimality gaps, we would like to
+emphasize that solving ICIs deterministic restoration problems using
+commercial MILP solvers such as CPLEX is hard, especially for large
+problem instances involving travel time and vehicle routing considera-
+tions (Garay-Sianca and Pinkley, 2021; Moreno et al., 2019; Morshed-
+lou et al., 2018). In such deterministic problems, optimality gaps can
+go up to 50% or even higher (Morshedlou et al., 2018; Garay-Sianca
+and Pinkley, 2021). Hence, the stochastic problem instances considered
+here for both cases cannot be solved for optimality within a prescribed
+time limit. However, based on our preliminary analysis, a time limit
+of 6 h (21600 s) is the approximate time after which the optimality
+gap tends to level off with the implementation of Benders algorithm
+to solve all instances. Algorithm 1 was implemented using callbacks
+with Benders cuts added as lazy constraints. Table 3 summarizes the
+dimensions of problem instances.
+4.4. Results
+The first part of this section summarizes the results related to the
+various features of the developed mean-risk model including a com-
+parison of the proposed solution approach to standard MILP solvers,
+and the second part shows the added benefit of implementing flexible
+restoration strategies and PFI in total cost reduction and resilience
+improvement.
+4.4.1. Mean-risk model
+The developed ICINRP using a mean-risk measure is solved using
+Algorithm 1. Table 4 compares the proposed Benders decomposition
+algorithm with CPLEX showing the added value of the proposed so-
+lution algorithm. The solutions found by the decomposition algorithm
+outperformed the ones found by CPLEX in all instances. Additionally,
+the decomposition algorithm was capable of solving all instances with
+a maximum optimality gap of about 24%. In contrast, CPLEX was not
+able to find any feasible solution for one of the instances (i.e., 𝑀𝑤=
+6 (𝜁= 0.5)). The maximum optimality gap of solved instances for CPLEX
+was approximately 57%. It is worth pointing out that the lower bounds
+found by CPLEX and the decomposition algorithm for the instances
+were similar, which are higher (tighter) than the WSs lower bounds
+by about 10% for all instances. For the first case (𝑀𝑤
+= 6), the
+highest optimality gap found using Benders decomposition algorithm
+was 14.637% compared to more than triple that value at 50%.456 for
+CPLEX. Furthermore, in the second case (𝑀𝑤= 7), the highest opti-
+mality gap found using Benders decomposition algorithm was 23.319%
+compared to 56.88% for the commercial solver. Using the proposed
+Benders algorithm, the average optimality gaps for cases 1 and 2 were
+about 13% and 20%, respectively. In contrast, the average optimality
+gaps using CPLEX solver for cases 1 and 2 were about 32% and 46%,
+respectively. These average values are about double the average gaps of
+the decomposition algorithm. Overall, these findings favor the proposed
+solution approach and show the added benefit of adapting it over
+commercial solvers.
+Regarding the mean-risk model, the choice of the risk coefficient
+𝜁in the proposed framework can alter the optimal plan; that is,
+increasing the value of 𝜁increases the relative importance of the risk
+term resulting in more conservative (risk-averse) plans. For instance,
+the CVaR values for case 1 showed a significant decrease with the
+increase of the risk coefficient value from 0 to 2 as shown in Fig. 3.
+This decrease in CVaR values is associated with a gradual increase in
+the expected total cost across scenarios for the different risk coefficients
+as illustrated in Fig. 3. The same findings are true for case 2 with a
+steeper trend in CVaR values as shown in Fig. 4.
+In ICINs restoration problems, disruption costs are expected to be
+higher than other costs combined, otherwise the optimal solutions can
+be found by prioritizing a reduction in the repair and flow costs over
+the disruption costs (Almoghathawi et al., 2021). Here, the detailed
+costs are presented for both cases in Figs. 3 and 4 showing that
+disruption cost constitutes the major portion of the total cost under all
+risk coefficients. Note that the total cost term here represents only the
+total of disruption cost, repair cost and flow cost and is different than
+the objective value term, which includes the total cost and CVaR terms
+inflated by the risk importance factor. In addition, trends of objective
+values, total and disruption costs, and CVaR values under both cases
+across the different risk coefficients are shown in Figs. 5 and 6; this
+shows that in mean-risk models, the objective value increases linearly
+with the increase of the risk coefficient. Moreover, both the expected
+total cost and disrupted cost exhibit similar raising trends as the risk
+coefficient changes. This similarity can be explained by knowing that
+the disruption cost represents the major portion of the total cost as
+explained earlier.
+
+Computers and Operations Research 144 (2022) 105812
+13
+B.A. Alkhaleel et al.
+Table 4
+Comparison of Benders decomposition and CPLEX solver solutions for the different instances with 10 reduced scenarios.
+Case
+CPLEX standard solver
+Benders decomposition
+Computational
+time (s)
+Gap(%)
+Objective value
+Computational
+time (s)
+Gap(%)
+Objective value
+𝑀𝑤= 6 (𝜁= 0)
+21648.783
+17.279
+18.142
+21617.794
+12.849
+17.514
+𝑀𝑤= 6 (𝜁= 0.5)
+21600.000
+–
+–
+21618.569
+14.477
+30.599
+𝑀𝑤= 6 (𝜁= 1)
+21605.193
+50.456
+58.771
+21616.394
+14.637
+42.986
+𝑀𝑤= 6 (𝜁= 2)
+21609.664
+29.233
+81.635
+21661.764
+12.791
+66.632
+𝑀𝑤= 7 (𝜁= 0)
+21612.699
+56.880
+90.808
+21664.057
+23.319
+47.302
+𝑀𝑤= 7 (𝜁= 0.5)
+21606.937
+38.043
+96.661
+21615.361
+21.666
+75.205
+𝑀𝑤= 7 (𝜁= 1)
+21612.841
+41.277
+143.474
+21614.859
+20.328
+102.743
+𝑀𝑤= 7 (𝜁= 2)
+21607.326
+50.304
+271.706
+21620.736
+17.480
+154.189
+Fig. 3. Case 1 (𝑀𝑤= 6): Detailed expected cost values of demand, repair, flow, and
+the overall expected total cost, as well as the CVaR information for different values of
+𝜁.
+Fig. 4. Case 2 (𝑀𝑤= 7): Detailed cost values of demand, repair, flow, and the overall
+expected total cost, as well as the CVaR information for different values of 𝜁.
+Tables 5 and 6 summarize the detailed outputs of the model for
+both cases – considering different choices of risk coefficient – including
+cost values, system and individual network resilience values, objective
+values, and other outputs for both cases. For case 1, the total resilience
+(or system resilience) decreases whereas the total disruption cost in-
+creases as the risk coefficient increases. The repair cost, however, looks
+constant across all risk coefficients indicating that the number of chosen
+disrupted components to be restored and their associated repair modes
+are almost the same for case 1. For case 2, the repair cost shows a
+similar behavior across all the values of 𝜁. Additionally, the flow cost
+could be described as a constant across the values of 𝜁for both cases.
+The resilience curves of the power network, water network, and system
+under the different risk coefficients can be found in Appendix.
+To assess the added value of stochastic models compared to a
+deterministic approach, the value of stochastic solution (VSS) is a well-
+known measure in the literature, which is designed to indicate whether
+the added benefit of modeling randomness using a risk-neutral stochas-
+tic optimization approach (Birge and Louveaux, 2011). However, the
+VSS cannot be implemented directly on risk-averse problems (Noyan,
+2012). Accordingly, we adopt the risk-averse version of the VSS known
+as the mean-risk value of stochastic solution (MRVSS) (see Noyan, 2012
+for details), which measures the possible gain from solving stochastic
+models incorporating a mean-risk function. In particular, this mea-
+sure represents the difference between the mean-risk expected value
+(MREV) problem (which results from solving the standard model with
+fixed first-stage decision variables whose values are obtained by solving
+a deterministic version of the standard model that replaces all random
+parameters with their expected values) and the mean-risk standard
+model solution. Higher values of MRVSS indicate a more added value in
+adapting a mean-risk approach over an expected value approach. Note
+that the MRVSS is equivalent to VSS when the risk coefficient 𝜁= 0.
+For case 1 (𝑀𝑤= 6), it can be seen that the MRVSS values are
+positive numbers ranging between 2.285M and 10.295M and increase
+with the increase of the risk coefficient 𝜁; this indicates the significance
+of solving mean-risk models over the expected value (deterministic)
+approaches. However, the increase of MRVSS with 𝜁is not reflected
+on the ratio between the MRVSS and the associated objective value,
+which does not show a clear trend with approximate values of 13%,
+11%, 12%, and 15% for 𝜁= 0, 0.5, 1, and 2, respectively. For 𝜁= 0,
+the added value of a stochastic solution is $2.285M (i.e., the overall
+cost of the deterministic solution is $2.285M higher than the stochastic
+solution). For other values of 𝜁, the MRVSS varies between a 𝜁-weighted
+value of 3M up to 10M. For case 2 (𝑀𝑤= 7), the values of MRVSS are
+even higher given the larger disruption scenario for this case despite
+the higher overall optimality gaps in this case compared to case 1.
+In fact, implementing the deterministic approach for this case can
+cause a 10%–20% increase in the expected economic losses compared
+to a mean-risk plan with a specific risk level 𝛼and risk weighted
+importance 𝜁. Hence, this shows that applying deterministic plans for
+larger disruptions involves high risk and could result in more economic
+losses. Overall, these results indicate that it is significant to solve mean-
+risk models to obtain preferred solutions for a specified set of risk
+parameters.
+
+Computers and Operations Research 144 (2022) 105812
+14
+B.A. Alkhaleel et al.
+Fig. 5. Case 1 (𝑀𝑤= 6): Trends of objective value, expected total cost, expected disruption cost, and CVaR with the increase of 𝜁.
+Fig. 6. Case 2 (𝑀𝑤= 7): Trends of objective value, expected total cost, expected disruption cost, and CVaR with the increase of 𝜁.
+4.4.2. Flexible restoration strategies and PFI
+As illustrated in Section 2, the proposed optimization model for
+solving the ICINRP considers flexible restoration strategies that are ex-
+pected to enhance the resulting optimal plans. In addition, the proposed
+model allows for partial functioning and interdependency, with a slight
+modification to the standard model formulation, supporting non-binary
+state ICIs restoration. Here, we compare the applied flexible restoration
+strategies to restricted ones and study the impact of PFI on restoration
+plans.
+Regarding the restoration strategies, Tables 7 and 8 summarize
+the detailed outputs (i.e., cost values, system and individual network
+resilience values, and CVaR values) of the model with risk coefficient
+𝜁= 1 under flexible (i.e., multicrew and multimode repair settings) and
+restricted (i.e., single crew and single mode settings) plans for cases 1
+and 2, respectively. In Tables 7 and 8, the first column represents the
+standard model with 𝜁= 1, the second column represents the standard
+model with 𝜁= 1 except that each failed component is restored by at
+most one crew (single crew setting), the third column represents the
+standard model with 𝜁= 1 except that each failed component can only
+be fully restored (single repair mode), and the PFI column represents
+the standard model with 𝜁= 1 except that partial functioning and
+interdependencies are allowed. Overall, both the objective value and
+CVaR value are lower under flexible restoration strategies for cases 1
+and 2. This indicates that flexible restoration planning can significantly
+reduce the main costs associated with restoration, namely disruption
+and repair costs, as well as the associated risk measure. Comparing the
+multicrew setting to the single crew setting, the reduction in the objec-
+tive value is about 25% and 36% for cases 1 and 2, respectively. For
+multimode repair vs. single mode repair, the reduction in the objective
+value is approximately 12% and 20% for cases 1 and 2, respectively.
+
+Computers and Operations Research 144 (2022) 105812
+15
+B.A. Alkhaleel et al.
+Table 5
+Case 1 (𝑀𝑤= 6): Detailed expected costs, MRVSS, expected flow, and expected resilience information considering different risk coefficients.
+Risk coefficient parameter
+𝜁= 0
+𝜁= 0.5
+𝜁= 1
+𝜁= 2
+Objective value (M)
+17.514
+30.599
+42.986
+66.632
+CVaR ($M)
+25.016
+21.904
+21.843
+21.352
+MRVSS (M)
+2.285
+3.417
+4.962
+10.295
+Total disruption cost ($M)
+12.962
+13.347
+13.846
+13.880
+Total repair cost ($M)
+2.750
+3.000
+2.750
+2.750
+Total flow cost ($M)
+1.803
+1.801
+1.798
+1.798
+Total cost ($M)
+17.515
+18.148
+18.394
+18.428
+Total resilience
+0.816
+0.810
+0.805
+0.804
+Power network disruption cost ($M)
+6.707
+6.729
+7.945
+7.879
+Power network repair cost ($M)
+1.750
+2.250
+2.000
+2.000
+Power network flow cost ($M)
+0.989
+0.989
+0.983
+0.983
+Power network resilience
+0.821
+0.820
+0.788
+0.789
+Power network aggregated received flow (MWh)
+19389.300
+19387.118
+19265.504
+19272.070
+Water network disruption cost ($M)
+6.255
+6.618
+5.901
+6.001
+Water network repair cost ($M)
+1.000
+0.750
+0.750
+0.750
+Water network flow cost ($M)
+0.814
+0.812
+0.815
+0.815
+Water network resilience
+0.812
+0.801
+0.822
+0.819
+Water network aggregated received flow (MG)
+159.545
+159.182
+159.899
+159.799
+Table 6
+Case 2 (𝑀𝑤= 7): Detailed expected cost values, MRVSS, expected flow, and expected resilience information under different risk coefficients.
+Risk coefficient parameter
+𝜁= 0
+𝜁= 0.5
+𝜁= 1
+𝜁= 2
+Objective value(M)
+47.302
+75.205
+102.743
+154.189
+CVaR ($M)
+52.293
+50.606
+49.313
+46.646
+MRVSS (M)
+9.678
+10.415
+16.287
+16.772
+Total disruption cost ($M)
+40.892
+41.495
+42.277
+45.007
+Total repair cost ($M)
+4.750
+4.500
+4.750
+4.750
+Total flow cost ($M)
+1.660
+1.657
+1.653
+1.639
+Total cost ($M)
+47.302
+47.652
+48.680
+51.396
+Total resilience
+0.757
+0.726
+0.752
+0.725
+Power network disruption cost ($M)
+16.402
+16.474
+12.786
+14.996
+Power network repair cost ($M)
+2.500
+2.500
+2.500
+2.500
+Power network flow cost ($M)
+0.939
+0.939
+0.958
+0.947
+Power network resilience
+0.686
+0.629
+0.712
+0.662
+Power network aggregated received flow (MWh)
+18419.820
+18412.648
+18781.405
+18560.355
+Water network disruption cost ($M)
+24.490
+25.022
+29.491
+30.011
+Water network repair cost ($M)
+2.250
+2.000
+2.250
+2.250
+Water network flow cost ($M)
+0.721
+0.718
+0.695
+0.693
+Water network resilience
+0.828
+0.824
+0.792
+0.789
+Water network aggregated received flow (MG)
+141.310
+140.778
+136.309
+135.789
+Table 7
+Case 1 (𝑀𝑤= 6): Detailed cost values, flow, and resilience information under SC, SM, and PFI for 𝜁= 1.
+Standard Model (𝜁= 1)
+Single Crew
+Single Repair Mode
+PFI
+Objective value (M)
+42.986
+57.604
+48.968
+29.463
+CVaR ($M)
+21.843
+29.642
+25.773
+14.381
+Total disruption cost ($M)
+13.846
+20.699
+15.405
+7.753
+Total repair cost ($M)
+2.750
+2.750
+3.000
+2.750
+Total flow cost ($M)
+1.798
+1.763
+1.790
+1.829
+Total resilience
+0.805
+0.712
+0.781
+0.893
+Power network disruption cost ($M)
+7.945
+14.127
+7.946
+5.506
+Power network repair cost ($M)
+2.000
+2.000
+2.000
+2.250
+Power network flow cost ($M)
+0.983
+0.951
+0.983
+0.995
+Power network resilience
+0.788
+0.622
+0.788
+0.853
+Power network aggregated received flow (MWh)
+19265.504
+18647.284
+19265.372
+19509.405
+Water network disruption cost ($M)
+5.901
+6.571
+7.459
+2.247
+Water network repair cost ($M)
+0.750
+0.750
+1.000
+0.500
+Water network flow cost ($M)
+0.815
+0.812
+0.808
+0.834
+Water network resilience
+0.822
+0.802
+0.775
+0.932
+Water network aggregated received flow (MG)
+159.899
+159.229
+158.341
+163.553
+
+Computers and Operations Research 144 (2022) 105812
+16
+B.A. Alkhaleel et al.
+Table 8
+Case 2 (𝑀𝑤= 7): Detailed cost values, flow, and resilience information under SC, SM, and PFI for 𝜁= 1.
+Standard Model (𝜁= 1)
+Single Crew
+Single Repair Mode
+PFI
+Objective value (M)
+102.743
+161.303
+128.854
+83.569
+CVaR ($M)
+49.313
+83.061
+61.543
+39.845
+Total disruption cost ($M)
+42.277
+67.719
+52.712
+32.521
+Total repair cost ($M)
+4.750
+4.500
+6.500
+4.750
+Total flow cost ($M)
+1.653
+1.523
+1.600
+1.703
+Total resilience
+0.752
+0.613
+0.684
+0.788
+Power network disruption cost ($M)
+12.786
+19.160
+16.831
+12.551
+Power network repair cost ($M)
+2.500
+2.250
+3.500
+2.500
+Power network flow cost ($M)
+0.958
+0.925
+0.937
+0.959
+Power network resilience
+0.712
+0.568
+0.621
+0.717
+Power network aggregated received flow (MWh)
+18781.405
+18144.010
+18376.940
+18804.894
+Water network disruption cost ($M)
+29.491
+48.559
+35.881
+19.970
+Water network repair cost ($M)
+2.250
+2.250
+3.000
+2.250
+Water network flow cost ($M)
+0.695
+0.598
+0.663
+0.744
+Water network resilience
+0.792
+0.658
+0.747
+0.859
+Water network aggregated received flow (MG)
+136.309
+117.241
+129.919
+145.830
+Fig. 7. Case 1 (𝑀𝑤= 6): Comparison of the resilience of the overall system and individual networks under SC vs. MC, and SM vs. MM settings.
+Fig. 8. Case 2 (𝑀𝑤= 7): Comparison of the resilience of the overall system and individual networks under SC vs. MC, and SM vs. MM settings.
+
+Computers and Operations Research 144 (2022) 105812
+17
+B.A. Alkhaleel et al.
+Fig. A.1. Case 1 (𝑀𝑤= 6): Comparison of system resilience curves under different risk coefficient solution plans for a sample of reduced scenarios.
+Note that the gain from adapting flexible restoration strategies is more
+significant for the second case with a higher number of disrupted
+components. Disruption costs behave similarly to the objective value
+for both cases and under both restoration strategies (i.e., multicrew
+and multimode repair). In contrast, repair costs are similar between the
+multicrew and single crew settings; however, they are higher in the
+single repair mode setting, significantly higher for case 2, indicating
+that the imperfect repair mode for multiple components is optimal.
+Surprisingly, multimode repair did not only reduce the repair costs
+by %8 and 27% for cases 1 and 2, respectively, but also reduced the
+disruption costs (improved resilience) for both cases by 10% for case 1
+and 20% for case 2.
+For a resilience-based benchmarking of the different restoration
+strategies, a comparison of the resilience of power network, water
+network, and system under flexible and restricted restoration plans for
+cases 1 and 2 is shown in Figs. 7 and 8, respectively. From the first
+glance, one can see that the resilience of both networks and the system
+is higher with multicrew and multimode restoration strategies. For in-
+stance, in case 1, the power network resilience under multicrew setting
+is significantly higher than under a single crew setting. This indicates
+the existence of critical components in the power network whose rapid
+restoration can significantly improve the resilience of the network. In
+contrast, the effect of multicrew setting on the water network resilience
+is minor. Conversely, multimode repair improved only the resilience
+of the water network under the same case. For case 2, with a higher
+
+Computers and Operations Research 144 (2022) 105812
+18
+B.A. Alkhaleel et al.
+Fig. A.2. Case 1 (𝑀𝑤= 6): Comparison of power network resilience curves under different risk coefficient solution plans for a sample of reduced scenarios.
+number of disrupted components, the resilience of both power and
+water networks showed a substantial improvement under multicrew
+and multimode settings. All these improvements in the resilience of
+both individual networks are clearly reflected on the system resilience
+for both case studies and under both flexible restoration strategies.
+Regarding PFI, Tables 7 and 8 summarize the detailed outputs
+(i.e., cost values, system and individual network resilience values, and
+CVaR values) of the standard model, under risk coefficient 𝜁= 1, with
+and without PFI for both cases. It can be seen that partial functioning
+and interdependency significantly reduced the disruption costs for both
+cases. That is, resilience is improved by PFI since allowing a disrupted
+component to partially function – before full restoration – can help
+deliver more flow to demand nodes, especially in the first time periods
+after disruption. This situation is the opposite of a binary status setting
+of components where disrupted components continue to be disrupted
+until fully restored. In addition, the reduction in disruption costs de-
+creases the risk gradually compared to a non-PFI setting. The results
+from applying PFI can link resilience to reliability and maintainability
+engineering through systems with multiple states or state-dependent
+systems. It might be of interest to study the relation between resilience,
+
+Computers and Operations Research 144 (2022) 105812
+19
+B.A. Alkhaleel et al.
+Fig. A.3. Case 1 (𝑀𝑤= 6): Comparison of water network resilience curves under different risk coefficient solution plans for a sample of reduced scenarios.
+reliability, and maintainability for a network having state-dependent
+critical components and how a tri-level framework can be developed
+to improve all three aspects. To sum up, ICINs systems featuring PFI
+are expected to be more resilient than non-PFI due to the flexibility of
+their post-disruption restoration plans.
+5. Conclusion and future work
+In this paper, a two-stage stochastic restoration optimization model
+using mixed-integer linear programming is proposed to solve the ICINRP
+under a mean-risk cost-based objective function. Moreover, the mean-
+risk model features flexible restoration planning strategies including
+multicrew repair of a single component and multimode repair, and
+also considers partial functioning and interdependencies of compo-
+nents across networks. The proposed model: (i) determines the set of
+failed components to be restored, (ii) selects the repair mode for each
+failed component, (iii) assigns each crew the set of failed components
+to be restored individually or concurrently, (iv) and schedules the
+baseline restoration sequence across scenarios for each crew such that
+the associated costs of disruption, repair, and flow of the system of
+ICIs are minimized. Additionally, as post-disruption restoration tasks
+occur in a highly dynamic environment, which is subject to a fair
+amount of uncertainty, the mean-risk model considers two important
+sources of uncertainty associated with restoration panning: (i)repair
+task durations, and (ii)travel times of crews between failed components.
+The proposed approach was demonstrated using a real-life case
+study based on the system of power and water networks in Shelby
+
+Computers and Operations Research 144 (2022) 105812
+20
+B.A. Alkhaleel et al.
+Fig. A.4. Case 2 (𝑀𝑤= 7): Comparison of system resilience curves under different risk coefficient solution plans for a sample of reduced scenarios.
+County, TN, U.S. under two hypothetical earthquakes. The mean-risk
+model was solved using the developed Benders decomposition algo-
+rithm, which outperformed the CPLEX standard solver as demonstrated.
+Our first finding was the significance of adapting mean-risk stochas-
+tic models over deterministic counterparts. This was demonstrated
+through the positive values of MRVSS under all cases. It is also found
+that the restoration plan can be altered based on the associated risk
+weighted importance. In particular, smaller values of the risk weighted
+importance factor can result in plans with low expected total costs but
+with high costs under worst-case scenarios. In contrast, higher values
+of the risk weighted importance factor can result in plans with slightly
+higher expected total costs but with less costs associated with worst-
+case scenarios. Regarding the flexible restoration strategies and PFI,
+both implementations demonstrated the added value in reducing the
+overall costs and mitigating risks.
+As for future work, the proposed model could be extended to con-
+sider the transportation network as a direct interdependent network.
+That is, the current approach assumes that CI networks, other than the
+underlying transportation network, are the ones being restored. Hence,
+the problem becomes not only focused on the restoration of CIs, but also
+on coordinating the process of finding the best routes and schedules for
+crews to repair damaged components in the transportation network.
+In addition, it is possible to extend the current model to introduce a
+facility location problem where work crews are dispatched to disrupted
+component locations rather than a direct travel between components.
+In such problems, the goal is to find the optimal location of these
+facilities from a set of candidate sites considering the fixed cost of
+
+Computers and Operations Research 144 (2022) 105812
+21
+B.A. Alkhaleel et al.
+Fig. A.5. Case 2 (𝑀𝑤= 7): Comparison of power network resilience curves under different risk coefficient solution plans for a sample of reduced scenarios.
+establishing such facilities as well as other crew-related variable costs.
+Moreover, considering economic measures of the resilience of commu-
+nities interacting with these ICINs, as well as the associated risks can
+be one of the future directions of this work. This future direction can
+also be associated with studying other types of interdependencies that
+affect both CIs and communities such as geographic interdependency
+to mitigate the related socioeconomic risks.
+CRediT authorship contribution statement
+Basem A. Alkhaleel: Conceptualization, Methodology, Formal
+Analysis,
+Writing.
+Haitao
+Liao:
+Conceptualization,
+Methodology,
+Writing
+–
+review
+&
+editing,
+Project
+administration.
+Kelly
+M.
+Sullivan:
+Conceptualization,
+Methodology,
+Writing
+–
+review
+&
+editing.
+Acknowledgments
+The authors would like to thank the editors and anonymous
+reviewers for their constructive comments that have led to an
+improvement over an earlier version of this paper. This work was
+supported by the U.S. National Science Foundation under Grant No.
+OIA 2119691.
+Appendix
+A.1. Resilience of the system and individual infrastructure networks under
+different risk coefficient solution plans
+See Figs. A.1–A.6.
+
+Computers and Operations Research 144 (2022) 105812
+22
+B.A. Alkhaleel et al.
+Fig. A.6. Case 2 (𝑀𝑤= 7): Comparison of water network resilience curves under different risk coefficient solution plans for a sample of reduced scenarios.
+References
+Abdelkader, Y.H., 2004. Evaluating project completion times when activity times are
+Weibull distributed. European J. Oper. Res. 157 (3), 704–715.
+Ahuja, R.K., Magnanti, T.L., Orlin, J.B., 1993. Network Flows: Theory, Algorithms, and
+Applications. Prentice-Hall, Inc., Upper Saddle River, NJ, USA.
+Alkhaleel, B.A., Liao, H., Sullivan, K.M., 2022. Risk and resilience-based optimal post-
+disruption restoration for critical infrastructures under uncertainty. European J.
+Oper. Res. 296 (1), 174–202. http://dx.doi.org/10.1016/j.ejor.2021.04.025.
+Almoghathawi, Y., Barker, K., Albert, L.A., 2019. Resilience-driven restoration model
+for interdependent infrastructure networks. Reliab. Eng. Syst. Saf. 185, 12–23.
+Almoghathawi, Y., González, A.D., Barker, K., 2021. Exploring recovery strategies for
+optimal interdependent infrastructure network resilience. Netw. Spat. Econ. 21 (1),
+229–260. http://dx.doi.org/10.1007/s11067-020-09515-4.
+Amin, M., 2002. Toward secure and resilient interdependent infrastructures. J. Infras-
+tructure Syst. 8 (3), 67–75. http://dx.doi.org/10.1061/(ASCE)1076-0342(2002)8:
+3(67).
+Assad, A., Moselhi, O., Zayed, T., 2020. Resilience-driven multiobjective restoration
+planning for water distribution networks. J. Perform. Constr. Facil. 34 (4),
+04020072. http://dx.doi.org/10.1061/(asce)cf.1943-5509.0001478.
+Azucena, J., Alkhaleel, B., Liao, H., Nachtmann, H., 2021. Hybrid simulation to support
+interdependence modeling of a multimodal transportation network. Simul. Model.
+Pract. Theory 107, 102237. http://dx.doi.org/10.1016/j.simpat.2020.102237.
+Baidya, P.M., Sun, W., 2017. Effective restoration strategies of interdependent power
+system and communication network. J. Eng. 2017 (13), 1760–1764. http://dx.doi.
+org/10.1049/joe.2017.0634.
+Barker, K., Lambert, J.H., Zobel, C.W., Tapia, A.H., Ramirez-Marquez, J.E., Albert, L.,
+Nicholson, C.D., Caragea, C., 2017. Defining resilience analytics for interdependent
+cyber-physical-social networks. Sustain. Resilient Infrastructure 2 (2), 59–67. http:
+//dx.doi.org/10.1080/23789689.2017.1294859.
+Benders, J.F., 1962. Partitioning procedures for solving mixed-variables programming
+problems. Numer. Math. 4, 238–252.
+Birge, J.R., Louveaux, F., 2011. Introduction to Stochastic Programming. Springer, New
+York, NY.
+Bruneau, M., Chang, S.E., Eguchi, R.T., Lee, G.C., O’Rourke, T.D., Reinhorn, A.M.,
+Shinozuka, M., Tierney, K., Wallace, W.A., von Winterfeldt, D., 2003. A framework
+
+Computers and Operations Research 144 (2022) 105812
+23
+B.A. Alkhaleel et al.
+to quantitatively assess and enhance the seismic resilience of communities. Earthq.
+Spectra 19, 733–752. http://dx.doi.org/10.1193/1.1623497.
+Bruninx, K., 2014. A practical approach on scenario generation and & reduction
+algorithms for wind power forecast error scenarios.
+Buldyrev, S.V., Parshani, R., Paul, G., Stanley, H.E., Havlin, S., 2010. Catastrophic
+cascade of failures in interdependent networks. Nature 464 (7291), 1025–1028.
+http://dx.doi.org/10.1038/nature08932.
+Buldyrev, S.V., Shere, N.W., Cwilich, G.A., 2011. Interdependent networks with
+identical degrees of mutually dependent nodes. Phys. Rev. E 83 (1), 016112.
+http://dx.doi.org/10.1103/physreve.83.016112.
+Campbell, R.J., Lowry, S., 2012. Weather-Related Power Outages and Electric System
+Resiliency. Library of Congress, Washington, DC.
+Casalicchio, E., Galli, E., Ottaviani, V., 2009. MobileOnRealEnvironment-GIS: A feder-
+ated mobile network simulator of mobile nodes on real geographic data. In: 2009
+13th IEEE/ACM International Symposium on Distributed Simulation and Real Time
+Applications. IEEE, http://dx.doi.org/10.1109/ds-rt.2009.25.
+Cavdaroglu, B., Hammel, E., Mitchell, J.E., Sharkey, T.C., Wallace, W.A., 2011. Integrat-
+ing restoration and scheduling decisions for disrupted interdependent infrastructure
+systems. Ann. Oper. Res. 203 (1), 279–294. http://dx.doi.org/10.1007/s10479-011-
+0959-3.
+Çelik, M., 2016. Network restoration and recovery in humanitarian operations: Frame-
+work, literature review, and research directions. Surv. Oper. Res. Manag. Sci. 21
+(2), 47–61. http://dx.doi.org/10.1016/j.sorms.2016.12.001.
+Center for Research on the Epidemiology of Disasters (CRED), 2021. EM-DAT: The
+emergency events database. Number of natural disaster. Available at: https://public.
+emdat.be/.
+Chen, J., Lim, C.H., Qian, P.Z., Linderoth, J., Wright, S.J., 2014. Validating sample
+average approximation solutions with negatively dependent batches. arXiv:1404.
+7208v2.
+Coffrin, C., Van Hentenryck, P., Bent, R., 2012. Last-mile restoration for multiple
+interdependent infrastructures. Proc. Natl. Conf. Artif. Intell. 26 (1), 455–463.
+CPLEX, IBM., 2021. CPLEX Optimizer | IBM. https://www.ibm.com/analytics/cplex-
+optimizer.
+Danziger, M.M., Shekhtman, L.M., Bashan, A., Berezin, Y., Havlin, S., 2016. Vulner-
+ability of interdependent networks and networks of networks. In: Understanding
+Complex Systems. Springer International Publishing, Switzerland, pp. 79–99. http:
+//dx.doi.org/10.1007/978-3-319-23947-7_5.
+de la Torre, L.E., Dolinskaya, I.S., Smilowitz, K.R., 2012. Disaster relief routing:
+Integrating research and practice. Socio-Econ. Plan. Sci. 46 (1), 88–97, Special
+Issue: Disaster Planning and Logistics: Part 1.
+Di Muro, M.A., La Rocca, C.E., Stanley, H.E., Havlin, S., Braunstein, L.A., 2016.
+Recovery of interdependent networks. Sci. Rep. 6 (22834), 1–11. http://dx.doi.
+org/10.1038/srep22834.
+Dupačová, J., Gröwe-Kuska, N., Römisch, W., 2003. Scenario reduction in stochastic
+programming. Math. Program. 95 (3), 493–511.
+Enayaty Ahangar, N., Sullivan, K.M., Nurre, S.G., 2020. Modeling interdependencies in
+infrastructure systems using multi-layered network flows. Comput. Oper. Res. 117,
+104883. http://dx.doi.org/10.1016/j.cor.2019.104883.
+Escudero, L.F., Garín, M.A., Unzueta, A., 2017. Scenario cluster Lagrangean de-
+composition
+for
+risk
+averse
+in
+multistage
+stochastic
+optimization.
+Comput.
+Oper. Res. 85, 154–171, URL http://www.sciencedirect.com/science/article/pii/
+S0305054817300989.
+Eusgeld, I., Nan, C., Dietz, S., 2011. ‘‘System-of-system’’ approach for interdependent
+critical infrastructures. Reliab. Eng. Syst. Saf. 96 (6), 679–686. http://dx.doi.org/
+10.1016/j.ress.2010.12.010.
+Fang, Y., Pedroni, N., Zio, E., 2016. Resilience-based component importance measures
+for critical infrastructure network systems. IEEE Trans. Reliab. 65 (2), 502–512.
+http://dx.doi.org/10.1109/tr.2016.2521761.
+Fang, Y., Sansavini, G., 2017. Emergence of antifragility by optimum postdisruption
+restoration planning of infrastructure networks. J. Infrastructure Syst. 23 (4),
+04017024.
+Fang, Y., Sansavini, G., 2019. Optimum post-disruption restoration under uncertainty
+for enhancing critical infrastructure resilience. Reliab. Eng. Syst. Saf. 185 (January
+2019), 1–11.
+Fares, R.L., King, C.W., 2017. Trends in transmission, distribution, and administration
+costs for U.S. investor-owned electric utilities. Energy Policy 105, 354–362. http:
+//dx.doi.org/10.1016/j.enpol.2017.02.036.
+Force, HurricaneSandyRebuildingTaskForce., 2013. Hurricane sandy rebuilding strat-
+egy. In: US Department of Housing and Urban Development., Washington, DC.
+Department of Housing and Urban Development,, Washington, DC.
+Franchin, P., Cavalieri, F., 2015. Probabilistic assessment of civil infrastructure re-
+silience to earthquakes. Comput.-Aided Civ. Infrastruct. Eng. 30 (7), 583–600.
+http://dx.doi.org/10.1111/mice.12092.
+Garay-Sianca, A., Pinkley, S.G.N., 2021. Interdependent integrated network design and
+scheduling problems with movement of machines. European J. Oper. Res. 289 (1),
+297–327.
+Ghorbani-Renani, N., González, A.D., Barker, K., Morshedlou, N., 2020. Protection-
+interdiction-restoration: Tri-level optimization for enhancing interdependent net-
+work resilience. Reliab. Eng. Syst. Saf. 199, 106907. http://dx.doi.org/10.1016/j.
+ress.2020.106907.
+Gong, J., Lee, E.E., Mitchell, J.E., Wallace, W.A., 2009. Logic-based MultiObjective
+optimization for restoration planning. In: Chaovalitwongse, E.W. (Ed.), Springer
+Optimization and Its Applications, Vol. 30. Springer US, Boston, MA, pp. 305–324.
+http://dx.doi.org/10.1007/978-0-387-88617-6_11.
+González, A.D., nas Osorio, L.D., Sánchez-Silva, M., Medaglia, A.L., 2016. The inter-
+dependent network design problem for optimal infrastructure system restoration.
+Comput.-Aided Civ. Infrastruct. Eng. 31 (5), 334–350. http://dx.doi.org/10.1111/
+mice.12171.
+Guidotti, R., Chmielewski, H., Unnikrishnan, V., Gardoni, P., McAllister, T., van de
+Lindt, J., 2016. Modeling the resilience of critical infrastructure: the role of
+network dependencies. Sustain. Resilient Infrastructure 1 (3–4), 153–168. http:
+//dx.doi.org/10.1080/23789689.2016.1254999.
+Haimes, Y.Y., Jiang, P., 2001. Leontief-based model of risk in complex interconnected
+infrastructures. J. Infrastructure Syst. 7 (1), 1–12. http://dx.doi.org/10.1061/(asce)
+1076-0342(2001)7:1(1).
+HDR, 2012. City of Raymore - water storage and water supply study. Available at:
+https://www.raymore.com/home/showpublisheddocument?id=1176.
+Heitsch,
+H.,
+Römisch,
+W.,
+2003.
+Scenario
+reduction
+algorithms
+in
+stochastic
+programming. Comput. Optim. Appl. 24 (2/3), 187–206.
+Helbing, D., 2013. Globally networked risks and how to respond. Nature 497 (7447),
+51–59. http://dx.doi.org/10.1038/nature12047.
+Henry, D., Ramirez-Marquez, J.E., 2012. Generic metrics and quantitative approaches
+for system resilience as a function of time. Reliab. Eng. Syst. Saf. 99, 114–122.
+Holden, R., Val, D.V., Burkhard, R., Nodwell, S., 2013. A network flow model for
+interdependent infrastructures at the local scale. Saf. Sci. 53, 51–60. http://dx.doi.
+org/10.1016/j.ssci.2012.08.013.
+Horejšová, M., Vitali, S., Kopa, M., Moriggia, V., 2020. Evaluation of scenario reduction
+algorithms with nested distance. Comput. Manag. Sci. 17 (2), 241–275.
+Hosseini, S., Barker, K., Ramirez-Marquez, J.E., 2016. A review of definitions and
+measures of system resilience. Reliab. Eng. Syst. Saf. 145, 47–61.
+Humphreys, B.E., 2019. Critical Infrastructure: Emerging Trends and Policy Consid-
+erations for Congress. CRS Report No. R45809, Congressional Research Service,
+Washington, DC.
+Karagiannis, G.M., Chondrogiannis, S., Krausmann, E., Turksezer, Z.I., 2017. Power
+Grid Recovery After Natural Hazard Impact. Technical Report EUR 28844 EN,
+Publications Office of the European Union, Luxembourg, http://dx.doi.org/10.
+2760/87402.
+Karakoc, D.B., Almoghathawi, Y., Barker, K., González, A.D., Mohebbi, S., 2019.
+Community resilience-driven restoration model for interdependent infrastructure
+networks. Int. J. Disaster Risk Reduct. 38, 101228. http://dx.doi.org/10.1016/j.
+ijdrr.2019.101228.
+Kim, Y., Spencer, B.F.J., Song, J., Elnashai, A.S., Stokes, T., 2007. Seismic performance
+assessment of interdependent lifeline systems. MAE Center Rep. CD Release 07-16.
+Kleywegt, A.J., Shapiro, A., Homem-de-Mello, T., 2002. The sample average approx-
+imation method for stochastic discrete optimization. SIAM J. Optim. 12 (2),
+479–502.
+Krokhmal, P., Palmquist, J., Uryasev, S., 2002. Portfolio optimization with conditional
+value-at-risk objective and constraints. J. Risk 4, 43–68.
+Laboratory, L.B.N., Nexant, I., 2021. The interruption cost estimate (ICE) calculator
+- lawrence berkeley national laboratory and nexant, inc. Available at: https://
+icecalculator.com/home.
+Lee I.I., E.E., Mitchell, J.E., Wallace, W.A., 2007. Restoration of services in interde-
+pendent infrastructure systems: A network flows approach. IEEE Trans. Syst. Man
+Cybern. C (Appl. Rev.) 37 (6), 1303–1317. http://dx.doi.org/10.1109/TSMCC.2007.
+905859.
+Little, R.G., 2002. Controlling cascading failure: Understanding the vulnerabilities of
+interconnected infrastructures. J. Urban Technol. 9 (1), 109–123. http://dx.doi.
+org/10.1080/106307302317379855.
+Manuel, J., 2013. The long road to recovery: Environmental health impacts of hurricane
+sandy. Environ. Health Perspect. 121 (5).
+Meltzer, A., Beck, S., Ruiz, M., Hoskins, M., Soto-Cordero, L., Stachnik, J.C., Lynner, C.,
+Porritt, R., Portner, D., Alvarado, A., Hernandez, S., Yepes, H., Charvis, P., Font, Y.,
+Regnier, M., Agurto-Detzel, H., Rietbrock, A., Leon-Rios, S., Mercerat, E.D., 2019.
+The 2016 Mw 7.8 pedernales, ecuador, earthquake: Rapid response deployment.
+Seismol. Res. Lett. 90 (3), 1346–1354. http://dx.doi.org/10.1785/0220180364.
+Memphis Light, Gas, Water Division (MLGW), 2021. Facts & figures - 2017. Available
+at: http://www.mlgw.com/images/content/files/pdf/FactsFigures2018.pdf.
+Mendonca, D., Lee, E., Wallace, W., 2004. Impact of the 2001 world trade center attack
+on critical interdependent infrastructures. In: 2004 IEEE International Conference
+on Systems, Man and Cybernetics (IEEE Cat. No.04CH37583), Vol. 5. IEEE, http:
+//dx.doi.org/10.1109/icsmc.2004.1401165.
+Mete, H.O., Zabinsky, Z.B., 2010. Stochastic optimization of medical supply location and
+distribution in disaster management. Int. J. Prod. Econ. 126 (1), 76–84. http://dx.
+doi.org/10.1016/j.ijpe.2009.10.004, Improving Disaster Supply Chain Management
+– Key supply chain factors for humanitarian relief.
+Min, H.-S.J., Beyeler, W., Brown, T., Son, Y.J., Jones, A.T., 2007. Toward modeling
+and simulation of critical national infrastructure interdependencies. IIE Trans. 39
+(1), 57–71. http://dx.doi.org/10.1080/07408170600940005.
+Mooney, E.L., Almoghathawi, Y., Barker, K., 2019. Facility location for recovering
+systems of interdependent networks. IEEE Syst. J. 13 (1), 489–499. http://dx.doi.
+org/10.1109/jsyst.2018.2869391.
+
+Computers and Operations Research 144 (2022) 105812
+24
+B.A. Alkhaleel et al.
+Morales, J.M., Pineda, S., Conejo, A.J., Carrión, M., 2009. Scenario reduction for futures
+market trading in electricity markets. IEEE Trans. Power Syst. 24 (2), 878–888.
+Moreno, A., Munari, P., Alem, D., 2019. A branch-and-benders-cut algorithm for the
+crew scheduling and routing problem in road restoration. European J. Oper. Res.
+275 (1), 16–34. http://dx.doi.org/10.1016/j.ejor.2018.11.004.
+Morshedlou, N., González, A.D., Barker, K., 2018. Work crew routing problem for
+infrastructure network restoration. Transp. Res. B 118, 66–89. http://dx.doi.org/
+10.1016/j.trb.2018.10.001.
+Noyan, N., 2012. Risk-averse two-stage stochastic programming with an application to
+disaster management. Comput. Oper. Res. 39 (3), 541–559. http://dx.doi.org/10.
+1016/j.cor.2011.03.017.
+Nurre, S.G., Cavdaroglu, B., Mitchell, J.E., Sharkey, T.C., Wallace, W.A., 2012. Restor-
+ing infrastructure systems: An integrated network design and scheduling (INDS)
+problem. European J. Oper. Res. 223 (3), 794–806.
+Nurre, S.G., Sharkey, T.C., 2014. Integrated network design and scheduling prob-
+lems with parallel identical machines: Complexity results and dispatching rules.
+Networks 63 (4), 306–326.
+Ouyang, M., 2014. Review on modeling and simulation of interdependent critical
+infrastructure systems. Reliab. Eng. Syst. Saf. 121, 43–60. http://dx.doi.org/10.
+1016/j.ress.2013.06.040.
+Ouyang, M., Wang, Z., 2015. Resilience assessment of interdependent infrastructure
+systems: With a focus on joint restoration modeling and analysis. Reliab. Eng. Syst.
+Saf. 141, 74–82. http://dx.doi.org/10.1016/j.ress.2015.03.011.
+Peerenboom, J., Fisher, R., Rinaldi, S., Kelly, T., 2002. Studying the chain reaction.
+Electr. Perspect. 27 (1), 22–35.
+Executive Office of the President, CouncilofEconomicAdvisers., 2013. Economic Benefits
+of Increasing Electric Grid Resilience to Weather Outages. The Council, Washington,
+D.C..
+Python, 2021. Python.org. https://www.python.org/.
+Rachev, S.T., 1991. Probability Metrics and the Stability of Stochastic Models, Scenario.
+Wiley, Chichester New York.
+Rahmaniani, R., Crainic, T.G., Gendreau, M., Rei, W., 2017. The benders decomposition
+algorithm: A literature review. European J. Oper. Res. 259 (3), 801–817. http:
+//dx.doi.org/10.1016/j.ejor.2016.12.005.
+Rinaldi, S.M., 2004. Modeling and simulating critical infrastructures and their interde-
+pendencies. In: 37th Annual Hawaii International Conference on System Sciences,
+2004. Proceedings of the. IEEE, pp. 5–8. http://dx.doi.org/10.1109/hicss.2004.
+1265180.
+Rinaldi, S.M., Peerenboom, J.P., Kelly, T.K., 2001. Identifying, understanding, and
+analyzing critical infrastructure interdependencies. IEEE Control Syst. 21 (6),
+11–25. http://dx.doi.org/10.1109/37.969131.
+Rockafellar, R.T., Uryasev, S., 2000. Optimization of conditional value-at-risk. J. Risk
+2 (3), 21–41.
+Saidi, S., Kattan, L., Jayasinghe, P., Hettiaratchi, P., Taron, J., 2018. Integrated
+infrastructure systems–A review. Sustainable Cities Soc. 36, 1–11. http://dx.doi.
+org/10.1016/j.scs.2017.09.022.
+Sharkey, T.C., Cavdaroglu, B., Nguyen, H., Holman, J., Mitchell, J.E., Wallace, W.A.,
+2015. Interdependent network restoration: On the value of information-sharing.
+European J. Oper. Res. 244 (1), 309–321.
+Sharma, N., Tabandeh, A., Gardoni, P., 2017. Resilience analysis: A mathemati-
+cal formulation to model resilience of engineering systems. Sustain. Resilient
+Infrastructure 3 (2), 49–67. http://dx.doi.org/10.1080/23789689.2017.1345257.
+Tootaghaj, D.Z., Bartolini, N., Khamfroush, H., Porta, T.L., 2017. Controlling cascading
+failures in interdependent networks under incomplete knowledge. In: 2017 IEEE
+36th Symposium on Reliable Distributed Systems (SRDS). IEEE, Hong Kong, http:
+//dx.doi.org/10.1109/srds.2017.14.
+Unsihuay, C., Lima, J.W.M., de Souza, A.Z., 2007. Modeling the integrated natural
+gas and electricity optimal power flow. In: 2007 IEEE Power Engineering Society
+General Meeting. IEEE, Tampa, FL, pp. 24–28. http://dx.doi.org/10.1109/pes.2007.
+386124.
+Vugrin, E.D., Turnquist, M.A., Brown, N.J., 2014. Optimal recovery sequencing for
+enhanced resilience and service restoration in transportation networks. Int. J. Crit.
+Infrastruct. 10 (3/4), 218–246.
+Wallace, W., Mendonca, D., Lee, E., Mitchell, J., Wallace, J., Monday, J., 2003.
+Managing disruptions to critical interdependent infrastructures in the context of
+the 2001 world trade center attack. In beyond september 11th: An account of.
+Post-Disaster Res., Special Publ. 39, 165–198.
+White House, 2013. Presidential Policy Directive/PPD-21 : Critical Infrastructure
+Security and Resilience. Office of the Press Secretary: Washington, DC.. Office of
+the Press Secretary, Washington, DC..
+Wolfram, C., 2021. Measuring the economic costs of the PG&E outages. Available at:
+https://energyathaas.wordpress.com/2019/10/14/measuring-the-economic-costs-
+of-the-pge-outages/.
+Wyss, G.D., Jorgensen, K.H., 1998. A user ’ s guide to LHS : Sandia’s latin hypercube
+sampling software acknowledgments. Distribution (February), 88.
+Zhang, C., Kong, J.-j., Simonovic, S.P., 2018. Restoration resource allocation model
+for enhancing resilience of interdependent infrastructure systems. Saf. Sci. 102,
+169–177. http://dx.doi.org/10.1016/j.ssci.2017.10.014.
+Zhang, P., Peeta, S., 2011. A generalized modeling framework to analyze interde-
+pendencies among infrastructure systems. Transp. Res. B 45 (3), 553–579. http:
+//dx.doi.org/10.1016/j.trb.2010.10.001.
+Zhang, Y., Yang, N., Lall, U., 2016. Modeling and simulation of the vulnerability of
+interdependent power-water infrastructure networks to cascading failures. J. Syst.
+Sci. Syst. Eng. 25 (1), 102–118. http://dx.doi.org/10.1007/s11518-016-5295-3.
+Zimmerman, R., 2001. Social implications of infrastructure network interactions. J.
+Urban Technol. 8 (3), 97–119. http://dx.doi.org/10.1080/106307301753430764.

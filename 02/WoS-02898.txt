@@ -1,0 +1,1918 @@
+4796
+IEEE TRANSACTIONS ON SMART GRID, VOL. 16, NO. 6, NOVEMBER 2025
+End-to-End Stochastic Predict-Then-Optimize for
+Cost-Efﬁcient Water-Energy Resource Scheduling
+Shunyu Wu
+, Jingcheng Wang
+, Haotian Xu
+, Yanjiu Zhong, and Jun Rao
+Abstract—Compared
+to
+other
+energy-intensive
+industries,
+urban water supply systems are unique due to the strong
+temporal coupling with the power grid, which intensiﬁes grid
+stress during peak hours. This paper addresses the water-
+energy nexus by developing a water-energy resource scheduling
+model for whole-process water supply that incorporates elec-
+tricity cost prediction uncertainties. Meanwhile, to minimize
+the scheduling cost in an end-to-end approach, we propose
+the
+Stochastic
+Predict-then-Optimize
+(SPTO),
+which
+aligns
+prediction distribution with the optimality gap by integrating
+probabilistic forecasting with stochastic optimization. Unlike
+traditional two-stage approaches, SPTO establishes a closed-
+loop feedback between forecasting and optimization, reducing
+cumulative errors and improving real-time adaptability. To
+enable end-to-end training, we derive the SPTO+, a differentiable
+convex upper-bound surrogate function based on Lagrangian
+duality, which provides surrogate gradient computation for end-
+to-end training. Experiments on real-world systems demonstrate
+that SPTO signiﬁcantly reduces operational cost and decision
+regret, effectively coordinating water operations with dynamic
+grid conditions to support cost-efﬁcient and grid-responsive
+scheduling.
+Index
+Terms—Predict-then-optimize,
+urban
+water-energy
+system, grid load, cost-efﬁcient scheduling.
+Received 8 July 2024; revised 20 December 2024 and 24 June 2025;
+accepted 13 August 2025. Date of publication 27 August 2025; date of current
+version 23 October 2025. This work was supported in part by the National Key
+Research and Development Program of China under Grant 2024YFB3312100;
+in part by the National Natural Science Foundation of China under Grant
+62273234 and Grant 62303273; and in part by the Natural Science Foundation
+of Shandong Province under Grant ZR2023QF072. Paper no. TSG-01194-
+2024. (Corresponding author: Jingcheng Wang.)
+Shunyu Wu and Jun Rao are with the School of Automation and
+Intelligent Sensing and the Key Laboratory of System Control and Information
+Processing, Ministry of Education of China, Shanghai Jiao Tong University,
+Shanghai 200240, China, and also with the School of Automation and
+Intelligent Sensing, Shanghai Key Laboratory of Perception and Control in
+Industrial Network Systems, Shanghai 200240, China (e-mail: shunyuwu@
+sjtu.edu.cn).
+Jingcheng Wang is with the School of Automation and Intelligent Sensing
+and the Key Laboratory of System Control and Information Processing,
+Ministry of Education of China, Shanghai Jiao Tong University, Shanghai
+200240, China, also with the Shanghai Key Laboratory of Perception and
+Control in Industrial Network Systems, Shanghai 200240, China, and also
+with the Autonomous Systems and Intelligent Control International Joint
+Research Center, Xi’an Technological University, Xi’an 710021, Shaanxi,
+China (e-mail: jcwang@sjtu.edu.cn).
+Haotian Xu is with the School of Control Science and Engineering,
+Shandong
+University,
+Jinan
+250061,
+China
+(e-mail:
+xuhaotian_1993@
+126.com).
+Yanjiu Zhong is with the School of Management, Hefei University of
+Technology, Hefei 230009, Anhui, China.
+Color versions of one or more ﬁgures in this article are available at
+https://doi.org/10.1109/TSG.2025.3601238.
+Digital Object Identiﬁer 10.1109/TSG.2025.3601238
+NOMENCLATURE
+Indices
+i
+Index for reservoirs, i = A, B, C
+J
+Set of all pumps
+j
+Index for pumps, j = 1, 2, . . . , 18
+Jd
+Set of distribution pumps, Jd = {9, 10, . . . , 18}
+Jd,A
+Set of pumps for Water Plant A
+Jd,B
+Set of pumps for Pump Station B
+Jd,C
+Set of pumps for Pump Station C
+K
+Set of ﬁltering tanks, K = {s, v, a}
+k
+Index for ﬁltering tanks, k = s, v, a
+N
+Set of distribution network nodes
+n
+Index for distribution nodes, n ∈N
+T
+Set of time steps
+t
+Time step index, t = 1, 2, . . . , T
+Parameters
+¯φj, ¯qn
+Reference ﬂow rates for pumps and nodes
+lt
+k
+Change in water level in tank k at time t
+δ
+Maximum allowed deviation from initial water
+level
+δ−, δ+
+Allowable shortage and excess margins
+η
+Evaporation rate in tanks
+ˆct
+Predicted electricity price at time t
+τk
+Time lag for outﬂow of tank k
+ak, bk
+Head loss coefﬁcients for tank k
+cn
+Coefﬁcient for head loss at node n
+Dt
+Total demand at time t
+Hrated,j
+Rated head of pump j at zero ﬂow
+kj
+Head loss coefﬁcient for pump j
+Lrlow
+i
+, Lrhigh
+i
+Minimum
+and
+maximum
+water
+levels
+for
+reservoir i
+Pj
+Power consumption of pump j
+Qj
+Maximum ﬂow capacity of pump j
+QL
+k, QH
+k
+Lower and upper ﬂow limits for tank k
+Si
+Storage capacity of reservoir i
+Wini
+k
+Initial water level in tank k
+Variables
+lri
+Change in water level of reservoir i
+tt
+j
+Duration of pump j’s operation at time t
+φt
+j
+Flow rate of pump j at time t
+Ht
+k
+Head at tank k at time t
+Ht
+n
+Head at distribution node n at time t
+qt
+in,k
+Inﬂow to tank k at time t
+1949-3053 c⃝2025 IEEE. All rights reserved, including rights for text and data mining, and training of artiﬁcial intelligence
+and similar technologies. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:01:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+WU et al.: END-TO-END STOCHASTIC PREDICT-THEN-OPTIMIZE
+4797
+qt
+out,k
+Outﬂow from tank k at time t
+ut
+j
+Binary
+decision
+variable
+indicating
+whether
+pump j is active at time t
+wt
+k
+Water level in tank k at time t
+I. INTRODUCTION
+M
+ANAGING peak demand is a critical concern in mod-
+ern smart grid operations [1], [2]. As the electriﬁcation
+of infrastructure grows, power grids must increasingly coordi-
+nate with large, ﬂexible, and often uncertain energy loads [3].
+Among these, the urban water supply system emerges as
+a signiﬁcant and controllable electricity consumer [4], [5].
+According to national estimates, water-related infrastructure
+consumes approximately 7–8% of total electricity in the
+United States [6]. In speciﬁc urban regions, water pumping
+alone can account for up to 30% of local utility energy
+consumption [7], providing potential for demand-side ﬂexibil-
+ity. More importantly, this load is highly time-concentrated.
+Studies report that during peak electricity periods—typically
+aligned with high-price hours—the contribution of water
+systems to total grid load can reach 15–20% [8].
+This temporal coupling intensiﬁes core operational chal-
+lenges in smart grids, such as maintaining voltage stability,
+managing frequency deviations, and ensuring sufﬁcient ramp-
+ing capacity, especially under high renewable penetration [9].
+Without coordination, this leads to greater reliance on
+expensive peaking generators and higher system risk dur-
+ing renewable ﬂuctuations [10], [11]. Therefore, coordinated
+scheduling of water systems is essential to provide ﬂexible
+load shifting that supports grid stability, with the extra beneﬁt
+of reducing electricity costs. However, such coordination must
+respect hydraulic constraints and process delays within the
+water system, making joint optimization both valuable and
+challenging [12].
+While co-optimization models aim to shift pumping away
+from expensive periods, most of them assume full knowledge
+of future prices, which is a strong assumption that contradicts
+the volatility and price unpredictability of real-world power
+markets [13], [14], [15]. This gap undermines their practical
+effectiveness in real-world smart grids, where electricity prices
+are inﬂuenced by stochastic factors such as renewable variabil-
+ity, demand spikes, and market bidding behavior [16], [17].
+One standard approach to handle such uncertainty is the
+two-stage predict and optimize framework [16], [18], [19].
+It uses a forecasting model to predict electricity prices and
+then solves an optimization problem with those predicted
+values. This modular design is easy to implement, but suf-
+fers from a fundamental misalignment. Traditional prediction
+losses, such as mean absolute error (MAE) or negative log-
+likelihood (NLL), measure forecast accuracy in isolation and
+do not reﬂect the impact of forecast errors on scheduling
+quality.
+However, in grid-interactive infrastructure systems, the
+effectiveness of forecasts is not only judged by statisti-
+cal metrics, but also by their contribution to operational
+decisions [20]. This has led to the emergence of Predic-
+then-Optimize (PTO) methods [21], which combine prediction
+with optimization through regret-based training losses. The
+PTO ensures that the forecasting model improves outcomes
+that matter directly to the optimization problem. However,
+existing PTO methods face two key limitations when applied
+to realistic energy systems.
+First, the regret function is often non-differentiable with
+respect to the predicted inputs [22], [23], especially in problems
+with discrete decisions or piecewise objectives. This prevents
+direct gradient computation and requires the use of surrogate
+loss functions or differentiable optimization layers [24], [25],
+[26], [27]. Second, and more critically, most PTO approaches
+rely on point predictions of uncertain parameters. That is, they
+train the forecasting model to output a single best-estimate price
+and then optimize accordingly. This ignores the distributional
+uncertainty inherent in electricity price forecasts, which can be
+large and asymmetric, especially during price spikes or load
+changes. Inability to model distributional uncertainty, leading
+to high rates of regret, especially during rare but critical events
+such as periods of grid stress or market volatility [28], [29].
+This paper presents a decision-aware optimization frame-
+work for water-energy scheduling under cost uncertainty in
+smart grids. Urban water systems represent a major con-
+trollable load, and their pumping operations often coincide
+with periods of high electricity demand. To reduce peak grid
+stress, this work extends the Predict-Then-Optimize (PTO)
+framework to a stochastic setting, where uncertain electricity
+prices are modeled as probability distributions. The main
+contributions are summarized as follows:
+1) A whole-process water-energy scheduling model is
+developed that satisﬁes hydraulic constraints and lever-
+ages electricity price responsiveness for demand-side
+ﬂexibility in smart grids. This formulation enables
+pump scheduling to adapt to electricity price variations,
+contributing to peak load reduction and demand-side
+ﬂexibility in the smart grid.
+2) A learning-based optimization framework is intro-
+duced,
+where
+electricity
+prices
+are
+predicted
+as
+probability distributions rather than point estimates.
+These
+forecasts
+are
+directly
+embedded
+into
+the
+optimization problem through a decision-focused loss.
+The
+proposed
+framework
+improves
+the
+alignment
+between prediction and scheduling under uncertain mar-
+ket conditions, enhancing the robustness of demand-side
+operations.
+3) To address the non-differentiability of regret-based
+objectives, a smooth surrogate loss is derived. This
+formulation enables
+gradient-based
+training of the
+forecasting model using decision-aware signals. The sur-
+rogate maintains ﬁdelity to the original regret objective
+while supporting efﬁcient model optimization.
+4) The proposed framework is evaluated under a real-world
+water-energy scheduling scenario. Results show that the
+proposed method achieves lower decision regret and
+improved cost performance compared to deterministic
+and two-stage baselines. These ﬁndings support the
+integration of data-driven decision models into grid-
+interactive infrastructure systems.
+Section II describes the problem formulation. Section III
+presents the whole-process water-energy scheduling model.
+Section IV introduces the proposed learning-based Stochastic
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:01:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+4798
+IEEE TRANSACTIONS ON SMART GRID, VOL. 16, NO. 6, NOVEMBER 2025
+Fig. 1.
+Overview of the real-world study area H. Station A handles the raw
+water treatment through sequential stages and the clean water distribution from
+the reservoir. Stations B and C just focus on water distribution to end users.
+All stations operate multiple pumps for signiﬁcant electricity consumption.
+The energy demand from pumping operations exhibits temporal coupling with
+daily water usage patterns, leading to coinciding peak loads in both water and
+energy systems. This coupling motivates the proposed cost-efﬁcient scheduling
+model.
+Predict-then-optimizer (SPTO) framework, including the prob-
+abilistic forecasting model, cost-aware optimization, and the
+SPTO+ loss function. Section V provides experimental results.
+Section VI concludes the paper.
+II. PROBLEM FORMULATION
+This study aims to address the coupled peak demand
+problem in water systems and electric power grids. Urban
+water systems consume signiﬁcant energy for pumping and
+distribution, which can intensify power grid loads during
+peak electricity demand periods. The study area is a speciﬁc
+urban water supply district H in a mega Asian city, covering
+approximately 20 km2 and serving around 500,000 residents.
+Its water distribution network (WDN) includes thousands of
+nodes and pipes, along with a set of essential production and
+delivery facilities, such as pumping stations, reservoirs, and
+treatment tanks. Electricity costs for operating these water
+pumps account for a signiﬁcant part of the system’s total
+operational expenses.
+To moderate peak-period loads and reduce operational costs,
+we formulate a cost-aware water-energy scheduling problem
+as a parametric stochastic optimization model. The objective
+is to minimize the expected operational cost:
+min
+u
+Ec∼Q
+
+c⊤u
+
+,
+s.t.
+u ∈˜U,
+(1)
+where u represents the decision variables (pump operations),
+and c denotes cost parameters (electricity prices) to be
+predicted for optimization. The set ˜U deﬁnes operational con-
+straints, including pump limits, water balance requirements,
+and pressure loss constraints.
+In practice, the true parameter c is unknown and needs to
+be predicted with a forecasting model. The common approach
+for most optimization problems with unknown parameters is
+the two-stage method, which predicts unknown parameters and
+incorporates them into the optimization model. The problems
+are then solved through various algorithms or solvers. Consider
+ˆc as the predicted parameter, the predicted optimal decisions
+are made by solving u∗(ˆc) = arg minu∈˜U ˆc⊤u.
+However, the existence of the arg min operator in u∗(ˆc)
+means that even small errors in the predicted parameter
+cost vector ˆc can signiﬁcantly affect the optimal decision.
+Unlike smooth mappings, the solution to an optimization
+problem is often the piecewise constant function for the cost
+coefﬁcients, dividing the decision space into distinct regions.
+Small variations in ˆc may push it across a region boundary,
+causing a sudden change in the optimal decision and resulting
+in a notable optimality gap.
+To evaluate the impact of such an optimality gap in an
+end-to-end approach, we deﬁne the decision regret function:
+R
+
+c, ˆc
+
+= c⊤u∗
+ˆc
+
+−c⊤u∗(c),
+(2)
+where u∗(c) = arg minu∈˜U c⊤u represents the true optimal
+decision under the actual parameter c. Such approach is
+also known as the Predict-then-optimize (PTO). Through the
+explicit deﬁnition of equation (2), the PTO approach ensures
+that predictions are optimized to minimize the impact of
+parameter uncertainty on the objective value.
+The key challenge in this study, as stated in the introduction,
+is to acquire the surrogate gradient for the non-differentiability
+of R(·). Small changes in ˆc can lead to sudden changes in
+u∗(ˆc). Therefore, it is essential to construct a differentiable sur-
+rogate function for acquiring the surrogate gradient, enabling
+end-to-end training.
+III. INTEGRATED WATER-ENERGY SCHEDULING MODEL
+This section presents the whole-process model of the urban
+water-energy co-optimization system, emphasizing the inte-
+gration of energy-aware pumping decisions and hydraulically
+feasible water production and distribution processes. The
+model consists of two coupled subsystems: the energy side,
+which focuses on electricity cost-aware scheduling of pumps;
+and the water side, which captures the ﬂow balance, pressure
+dynamics, and process delays across the entire treatment and
+supply pipeline.
+A. Energy-Side: Energy and Price Costs Minimization
+In water supply systems, even a single suburban district
+typically operates dozens of pumps in the whole process
+supply loop, including raw-water lifts, treatment boosters, and
+distribution units. At peak, these drives draw MWs of electrical
+power, making the district a non-trivial load in local demand-
+side management. Moreover, their operations often align with
+peak electricity demand periods, which further ampliﬁes grid
+stress.
+To address the impact of uncertain and time-varying elec-
+tricity prices, we design the objective function to capture both
+the operational energy usage and its temporal coupling price
+cost. The optimization seeks to minimize the expected total
+cost across the planning horizon:
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:01:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+WU et al.: END-TO-END STOCHASTIC PREDICT-THEN-OPTIMIZE
+4799
+min
+u∈˜U
+
+t∈T
+
+j∈J
+E
+
+ˆc t Pj ut
+j
+
+,
+(3)
+where ˆc t denotes the stochastic electricity price at time t,
+modeled as a random variable with known distribution or
+empirical samples. Pj is the rated power of pump j, and ut
+j ∈
+{0, 1} is the on/off control signal indicating its operational
+status.
+The expectation operator captures the average cost under
+the price uncertainty, and in practice, is approximated via a
+sample average approximation (SAA) approach:
+E[·] ≈
+1
+||
+
+t∈T
+
+j∈J
+
+ω∈
+	
+ˆct,ωPjut,ω
+j
+
+,
+where  denotes a ﬁnite set of sampled price scenarios.
+The uncertainty of cost is predicted by probabilistic neural
+forecasting in section IV, which enables the capture of com-
+plex, nonlinear temporal dependencies in electricity prices.
+Consequently, the objective function inherently encodes inter-
+temporal coupling in the cost proﬁle, which signiﬁcantly
+increases the solution difﬁculty when combined with binary
+control decisions and physical system constraints.
+This formulation is risk-neutral, but it can be naturally
+extended to risk-aware variants by substituting the expectation
+with an appropriate risk measure. Moreover, the structure
+is compatible with decomposition or approximation tech-
+niques such as stochastic dual dynamic programming (SDDP),
+depending on the underlying system dynamics and constraint
+structure.
+The energy cost component is modeled based on pump
+operations constrained by mechanical and hydraulic behavior.
+For the ﬁxed-frequency pumps, the ﬂow rate φt
+j for pump j at
+time t is limited by:
+φt
+j ≤ut
+j · Qj,
+(4)
+where φt
+j is the actual delivered ﬂow and Qj is the pump’s
+maximum capacity.
+Considering the practical parallel pump systems, it is essen-
+tial to maintain the same head for all pumps. The head of
+each pump depends on the ﬂow rate, and this relationship is
+initially modeled by a quadratic equation. Speciﬁcally, at time
+t and for each pump j ∈P, we have:
+Hrated,j −kj
+	
+φt
+j
+
+2
+= Ht,
+(5)
+where Hrated,j is the rated head at zero ﬂow, kj is a constant
+describing how the head decreases with increasing ﬂow for
+pump j, and Ht is the common head at time t. This ensures
+that the head for all pumps is equal at each time t. Moreover,
+from the equal-head condition, the following must hold:
+k1
+
+φt
+1
+2 = k2
+
+φt
+2
+2 = · · · = km
+
+φt
+m
+2,
+(6)
+where m denotes the number of parallel pumps. Considering
+that these quadratic equality constraints can be difﬁcult to
+handle in the solver. Therefore, we consider a linear approxi-
+mation around a chosen reference ﬂow rate ¯φj for each pump.
+Using a ﬁrst-order Taylor expansion of the quadratic term
+(φt
+j)2 around ¯φj, we approximate:
+	
+φt
+j
+
+2
+≈2 ¯φjφt
+j −
+ ¯φj
+2.
+Substituting this into the head equation yields a linear
+approximation:
+Hrated,j −kj
+
+2 ¯φjφt
+j −
+ ¯φj
+2
+≈Ht.
+(7)
+Similarly, the equal-head conditions can be approximated by
+replacing each (φt
+j)2 term with its linearized form. By choosing
+appropriate reference ﬂow values, these linear approximations
+enable standard linear (or mixed-integer linear) optimization
+solvers to be applied. While this approximation is only exact
+at the chosen reference point, it provides a computationally
+tractable approach and can be iteratively reﬁned if necessary.
+B. Water-Side: Whole-Process Water Balance
+The water side of the system is divided into two processes:
+distribution and production. For the water distribution sub-
+system, it maintains a real-time supply—demand balance to
+guarantee that end-user consumption is met at adequate pres-
+sure. By capturing time-lagged ﬂow transfer and treatment-unit
+pressure losses, the water production subsystem aims to keep
+downstream reservoir levels within safe bands. Modeling of
+the water side focuses on the water constraints part of the
+optimization model.
+1) Water Distribution Process Constraints: Consider the
+total demand at each time t balanced by the aggregate output
+of the distribution pumps:
+Dt −δ−≤
+
+j∈Jd
+φt
+j ≤Dt + δ+,
+(8)
+where Jd ⊂J indicates the subset of pumps for delivery,
+and δ−, δ+ represent the tolerated mismatch. To regulate
+mechanical wear, we introduce operational time variables tt
+j
+subject to:
+tt
+j ≤M · ut
+j,
+(9)
+Tmin ≤
+
+t∈T
+ut
+j · tt
+j ≤Tmax.
+(10)
+Reservoir operations ensure safe water-level management at
+stations ri, where i ∈{A, B, C}. The water-level changes are
+calculated by inﬂows from pump sets and speciﬁc outﬂows,
+as follows:
+lt
+ri =
+
+j∈Jd,i φt
+j −qt
+out,i
+Si
+,
+i ∈{A, B, C}.
+(11)
+Here, Jd,i denotes pump indices associated with each reser-
+voir, and qt
+out,A speciﬁcally represents the activated carbon
+ﬁlter outﬂow entering Reservoir A. Si normalizes these ﬂow
+differences into water-level changes. The cumulative water
+levels must remain within safe operational limits:
+Llow
+ri
+≤Lri −
+
+t∈T
+lt
+ri ≤Lhigh
+ri
+,
+i ∈{A, B, C}.
+(12)
+At the distribution nodes n ∈N, head loss follows a
+simpliﬁed Darcy-Weisbach quadratic form:
+Ht
+n ≈Ht −cn
+
+2¯qnqt
+n −(¯qn)2 
+,
+(13)
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:01:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+4800
+IEEE TRANSACTIONS ON SMART GRID, VOL. 16, NO. 6, NOVEMBER 2025
+where Ht is the common head from upstream pumps, and cn
+captures pipeline head-loss characteristics. To ensure network
+operability, each node’s head is constrained:
+Ht
+n ≥Hmin
+n
+,
+n ∈N, t ∈T.
+(14)
+2) Water Production Process Constraints: The water pro-
+duction process involves multiple treatment stages, including
+sedimentation, ﬁltration, and activated carbon absorption. All
+of these stages involve modeling of dynamics, time delays,
+and pressure requirements.
+The inﬂow into each treatment tank k
+∈
+{s, v, a} is
+determined by the cumulative ﬂow of the associated pumps:
+qt
+in,k =
+
+j∈Jk
+φt
+j,
+(15)
+where Jk denotes the set of pumps assigned to tank k. To
+stabilize operations, inﬂow bounds are enforced:
+QL
+k ≤qt
+in,k ≤QH
+k .
+(16)
+The delay property of each treatment process can be further
+formulated through lagged outﬂows:
+qt
+out,k = qt−τk
+in,k ,
+(17)
+where τk is the delay associated with sedimentation or ﬁltration
+dynamics. The corresponding water-level change in tank k is
+given by:
+lt
+k =
+qt
+in,k −qt
+out,k
+Ak
+,
+(18)
+where Ak represents the surface area of tank k.
+To prevent large ﬂuctuations of water level in tanks, we
+further adopt a recursive balance relation as:
+wt
+k = (1 −γ )wt−1
+k
++ qt
+in,k −qt
+out,k,
+(19)
+subject to stability bounds:
+|wt
+k −Wini
+k | ≤δ,
+(20)
+where γ is the evaporation rate, Wini
+k
+is the initial target level,
+and δ denotes the maximum permissible deviation.
+Finally, to limit the pressure loss in each treatment tank
+k ∈K = {s, v, a}, the Forchheimer-type equation is applied
+to account for the head loss as a function of ﬂow. The outlet
+head at time t ∈T is given by:
+Ht
+out,k = Ht
+in,k −
+	
+akqt
+out,k + bk
+
+qt
+out,k
+2
+,
+∀k ∈K, t ∈T,
+(21)
+where Ht
+in,k and Ht
+out,k denote the inlet and outlet heads,
+respectively, and qt
+out,k is the outﬂow rate. Parameters ak and
+bk are the linear and quadratic head loss coefﬁcients.
+To simplify the optimization model, a ﬁrst-order Taylor
+approximation is applied around a nominal ﬂow value ¯qout,k,
+resulting in:
+Ht
+out,k ≈Ht
+in,k −
+
+akqt
+out,k + bk
+	
+2¯qout,kqt
+out,k −
+
+¯qout,k
+2
+
+,
+(22)
+The inlet head Ht
+in,k varies depending on the tank type: for
+k = s, it comes from the initial pumps; for k = v, it is provided
+by the intermediate pump group; and for k = a, it corresponds
+to the outlet head of tank v. To ensure proper functioning, a
+constraint is applied that the outlet head of each tank must be
+above the required minimum level at all times:
+Ht
+k ≥Hmin
+k
+,
+k ∈K, t ∈T
+(23)
+where Hmin
+k
+is the minimum required outlet head for tank k.
+IV. END-TO-END STOCHASTIC PREDICT-THEN-OPTIMIZE
+FRAMEWORK
+Section III established a detailed integrated model including
+both energy-side scheduling and water-side hydraulic oper-
+ations. To address the problem of decision making under
+uncertainty, we propose the end-to-end Stochastic Predict-
+then-Optimize (SPTO) framework. As shown in Fig. 2,
+the framework integrates a probabilistic forecasting neural
+network for estimating uncertain parameters and the stage for
+cost-efﬁcient scheduling optimization.
+In the following sections, we ﬁrst describe the optimization
+and prediction stages separately. After, we explain speciﬁcally
+how to connect the two stages by constructing a surrogate
+function with surrogate gradients in Section IV-C.
+A. Cost-Efﬁcient Scheduling Optimization
+The scheduling model (3) involves uncertain electricity
+prices ˆc t, aiming to minimize the expected total operational
+cost induced by pump electricity usage. Mathematically, this
+objective is formulated as:
+min
+u∈˜U
+
+t∈T
+
+j∈J
+E
+
+ˆc tPjut
+j
+
+s.t.
+Equations (4)–(24),
+(24)
+where ˆc t is the predicted electricity price at time t, Pj
+denotes the rated power of pump j, and ut
+j ∈{0, 1} denotes
+binary activation signals. The feasible region ˜U captures the
+complete set of constraints from Section III, including pump
+dynamics, reservoir and pipeline hydraulics, and operational
+requirements.
+Note that While the Predict-then-optimize framework is
+originally formulated under the assumption of a convex and
+closed feasible region, Elmachtoub and Grigas [21] have
+shown that this assumption can be relaxed without loss of
+generality. For mixed-integer optimization problems, the origin
+non-convex feasible region ˜U can be replaced by its closed
+convex hull U. Since linear optimization over ˜U is equivalent
+to linear optimization over U, the convex surrogate loss
+functions can be directly applied to these problems. This
+equivalence enables the Predict-then-optimize framework to
+handle a broad range of decision-making tasks involving
+binary variables.
+In practice, directly solving (24) requires accurate proba-
+bilistic forecasting of electricity prices, therefore motivating
+the following forecasting mechanism.
+B. Probabilistic Forecasting of Electricity Prices
+As stated in the problem formulation, the electricity price
+ˆc needs to be predicted for optimization. Here, we develop a
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:01:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+WU et al.: END-TO-END STOCHASTIC PREDICT-THEN-OPTIMIZE
+4801
+Fig. 2.
+Overview of the proposed Stochastic Predict-then-optimize (SPTO) framework for cost-efﬁcient water-energy scheduling. The framework integrates a
+probabilistic forecasting model, an optimization model with detailed water–energy constraints, and a surrogate regret-based loss to enable end-to-end training
+for cost-efﬁcient scheduling.
+probabilistic forecasting model to produce output as probabil-
+ity distributions rather than a single point value. Unlike the
+normal forecasting model, probabilistic forecasting captures
+the uncertainty of the predictions, which is valuable for
+handling the highly uncertain nature of electricity prices.
+In this paper, we formulate the prediction model as f(
+)
+for electricity prices forecasting. For the primary model, we
+utilize the Bidirectional Long Short-Term Memory (BiLSTM)
+network, which has been proven effective for the sequential
+nature of electricity price in existing studies [30], [31], [32].
+Though utilization may come with higher computational
+complexity, the accuracy improvements through BiLSTM are
+important for capturing the dynamics of electricity price data.
+ht = BiLSTM
+	
+xt, ht−1; 
+lstm
+
+,
+(25)
+where ht denotes the hidden state at time t, and 
+lstm
+represents the parameters of the BiLSTM layers. To enhance
+the model performance for capture temporal dependencies
+among features, the multi-head attention module [33] is
+incorporated as:
+˜ht = Attention
+
+ht, h; 
+att
+
+,
+(26)
+where ˜ht is the output of the attention layer, and 
+att
+denotes the parameters of the attention module. Note that both
+BiLSTM and the attention module are commonly used in the
+ﬁeld of deep learning, so we simplify their formulas as this is
+not the innovation of this paper.
+The model generates the mean and variance parameters
+of the prediction distribution through two separate fully
+connected networks, incorporating dropout and LeakyReLU
+activations for enhanced generalization. The parameters are
+deﬁned as follows:
+ˆμt = Linearμ
+	
+˜ht; 
+μ
+
+,
+ˆσ t = exp
+
+Linearσ
+	
+˜ht; 
+σ
+
+
++ 10−6,
+(27)
+where Linearμ(·) and Linearσ(·) are linear layers parameter-
+ized by 
+μ and 
+σ. The use of the exponential function
+ensures positivity for σ t, and a small constant is added for
+numerical stability.
+To enable gradient-based optimization, we utilize the repa-
+rameterization trick to express ˆct as a differentiable function
+of the predicted mean ˆμt and standard deviation ˆσ t:
+ˆct = ˆμt + ˆσ t · ϵt,
+ϵt ∼N(0, 1),
+(28)
+where ϵt is drawn from a standard normal distribution. This
+formulation allows the model to generate cost predictions ˆct
+while keeping differentiability with respect to the prediction
+parameters ˆμt and ˆσ t.
+C. Mathematical Formulations of Stochastic
+Predict-Then-Optimize
+For optimizing the cost-efﬁcient resource scheduling model
+in an end-to-end approach, we give the mathematical for-
+mulations of the Stochastic Predict-Then-Optimize (SPTO)
+framework to derive the surrogate gradient for training. Given
+the predicted cost distribution ˆc ∼N( ˆμ, ˆσ 2I), we evaluate the
+performance of a decision-making policy using the stochastic
+decision regret:
+Rs
+	
+ˆμ, ˆσ 2, c
+
+:= Eˆc
+
+c⊤u
+
+ˆc
+
+−c⊤u(c),
+(29)
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:01:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+4802
+IEEE TRANSACTIONS ON SMART GRID, VOL. 16, NO. 6, NOVEMBER 2025
+where Rs(·) denotes the stochastic version of R(·) in equa-
+tion (2). u(ˆc) represents the decision made under the predicted
+cost vector ˆc, and u(c) is the optimal decision under the true
+cost vector c. This loss quantiﬁes the expected regret induced
+by prediction uncertainty.
+However, a challenge arises when the optimization solution
+set U∗(ˆc) is not a singleton. In this case, the selection of a
+speciﬁc solution u∗(ˆc) ∈U∗(ˆc) can lead to inconsistencies in
+the regret computation. For instance, a degenerate prediction
+ˆc = 0 still makes U∗(0) = U, resulting in a trivial regret value.
+To resolve this ambiguity, we deﬁne the SPTO loss using a
+worst-case selection over all possible optimal solutions. This
+unambiguous formulation ensures consistency and robustness
+in the regret evaluation:
+lSPTO
+	
+ˆμ, ˆσ 2, c
+
+:=
+max
+u∈U∗(ˆc)
+Eˆc
+
+c⊤u
+
+−c⊤u(c).
+(30)
+While lSPTO provides a rigorous measure of decision regret
+under prediction uncertainty, it is generally non-differentiable
+due to the arg min operator within u∗(ˆc). To address this, we
+derive a convex upper bound surrogate function for lSPTO.
+The surrogate function approximates the regret loss while
+preserving differentiability.
+Proposition 1 (Surrogate Loss Function for lSPTO): Let
+U ⊆Rd be convex and compact, and let c ∈Rd be the true
+cost vector. For ˆc ∼N( ˆμ, ˆσ 2I), consider the SPTO loss as:
+lSPTO
+	
+ˆμ, ˆσ 2, c
+
+:=
+max
+u(ˆc)∈U∗(ˆc)
+Eˆc
+
+c⊤u
+
+ˆc
+
+−c⊤u(c),
+where U∗(ˆc) = arg minu∈U ˆc⊤u. The surrogate loss is:
+lSPTO+
+	
+ˆμ, ˆσ 2, c
+
+:= Eˆc
+
+−min
+u∈U
+
+2ˆc −c
+⊤u + 2ˆc⊤u(c)
+
+−c⊤u(c),
+and satisﬁes:
+lSPTO
+	
+ˆμ, ˆσ 2, c
+
+≤lSPTO+
+	
+ˆμ, ˆσ 2, c
+
+.
+Proof: By deﬁnition:
+lSPTO
+	
+ˆμ, ˆσ 2, c
+
+=
+max
+u(ˆc)∈U∗(ˆc)
+Eˆc
+
+c⊤u
+
+ˆc
+
+−c⊤u(c). (31)
+For each realization ˆc, the set U∗(ˆc) comprises all optimal
+solutions to minu∈U ˆc⊤u. Among these optimal solutions, lSPTO
+selects the one that maximizes c⊤u(ˆc).
+Suppose U = {u ∈Rd:Au ≤b} for some A ∈Rm×d and
+b ∈Rm. The minimization problem for a given ˆc is:
+min
+u∈U ˆc⊤u
+s.t.Au ≤b.
+(32)
+Its Lagrangian function is:
+L(u, λ) = ˆc⊤u + λ⊤(Au −b),
+λ ≥0.
+(33)
+The dual function is:
+g(λ) = inf
+u L(u, λ) =
+
+−λ⊤b if A⊤λ = −ˆc,
+−∞
+otherwise.
+(34)
+By weak duality:
+min
+u∈U ˆc⊤u ≥max
+λ≥0 g(λ).
+(35)
+We have:
+lSPTO
+	
+ˆμ, ˆσ 2, c
+
+= Eˆc
+
+max
+u(ˆc)∈U∗(ˆc)
+c⊤u
+
+ˆc
+
+
+−c⊤u(c). (36)
+Since u(ˆc) is the solution of minu∈U ˆc⊤u, we know ˆc⊤u(ˆc) ≤
+ˆc⊤u(c) for u(c) deﬁned by minimizing c⊤u. Consider the ﬁrst-
+order perturbed linear form (2ˆc −c)⊤u, we claim that:
+c⊤u
+
+ˆc
+
+−c⊤u(c) ≤−min
+u∈U
+
+2ˆc −c
+⊤u + 2ˆc⊤u(c) −c⊤u(c).
+(37)
+Intuitively, it bounds the difference c⊤u(ˆc)−c⊤u(c) by shifting
+the costs from ˆc to 2ˆc −c and using the minimal value of
+(2ˆc−c)⊤u over U. Since u(ˆc) is optimal for ˆc, comparing it to
+a solution optimal for c and adjusting via (2ˆc −c) yields this
+upper bound. Taking expectation with respect to ˆc, we obtain:
+Eˆc
+
+c⊤u
+
+ˆc
+
+−c⊤u(c)
+
+≤Eˆc
+
+−min
+u∈U
+
+2ˆc −c
+⊤u + 2ˆc⊤u(c)
+
+−c⊤u(c).
+(38)
+Since the left-hand side represents the worst-case chosen u(ˆc)
+in U∗(ˆc) (i.e., lSPTO), we have:
+lSPTO
+	
+ˆμ, ˆσ 2, c
+
+≤Eˆc
+
+−min
+u∈U
+
+2ˆc −c
+⊤u + 2ˆc⊤u(c)
+
+−c⊤u(c)
+(39)
+Therefore:
+lSPTO
+	
+ˆμ, ˆσ 2, c
+
+≤lSPTO+
+	
+ˆμ, ˆσ 2, c
+
+.
+This completes this proof.
+In the following proposition, we aim to show that lSPTO and
+lSPTO+ are ﬁsher consistent. Fisher consistency means that if
+the model can achieve the “perfect prediction“ scenario, the
+set of minimizers of lSPTO coincides with the set of minimizers
+of lSPTO+.
+Proposition 2 (Fisher Consistency of lSPTO+): Let U ⊆Rd
+be convex and compact, and let c ∈Rd be the true cost vector.
+For ˆc ∼N( ˆμ, ˆσ 2I), the lSPTO and lSPTO+ are deﬁned as:
+lSPTO
+	
+ˆμ, ˆσ 2, c
+
+:=
+max
+u∈U∗(ˆc)
+Eˆc
+
+c⊤u
+
+−c⊤u(c),
+lSPTO+
+	
+ˆμ, ˆσ 2, c
+
+:= Eˆc
+
+−min
+u∈U
+
+2ˆc −c
+⊤u + 2ˆc⊤u(c)
+
+−c⊤u(c).
+If ˆμ = c and ˆσ 2 = 0 (perfect prediction), then:
+arg min
+ˆμ,ˆσ 2 lSPTO
+	
+ˆμ, ˆσ 2, c
+
+= arg min
+ˆμ,ˆσ 2 lSPTO+
+	
+ˆμ, ˆσ 2, c
+
+.
+Proof: For lSPTO, by deﬁnition:
+lSPTO
+	
+ˆμ, ˆσ 2, c
+
+=
+max
+u∈U∗(ˆc)
+Eˆc
+
+c⊤u
+
+−c⊤u(c).
+(40)
+Since u(c) minimizes c⊤u, we have for any u ∈U and any ˆc:
+c⊤u
+
+ˆc
+
+≥c⊤u(c).
+(41)
+Thus:
+Eˆc
+
+c⊤u
+
+ˆc
+
+≥c⊤u(c).
+(42)
+Therefore, the lSPTO+ is nonnegative.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:01:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+WU et al.: END-TO-END STOCHASTIC PREDICT-THEN-OPTIMIZE
+4803
+Under perfect prediction, let ( ˆμ∗, ˆσ 2∗) be ˆc = c. Then every
+realization of ˆc equals c, and the set U∗(c) is simply the set
+of optimal solutions to c⊤u. Since u(c) is an optimal solution
+under true cost c, we have:
+lSPTO(c, 0, c) = max
+u∈U∗(c) Eˆc=c
+
+c⊤u
+
+−c⊤u(c).
+(43)
+Considering that ˆc = c, for any u in U∗(c), we have:
+c⊤u = c⊤u(c)
+(44)
+Hence:
+lSPTO(c, 0, c) = c⊤u(c) −c⊤u(c) = 0.
+(45)
+Similarly, substitute ˆc = c into lSPTO+:
+lSPTO+(c, 0, c) = Eˆc=c
+
+−min
+u∈U(2c −c)⊤u + 2c⊤u(c)
+
+−c⊤u(c).
+(46)
+Since (2c −c) = c and minu c⊤u = c⊤u(c):
+−min
+u (2c −c)⊤u = −min
+u c⊤u = −c⊤u(c).
+(47)
+Then we have:
+lSPTO+(c, 0, c) =
+
+−c⊤u(c) + 2c⊤u(c)
+
+−c⊤u(c) = 0.
+(48)
+Therefore, under perfect prediction, both lSPTO and lSPTO+
+achieve their minimal value of 0.
+Fisher consistency requires that if we can realize the
+true cost distribution exactly (perfect prediction), then the
+minimizers of lSPTO and lSPTO+ coincide. Since both lSPTO and
+lSPTO+ are nonnegative and achieve their inﬁmum of 0 at the
+perfect predictor, no other predictor ( ˆμ, ˆσ 2) can yield a value
+less than 0 for either loss. Hence:
+arg min
+ˆμ,ˆσ 2 lSPTO
+	
+ˆμ, ˆσ 2, c
+
+= arg min
+ˆμ,ˆσ 2 lSPTO+
+	
+ˆμ, ˆσ 2, c
+
+. (49)
+This completes the proof.
+After establishing the Fisher consistency between lSPTO
+and lSPTO+, we turn our attention to the computation of
+gradients for lSPTO+. In the following proposition, we derive
+the surrogate gradient using sub-gradient of lSPTO+ and the
+chain rule.
+Proposition 3 (Gradient computation for lSPTO+): Let
+U ⊆Rd be convex and compact, and let c ∈Rd be the
+true cost vector. For ˆc ∼N( ˆμ, ˆσ 2I) and lSPTO+( ˆμ, ˆσ 2, c) :=
+Eˆc[ −minu∈U(2ˆc −c)⊤u + 2ˆc⊤u(c)] −c⊤u(c), the gradient of
+lSPTO+ is computed as:
+∂ˆμlSPTO+ ≈2
+M
+M
+
+i=1
+
+u(c) −u
+
+2ˆci −c
+
+,
+(50)
+∂ˆσ 2lSPTO+ ≈1
+M
+M
+
+i=1
+
+u(c) −u
+
+2ˆci −c
+ ϵi
+√
+ˆσ 2 .
+(51)
+Proof: For the lSPTO+ with ˆc, we deﬁne:
+f
+
+ˆc
+ := −min
+u∈U
+
+2ˆc −c
+⊤u + 2ˆc⊤u(c) −c⊤u(c).
+(52)
+Let g(ˆc) := minu∈U(2ˆc −c)⊤u, the minimum is reached
+at u(2ˆc −c) ∈U. For the function h(v) = minu∈U v⊤u
+for v = (2ˆc −c), it is the support function of the set
+−U. Speciﬁcally, h(v) is convex and piecewise linear in v.
+Differentiating w.r.t. v gives a subgradient u(v) where u(v) is
+any optimal solution. Here, v = 2ˆc −c, so:
+∂vh(v) ∋u(v).
+(53)
+Since v = 2ˆc −c, we have ∂v
+∂ˆc = 2I. By the chain rule:
+∂ˆcg
+
+ˆc
+
+= ∂ˆc min
+u
+	
+(2ˆc −c)⊤u
+
+∋2u
+
+2ˆc −c
+
+.
+(54)
+Thus:
+∂ˆc
+
+−g(ˆc)
+
+= −2u
+
+2ˆc −c
+
+.
+(55)
+Also:
+∂ˆc
+	
+2ˆc⊤u(c)
+
+= {2u(c)},
+∂ˆc
+	
+−c⊤u(c)
+
+= {0}
+(56)
+Combining these subgradients:
+∂ˆcf
+
+ˆc
+
+= ∂ˆc
+
+−g
+
+ˆc
+
++ ∂ˆc
+	
+2ˆc⊤u(c)
+
++ ∂ˆc
+	
+−c⊤u(c)
+
+∋−2u
+
+2ˆc −c
+
++ 2u(c)
+= 2
+
+u(c) −u
+
+2ˆc −c
+
+.
+(57)
+Since lSPTO+ is the expectation of f(ˆc) over ˆc, linearity of
+expectation ensures:
+∂ˆclSPTO+ ∋2
+
+u(c) −u
+
+2ˆc −c
+
+,
+(58)
+we have ˆc = ˆμ +
+√
+ˆσ 2ϵ. Therefore:
+∂ˆc
+∂ˆμ = I,
+∂ˆc
+∂ˆσ 2 =
+ϵ
+2
+√
+ˆσ 2 .
+(59)
+For a ﬁxed ˆc:
+∂ˆμf
+
+ˆc
+
+= ∂ˆcf
+
+ˆc
+ ∂ˆc
+∂ˆμ = 2
+
+u(c) −u
+
+2ˆc −c
+
+,
+(60)
+∂ˆσ 2f
+
+ˆc
+
+= ∂ˆcf
+
+ˆc
+ ∂ˆc
+∂ˆσ 2 =
+
+u(c) −u
+
+2ˆc −c
+
+ϵ
+√
+ˆσ 2 .
+(61)
+Since lSPTO+ involves an expectation over ˆc, we approxi-
+mate by M samples ˆci = ˆμ +
+√
+ˆσ 2ϵi:
+lSPTO+ ≈1
+M
+M
+
+i=1
+f
+
+ˆci
+
+.
+(62)
+Differentiating ˆμ:
+∂ˆμlSPTO+ ≈1
+M
+M
+
+i=1
+∂ˆμf
+
+ˆci
+
+= 2
+M
+M
+
+i=1
+
+u(c) −u
+
+2ˆci −c
+
+.
+(63)
+Similarly, for ˆσ 2:
+∂ˆσ 2lSPTO+ ≈1
+M
+M
+
+i=1
+∂ˆσ 2f
+
+ˆci
+
+= 1
+M
+M
+
+i=1
+
+u(c) −u
+
+2ˆci −c
+ ϵi
+√
+ˆσ 2 .
+(64)
+This completes the proof.
+To demonstrate the structure of the proposed SPTO
+more directly, we summarize its end-to-end training process
+as Algorithm 1.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:01:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+4804
+IEEE TRANSACTIONS ON SMART GRID, VOL. 16, NO. 6, NOVEMBER 2025
+Algorithm 1 End-to-End Stochastic Predict-Then-Optimize
+Require: Predicted distribution parameters ( ˆμ, ˆσ 2), true cost
+vector c, learning rate η, number of Monte Carlo samples
+M
+1: Initialize ˆμ and ˆσ 2 randomly
+2: while training do
+3:
+Predict the probability distribution parameters ˆμi, ˆσ 2
+i
+using the model f(
+)
+4:
+Sample {ϵi ∼N(0, I)}M
+i=1
+5:
+Compute Monte Carlo cost samples: ˆci = ˆμ +
+√
+ˆσ 2ϵi
+for i = 1, . . . , M
+6:
+for i = 1, . . . , M do
+7:
+Solve optimization: u(2ˆci −c) ∈arg minu∈U(2ˆci −
+c)⊤u
+8:
+end for
+9:
+Compute subgradient of ˆμ:
+∂ˆμlSPTO+ ≈2
+M
+M
+
+i=1
+[u(c) −u(2ˆci −c)]
+10:
+Compute subgradient of ˆσ 2:
+∂ˆσ 2lSPTO+ ≈1
+M
+M
+
+i=1
+[u(c) −u(2ˆci −c)] ϵi
+√
+ˆσ 2
+11:
+Update ˆμ and ˆσ 2:
+ˆμ ←ˆμ −η∂ˆμlSPTO+,
+ˆσ 2 ←ˆσ 2 −η∂ˆσ 2lSPTO+
+12:
+Update the prediction model f(
+)
+13: end while
+TABLE I
+PUMPS PARAMETERS
+V. EXPERIMENTS AND RESULTS DISCUSSION
+A. Experimental Settings
+Pump parameters settings: The parameters of all the
+pumps for the distribution and production process in Stations
+A ∼C in Fig. 1 are listed in table I.
+Implementation Details: For solving the optimization
+problem, the hardware environment is a Windows per-
+sonal computer with Intel(R) Core(TM) i5-13600k CPU @
+3.20 GHz, 32 GB RAM, and RTX 4070ti GPU. As for the
+model implementation, Pyomo is applied to construct the
+model, and the Gurobi solver is utilized to solve it. This
+section examines three main components: the effectiveness of
+the SPTO, the accuracy of the forecasting model, and the
+solution of the optimization model. Such an organization is to
+Fig. 3.
+Demonstration of energy usage and price trend with zoomed peak
+periods.
+assess whether the proposed SPTO framework can reduce the
+optimality gap; whether the forecasting results are satisfactory,
+and whether the optimization problems are solved correctly as
+expected.
+Baselines: To evaluate the performance of the proposed
+SPTO framework, we compare it with three baselines.
+Deterministic two-stage approach (DTS) [26] predicts uncertain
+parameters as ﬁxed point values and solves the optimization
+problem based on these predictions. Stochastic two-stage
+approach (STS) [24] addresses the uncertainty using probabilis-
+tic forecasting models and optimizes the expected objective
+value. However, the distribution is not directly incorporated into
+the optimization stages. Smart predict-then-optimize (SPO) [21]
+integrates the optimization objective into the training process
+of the prediction model. Unlike DTS and STS, SPO aligns
+predictions with the optimization stages. However, it utilizes
+deterministic predictions and does not explicitly handle the
+uncertainty of parameter prediction errors.
+B. Optimization Solution Analysis
+Firstly, we investigate whether the proposed SPTO schedul-
+ing model is responsive to electricity prices by comparing
+energy consumption trends against dynamic price signals.
+Fig. 3 shows the total energy consumption and price over
+time, with two high-price intervals zoomed in. During these
+peak periods (steps 10–20 and 30–35), energy consumption
+drops signiﬁcantly, indicating that the model strategically
+shifts operations away from periods of high expense. This
+aligns with the core design of the cost-aware SPTO framework.
+Secondly, we validate the negative correlation between
+energy usage and price. As shown in Fig. 4, most sampled
+points cluster in the low-price region with high energy usage.
+A ﬁtted regression line conﬁrms the inverse trend, with a
+negative slope. This negative correlation supports the result in
+Fig. 3, showing that the scheduling model reduces load during
+expensive periods and concentrates operations when the price
+is low.
+Thirdly, we examine the smoothness of the energy schedul-
+ing behavior. Fig. 5 presents the ramp rate curve and its
+histogram distribution. The curve shows that most ﬂuctuations
+are mild and centered around zero. The inset histogram
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:01:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+WU et al.: END-TO-END STOCHASTIC PREDICT-THEN-OPTIMIZE
+4805
+Fig. 4.
+Scatter comparison of energy usage and electricity price.
+Fig. 5.
+Ramp rate distribution of energy consumption.
+Fig. 6.
+Pump-level power usage heatmap and price overlap.
+presents the distribution of ramp rates, with a mean close to
+zero and a narrow variance. This indicates that the model does
+not introduce many abrupt changes in energy usage. Smooth
+scheduling helps reduce operational stress on the equipment
+and avoids unexpected load shocks to the grid.
+Also, we analyze the asynchronous coordination across
+different pump stations. Fig. 6 provides a heatmap of pump-
+level power usage with electricity price across time. Although
+not all pumps reduce activity uniformly during price peaks,
+the overall behavior reﬂects a coordinated yet ﬂexible response
+strategy. This conﬁrms the effectiveness of the decentralized
+scheduling policy under system-wide constraints.
+Fig. 7.
+Loss curve comparison while training with SPTO or Gaussian Loss.
+Results demonstrated across Fig. 3 - Fig. 6 show that the
+SPTO framework reduces energy use during high-price periods
+and maintains smooth scheduling without sharp ﬂuctuations.
+These results conﬁrm that SPTO achieves cost-efﬁcient and
+stable scheduling in real-world settings.
+C. Effectiveness of SPTO Examination
+Moreover, we would like to verify the misconception men-
+tioned in the introduction that higher forecasting accuracy,
+as measured by the two-stage approach, does not necessarily
+suggest smaller decision regret. Fig. 7 presents a comparative
+analysis of training forecasting models using SPTO loss and
+Gaussian loss separately. In sub-ﬁgure (a), training with the
+SPTO loss (red line) leads to an increase in the Gaussian
+loss (blue line) of the prediction model, which increases from
+approximately −1.2 to −0.6 within 10 epochs. Meanwhile,
+sub-ﬁgure (b) shows that training with the Gaussian loss (blue
+line) ultimately leads to a higher SPTO loss (red line). The
+SPTO loss increases from 1740 to 1820.
+These ﬁndings conﬁrm that the SPTO loss effectively tunes
+the prediction and optimization stages. While Gaussian loss
+improves the prediction accuracy of traditional measurements,
+it fails to reduce decision regret. Instead, SPTO loss is able to
+reduce decision regret, emphasizing the importance of aligning
+prediction and optimization in an end-to-end approach.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:01:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+4806
+IEEE TRANSACTIONS ON SMART GRID, VOL. 16, NO. 6, NOVEMBER 2025
+Fig. 8.
+Comparison of the SPTO and two-stage approaches.
+Fig. 9.
+Decision regret comparison of different approaches.
+We also evaluate the effectiveness of the end-to-end SPTO
+method against the two-stage approach, investigating its appli-
+cation in stochastic optimization scenarios for minimizing the
+optimality gap. In Fig. 8, the x-axis represents the time step
+with 5 minutes for each step. The y-axis reﬂects the optimality
+gap of the different methods while optimizing on the time
+horizon.
+The results show that the SPTO framework (blue line)
+is very close to the optimum (red dashed line), with the
+optimal gap consistently remaining below 1000 units. In
+contrast, the two-stage approach (green dashed line) shows
+signiﬁcantly higher gaps and greater variability. In addition,
+compared to the red shaded region, the narrower blue shaded
+region highlights the robustness of SPTO in minimizing the
+optimality gap. These ﬁndings suggest that the end-to-end
+SPTO approach provides solutions that are closer to the true
+optimum, which outperforms the two-stage approach.
+To further evaluate the effectiveness of SPTO, we compare
+its decision regret against the deterministic two-stage approach
+(DTS), stochastic two-stage approach (STS), and SPO meth-
+ods, as shown in Fig. 9. Each method is represented on the
+x-axis, while the y-axis reﬂects the decision regret.
+The results show that SPTO has the lowest median decision
+regret and signiﬁcantly less variability than the other meth-
+ods.DTS and STS show higher medians and greater variability.
+SPO, on the other hand, although slightly better than the
+two-stage approach, still does not perform as well as SPTO.
+Fig. 10.
+Comparison with forecasting results and the true values.
+The narrower interquartile range and fewer outliers for SPTO
+highlight its performance in minimizing decision regret. By
+directly taking into account the predictive distribution, SPTO
+demonstrates superiority in achieving smaller decision regret,
+making it a better choice for stochastic optimization problems
+than the traditional two-stage approach and deterministic SPO.
+D. Evaluation of the Probabilistic Forecasting Model
+Then, the performance of the applied probabilistic fore-
+casting model is examined and shown in Fig. 10. The ﬁgure
+comprises two subplots that evaluate the performance and
+reliability of the probabilistic forecasting model. Subplot
+(a) compares the true values against the forecast mean,
+highlighting forecasting uncertainty over time. The green line
+represents the predicted mean, the purple dashed line shows
+the true values, and the shaded green area represents the
+forecasting uncertainty interval. Subplot (b) presents a visual
+representation of the probabilistic density of forecasting errors.
+The green bars represent the forecast distribution, the purple
+bars illustrate the ground truth distribution, and the dashed
+green line shows the probability density of the forecasting
+errors.
+From the two subplots, we can visualize that the mean
+of the predicted values is similar to the true values, and the
+shape of the distribution is comparable. When considering
+the conﬁdence interval, it can be observed that the true
+values mostly fall within the forecasting uncertainty range.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:01:13 UTC from IEEE Xplore.  Restrictions apply. 
+
+WU et al.: END-TO-END STOCHASTIC PREDICT-THEN-OPTIMIZE
+4807
+This implies that the probabilistic prediction model effectively
+estimates the uncertainty.
+VI. CONCLUSION
+This paper investigates the challenge of cost-efﬁcient
+water-energy scheduling under electricity price uncertainty
+within the smart grid. To address the inherent misalign-
+ment between prediction and decision-making in traditional
+two-stage methods, we develop an end-to-end Stochastic
+Predict-Then-Optimize (SPTO) framework. By integrating
+a probabilistic forecasting model with a stochastic regret-
+minimization objective, the SPTO approach enables direct
+alignment between predictive accuracy and downstream oper-
+ational decisions.
+Unlike prior PTO studies limited to synthetic benchmarks,
+this work applies the SPTO framework to a real-world
+urban water-energy system, demonstrating its practical scala-
+bility and impact. The experimental results show that SPTO
+effectively mitigates cumulative decision errors induced by
+prediction uncertainty, leading to improved energy cost savings
+and load ﬂexibility. Beyond optimizing pump operations, our
+ﬁndings also underscore the coupled dynamics between water
+infrastructure and power systems, advocating for integrated
+approaches to urban resource management in smart grid
+environments.
+REFERENCES
+[1] T. Jiang, P. Ju, Z. Lin, Q. Wu, Z. Lin, and C. Y. Chung, “Competitive
+incentive mechanism for multi-agents in demand response via a hierar-
+chical game considering joint uncertainties,” IEEE Trans. Smart Grid,
+vol. 16, no. 4, pp. 2913–2925, Jul. 2025.
+[2] J. Xu, T. Zheng, Y. Dang, F. Yang, and D. Li, “Distributed deep
+reinforcement learning for data-driven water heater model in smart grid,”
+IEEE Trans. Smart Grid, vol. 16, no. 4, pp. 2900–2912, Jul. 2025.
+[3] Q. Shi, Y. Yan, W. Liu, B. Zeng, Z. Wang, and F. Li, “Resilience
+assessment of urban power network considering multi-stage electrical-
+water fault propagation,” IEEE Trans. Power Syst., vol. 40, no. 4,
+pp. 2819–2831, Jul. 2025.
+[4] A. Stuhlmacher, S. Guikema, and J. L. Mathieu, “Assessing power
+and water network resilience when water pumps provide frequency
+regulation,” IEEE Trans. Power Syst., vol. 40, no. 5, pp. 3833–3845,
+Sep. 2025.
+[5] S. Wu, J. Wang, H. Xu, S. Zhao, and J. Xu, “CritiCoder: An end-to-end
+uncertain regression network for robust macroscopic pressure models in
+water distribution systems,” IEEE Trans. Comput. Social Syst., vol. 11,
+no. 2, pp. 2222–2233, Apr. 2024.
+[6] A. Stuhlmacher and J. L. Mathieu, “Chance-constrained water pump-
+ing to manage water and power demand uncertainty in distribution
+networks,” Proc. IEEE, vol. 108, pp. 1640–1655, Sep. 2020.
+[7] J. Bhardwaj, J. P. Krishnan, D. F. Marin, B. Beferull-Lozano,
+L. R. Cenkeramaddi, and C. Harman, “Cyber-physical systems for smart
+water networks: A review,” IEEE Sensors J., vol. 21, pp. 26447–26469,
+Dec. 2021.
+[8] W. Zhao, T. H. Beach, and Y. Rezgui, “Optimization of potable water
+distribution and wastewater collection networks: A systematic review
+and future research directions,” IEEE Trans. Syst., Man, Cybern., Syst.,
+vol. 46, no. 5, pp. 659–681, May 2016.
+[9] Y. Cao, B. Zhou, C. Y. Chung, Z. Shuai, Z. Hua, and Y. Sun, “Dynamic
+modelling and mutual coordination of electricity and watershed networks
+for spatio-temporal operational ﬂexibility enhancement under rainy
+climates,” IEEE Trans. Smart Grid, Vol. 14, no. 5, pp. 3450–3464,
+Sep. 2023.
+[10] R. Koh, J. Kern, and S. Galelli, “Hard-coupling water and power system
+models increases the complementarity of renewable energy sources,”
+Appl. Energy, vol. 321, Sep. 2022, Art. no. 119386.
+[11] A. B. Bianchi, J. Willet, H. Rijnaarts, and S. S. Torbaghan, “Distribution
+robust water-based demand side management in power transmis-
+sion networks,” Sustain. Energy, Grids Netw., vol. 36, Oct. 2023,
+Art. no. 101232.
+[12] B. Tasseff et al., “Polyhedral relaxations for optimal pump scheduling
+of potable water distribution networks,” INFORMS J. Comput., vol. 36,
+no. 4, pp. 1040–1063, 2024.
+[13] E. A. M. Cesena et al., “Quantifying the impacts of modelling
+assumptions on accuracy and computational efﬁciency for integrated
+water-energy system simulations under uncertain climate,” IEEE Trans.
+Sustain. Energy, vol. 13, no. 3, pp. 1370–1382, Jul. 2022.
+[14] Y. Yao, C. Li, H. M. Tai, and C. Shao, “Modeling of water transfer
+delay for optimal operation of integrated electrical-water system,” IEEE
+Trans. Power Syst., vol. 38, no. 1, pp. 331–348, Jan. 2023.
+[15] K. Oikonomou and M. Parvania, “Optimal coordinated operation of
+interdependent power and water distribution systems,” IEEE Trans.
+Smart Grid, vol. 11, no. 6, pp. 4784–4794, Nov. 2020.
+[16] Y. C. Hung and G. Michailidis, “Modeling and optimization of time-of-
+use electricity pricing systems,” IEEE Trans. Smart Grid, vol. 10, no. 4,
+pp. 4116–4127, Jul. 2019.
+[17] C. Gu, Y. Pan, R. Liu, and Y. Chen, “Learning and optimization
+for price-based demand response of electric vehicle charging,” 2024,
+arXiv:2404.10311v1.
+[18] S. Zuloaga and V. Vittal, “Integrated electric power/water distri-
+bution system modeling and control under extreme mega drought
+scenarios,” IEEE Trans. Power Syst., vol. 36, no. 1, pp. 474–484,
+Jan. 2021.
+[19] A. Miraki, P. Parviainen, and R. Arghandeh, “Electricity demand
+forecasting at distribution and household levels using explainable
+causal graph neural network,” Energy AI, vol. 16, May 2024,
+Art. no. 100368. [Online]. Available: https://linkinghub.elsevier.com/
+retrieve/pii/S266654682400034X
+[20] J. Mandi, T. Guns, E. Demirovi´c, and P. J. Stuckey, “Smart predict-and-
+optimize for hard combinatorial optimization problems,” in Proc. 34th
+AAAI Conf. Artif. Intell., vol. 34, 2020, pp. 1603–1610.
+[21] A. N. Elmachtoub and P. Grigas, “Smart ‘predict, then Optimize,”’
+Manage. Sci., vol. 68, no. 1, pp. 9–26, 2022.
+[22] B. Tang and E. B. Khalil, “PyEPO: A PyTorch-based end-to-end predict-
+then-Optimize library for linear and integer programming,” Jun. 2022,
+arXiv:2206.14234.
+[23] H. Geng et al., “Rethinking and benchmarking predict-then-optimize
+paradigm
+for
+combinatorial
+optimization
+problems,”
+Nov.
+2023,
+arXiv:2311.07633.
+[24] P. Donti, B. Amos, and J. Z. Kolter, “Task-based end-to-end model
+learning in stochastic optimization,” in Proc. Adv. Neural Inf. Process.
+Syst., vol. 30, 2017, pp. 1–15.
+[25] B. Amos and J. Z. Kolter, “OptNet: Differentiable optimization as a
+layer in neural networks,” in Proc. Int. Conf. Mach. Learn., 2017,
+pp. 136–145.
+[26] J.
+Mandi
+and
+T.
+Guns,
+“Interior
+point
+solving
+for
+LP-based
+prediction+Optimisation,” in Proc. Adv. Neural Inf. Process. Syst.,
+vol. 33, 2020, pp. 7272–7282.
+[27] A. M. Ferber et al., “Surco: Learning linear surrogates for combinatorial
+nonlinear optimization problems,” in Proc. Int. Conf. Mach. Learn.,
+2023, pp. 10034–10052.
+[28] J. Zhang, E. Shan, L. Wu, J. Yin, L. Yang, and Z. Gao, “An end-to-end
+predict-then-optimize clustering method for stochastic assignment prob-
+lems,” IEEE Trans. Intell. Transp. Syst., vol. 25, no. 9, pp. 12605–12620,
+Sep. 2024.
+[29] W. Guo et al., “Integrating end-to-end prediction-with-optimization for
+distributed hydrogen energy system scheduling,” in Proc. IEEE 20th Int.
+Conf. Autom. Sci. Eng. (CASE), 2024, pp. 2774–2779.
+[30] D. Salinas, V. Flunkert, J. Gasthaus, and T. Januschowski, “DeepAR:
+Probabilistic forecasting with autoregressive recurrent networks,” Int. J.
+Forecast., vol. 36, no. 3, pp. 1181–1191, 2020.
+[31] G. Memarzadeh and F. Keynia, “Short-term electricity load and price
+forecasting by a new optimal LSTM-NN based prediction algorithm,”
+Elect. Power Syst. Res., vol. 192, Mar. 2021, Art. no. 106995.
+[32] S. Wu, J. Wang, H. Xu, S. Zhao, and J. Xu, “Knowledge-based
+bi-correction model for achieving effective lag-free characteristic
+on
+daily
+urban
+water
+demand
+forecasting,”
+Expert
+Syst.
+Appl.,
+vol. 255, Dec. 2024, Art. no. 124508. [Online]. Available: https://www.
+sciencedirect.com/science/article/pii/S0957417424013757
+[33] A. Vaswani et al., “Attention is all you need,” in Proc. Adv. Neural Inf.
+Process. Syst., vol. 30, 2017, pp. 1–15.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 02:01:13 UTC from IEEE Xplore.  Restrictions apply. 

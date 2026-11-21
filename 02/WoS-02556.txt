@@ -1,0 +1,2481 @@
+Electric Power Systems Research 234 (2024) 110599
+Available online 26 June 2024
+0378-7796/© 2024 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+Chance constrained optimal power-water flow: An iterative algorithm 
+assisted by deep neural networks 
+Xia Zhao *, Dingyi Liu , Zhenyu Wu , Chongqi Huang 
+National Key Laboratory of Power Transmission Equipment Technology (Chongqing University), Chongqing 400044, China   
+A R T I C L E I N F O  
+Keywords: 
+Water-energy nexus 
+Optimal power flow 
+Chance constraint programming 
+Neural network 
+Uncertainty 
+A B S T R A C T  
+The optimal power-water flow (OPWF) is a fundamental tool for operating integrated power and water networks. 
+To address uncertainties in renewable energy and load demands, researchers have used chance-constrained 
+models to investigate OPWF under uncertainty. However, existing work has limitations, such as over­
+simplified network representations, intractable problem formulations, and high computational burdens. This 
+paper presents a chance-constrained OPWF formulation that incorporates detailed network constraints and 
+stochastic uncertainties from wind speeds and electricity/water demands. By leveraging the concept of quantiles 
+of stochastic variables and convexification techniques, the model is recast into a deterministic mixed-integer 
+second-order cone programming (MISOCP) problem with uncertain margins. To efficiently solve this problem, 
+we propose a novel iterative algorithm assisted by deep neural networks (DNNs). The algorithm integrates two 
+DNNs: one designed to solve power and water flow equations, accelerating the probabilistic evaluation of un­
+certain margins; and the other to predict pipeline flows and refine variable ranges, facilitating a warm-start 
+approach to the MISOCP model. Case studies conducted on the IEEE 123-node feeder coupled with a 67-node 
+water distribution network validate the two DNNs and the overall iterative algorithm. The findings demon­
+strate that the proposed DNN-assisted approach effectively balances system security and economy. Compared to 
+existing algorithms, the relative error of the optimization solution is less than 0.03%, with a speedup ratio 
+exceeding 200.   
+1. Introduction 
+1.1. Motivations 
+The electrical power and water systems are typically planned and 
+operated as separate entities, although they are intrinsically interde­
+pendent. This interdependency, known as the water-energy nexus [1,2], 
+has become increasingly significant due to the growing demand for both 
+electricity and water resources. It is estimated that approximately 40 % 
+of the water withdrawn is used for power production, specifically for 
+cooling and fuel extraction [1]. On the other hand, water and waste­
+water services are highly energy-intensive, accounting for about 3−4 % 
+of the total electricity consumption in the USA [3], and the average 
+energy consumption for urban water supply in China in 2011 was 
+recorded at 0.29 kWh/m3 [4]. In addition, over 80 % of the energy 
+consumption within the water sector is ascribed to water-pumping ac­
+tivities [2]. 
+Over the last decade, global attention has intensified on the 
+development of multi-energy systems [5,6]. This evolution has led to the 
+emergence of diverse multi-energy configurations, including power-gas 
+[7,8], power-heat [9], power-transportation [10], power-gas-heat [11], 
+and power-gas-hydrogen systems [12]. The goal of these integrated 
+systems is to identify synergies between different energy carriers, 
+enhancing overall efficiency, reliability, and sustainability. Recently, 
+there has been growing interest in exploring synergies between power 
+and water systems, aligning with the broader concept of multi-energy 
+systems. Numerous studies have proposed the coordinated operation 
+of these two systems from an integrated perspective [3,13-16], with a 
+specific problem known as the optimal power-water flow (referred to as 
+optimal PWF or OPWF, and also named optimal water-power flow in 
+[13]). 
+The OPWF problem is an extension of the classic optimal power flow 
+(OPF) problem for electrical power systems within the context of inte­
+grated power and water systems (IPWSs). It aids system operators in 
+making well-informed decisions to minimize the overall operational 
+costs, meet power and water demands, and satisfy engineering and 
+* Corresponding author at: Institute: National Key Laboratory of Power Transmission Equipment Technology, Address: Chongqing University, Chongqing, China. 
+E-mail address: zx@cqu.edu.cn (X. Zhao).  
+Contents lists available at ScienceDirect 
+Electric Power Systems Research 
+journal homepage: www.elsevier.com/locate/epsr 
+https://doi.org/10.1016/j.epsr.2024.110599 
+Received 17 December 2023; Received in revised form 6 June 2024; Accepted 12 June 2024   
+
+Electric Power Systems Research 234 (2024) 110599
+2
+operating constraints in both systems. It also manages in­
+terdependencies between power and water. The OPWF provides an 
+essential tool for the operation and planning of IPWSs, attracting sig­
+nificant research attention. 
+However, most of the existing OPWF models are deterministic in 
+nature. This paper reports on the study of OPWF modeling under un­
+certainties, with a particular focus on an algorithm facilitated by deep 
+neural networks (DNNs). 
+1.2. Literature review 
+1.2.1. OPWF models and methods 
+Many efforts have been made to address the OPWF problem at the 
+distribution level, as outlined in [13-16]. Ref. [13] is an early contri­
+bution to OPWF formulation, where the PDN is depicted using the bus 
+injection model, and the WDN is characterized by pipelines with pre­
+determined directions and variable-speed pumps. The Darcy–Weisbach 
+equations are employed to articulate the head losses in pipelines. Later 
+investigations, as indicated in [14-16], consistently apply the branch 
+flow model for the PDN, presupposing unfixed pipeline directions. 
+Ref. [14] and [16] apply the Darcy-Weisbach equations, whereas [8] 
+adopts the Hazen-Williams equations for pipeline description. In terms 
+of pump speed control, variable-speed pumps are investigated in [15] 
+and [9], whereas [14] is dedicated to fixed-speed pumps. 
+The OPWF problem is inherently a non-convex and non-linear pro­
+gramming problem. To address this problem, a variety of approaches 
+have been employed, including piecewise linearization [15], 
+second-order cone (SOC) relaxation [14,16], the convex hull technique 
+[14], 
+McCormick 
+envelopes 
+[16], 
+and 
+the 
+feasible 
+point 
+pursuit-successive convex approximation method [13]. 
+In addition to the OPWF problems at the distribution level, there are 
+also studies on OPWF involving bulk transmission networks. For 
+instance, Refs. [3] and [17] have explored the potential of water dis­
+tribution networks (WDNs) in providing energy flexibility [3] or ac­
+commodating wind power [17] to bulk transmission systems through 
+OPWF. 
+1.2.2. Chance-constraied OPWF 
+All the studies in [3,13-17] are deterministic optimizations, 
+neglecting the inherent uncertainty of RE sources and load demands. 
+However, 
+these 
+uncertainties 
+can 
+significantly 
+affect 
+the 
+decision-making for OPWF. If not properly addressed, they could 
+compromise the optimality and even the feasibility of OPWF solutions. 
+Common methods for addressing uncertainties in optimizations 
+include stochastic optimization and robust optimization. Stochastic opti­
+mization typically involves modeling uncertainties as random variables 
+with known probability distributions and dealing with expected values 
+and probabilistic constraints [18]. In contrast, robust optimization seeks 
+solutions that are feasible across all uncertainty scenarios, emphasizing 
+the worst-case scenario [19]. It operates without assuming known dis­
+tributions, however, robust solutions can be overly conservative. Both 
+methods are widely used in power and energy system optimization [6, 
+20]. Additionally, there are hybrid methods of stochastic and robust 
+optimization, such as distributionally robust optimization [19] or the 
+stochastic-robust model proposed in [21] to optimize the operation of 
+isolated energy communities. 
+In this paper, we focus on chance-constrained programming (CCP), 
+which is a specific form of stochastic optimization. It introduces addi­
+tional chance constraints to deterministic optimization, ensuring that 
+the probability of violating certain constraints remains below a specified 
+threshold. 
+CCP has been extensively studied in the OPF formulation in power 
+systems. Recently, several studies have also resorted to CCP to address 
+the OPWF problem under uncertainty. Ref. [22] formulated an OPWF 
+problem incorporating uncertain RE generation, modeling the RE gen­
+eration as a CCP problem and solving it using the probability-efficient 
+point (PEP) method. The authors of [23-26] expanded their series of 
+related studies to address uncertainties in water loads [23], power loads 
+[24,26], or both [25] by incorporating chance constraints of violating 
+network constraints into the distribution-level OPWF problem. They 
+tackled these chance-constrained OPWF (CC–OPWF) problems using 
+scenario-based methods [23-25]. However, due to the limited scalability 
+of the scenario approach for larger problems, the authors proposed in 
+Table 1 
+Comparative summary of the reviewed studies on CC–OPWF.  
+Ref. 
+Uncertainty 
+Modelling 
+Regulation 
+Tractable 
+approximation 
+Method for chance 
+constraints 
+DNN 
+Power 
+loads 
+Water 
+loads 
+RE 
+Power 
+losses 
+Branch 
+limits 
+Pipe 
+direction 
+Pump 
+speed 
+[22] 
+×
+×
+√ 
+√ 
+√ 
+×
+√ 
+Piecewise linearization 
+PEP 
+×
+[23] 
+×
+√ 
+×
+√ 
+×
+×
+×
+×
+Scenario approach 
+×
+[24] 
+√ 
+×
+×
+×
+×
+×
+×
+Convex hull 
+Scenario approach 
+×
+[25] 
+√ 
+√ 
+×
+×
+×
+×
+×
+Convex hull 
+Scenario approach 
+×
+[26] 
+√ 
+×
+×
+×
+×
+√ 
+×
+Quasi-convex hull 
+Reformulation 
+×
+[27] 
+√ 
+√ 
+√ 
+×
+√ 
+√ 
+×
+Quasi-convex hull 
+Reformulation 
+×
+[28] 
+√ 
+√ 
+×
+×
+√ 
+√ 
+√ 
+×
+Fixed-point-iteration 
+×
+This 
+work 
+√ 
+√ 
+√ 
+√ 
+√ 
+√ 
+√ 
+SOC relaxation and 
+McCormick envelope 
+Fixed-point-iteration 
+√ 
+*Ref. [28] is our previous work. 
+Fig. 1. Outline of the fixed-point-iteration algorithm assisted by DNNs.  
+X. Zhao et al.                                                                                                                                                                                                                                    
+
+Electric Power Systems Research 234 (2024) 110599
+3
+[26] a reformulation of the OPWF problem by introducing robust water 
+constraints and a tractable transformation of the chance constraints. A 
+similar reformulation of chance constraints is utilized in [27] to address 
+uncertainties in water and power loads as well as wind power. However, 
+the reformulation outlined in [26] and [27] is based on the linearization 
+of the inequality constraints and the assumption of Gaussian un­
+certainties. In our previous work [28], we introduced the fixed-point-it­
+eration algorithm to address the CC–OPWF problem for the first time. 
+1.2.3. Fixed-point-iteration-based CC-OPF and CC-OPWF 
+The fixed-point-iteration algorithm was proposed in [29] as a solution 
+to chance-constrained OPF. It is built upon the concept of uncertain 
+margin previously defined by the same authors in [30]. The uncertain 
+margin represents an estimation of the quantiles of uncertain variables 
+and is interpreted as network constraint tightening to accommodate 
+uncertainties from RE generation and power demands. The 
+fixed-point-iteration algorithm is notable for its ability to decompose the 
+CCP optimization process into successive steps of solving a deterministic 
+OPF problem and conducting a probabilistic evaluation of uncertain 
+margins. Initially, the iteration algorithm was developed based on par­
+tial linearization of the AC power flow equations as well as the 
+assumption of Gaussian uncertainties to facilitate the analytical refor­
+mulation of chance constraints [30]. The sample-based approach, such 
+as the Monte Carlo (MC) method, was subsequently incorporated into 
+the iteration to accommodate non-linear models and non-Gaussian un­
+certainties [31]. However, the evaluation of uncertain margins typically 
+requires tens of thousands of MC simulations at each iteration, posing a 
+challenge to computational efficiency. To address this issue, alternative 
+approaches such as the three-point estimation [32] and the 
+response-surface approach [33] are employed to accelerate the uncer­
+tainty evaluation. Moreover, the non-convex nature of the OPF problem 
+presents another challenge for the iteration algorithm, as it relies on 
+repeatedly solving the problem. Consequently, [32] employs a linear­
+ized network model, while [34] applies SOC relaxations to address the 
+convex problem. 
+To the best of our knowledge, our previous work [28] was the first 
+and the only attempt to apply the fixed-point-iteration algorithm to 
+CC–OPWF, however, it had limitations in network representation, 
+intractability, and computation efficiency. Specifically, the power sys­
+tem was oversimplified by using the DC power model, the OPWF 
+formulated was intractable due to nonlinear and non-convex constraints 
+within the water network, and the probabilistic evaluation is conducted 
+through repeatedly solving of PWF equations using the Newton-Raphson 
+(N-R) method, posing great challenges to computation efficiency. 
+1.3. Research gap and contributions 
+From the literature review, a comparative summary of the studies on 
+CC–OPWF is presented in Table 1. The research gaps in the context of 
+CC–OPWF can be identified as follows:  
+1) Incomplete modeling of uncertainties, network representation, and 
+regulations. For instance, most studies do not account for regulations 
+concerning pipe direction and pump speed in CC–OPWF.  
+2) Challenges in effectively and efficiently solving the CC–OPWF 
+problem. The scenario approach used in [23-25] and the 
+fixed-point-iteration method we previously used in [28] are not 
+applied to large-scale systems. Additionally, the reformulation 
+methods proposed in [26] and [27] require uncertainty factors to 
+follow Gaussian distributions and necessitate model linearization. 
+Therefore, further research is needed to develop a more efficient and 
+scalable method to address the intractability and computational 
+burden associated with CC–OPWF. 
+To fill these identified gaps, this work aims to develop a novel 
+method for addressing the challenges in modeling and solving the 
+CC–OPWF problem, particularly with the assistance of deep neural 
+networks (DNNs). Recent years have witnessed the growing successful 
+application of DNNs in power flow [35], probabilistic power flow [36, 
+37], optimal power flow [38,39], optimal gas flow [40], optimal 
+power-gas flow [41], and the integrated scheduling of power and gas 
+systems [42]. Inspired by these applications, particularly in fitting high 
+non-linear power flow equations [36,37] and predicting the optimal 
+range of gas flow [41], as well as specifying warm-starts for power-gas 
+optimization [40], we propose leveraging DNN to improve the 
+fixed-point-iteration algorithm for CC–OPWF. 
+The main contributions of this work are twofold:  
+• CC–OPWF formulation. A CC–OPWF problem is formulated by 
+integrating detailed power and water network constraints, bi- 
+directional water flow, pump speed regulation, and considerations 
+of uncertainties in power and water demands, as well as RE gener­
+ations. This problem is subsequently reformulated into a tractable 
+MISOCP problem through the application of uncertain margins, SOC 
+relaxation, and the McCormick envelopes. 
+• CC–OPWF solution. A novel fixed-point-iteration algorithm incor­
+porating two DNNs, referred to as Deep-PWF and Deep-OPWF, is 
+proposed to provide an efficient and scalable solution to the 
+CC–OPWF problem. Deep-PWF is developed and trained to predict 
+PWF solutions, thereby accelerating the MC simulations for uncer­
+tainty evaluation. The cascade of Deep-OPWF and Deep-PWF is 
+Fig. 2. Schematic diagram of the integrated system composed of a power distribution network (PDN) and a WDN.  
+X. Zhao et al.                                                                                                                                                                                                                                    
+
+Electric Power Systems Research 234 (2024) 110599
+4
+utilized to provide a warm start by predicting water flow directions 
+and refining variable limits for the McCormick envelopes. The pro­
+posed iteration algorithm is outlined in Fig. 1. 
+The remainder of this paper is organized as follows. Section 2 de­
+scribes the typical structure of the integrated distribution system under 
+study and formulates the deterministic OPWF problem. In Section 3, the 
+chance-constrained OPWF problem is formulated to address un­
+certainties and subsequently reformulated as a deterministic problem 
+using the concept of uncertain margins. The fixed-point-iteration algo­
+rithm is also presented in this section. Section 4 presents the proposed 
+DNNs and their incorporation into the iterative algorithm for chance- 
+constrained OPWF. Case studies are conducted in Section 5 to validate 
+the proposed DNNs and overall iterative algorithm. Finally, Section 6 
+concludes the paper and discusses future work. 
+2. Optimal power-water flow formulation 
+Fig. 2 depicts the integrated power and water distribution system 
+studied in this work, where the power and water distribution networks 
+are interconnected through electric pumps. These pumps consume 
+electrical power to elevate the hydraulic heads at water sources or 
+within the WDN, thereby compensating for head loss resulting from 
+pipeline friction or gravity. We will first present the mathematical 
+modeling of the integrated system shown in Fig. 2 before we formulate 
+the optimal power-water flow problem. 
+2.1. Modeling of the power distribution network 
+The PDN studied is radial and represented as a directed graph (NP, 
+EP), where NP is the node set and EP is the edge set representing distri­
+bution lines and transforms. The notations used throughout this article 
+are summarized in Table A2 for convenience to look up. 
+We use the relaxed branch flow model [43] to model the radial PDN. 
+For each branch (i, j)∈EP, let rij+jxij be the series impedance and Pij+jQij 
+be the sending-end complex power from node i to j, let Pi+jQi be the 
+complex power injection at node i∈NP, we have 
+Pij −rijlij + Pj =
+∑
+k:j→k
+Pjk, ∀(i, j) ∈E P
+(1a)  
+Qij −xijlij + Qj =
+∑
+k:j→k
+Qjk, ∀(i, j) ∈E P
+(1b)  
+vi −vj = 2
+(
+rijPij + xijQij
+)
+−
+(
+r2
+ij + x2
+ij
+)
+lij, ∀(i, j) ∈E P
+(1c)  
+P2
+ij + Q2
+ij = vilij, ∀(i, j) ∈E P
+(1d)  
+where lij is the squared current magnitude on branch (i, j), vi is the 
+squared voltage magnitude at node i. Constraints (1a) and (1b) describe 
+the nodal balance of active and reactive power at node j∈NP; (1c) is the 
+Ohm’s law; (1d) defines the sending-end power flow in the branch (i, j)∈
+EP. 
+For the studied PDN, which is connected to WDNs through electrical 
+pumps, the active and reactive power injection at node i are given as: 
+Pi = Pi,gen + Pi,wind −Pi,load −Pi,pump, ∀i ∈N P
+(2a)  
+Qi = Qi,gen + Qi,wind −Qi,load, ∀i ∈N P
+(2b)  
+where Pi,gen, Pi,wind, Pi,load, and Pi,pump are the active power of generators, 
+wind turbines, load, and the electric pumps at node i∈NP, respectively, 
+while Qi,gen, Qi,wind, and Qi,load are the their corresponding reactive 
+powers. 
+In addition to (1a)–(1d), the following constraints on powers and 
+magnitudes of voltage and current are required: 
+Pmin
+i,gen ≤Pi,gen ≤Pmax
+i,gen, ∀i ∈N P
+(3a)  
+Qmin
+i,gen ≤Qi,gen ≤Qmax
+i,gen, ∀i ∈N P
+(3b)  
+vmin
+i
+≤vi ≤vmax
+i
+, ∀i ∈N P
+(3c)  
+lij ≤lmax
+ij
+, ∀(i, j) ∈E P
+(3d)  
+Pmin
+ij
+≤Pij ≤Pmax
+ij
+, ∀(i, j) ∈E P
+(3e)  
+Qmin
+ij
+≤Qij ≤Qmax
+ij
+, ∀(i, j) ∈E P
+(3f)  
+where the superscripts max and min are used to denote the upper and 
+lower limits on the corresponding variables. 
+Note that the nodes without generators, loads, wind turbines, or 
+pumps can be handled by simply setting the respective powers in (2a), 
+(2b) and their upper and lower limits in (3a), (3b) to zero. 
+2.2. Modeling of the water distribution network 
+Consider a WDN composed of junctions, pipes, pumps, reservoirs, 
+and tanks. Similar to PDN, we use another directed graph (NW, EW) with 
+node set NW and edge set EW to describe the WDN. The node set NW 
+represents junctions, water reservoirs, and tanks, and the edge set EW 
+represents pipes and pumps as EW =EPi∪EPu. 
+The WDN is modeled by the following functions on pipes, pumps, 
+and nodal flow balance: 
+Hm −Hn = sgn(Hm, Hn)fmnq2
+mn, ∀(m, n) ∈E Pi
+(4a)  
+sgn(Hm, Hn) =
+{
+1, Hm ≥Hn
+−1, Hm < Hn , ∀(m, n) ∈E Pi
+(4b)  
+Hn −Hm = amnω2
+mn −bmnq2
+mn, ∀(m, n) ∈E Pu
+(4c)  
+Pmn,pump = ρg
+ηmn
+qmn(Hn −Hm), ∀(m, n) ∈E Pu
+(4d)  
+qm,src −qm,load +
+∑
+k:k→m
+qkm =
+∑
+n:m→n
+qmn, ∀m ∈N W.
+(4e) 
+Constraint (4a) is the Darcy-Weisbach equation, where Hm is the 
+hydraulic head at node m∈NW, and qmn and fmn are the volumetric flow 
+rate and friction factor of pipe (m, n)∈EPi, respectively. Constraints (4c) 
+and (4d) formulate the hydraulic characteristic of the pump (m, n)∈EPu 
+and its power consumption with the nonnegative coefficients of amn and 
+bmn, efficiency ηmn, relative speed ωmn, water density ρ, and the gravity 
+constant g [44]. Constraint (4e) represents conservation of mass 
+requiring the total inflow to equal total outflow at each node m∈NW with 
+the water source flow rate qm,src and the load flow rate qm,load. 
+Note that Pmn, pump in (4d) denotes the electric power consumed by 
+pump (m, n)∈EPu. Assuming that the pump is powered by node i∈NP in 
+the PDN, Pmn,pump corresponds to Pi,pump in (2a). As a result, the PDN and 
+WDN are coupled through (2a) and (4d). 
+Finally, we impose the following limits on flow rates, heads, and 
+pump speeds: 
+qmin
+mn ≤qmn ≤qmax
+mn , ∀(m, n) ∈E W
+(5a)  
+qmin
+m,src ≤qm,src ≤qmax
+m,src, ∀m ∈N W
+(5b)  
+Hmin
+m
+≤Hm ≤Hmax
+m , ∀m ∈N W
+(5c)  
+Hmin
+mn ≤Hn −Hm ≤Hmax
+mn , ∀(m, n) ∈E Pu
+(5d)  
+ωmin
+mn ≤ωmn ≤ωmax
+mn , ∀(m, n) ∈E Pu
+(5e)  
+X. Zhao et al.                                                                                                                                                                                                                                    
+
+Electric Power Systems Research 234 (2024) 110599
+5
+Href = const.
+(5f)  
+where Hmin
+mn andHmax
+mn are the lower and upper bound of head gain through 
+the pump (m, n)∈EPu. Constraint (5f) states that one of the reservoirs is 
+chosen as the reference node with a given hydraulic head. 
+2.3. Formulation of the optimal power-water flow problem 
+The objective of the OPWF problem is to minimize the overall costs 
+associated with sourcing electricity from the upper grid and water from 
+the reservoir, as depicted in Fig. 2. Additionally, it aims to reduce active 
+power losses within the PDN. To achieve this goal, the following 
+objective function has been formulated: 
+C =
+∑
+i∈N P
+ci,genPi,gen +
+∑
+m∈N W
+cm,srcqm,src +
+∑
+(i,j)∈E P
+rijlij
+(6)  
+where ci,gen for i∈NP and cm,src for m∈NW denote the electricity and water 
+price, respectively. The third term represents the active power loss in the 
+PDN. 
+Let u={Pgen, Qgen, vslack, ω, qsrc} be the set of control variables, where 
+Pgen and Qgen are vectors representing the active and reactive generation 
+powers at each node, respectively; vslack denotes the squared voltage of 
+the root node connected to the upper grid; ω is the vector of pump 
+speeds, and qsrc aggregates all source flow rates excluding the reference 
+reservoir. Let x={P, Q, v, l, q, H} be the set of dependent variables, where 
+P, Q, and l are vectors of Pij, Qij, and lij, (i, j)∈EP; v is the vector of vi, i∈NP; 
+q is the vector of qmn, (m, n)∈EW, and H is the vector of Hm, m∈NW. The 
+OPWF problem can be formulated as follows: 
+OPWF : min
+x,u C(x, u)
+(7a)  
+subject to f(x, u) = 0
+(7b)  
+g(x, u) ≤0
+(7c)  
+where C(·) is the objective function defined by (6). Equality constraint 
+(7b) represents the power Eqs. (1a)–(1d), (2a), (2b), and hydraulic Eqs. 
+(4a)–(4e), (5f), which also defines the PWF problem of the integrated 
+system. Inequality constraint (7c) collects the constraints of (3a)–(3f) 
+and (5a)–(5e). 
+The OPWF poses a non-convex and non-linear challenge, utilizing 
+sign functions to denote pipe directions. These sign functions can be 
+effectively handled through the big-M method [16], transforming the 
+problem into a mixed-integer nonlinear programming (MINLP) problem. 
+3. Chance-constrained OPWF formulation and its fixed-point- 
+iteration solution 
+3.1. Uncertainty modeling 
+The OPWF problem above is a deterministic problem neglecting the 
+inherent uncertainty associated with the power- and water-loads and 
+wind powers. To address the uncertainty, the active and reactive power 
+loads, and the flow rates of water loads are modeled as the sum of the 
+forecasted values and forecast errors [31]: ̃
+Pi,load = Pi,load + Δ̃Pi,load, ∀i ∈N P
+(8a)  ̃
+Qi,load = Qi,load + Δ̃Qi,load, ∀i ∈N P
+(8b)  ̃
+qm,load = qm,load + Δ̃qm,load, ∀m ∈N W
+(8c)  
+where the tilde ~ is used to denote uncertain variables, and the forecast 
+errors Δ̃Pi,load, Δ̃Qi,load, and Δ̃qm,load are all assumed to be Gaussian 
+variables with zero means. 
+We follow [32] to model the wind speed vwind as a two-parameter 
+Weibull random with scale parameter α and shape parameter β. The 
+cumulative distribution function is 
+F(̃vwind) = 1 −exp
+[
+−
+(̃vwind
+α
+)β]
+.
+(9) 
+The corresponding wind power at node i can be expressed as ̃Pwind =
+f(̃vwind) where the node index is dropped to simplify the notation. We 
+used the following function (10) to map wind speed to wind power [45]: 
+f(v) =
+⎧
+⎪
+⎪
+⎪
+⎨
+⎪
+⎪
+⎪
+⎩
+0,
+v ≤vinorv > vout
+1
+2ρairACpv3,
+vin < v < vN
+Pwind,N
+vN ≤v ≤vout
+,
+(10)  
+where vin, vout, and vN are the cut-in, cut-out, and nominal wind speed, 
+respectively; Pwind,N is the nominal wind power; ρair is the air density, A 
+is the area swept out by the wind turbine blades, and Cp is the wind- 
+turbine power coefficient which is regarded as constant in this work. 
+Assuming that the wind turbine is operating under a constant power 
+factor cosφ, the reactive wind power is given by ̃
+Qwind =̃ Pwind̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅
+1 −cos2φ
+√
+cosφ
+.
+(11) 
+It is worth noting that actual load forecast errors and wind speeds are 
+not necessarily expected to follow Gaussian and Weibull distributions. 
+The proposed approach in this paper does not rely on any specific as­
+sumptions about probability distributions. Moreover, if there is suffi­
+cient real-world data available on loads and wind speeds, it can be 
+effectively incorporated into our approach. 
+3.2. Chance-constrained OPWF 
+With the uncertainty in power and water load as well as in wind 
+speed, the power and water flowing throughout the integrated system 
+are also uncertain. Therefore, it is usually impossible to hold the 
+inequality constraints of the OPWF. By introducing the chance con­
+straints to evaluate the probabilities of holding the inequalities, we 
+formulate the OPWF as the following chance-constrained OPWF: 
+CC −OPWF : minE
+(∑
+i∈N P
+ci,genPi,gen +
+∑
+m∈N W
+cm,srcqm,src +
+∑
+∀(i,j)∈E P
+rij̃lij
+)
+(12a)  
+subject to f(̃x, u) = 0
+(12b) 
+(3a), (3b), (5b), (5e), (5f), 
+Fig. 3. Structure of the Deep-PWF, where ai,j and si,j denote respectively the 
+outputs of the linear mapping and the activation function of the j-th neuron in 
+the i th layer. Assuming there are L hidden layers and Ni neurons in the i th 
+layer, we have i∈{1,2,…,L}and j∈{1,2,…,Ni}. 
+X. Zhao et al.                                                                                                                                                                                                                                    
+
+Electric Power Systems Research 234 (2024) 110599
+6
+P
+{̃
+vi ≤vmax
+i
+}
+≥1 −εv, ∀i ∈N P
+(12c)  
+P
+{̃
+vi ≥vmin
+i
+}
+≥1 −εv, ∀i ∈N P
+(12d)  
+P
+{̃
+lij ≤lmax
+ij
+}
+≥1 −εl, ∀(i, j) ∈E P
+(12e)  
+P
+{̃
+Pij ≤Pmax
+ij
+}
+≥1 −εP, ∀(i, j) ∈E P
+(12f)  
+P
+{̃
+Pij ≥Pmin
+ij
+}
+≥1 −εP, ∀(i, j) ∈E P
+(12g)  
+P
+{̃
+Qij ≤Qmax
+ij
+}
+≥1 −εQ, ∀(i, j) ∈E P
+(12h)  
+P
+{̃
+Qij ≥Qmin
+ij
+}
+≥1 −εQ, ∀(i, j) ∈E P
+(12i)  
+P
+{̃
+qmn ≤qmax
+mn
+}
+≥1 −εq, ∀(m, n) ∈E W
+(12j)  
+P
+{̃
+qmn ≥qmin
+mn
+}
+≥1 −εq, ∀(m, n) ∈E W
+(12k)  
+P
+{̃
+Hm ≤Hmax
+m
+}
+≥1 −εH, ∀m ∈N W
+(12l)  
+P
+{̃
+Hm ≥Hmin
+m
+}
+≥1 −εH, ∀i ∈N W
+(12m)  
+P
+{
+(̃Hn −̃ Hm) ≤Hmax
+mn
+}
+≥1 −εH, ∀(m, n) ∈E Pu
+(12n)  
+P
+{
+(̃Hn −̃ Hm) ≥Hmin
+mn
+}
+≥1 −εH, ∀(m, n) ∈E Pu
+(12o)  
+where E denotes expectation, and P is the probability measure. Specif­
+ically, we have the following statements.  
+1) The objective (12a) of the CC–OPWF is to minimize the expected 
+cost due to the uncertainty in currents.  
+2) The equality constraint (12b) is the stochastic counterpart of (7b) 
+with uncertainties considered.  
+3) The inequality constraints on generations (3a), (3b), water sources 
+(5b), (5f), and pump speeds (5e) are considered as hard constraints, 
+which are considered impossible to violate. The remaining inequality 
+constraints are soft and formulated as individual chance constraints 
+with acceptable violation probabilities of εv, εl, εP, εQ, εq, and εH.  
+4) For simplicity, we follow [31] to formulate the uncertain OPWF 
+problem with individual chance constraints to limit the violation 
+probabilities of each constraint. However, the solution framework 
+proposed in this work can be readily extended to the CC–OPWF with 
+joint chance constraints. 
+3.3. Reformulation of the chance-constrained OPWF 
+The CC–OPWF problem is computationally intractable with an ex­
+pected cost objective and chance constraints. To address this issue, we 
+reformulate the problem by introducing the concept of uncertain margin, 
+as detailed in [31]. 
+We use the nodal head constraints in (12l) and (12 m) for node m as 
+illustrative examples. Assume that the actual nodal head is uncertain 
+due to the stochastic variations in wind speeds and load demands and 
+can be modeled as a random variable. This variable can be further 
+represented as the sum of the forecasted operating point (or the sched­
+uled value) Hm and a stochastic deviationΔ̃Hm[30–32]: ̃
+Hm = Hm + Δ̃Hm.
+(13) 
+Suppose the cumulative distribution function (CDF) of Δ̃Hmis FHm(·) 
+and its inverse function isF−1
+Hm(⋅). Based on the definition of the CDF and 
+its inherent monotonicity, the chance constraints of (12l) and (12 m) can 
+be reformulated into the following expression: 
+P
+{
+Δ̃Hm ≤Hmax
+m
+−Hm
+}
+= FHm
+(
+Hmax
+m
+−Hm
+)
+≥1 −εH⇒Hmax
+m
+−Hm
+≥F−1
+Hm(1 −εH),
+(14a)  
+P
+{
+Δ̃Hm ≥Hmin
+m
+−Hm
+}
+= 1 −FHm
+(
+Hmin
+m
+−Hm
+)
+≥1 −εH⇒Hmin
+m
+−Hm
+≤F−1
+Hm(εH),
+(14b)  
+or as 
+Hmin
+m
+−F−1
+Hm(εH) ≤Hm ≤Hmax
+m
+−F−1
+Hm(1 −εH).
+(15) 
+Denoting 
+λup
+Hm = F−1
+Hm(1 −εH)
+(16a)  
+and 
+λlow
+Hm = −F−1
+Hm(εH),
+(16b)  
+we have 
+Hmin
+m
++ λlow
+Hm ≤Hm ≤Hmax
+m
+−λup
+Hm.
+(17) 
+It is observed that 1) λup
+Hm, which is referred to as the upper uncertainty 
+margin, actually represents the (1-εH)-quantile of Δ̃Hm. Correspondingly, 
+λlow
+Hm, known as the lower uncertainty margin, is the negative of the εH- 
+quantile ofΔ̃Hm. 2) The chance constraints have now been reformulated 
+into deterministic constraints by introducing λup
+Hmand λlow
+Hm. 3) The impacts 
+of uncertainty on the nodal head can be expressed by tightening its 
+upper and lower limits with the tighteningsλup
+Hmand λlow
+Hm. Additionally, in 
+this reformulation process, no assumptions were made regarding the 
+specific distribution of the random variables. This implies that the 
+reformulation is capable of accommodating diverse distributions. 
+Applying a similar reformulation to all chance constraints, we can 
+rewrite the CC–OPWF problem as 
+R −CC −OPWF : min
+x,u
+(∑
+i∈N P
+ci,genPi,gen +
+∑
+m∈N W
+cm,srcqm,src +
+∑
+∀(i,j)∈E P
+rijlij
+)
+(18a)  
+subject to (7b), (3a), (3b), (5b), (5e), (5f), 
+vmin
+i
++ λlow
+vi
+≤vi ≤vmax
+i
+−λup
+vi , ∀i ∈N P
+(18b)  
+lij ≤lmax
+ij
+−λup
+lij , ∀(i, j) ∈E P
+(18c) 
+Fig. 4. Flowchart to predict the solution of the R-CC–OPWF problem.  
+X. Zhao et al.                                                                                                                                                                                                                                    
+
+Electric Power Systems Research 234 (2024) 110599
+7
+Pmin
+ij
++ λlow
+Pij ≤Pij ≤Pmax
+ij
+−λup
+Pij, ∀(i, j) ∈E P
+(18d)  
+Qmin
+ij
++ λlow
+Qij ≤Qij ≤Qmax
+ij
+−λup
+Qij, ∀(i, j) ∈E P
+(18e)  
+qmin
+mn + λlow
+qmn ≤qmn ≤qmax
+mn −λup
+qmn, ∀(m, n) ∈E W
+(18f)  
+Hmin
+m
++ λlow
+Hm ≤Hm ≤Hmax
+m
+−λup
+Hm, ∀m ∈N W
+(18g)  
+λlow
+Hmn ≤Hm −Hn ≤Hmax
+mn −λup
+Hmn, ∀(m, n) ∈E Pu
+(18h)  
+where the upper uncertainty marginsλup
+vi , λup
+lij , λup
+Pij, λup
+Qij,λup
+qmn, and λup
+Hmnhave 
+similar expressions as λup
+Hm, and the lower uncertainty marginsλlow
+vi , λlow
+Pij , 
+λlow
+Qij , λlow
+qmn, and λlow
+Hmnhave similar expressions as λlow
+Hm . 
+It is worth noting that the R-CC-OPWF remains a nonlinear and non- 
+convex problem. Additionally, if all the uncertain margins are set to 0, 
+the R-CC-OPWF reduces to an OPWF problem. Consequently, the OPWF 
+can be considered a special instance of the R-CC-OPWF. 
+3.4. Fixed-point-iteration algorithm for R-CC-OPWF 
+We apply the fixed-point-iteration algorithm from [31] to solve the 
+CC–OPWF problem. The algorithm alternates between solving the 
+deterministic R-CC–OPWF problem under the given vector of tighten­
+ings λ(k−1) to obtain the optimal [x(k),u(k)], and evaluating λ(k) based on 
+[x,u](k) through either analytical methods or sample-based methods 
+such as MC simulations, where kis the iteration count. The process ter­
+minates when the tightenings λ do not change between iterations. 
+Details of the fixed-point-iteration algorithm to solve the CC–OPWF 
+problem are provided in Algorithm 1. MC simulation has clear advan­
+tages over analytical methods since it requires neither simplification 
+(such as linearization) of PWF equations nor any particular assumption 
+about the probability distribution of uncertainties. Results of MC sim­
+ulations are also typically used as a reference to verify the analytical 
+methods. However, MC simulation is usually computationally intensive. 
+Consequently, in this work, we apply MC simulation to evaluate λ and 
+utilize the DNN technique to mitigate the computational burden. 
+Algorithm 1: Fixed-point-iteration algorithm for CC–OPWF 
+1. Initialize the iteration count k=1 and uncertain margins λ(k-1) =0. 
+2. While k<kmax do 
+3. Solve the deterministic R-CC–OPWF problem with λ(k−1) to 
+obtain the optimal control variables u(k) and dependent variables x(k). 
+4. Evaluate λ(k) via MC simulation: 
+1) Generate samples of forecast errors in power and water loads, and 
+wind speeds based on their probabilistic distribution. 
+2) Calculate the corresponding power and water loads and wind 
+powers via (8a)–(8c) and (10). 
+3) Solve the PWF equations (7b) based on u(k) and power/water loads 
+and wind powers to obtain the samples of x(k). 
+4) Conduct statistical analysis on the samples of x(k) by verifying 
+(12c)–(12o) to detect the chance constraints that do not meet the pre­
+defined violation probabilities of εv, εl, εP, εQ, εq, and εH. 
+5) Update the uncertain margins λ of the violated chance constraints 
+via (16a) and (16b). 
+5. Check convergence by comparing the maximum change |λ(k)- 
+λ(k-1)| with the predefined threshold η. If |λ(k)-λ(k-1)|≤η, go to step 7 to 
+stop the iteration; otherwise update k=k+1. 
+6. end while 
+7. Output the final u(k) and x(k). 
+4. The proposed DNN-Assisted solution for CC-OPWF 
+Although the fixed-point-iteration algorithm successfully transforms 
+the original CC–OPWF into alternating between solving the determin­
+istic R-CC–OPWF and updating the uncertain margin λ, there are still 
+two challenges. First, evaluating λ based on MC simulation is compu­
+tationally intensive since it requires repeatedly solving the PWF equa­
+tions (7b) multiple times. The second challenge is how to solve the 
+nonlinear and nonconvex R-CC–OPWF problem. 
+To address the first challenge, we propose training a DNN-based 
+surrogate model, referred to as Deep-PWF, to map the power and 
+water loads, wind speeds, and control variables u to the dependent 
+variables x. As for the second challenge, we suggest reformulating the R- 
+CC–OPWF problem into a tractable problem with SOC relaxation and 
+McCormick envelopes. Additionally, we recommend utilizing another 
+deep neural network, referred to as Deep-OPWF, to predict the optimal 
+1) nodal heads and 2) flow rates of pipes and pumps, and then use these 
+predictions as warm starts to facilitate the solve of the R-CC–OPWF 
+problem. 
+4.1. Deep-PWF 
+The PWF equations (7b) are nonlinear and have no closed-form so­
+lutions, which are typically solved by iterative numerical methods such 
+Fig. 5. Flowcharts of the two algorithms.  
+X. Zhao et al.                                                                                                                                                                                                                                    
+
+Electric Power Systems Research 234 (2024) 110599
+8
+as the well-known Newton-Raphson (N-R) method. However, the itera­
+tion solution itself is time-consuming, not to mention that evaluating the 
+uncertain margins λ via MC simulations requires repeating the iteration 
+solution of the PWF equations thousands of times or even more. 
+Fortunately, when applying MC simulations to repeatedly solve the 
+PWF equations, the network topology as well as the network parameters 
+such as impedances and pipe frictions remain unchanged. As a result, the 
+PWF equations can be interpreted by the following mapping:  
+(19) 
+where yPWF=[y1, y2, …, ym] is an m-dimensional input vector collecting 
+wind speeds, power and water loads, and control variables u, and 
+zPWF=[z1, z2, …, zn] represents the n variables involved in the chance 
+constraints (12c)–(12o), i.e., vi, lij, Pij, Qij, Hm, and qmn, where 
+i∈NP\{slack}, m∈NW\{ref}, (i, j)∈EP, and (m, n)∈EW. 
+We suggest using a deep neural network Deep-PWF to learn the 
+mapping (19). The Deep-PWF proposed is a multi-layer feed-forward 
+neural network with multiple hidden layers between the input and 
+output layers. The structure of the Deep-PWF is depicted in Fig. 3, where 
+each neuron is associated with 1) a linear mapping defined by a set of 
+weights and a bias, and 2) an activation function. Accordingly, the 
+forward propagation of the Deep-PWF is 
+s0 = y
+(20a)  
+ak = Wksk−1 + bk, ∀k ∈{1, 2, ⋯, L}
+(20b)  
+sk = max(ak, 0), ∀k ∈{1, 2, ⋯, L}
+(20c)  
+z = WL+1sL + bL+1
+(20d)  
+where (20a) defines the input layer, (20b) is the linear mapping, (20c) 
+represents the Rectifier linear unit (ReLU) activation function selected in 
+this work, and finally (20d) obtains the output. 
+The training and testing for Deep-PWF are outlined as follows: 
+Fig. 6. Schematic of the integrated power and water distribution system. The IEEE 123-node system is coupled with the 67-node water distribution network through 
+pumps P1, P2, and P3, which are powered by electrical nodes E118, E68, and E105 respectively. Two wind turbines with a nominal power of 39 kW each are 
+connected to electrical nodes E48 and E66. The four blue pipes are not included in the base case C1 but are added to the extended case C2. 
+Table 2 
+Structures and training data of Deep-PWF and Deep-OPWF.  
+DNNs 
+Structure 
+Training 
+Layers and neurons 
+Inputs 
+Outputs 
+Scenarios 
+Simulation methods 
+Deep-PWF 
+(250, 250, 250)* 
+1) Power and water loads 
+2) Wind powers 
+3) Control variables u 
+Dependent variables x 
+50,000 
+Solve the PWF problem (7b) via the N-R method 
+Deep-OPWF 
+(500, 500, 500, 500) 
+1) Power and water loads 
+2) Wind powers 
+3) Uncertain margins λ 
+Control 
+variables u 
+10,000 
+Solve the R-CC–OPWF problem using the solver SCIP  
+* (250,250,250) denotes three hidden layers with 250 neurons in each layer; (500, 500, 500, 500) follows a similar pattern. 
+Table 3 
+Mean values and STDs obtained by the Deep-PWF and N-R methods under varying load forecast error STDs and an MC size of 10,000.  
+Items 
+Methods 
+10 % 
+15 % 
+20 % 
+V68 
+(p.u.) 
+I12 
+(p.u.) 
+H10 
+(m) 
+q12 
+(m3/h) 
+V68 
+(p.u.) 
+I12 
+(p.u.) 
+H10 
+(m) 
+q12 
+(m3/h) 
+V68 
+(p.u.) 
+I12 
+(p.u.) 
+H10 
+(m) 
+q12 
+(m3/h) 
+Means 
+N-R 
+1.094 
+0.149 
+69.995 
+20.833 
+1.094 
+0.1484 
+69.995 
+20.832 
+1.094 
+0.149 
+69.995 
+20.831 
+Deep-PWF 
+1.094 
+0.149 
+69.996 
+20.836 
+1.094 
+0.1485 
+69.996 
+20.836 
+1.094 
+0.149 
+69.997 
+20.838 
+ε%* 
+2.8e-3 
+6.3e-2 
+2.0e-3 
+1.4e-2 
+2.6e-3 
+6.1e-2 
+1.7e-3 
+1.9e-2 
+2.8e-3 
+6.7e-2 
+2.8e-3 
+3.4e-2 
+STDs 
+N-R 
+4.1e-4 
+9.7e-4 
+0.037 
+2.0872 
+6.2e-4 
+0.0015 
+0.057 
+3.1174 
+8.5e-4 
+0.0020 
+0.074 
+4.1402 
+Deep-PWF 
+4.1e-4 
+9.7e-4 
+0.037 
+2.0874 
+6.2e-4 
+0.0015 
+0.057 
+3.1171 
+8.5e-4 
+0.0020 
+0.074 
+4.1405 
+ε% 
+4.2e-3 
+8.2e-3 
+5.1e-3 
+9.6e-3 
+4.3e-3 
+3.8e-2 
+3.9e-3 
+1.4e-2 
+4.1e-3 
+4.2e-2 
+6.8e-3 
+8.2e-3  
+* ε% is the relative error of Deep-PWF compared to N-R; V68 is the voltage of node 68, I12 is the current of line 1–2, H10 is the hydraulic head of node 10, and q12 is the 
+water flow rate of pipe 1–2. 
+X. Zhao et al.                                                                                                                                                                                                                                    
+
+Electric Power Systems Research 234 (2024) 110599
+9
+1) Data acquisition. Due to the lack of the historical power and water 
+flow data of the integrated system studied, we generate training data 
+by simulation. More specifically, input data—wind speeds, power 
+and water loads, and control variables u={Pgen, Qgen, vslack, ω, 
+qsrc}—are randomly generated. The corresponding output data are 
+derived by solving the PWF equations (7b) via the N-R method. All 
+data are then divided into training and testing sets based on a 
+specified ratio, such as 4:1.  
+2) Preprocess. We apply the z-score normalization method [46] to 
+preprocess both input and output data. This method standardizes 
+each feature by subtracting the mean and dividing it by the standard 
+deviation (STD), resulting in a distribution with a mean of 0 and an 
+STD of 1. This preprocessing not only equalizes the scales of different 
+features but also reduces the influence of outliers, thereby facili­
+tating a more stable and effective training phase.  
+3) Activation function choice. The widely recognized ReLU activation 
+function is chosen due to its effectiveness in addressing the vanishing 
+gradient problem and its computational efficiency.  
+4) Loss function definition. The mean squared error (MSE) is used as the 
+loss function to evaluate the performance of the Deep-PWF. MSE 
+provides a clear and straightforward measure of the average squared 
+difference between the predicted and actual values, which guides the 
+optimization process toward minimizing prediction errors.  
+5) Learning algorithm and rate adjustment: The root mean square 
+propagation 
+(RMSProp) 
+algorithm 
+[47] 
+is 
+chosen 
+as 
+the 
+back-propagation algorithm. We initiate the learning rate at 0.001 
+and incorporate a rate reduction strategy that diminishes the 
+learning rate by half when the loss function shows a decrease of less 
+than a specified threshold over 5 consecutive epochs, ensuring that 
+fine adjustments are made as the network approaches convergence.  
+6) Early stopping mechanism: To safeguard against overfitting and to 
+promote the development of a generalizable model, an early stop­
+ping strategy is integrated into our training routine. This technique 
+intervenes if the validation loss does not improve by more than a set 
+threshold for 20 consecutive epochs, indicating that the model has 
+potentially begun to memorize the training data rather than learning 
+to generalize from it. 
+To improve the prediction accuracy, we employed an approach that 
+utilizes multiple neural networks to perform the mapping of Deep-PWF, 
+with each network learning a subset of output variables. For instance, in 
+the Case Studies section, two neural networks with the same structures 
+are trained individually to predict the power system variables of vi, lij, Pij, 
+and Qij, and the hydraulic variables of Hm and qmn. 
+With the trained Deep-PWF, the forward propagation process (20a)– 
+(20d) will serve as the surrogate model for the PWF equations (7b) and 
+consequently, the solving of the PWF problem will be significantly 
+accelerated. 
+4.2. Deep-OPWF 
+Similar to representing the PWF problem with the mapping (19), the 
+R-CC–OPWF problem can also be expressed through another mapping: 
+M OPWF : yOPWF→zOPWF
+(21) 
+The difference between MPWF (19) and MOPWF (21) lies in the defi­
+nitions of inputs y and outputs z. In the newly defined MOPWF, yOPWF 
+collects the variables of wind speeds, power loads, water loads, as well as 
+uncertain margins λ, while zOPWF corresponds to the optimal solution of 
+the R-CC–OPWF problem. 
+From (21), the Deep-OPWF with a structure similar to the Deep-PWF 
+shown in Fig. 3 can be constructed and trained. We also use ReLU 
+activation, the z-score-based pre-process, the RMSProp algorithm, and 
+the MES loss function to train the Deep-OPWF. However, more hidden 
+layers and more neurons in each hidden layer are needed in Deep-OPWF 
+than in Deep-PWF because the mapping MPWF is essentially the PWF 
+equations with a relatively clear relationship between yPWF and zPWF, 
+while the relationship between yOPWF and zOPWF of the mapping MOPWF 
+is more complex. Moreover, the data for training Deep-OPWF is gener­
+ated by solving the R-CC–OPWF problem under massive wind and load 
+scenarios with the solver SCIP [48]. 
+To speed up the training and guarantee satisfying the equality con­
+straints (7b) of the R-CC–OPWF, we only use the neural networks to 
+learn control variables, rather than simultaneously learning both control 
+variables and state variables. That is, only u rather than [u, x] is selected 
+as the output of the Deep-OPWF. After the Deep-OPWF has been trained, 
+it can now be used to predict u given yOPWF, and x can then be deter­
+mined via solving the PWF equations (7b). Recalling that the Deep-PWF 
+has already been trained to solve the PWF problem, the optimal solution 
+of the R-CC–OPWF is predicted through a cascade of the two neural 
+networks, as depicted in Fig. 4. 
+Although the optimal solution predicted in Fig. 4 satisfies the 
+equality constraints of the R-CC–OPWF, it does not necessarily ensure 
+all the inequalities are satisfied. Therefore, the predicted solution is not 
+directly applied to the fixed-point iteration, but rather as warm-starts for 
+the R-CC–OPWF problem. In addition, since the R-CC–OPWF is 
+intractable due to the nonlinear power equations (1d), as well as the 
+hydraulic Eqs. (4a)–(4d), we will apply the SOC relaxation and 
+McCormick envelopes to approximate these constraints before using the 
+learned warm-starts to help solve the problem. 
+4.3. Convex approximations utilizing warm starts from Deep-PWF and 
+Deep-OPWF 
+To address the intractability of the R-CC–OPWF problem, the 
+following convex approximation methods are applied:  
+1) The nonconvex quadratic power flow Eq. (1d) is relaxed to a convex 
+SOC [16].  
+2) The Darcy-Weisbach equation is approximated by a set of linear 
+constraints, SOCs, and McCormick envelops by introducing two bi­
+nary variables,I+
+mn andI−
+mn, to represent the water flow directions and 
+two sets of auxiliary variables, χmn and γmn, for each pipe [16,49]. 
+Fig. 7. (a) Probability density and (b) cumulative distribution of the head at node 10, with an STD of 10 % in load forecast error.  
+X. Zhao et al.                                                                                                                                                                                                                                    
+
+Electric Power Systems Research 234 (2024) 110599
+10
+3) The pump equation (4c) is reformulated by defining ϖmn = ω2
+mn and 
+replacing q2
+mn with the auxiliary variable υmn and its McCormick 
+envelops.  
+4) The pump power Eq. (4d) is reformulated similarly by replacing the 
+bilinear term qmn(Hm-Hn) with a new auxiliary variable ζmn and its 
+McCormick envelops [16]. 
+Details on the convex approximations are given in Appendix B. With 
+these convex approximations, the R-CC–OPWF problem is reformulated 
+as a tractable mixed-integer SOC problem (MISOCP). If the water flow 
+direction can be pre-determined, the MISOCP is further simplified to a 
+continuous SOCP by replacing the mixed-integer constraints (A2)–(A11) 
+with (A12)–(A16). In addition, it can be observed that the McCormick 
+envelopes (A11), (A16), and (A22)–(A25) are closely related to the 
+bounds of the bilinear variables, which have been proven to be critical 
+contributors to the quality of relaxations [50]. Therefore, we are moti­
+vated to use Deep-OPWF to obtain warm-starts for two purposes: 1) 
+identifying the water flow directions, thereby converting the original 
+R-CC–OPWF into a tractable SOCP; and 2) tightening the variable 
+boundings of the McCormick envelopes to improve the approximation 
+accuracy. 
+Let [q0, H0] be the predicted flow rates and nodal heads through the 
+propagation shown in Fig. 4. The following steps are used to determine 
+the warm-starts:  
+1) Identify the water flow directions based onH0
+mandH0
+n via (4b) and 
+reverse the direction with negative flows to make I+
+mn = 1for all (m, 
+n)∈EPi.  
+2) The boundaries for the McCormick envelopes (A16) and (A22)– 
+(A25) are tightened by ̂
+q
+min
+mn = max
+{
+(1 −α)q0
+mn, qmin
+mn
+}
+,̂ q
+max
+mn = min
+{
+(1 + α)q0
+mn, qmax
+mn
+}
+, ∀(m, n)
+∈E W
+(22a)  ̂
+H
+min
+mn = max
+{
+(1 −α)H0
+mn, Hmin
+mn
+}
+,̂ H
+max
+mn
+= min
+{
+(1 + α)H0
+mn, Hmax
+mn
+}
+, ∀(m, n) ∈E pu
+(22b)   
+where 0<α<1 is a given constant. 
+4.4. CC–OPWF solution assisted by Deep-PWF and Deep-OPWF 
+The proposed DNN-assisted solution for CC–OPWF is summarized as 
+a two-stage algorithm (Algorithm 2). 
+Algorithm 2: Fixed-point-solution for CC–OPWF assisted by DNNs 
+Stage 1 (Offline): Train Deep-PWF and Deep-OPWF. 
+1. Generate massive scenarios randomly by sampling power and 
+water loads, wind speeds, and uncertain margins. 
+2. Construct inputs yPWF in (19) and yOPWF in (21) for training the 
+two DNNs based on the scenarios generated. 
+3. Obtain outputs zPWF by solving the PWF problem (7b) based on 
+yPWF for each scenario via the N-R method. 
+4. Obtain outputs zOPWF by solving the R-CC–OPWF problem based 
+on yOPWF for each scenario with the solver SCIP. 
+5. Train Deep-PWF and Deep-OPWF using the massive inputs and 
+outputs generated with the ReLU activation, the z-score-based pre- 
+process, the RMSProp algorithm, and the MSE loss function. 
+Stage 2 (Online): Solve the CC–OPWF for a new scenario with the 
+trained Deep-PWF and Deep-OPWF. 
+6. Initialize the iteration count k=1 and uncertain margins λ(k-1) =0. 
+7. While k<kmax do 
+8. Find warm-starts for solving R-CC–OPWF: 
+1) Predict [q0, H0] using Deep-OPWF and Deep-PWF through the 
+propagation shown in Fig. 4; 
+2) Specify water flow directions by (4b) and bounding by (22a) and 
+(22b); 
+3) 
+Updateqmin
+mn ←̂qmin
+mn ,qmax
+mn ←̂qmax
+mn ,
+∀(m,
+n) ∈EW, 
+andHmax
+mn ← ̂
+H
+max
+mn ,Hmin
+mn ←̂H
+min
+mn ,∀(m,n) ∈EPi. 
+9. Solve the tractable R-CC–OPWF problem in Appendix B with 
+Fig. 8. (a) Probability density and (b) cumulative distribution of the head at node 10, with an STD of 20 % in load forecast error.  
+Table 4 
+Computation times for the Deep-PWF and the N-R method with different MC 
+sample sizes and an STD of 10 % in load forecast error.  
+Methods 
+MC samples 
+5000 
+10,000 
+50,000 
+N-R 
+471.53s 
+963.41s 
+4417.35s 
+Deep-PWF 
+1.68s 
+2.12s 
+4.25s 
+Speed-up 
+280.65 
+454.44 
+1039.38  
+Table 5 
+Methods for comparison.  
+Methods 
+Problems 
+Description 
+Solvers 
+M0 
+R-CC–OPWF in Section 3.3 
+MINLP 
+SCIP 
+M1 
+Tractable R-CC–OPWF in Appendix B 
+MISOCP 
+Gurobi 
+M2 (proposed) 
+Tractable R-CC–OPWF in Appendix B 
+SOCP with warm-starts by the two DNNs 
+Gurobi 
+*M0 is referred to as the benchmark. The warm-starts are obtained through the propagation of Deep-OPWF and Deep-PWF given in Fig. 4. 
+X. Zhao et al.                                                                                                                                                                                                                                    
+
+Electric Power Systems Research 234 (2024) 110599
+11
+λ(k−1) and the updated boundings to obtain u(k) and x(k). 
+10. Evaluate λ(k) via MC simulation: 
+1) Generate samples of forecast errors in power and water loads, and 
+wind speeds based on their probabilistic distribution. 
+2) Calculate the corresponding power and water loads and wind 
+powers via (8a)–(8c) and (10). 
+3) Obtain the samples of x(k) based on u(k) and power/water loads 
+and wind powers through the propagation of Deep-PWF (20a)–(20d). 
+4) Conduct statistical analysis on the samples of x(k) by verifying 
+(12c)–(12o) to detect the chance constraints that do not meet the pre­
+defined violation probabilities of εv, εl, εP, εQ, εq, and εH. 
+5) Update the uncertain margins λ of the violated chance constraints 
+via (16a) and (16b). 
+11. Check convergence by comparing the maximum change |λ(k)- 
+λ(k-1)| with the predefined threshold η. If |λ(k)-λ(k-1)|≤η, go to step 7 to 
+stop the iteration; otherwise update k=k+1. 
+12. end while 
+13. Output the final u(k) and x(k). 
+To provide a clearer illustration of Algorithms 1 and 2, flowcharts for 
+both are presented in Fig. 5. The two algorithms share a similar iterative 
+frame, with the main differences being in the approach to solving the 
+deterministic optimization problem and obtaining system state vari­
+ables. Specifically, Algorithm 2 introduces the following modifications: 
+1) It substitutes the N-R method for solving the PWF equations with the 
+propagation process of Deep-PWF. 2) Rather than directly tackling the 
+MINLP problem (R-CC–OPWF), Algorithm 2 adopts a sequential 
+approach: it first employs Deep-OPWF and Deep-PWF to predict flows 
+and heads, then specifies pipe directions and narrows variable ranges, 
+and finally, it solves the tractable SOCP problem. 
+5. Case studies 
+5.1. Simulation setup 
+For case studies, we use the single-phase version of the IEEE 123- 
+node feeder coupled with the 67-node water distribution network, as 
+shown in Fig. 6. There are 3 reservoirs, 3 variable-speed pumps, and 67 
+pipes in the water network for the base case C1. In the extended case C2, 
+4 additional pipes are added as indicated by the blue dashed lines in 
+Fig. 6. Electricity is priced at CNY 0.48 per kWh, while water from 
+reservoirs R1, R2, and R3 is priced at CNY 0.253, 0.283, and 0.318 per 
+m3, respectively. Comprehensive parameters for the water network and 
+the two wind turbines are detailed in the supplementary online data file 
+[51]. 
+All optimal models have been implemented in YALMIP [52]. The 
+original OPWF problem and R-CC–OPWF problem are solved using 
+SCIP, while the tractable OPWF and R-CC–OPWF problems are 
+addressed with Gurobi [53]. Python 3.7 and Tensorflow 2.0 [54] are 
+utilized for constructing and training the Deep-PWF and Deep-OPWF. 
+Table 2 provides a comparative analysis of the network structures and 
+training datasets for the two DNNs. All the simulations are conducted on 
+a laptop computer equipped with a 3.11 GHz Intel Core i7–9700H 
+processor and 16 GB RAM. 
+It is worth noting that the mapping of Deep-OPWF is more complex 
+than Deep-PWF, requiring more hidden layers and neurons. However, 
+Deep-PWF undergoes a larger-scale sample training compared to Deep- 
+OPWF. This is because Deep-PWF is used directly to evaluate uncer­
+tainty margins, while Deep-OPWF only provides warm-starts for solving 
+the R-CC–OPWF problem. Additionally, due to the similar topologies of 
+C1 and C2, transfer learning [55] was applied to enhance the training 
+efficiency of the two DNNs in C2. 
+Fig. 9. Predicated heads of non-reservoir nodes (i.e., Node 1~Node 64) by the DNNs and the final optimal heads for (a) C1 and (b) C2. The predicated heads are from 
+the propagation of Deep-OPWF and Deep-PWF given in Fig. 4. 
+Table 6 
+Optimal results and computation time of different methods for solving the R- 
+CC–OPWF problem of C1 and C2.  
+Cases 
+Methods 
+Cost 
+(CNY) 
+Cost 
+gap 
+δ(%) 
+Max 
+violation ξ 
+Time 
+(s) 
+Speed- 
+up 
+C1 
+M0 
+6433.71 
+— 
+— 
+5.03 
+— 
+M1 
+6359.81 
+1.15 
+0.47 
+3.03 
+1.66 
+M2 
+(proposed) 
+6432.80 
+0.01 
+7.45e-4 
+1.64 
+3.07 
+C2 
+M0 
+6430.86 
+— 
+— 
+23.36 
+— 
+M1 
+6353.67 
+1.20 
+0.63 
+4.61 
+5.07 
+M2 
+(proposed) 
+6429.95 
+0.01 
+4.54e-3 
+2.66 
+8.78 
+* M0 is referred to as the benchmark for calculating the cost gap and speed-up of 
+M1 and M2. 
+Table 7 
+Optimal results and computation time of the two algorithms.  
+Cases 
+Methods 
+Iterations 
+Costs 
+(CNY) 
+Cost 
+gap δ 
+(%) 
+Time 
+(s) 
+Speed- 
+up 
+C1 
+Algorithm 1 
+3 
+6555.73 
+— 
+2819.4 
+— 
+Algorithm 2 
+(proposed) 
+3 
+6553.96 
+0.027 
+10.6 
+266.0 
+C2 
+Algorithm 1 
+3 
+6530.65 
+— 
+2950.5 
+— 
+Algorithm 2 
+(proposed) 
+3 
+6528.76 
+0.029 
+14.7 
+200.7 
+*Algorithm 1 is used as the reference for calculating the cost gap and the speed- 
+up of Algorithm 2. 
+X. Zhao et al.                                                                                                                                                                                                                                    
+
+Electric Power Systems Research 234 (2024) 110599
+12
+5.2. Evaluation of the Deep-PWF 
+As explained in Section 4.1, the trained Deep-PWF functions essen­
+tially as a surrogate model of the PWF equations (7b). Consequently, its 
+forward propagation can be considered a deterministic solver for these 
+equations. We evaluate its performance in this section with the 
+following steps: 1) Generate massive samples randomly by sampling 
+Gaussian forecast errors in loads and the Weibull random wind speeds 
+via MC simulation. 2) Determine all the voltages, currents, power flows, 
+nodal heads, and water flow rates through all pipes and pumps of each 
+scenario given a set of control variables using the trained Deep-PWF and 
+the N-R method respectively to solve (7b). 3) Evaluate the relative errors 
+between the results of Deep-PWF and the N-R method. 
+Both C1 and C2 are simulated and similar evaluation results are 
+obtained. Only the results of C2 are provided and discussed below. Let σ 
+be the standard deviations (STDs) of the Gaussian forecast errors in 
+power and water loads (8a)–(8c). Assuming σ is 10 %, 15 %, and 20 % of 
+the forecasted loads. Table 3 compares the mean values and STDs of the 
+10,000 scenarios by MC simulation with the trained Deep-PWF and the 
+N-R method. Due to space limitations, only four variables are presented 
+as demonstration examples. 
+Table 3 shows that both means and STDs derived from the two 
+methods are almost the same across all assessed variables and levels of 
+load forecast errors. The maximum relative error (ε%) of means and 
+STDs does not exceed 6.7e-2. This suggests that the Deep-PWF is a 
+reliable surrogate for the N-R method in predicting system states. 
+Furthermore, it is noted that with an increase in the STD of forecast error 
+(σ), the STDs of all four variables increase accordingly, while the means 
+remain relatively stable, as anticipated. 
+The probability distributions obtained by the two methods are also 
+compared. Fig. 7 and Fig. 8 respectively present the cumulative distri­
+bution of H10 for σ being 10 % and 20 % of the forecasted value. The 
+distribution curves of the Deep-PWF closely match those of the N-R 
+method very well. Additionally, the distribution of H10 closely resembles 
+a Gaussian distribution, with a mean of approximately 70 m, consistent 
+with the simulation results in Table 3. When comparing the scenario 
+with a 10 % STD in Fig. 7 to a 20 % STD in Fig. 8, the PDF curve in Fig. 8 
+appears flatter and wider, indicating a broader range of possible values 
+for H10 and a more dispersed distribution as expected. 
+Results of Table 3, Fig. 7, and Fig. 8 validate the precision of the 
+Deep-PWF. We also evaluate the computation efficiency of both methods 
+in Table 4 with an STD of 10 % in load forecast error and MC sample 
+sizes of 5000, 10,000, and 50,000. The results clearly indicate that the 
+Deep-PWF exhibits a significant efficiency advantage over the N-R 
+method, completing all simulations within seconds and achieving a 
+speed-up of over 280 for all sample sizes. Moreover, as the sample size 
+grows, the computation time of the Deep-PWF only slightly increases, 
+while the time required by the N-R method is nearly proportional to the 
+number of samples. These findings indicate that the Deep-PWF model is 
+more scalable and better suited for larger simulations. 
+5.3. Evaluation of the DNN-assisted optimization method 
+In this section, we evaluate the performance of the proposed DNN- 
+assisted optimization method in terms of solution quality and compu­
+tation time. For a random scenario of the base case C1 and extended case 
+C2, we apply the three methods shown in Table 5 to solve the R- 
+CC–OPWF problem. 
+The optimal results are summarized in Table 6, where the cost gap δ 
+and max violation ξ are calculated respectively by 
+δ = |Cost −CostM0| / CostM0
+(23a)  
+ξ = max
+{⃒⃒⃒⃒|Hm −Hn|
+fmnq2
+mn
+−1⃒⃒⃒⃒, ∀(m, n)
+∈E pi,⃒⃒⃒⃒
+Hn −Hm
+amnω2
+mn −bmnq2
+mn
+−1⃒⃒⃒⃒,⃒⃒⃒⃒
+ηmnPmn,pump
+ρgqmn(Hn −Hm) −1⃒⃒⃒⃒, ∀(m, n) ∈E Pu
+}
+.
+(23b) 
+The following observations can be drawn from Table 6:  
+1) In comparison to the base case C1, the extended case C2 shows a 
+slight decrease in cost but a significant increase in computation time 
+for all three methods. This is attributed to the integration of 4 
+additional pipelines in C2, leading to an increase in the loop count 
+within the WDN while the load flow rate on each node remains 
+unchanged.  
+2) The cost gap for M1 is 1.15 % in C1 and 1.20 % in C2, suggesting a 
+minor cost increase compared to M0. As for M2, the cost gap is 
+negligible at 0.01 % for both cases, indicating that M2 achieves a cost 
+comparable to the benchmark method.  
+3) The maximum violation for M1 is 0.47 in C1 and 0.63 in C2, which is 
+relatively significant. Conversely, M2 shows a much better perfor­
+mance with a maximum violation of 7.45e-4 in C1 and 4.54e-3 in C2.  
+4) M1 reduces the computation time to 3.03 s in C1 and 4.61 s in C2, 
+resulting in speed-ups of 1.66 and 5.07 times, respectively. 
+Furthermore, M2 enhances the computation efficiency further, 
+achieving speed-ups of 3.07 and 8.78 times in each case. This sig­
+nificant reduction by M2 highlights its superiority in computational 
+efficiency. Additionally, when tackling the extended case C2 with 
+more loops, M2 experiences the smallest increase in solution time 
+Table 8 
+Maximum violations of chance constraints in percent for the there methods.  
+Cases 
+Models 
+Methods 
+Voltages 
+Branch currents 
+Heads 
+Pipe and pump flow rates 
+C1 
+Deterministic OPWF 
+SCIP 
+48.67 % 
+51.02 % 
+50.16 % 
+66.54 % 
+Chance-constrained OPWF 
+Algorithm 1 
+4.85 % 
+4.86 % 
+4.98 % 
+4.33 % 
+Chance-constrained OPWF 
+Algorithm 2 
+4.82 % 
+4.84 % 
+4.96 % 
+4.29 % 
+C2 
+Deterministic OPWF 
+SCIP 
+46.96 % 
+49.61 % 
+51.62 % 
+66.24 % 
+Chance-constrained OPWF 
+Algorithm 1 
+4.99 % 
+4.32 % 
+4.99 % 
+4.66 % 
+Chance-constrained OPWF 
+Algorithm 2 
+4.99 % 
+4.27 % 
+4.98 % 
+4.58 %  
+Table 9 
+Optimal results of Algorithm 2 for solving the CC–OPWF model with different acceptable violation probabilities.  
+Cases 
+Costs of OPWF (CNY) 
+ε=1 % 
+ε=5 % 
+ε=10 % 
+Costs 
+(CNY) 
+εmax (%) 
+Iter. 
+Time (s) 
+Costs (CNY) 
+εmax (%) 
+Iter. 
+Time (s) 
+Costs 
+(CNY) 
+εmax (%) 
+Iter. 
+Time (s) 
+C1 
+6433.71 
+6592.85 
+0.98 
+5 
+19.6 
+6553.96 
+4.99 
+3 
+10.6 
+6525.19 
+10.1 
+2 
+7.1 
+C2 
+6430.86 
+6584.16 
+0.99 
+5 
+26.4 
+6528.76 
+4.99 
+3 
+14.7 
+6513.77 
+9.9 
+2 
+9.2  
+X. Zhao et al.                                                                                                                                                                                                                                    
+
+Electric Power Systems Research 234 (2024) 110599
+13
+among the three methods, indicating good scalability for larger 
+networks. 
+All these observations highlight the good performance of M2 in terms 
+of both accuracy and efficiency and the advantages of utilizing DNNs for 
+obtaining warm starts in solving the R-CC–OPWF problem. 
+Fig. 9 further compares the predicted heads by DNNs with the final 
+optimal heads to evaluate the quality of the warm starts. The analysis 
+shows that the predicted heads for all nodes in the base case C1 closely 
+match the final optimal results, with a maximum difference of 0.1 m at 
+Node 7. Similar results are observed when comparing the predicted 
+values with the final optimal solution for C2. Fig. 9 demonstrates how 
+DNNs provide high-quality warm starts, contributing to the improved 
+performance of the proposed method. 
+5.4. Evaluation of the DNN-assisted iteration algorithm for CC-OPWF 
+After evaluating the performance of the Deep-PWF and Deep-OPWF 
+separately, we finally assess the performance of the proposed iteration 
+solution for CC–OPWF assisted by the two DNNs in this section. 
+1) Comparison between Algorithm 1 and Algorithm 2 
+We enforce all the acceptable violation probabilities for chance 
+constraints to be 5 %, and all the STDs of the forecasted error in power 
+and water loads are 10 % of their forecasted value. Algorithm 1 uses 
+SCIP to solve the R-CC–OPWF, and Algorithm 2 uses Gurobi to solve the 
+tractable problem with warm-starts given by the two DNNs. Both algo­
+rithms evaluate the uncertain margins based on 10,000 scenarios 
+generated by MC simulation. 
+Results of the base case C1 and extended case C2 are listed in Table 7, 
+where the results of Algorithm 1 are referred to as a reference for cost 
+gap and speed-up. It can be observed that both algorithms require only 3 
+iterations for both cases. Algorithm 2 yields a slightly lower cost 
+compared to Algorithm 1, but the cost gap between the two algorithms is 
+less than 0.03 %. In terms of computation time, Algorithm 1 requires 
+nearly 50 min to complete the calculations, while Algorithm 2 takes less 
+than 15 s, demonstrating a significant speed advantage. 
+After solving the CC–OPWF problem with the two algorithms, we 
+further compare the optimal solutions by evaluating the probabilities 
+violating the chance constraints (see Eqs. (12c)–(12o)) based on the 
+10,000 scenarios generated by MC simulation. For each scenario, we 
+solve the PWF problem (7b) with Deep-PWF based on the optimal 
+control variables obtained by the two algorithms and record the 
+observed probabilities violating the chance constraints. Table 8 presents 
+the maximum violations in voltages, branch currents, heads, and flow 
+rates of pipes and pumps. The violations in the optimal solution from the 
+deterministic OPWF model are also included for comparison. It is 
+evident that the deterministic OPWF, which does not account for un­
+certainties, results in an approximate 50 % probability of violating 
+constraints. However, both algorithms used to solve the chance- 
+constrained OPWF effectively maintain the violation probabilities at 
+or below the acceptable threshold of 5 %, showcasing the effectiveness 
+of incorporating chance constraints into the OPWF model. 
+2) Performance of Algorithm 2 with different acceptable violation 
+probabilities 
+Algorithm 2 is applied to solve the CC–OPWF problem for C1 and C2 
+with different acceptable violation probabilities of 1 %, 5 %, and 10 %. 
+The load forecasting is subjected to the same STDs of 10 %. Table 9 
+provides the costs, computation time, iterations, and violation proba­
+bilities, where εmax (%) represents the maximum probability, expressed 
+as a percentage, of violating any chance constraint. The costs of the 
+deterministic OPWF model are also included. 
+The following conclusions can be drawn from Table 9: 
+1) The operating costs of the deterministic OPWF model are consis­
+tently lower than those of the CC–OPWF in both C1 and C2. As the 
+acceptable violation probability ε increases, the costs for CC–OPWF 
+decrease as expected, reflecting a trade-off between security and 
+economy. This trade-off allows system operators to choose an ε value 
+that balances economic efficiency with the desired level of constraint 
+violation risk.  
+2) The εmax (%) for CC–OPWF is well within the acceptable limits set 
+by ε for all scenarios. This demonstrates the effectiveness of 
+Fig. 10. (a) Probability density and (b) cumulative distribution of H54 with different acceptable violation probabilities. The vertical lines at 70 m represent the lower 
+limit on the head of Node 54. 
+Fig. 11. (a) Probability density and (b) cumulative distribution of q62–14 with different acceptable violation probabilities. The vertical lines at 0.17m3/s represent the 
+upper limit on the flow of pipe 62–14. 
+X. Zhao et al.                                                                                                                                                                                                                                    
+
+Electric Power Systems Research 234 (2024) 110599
+14
+Algorithm 2 in finding solutions that satisfy the predefined risk 
+thresholds. 
+3) The computation time and number of iterations required by Algo­
+rithm 2 to converge increase as the acceptable violation probability 
+decreases (from ε=10 % to ε=1 %). This suggests that finding solu­
+tions with a lower risk of constraint violation is computationally 
+more demanding. 
+Fig. 10 compares the PDF and CDF of H54 the head at node 54 ob­
+tained from the deterministic OPWF and CC–OPWF models to show the 
+potential risk for H54 falling below the lower limit. Specifically, when 
+using the deterministic OPWF model to determine the optimal operating 
+point of the WDN, the mean value of H54 is approximately 70 m. The 
+corresponding probability of H54 being below 70 m, denoted as P 
+{H54≤70 m}, is around 50 %. Conversely, when using the CC–OPWF 
+model and decreasing the acceptable violation probability ε from 10 % 
+to 5 % and 1 %, both curves in Fig. 10 shift to the right. As a result, the 
+value of P{H54≤70 m} decreases accordingly from 10 % to 5 % and 1 %, 
+indicating a reduced risk of violating the lower head limit. 
+Fig. 11 further compares the PDF and CDF of q62–14, the flow rate at 
+pipe 62–14, and provides the potential risk for the pipe exceeding its 
+upper flow limit. Similar results to Fig. 10 are obtained. The determin­
+istic OPWF model shows that the mean value of q62–14 is 0.17m3/s, and 
+the probability P{q62–14≥0.17m3/s} is around 50 %. By using the 
+CC–OPWF model and decreasing ε from 10 % to 5 % and 1 %, both 
+curves in Fig. 11 shift to the left, indicating a reduced risk of violating 
+the upper flow limit. 
+The values of P{H54≤70 m} and P{q62–14≥0.17m3/s}are in exact 
+agreement with the preset limit violation probability ε. This confirms 
+that the CC–OPWF model can accurately manage the risk level and also 
+indicates that the uncertainty margins within the fixed-point-iteration 
+algorithms can effectively capture the probabilistic nature of 
+uncertainties. 
+6. Conclusions 
+We have expanded upon our previous work on CC–OPWF by 
+reformulating a tractable problem and integrating DNNs into the fixed- 
+point-iteration algorithm. The optimization model has been recast as a 
+tractable MISOCP problem through SOC relaxation and McCormick 
+envelope. Two DNNs are developed and trained to enhance the algo­
+rithm: one predicts the PWF solution to accelerate the uncertainty 
+evaluation based on MC simulations, while the other provides warm- 
+starts for optimization by predicting water flow directions and refining 
+variable limits. Numerical results from the IEEE 123-node feeder 
+coupled with the 67-node water distribution network validate the 
+computational accuracy and efficiency of the two DNNs and the overall 
+iterative algorithms. 
+The main results are summarized as follows:  
+1) DNN accurately replicates the PWF solution and achieves over a 200- 
+fold speed-up for uncertainty evaluation.  
+2) With DNN warm starts, the cost gap for OPWF reduces from 1.2 % to 
+0.01 %, and the maximum violation of relaxed equality constraints 
+decreases from around 0.7 to below 4.5e-3, while saving nearly 40 % 
+of computation time.  
+3) The proposed DNN-assisted approach provides an effective balance 
+between security and economy for power-water network coordina­
+tion under uncertainty. Compared to the existing iterative algorithm, 
+the DNN-assisted algorithm proposed achieves a relative error of 
+only 0.03 % in operation costs, while significantly reducing the so­
+lution time with a speedup ratio exceeding 200. 
+In future work, we plan to expand the proposed iterative approach to 
+the OPWF problem with joint chance constraints. Additionally, we 
+intend to explore physics-informed learning approaches to enhance the 
+learning capabilities of our DNNs, as suggested in [56]. 
+CRediT authorship contribution statement 
+Xia Zhao: Writing – review & editing, Visualization, Methodology. 
+Dingyi Liu: Writing – original draft, Validation, Methodology, Data 
+curation, Conceptualization. Zhenyu Wu: Methodology, Conceptuali­
+zation. Chongqi Huang: Writing – review & editing, Validation, Data 
+curation. 
+Declaration of competing interest 
+The authors declare that they have no known competing financial 
+interests or personal relationships that could have appeared to influence 
+the work reported in this paper. 
+Data availability 
+The data has been uploaded to the online database, please refer to 
+reference [51] in the manuscript for details  
+Supplementary materials 
+Supplementary material associated with this article can be found, in the online version, at doi:10.1016/j.epsr.2024.110599. 
+Appendix A. Nomenclature 
+Tables A1 and A2.  
+Table A1 
+Acronyms.  
+Notations 
+Definitions 
+Notations 
+Definitions 
+CC–OPWF 
+Chance constraint optimal power and water flow 
+CCP 
+Chance-constrained programming 
+DNN 
+Deep neural networks 
+PEP 
+Probability-efficient point 
+OPF 
+Optimal power flow 
+MC 
+Monte Carlo 
+OPWF 
+Optimal power and water flow 
+N-R 
+Newton-raphson 
+PWF 
+Power and water flow 
+MINLP 
+Mixed-integer nonlinear programming 
+IPWS 
+Integrated power-water system 
+MISOCP 
+Mixed-integer second-order cone programming 
+WDN 
+Water distribution network 
+STD 
+Standard deviation 
+PDN 
+Power distribution network 
+PDF 
+Probability density function 
+SOC 
+Second-order cone 
+CDF 
+Cumulative distribution function 
+RE 
+Renewable energy   
+X. Zhao et al.                                                                                                                                                                                                                                    
+
+Electric Power Systems Research 234 (2024) 110599
+15
+Table A2 
+Notations.  
+Notations 
+Definitions 
+NP, EP, 
+Set of the nodes and edges of the power distribution network 
+NW, EW, EPi, EPu 
+Set of the nodes, edges, pipes, and pumps of the water distribution network 
+rij, xij 
+Series resistance and reactance of the branch (i, j)∈EP 
+fmn 
+The friction factor of pipe (m, n)∈EPi 
+amn/bmn, ηmn 
+Coefficients and efficiency of the pump (m, n)∈EPu 
+ρ, g 
+Water density and the gravity constant 
+ci,gen 
+Electricity price of the generator at node i∈NP 
+cm,src 
+Water price of the source at node m∈NW 
+ρair 
+Air density 
+A 
+The area swept out by the wind turbine blades 
+Cp 
+The wind-turbine power coefficient 
+vwind, vin, vout, vN 
+Wind speed and the cut-in, cut-out, and nominal wind speed 
+Pwind,N 
+The nominal wind power 
+cosφ 
+Power factor 
+εv, εl, εP, εQ, εq, εH 
+Acceptable violation probability of voltage, current, active power, reactive power, flow rate, and hydraulic heads 
+λup, λlow 
+Upper and lower uncertainty margins 
+Pij, Qij 
+Sending-end active and reactive power of the branch (i, j)∈EP 
+lij 
+Squared current magnitude on branch (i, j)∈EP 
+vi 
+Squared voltage magnitude at node i∈NP 
+Pi, Qi 
+Active and reactive power injection at node i∈NP 
+Pi,gen, Qi,gen 
+Active and reactive power of generators at node i∈NP 
+Pi,wind, Qi,wind 
+Active and reactive wind power at node i∈NP 
+Pi,load, Qi,load 
+Active and reactive power of loads at node i∈NP 
+Pi,pump, Pmn,pump 
+Electric power consumed by the pump (m, n)∈EW connected to node i∈NP 
+Hm 
+Hydraulic head at node m∈NW 
+qmn 
+Volumetric flow rate in pipe (m, n)∈EPi 
+ωmn 
+Relative speed of pump (m, n)∈EPu 
+qm,src, qm,load 
+Flow rate of sources and loads at node m∈NW 
+*Subscripts indicating indexes (e.g., i, m) or variables (e.g., H for heads) are represented in italicized letters, while other subscripts appear in 
+regular letters. 
+Appendix B. Tractable Reformulation for the OPWF and R-CC–OPWF 
+Both OPWF and R-CC–OPWF are intractable due to the nonlinear power equations (1d), as well as the hydraulic Eqs. (4a)-(4d). We approximate 
+these constraints by using SOC relaxation and the McCormick envelopes for the bilinear and quadratic terms involved. 
+The nonconvex power flow Eq. (1d) is relaxed to a convex SOC [43]: 
+P2
+ij + Q2
+ij ≤vilij, ∀(i, j) ∈E P
+(A1) 
+The Darcy-Weisbach Eq. (4a) is converted to the following linear constraints, SOCs and McCormick envelops by introducing 1) binary variablesI+
+mn, 
+I−
+mn to indicate the water flow direction (i.e.,I+
+mn = 1if and only if qmn≥0, and I−
+mn = 1if and only if qmn≤0) and 2) auxiliary variables χmn and γmn [16,49]: 
+I+
+mn + I−
+mn = 1, I+
+mn, I−
+mn ∈{0, 1}, ∀(m, n) ∈E Pi
+(A2)  
+qmin
+mn
+(
+1 −I+
+mn
+)
+≤qmn ≤qmax
+mn
+(
+1 −I−
+mn
+)
+, ∀(m, n) ∈E Pi
+(A3)  
+fmnq2
+mn ≤χmn, ∀(m, n) ∈E Pi
+(A4)  
+fmnγmn ≥χmn, ∀(m, n) ∈E Pi
+(A5)  
+q2
+mn ≤γmn, ∀(m, n) ∈E Pi
+(A6)  
+χmn ≥Hn −Hm −M
+(
+I+
+mn −I−
+mn + 1
+)
+, ∀(m, n) ∈E Pi
+(A7)  
+χmn ≥Hm −Hn + M
+(
+I+
+mn −I−
+mn −1
+)
+, ∀(m, n) ∈E Pi
+(A8)  
+χmn ≤Hn −Hm + M
+(
+I+
+mn −I−
+mn + 1
+)
+, ∀(m, n) ∈E Pi
+(A9)  
+χmn ≤Hm −Hn −M
+(
+I+
+mn −I−
+mn −1
+)
+, ∀(m, n) ∈E Pi
+(A10)  
+γmn ≤
+(
+qmin
+mn + qmax
+mn
+)
+qmn −qmin
+mn qmax
+mn , ∀(m, n) ∈E Pi
+(A11)  
+where M is a sufficiently large number and (A3) is the variant of (5a) with direction indicatorsI+
+mn and I−
+mnincorporated. 
+If the water flow directions for all the pipes can be pre-determined, i.e., I+
+mn = 1, I−
+mn = 0, (A2)-(A11) reduced to 
+0 ≤qmn ≤qmax
+mn , ∀(m, n) ∈E Pi
+(A12)  
+fmnq2
+mn ≤Hn −Hm, ∀(m, n) ∈E Pi
+(A13)  
+X. Zhao et al.                                                                                                                                                                                                                                    
+
+Electric Power Systems Research 234 (2024) 110599
+16
+fmnγmn ≥Hn −Hm, ∀(m, n) ∈E Pi
+(A14)  
+q2
+mn ≤γmn, ∀(m, n) ∈E Pi
+(A15)  
+γmn ≤
+(
+qmin
+mn + qmax
+mn
+)
+qmn −qmin
+mn qmax
+mn , ∀(m, n) ∈E Pi
+(A16) 
+The pump Eq. (4c) is approximated by defining ϖmn = ω2
+mn,υmn = q2
+mn, and the latter one is relaxed to the following SOC and McCormick envelops: 
+Hn −Hm = amnϖmn −bmnυmn, ∀(m, n) ∈E Pu
+(A17)  
+q2
+mn ≤υmn, ∀(m, n) ∈E Pu
+(A18)  
+υmn ≤
+(
+qmin
+mn + qmax
+mn
+)
+qmn −qmin
+mn qmax
+mn , ∀(m, n) ∈E Pu
+(A19) 
+It is worth noting that 1)ω2
+mnonly appears in (4c), there is, therefore, no need to convexify ϖmn = ω2
+mn; 2) the bounds on speed ωmn (5e) becomes the 
+following bounds on squared speed: 
+ϖmin
+mn ≤ϖmn ≤ϖmax
+mn , ∀(m, n) ∈E Pu
+(A20) 
+The power consumption (4d) is approximated similarly by introducing an auxiliary variable ζmn and its McCormick envelops to replace the bilinear 
+term on the right-hand side: 
+Pmn,pump = ρg
+ηmn
+ζmn, ∀(m, n) ∈E Pu
+(A21)  
+ζmn ≥qmin
+mn Hmn + qmnHmin
+mn −qmin
+mn Hmin
+mn , ∀(m, n) ∈E Pu
+(A22)  
+ζmn ≥qmax
+mn Hmn + qmnHmax
+mn −qmax
+mn Hmax
+mn , ∀(m, n) ∈E Pu
+(A23)  
+ζmn ≤qmax
+mn Hmn + qmnHmin
+mn −qmax
+mn Hmin
+mn , ∀(m, n) ∈E Pu
+(A24)  
+ζmn ≤qmnHmax
+mn + qmin
+mn Hmn −qmin
+mn Hmax
+mn , ∀(m, n) ∈E Pu
+(A25) 
+Take the R-CC–OPWF as an example. With the approximations above, the R-CC–OPWF is reformulated to the following tractable problem: 
+Tractable R-CC–OPWF: min
+x,u
+(
+∑
+i∈N P
+ci,genPi,gen + ∑
+m∈N W
+cm,srcqm,src +
+∑
+∀(i,j)∈E P
+rijlij
+)
++
+∑
+(m,n)∈E Pi
+τmnγmn +
+∑
+(m,n)∈E Pu
+ψmnυmn (A26) subject to 1) Power flow 
+equations: (1a)-(1c), (A1), (2a), (2b); 
+2) Hydraulic equations: (A2)-(A11), (A17)-(A19), (A21)-(A25); 
+3) Hard inequalities: (3a), (3b), (5b), (A20), (5f) 
+4) Reformulated chance constraints: (18b)-(18h). where τmn, (m, n)∈EPi and ψmn, (m, n)∈EPu are penalty coefficients to tighten the SOCs of (A15) 
+and (A18). 
+References 
+[1] D. Bauer, M. Philbrick, B. Vallario, et al., The Water-Energy Nexus: Challenges and 
+Opportunities, US Department of Energy, 2014. 
+[2] S. Ahmad, H. Jia, Z. Chen, et al., Water-energy nexus and energy efficiency: a 
+systematic analysis of urban water systems, Renew. Sustain. Energy Rev. 134 
+(2020) 110381. 
+[3] K. Oikonomou, M. Parvania, Optimal coordination of water distribution energy 
+flexibility with power systems operation, IEEE Trans. Smart. Grid. 10 (1) (2019) 
+1101–1110. 
+[4] K. Smith, Understanding Energy Consumption for Urban Water Supply in China, 
+MS thesis, Dept. Environ. Sci. Eng, Tsinghua Univ, Beijing, China, 2015. 
+[5] E. Dall’Anese, P. Mancarella, A. Monti, Unlocking flexibility: integrated 
+optimization and control of multienergy systems, IEEE Power Energy Mag. 15 (1) 
+(2017) 43–52. 
+[6] M. Nasir, A.R. Jordehi, M. Tostado-V´eliz, et al., Two-stage stochastic-based 
+scheduling of multi-energy microgrids with electric and hydrogen vehicles 
+charging stations, considering transactions through pool market and bilateral 
+contracts, Int. J. Hydrog. Energy 48 (61) (2023) 23459–23497. 
+[7] F. Qi, M. Shahidehpour, Z. Li, et al., A chance-constrained decentralized operation 
+of multi-area integrated electricity–natural gas systems with variable wind and 
+solar energy, IEEE Trans. Sustain. Energy 11 (4) (2019) 2230–2240. 
+[8] Y. Meng, S.A. Mansouri, A.R. Jordehi, et al., Eco-environmental scheduling of 
+multi-energy communities in local electricity and natural gas markets considering 
+carbon taxes: a decentralized bi-level strategy, J. Clean. Prod. 440 (2024) 140902. 
+[9] X. Liu, J. Wu, N. Jenkins, et al., Combined analysis of electricity and heat networks, 
+Appl. Energy 162 (2016) 1238–1250. 
+[10] W. Wei, S. Mei, L. Wu, et al., Optimal traffic-power flow in urban electrified 
+transportation networks, IEEE Trans. Smart. Grid. 8 (1) (2016) 84–95. 
+[11] A. Shabanpour-Haghighi, A.R. Seifi, An integrated steady-state operation 
+assessment of electrical, natural gas, and district heating networks, IEEE Trans. 
+Power Syst. 31 (5) (2015) 3636–3647. 
+[12] Y. Jiang, Z. Ren, C. Lu, et al., A region-based low-carbon operation analysis method 
+for integrated electricity-hydrogen-gas systems, Appl. Energy 355 (2024) 122230. 
+[13] A.S. Zamzam, E. Dall Anese, C. Zhao, et al., Optimal water-power flow-problem: 
+formulation and distributed optimal solution, IEEE Trans. Control Netw. Syst. 6 (1) 
+(2019) 37–47. 
+[14] Q. Li, S. Yu, A.S. Al-Sumaiti, et al., Micro water-energy nexus: optimal demand-side 
+management and quasi-convex hull relaxation, IEEE Trans. Control Netw. Syst. 6 
+(4) (2019) 1313–1322. 
+[15] K. Oikonomou, M. Parvania, Optimal coordinated operation of interdependent 
+power and water distribution systems, IEEE Trans. Smart. Grid. 11 (6) (2020) 
+4784–4794. 
+[16] X. Li, Z. Wu, L. Yang, et al., A convex-relaxation based method for optimal water- 
+power flow, Energy Rep. 8 (2022) 973–983. 
+[17] Y. Yao, C. Li, C. Shao, et al., Efficient operation of integrated electrical-water 
+system for wind power accommodation, IEEE Trans. Industr. Inform. 19 (9) (2023) 
+9382–9393. 
+[18] S.S. Reddy, V. Sandeep, C. Jung, Review of stochastic optimization methods for 
+smart grid, Front. Energy 11 (2017) 197–209. 
+[19] AntonioJ Conejo, Wu X, Robust optimization in power systems: a tutorial 
+overview, Optim. Eng. 23 (4) (2022) 2051–2073. 
+[20] D. Bertsimas, E. Litvinov, X.A. Sun, et al., Adaptive robust optimization for the 
+security constrained unit commitment problem, IEEE Trans. Power Syst. 28 (1) 
+(2012) 52–63. 
+[21] M. Tostado-V´eliz, A.R. Jordehi, S.A. Mansouri, et al., Day-ahead scheduling of 
+100% isolated communities under uncertainties through a novel stochastic-robust 
+model, Appl. Energy 328 (2022) 120257. 
+[22] L. Edmonds, M. Derby, M. Hill, et al., Coordinated operation of water and 
+electricity distribution networks with variable renewable energy and distribution 
+locational marginal pricing, Renew. Energy 177 (2021) 1438–1450. 
+[23] A. Stuhlmacher, J.L. Mathieu, Chance-constrained water pumping managing power 
+distribution network constraints, in: 2019 North American Power Symposium 
+(NAPS), 2019, pp. 1–6. 
+[24] A. Stuhlmacher, J.L. Mathieu, Water distribution networks as flexible loads: a 
+chance-constrained programming approach, Electr. Power Syst. Res. 188 (2020) 
+106570. 
+X. Zhao et al.                                                                                                                                                                                                                                    
+
+Electric Power Systems Research 234 (2024) 110599
+17
+[25] A. Stuhlmacher, J.L. Mathieu, Chance-constrained water pumping to manage water 
+and power demand uncertainty in distribution networks, Proc. IEEE 108 (9) (2020) 
+1640–1655. 
+[26] Stuhlmacher A., Mathieu J.L., "Uncertainty-aware methods for leveraging water 
+pumping flexibility for power networks," arXiv preprint arXiv:2207.04943, 2022. 
+[27] N. Gao, C. Wang, N. Liu, et al., Chance-constrained operation of the water-energy 
+nexus with conflicting objectives, IET Energy Syst. Integr. 3 (2) (2021) 184–201. 
+[28] Z. Wu, M. Sun, Y. Liang, et al., Chance-constrained optimal power-water flow 
+considering load uncertainties, in: 2021 IEEE 5th Conference on Energy Internet 
+and Energy System Integration (EI2), 2021, pp. 4023–4028. 
+[29] J. Schmidli, L. Roald, S. Chatzivasileiadis, et al., Stochastic AC optimal power flow 
+with approximate chance-constraints, in: 2016 IEEE Power and Energy Society 
+General Meeting (PESGM), 2016, pp. 1–5. 
+[30] H. Qu, L. Roald, G. Andersson, Uncertainty Margins For Probabilistic AC Security 
+Assessment, IEEE, 2015. 
+[31] L. Roald, G. Andersson, Chance-constrained AC optimal power flow: 
+reformulations and efficient algorithms, IEEE Trans. Power Syst. 33 (3) (2018) 
+2906–2918. 
+[32] X. Du, X. Lin, Z. Peng, et al., Chance-constrained optimal power flow based on a 
+linearized network model, Int. J. Electric. Power Energy Syst. 130 (2021) 106890. 
+[33] Y. Xu, M. Korkali, L. Mili, et al., An iterative response-surface-based approach for 
+chance-constrained AC optimal power flow considering dependent uncertainty, 
+IEEe Trans. Smart. Grid. 12 (3) (2021) 2696–2707. 
+[34] L. Halilbaˇsi´c, P. Pinson, S. Chatzivasileiadis, Convex relaxations and 
+approximations of chance-constrained AC-OPF problems, IEEE Trans. Power Syst. 
+34 (2) (2018) 1459–1470. 
+[35] X. Hu, H. Hu, S. Verma, et al., Physics-guided deep neural networks for power flow 
+analysis, IEEE Trans. Power Syst. 36 (3) (2020) 2082–2092. 
+[36] Y. Yang, Z. Yang, J. Yu, et al., Fast calculation of probabilistic power flow: a model- 
+based deep learning approach, IEEe Trans. Smart. Grid. 11 (3) (2019) 2235–2244. 
+[37] D. Wang, K. Zheng, Q. Chen, et al., A data-driven probabilistic power flow method 
+based on convolutional neural networks, Int. Trans. Electric. Energy Syst. 30 (7) 
+(2020) e12367. 
+[38] W. Huang, X. Pan, M. Chen, et al., Deepopf-v: solving ac-opf problems efficiently, 
+IEEE Trans. Power Syst. 37 (1) (2021) 800–803. 
+[39] R. Nellikkath, S. Chatzivasileiadis, Physics-informed neural networks for AC 
+optimal power flow, Electric Power Syst. Res. (2022) 108412. 
+[40] H. Liu, L. Yang, X. Shen, et al., A data-driven warm start approach for convex 
+relaxation in optimal gas flow, IEEE Trans. Power Syst. 36 (6) (2021) 5948–5951. 
+[41] S. Bao, Z. Yang, L. Guo, et al., One-segment linearization modeling of electricity- 
+gas system optimization, Energy 197 (2020) 117230. 
+[42] H. Liu, X. Shen, Q. Guo, et al., A data-driven approach towards fast economic 
+dispatch in electricity-gas coupled systems based on artificial neural network, 
+Appl. Energy 286 (2021) 116480. 
+[43] M. Farivar, S.H. Low, Branch flow model: relaxations and convexification—Part I, 
+IEEE Trans. Power Syst. 28 (3) (2013) 2554–2564. 
+[44] Walski T.M., Chase D.V., Savic D.A., et al., "Advanced water distribution modeling 
+and management," 2003. 
+[45] F. Moazeni, J. Khazaei, Co-optimization of wastewater treatment plants 
+interconnected with smart grids, Appl. Energy 298 (2021) 117150. 
+[46] H. Anysz, A. Zbiciak, N. Ibadov, The influence of input data standardization 
+method on prediction accuracy of artificial neural networks, Procedia Eng. 153 
+(2016) 66–70. 
+[47] R. Setiono, H. Liu, Feature extraction via neural networks. Feature Extraction, 
+Construction and Selection: A Data Mining Perspective, 1998, pp. 191–204. 
+[48] T. Achterberg, SCIP: solving constraint integer programs, Math. Program. Comput. 
+1 (2009) 1–41. 
+[49] S. Chen, A.J. Conejo, R. Sioshansi, et al., Unit commitment with an enhanced 
+natural gas-flow model, IEEE Trans. Power Syst. 34 (5) (2019) 3729–3738. 
+[50] H. Nagarajan, M. Lu, E. Yamangil, et al., Tightening McCormick relaxations for 
+nonlinear programs via dynamic multivariate partitioning, in: Principles and 
+Practice of Constraint Programming: 22nd International Conference, CP 2016, 
+Toulouse, France, 2016, pp. 369–387. September 5-9, 2016, Proceedings 22. 
+[51] D. Liu, 67 Node IEWS Data. https://doi.org/10.13140/RG.2.2.23794.11207. 
+[52] J. Lofberg, YALMIP: a toolbox for modeling and optimization in MATLAB, in: 2004 
+IEEE International Conference on Robotics and Automation (IEEE Cat. No. 
+04CH37508), 2004, pp. 284–289. 
+[53] Gurobi Optimization, The Gurobi Optimizer, available online from http://www. 
+gurobi.com. 
+[54] Abadi M., Agarwal A., and Barham P., et al., "Tensorflow: large-scale machine 
+learning on heterogeneous systems," 2015, Software available from tensorflow.org, 
+URL https://www.tensorflow.org/. 
+[55] S.J. Pan, Q. Yang, A survey on transfer learning, IEEe Trans. Knowl. Data Eng. 22 
+(10) (2009) 1345–1359. 
+[56] G.S. Misyris, A. Venzke, S. Chatzivasileiadis, Physics-informed neural networks for 
+power systems, in: 2020 IEEE Power & Energy Society General Meeting (PESGM), 
+2020, pp. 1–5. 
+X. Zhao et al.                                                                                                                                                                                                                                    

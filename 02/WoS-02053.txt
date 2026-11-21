@@ -1,0 +1,2101 @@
+Coordinated operation of the integrated electricity-water distribution
+system and water-cooled 5G base stations
+Mingyi Sun, Xia Zhao*, Hong Tan, Xinyi Li
+State Key Laboratory of Power Transmission Equipment & System Security and New Technology, College of Electrical Engineering, Chongqing University,
+Chongqing, 400030, China
+a r t i c l e
+i n f o
+Article history:
+Received 16 April 2021
+Received in revised form
+4 September 2021
+Accepted 10 September 2021
+Available online 14 September 2021
+Keywords:
+Integrated electricity-water distribution
+system
+Water-cooled 5G base station
+Energy & water management
+Telecom service provider
+Power distribution system
+a b s t r a c t
+To deal with the heavy operational expenditures of the ﬁfth-generation (5G) telecom service providers
+(TSPs), powering 5G base stations (BSs) with renewable energy (RE) and stimulating a good interaction
+between the RE-BS and the smart grid is recognized as an effective and practical solution. However, the
+existing researches on the interaction between RE-BSs and the smart grid mainly study from the
+perspective of the TSPs, ignoring the operational constraints of the grid. On the other hand, with the
+rapid development of integrated energy systems, the integrated operation of the power and water dis-
+tribution system attracts growing attention. And recently, water-cooling has been introduced as a
+promising energy-saving technique for 5G-BSs, but few efforts have been spent investigating the
+interaction between the BSs, the power, and the water distribution system. This paper considers the
+water-cooled 5G-RE-BSs enabled by an integrated electricity-water distribution system (IEWDS), which
+is managed by the integrated electricity-water service provider (IEWSP). Coordination mechanisms
+between the TSP and the IEWSP are investigated, and the optimal model with two coordinated operation
+modes of the IEWDS, incorporating operation constraints of both the IEWDS and the 5G-BS, is proposed.
+Case studies on two IEWDS sample systems validated the beneﬁts of coordination and the effectiveness
+of the proposed coordination methods.
+© 2021 Elsevier Ltd. All rights reserved.
+1. Introduction
+1.1. Research motivation
+Energy and water support the sustainable development of hu-
+man society. These two resources are highly interconnected and
+mutually dependent since the production of energy requires large
+volumes of water while the water withdrawal, treatment, and
+distribution are usually energy-intensive processes. For example,
+the statistics show that the cooling water demand of thermal po-
+wer plants in the United States exceeds 40% of the total social water
+intake [1], and the power consumption of the entire Chinese social
+water cycle exceeds 19% of the total power consumption in the
+country. Globally, approximately 75% of all industrial water with-
+drawals were used for energy production in 2014 [2].
+Over the past decades, the strong interdependencies between
+energy and water have received much attention and developed the
+concept of water-energy nexus [3]. Numerous researches on water-
+energy nexus have been carried out from a macro perspective to
+study such as the life-cycle water use for energy supply, the energy
+use for water infrastructure, and the water/energy management or
+saving techniques based on the long-term statistics or at the na-
+tional level [3e6]. The recent years have seen signiﬁcant efforts
+worldwide to develop integrated energy systems (IESs) [7]. The
+potential synergies between electricity and water are sought to
+achieve a more efﬁcient, ﬂexible, and decarbonized energy system,
+which therefore suggests planning and operating power systems
+and water systems in a more integrated perspective.
+On the other hand, ﬁfth-generation (5G) communication has
+become a hot topic in recent years. Compared with the fourth-
+generation (4G), 5G promises signiﬁcant performance improve-
+ments in increased data rate, reduced end-to-end latency, and
+improved coverage, connectivity, security, and reliability, etc. [8,9].
+Accordingly, 5G is expected to enable many emerging technologies
+such as the Internet of Things (IoT), Device to Device (D2D) com-
+munications, augmented/virtual reality (AR/VR), self-driving cars,
+* Corresponding author.
+E-mail addresses: 13767974294@163.com (M. Sun), zx@cqu.edu.cn (X. Zhao), th_
+199711@163.com (H. Tan), li3xy@mail.uc.edu (X. Li).
+Contents lists available at ScienceDirect
+Energy
+journal homepage: www.elsevier.com/locate/energy
+https://doi.org/10.1016/j.energy.2021.122034
+0360-5442/© 2021 Elsevier Ltd. All rights reserved.
+Energy 238 (2022) 122034
+
+Nomenclature
+Acronyms
+5G
+Fifth-generation
+BS
+Base station
+IES
+Integrated energy system
+IEWDS
+Integrated electricity-water distribution system
+IEWSP
+Integrated electricity-water service provider
+PDS
+Power distribution system
+RE
+Renewable energy
+TSP
+Telecom service provider
+WCS
+Water-cooling system
+WDS
+Water distribution system
+Sets and Indices
+BS
+Bus set with 5G-BSs
+i,j
+Index of PDS buses
+ij
+Index of PDS lines
+m
+Index of WDS nodes
+mn
+Index of WDS pipes
+RES
+Bus set with RE source
+s
+Index of breakpoints of pipe ﬂow rate
+t
+Index of time-period
+x
+Index of breakpoints for relative pump speed
+y
+Index of breakpoints for pump power
+Dt
+Index of time interval
+Parameters
+Am,Ta
+Cross-sectional area of water tanks
+Am,Ta,BS
+Cross-sectional area of BS tanks
+Amn,U Bmn,U Parameters of pumps
+C1,Cut
+Contract price for electricity deviation
+C1,G*(t)
+Contract price for electricity
+Ci,Bat,BS
+Compensation-coefﬁcient of BS batteries
+Ci,Deg
+Battery degradation cost
+Ci,G(t)
+Time-ofeuse electricity price
+Ci,PVCur
+Cost-coefﬁcient of PV curtailment
+Ci,WGCur Cost-coefﬁcient of wind curtailment
+Cm,S(t)
+Comprehensive water price
+Cm,Ta,BS
+Compensation-coefﬁcient of BS tanks
+Ei,initial
+Initial battery energy
+Ei,initial,BS Initial BS battery energy
+Hm,initial Initial hydraulic head of water tanks
+Hm,initial,BS Initial hydraulic head of BS tanks
+Hmn,U0
+Shutoff head of pumps
+M
+A very large positive constant
+P1,Pre(t)
+Desired tie-line power of upper-level grids
+Pi,0,BS
+Fixed power of BSs
+Pi,L(t)
+Active power load of buses
+Pi,WCS,BS Power of WCSs
+Pi,WR,BS
+Basic power of BSs under work-mode
+Pi,PV(t)
+Power output of PV power stations
+Pi,RES,BS(t) RE source output of BSs
+Pi,Sleep,BS Basic power of BSs under sleep mode
+Pi,WG(t)
+Power output of wind farms
+Qi,L(t)
+Reactive power load of buses
+qm,L(t)
+Water load of nodes
+qm,WCS,BS(t) Water-loss rate of WCSs
+qmn,P,s
+Breakpoints of ﬂow rate for pipes
+qmn,U,x
+Breakpoints of ﬂow rate for pumps
+rij, xij
+Resistance and reactance of lines
+rmn,P
+Resistance coefﬁcient of pipes
+gU
+Power factor
+zBSS
+Reduction ratio of basic power demand under sleep
+mode
+hCh, hDis Charging/discharging efﬁciency-coefﬁcient of battery
+hCh,BS
+Charging efﬁciency-coefﬁcient of BS battery
+hDis,BS
+Discharging efﬁciency-coefﬁcient of BS battery
+hmn,U
+Efﬁciency-coefﬁcient of pumps
+r
+Water density
+umn,U, y
+Breakpoints of relative pump speed
+Variables and Functions
+amn,s(t)
+Binary variables for linearization
+CBat,BS
+BS battery compensation cost
+CCur
+RE source curtailment cost
+Ccut
+Additional cost(contract)
+CDeg
+Battery degradation cost
+CG, CG*
+Cost for power purchase
+CS
+Cost for water purchase
+CTa,BS
+BS tank compensation cost
+Ei,Bat(t)
+Remaining energy of batteries
+Ei,Bat,BS(t) Remaining energy of BS batteries
+Hm(t)
+Node head
+Hm,Ta(t)
+Hydraulic head of tanks
+Hm,Ta,BS(t) Hydraulic head of BS tanks
+lij(t), ui(t) Auxiliary variables of SOCP relaxation
+Pi,BS(t)
+Total power demand of BSs
+Pi,Ch(t)
+Charging/discharging powe of batteries
+Pi,Dis(t)
+in the PDS
+Pi,Ch,BS(t), Pi,Dis,BS(t) Charging/discharging power of BS
+batteries
+Pi,G(t)
+Active power output of power plants
+Pi,PVCur(t) PV curtailment
+Pi,RESCur,BS(t) RE source curtailment of BSs
+Pi,U(t)
+Active pump power
+Pi,WGCur(t) wind curtailment
+Pij(t)
+Active power ﬂow of lines
+Qi,G(t)
+Reactive power output of power plants
+Qi,U(t)
+Reactive pump power
+Qij(t)
+Reactive power ﬂow of lines
+qm,BS(t)
+Total water demand of BSs
+qm,In(t)
+Inﬂow rate of water tanks
+qm,Out(t) Outﬂow rate of water tanks
+qm,In,BS(t) Inﬂow rate of BS tanks
+qm,Out,BS(t) Outﬂow rate of BS tanks
+qm,S(t)
+Flow rate of water sources
+qmn,P(t)
+Flow rate of pipes
+qmn,U(t)
+Flow rate of pumps
+vi(t)
+Voltage magnitude of buses
+DHmn,P(t) Hydraulic head difference of pipes
+DHmn,U(t) Pump head gain
+DbHmn;PðtÞ Hydraulic head difference of pipes in piecewise
+linearization
+DbHmn;UðtÞ Pump head gain in piecewise linearization
+bPmn;UðtÞ
+Pump power in piecewise linearization
+lmn,s(t)
+linearization
+lmn,x,y(t) Continuous variables for piecewise linearization
+mi,Bat(t)
+0-1 variables of batteries
+mi,Bat, BS ((t) 0-1 variables of BS batteries
+mm, Ta ((t) 0-1 variables of water tanks
+mm,Ta,BS(t) 0-1 variables of BS tanks
+umn,U(t) Relative pump speed
+M. Sun, X. Zhao, H. Tan et al.
+Energy 238 (2022) 122034
+2
+
+and Internet of Vehicles (IoVs) [8,10]. However, these performance
+improvements bring about the obvious issues of signiﬁcantly
+increased energy demand and operational expenditures, which
+challenges 5G telecom service providers (TSPs) greatly and may
+become the major deployment obstacle of 5G systems. Evidence
+suggests that base stations (BSs) are the most energy-intensive
+components of a wireless network. Nearly 80% of the energy
+required by the networks is consumed at BSs [11]. The 5G
+communication uses a high-frequency millimeter-wave (mmWave)
+to carry data. Due to the strong absorption effect of the atmosphere
+on mmWaves and the fact that mmWaves are easily blocked by
+walls, foliage and even peoples' bodies, the coverage of a 5G-BS is
+much smaller than that of the previous 2G/3G/4G [10,12]. The
+typical density of the BS for 4G is around 8e10 BS/km2, while that
+of 5G is anticipated to be 40e50 BS/km2 [12]. Besides, 5G-BSs are
+generally equipped with some new high-energy-demand compo-
+nents such as mmWave transceivers, fast data converters, inte-
+grated
+multiple-input-multiple-output
+(MIMO)
+antennas,
+and
+high-power ampliﬁers [13]. It is estimated the energy consump-
+tion of each 5G-BS grows up to twice or more than that of a 4G-BS
+[13]. Therefore, the total energy consumption of 5G-BSs might be 9
+times or more than that of 4G to provide the same service coverage
+[10]. A survey estimated that the high-density BSs and the addi-
+tional equipment required by 5G will increase the TSPs’ total
+network energy consumption by up to 150%e170% by 2026 [14].
+To address the energy consumption issue, a variety of energy-
+saving solutions are suggested to improve the energy efﬁciency
+(EE) of 5G networks such as resource allocation, relaying tech-
+niques, multiple radio access, cell breathing, adaptive MIMO
+switching, BS sleeping, and so on [15,16]. Besides, powering BSs
+with renewable energy sources such as photovoltaic (PV) panels
+and wind turbines is considered a promising and practical energy-
+harvesting solution to reduce the operational expenditure of TSPs
+[13]. Statistics in Ref. [17] show that renewable-energy-powered
+BSs (RE-BSs) have grown from 9000 in 2010e43,000 by mid-
+2014. To deal with the intermittence and ﬂuctuations of renew-
+able energies, RE-BSs are generally equipped with batteries or
+connected to a power grid for reliable energy supply. In such cases,
+the RE-BSs are powered by hybrid sources, which gives rise to the
+problem of the power coordination or energy management of BSs.
+Speciﬁcally, as conventional power grids evolve into the smart grids
+with the main features of distributed generation, demand-side
+management, and price signaling [13,18], more power coordina-
+tion problems appear since the RE-BS connected to a smart grid
+may act as a prosumer to participate in the energy trading and
+demand-side response programs with the smart grid.
+In addition to the above-mentioned energy-saving solutions,
+water-cooling has been introduced to reduce the cooling costs of
+BSs [19]. Compared with traditional air cooling, water-cooling has
+the advantages of higher heat transfer coefﬁcients, low acoustic
+noise, environmental friendliness, and a high possibility of heat
+reuse [20]. Although water-cooling for BSs has not been widely
+applied in commercial applications, it is gaining more and more
+attraction. For example, in 2018, Nokia has cooperated with Finnish
+telecom operator Elisa and power system provider Efore to deploy
+the world's ﬁrst water-cooled 5G-BS in Helsinki, Finland [21].
+Moreover, there are many successful applications of water-cooling
+for data centers [22,23], which provide excellent references for the
+design and operation of water-cooled BSs. In this work, cooling
+water tanks are installed for BSs and supplied by the WDS to ach-
+ieve circulative cooling and water demand regulation.
+With the RE sources, batteries, and water tank installed, the 5G-
+BS is essentially a small-scale integrated water-energy system. It
+acts as a distributed energy-prosumer to the power grid and a
+ﬂexible water load to the WDS. Accordingly, the interdependencies
+among the 5G-BS, the power grid, and the WDS are necessary to be
+recognized, and this is the motivation behind the current work.
+1.2. Literature review
+1.2.1. Coordinated operation of power systems and water systems
+Researches on the coordinated operation of power systems and
+water systems are brieﬂy reviewed as follows.
+An optimal power-water ﬂow model of an integrated electricity-
+water distribution system (IEWDS) considering network con-
+straints of both power distribution systems (PDSs) and water dis-
+tribution systems (WDSs), and the pump coupling is proposed in
+Ref. [24]. In Ref. [25], an optimal model for operating an IEWDS is
+proposed to minimize the operation cost of the integrated
+electricity-water service provider (IEWSP) and enhance the wind
+power accommodation. An analytical framework based on time-
+series optimal power and water ﬂow simulation is developed in
+Ref. [26] to analyze the interdependencies between power systems
+and WDSs. In Ref. [27], the ﬂexibility offered by WDSs to the power
+systems is studied, and a day-ahead power system dispatch model
+integrating the energy regulating capacity of WDSs is proposed.
+Based on this, the authors of [27] further propose a coordinated
+operation model for the IEWDS incorporating the ﬂexibility pro-
+vided by water treatment and desalination plants in Ref. [28]. A
+dispatch method for a combined electricity-water supply system is
+proposed and applied to smart communities in Ref. [29], whereas
+the dispatch model with WDS constraints proposed in Ref. [30]
+studies the optimal operation of islanded water-energy microgrids.
+In addition to the mentioned work [24e30] focusing on the linkage
+between electricity and water, the interdependencies between the
+water, thermal and electrical energy are studied with an island
+electricity-water-heat microgrid model proposed in Ref. [31], the
+IES model composed of electricity, heating, and water distribution
+systems is presented to improve the wind power accommodation
+in Ref. [32], and the coordinated operation for an integrated water
+and energy system including electricity, gas, and water distribution
+systems is investigated in Ref. [33].
+Although existing studies have made some contributions to-
+wards the coordinated operation of power systems and water
+systems, 5G-BSs and their operation ﬂexibilities are not incorpo-
+rated in coordinated operation modeling, and therefore in-
+terdependencies among the 5G-BS, the power grid, and the WDS
+are not addressed.
+1.2.2. Interaction between RE-BSs and smart grids
+Existing studies on the interaction between RE-BSs and smart
+grids are brieﬂy reviewed in this section.
+Smart gird enabled mobile networks are considered in Ref. [34]
+where energy from the grid and RE sources in each BS are assumed
+to be shared among the BSs, and an optimization problem for joint
+BS operation and power distribution is formulated to minimize the
+on-grid power consumption. In Ref. [35], RE-BSs are equipped with
+batteries and allowed to sell energy to a smart grid. In Ref. [36], the
+RE-BS with a dual-battery architecture is studied and the joint
+scheme for user association and smart grid energy transfer is pro-
+posed. In Refs. [37,38], the BS utilizes its harvested RE and stored
+energy to provide ancillary services to a smart grid by responding
+to the requests of increasing or decreasing the on-grid power.
+Accordingly, energy management strategies for BS on/off switching
+and activating/deactivating of radio resource blocks are proposed in
+Refs. [37,38], respectively.
+However, all the above studies in Refs. [34e38] investigated the
+interaction between RE-BSs and smart grids mainly from the
+perspective of communication networks or TSPs. They focus on the
+optimal operation of BSs, and the smart grids are treated as ideal
+M. Sun, X. Zhao, H. Tan et al.
+Energy 238 (2022) 122034
+3
+
+power sources, i.e., operation constraints of the grids are ignored. In
+fact, with the rapid development of 5G, the high density of 5G-BSs
+and their huge energy consumption challenge the operation of both
+5G networks and the grids; while on the other hand, the coordi-
+nated operation of 5G-BSs is expected to bring more aggregation
+beneﬁts to the grids. Therefore, it is necessary to model and analyze
+the interaction between BSs and the grids in a more integrated way
+where constraints of both BSs and the grids are considered.
+1.3. Contributions
+In this work, we consider the water-cooled 5G-BS with RE source
+(abbreviated as 5G-BS below) embedded in an IEWDS. The novelty
+of this work is that we highlight the interaction between the 5G-BS
+and the IEWDS from the perspective of energy & water manage-
+ment. To our best knowledge, such interaction has not been
+investigated in the literature.
+In contrast to the previous work in Refs. [34e38], we investigate
+the interaction between the BS and the IEWDS from the perspective
+of energy management rather than the communication service.
+Although there are some recent studies on 5G in the ﬁeld of power
+and energy system (PES) such as [12,39], they focus on the 5G
+enabled PES or exploring the application potential of 5G techniques
+in PES.
+To address the energy & water interaction between the 5G-BS
+and the IEWDS, the cooperation mechanisms between the TSP and
+the IEWSP are developed, and the corresponding optimal model,
+incorporating detailed operation constraints of both the IEWDS and
+the 5G-BS, are formulated.
+The main contributions of this work are as follows.
+(1) An advanced water-cooled 5G-BS is modeled for energy & water
+management. The water-cooled 5G-BS with RE sources, bat-
+tery, and water storage is modeled as a small-scale integrated
+electricity-water system from the perspective of energy &
+water management.
+(2) The energy & water interaction between the 5G-BS and the
+IEWDS is studied and the coordination mechanisms are pro-
+posed. Two possible win-win operation modes of the IEWDS
+are developed to explore the coordination mechanisms be-
+tween the TSP and the IEWSP. The ﬁrst mode focuses on the
+coordination between the IEWSP and the TSP, and the second
+one is a dual coordination mode, which features the coor-
+dination between the IEWSP and the upper-level grid, and
+the coordination between the IEWSP and the TSP.
+(3) The optimal model to address the coordination mechanisms
+between the TSP and the IEWSP is formulated. The coordina-
+tion mechanisms are conducted by an optimal model with
+different objectives and detailed operation constraints of
+both the 5G-BS and the IEWDS. The SOCP relaxation and
+piecewise linearization techniques are applied to reformu-
+late the proposed model into a tractable mixed-integer sec-
+ond-order cone programming (MISOCP) problem.
+2. IEWDS and 5G-BS
+2.1. Interdependent structure
+The IEWDS embedded with 5G-BSs includes two service pro-
+viders, i.e., the IEWSP and the TSP, as shown in Fig. 1. The IEWSP
+owns the PDS, the WDS, electrical pumps, PV stations, and wind
+farms, and is responsible for their operation and maintenance. The
+TSP has the ownership of all the 5G-BSs in the IEWDS as well as the
+operation and maintenance authority.
+The 5G-BS is mainly composed of the communication devices,
+the RE source, the battery, and the water-cooling system (WCS)
+along with the controllable water tank [19,22], as shown in Fig.1(a).
+The water tank can be installed inside the BS to provide an on-site
+water supply, or outside the BS to supply water to multiple BSs
+within an area. Note that the 5G-BS are supposed to be able to feed
+surplus electricity back to the PDS, and a similar bidirectional water
+ﬂow between the 5G-BS and the WDS is assumed.
+The power demands of the 5G-BS include the transmitting po-
+wer of the communication devices, the ﬁxed power demand of the
+BS, and the power supplied to the WCS. The power demands can be
+supplied by the purchased power from the IEWSP, the RE source,
+and the BS battery. The transmitting power is the power required to
+provide services to the telecom users of the BS. Based on the test
+results of [40], the transmitting power of 5G-BSs is nearly propor-
+tional to the communication load. The ﬁxed power is the basic
+power needed to operate a 5G-BS, which does not vary with the
+communication load. The power supplied to the WCS is used to
+circulate cooling water and cool the energy-intensive 5G devices of
+the BS.
+As shown in Fig. 1(b), the IEWSP purchases electricity and water
+from the upper-level power system and the reservoir/water plant
+to satisfy the power and water demand throughout the IEWDS,
+respectively. Electrical pumps are the main coupling facilities be-
+tween the PDS and the WDS, which consume power to boost the
+hydraulic pressure of the entire or partial WDS. In Fig. 1(b), the
+Fig. 1. The schematic diagram of the 5G-BS and the IEWDS.
+M. Sun, X. Zhao, H. Tan et al.
+Energy 238 (2022) 122034
+4
+
+electrical pump is directly connected to the reservoir/water plant to
+control the hydraulic pressure, and small booster pumps may also
+be installed in the WDS to provide secondary pressurization. Be-
+sides BS batteries and BS tanks, both the PDS and the WDS are
+equipped with storages to provide electricity and water backups for
+the operation of the IEWDS.
+2.2. Coordination mechanisms
+When the IEWSP and the TSP operate independently, the BS
+battery is only used for the emergency power supply of the telecom
+equipment and the BS tank is responsible for replenishing the
+water loss during the cooling water circulation. Considering that
+power emergency rarely occurs and water loss is generally negli-
+gible, these two kinds of storage equipment are almost idle in the
+normal operation of the IEWDS.
+To make full use of the BS batteries and water tanks and to
+create synergies between the operations of the IEWDS and 5G-BSs,
+two coordination mechanisms, as shown in Fig. 2., are developed in
+this work. The ﬁrst mechanism (Fig. 2(a)) focuses on the coordi-
+nation between the IEWSP and the TSP; and the second one
+(Fig. 2(b)) is a dual coordination mode, which features the coordi-
+nation between the IEWSP and the upper-level grid, and the co-
+ordination between the IEWSP and the TSP.
+2.2.1. Mechanism 1
+As shown in Fig. 2(a), Mechanism 1 assumes that the control
+authority of the BS battery and BS tank is transferred from the TSP
+to the IEWSP, i.e., BS batteries and BS tanks are dispatchable re-
+sources to the IEWSP. Under this mechanism, the TSP provides the
+BS battery and BS tank to the IEWSP in exchange for service
+compensation, and the IEWSP has the potential to lower its oper-
+ation cost by utilizing these dispatchable resources. Therefore, a
+win-win situation may be achieved.
+2.2.2. Mechanism 2
+Mechanism 2 is a dual coordination mode, as shown in Fig. 2(b).
+Besides the coordination between the IEWSP and the TSP, which is
+similar to Mechanism 1, the coordination between the IEWSP and
+the upper-level grid is expected. The upper-level grid sends the
+daily tie-line power curve to the IEWDS to inform its desired tie-
+line power, and the IEWSP tries to operate the PDS, the WDS, and
+the BS batteries and tanks coordinately to follow this desired curve.
+By doing this, the IEWSP is compensated by low-priced electricity
+from the upper-level grid. On the contrary, the IEWSP will be
+charged a penalty for the deviation in the actual tie-line power
+curve from the desired one.
+3. Problem formulation
+In this section, the above two coordinated mechanisms will be
+formulated as two optimal problems. The IEWSP is the decision-
+maker for both problems. Different objectives are designed for
+the two mechanisms, while the same constraints, including all the
+operational constraints of the PDS, the WDS, the coupling facilities
+between the PDS and the WDS, and 5G-BSs, are satisﬁed.
+3.1. Modeling of 5G-BS
+1) Power balance
+According to the schematic diagram of the 5G-BS shown in Fig.1
+(a), the power balance of the 5G-BS is
+Pi;BSðtÞ ¼ Pi;Re;BSðtÞ þ Pi;Ch;BSðtÞ  Pi;Dis;BSðtÞ þ Pi;RESCur;BSðtÞ
+ Pi;RES;BSðtÞ
+(1)
+The sleep mode of 5G RE-BS [41] is considered in this work.
+Fig. 3(a) and Fig. 3(b) depict the power demand of the 5G-BS in the
+work mode and the sleep mode, respectively. The WCS power and
+the ﬁxed power comprise the basic power of the 5G-BS. In Fig. 3,
+Pi,WR,BS and Pi,Sleep,BS represent the basic power of the 5G-BS in the
+work mode and the sleep mode, respectively [42]. The power
+equation of the two modes is formulated as (2).
+Pi;Re;BSðtÞ ¼
+ Pi;WR;BS þ Pi;L;BSðtÞ if Pi;L;BSðtÞs0
+Pi;Sleep;BS if Pi;L;BSðtÞ ¼ 0
+(2)
+Pi;WR;BS ¼ Pi;0;BS þ Pi;WCS;BS
+(3)
+Pi;Sleep;BS ¼ ð1  zBSSÞPi;0;BS þ Pi;WCS;BS
+(4)
+0  Pi;L;BSðtÞ  Pi;L;BS
+(5)
+0  Pi;RESCur;BSðtÞ  Pi;RES;BSðtÞ
+(6)
+Under work mode, the basic power is the sum of the ﬁxed power
+Pi,0,BS, and the WCS power Pi,WCS,BS, as shown in (3), while under
+sleep mode, the BS reduces the transmitting power to zero and the
+ﬁxed power demand to some degree (generally 15%e20% [11],
+which is reﬂected by the coefﬁcient zBSS in (4)). Equations (5) and
+(6) restrict the transmitting power and the curtailment of 5G-BS
+RE sources, respectively. The overline and underline indicate the
+maximum and minimum limits of the variable, respectively.
+2) Water ﬂow balance
+Fig. 2. Two coordination mechanisms.
+M. Sun, X. Zhao, H. Tan et al.
+Energy 238 (2022) 122034
+5
+
+According to Fig. 1 (a), the water balance for the 5G-BS is
+formulated as
+qm;BSðtÞ ¼ qm;In;BSðtÞ þ qm;WCS;BSðtÞ  qm;Out;BSðtÞ
+(7)
+3) 5G-BS battery
+The following constraints represent the operation constraints of
+the 5G-BS battery:
+Ei;Bat;BSðtÞ ¼ Ei;Bat;BSðt  DtÞ þ Dt
+"
+hCh;BSPi;Ch;BSðtÞ  Pi;Dis;BSðtÞ
+hDis;BS
+#
+(8)
+ 0  Pi;Ch;BSðtÞ  Pi;Ch;BSmi;Bat;BSðtÞ
+0  Pi;Dis;BSðtÞ  Pi;Dis;BS
+h
+1  mi;Bat;BSðtÞ
+i
+(9)
+E i;BS  Ei;Bat;BSðtÞ  Ei;BS
+(10)
+Ei;Bat;BSðTÞ  Ei;initial;BS
+(11)
+Equation (8) is the energy continuity constraint of the BS battery
+[43]. The charging/discharging power of the BS battery is restricted
+by (9), where mi,Bat,BS(t) is the 0e1 variable representing the
+charging/discharging status of the battery, which is equal to 1 if the
+battery is charging and 0 otherwise. Equation (10) limits the energy
+of the BS battery in each period. Equation (11) requires that the
+battery energy at the last time-period T should be no less than the
+initial value Ei,initial,BS.
+4) 5G-BS water tank
+Hm;Ta;BSðtÞ ¼ Hm;Ta;BSðt  DtÞ þ
+Dt
+Am;Ta;BS
+h
+qm;In;BSðtÞ  qm;Out;BSðtÞ
+i
+(12)
+8
+<
+:
+0  qm;In;BSðtÞ  qm;In;BSmm;Ta;BSðtÞ
+0  qm;Out;BSðtÞ  qm;Out;BS
+h
+1  mm;Ta;BSðtÞ
+i
+M
+
+mm;Ta;BSðtÞ  1
+
+ HmðtÞ  Hm;Ta;BSðtÞ  Mmm;Ta;BSðtÞ
+(13)
+H m;Ta;BS  Hm;Ta;BSðtÞ  Hm;Ta;BS
+(14)
+Hm;Ta;BSðTÞ  Hm;initial;BS
+(15)
+Equation (12) is the water continuity equation for the BS tank.
+Equation (13) restricts the inﬂow/outﬂow rate of the tank, where
+mm,Ta,BS(t) is the 0e1 variable representing the status of the tank,
+which takes the value of 1 if the tank is ﬁlling water and 0 other-
+wise. Since the 5G-BS tank and the WDS are owned by different
+service providers, the ﬂow rate of the tank is supposed to be
+independently controlled through valve controls and thus the BS
+tank head is decoupled from the nodal head of the WDS. In (13), we
+use the big-M method to model this control action. For example,
+mm,Ta,BS(t) takes the value of 1 when the nodal head of the WDS
+Hm(t) is greater than or equal to the BS tank head Hm,Ta,BS(t), indi-
+cating that water can only ﬂow into the tank at this time, while the
+ﬂow rate is controllable. Equation (14) limits the head of the BS tank
+and (15) guarantees that the ﬁnal tank head at time-period T is no
+less than initial value Hm,initial,BS.
+3.2. Modeling of the coupled PDS and WDS
+3.2.1. Operation constraints of the PDS
+A balanced PDS with a radial network topology can be described
+by the DistFlow model [44], which can be easily extended to un-
+balanced three-phase power ﬂow equations with some approxi-
+mations so that the proposed model can also be applied to
+unbalanced three-phase PDS.
+The radial PDS is depicted in Fig. 4, where rij and xij are the
+Fig. 3. Power demands of the 5G-BS.
+Fig. 4. Schematic diagram of a radial PDS.
+M. Sun, X. Zhao, H. Tan et al.
+Energy 238 (2022) 122034
+6
+
+resistance and the reactance of power line i-j; vi(t) and vj(t) are
+voltage magnitudes of bus i and j, and Pij(t) and Qij(t) represent the
+active/reactive power of line i-j ﬂowing from bus i to j, and Pj,L(t)
+and Qj,L(t) are the active/reactive power loads at bus j.
+The DistFlow model describes the PDS shown in Fig. 4 with the
+following active/reactive power and voltage equations:
+PijðtÞ ¼
+X
+k:j/k
+PjkðtÞ þ rij
+P2
+ijðtÞ þ Q2
+ij ðtÞ
+v2
+i ðtÞ
+þ Pj;LðtÞ
+(16)
+QijðtÞ ¼
+X
+k:j/k
+QjkðtÞ þ xij
+P2
+ijðtÞ þ Q2
+ij ðtÞ
+v2
+i ðtÞ
+þ Qj;LðtÞ
+(17)
+v2
+i ðtÞ  v2
+j ðtÞ ¼ 2rijPijðtÞ þ xijQijðtÞ 
+
+r2
+ij þ x2
+ij
+ P2
+ijðtÞ þ Q2
+ij ðtÞ
+v2
+i ðtÞ
+(18)
+Equations (16) and (17) describe the active and reactive power
+balance of power line i-j, where k:j/k denotes all the downstream
+buses connected to bus j, and (18) describes the voltage drop along
+the power line i-j.
+In addition, the PDS should operate within the following limits:
+P ij  PijðtÞ  Pij; Q ij  QijðtÞ  Qij
+(19)
+v i  viðtÞ  vi
+(20)
+Note that if bus j in Fig. 4 is connected to PV stations, wind farms,
+batteries, electrical pumps, etc, installed in the PDS, Pj,L(t) and Qj,L(t)
+should be replaced with the following equivalent loads Pj,equ,L(t)
+and Qj,equ,L(t), respectively,
+and the following constraints
+P i;G  Pi;GðtÞ  Pi;G; Q i;G  Qi;GðtÞ  Qi;G
+(22)
+0  Pj;WGCurðtÞ  Pj;WGðtÞ; 0  Pj;PVCurðtÞ  Pj;PVðtÞ
+(23)
+8
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+<
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+:
+0  Pi;ChðtÞ  Pi;Chmi;BatðtÞ
+0  Pi;DisðtÞ  Pi;Dis
+h
+1  mi;BatðtÞ
+i
+Ei;BatðtÞ ¼ Ei;Batðt  DtÞ þ Dt
+
+hChPi;ChðtÞ  Pi;DisðtÞ
+hDis
+
+E i  Ei;BatðtÞ  Ei
+Ei;BatðTÞ  Ei;initial
+(24)
+Equation (22) limits the power supplied by power plants, (23)
+limits the wind and PV curtailment, and (24) includes the operation
+constraints of the battery installed in the PDS, which are similar to
+the constraints of the BS battery shown in (8)-(11).
+3.2.2. Operation constraints of the WDS
+The WDS consists of pipes, tanks, pumps, water sources, and
+water loads. The operation constraints of WDS include the equality
+constraints in (25)-(28) and inequality constraints in (29)-(31).
+qm;SðtÞ þ qm;OutðtÞ  qm;InðtÞ  qm;LðtÞ  qm;BSðtÞ  qmn;PðtÞ
+ qmn;UðtÞ
+¼ 0
+(25)
+DHmn;PðtÞ ¼ HmðtÞ  HnðtÞ ¼ rmn;P
+			qmn;PðtÞ
+			qmn;PðtÞ
+(26)
+DHmn;UðtÞ ¼ u2
+mn;UðtÞHmn;U0  Amn;Uu2Bmn;U
+mn;U
+ðtÞqBmn;U
+mn;UðtÞ
+(27)
+HmðtÞ ¼ Hm;TaðtÞ ¼ Hm;Taðt  DtÞ þ Dt
+Am;Ta
+h
+qm;InðtÞ  qm;OutðtÞ
+i
+(28)
+Equation (25) describes the nodal balance at node m, where
+qmn,P(t) is the ﬂow rate of pipe m-n. If water ﬂows from node m to n,
+qmn,P(t) is positive and negative otherwise. Equation (26) is the
+Chezy-Manning equation [45] representing the hydraulic charac-
+teristics of pipes and (27) describes the head gain of pumps.
+Equation (28) expresses the water tank.
+H m  HmðtÞ  Hm; q mn;P  qmn;PðtÞ  qmn;P
+(29)
+H m;Ta  Hm;TaðtÞ  Hm;Ta; Hm;TaðtÞ ¼ HmðtÞ; Hm;TaðTÞ  Hm;initial;
+0  qm;InðtÞ  qm;Inmm;TaðtÞ; 0  qm;OutðtÞ  qm;Out
+h
+1mm;TaðtÞ
+i
+(30)
+DH mn;U  DHmn;UðtÞ  DHmn;U; q mn;U  qmn;UðtÞ  qmn;U;
+u mn;U  umn;UðtÞ  umn;U
+(31)
+Equation (29) limits the nodal head and ﬂow rates of pipes,
+respectively. Equation (30) represents the constraints of tank head
+and inﬂow/outﬂow rates, where Hm,Ta, representing the head of the
+tank connected to node m, is assumed to be equal to Hm, which is
+the head of node m [28]. Equation (31) expresses the boundaries of
+the ﬂow rate, speed ratio, and head gain of pumps.
+3.2.3. Coupling between the PDS and the WDS
+The electric pump is the coupling facility between the PDS and
+the WDS. The active power and reactive power of pumps are
+determined by (32) and (33) respectively, under the assumption of
+a constant power factor [24].
+8
+<
+:
+Pj;equ;LðtÞ ¼ Pj;LðtÞ þ Pj;UðtÞ þ Pj;BSðtÞ þ Pj;ChðtÞ þ Pj;WGCurðtÞ þ Pj;PVCurðtÞ
+ Pj;GðtÞ  Pj;WGðtÞ  Pj;PVðtÞ  Pj;DisðtÞ
+Qj;equ;LðtÞ ¼ Qj;LðtÞ þ Qj;UðtÞ  Qj;GðtÞ
+(21)
+M. Sun, X. Zhao, H. Tan et al.
+Energy 238 (2022) 122034
+7
+
+Pi;UðtÞ ¼
+rg
+hmn;U
+DHmn;UðtÞqmn;UðtÞ
+(32)
+Qi;UðtÞ ¼ gUPi;UðtÞ
+(33)
+3.3. Coordinated operation modes for the IEWDS
+The coordinated mechanisms proposed in Section 2.2 are
+formulated as two optimal problems in this section to deﬁne the
+following two kinds of operation modes.
+3.3.1. Operation-mode 1: coordinated operation between the IEWSP
+and the TSP
+Operation-mode 1 realizes the coordinated mechanism pre-
+sented in Section 2.2.1. Under this mode, the TSP coordinates with
+the IEWSP by providing the “power-water reserve” service to make
+a beneﬁt, and accordingly, the IEWSP has the potential to reduce its
+total operation cost with ﬂexible resources provided by the TSP.
+Accordingly, operation-mode 1 is formulated as the problem M1
+with the objective function deﬁned by (34)
+M1: min CG þ CCur þ CDeg þ CBat;BS þ CTa;BS þ CS
+(34)
+and the following constraints:
+s:t
+8
+>
+>
+<
+>
+>
+:
+5G  BS constraints:ð1Þ  ð15Þ
+PDS constraints:ð16Þ  ð24Þ
+WDS constraints:ð25Þ  ð31Þ
+Coupling constraints:ð32Þ; ð33Þ
+As shown in (34), the objective of operation-mode 1 is to
+minimize the overall operation cost of the IEWSP, which includes 1)
+the cost for purchasing electricity and water, denoted by CG and CS,
+respectively 2) the cost of curtailing RE sources of the IEWSP,
+denoted by CCur, 3) the battery operation cost CDeg, and 4) the
+compensation of the battery service and tank service to the TSP,
+denoted by CBat,BS and CTa,BS, respectively. All these costs are deﬁned
+by
+8
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+<
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+:
+CG ¼
+X
+T
+t¼1
+C1;GðtÞP1;GðtÞ
+CCur ¼
+X
+i
+X
+T
+t¼1
+Ci;WGCurPi;WGCurðtÞ þ Ci;PVCurPi;PVCurðtÞ i2RES
+CDeg ¼
+X
+i
+Ci;Deg
+X
+T
+t¼1
+Pi;ChðtÞ þ Pi;DisðtÞ i2RE
+CBat;BS ¼
+X
+i
+Ci;Bat;BS
+X
+T
+t¼1
+Pi;Ch;BSðtÞ þ Pi;Dis;BSðtÞ i2BS
+CTa;BS ¼
+X
+i
+Cm;Ta;BS
+X
+T
+t¼1
+h
+qm;In;BSðtÞ þ qm;Out;BSðtÞ
+i
+i2BS
+CS ¼
+X
+T
+t¼1
+C1;SðtÞq1;SðtÞ
+(35)
+Note that detailed calculation steps for the battery degradation
+cost Ci,Deg are provided in Refs. [43,46]. The variables Ci,Bat,BS and
+Cm,Ta,BS are the compensation-coefﬁcients for the BS battery service
+and the BS tank service, respectively. The case where Ci,Bat,BS takes
+the smallest value is to only compensate for the BS battery degra-
+dation cost, in order to compensate the TSP's battery maintenance
+cost. The value of Cm,Ta,BS is related to multiple factors such as the
+deployment cost in different areas and facility aging [47].
+3.3.2. Operation-mode 2: dual coordinated operations among the
+IEWSP, the TSP, and the upper-level grid
+Operation-mode 2 realizes the coordinated mechanism pre-
+sented in Section 2.2.2. Under this mode, coordination between the
+IEWSP and the upper-level gird is also introduced besides the co-
+ordination between the IEWSP and the TSP. The IEWSP is supposed
+to sign a contract with the upper-level gird. The contract stipulates
+that the upper-level grid sells low-priced electricity to the IEWSP all
+day, which acts as the compensation for the IEWSP to track the
+desired tie-line power curve. However, the IEWSP has to pay for the
+power deviation.
+Operation-mode 2 is formulated as the problem M2 with the
+objective function deﬁned by
+M2 : min CCut þ C*
+G þ CCur þ CDeg þ CBat;BS þ CTa;BS þ CS
+CCut ¼ C1;Cut
+X
+T
+t¼1
+		P1;GðtÞ  P1;PreðtÞ
+		
+C*
+G ¼
+X
+T
+t¼1
+C*
+1;GðtÞP1;GðtÞ
+(36)
+and the same constraints of problem M1.
+Note that the overall cost for the power deviation depends on
+the coefﬁcient C1,Cut multiplied by the absolute value of the dif-
+ference between power P1,G(t) and the desired power P1,Pre(t),
+which can be simpliﬁed by Ref. [48]. The variable CG* denotes the
+new power purchase cost.
+4. Solution methodology
+Both M1 and M2 formulated in Section 3.3 are intractable MINLP
+problems due to the plenty of nonlinear functions involved. In this
+section, the original problem will be reformulated into a MISOCP
+problem with the techniques of SOCP relaxation and piecewise
+linearization.
+4.1. SOCP relaxation for PDS operation constraints
+In this work, the nonlinear PDS functions are addressed through
+the SOCP relaxation in Ref. [49]. The tightness and exactness of the
+SOCP relaxation have been proved in Ref. [50].
+Two auxiliary variables, lij(t) and ui(t) are deﬁned to substitute
+the nonlinear terms.
+lijðtÞ ¼
+P2
+ijðtÞ þ Q2
+ij ðtÞ
+v2
+i ðtÞ
+(37)
+uiðtÞ ¼ v2
+i ðtÞ
+(38)
+Then the PDS constraints in (16)-(18) are rewritten as:
+PijðtÞ ¼
+X
+k:j/k
+PjkðtÞ þ rijlij þ Pj;LðtÞ
+(39)
+QijðtÞ ¼
+X
+k:j/k
+QjkðtÞ þ xijlij þ Qj;LðtÞ
+(40)
+uiðtÞ  ujðtÞ ¼ 2rijPijðtÞ þ xijQijðtÞ 
+
+r2
+ij þ x2
+ij
+
+lij
+(41)
+M. Sun, X. Zhao, H. Tan et al.
+Energy 238 (2022) 122034
+8
+
+lijðtÞ 
+P2
+ijðtÞ þ Q2
+ij ðtÞ
+uiðtÞ
+(42)
+Obviously, (42) can be rearranged to a second-order cone
+constraint.
+4.2. Linearization of WDS operation constraints
+The piecewise linearization technique is applied to approximate
+the nonlinear functions (26), (27) and (32). The case studies in
+Ref. [27] indicate that the technique provides acceptable solution
+accuracy at a reasonable computational time.
+4.2.1. Linearization of the head loss function
+For (26), the range of qmn,P(t) is ﬁrstly divided into S-1 intervals
+by S breakpoints, as shown in Fig. A1(a) in Appendix A. Then S
+continuous variables lmn,s(t) (lmn,s(t)2[0,1], s ¼ 1, 2, …, S) are
+introduced and related to corresponding breakpoints of qmn,P(t),
+and S-1 binary variables amn,s(t) (s ¼ 1, 2, 3, …, S-1) are related to
+corresponding intervals divided by the breakpoint.
+Therefore, the variable qmn,P(t) and equation (26) can be
+rewritten as (43) and (44), respectively [27].
+qmn;PðtÞ ¼
+X
+S
+s¼1
+h
+lmn;sðtÞqmn;P;s
+i
+(43)
+DbHmn;PðtÞ ¼
+X
+S
+s¼1
+n
+lmn;sðtÞDHmn;P
+h
+qmn;P;s
+io
+(44)
+X
+S1
+s¼1
+amn;sðtÞ ¼ 1
+(45)
+X
+S
+s¼1
+lmn;sðtÞ ¼ 1
+(46)
+lmn;1ðtÞ  amn;1ðtÞ
+(47)
+lmn;sðtÞ  amn;s1ðtÞ þ amn;sðtÞ s ¼ 2; 3; …; S  1
+(48)
+lmn;SðtÞ  amn;S1ðtÞ
+(49)
+4.2.2. Linearization of the water pump constraints
+For the bivariate functions (27) and (32), as shown in Fig. A1(b)
+in Appendix A, the range of qmn,U(t) and umn,U(t) are divided into X-
+1 and Y-1 intervals by X and Y breakpoints, respectively. The four
+coordinated points are the vertices of the rectangle which is
+divided into an upper triangle and a lower one. Continuous vari-
+ables lmn,x,y(t) (lmn,x,y(t)2[0,1], x ¼ 1, 2, …, X, y ¼ 1, 2, …, Y), and
+binary variables aup,mn,x,y(t) and ado,mn,x,y(t) are introduced. Each
+continuous variable is associated with a corresponding vertex, and
+each binary variable is associated with a triangle, as shown in
+Fig. A1(b).
+Therefore, qmn,U(t) and umn,U(t) are rewritten as (50) and (51),
+and the approximation of (27) and (32) are shown in (52) and (53),
+respectively [27].
+qmn;UðtÞ ¼
+X
+X
+x¼1
+X
+Y
+y¼1
+h
+lmn;x;yðtÞqmn;U;x
+i
+(50)
+umn;UðtÞ ¼
+X
+X
+x¼1
+X
+Y
+y¼1
+lmn;x;yðtÞumn;U;y
+
+(51)
+DbHmn;UðtÞ ¼
+X
+X
+x¼1
+X
+Y
+y¼1
+n
+lmn;x;yðtÞDHmn;U
+h
+qmn;U;x; umn;U;y
+io
+(52)
+bPmn;UðtÞ ¼
+X
+X
+x¼1
+X
+Y
+y¼1
+n
+lmn;x;yðtÞPmn;U
+h
+qmn;U;x; umn;U;y
+io
+(53)
+X
+X1
+x¼1
+X
+Y1
+y¼1
+h
+aup; mn;x;yðtÞ þ ado; mn;x;yðtÞ
+i
+¼ 1
+(54)
+X
+X
+x¼1
+X
+Y
+y¼1
+lmn;x;yðtÞ ¼ 1
+(55)
+lmn;x;yðtÞ  aup; mn;x;y1ðtÞ þ aup; mn;xþ1;yðtÞ þ aup; mn;x;yðtÞ
+þ ado; mn;x1;yðtÞ þ ado; mn;x;yþ1ðtÞ þ ado; mn;x;yðtÞ
+(56)
+4.3. Reformulated model
+With the SOCP relaxation and linearization above, the original
+problem M1 and M2 are reformulated as M1* and M2*, with the
+objectives deﬁned by
+(
+M1*: min CG þ CCur þ CDeg þ CBat;BS þ CTa;BS þ CS
+M2*: min CCut þ C*
+G þ CCur þ CDeg þ CBat;BS þ CTa;BS þ CS
+(57)
+and the same constraints:
+s:t
+8
+>
+>
+<
+>
+>
+:
+5GBS constraints:ð1Þð15Þ
+PDSconstraints:ð19Þð24Þ; ð37Þð42Þ
+WDSconstraints:ð25Þ; ð28Þð31Þ; ð43Þð52Þ; ð54Þð56Þ
+Couplingconstraints:ð53Þ; ð33Þ
+To provide a quick reference, the decision variables, objectives,
+and constraints of the optimal models proposed are summarized in
+Fig. 5.
+5. Case studies
+5.1. Test system description and data sources
+The proposed model is applied to two test IEWDSs. System 1 is
+composed of the IEEE-33 PDS [44] and an 8-node WDS [46], and
+System 2 is a larger test system composed of the IEEE-123 PDS [51]
+and a 24-node WDS. Simulations in Section 5.2 and 5.3 are con-
+ducted on System 1 to illustrate the proposed operation modes and
+discuss the effects of the BS battery capacity and compensation of
+the BS battery service, respectively. Simulations in Section 5.4 are
+conducted on System 2 to verify the adaptability of the proposed
+M. Sun, X. Zhao, H. Tan et al.
+Energy 238 (2022) 122034
+9
+
+model to a larger system.
+System 1 is shown in Fig. 6, where Letter E and W denote PDS
+buses and WDS nodes, respectively. The test system is divided into
+six areas denoted by the gray rectangles in Fig. 6. Considering that
+the service coverage radius of a 5G-BS is generally between 100 and
+300 m [10], almost all the PDS buses are assumed to connect to a
+5G-BS. In addition, all the 5G-BSs in the test system are supposed to
+be water-cooled and a BS water tank connected to the WDS is
+installed in each area to supply water to the BSs within the corre-
+sponding area. BSs and BS tanks in each area and their connections
+Fig. 5. Summary of the proposed model.
+Fig. 6. Topology of system 1.
+Table 1
+PDS buses and WDS nodes in each area.
+Area
+PDS Buses
+WDS Nodes
+Buses connected to 5G BS
+Nodes with a BS water tank
+A
+E19~E22
+W5
+E19~E21
+W5
+B
+E26~E33
+W6
+E26~E32
+W6
+C
+E8~E13
+W2
+E8~E13
+W2
+D
+E2~E7
+W3
+E2~E7
+W3
+E
+E23~E25
+W1
+E23, E24
+W1
+F
+E14~E18
+W4
+E14~E17
+W4
+M. Sun, X. Zhao, H. Tan et al.
+Energy 238 (2022) 122034
+10
+
+to the PDS and the WDS are shown in Table 1.
+The total power load [52], the total 5G-BS load [53], the sum of
+the ﬁrst two, and the total water load [54] of the test system during
+a one-day horizon are summarized in Fig. A2(a). The total wind
+power output [52], the total PV output [52], and the total RE output
+of 5G-BSs are shown in Fig. A2(b).
+Table 2 shows the TOU electricity price and the comprehensive
+water price, which are based on the typical price data of cities in
+China. Note that the contract electricity price is equal to the valley
+electricity price and remains unchanged throughout the day.
+However, the active power deviation will be charged according to
+the contract deviation electricity price.
+All the parameters and data for this simulation can be found in
+Ref. [46].
+5.2. Two coordinated operation modes
+The four cases as shown in Table 3 are developed to illustrate the
+two proposed cooperation mechanisms between the TSP and the
+IEWSP.
+5.2.1. Operation-mode 1
+The effectiveness of operation-mode 1 is investigated in this
+subsection by comparing the results of Case 1 and Case 2. In Case 1,
+the IEWSP solves an optimal operation problem to minimize its
+operation cost without considering the TSP's service. It is supposed
+that the BS battery is only used for the emergency power supply of
+the 5G-BS and does not participate in the daily dispatch. The 5G-BS
+mainly obtains power from the PDS and its on-site RE source. In
+Case 2, the IEWDS and the 5G-BSs are operated in a coordinated
+way. The TSP provides the BS battery and the regional BS water tank
+as dispatchable resources to the IEWSP, and the corresponding
+operation costs for the dispatchable resources are compensated by
+the IEWSP with a contracted compensation coefﬁcient.
+The daily operation costs of the IEWSP and the compensations
+to the TSP in Cases 1 and 2 are shown in Table 4. It can be observed
+that both the IEWSP and the TSP can beneﬁt from the coordinated
+operation. Compared with Case 1, the IEWSP's operation cost is
+reduced by $103.08, and the TSP receives an additional compen-
+sation of $184.94 in Case 2.
+The tie-line powers in Case 1 and Case 2 over the 24 h are
+depicted in Fig. 7. In Case 2, an obvious increase of tie-line power
+during the valley price period (22:00e8:00), as well as a decrease
+during the peak price period (8:00e22:00), can be observed. This is
+because in Case 2, the battery and water tanks are dispatchable to
+the IEWSP owing to the coordinated operation. The IEWSP in Case 2
+can choose to purchase power from the external grids or to
+compensate the power supply by the TSP, and therefore achieve a
+reduction in the electricity bill.
+Besides, the proposed operation-mode 1 used in Case 2 is also
+helpful to accommodate the surplus RE powers in the 5G-BS. There
+is no other way for the TSP to accommodate its surplus RE powers
+but to store in the BS batteries in Case 1, which results in the RE
+curtailment of 627.7 kW. While in Case 2, the surplus RE powers are
+allowed to transmit to the IEWDS, and it is found that all the RE
+powers are accommodated and there is no RE curtailment in both
+the IEWDS and the 5G-BSs.
+To analyze the role of the BS battery and the regional BS water
+tank throughout the day, more results are shown in Figs. 8e10. The
+total charging/discharging power for all the BS batteries in Case 2 is
+shown in Fig. 8, where a minus power indicating discharging. The
+pump power in Case 1 and Case 2, as well as the total inﬂow/
+outﬂow rate for all the BS water tanks in Case 2, are shown in Figs. 9
+and 10, respectively.
+As shown in Fig. 8, the BS batteries are in discharging states
+during the peak price period (8:00e22:00) and in charging states
+during the valley price period (22:00e8:00). That is, the BS batte-
+ries act as power sources to the IEWDS during 8:00e22:00 to
+reduce the power purchased by the IEWSP from the external grid
+with a high cost. For example, at time-period 19 when the power
+load of the IEWDS is high (see Fig. A2(a)), it is found that the dis-
+charging power of the BS batteries reaches the peak value of
+0.45 MW, accounts for 12.82% of the tie-line power at the same
+time. While after the time-period 22, the BS batteries begin to be
+charged with low-cost electricity and guarantee that their energy
+stored at the end of the day is not less than the initial value.
+Meanwhile, compared with Case 1, the variable-speed pump of
+the IEWDS in Case 2 can make a better speed-adjustment strategy
+to reduce power consumption owing to the additional water stor-
+age capacity provided by the BS tanks. For example, during the
+time-period 2e3 and 22e24 (the valley price period), the pump
+power in Case 2 increases (see Fig. 9), and the inﬂow rate of the BS
+tanks increases accordingly (see Fig. 10), which indicates that the
+pump in Case 2 pressurizes the WDS and charges the BS tanks with
+the valley-priced electricity. On the contrary, during the time-
+period 8 and 18e21, although the electricity is at a high price, the
+pump in Case 1 has to consume much electricity to satisfy the high
+water demand (see Fig. A2(a)); while in Case 2, since some water
+load is fed by releasing the water storage from the BS tanks (see
+Fig. 10), a reduction of pump power, and accordingly of electricity
+bill, is achieved. Note that the large change in the BS tank outﬂow
+rate at time-period 19 is due to the increase in pump power to cope
+with the increased water load at the period, so water ﬂows into the
+tank.
+Table 2
+Electricity and water prices.
+Energy price
+22:00e8:00
+8:00e22:00
+TOU electricity price ($/kWh)
+0.0374
+0.1195
+Contract electricity price ($/kWh)
+0.0374
+Contract deviation electricity price ($/kWh)
+0.0821
+Comprehensive water price ($/m3)
+0.8269
+Table 3
+The four cases developed.
+Case
+Interaction between TSP
+and IEWSP considered
+Interaction between IEWSP and
+the upper-level grid considered
+Description
+Case 1
+No
+No
+The IEWSP operates its PDS and WDS separately without
+coordinating with the TSP or the upper-level grid.
+Case 2
+Yes
+No
+The IEWSP operates under operation-mode 1, i.e., the IEWSP
+operates its PDS and WDS considering only the coordination with the TSP.
+Case 3
+No
+Yes
+Only the coordination between the IEWSP and the upper-level grid is considered.
+Case 4
+Yes
+Yes
+The IEWSP operates under operation-mode 2, i.e., dual coordinated operations
+among the IEWSP, the TSP, and the upper-level grid are considered.
+M. Sun, X. Zhao, H. Tan et al.
+Energy 238 (2022) 122034
+11
+
+5.2.2. Operation-mode 2
+In this subsection, operation-mode 2, where the coordination
+mechanism between the IEWSP and the upper-level grid is incor-
+porated, is studied with Case 3 and Case 4.
+The operation costs of the IEWSP and the compensations to the
+TSP in Cases 3 and 4 are shown in Table 5. It can be observed that
+both the IEWSP and the TSP can beneﬁt from the coordination of
+operation-mode 2, which is similar to the observation from the
+results of operation-mode 1 (see Table 4). Compared with Case 3,
+the IEWSP's operation cost is reduced by $70.12, and the TSP re-
+ceives additional compensation of $14.90 in Case 4.
+The tie-line powers in Case 3 and Case 4, as well as the desired
+one provided by the upper-level grid, are depicted in Fig. 11. It is
+shown that the tie-line power in Case 4 follows the desired curve
+Table 4
+Operation costs and the compensation in Case 1 and Case 2 (operation-mode 1).
+Case
+IEWSP's operation cost ($)
+TSP's compensation ($)
+Case 1
+16928.93
+0
+Case 2 (operation-mode 1)
+16825.85
+184.94
+Increment
+103.08
+184.94
+Fig. 7. The tie-line (E1-E2) power in Case 1 and Case 2.
+Fig. 8. Total charging/discharging powers of all 5G-BS batteries in Case 2.
+Fig. 9. The pump power in Case 1 and Case 2.
+M. Sun, X. Zhao, H. Tan et al.
+Energy 238 (2022) 122034
+12
+
+well while obvious deviations in Case 3 can be observed. For
+example, the power deviation in Case 3 at time-period 2 reaches up
+to 0.22 MW, which accounts for 7.86% of the tie-line power at the
+same period.
+The IEWSP in Case 3 pays $51.64 to the upper-level grid due to
+the power deviation according to the contract. In contrast, with the
+help of the dispatchable resources provided by the TSP, the IEWSP
+in Case 4 can control the tie-line power to follow the desired curve
+as well as possible. Since the compensation paid to the TSP is less
+than the punishment for the power deviation charged by the
+upper-level grid, the IEWSP's operation cost in Case 4 is reduced
+compared with Case 3.
+5.3. Sensitivity analysis
+In this section, two sensitivity studies are conducted based on
+Case 2 to evaluate the effects of the BS battery capacity and
+compensation-coefﬁcient of the BS battery service, respectively, on
+the coordination between the IEWSP and the TSP.
+5.3.1. BS battery capacity
+The simulation in Case 2 is conducted with the 5G-BS battery
+capacities (in a single 5G-BS) being 200 kWh, 400 kWh, 600 kWh,
+Fig. 10. Total inﬂow/outﬂow rates of all 5G-BS tanks in Case 2.
+Table 5
+Operation costs and the compensation in Case 3 and Case 4.
+Case
+IEWSP's operation cost ($)
+TSP's compensation ($)
+Case 3
+13171.35
+0
+Case 4 (operation mode 2)
+13101.23
+14.90
+Increment
+70.12
+14.90
+Fig. 11. The tie-line power (E1-E2) proﬁle in Case 3 and Case 4 (operation-mode 2).
+Table 6
+The operation cost and the compensation with different 5G-BS battery capacities.
+Scene
+Capacity (kWh)
+IEWSP's operation cost
+($)
+TSP's compensation
+($)
+Value
+Increment
+Value
+Increment
+1
+200
+16825.85
+e
+184.94
+e
+2
+400
+16824.92
+0.93
+212.25
+27.31
+3
+600
+16824.26
+1.59
+229.81
+44.87
+4
+800
+16824.25
+1.60
+239.79
+54.85
+M. Sun, X. Zhao, H. Tan et al.
+Energy 238 (2022) 122034
+13
+
+and 800 kWh, which are denoted as Scene 1e4, respectively. The
+resulting operation cost and the compensation are listed in Table 6.
+The following observations can be made from Table 6.
+(1) Compared with Scene 1, the IEWSP's operation cost experi-
+ences a slight drop as the BS battery capacity increases,
+indicating that the increase in the BS battery capacity has
+little effect on reducing the operation cost of the IEWSP. For
+example, as the battery capacity increase to 800 kWh, only a
+reduction of $1.6 in operation cost can be achieved.
+(2) In contrast, the TSP's compensation increases obviously with
+the increase in the BS battery capacity. For example, the TSP's
+compensation in Scene 4 is $54.85 more than that of Scene 1,
+which accounts for 29.66% of the TSP's compensation in
+Scene 1.
+The total charging/discharging power of all 5G-BS batteries with
+different capacities is shown in Fig. 12. It can be found that during
+the time-period 1e7 (the valley price period), the 5G-BS batteries in
+Scene 1e4 are in charging status with a successively increased
+charging power as the capacity increases from 200 kWh to
+800 kWh. In contrast, during the time-period 8e21 (the peak price
+period), the 5G-BS batteries in Scene 1e4 are in discharging status
+with a successively increased discharging power as the capacity
+increases from 200 kWh to 800 kWh. It is interesting to ﬁnd that
+during the time-period 22e24 (the valley price period), as the
+battery capacity increases, the charging power decreases. This is
+because the energy stored in the batteries at the end of the day
+should be no less than their initial value (see (11)).
+Results of Table 6 and Fig.12 demonstrate that the 5G-BS battery
+capacity has a great inﬂuence on the TSP's compensation, but little
+inﬂuence on the IEWSP's operation cost. As the battery capacity
+increases, the TSP can provide more power support to the IEWSP
+and therefore obtain more compensation, while for the IEWSP, the
+battery compensation cost increases (see the objective in (34)),
+resulting in only a slight reduction in the operation cost.
+5.3.2. Compensation-coefﬁcient for the BS battery service
+The simulation in Case 2 is conducted with the compensation-
+coefﬁcient
+for
+the
+BS
+battery
+service
+being
+decreased
+and
+increased by 10% based on that in Scene 1, which are denoted as
+Scene 5 and 6, respectively. The resulting operation cost and the
+compensation are listed in Table 7.
+The following observations can be made from Table 7.
+(1) Compared with Scene 1, the IEWSP's operation cost increases
+slightly with the increase of the compensation-coefﬁcient
+and
+vice
+versa.
+For
+example,
+as
+the
+compensation-
+coefﬁcient increases by 10% and reaches 0.0434 $/kWh, an
+increment of $15.43 in operation cost can be observed; while
+the
+IEWSP's
+operation
+cost
+drops
+by
+$22.32
+as
+the
+compensation-coefﬁcient decreases by 10% and reaches
+0.0355 $/kWh.
+(2) In contrast, the TSP's compensation experiences a drastic
+reduction and a substantial increase with the increase and
+decrease in the compensation-coefﬁcient, respectively. For
+example, the TSP's compensation in Scene 5 is $186.13 more
+than that of Scene 1, which accounts for 100.65% of the TSP's
+compensation in Scene 1. On the contrary, the TSP's
+compensation in Scene 6 is $166.59 less than that of Scene 1,
+which accounts for 90.08% of the TSP's compensation in
+Scene 1. These results indicate that the variation in the
+compensation-coefﬁcient has a greater effect on the beneﬁt
+of the TSP.
+The total charging/discharging power of all the 5G-BS batteries
+with different compensation-coefﬁcients is shown in Fig. 13. It can
+be observed that the IEWSP signiﬁcantly increases the use of the BS
+battery during the time-period 16e21 (the peak price period). In
+this period, the total power load in the PDS reaches the peak of the
+day (see Fig. A2(a)). Due to the reduced compensation-coefﬁcient
+cost of the TSP in Scene 5, the IEWSP prefers to use the 5G-BS
+battery with a moderate compensation rather than using the high-
+Fig. 12. Total charging/discharging powers of all 5G-BS batteries with different capacities.
+M. Sun, X. Zhao, H. Tan et al.
+Energy 238 (2022) 122034
+14
+
+price electricity from the grid. Therefore, the discharging power of
+the 5G-BS batteries climbs up to 1 MW, which is 122.22% higher
+than that of Scene 1 for the same period. After the time-period 22
+(the valley price period), the 5G-BS battery is charged with a
+maximum charging power of 1.98 MW, which is 141.46% higher
+than
+that
+of
+Scene
+1
+in
+this
+period.
+Conversely,
+as
+the
+compensation-coefﬁcient of the TSP increases (Scene 6), the IEWSP
+greatly reduces the use of the 5G-BS battery and the entire
+charging/discharging curve tends to be ﬂat.
+Results of Table 7 and Fig. 13 show that the compensation-
+coefﬁcient of the 5G-BS battery affects both the IEWSP's opera-
+tion cost and the TSP's compensation. With the development of
+battery techniques, the TSP can provide more battery services with
+reduced cost and both the TSP and the IEWSP will make greater
+beneﬁts from the coordination. On the contrary, with the increase
+in battery compensation cost, the coordination beneﬁts for the TSP
+and the IEWSP will reduce. If the compensation cost for the 5G-BS
+battery exceeds some value, the IEWSP will no longer use this
+battery service, which indicates that there is no coordination be-
+tween the TSP and the IESWP.
+5.4. Adaptability to a larger test system
+In this section, Cases 1e4 presented in Section 5.2 are restudied
+with System 2, which is a larger IEWDS composed of the IEEE-123
+PDS and a 24-node WDS.
+The IEWSP's operation costs, the TSP's compensations, and the
+electricity and water purchasing in the four cases of System 2 are
+summarized in Table 8.
+Comparing the results of Case 1 and Case 2 in Table 8 leads to a
+similar conclusion as in Section 5.2.1, and comparing Case 3 and
+Case 4 leads to a similar conclusion as in Section 5.2.2. That is,
+under both operation modes, the coordinated operation (Cases 2
+and 4) will bring beneﬁt to the two sides of the IEWSP and the TSP.
+A comparison of the two operation modes will be made further
+in this section. Comparing the non-coordination cases, i.e. Case 1
+and Case 3, of the two modes, it is found that the IEWSP's operation
+cost in Case 3 is reduced by $4008.86 compared with that in Case 1.
+The reduction accounts for 10.54% of the operation cost in Case 1.
+Comparing the coordinated cases of Cases 2 and 4, it is obtained
+that the IEWSP's operation cost in Case 4 is reduced by $3605.57
+compared with that in Case 2, which accounts for 9.61% of the
+Table 7
+Operation costs and compensations with different compensation-coefﬁcients for battery service.
+Scene
+Coefﬁcient ($/kWh)
+Coefﬁcient increase ratio
+IEWSP's operation cost ($)
+TSP's compensation ($)
+Value
+Increment
+Value
+Increment
+1
+0.0395
+e
+16825.85
+e
+184.94
+e
+5
+0.0355
+10%
+16803.53
+22.32
+371.07
+186.13
+6
+0.0434
+10%
+16841.28
+15.43
+18.35
+166.59
+Fig. 13. Charging/discharging powers of all the 5G-BS batteries with different compensation-coefﬁcients.
+Table 8
+Operation costs, compensations, and costs for electricity and water purchasing of System 2.
+Case
+IEWSP's operation cost ($)
+TSP's compensation ($)
+Electricity purchased (MWh)
+Water purchased (m3)
+1
+38035.85
+0
+87.76
+37043.04
+2
+37523.98
+184.98
+85.38
+37061.11
+3
+34026.99
+0
+87.89
+37043.04
+4
+33918.41
+12.91
+86.54
+37076.01
+M. Sun, X. Zhao, H. Tan et al.
+Energy 238 (2022) 122034
+15
+
+operation cost in Case 2. These results demonstrate that the IEWSP
+can beneﬁt from following the power curve given by the upper-
+level grid.
+It is also shown by Table 8 that to follow the power curve, the
+IEWSP should purchase a little more electricity and water in Cases
+3/4 compared with Case 1/2. For example, the amount of electricity
+purchased in Cases 3 is 0.13 MWh more than that of Cases 1, and the
+water purchased in Case 4 is 14.9 m3 more than that of Case 2.
+However, since the increment in cost for purchasing electricity and
+water in Case 3 and Case 4 is small, the IEWSP's total operation
+costs in Case 3/4 decrease compared with those of Case 1/2.
+As for the TSP, it is shown that the compensation in Case 2 is
+$172.07 more than that of Case 4, indicating that the IEWSP reduces
+the utilization of the service provided by the TSP in Case 4. This is
+because the IEWSP in operation-mode 2 can enjoy the valley
+electricity price throughout the day according to the contact.
+Therefore, the IEWSP can make an optimal decision to minimize its
+own operation cost by choosing to follow the desired power of the
+upper-level grid with a reward of the valley electricity price or to
+use the service of battery and water tank provided by the TSP with
+the deviation penalty cost. In this simulation, the valley electricity
+price is set to be much lower than the compensation of the 5G-BS
+battery service, and the penalty for power deviation is high.
+Therefore, the IEWSP prefers to follow the power curve strictly,
+which may reduce the compensation for the TSP.
+6. Conclusion
+This paper highlights the interaction between the 5G-BSs and
+the IEWDS and investigates the possible win-win cooperation
+mechanism between the TSP and IEWSP.
+An optimal model for the coordinated operation with detailed
+operation constraints of the 5G-BS and the IEWDS is proposed and
+two modes for the operation of the IEWDS coordinating with the
+TSP and the upper-level grid are further developed. The proposed
+model is reformulated into a tractable MISOCP problem with the
+techniques of SOCP relaxation and piecewise linearization.
+Case studies are carried out with two test IEWDSs. Four cases
+under the two operation modes are simulated and compared, as
+well as sensitivity and adaptability studies are conducted. Simula-
+tion results demonstrated the effectiveness of the proposed
+optimal model and its solution method, and more importantly,
+recognized the mutual beneﬁts for both the TSP and the IEWSP
+from the coordinated operation between the IEWDS and 5G-BSs.
+Credit author statement
+Mingyi
+Sun:
+Conceptualization,
+Methodology,
+Software,
+Writing original draft, Investigation, Validation. Data curation. Xia
+Zhao: Methodology, Supervision, Writing Reviewing and Editing,
+Visualization. Hong Tan: Writing Reviewing and Editing. Xinyi Li:
+Writing Reviewing and Editing.
+Declaration of competing interest
+The authors declare that they have no known competing
+ﬁnancial interests or personal relationships that could have
+appeared to inﬂuence the work reported in this paper.
+Appendix A
+Fig. A1. Piecewise linearization of the hydraulic head loss function and the water pump functions
+M. Sun, X. Zhao, H. Tan et al.
+Energy 238 (2022) 122034
+16
+
+References
+[1] Maupin MA, Kenny JF, Hutson SS, et al. Estimated use of water in the United
+States in 2010. U.S. Department of the Interior; 2014.
+[2] The United Nations world water development report 2019-leaving no one
+behind. UNESCO World Water Assessment Programme (WWAP); 2019.
+[3] Hamiche AM, Stambouli AB, Flazi S. A review of the water-energy nexus.
+Renew
+Sustain
+Energy
+Rev
+2016;65:319e31.
+https://doi.org/10.1016/
+j.rser.2016.07.020.
+[4] Vilanova MN, Balestieri JP. Exploring the water-energy nexus in Brazil: the
+electricity use forwater supply. Energy 2015;85:415e32. https://doi.org/
+10.1016/j.energy.2015.03.083.
+[5] Xiang X, Jia S. China's water-energy nexus: assessment of water-related en-
+ergy use. Resour Conserv Recycl 2019;144:32e8. https://doi.org/10.1016/
+j.resconrec.2019.01.009.
+[6] Kzltan M. Water-energy nexus of Turkey's municipalities: evidence from
+spatial panel data analysis. Energy 2021;226:120347. https://doi.org/10.1016/
+j.energy.2021.120347.
+[7] Mancarella P. MES (multi-energy systems): an overview of concepts and
+evaluation
+models.
+Energy
+2014;65:1e17.
+https://doi.org/10.1016/
+j.energy.2013.10.041.
+[8] Agiwal M, Roy A, Saxena N. Next generation 5G wireless networks: a
+comprehensive survey. IEEE Communications Surveys & Tutorials 2016;18:
+1617e55. https://doi.org/10.1109/COMST.2016.2532458.
+[9] Palattella MR, Dohler M, Grieco A, Rizzo G, Torsner J, Engel T, et al. Internet of
+Things in the 5G era: enablers, architecture, and business models. IEEE J Sel
+Area Commun 2016;34:510e27. https://doi.org/10.1109/JSAC.2016.2525418.
+[10] Wang Q, Zhao X, Lv Z, Ma X, Zhang R, Lin Y. Optimizing the ultra-dense 5G
+base stations in urban outdoor areas: coupling GIS and heuristic optimization.
+Sustain Cities Soc 2020;63:102445. https://doi.org/10.1016/j.scs.2020.102445.
+[11] Auer G, Giannini V, Desset C, Godor I, Skillermark P, Olsson M, et al. How
+much energy is needed to run a wireless network? IEEE Wirel Commun
+2011;18:40e9. https://doi.org/10.1109/MWC.2011.6056691.
+[12] Hui H, Ding Y, Shi Q, Li F, Song Y, Yan J. 5G network-based Internet of Things
+for demand response in smart grid: a survey on application potential. Appl
+Energy 2020;257:113972. https://doi.org/10.1016/j.apenergy.2019.113972.
+[13] Israr A, Yang Q, Li W, Zomaya AY. Renewable energy powered sustainable 5G
+network infrastructure: opportunities, challenges and perspectives. J Netw
+Comput Appl 2021;175. https://doi.org/10.1016/j.jnca.2020.102910.
+[14] The balance between 5G proﬁt and power. Available at: https://www.
+datacenterdynamics.com/en/analysis/balance-between-5g-proﬁt-and-power/
+.
+[15] Dahal MS, Shrestha JN, Shakya SR. Energy saving technique and measurement
+in green wireless communication. Energy 2018;159:21e31. https://doi.org/
+10.1016/j.energy.2018.06.066.
+[16] Li YR, Chen M, Xu J, Tian L, Huang K. Power saving techniques for 5G and
+beyond.
+IEEE
+Access
+2020;8:108675e90.
+https://doi.org/10.1109/
+ACCESS.2020.3001180.
+[17] H S. Green power for mobile Bi-annual report. GSMA; 2014.
+[18] Hu S, Chen X, Ni W, Wang X, Hossain E. Modeling and analysis of energy
+harvesting and smart grid-powered wireless communication networks: a
+Fig. A2. Load demand and RE power output curves
+Tabel A1
+Bounds on the decision variables
+Decision variables
+Upper limit
+Lower limit
+Units
+Pi,Ch,BS(t)
+0.1
+0
+MW
+Pi,Dis,BS(t)
+0.1
+0
+MW
+mi,Bat,BS ((t)
+1
+0
+0-1 variable
+qm,In,BS(t)
+0.2
+0
+m3/s
+qm,Out,BS(t)
+0.2
+0
+m3/s
+mm,Ta,BS(t)
+1
+0
+0-1 variable
+Pi,RESCur,BS(t)
+Pi,RES,BS(t)
+0
+MW
+Pi,G(t) (IEEE-33)
+10
+0
+MW
+Pi,G(t) (IEEE-123)
+200
+0
+MW
+Qi,G(t) (IEEE-33)
+10
+10
+MW
+Qi,G(t) (IEEE-123)
+200
+200
+MW
+qm,S(t) (8-node)
+e
+0
+m3/s
+qm,S(t) (24-node)
+e
+0
+m3/s
+umn,U(t)
+1
+0
+p.u.
+Pi,PVCur(t)
+Pi,PV(t)
+0
+MW
+Pi,WGCur(t)
+Pi,WG(t)
+0
+MW
+M. Sun, X. Zhao, H. Tan et al.
+Energy 238 (2022) 122034
+17
+
+contemporary survey. IEEE Trans Green Commun Netw 2020;4:461e96.
+https://doi.org/10.1109/TGCN.2020.2988270.
+[19] Nortershauser D, Le Masson S, Volkov T, Galkin T, Amper O, Huttunen J.
+Experimental liquid cooled base station. In: IEEE international telecommu-
+nications energy conference (INTELEC); 2016. p. 1e7. https://doi.org/10.1109/
+INTLEC.2016.7749130.
+[20] Sun R. A novel concept methodology of in-direct cold plate liquid cooling
+design for data center in CPU socket area. In: 19th IEEE intersociety confer-
+ence on thermal and thermomechanical phenomena in electronic systems
+(ITherm); 2020. https://doi.org/10.1109/INTLEC.2016.7749130.
+[21] Nokia selected as nationwide supplier of 5G RAN by Elisa Finland. Available
+at:
+https://www.nokia.com/about-us/news/releases/2020/09/30/nokia-
+selected-as-nationwide-supplier-of-5g-ran-by-elisa-ﬁnland/.
+[22] Khosravi A, Laukkanen T, Vuorinen V, et al. Waste heat recovery from a data
+centre and 5G smart poles for low-temperature district heating network.
+Energy 2020;218:119468. https://doi.org/10.1016/j.energy.2020.119468.
+[23] Rose I. Analysis of a water tank energy storage system for use in a warm water
+cooled data center. In: 15th IEEE intersociety conference on thermal and
+thermomechanical phenomena in electronic systems (ITherm); 2016. https://
+doi.org/10.1109/ITHERM.2016.7517694.
+[24] Zamzam AS, Dall'Anese E, Zhao C, Taylor JA, Sidiropoulos ND. Optimal
+waterepower ﬂow-problem: formulation and distributed optimal solution.
+IEEE Transactions on Control of Network Systems 2019;6:37e47. https://
+doi.org/10.1109/TCNS.2018.2792699.
+[25] Song SH, Mu YF, Meng XJ, Jia HJ, Xu J, Yuan K. Joint economical dispatch
+method of power distribution network and water distribution system for
+distributed generator accommodation. Autom Electr Power Syst 2019;43:
+95e115. https://doi.org/10.7500/AEPS20180922001.
+[26] Zuloaga S, Khatavkar P, Vittal V, Mays LW. Interdependent electric and water
+infrastructure modeling, optimization and control. IET Energy Systems Inte-
+gration 2019. https://doi.org/10.1049/iet-esi.2019.0039.
+[27] Oikonomou K, Parvania M. Optimal coordination of water distribution energy
+ﬂexibility with power systems operation. IEEE Trans Smart Grid 2019;10:
+1101e10. https://doi.org/10.1109/TSG.2018.2824308.
+[28] Oikonomou K, Parvania M. Optimal coordinated operation of interdependent
+power and water distribution systems. IEEE Trans Smart Grid 2020;11:
+4784e94. https://doi.org/10.1109/TSG.2020.3000173.
+[29] Sui Q, Wei F, Zhang R, Lin X, Tong N, Wang Z, et al. Optimal use of electric
+energy oriented water-electricity combined supply system for the building-
+integrated-photovoltaics
+community.
+Appl
+Energy
+2019;247:549e58.
+https://doi.org/10.1016/j.apenergy.2019.04.059.
+[30] Moazeni F, Khazaei J. Dynamic economic dispatch of islanded water-energy
+microgrids with smart building thermal energy management system. Appl
+Energy 2020;276:115422. https://doi.org/10.1016/j.apenergy.2020.115422.
+[31] Roustaei M, Niknam T, Salari S, Chabok H, Sheikh M, Kavousi-Fard A, Aghaei J.
+A scenario-based approach for the design of smart energy and water hub.
+Energy 2020;195:116931. https://doi.org/10.1016/j.energy.2020.116931.
+[32] Li C, Yao Y, Xie K, Hu B, Niu T. Integrated electrical, heating, and water dis-
+tribution system to accommodate wind power. IEEE Trans Sustain Energy
+2020;12:1. https://doi.org/10.1109/TSTE.2020.3034134.
+[33] Zhao P, Gu C, Cao Z, Ai Q, Xiang Y, Ding T, et al. Water-energy nexus man-
+agement for power systems. IEEE Trans Power Syst 2020:1. https://doi.org/
+10.1109/TPWRS.2020.3038076 (early access).
+[34] Huang X, Han T, Ansari N. Smart grid enabled mobile networks: jointly
+optimizing BS operation and power distribution. IEEE Trans Netw 2017;25:
+1832e45. https://doi.org/10.1109/TNET.2017.2655462.
+[35] Labidi W, Chahed T, Elayoubi S. Optimal battery management strategies in
+mobile networks powered by a smart grid. IEEE Trans Green Commu Netw
+2018;2:859e67. https://doi.org/10.1109/TGCN.2018.2806299.
+[36] Liu X, Ansari N. Proﬁt-driven user association and smart grid energy transfer
+in green cellular networks. IEEE Trans Veh Technol 2019;68:10111e20.
+https://doi.org/10.1109/TVT.2019.2934416.
+[37] Renga D, Al Haj Hassan H, Meo M, Nuaymi L. Energy management and base
+station on/off switching in green mobile networks for offering ancillary ser-
+vices. IEEE Trans Green Commu Netw 2018;2:868e80. https://doi.org/
+10.1109/TGCN.2018.2821097.
+[38] Al Haj Hassan H, Renga D, Meo M, Nuaymi L. A novel energy model for
+renewable energy-enabled cellular networks providing ancillary services to
+the smart grid. IEEE Trans Green Commu Netw 2019;3:381e96. https://
+doi.org/10.1109/TGCN.2019.2893203.
+[39] Malik MU, Ali M, Tao J. The impact of Internet of Things supported by
+emerging 5G in power systems: a review. Journal of Power and Energy Sys-
+tems 2019. https://doi.org/10.17775/CSEEJPES.2019.01850.
+[40] Frenger P, Tano R. More capacity and less power: how 5G NR can reduce
+network energy consumption. In: 2019 IEEE 89th vehicular Technology con-
+ference.
+VTC2019-Spring);
+2019.
+https://doi.org/10.1109/
+VTCSpring.2019.8746600.
+[41] Dahal MS, Shrestha JN, Shakya SR. Energy saving technique and measurement
+in green wireless communication. Energy 2018;159:21e31. https://doi.org/
+10.1016/j.energy.2018.06.066.
+[42] Han D, Zheng B, Chen Z. Sleep mechanism of base station based on minimum
+energy cost. Wireless Commun Mobile Comput 2018;2018:1e13. https://
+doi.org/10.1155/2018/4202748.
+[43] Wang LY, Chen QX, He GN, Zhong GB, Kang CQ. Optimization of generation
+scheduling considering battery energy storage life model. Autom Electr Power
+Syst 2019;43:93e101. https://doi.org/10.7500/AEPS20180329002.
+[44] Baran ME, Wu FF. Network reconﬁguration in distribution systems for loss
+reduction and load balancing. IEEE Trans Power Deliv 1989;2:1401e7. https://
+doi.org/10.1109/61.25627.
+[45] Walski TM, Chase DV, Savic DA, Grayman W, Beck S, Koelle E. Advanced water
+distribution modeling and management. 2003.
+[46] IEWS Data. Available at: https://www.researchgate.net/project/Coordinated-
+operation-of-the-integrated-electricity-water-system-and-5G-base-stations/
+update/6064acb1220bc500014d2169.
+[47] Amaral Lopes R, Grønborg Junker R, Martins J, Murta-Pina J, Reynders G,
+Madsen H. Characterisation and use of energy ﬂexibility in water pumping
+and storage systems. Appl Energy 2020;277:115587. https://doi.org/10.1016/
+j.apenergy.2020.115587.
+[48] Bertismas D, Ttsitskikilis J. Introduction to linear optimization. Athena Sci-
+entiﬁc 1998. https://doi.org/10.1038/258429a0.
+[49] Farivar M, Clarke CR, Low SH, Chandy KM. Inverter VAR control for distribu-
+tion systems with renewables. In: IEEE international conference on smart grid
+communications;
+2011.
+https://doi.org/10.1109/
+SmartGridComm.2011.6102366.
+[50] Gan L, Li N, Topcu U, Low SH. Exact convex relaxation of optimal power ﬂow
+in radial networks. IEEE Trans Automat Contr 2015;60:72e87. https://doi.org/
+10.1109/TAC.2014.2332712.
+[51] Lucien B, Andreas V, Spyros C. Second-order cone relaxations of the optimal
+power ﬂow for active distribution grids: comparison of methods. Int J Elec
+Power 2021;127:106625. https://doi.org/10.1016/j.ijepes.2020.106625.
+[52] PJM data miner. Available at: https://www.pjm.com/markets-and-operations/
+ops-analysis.aspx.
+[53] Marsan MA, Chiaraviglio L, Ciullo D, Meo M. Optimal energy savings in cellular
+access networks. In: 2009 IEEE international conference on communications
+workshops; 2009. https://doi.org/10.1109/ICCW.2009.5208045.
+[54] House LW. Water supply related electricity demand in California. Demand
+Response Research Center; 2006.
+M. Sun, X. Zhao, H. Tan et al.
+Energy 238 (2022) 122034
+18

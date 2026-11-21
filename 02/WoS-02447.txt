@@ -1,0 +1,1866 @@
+Applied Energy 347 (2023) 121455
+Available online 21 June 2023
+0306-2619/© 2023 Elsevier Ltd. All rights reserved.
+Contents lists available at ScienceDirect
+Applied Energy
+journal homepage: www.elsevier.com/locate/apenergy
+Predictive control of interlinked water-energy microgrids
+Saskia A. Putri a, Faegheh Moazeni a,∗, Javad Khazaei b
+a Civil & Environmental Engineering Department, Lehigh University, 1 West Packer Ave, Bethlehem, PA 18015, USA
+b Electrical & Computer Engineering Department, Lehigh University, 19 Memorial Drive West Bethlehem, PA 18015, USA
+A R T I C L E
+I N F O
+Keywords:
+Water-energy microgrid
+Multiple input-multiple output
+Model predictive control
+Smart water distribution system
+Microgrid system
+Energy conservation
+A B S T R A C T
+Although water and energy systems are interdependent, they are still designed individually due to their
+complexity. This paper proposes a multiple input multiple output (MIMO) model predictive control (MPC) for
+demand management of an integrated water distribution system (WDS) supplied by an islanded microgrid (MG)
+system, offering an additional opportunity for energy-saving at the WDS. This strategy benefits the island and
+remote communities, which have limited access to the centralized electric grid. The existing literature either
+used an open-loop approach for energy management of water-energy microgrids or ignored the interconnected
+nature and MIMO nature of these systems. Compared to that, the proposed closed-loop energy management
+system is developed to address the detailed dynamics of assets, the inherent interconnections between water
+and energy networks, and to provide resilience as well as energy saving and demand management capabilities.
+The integrated MPC algorithm is designed in discrete time, utilizing a state-space model and sequential
+quadratic programming (SQP) as the solution method. Considering the intensive use of electricity by the
+pumps in WDS, their energy consumption is accommodated by an islanded microgrid system that incorporates
+a diesel generator, renewable energy sources (wind and solar), and a battery bank that serves as an energy
+source and a storage device. The proposed approach is investigated using base water demand from a real-world
+community, Telford, in Pennsylvania. Several case studies, such as variations in renewable energy contributions
+and increments of the control actions, are carried out to demonstrate the feasibility and reliability of the
+integrated MPC to provide efficient water and energy demand management concurrently.
+1. Introduction
+In view of its significant impact on the day-to-day functioning of
+society and the economy, the water system is described to be one
+of the critical infrastructure systems that need to be well understood
+and controlled to enhance its resiliency. The water system is also
+closely linked to the energy sector, as it contributes to high energy
+intensity. A significant portion of the operating costs for water systems
+is accounted for energy consumption, estimated at 40% [1], with water
+distribution system (WDS) contributing the most [2] due to pumps’
+electrical usage [3]. Therefore, water and energy systems will need to
+be coordinated effectively and efficiently. By leveraging the interdepen-
+dencies of the water-energy systems, an optimal control strategy can be
+designed that will result in better water-energy demand management
+and a reduction of energy consumption and operating costs. Microgrid
+(MG) is a local energy solution that can be utilized to manage the
+water demand and energy distribution in local and island communities,
+which can result in lower carbon emission and operational costs, and
+enhanced energy management [4,5]. The components of an MG system
+∗Corresponding author.
+E-mail addresses: sap322@lehigh.edu (S.A. Putri), moazeni@lehigh.edu (F. Moazeni), khazaei@lehigh.edu (J. Khazaei).
+typically consist of energy storage units, controllable distributed gener-
+ation units, renewable energy sources (RESs), and smart loads (which is
+the WDS in this paper) [6]. Thus, it is crucial to coordinate the control
+of the WDS and MG systems so that both systems are well managed
+while guaranteeing the demand sustainably.
+1.1. Literature review on co-optimization of water-energy microgrid
+In order for water-energy microgrid to effectively deliver services
+under operational constraints, a multi-variable and advanced control
+approach is required. Several studies have investigated the optimization
+of water-energy microgrid concurrently due to their attractive contribu-
+tion to energy conservation [7], flexibility in energy management [3,8],
+and optimal water pump scheduling that would allow for the water
+conservation [9]. The co-optimization of water-energy microgrid is
+conducted by minimizing the overall cost of the power generators
+subject to the operational constraints of the integrated water-energy
+microgrid system. Microgrid and water systems are interconnected by
+the algebraic equation of water pumps’ energy consumption, which
+https://doi.org/10.1016/j.apenergy.2023.121455
+Received 17 January 2023; Received in revised form 23 May 2023; Accepted 11 June 2023
+
+Applied Energy 347 (2023) 121455
+2
+S.A. Putri et al.
+Nomenclature
+𝛼𝐷𝑆, 𝛽𝐷𝑆, 𝛾𝐷𝑆
+Cost function coefficients of the diesel
+generation unit 𝑖
+𝛥ℎ𝑊𝑃,𝑚
+Head gain of pump 𝑚in meters
+𝛥𝑡
+Discretization step control sampling time =
+1 h (i.e, 3600 s)
+𝜂
+Efficiency of pump
+𝛾
+Specific weight of water in N∕m3
+ℎ
+Maximum stored water in the storage tanks
+in meters
+𝑝𝐷𝑆
+Maximum diesel generator output power in
+kW
+𝑝𝑊𝑖𝑛𝑑
+Maximum wind turbine output power in
+kW
+𝑝𝑐
+Maximum battery charging power in kW
+𝑝𝑑
+Maximum battery discharging power in kW
+𝑝𝑃𝑉
+Maximum PV output power in kW
+𝑞𝑣
+Maximum flow rate of the valve in m3∕s
+𝑞𝑊𝑃
+Maximum flow rates of the 𝑚th pump in
+m3∕s
+𝑆𝑂𝐶
+Maximum state of charge of the battery in
+%
+ℎ
+Minimum stored water in the storage tanks
+in meters
+𝑝𝐷𝑆
+Minimum diesel generator output power in
+kW
+𝑝𝑃𝑉
+Minimum PV output power in kW
+𝑝𝑊𝑖𝑛𝑑
+Minimum wind turbine output power in
+kW
+𝑞𝑣
+Minimum flow rate of the valve in m3∕s
+𝑞𝑊𝑃
+Minimum flow rates of the 𝑚th pump in
+m3∕s
+𝑆𝑂𝐶
+Minimum state of charge of the battery in
+%
+𝑎𝑊𝑃, 𝑏𝑊𝑃, 𝑐𝑊𝑃
+Pump’s characteristics constants
+𝑑𝑝
+Pipe diameter in meters
+𝑓𝐵
+Operating cost of BESS unit in $
+𝑓𝐷𝑆
+Operating cost of the diesel generator in $
+𝑔𝑎𝑐(𝑘)
+Solar irradiance at time instant 𝑘in kW∕m2
+𝑔𝑆𝑇𝐶
+Solar irradiance at standard temperature in
+W∕m2
+ℎ𝑓
+Water level in tank 𝑓
+𝑘
+Discrete-time instant
+𝑘𝐵
+Cost coefficient of the BESS unit
+𝑘𝑐
+Temperature coefficient of PV panel
+𝑛𝑊𝑃
+Speed of the pump in rpm
+𝑝𝐵
+BESS unit output power in kW
+𝑝𝐷𝑆
+Diesel generation unit output power in kW
+𝑝𝐿𝑜𝑎𝑑
+Power request from water pumps in kW
+𝑝𝑃𝑉
+PV unit output power in kW
+𝑝𝑆𝑇𝐶
+PV output power in standard temperature
+𝑃𝑊𝑖𝑛𝑑
+Wind generation unit output power in kW
+𝑝𝑊𝑃,𝑚
+Power of pump 𝑚in kW
+𝑞𝑓,𝑗
+Outflow of 𝑗th element from tank 𝑓in m3∕s
+𝑞𝑖,𝑓
+Inflow of 𝑖th element to tank 𝑓in m3∕s
+𝑞𝑖,𝑙
+Inflow of 𝑖th element to node 𝑙in m3∕s
+𝑞𝑙,𝑗
+Outflow of 𝑗th element from node 𝑙in m3∕s
+𝑞𝑇1, 𝑞𝑇2
+Volumetric rate of water in tanks 1 and 2
+m3∕s
+𝑞𝑣
+Flow rates of the valve in m3∕s
+𝑞𝑊𝑃,𝑚
+Flow rates of the 𝑚th pump in m3∕s
+𝑞𝑑1, 𝑞𝑑2
+Water demand’s flow rates from storage
+tanks 1 and 2 in m3∕s
+𝑠𝑓
+Constant cross-sectional area of tank 𝑓
+𝑆𝑂𝐶
+State of charge of the battery in kWh
+𝑡𝑇𝑐, 𝑡𝑇𝑖
+Reference and current temperature of solar
+cells in ◦C
+𝑣𝑐
+Cut-in wind speed in m/s
+𝑣𝑘
+Measured wind speed in m/s
+𝑣𝑜
+Cut-out wind speed in m/s
+𝑣𝑟
+Nominal wind speed m/s
+is governed by the pump’s pressure head and flows. Therefore, it is
+imperative to add the interlink to the constraint of the integrated
+water-energy system.
+A number of co-optimization studies have been implemented to
+illustrate the benefits of optimizing both water and energy systems
+simultaneously. In [10], multiple management strategies regarding the
+energy usage and cost of operations in two water utilities were exam-
+ined, using energy and water quality management systems (EWQMSs).
+Another study by [3] developed a mixed integer nonlinear and linear
+programming (MINLP & MILP) to minimize the operation cost of an
+integrated water-energy microgrid by incorporating renewable energy
+sources with piecewise linear functions to approximate nonlinear be-
+havior. The findings demonstrated daily energy savings in both models,
+while the MILP formulation provided fast convergence and CPU time
+close to the MINLP formulation with only a small error percentage.
+In [8], optimal demand management of a micro water-energy network
+was investigated, where control the energy demand of the water system
+improved the grid’s flexibility significantly. Another study by [11]
+proposed a water-energy co-optimization model for a community-scale
+microgrid, featuring both a microgrid energy management (MEM) and
+a microgrid water management (MWM) specifically for a wastewater
+treatment unit. The results indicated that MWM inclusion decreased
+the cost of meeting water demand and the microgrid operating cost.
+A neural-network-based energy management system for a renewable-
+based microgrid was developed by [12] to minimize operational costs
+while guaranteeing water and electricity load supplies. The study uti-
+lized piecewise linear models and binary variables to represent both
+units and used a rolling horizon strategy to alleviate the effect of
+uncertainties in forecasting renewable sources. In [9], three optimiza-
+tion models using MINLP were developed to minimize the electricity
+costs in a micro water-energy system, illustrating that a co-optimization
+model that includes renewable and energy storage system was able to
+minimize daily electricity costs and water pump’s power consumption
+and reduce fossil fuel-based power generation. The results of these
+studies offered insightful approaches to the model formulation of the
+water-energy microgrid. In addition, these studies showed that co-
+optimization provides cost-efficient and energy-saving benefits when
+compared to independent optimization of the two systems. Nonetheless,
+these studies are applied in an ‘‘open-loop’’ control setting. The absence
+of feedback control prevents the system from being adjusted and cor-
+rected, leading to high error margins when dealing with disturbances
+to which water-energy microgrid is highly susceptible [13].
+1.2. Literature review on model predictive control of standalone water and
+microgrid systems
+A high rate of success has been demonstrated for model predictive
+control (MPC) of standalone (i.e., off-grid) water systems and smart
+grids [13,14]. Compared to conventional control that relies on current
+
+Applied Energy 347 (2023) 121455
+3
+S.A. Putri et al.
+state measurement to provide a feedback loop to adjust the control
+action, MPC incorporates the dynamic and static models of the plant
+that is being controlled to predict the system’s future behavior and
+then uses this prediction to generate an optimal control signal [15,16].
+MPC determines a control sequence by solving a finite-time horizon
+of an online model-based optimization at each sampling instant, using
+the plant’s current state as the initial state [13]. MPC follows the
+receding horizon framework by applying only the first value of the
+optimized control and output sequences and disregarding the rest of
+the trajectory [17]. The optimal solution derived from the MPC is a set
+of future controls subject to the objective functions and constraints at
+future time instants [15]. This is also one of the main features of MPC,
+which provides an effective solution to follow several performance
+goals while considering hard constraints to the multiple inputs and
+outputs of the system [13]. Overall, MPC is a powerful control tech-
+nique that offers many advantages over the traditional control approach
+that utilizes pre-computed control laws, particularly in a time-varying
+system, potentially subject to disturbance and where hard constraints
+must be handled.
+Developments of MPC strategy for the management of WDSs have
+been continuously investigated with different approaches such as flow-
+based control [18], a linear approximation of flow and pressure head
+model [19], combined control scheme of linear MPC and constraint-
+satisfaction formulation that avoids nonlinear MPC formulation [20],
+and nonlinear flow-pressure based model in economic MPC [14,21,22].
+For example, A nonlinear economic MPC for WDSs was developed
+in [14] with a two-layer approach to obtain optimal hourly solutions
+of actuators to meet water demand and pressure requirements, while
+the lower layer was used to generate a shorter sampling period for
+pump scheduling. In [21], geometric programming MPC was utilized
+for WDSs management to deal with the non-convexity of MPC when
+considering WDSs models. Another study done by [22], also explored a
+flow-pressure-based model in economic MPC that includes controllable
+pressure and varying risks in the MPC formulation. Nevertheless, these
+studies have not taken into account the interdependencies of the water-
+energy system. For instance, the focus was mainly on minimizing
+the electricity cost from the actuators, either by regulating the pump
+schedule in accordance with the safety heads, minimizing the pump’s
+flow rate and switches to attain the smoothness of the controllers, or
+adding economic consideration to the objective functions. Although
+these objective functions would indirectly result in reduced energy con-
+sumption in WDSs, there are still significant limitations to be addressed:
+In order to meet electricity demand, a variety of available energy
+resources should be considered; MPC is currently conducted utilizing
+conventional fossil fuels or the main grid as the sole energy resource,
+whereas, in reality, a sustainable and clean water system cannot be
+achieved without its electricity derived from renewable and clean
+sources. Thus, energy management should also consider the application
+of renewable energy sources (RES), such as wind and solar, as well
+as energy storage units that allow a high degree of penetration of
+renewable energy sources. Moreover, in the control strategy of above-
+mentioned studies, the dynamic of the available energy resources is not
+taken into account.
+From a microgrid perspective, developments of MPC algorithm
+have been conducted to provide optimal control of grid-connected and
+islanded (i.e., standalone) microgrid with different energy management
+strategies. In [23], a real-time bi-level optimization model was utilized
+in the MPC framework to minimize the cost and the usage of a diesel
+generator for an islanded microgrid. In another study by [5], demand
+management of an off-grid (i.e., islanded) MGs was studied while
+considering the power flow variation and the stochastic behavior of
+demand load and renewable sources. A two-layer economic model
+predictive control with MILP formulation was experimentally studied
+by [4] in an isolated microgrid. However, these studies focused pri-
+marily on household electricity demand. Furthermore, existing research
+for MPC in standalone microgrid systems only applies loads from the
+water supply without taking into account essential parameters and
+hydraulic laws involved in the water system, which can impact both
+systems’ control and operation. In [6], a two-stage MPC optimization
+was proposed to optimize the operation of an integrated islanded
+microgrid-seawater desalination plant. However, the water system con-
+trol was oversimplified, limited to a water tank and desalination plant
+scheduling at certain times without addressing pumps as one of the
+most energy-intensive units in WDSs. In [24], stochastic behaviors of
+RESs and weather conditions were investigated in a networked smart
+greenhouses integrated microgrid using MPC. While in this study, a
+water pump was considered one of the sources of electricity demand,
+its dynamic model was oversimplified, and the control strategy did
+not take into account the polynomial relationship between flow and
+pressure head. This can have a significant impact on the actual energy
+consumption and the control outcomes of the system.
+1.3. Contributions of this work
+To address the limitation of the existing studies, this paper pro-
+poses an integrated water-energy microgrid control by utilizing the
+MPC framework as an advanced control approach. The control-oriented
+model incorporates the dynamics of water and energy system assets
+to enhance real-time demand management in smart-islanded commu-
+nities. MPC is selected as the control method as it combines the first
+three elements of control actions by utilizing the feedback control to
+minimize the error signal of the controlled output with the desired
+setpoints [17], feedforward control to measure and predict the dis-
+turbance [25], and optimal control [26] to obtain control law that
+minimizes a quadratic objective function developed from system’s ex-
+pression in state space model, making MPC an advanced and preferred
+control strategy. To summarize our work, the main contributions of the
+paper are listed as follows:
+1. Compared to the state-of-the-art, which mainly ignored the in-
+herent interlinks between water and energy assets, these inter-
+links as well as the full dynamics of energy-consuming assets of
+the water system in discrete time are considered in the proposed
+MIMO interconnected water-energy MPC algorithm.
+2. The developed closed-loop systems featured two objective func-
+tions: ensuring the security level of the storage tanks and energy
+storage unit, and minimizing abrupt changes in the actuators and
+controllable power units, thereby increasing their lifespans.
+3. Energy management of the microgrid assets (i.e., economic dis-
+patch problem) is integrated in the MPC framework to optimize
+the closed-loop resource allocation problem.
+4. To eliminate the discrepancies between the actual plant model
+and the prediction model implemented in MPC, this work de-
+velops an offset-free control-oriented model formulation in con-
+junction with feedback mechanisms and receding horizons (MPC
+strategy).
+5. Telford, Pennsylvania, was selected as the test site to implement
+the proposed optimal water-energy management while satisfy-
+ing operational constraints, ensuring compliance with customer
+demands, and achieving sustainable resource utilization.
+The remainder of the paper is organized in the following order.
+Section 2 describes the dynamic model and layout of the water-energy
+microgrid. The integrated MPC is formulated based on the nodes’
+mass conservation law, the tanks’ energy conservation law, the power
+balance, and the energy storage unit’s dynamic. Section 3 introduces
+the MPC strategy of the water-energy microgrid based on state-space
+representation. The results of the proposed control strategy in different
+case studies are discussed in Section 4. Section 5 concludes the work
+and briefly describes future work.
+
+Applied Energy 347 (2023) 121455
+4
+S.A. Putri et al.
+Fig. 1. Layout of the studied water-energy microgrid.
+2. Model layout and formulation
+2.1. Schematic system layout
+Fig. 1 illustrates the system’s conceptual layout and elements. The
+existing system is based on WDS in Telford, Pennsylvania, which in-
+volves five wells scattered across the region, providing water to more
+than 4500 people. In this paper, actual water demand from one of
+the wells is utilized for the small-scale WDS, shown in Fig. 1. The
+studied WDS consists of a clear well connected to two storage tanks,
+two pumps, and a valve. The outflow of the water tanks mimics the
+water demand of Telford’s WDS. The pumps are among the major
+contributors to energy-intensive components of a water system [2].
+Thereby, their consumed power is considered as the electrical load
+of the islanded microgrid system. The studied microgrid includes an
+aggregated wind turbine with 700 kW capacity, a diesel generator, a
+battery energy storage system, and a solar photovoltaic (PV) generation
+system with 600 kW capacity (exhibited in the lower part of Fig. 1).
+Based on the average power consumption of the WDSs, the wind
+turbine is determined to account for 54% of the average load, while
+the photovoltaic unit is to contribute 46%.
+2.2. Control-oriented modeling for water distribution system
+2.2.1. Nodes
+Nodes serve as the connection between two or more pipes to merge
+or divide the water flows. Assuming no leakage, flow balance of the
+nodes is designed as an equality constraint such that [27]:
+∑
+𝑖
+𝑞𝑖,𝑙(𝑘) =
+∑
+𝑗
+𝑞𝑙,𝑗(𝑘) ∀𝑘∈Z+
+(1)
+where 𝑞𝑖,𝑙(𝑘) and 𝑞𝑙,𝑗(𝑘), in m3∕s, denote the inflow and outflow from
+𝑙th arbitrary node from the 𝑖th element and the 𝑗th element, re-
+spectively, and 𝑘∈Z+ denotes the discrete-time instant in positive
+integers (conceptual sketch of the node illustrated in Fig. 2). Pump
+flow rates (and some of the mains and arteries) are the only measurable
+data in automated water systems, which also contribute to electricity
+consumption [9]. Therefore, the model neglects pipe flows that are not
+connected to any pumps.
+Fig. 2. Conceptual sketch of a WDS node.
+2.2.2. Storage tanks
+Storage tanks are considered passive elements in WDS, as they only
+receive the effects from the active (controllable) elements, such as
+pumps and valves [18]. The mass balance related to the 𝑓th tank’s
+water level (ℎ𝑓in meters) can be expressed with a linear discrete-time
+difference equation [27] such that:
+ℎ𝑓(𝑘+ 1) = ℎ𝑓(𝑘) + 𝛥𝑡
+𝑠𝑓
+(
+∑
+𝑖
+𝑞𝑖,𝑓(𝑘) −
+∑
+𝑗
+𝑞𝑓,𝑗(𝑘)
+)
+(2)
+where 𝑞𝑖,𝑓(𝑘) and 𝑞𝑓,𝑗(𝑘), in m3∕s, are the input and output flows of tank
+𝑓, respectively. The discretization step control sampling time (𝛥𝑡) is 1 h
+(i.e., 3600 s). Moreover, 𝑠𝑓(in m2) denotes the cross-sectional area of
+tank 𝑓, which is constant. The tank’s physical capacity at every instant
+𝑘is expressed as:
+ℎ≤ℎ𝑓(𝑘) ≤ℎ, ∀𝑘∈Z+
+(3)
+where ℎand ℎexpress the minimum and maximum threshold of the
+water level in 𝑚, respectively.
+2.2.3. Pumps
+Pumps are active control elements, as they can be manipulated
+to regulate the flow and/or pressure of water in certain network
+segments [18]. Depending on the objectives, multiple types of pumps
+can be utilized in WDSs, such as This study considers pumps’ flow rate
+as the control inputs in the studied WDSs. Constraint associated with
+the pump’s physical limitation is expressed as:
+𝑞𝑊𝑃≤𝑞𝑊𝑃,𝑚(𝑘) ≤𝑞𝑊𝑃∀𝑘∈Z+
+(4)
+
+Applied Energy 347 (2023) 121455
+5
+S.A. Putri et al.
+where 𝑞𝑊𝑃and 𝑞𝑊𝑃express the minimum and maximum of the flow
+rates of the 𝑚th pump in m3∕s, respectively. The flow and pressure
+head of a pump govern its hydraulic characteristic, expressed by the
+following polynomial characteristic equation [27]:
+𝛥ℎ𝑊𝑃,𝑚(𝑘) = 𝑎𝑊𝑃(𝑛𝑊𝑃)2 + 𝑏𝑊𝑃𝑞𝑊𝑃,𝑚(𝑘)𝑛𝑊𝑃+ 𝑐𝑊𝑃(𝑞𝑊𝑃,𝑚(𝑘))2 ∀𝑘∈Z+
+(5)
+where, 𝑎𝑊𝑃, 𝑏𝑊𝑃, and 𝑐𝑊𝑃are the pump’s specific coefficients adopted
+from [28] and 𝑛𝑊𝑃is the speed of the pump in rpm.
+Pump’s electric power at each time instant 𝑘(𝑝𝑊𝑃) serves as the
+interlink between the WDS and the microgrid, obtained as [27]:
+𝑝𝑊𝑃,𝑚(𝑘) = 𝐼× 𝑞𝑊𝑃,𝑚(𝑘) × 𝛥ℎ𝑊𝑃,𝑚(𝑘) ∀𝑘∈Z+
+(6)
+where 𝐼=
+𝛾
+1000𝜂is a constant for the pump with an efficiency of 𝜂, 𝛾
+is the specific weight of water (9.781 N∕m3), and 𝑝𝑊𝑃,𝑚is the power of
+pump 𝑚in kW. In this work, A pump’s efficiency of 75% is applied for
+all pumps adopted from [24,29,30].
+2.2.4. Valves
+Similar to pumps, valves are considered active elements in WDS.
+In the studied WDS, a flow-control valve connected to the pumps
+is another controllable input (see Fig. 1). The following constraint
+associated with the 𝑛th valve’s flow rate (𝑞𝑣,𝑛) at each instant 𝑘is
+imposed:
+𝑞𝑣≤𝑞𝑣,𝑛(𝑘) ≤𝑞𝑣∀𝑘∈Z+
+(7)
+where 𝑞𝑣and 𝑞𝑣express the minimum and maximum allowable flow
+rates passing through each valve in m3∕s, respectively.
+2.3. Control-oriented modeling of the microgrid system
+2.3.1. Renewable energy sources (RESs)
+RESs used in this study are solar PV and wind. Due to the intermit-
+tent nature of the RESs, they are regarded as deterministic uncertainty
+inputs to the system. In this paper, hourly solar irradiance, temperature,
+and wind speed data are extracted from [31,32], respectively, for June
+1st in Pennsylvania.
+Wind generation units: The output power from the wind turbine
+is highly uncertain and is governed by the wind’s speed. In the current
+work, a simplified linear model to obtain the output power of the wind
+turbine can be expressed as [24]:
+𝑝𝑊𝑖𝑛𝑑(𝑘) =
+⎧
+⎪
+⎪
+⎨
+⎪
+⎪⎩
+0
+if 𝜐𝑘< 𝜐𝑐& 𝜐𝑘> 𝜐𝑜
+𝑝𝑟
+𝜐𝑘−𝜐𝑐
+𝜐𝑟−𝜐𝑐
+if 𝜐𝑐≤𝜐𝑘≤𝜐𝑟
+𝑝𝑟
+if 𝜐𝑟≤𝜐𝑘≤𝜐𝑜
+(8)
+where 𝜐𝑘and 𝜐𝑟are the wind speed at time instant 𝑘and the rated wind
+speed (set at 15 m/s), respectively in m/s, 𝑝𝑟is the rated power in kW
+(set at 700 kW), 𝜐𝑐and 𝜐𝑜are the cut-in and cut-out wind speed in m/s
+(set at 5 and 45 m/s, respectively). Other models [9,33] can also be
+used to obtain wind power. The 24-h output power generation profile
+of the wind is depicted in Fig. 3(a).
+Solar PV generation units: The proposed model has a 600 kW
+PV unit. The daily output power of PV is calculated using the solar
+irradiance and temperature data, such that [34]:
+𝑝𝑃𝑉(𝑘) = 𝑝𝑆𝑇𝐶
+𝑔𝑎𝑐(𝑘)
+𝑔𝑆𝑇𝐶
+(1 + 𝑘𝑐(𝑡𝑇𝑐−𝑡𝑇𝑖(𝑘)))
+(9)
+where 𝑝𝑆𝑇𝐶is the power output of PV in standard temperature con-
+dition (STC) set at 600 kW, 𝑔𝑎𝑐(𝑘) expressed as the solar irradiance
+at time instant 𝑘, and 𝑘𝑐is the temperature coefficient of the PV unit
+(−0.0047) [34]. 𝑡𝑇𝑐and 𝑡𝑇𝑖(𝑘) are the reference (set at 25 ◦C) and real
+temperature of solar cells in ◦C. The 24-h output power generation
+profile of PV is illustrated in Fig. 3(b).
+Fig. 3. (a)–(b) 24-h wind and solar PV electrical power generation profile, respectively.
+2.3.2. Diesel generation unit
+The diesel generator serves as one of the control inputs to the
+system, supporting the microgrid system to meet the required power
+from the WDS. Power dispatched from a diesel generator (𝑝𝐷𝑆) is
+minimized to limit operating costs and carbon emissions. The following
+are the upper/lower bounds of the diesel generator at each instant 𝑘:
+𝑝𝐷𝑆≤𝑝𝐷𝑆(𝑘) ≤𝑝𝐷𝑆∀𝑘∈Z+
+(10)
+where 𝑘∈Z+ denotes the discrete-time instant, 𝑝𝐷𝑆and 𝑝𝐷𝑆are the
+minimum and maximum operating limits of the diesel generator.
+The cost function of the diesel generator (𝑓𝐷𝑆) is expressed by
+𝑓𝐷𝑆(𝑘) = 𝛼𝐷𝑆+ 𝛽𝐷𝑆𝑝𝐷𝑆(𝑘) + 𝛾𝐷𝑆(𝑝𝐷𝑆(𝑘))2
+⏟⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏟⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏟
+operational cost
+(11)
++ 𝑐𝑢𝑝𝑝𝐷𝑆(𝑘)
+⏟⏞⏞⏟⏞⏞⏟
+start-up cost
++ 𝑐𝑑𝑛𝑝𝐷𝑆(𝑘)
+⏟⏞⏞⏟⏞⏞⏟
+shutdown cost
+∀𝑘∈Z+
+(12)
+where 𝛼𝐷𝑆, 𝛽𝐷𝑆, and 𝛾𝐷𝑆are cost coefficients of the diesel generator
+unit and 𝑐𝑢𝑝and 𝑐𝑑𝑛are the startup and shutdown costs adopted
+from [3].
+In order to configure the start-up and shut-down costs, conditional
+statements are added in the cost function that examines the generator
+state at each time step. The cost function of the diesel generator will
+be used for decision-making in different operating conditions of the
+islanded microgrid system.
+2.3.3. Battery energy storage system
+The battery energy storage system (BESS) in the studied interlinked
+water-energy microgrid system is utilized as the sole storage unit
+to balance out the system. The studied BESS is bidirectional, i.e., it
+can both store the excess power (charging) and supply the required
+energy to meet the demand as needed (discharging) subject to the
+available energy level [35]. The BESS will be in standby mode when the
+generated power exactly matches the demand [36]. The discrete-time
+linear dynamic model of the battery state of the charge (SOC) used in
+this system is expressed as [35]:
+𝑆𝑂𝐶(𝑘+ 1) = 𝑆𝑂𝐶(𝑘) −𝜂𝐵𝛥𝑡
+𝛿𝐵
+𝑝𝐵(𝑘)
+(13)
+where 𝑝𝐵(𝑘) in kW is the output power of the battery that serves as a
+control input to the system, 𝜂𝐵(%) is the efficiency of the BESS, 𝛥𝑡is
+sampling time given in 1 h, and 𝛿𝐵is the battery capacity expressed in
+kWh.
+In order to prevent damages to the battery, the energy level and
+the output power of the battery must be bounded at each time instant
+
+Applied Energy 347 (2023) 121455
+6
+S.A. Putri et al.
+𝑘such that:
+−𝑝𝑐≤𝑝𝐵(𝑘) ≤𝑝𝑑∀𝑘∈Z+
+(14)
+𝑆𝑂𝐶≤𝑆𝑂𝐶(𝑘) ≤𝑆𝑂𝐶∀𝑘∈Z+
+(15)
+where 𝑝𝑐and 𝑝𝑑denote the limit of the maximum charging and
+discharging of the battery.
+Following the model formulation in [3,4], the cost function of BESS
+is expressed by Eq. (16). In this equation, the operation cost of a BESS
+is correlated with the amount of power it consumes or generates.
+𝑓𝐵(𝑘) = 𝑘𝐵𝑝𝐵(𝑘) ∀𝑘∈Z+
+(16)
+where 𝑘𝐵represents a fixed purchased power coefficient for the BESS
+with value adopted from [37].
+2.3.4. Power flow balance
+The power flow balance equation of the microgrid, as one of
+the governing equations in the power system, expressed in Eq. (17),
+adopted from [35], ensures that the amount of available power meets
+the power demand (i.e., 𝑝𝐿𝑜𝑎𝑑). Herein, 𝑝𝐿𝑜𝑎𝑑(𝑘) = ∑2
+𝑚=1 𝑝𝑊𝑃,𝑚(𝑘),
+calculated from the summation of the electricity consumption of the
+water pumps described in Eq. (6).
+𝑝𝐿𝑜𝑎𝑑(𝑘) = 𝑝𝑃𝑉(𝑘) + 𝑝𝑊𝑖𝑛𝑑(𝑘) + 𝑝𝐵(𝑘) + 𝑝𝐷𝑆(𝑘)
+(17)
+3. Model predictive control of interconnected water-energy micro-
+grid system
+MPC algorithm provides a closed-loop formulation for minimizing
+the tracking error trajectory through feedback control in the system.
+The proposed control law applies a receding horizon approach in which
+the optimal control action is derived from the first sample of the input
+sequence, allowing a new measurement of the system’s state. Subse-
+quently, a finite horizon is shifted, and a new optimization problem is
+solved.
+Integrated MPC for the water-energy microgrid operates to predict
+the hour ahead control inputs to minimize the tracking error between
+the predicted output and the known set-points and to obtain stability
+of the control actions. MPC also serves as the energy management
+system (EMS) to ensure power balance in the microgrid is obtained
+effectively [5,35].
+3.1. Problem formulation
+The control-oriented model of the water-energy microgrid is ex-
+pressed in a linear time-invariant discrete-time framework. Based on
+the dynamic model described in Eqs. (2), (13), as well as (17) to
+ensure that BESS maintain the balance between energy production and
+consumption [35], the following describes the state-space model of the
+interlinked water-energy microgrid system:
+𝐱(𝑘+ 1) = 𝐴𝐱(𝑘) + 𝐵𝑢𝐮(𝑘) + 𝐵𝑑𝐝(𝑘)
+(18)
+𝐲(𝑘) = 𝐶𝐱(𝑘)
+(19)
+where 𝐱(𝑘) = [ℎ1, ℎ2, 𝑆𝑂𝐶]𝑇∈R𝑛𝑥is the state vector representing
+the water level of tanks 1 and 2 as well as the energy status of
+the BESS, respectively, 𝐮(𝑘) = [𝑞𝑣, 𝑞𝑊𝑃,1, 𝑞𝑊𝑃,2, 𝑝𝐵, 𝑝𝐷𝑆]𝑇∈R𝑛𝑢cor-
+responds to the flow rates of the valve and the pumps and energy
+dispatch from the battery and diesel generator, respectively, 𝐝(𝑘) =
+[𝑞𝑑1, 𝑞𝑑2, 𝑝𝑃𝑉, 𝑝𝑊𝑖𝑛𝑑, 𝑝𝐿𝑜𝑎𝑑]𝑇∈R𝑛𝑑represents the disturbance vector
+pertains to the water demand (𝑞𝑑1, 𝑞𝑑2), output power of the RESs
+(𝑝𝑃𝑉, 𝑝𝑊𝑖𝑛𝑑), and the electrical load (𝑝𝐿𝑜𝑎𝑑), 𝐲(𝑘) ∈R𝑛𝑦is the vector
+of system outputs coinciding with the state vector. The studied system
+is fully observable with system’s matrices, 𝐴= 𝐶= 𝐼3×3, 𝐵𝑢and, 𝐵𝑑as
+follows:
+𝐵𝑢=
+⎡
+⎢
+⎢
+⎢
+⎢⎣
+0
+𝛥𝑡
+𝑠1
+0
+0
+0
+0
+0
+𝛥𝑡
+𝑠2
+0
+0
+0
+0
+0
+0
+𝜉𝐵𝛥𝑡
+⎤
+⎥
+⎥
+⎥
+⎥⎦
+,
+(20)
+𝐵𝑑=
+⎡
+⎢
+⎢
+⎢
+⎢⎣
+−𝛥𝑡
+𝑠1
+0
+0
+0
+0
+0
+−𝛥𝑡
+𝑠2
+0
+0
+0
+0
+0
+𝜉𝐵𝛿𝑃𝑉
+𝜉𝐵𝛥𝑡𝛿𝑊𝑖𝑛𝑑
+−𝜉𝐵𝛥𝑡
+⎤
+⎥
+⎥
+⎥
+⎥⎦
+(21)
+where 𝜉𝐵=
+𝜂𝐵
+𝛿𝐵is the conversion coefficient of the battery, 𝛥𝑡is the
+sampling time, given in 1 h, 𝛿𝑃𝑉and 𝛿𝑊𝑖𝑛𝑑denote the percentiles of
+the PV panel’s capacity and wind turbine’s capacity, respectively.
+Additionally, to obtain an offset-free control [35], the model is
+rewritten in an incremental form using 𝜟𝒖(𝑘) as the new control input,
+expressed by:
+𝜟𝒖(𝑘) ≜𝒖(𝑘) −𝒖(𝑘−1)
+(22)
+According to Eq. (22) and referring to the state-space representation
+in Eqs. (18)–(19), the augmented model can be seen in Eqs. (23)–(24):
+[𝑥(𝑘+ 1)
+𝑢(𝑘)
+]
+⏟⏞⏞⏞⏟⏞⏞⏞⏟̂
+𝑥(𝑘+1)
+=
+[
+𝐴
+𝐵𝑢
+0𝑛𝑢×𝑛𝑥𝐼𝑛𝑢×𝑛𝑢
+]
+⏟⏞⏞⏞⏞⏞⏞⏞⏞⏟⏞⏞⏞⏞⏞⏞⏞⏞⏟
+𝑀∈R(𝑛𝑥+𝑛𝑢)×(𝑛𝑥+𝑛𝑢)
+[ 𝑥(𝑘)
+𝑢(𝑘−1)
+]
+⏟⏞⏞⏞⏟⏞⏞⏞⏟̂
+𝑥(𝑘)
++
+[ 𝐵𝑢
+𝐼𝑛𝑢×𝑛𝑢
+]
+⏟⏞⏟⏞⏟
+𝑁𝑢∈R(𝑛𝑥+𝑛𝑢)×𝑛𝑢
+𝛥𝑢(𝑘) +
+[ 𝐵𝑑
+0𝑛𝑢×𝑛𝑑
+]
+⏟⏞⏟⏞⏟
+𝑁𝑑∈R(𝑛𝑥+𝑛𝑢)×𝑛𝑑
+𝑑(𝑘)
+(23)
+𝑦(𝑘) = [𝐶0𝑛𝑦×𝑛𝑢]
+⏟⏞⏞⏞⏟⏞⏞⏞⏟
+𝑄∈R𝑛𝑦×(𝑛𝑥+𝑛𝑢)̂
+𝑥(𝑘)
+(24)
+A new state vector of̂ 𝒙(𝒌) = [𝑥(𝑘) 𝑢(𝑘−1)]𝑇∈R𝑛𝑥+𝑛𝑢is introduced,
+and a simplified form of the incremental state-space model is derived
+such that [35]:̂
+𝒙(𝑘+ 1) =𝑀̂𝒙(𝑘) + 𝑁𝑢𝜟𝒖(𝑘) + 𝑁𝑑𝒅(𝑘)
+(25)
+𝑦(𝑘) =𝑄̂𝒙(𝑘)
+(26)
+where 𝑀∈R(𝑛𝑥+𝑛𝑢)×(𝑛𝑥+𝑛𝑢), 𝑁𝑢∈R(𝑛𝑥+𝑛𝑢)×𝑛𝑢, 𝑁𝑑∈R(𝑛𝑥+𝑛𝑢)×𝑛𝑑, and
+𝑄∈R𝑛𝑦×(𝑛𝑥+𝑛𝑢) are the augmented matrices for the state, control,
+disturbance, and output variables.
+3.2. MPC model constraints
+Following the water and microgrid system models presented in
+Sections 2.2 and 2.3, the MPC model constraints can be described as
+the following:
+1. Inequality Constraints: are associated with the physical limits
+of the systems described in Eqs. (3)–(4), (7), (10), (14), and (15),
+generically presented as:
+𝑥𝑖≤𝒙𝑖(𝑘) ≤𝑥𝑖∀𝑖= 1, 2, 3
+(27)
+𝑢𝑗≤𝒖𝑗(𝑘) ≤𝑢𝑗∀𝑗= 1, … , 5
+(28)
+where 𝑥𝑖(𝑘) and 𝑢𝑗(𝑘) denote state and control variables, re-
+spectively, while underline and overline values represent the
+minimum and maximum thresholds of the respective variable,
+respectively, provided in Tables 5 and 6 in the Appendix.
+2. Equality constraints: correspond to the mass conservation of
+the WDS as shown in Eq. (1) and power balance of the microgrid
+system in Eq. (17), summarized below:
+𝑢1(𝑘) = 𝑢2(𝑘) + 𝑢3(𝑘)
+(29)
+𝑢2(𝑘) = 𝑑1(𝑘) + 𝑞𝑇1(𝑘)
+(30)
+
+Applied Energy 347 (2023) 121455
+7
+S.A. Putri et al.
+𝑢3(𝑘) = 𝑑2(𝑘) + 𝑞𝑇2(𝑘)
+(31)
+𝑢4(𝑘) = −𝑢5(𝑘) −𝑑3(𝑘) −𝑑4(𝑘) + 𝑑5(𝑘)
+(32)
+where 𝑞𝑇1(𝑘) and 𝑞𝑇2(𝑘) are the volumetric rate of water in tanks 1 and
+2 for every time instant 𝑘in m3∕s, respectively.
+3.3. Operational goals for water-energy microgrid
+In this water-energy microgrid, the following are the two control
+objectives implemented by the MPC [14,18,35]:
+1. Storage security: this objective function, formulated in Eq. (33),
+regulates the security term to the system’s state vector, where
+the water system is to maintain appropriate water levels in
+tanks for emergency purposes [20] and the microgrid system
+is to maintain the battery level around the operational point,
+preventing the BESS to pull the SOC down to zero at the end
+of the prediction horizon [4,5].
+𝑓1 ≜‖𝐱(𝑘) −𝐱𝑠𝑝‖2
+𝑊𝑥
+(33)
+where 𝐱𝑠𝑝is a vector of fixed set-points associated with the
+system’s state variables, where 𝑥𝑠𝑝1 and 𝑥𝑠𝑝2 are set at 80% of
+the maximum water level for tanks 1 and 2, respectively, and
+𝑥𝑠𝑝3 is fixed at 50% of SOC of the BESS.
+2. Stability of control actions: this objective function, formulated
+in Eq. (34), penalizes the deviations of the control variables (𝛥𝑢)
+from the set-points within each discrete-time interval [𝑘−1, 𝑘].
+The resultant smoothness increases the equipment’s lifespan by
+protecting it from sudden changes in demand for water and
+power systems [35,38].
+𝑓2 ≜‖𝜟𝒖(𝑘)‖2
+𝑊𝑢
+(34)
+where 𝜟𝒖(𝒌) is calculated from Eq. (22).
+Therefore, the cost function 𝐽considering the above two control
+objectives are derived as:
+𝐽=
+𝑛𝑝
+∑
+𝑗=1
+‖𝒙(𝑘+ 𝑗|𝑘) −𝒙𝒔𝒑‖2
+𝑊𝑥+
+𝑛𝑐
+∑
+𝑗=1
+‖𝜟𝒖(𝑘+ 𝑗−1)‖2
+𝑊𝑢
+(35)
+where 𝑛𝑝and 𝑛𝑐represent the prediction and control horizon, respec-
+tively. In this study, 𝑛𝑝= 𝑛𝑐= 10 similar to [35]. Weight factors
+(𝑊𝑥= 𝑊𝑇
+𝑥
+and 𝑊𝑢= 𝑊𝑇
+𝑢) are positive definite symmetric weighted
+matrices determined in a qualitative manner to govern the priority of
+each objective function 𝐽[35,39].
+3.4. Optimal control problem formulation
+3.4.1. Prediction model
+In MPC, the system model is formulated as the prediction model in
+the form of the system’s output [40]. Therefore, in order to solve the
+optimal control model over 𝑛𝑝, following the approach shown in [35],
+the nominal problem in Eqs. (25) and (26) can be formulated in the
+form of a quadratic programming problem as follows
+𝒚𝒑=
+⎡
+⎢
+⎢
+⎢
+⎢⎣̂
+𝑦(𝑘+ 1)̂
+𝑦(𝑘+ 2)
+⋮̂
+𝑦(𝑘+ 𝑛𝑝|𝑘)
+⎤
+⎥
+⎥
+⎥
+⎥⎦
+=
+⎡
+⎢
+⎢
+⎢
+⎢⎣
+𝑄𝑀
+𝑄𝑀2
+⋮
+𝑄𝑀𝑛𝑝
+⎤
+⎥
+⎥
+⎥
+⎥⎦
+⏟⏞⏟⏞⏟
+𝐹∈R(𝑛𝑦𝑛𝑝)×(𝑛𝑥+𝑛𝑢)̂
+𝒙(𝑘)
++
+⎡
+⎢
+⎢
+⎢
+⎢⎣
+𝑄𝑁𝑢
+0
+𝑄𝑀𝑁𝑢
+𝑄𝑁𝑢
+⋮
+⋮
+⋱
+𝑄𝑀𝑛𝑝−1𝑁𝑢
+…
+𝑄𝑀𝑁𝑢
+𝑄𝑁𝑢
+⎤
+⎥
+⎥
+⎥
+⎥⎦
+⏟⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏟⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏟
+𝐻𝑢∈R(𝑛𝑦𝑛𝑝)×(𝑛𝑝(𝑛𝑥+𝑛𝑢))
+⎡
+⎢
+⎢
+⎢
+⎢⎣
+𝛥𝑢(𝑘)
+𝛥𝑢(𝑘+ 1)
+⋮
+𝛥𝑢(𝑘+ 𝑛𝑝−1)
+⎤
+⎥
+⎥
+⎥
+⎥⎦
++
+⎡
+⎢
+⎢
+⎢
+⎢⎣
+𝑄𝑁𝑑
+0
+𝑄𝑀𝑁𝑑
+𝑄𝑁𝑑
+⋮
+⋮
+⋱
+𝑄𝑀𝑛𝑝−1𝑁𝑑
+…
+𝑄𝑀𝑁𝑑
+𝑄𝑁𝑑
+⎤
+⎥
+⎥
+⎥
+⎥⎦
+⏟⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏟⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏞⏟
+𝐻𝑑∈R(𝑛𝑦𝑛𝑝)×(𝑛𝑝(𝑛𝑥+𝑛𝑑))
+⎡
+⎢
+⎢
+⎢
+⎢⎣
+𝑑(𝑘)
+𝑑(𝑘+ 𝑖)
+⋮
+𝑑(𝑘+ 𝑛𝑝−1)
+⎤
+⎥
+⎥
+⎥
+⎥⎦
+(36)
+which can be simplified in a compact vector form as
+𝒚𝒑= 𝐹̂𝒙(𝑘) + 𝐻𝑢𝜟𝒖𝒑+ 𝐻𝑑𝒅𝒑
+(37)
+where 𝒚𝒑∈R𝑛𝑦𝑛𝑝represents the vector of the predicted output that
+consists of all̂ 𝒙(𝑘) for the entire horizon witĥ 𝒙(𝑘) collecting 𝒙(𝒌) and
+𝒖(𝒌). 𝛥𝒖𝒑∈R𝑛𝑢𝑛𝑝and 𝒅𝒑∈R𝑛𝑑𝑛𝑝correspond to the column vector of
+the predicted control increment and the system’s disturbances over the
+prediction horizon [18,35,38].
+As defined in Eq. (22), the optimal set of 𝒖𝒑over the defined 𝑛𝑝is
+expressed by:
+𝒖𝒑= 𝐿𝒖(𝑘−1) + 𝑇𝜟𝒖𝒑
+(38)
+where 𝐿∈R𝑛𝑢𝑛𝑝, and 𝑇∈R(𝑛𝑢𝑛𝑝)×(𝑛𝑢𝑛𝑝) are appropriate augmented
+identity matrices.
+3.4.2. Optimization problem formulation
+Considering that all variables are linked to 𝜟𝒖𝒑as shown in Eqs.
+(37)–(38), the entire MPC formulation, namely, the objective function
+in Eq. (35), the inequality constraints in Eqs. (27) and (28), and the
+equality constraints in Eqs. (29)–(31), and (32), over 𝑛𝑝is developed
+based on the incremental form of 𝜟𝒖𝒑[18,38]. The following is the
+summarized optimization problem reformulated from [35,38]:
+min
+𝐽(𝛥𝑢𝑝) = 1
+2 (𝒚𝒓𝒆𝒇−𝒚𝒑)𝑇𝑊𝑥(𝒚𝒓𝒆𝒇−𝒚𝒑) + 1
+2 𝛥𝒖𝒑𝑊𝑢𝛥𝒖𝒑
+(39)
+𝑠.𝑡.
+⎡
+⎢
+⎢
+⎢
+⎢⎣
+−𝐻𝑢
+𝐻𝑢
+−𝑇
+𝑇
+⎤
+⎥
+⎥
+⎥
+⎥⎦
+𝜟𝒖𝒑≤
+⎡
+⎢
+⎢
+⎢
+⎢⎣
+−𝒚𝒎𝒊𝒏
+−𝒑+ 𝐹̂𝒙(𝑘) + 𝐻𝑑𝒅𝒑
+𝒚𝒎𝒂𝒙
+−𝒑−𝐹̂𝒙(𝑘) −𝐻𝑑𝒅𝒑
+−𝒖𝒎𝒊𝒏
+𝒑
++ 𝐿𝒖(𝑘−1)
+𝒖𝒎𝒂𝒙
+𝒑
+−𝐿𝒖(𝑘−1)
+⎤
+⎥
+⎥
+⎥
+⎥⎦
+(40)
+𝑇𝑒𝑞𝜟𝒖𝒑= 𝒖𝒆𝒒
+𝒑−𝐿𝑒𝑞𝒖(𝑘−1)
+(41)
+where 𝒚𝒑in Eq. (39) can be substituted with Eq. (37) and 𝒚𝒓𝒆𝒇is
+the sequence of the fixed-set points over 𝑛𝑝, presented in Eq. (33). In
+addition, lower and upper bounds for 𝒚𝒑and 𝒖𝒑correspond to Eqs.
+(27)–(28). The equality constraint in Eq. (41) is derived from Eqs.
+(29)–(32), where 𝐿𝑒𝑞and 𝑇𝑒𝑞are matrices of suitable dimensions.
+3.5. Solution method
+The proposed combined MPC algorithm for water-energy microgrid
+is solved in MATLAB using the ‘‘fmincon’’ nonlinear solver with a
+solution method specified to sequential quadratic programming (SQP).
+SQP method solves nonlinear optimization problems in the form of
+Eq. (42) subject to Eqs. (43)–(44) through linear approximation of the
+
+Applied Energy 347 (2023) 121455
+8
+S.A. Putri et al.
+objective and constraint functions and solves a sequence of quadratic
+programming (QP) problems iteratively such that [41,42]:
+min 𝑓(𝐱)
+(42)
+s.t ℎ(𝐱) = 0
+(43)
+𝑔(𝐱) ≤0
+(44)
+where 𝑓∶R𝑛→R is the objective function. In this study, the objective
+function is nonlinear as shown in Eq. (39) where 𝒙∈R𝑛is expressed as
+𝜟𝒖𝒑in the form of a vector as the sole decision variable. The functions
+ℎ∶R𝑛→R𝑚and 𝑔∶R𝑛→R𝑝describe the equality and inequality
+constraints, respectively, concatenated from Eqs. (27)–(32). In addition,
+𝑛, 𝑚, and 𝑝, are the number of the states, equality constraints, and
+inequality constraints, respectively.
+The associated Lagrangian function to the nonlinear problem in
+Eq. (42) is expressed by [42]:
+(𝒙, 𝝀, 𝝁) ∶= 𝑓(𝒙) + 𝝀𝑇ℎ(𝑥) + 𝝁𝑇𝑔(𝑥)
+(45)
+where 𝝀∈R𝑚and 𝝁∈R𝑝are the Lagrangian multipliers. Then, a QP
+subproblem is formulated by linearizing the constraints Eqs. (43)–(44)
+in each SQP iteration 𝑘expressed by:
+min ∇𝑓(𝒙𝒌)𝑇𝒅𝒌+ 1
+2𝒅𝑇
+𝒌𝐵𝑘𝒅𝒌
+(46)
+s.t ℎ𝑖(𝒙𝒌) + ∇ℎ𝑖(𝑥𝑘)𝑇𝒅𝒌≤0, ∀𝑖∈{1, 2, … , 𝑝}
+(47)
+𝑔𝑗(𝒙𝒌) + ∇𝑔𝑗(𝑥𝑘)𝑇𝒅𝒌= 0, ∀𝑗∈{1, 2, … , 𝑚}
+(48)
+where 𝒅𝒌∶= 𝒙−𝒙𝒌is the search direction from the new QP and 𝐵𝑘is the
+Broyden–Fletcher–Goldfarb–Shanno (BFGS) approximation to the Hes-
+sian matrix of the Lagrangian function in Eq. (45) which calculates the
+second derivatives of the objective function and constraint functions.
+SQP starts with an initial guess for vector 𝒙𝒌for a given iterate 𝑘
+and continues iteratively by updating 𝒙𝒌+𝟏∶= 𝒙+ 𝛼𝒅𝒌. A new iterate
+𝒙𝒌+𝟏is constructed through solving 𝒅𝒌until the error converges to less
+than the relative tolerance (𝛿) and when Karush–Kuhn–Tucker (KKT)
+conditions are satisfied [42,43]. A step size 0 ≤𝛼≤1 is also determined
+to ensure the convergence [43]. The algorithm of the SQP is provided
+in Algorithm 1. For more details on the SQP method and the numerical
+solution, the readers are encouraged to refer to [41–43].
+Algorithm 1 Sequential Quadratic Programming
+Input: Define objective function 𝑓(𝒙) from Eq. (39)
+Input: Define constraints 𝑔(𝒙) ≤0 from Eq. (40)
+Input: Define constraints ℎ(𝒙) = 0 from Eq. (41)
+Input: Set initial guess, 𝒙𝟎
+Input: Formulate Lagrangian function Eq. (45)
+1: procedure Minimize Eq. (39)
+2:
+for 𝑘∈{1, 2..., 𝑛} do
+3:
+Evaluate ∇𝑓(𝒙𝒌), ∇ℎ𝒙𝒌, ∇𝑔(𝒙𝒌) at 𝒙𝒌
+4:
+Find 𝐵𝑘approximation to the Hessian matrix of Eq. (45)
+5:
+Solve QP subproblems from Eqs. (46)–(48) to obtain 𝒅𝒌
+6:
+Given 𝒅𝒌, find 𝛼to determine 𝑥𝑘+1 = 𝒙𝒌+ 𝛼𝒅𝒌
+7:
+Update the approximate Hessian, using BFGS method
+8:
+Update k = k+1
+9:
+end for when convergence is obtained (𝒅𝒌
+≤
+𝛿and KKT
+conditions)
+Output: Optimal solution 𝒙∗= 𝜟𝒖∗
+𝒑
+4. Case studies
+The studied water-energy microgrid system follows a small-scale
+WDS and islanded microgrid system with a conceptual layout shown
+in Fig. 1 with detailed parameters in the
+Appendix. The control-
+oriented model is carried out on a processor of Intel Core CPU i7-6700
+at 3.40 GHz and 32 GB RAM. The small-scale water-energy microgrid
+Table 1
+Model parameters under baseline condition.
+Variable
+WDS
+Microgrid
+𝑥0|𝑘
+ℎ0
+1 = ℎ0
+2 = 5 m
+𝑆𝑂𝐶0 = 80%
+𝑢0|𝑘
+𝑞𝑣,1 = 𝑞𝑊𝑃,1 = 𝑞𝑊𝑃,2 = 0 m3
+s
+𝑝𝐷𝑆= 𝑝𝐵= 0 kW
+𝑥𝑠𝑝
+ℎ1 = ℎ2 = 8 m
+SOC = 50%
+𝑊𝑥
+𝑑𝑖𝑎𝑔{0.01 0.01}
+0.01
+𝑊𝑢
+𝑑𝑖𝑎𝑔{1 1 1}
+𝑑𝑖𝑎𝑔{1 1}
+are tested under various case studies presented in this section to verify
+the effectiveness of the proposed integrated MPC algorithm. The model
+layout remains the same for all case studies (Fig. 1). Further, all case
+studies are performed over a period of one day (24 h).
+4.1. Case study 1: baseline
+Baseline conditions for the proposed water-energy microgrid are
+specified in Table 1. Furthermore, real water demand is utilized as the
+disturbance to the water system adopted from Telford, Pennsylvania,
+on June 1st and expressed in m3∕s. Water demand used in this study
+is during summertime when the water consumption is generally higher
+compared to the average annual water consumption [9]. A higher-than-
+average level of water consumption would also prove the effectiveness
+and robustness of MPC in WDS, evaluating whether the controllable
+variables are able to meet the demand while tracking the reference set
+points.
+The results for the baseline condition of the studied WDS are
+presented in Fig. 4. The first two subplots in Fig. 4(a) demonstrate the
+behavior of the water tanks 1 and 2, respectively. As expected from
+the first term of the objective function in Eq. (35), the control strategy
+is designed to meet the safety level of the water tanks by minimizing
+the tracking error such that as 𝑘goes to a defined time instant, the
+tracking error converges to zero. The figure illustrates that the control
+strategy successfully forced the tracking error to zero at hour 7 and
+reached a steady state condition for the following iteration, both for
+tanks 1 and 2. In addition, the third subplot of Fig. 4(a) displays
+the outflow trajectories associated with tanks 1 and 2 compared with
+their respective water demand, respectively. The results indicate that
+demand compliance is consistently obtained throughout the iterations.
+Fig. 4(b) exhibits the optimized flows of the actuators (flow control
+valve and the pumps) for the WDS. The figure is formulated to illustrate
+how the controllers behave to achieve the operation goals of the model,
+such as minimizing the tracking error (actual water level of the storage
+tanks with the setpoints) while guaranteeing demand compliance. As
+enforced by the equality constraint in Eq. (29), total flow rates from
+pumps 1 and 2 are equal to the flow rate of the valve connected to the
+clear well as shown in the first subplot of Fig. 4(b). Furthermore, the
+control strategy decides to utilize the pumps entirely to meet the water
+demand and tank’s security level while also satisfying the upper/lower
+bounds (physical constraints), as displayed in the second and third
+subplots. Considering that the water demand is solely met through
+operating the pumps, the pattern of the pumps’ behavior emulates the
+24-h water demand profile.
+Fig. 5(a) illustrates the predicted energy dispatch from each gen-
+eration unit of the proposed islanded microgrid system to meet the
+electrical load from the WDS under baseline conditions. As seen from
+the figure, the aggregate output power of the proposed microgrid
+system is sufficient to satisfy the aggregate load requirement from
+the pumps at any given time while meeting their physical bounds.
+Wind power, indicated by green bars, is employed continuously, while
+solar energy, indicated by yellow bars, is used only from hours 6 to
+18, in accordance with the available solar radiation. Under baseline
+conditions, the output power from the RESs is utilized completely to
+meet the load depending on the available rates at each hour. The diesel
+generator is also continuously used to generate power throughout the
+
+Applied Energy 347 (2023) 121455
+9
+S.A. Putri et al.
+Fig. 4. 24-h dispatch of WDS components using the proposed MIMO MPC in baseline
+case study.
+24-h operation, excluding hours 8 to 14, where RESs are generating
+surplus power.
+The availability of the BESS in the studied water-energy microgrid
+supports the demand compliance by generating energy when total
+output power from RESs and a diesel generator is insufficient, as well
+as storing the excess energy from the RESs indicated by the purple
+bars in Fig. 5(a). Energy discharge from the BESS during the 24-h
+operation also depends on the available energy level as exhibited in
+Fig. 5(b). Following the control-oriented model, set-point tracking of
+50% for the system’s state (SOC) is requested for the MPC. However,
+considering BESS is mainly utilized to balance the energy production
+and consumption at each time 𝑘, the set-point tracking is disregarded
+by the MPC (it should be noted that in the model formulation, weight
+matrix of the system’s state 𝑊𝑥is lower than the weight of the control
+actions 𝑊𝑢). Therefore, during hours 6 to 13, when the electricity
+demand is low, in combination with excess energy from the RESs, the
+Fig. 5. 24-h dispatch of MG components using the proposed MIMO MPC in baseline
+case study.
+Table 2
+Operation cost for the microgrid system under case study 2 conditions.
+Scenario
+Cost ( $
+day )
+Cost (
+$
+year )
+Cost savings (
+$
+year )
+1
+32.385
+11.820.606
+N/A
+2
+31.402
+11.461.727
+358.878
+3
+31.397
+11.459.786
+360.820
+MPC switched the BESS from discharging to charging mode with the
+highest SOC seen at 95%. Additionally, when the RESs availability is
+limited, more energy is discharged from the BESS to support the diesel
+generator to meet the electricity load, thereby decreasing the SOC to
+its minimum at 20%. Therefore, from hours 23 to 24, additional loads
+are added to charge the battery, indicated by the negative bars.
+4.2. Case study 2: Effect of 𝛥𝑢constraint on the actuators in WDS
+In this case study, constraint to the deviation of the control signal
+variation (𝛥𝑢) between two consecutive time steps for the WDS is
+imposed to increase the lifespan of the actuators in the WDS by obtain-
+ing a smoother control action to the actuators [18,43]. In addition, a
+different set-point for the tanks’ water level is formulated with detailed
+cost analysis for different scenarios as shown in Table 2. The following
+scenarios are also implemented in the WDS:
+1. Scenario 1: 𝑥𝑠𝑝= 8 m for tanks 1 and 2, no constraint to 𝛥𝑢. This
+scenario serves as the baseline with results described in 4.1.
+2. Scenario 2: 𝑥𝑠𝑝= 8 m for tanks 1 and 2, 𝜟𝒖= [0.25; 0.15; 0.15]𝑇
+associated with 𝑞𝑣,1, 𝑞𝑊𝑃,1, 𝑞𝑊𝑃,2, respectively.
+3. Scenario 3: 𝑥𝑠𝑝= 6 m for tanks 1 and 2, 𝜟𝒖= [0.25; 0.15; 0.15]𝑇
+associated with 𝑞𝑣,1, 𝑞𝑊𝑃,1, 𝑞𝑊𝑃,2, respectively.
+Fig. 6 exhibits the comparison between each scenario for case
+study 2. Fig. 6(a) displays the water level evolution of tanks 1 and
+2, while Fig. 6(b) illustrates the flow behavior of the actuators. The
+purple lines indicate the water level of the tanks and flow rates of
+the actuators for the baseline scenario, while the green and magenta
+lines represent scenarios 2 and 3 correspondingly. In all scenarios, the
+demand response is always met. In scenario 2, the water level in tanks
+
+Applied Energy 347 (2023) 121455
+10
+S.A. Putri et al.
+1 and 2 (ℎ1 and ℎ2) reaches the reference point (𝑥𝑠𝑝1,2 = 8 m) after
+an additional hour. This is because the stored water in the tanks is
+also utilized to satisfy the water demand. As shown in the baseline
+condition, abrupt variation of the controls from hours 13 to 14 occurred
+as well as at hour 1 as the initial guess of controls (𝑞𝑣, 𝑞𝑊𝑃,1, 𝑞𝑊𝑃,2) is
+set at 0 m3/s, leading to a high deviation of the control signals (𝛥𝑢).
+Therefore, constraint to 𝛥𝑢is applied in scenario 2, at hours 1, 14, and
+15. As indicated in Fig. 6(b), the flow rate of the actuators is decreased,
+compared to scenario 1. Accordingly, the system proceeded to track
+the set point over the following hours and reached a steady state at
+hour 20. Similarly, scenario 3 displays the same patterns as scenario
+2. However, due to the change of the reference point to 6 m, set point
+tracking can be achieved one hour and two hours faster than scenarios
+1 and 2, respectively (see Fig. 6(a)).
+Furthermore, a detailed cost analysis was performed to compare
+the performance of each scenario in case study 2, as depicted in
+Table 2. Operational cost is obtained through the utilization of the
+microgrid system to meet the electricity demand from the pumps for
+each scenario. Overall, the microgrid system has successfully guaran-
+teed demand across all scenarios and satisfied all operating constraints.
+A comparison of the scenarios reveals that scenarios 2 and 3 achieve
+substantial annual cost savings for over $300, 000, with a slight differ-
+ence between the two. A greater amount of energy can be saved in
+the third scenario because maintaining the water level of the tanks at
+the minimum level entails less water withdrawal from the clear well,
+thereby reducing the energy consumption of the actuators compared to
+scenarios 1 and 2.
+4.3. Case study 3: Effect of RESs uncertainty on the energy management
+system
+This study examines five scenarios for the water-energy microgrid
+and illustrates how MPC can be used to allocate the available resources
+to ensure demand compliance despite the uncertainty associated with
+renewable energy. The setup is adopted from [5] and reformulated for
+the studied water-energy microgrid. The following is the set-up of the
+scenarios:
+1. Scenario 1: 100% of 𝑝𝑃𝑉(𝛿𝑃𝑉= 1) and 𝑝𝑊𝑖𝑛𝑑(𝛿𝑊𝑖𝑛𝑑= 1) -
+Baseline
+2. Scenario 2: 40% of 𝑝𝑃𝑉(𝛿𝑃𝑉= 0.4) and 100% of 𝑝𝑊𝑖𝑛𝑑(𝛿𝑊𝑖𝑛𝑑=
+1)
+3. Scenario 3: 100% of 𝑝𝑃𝑉(𝛿𝑃𝑉= 1) and 40% of 𝑝𝑊𝑖𝑛𝑑(𝛿𝑊𝑖𝑛𝑑=
+0.4)
+4. Scenario 4: 0% of 𝑝𝑃𝑉(𝛿𝑃𝑉= 0) and 100% of 𝑝𝑊𝑖𝑛𝑑(𝛿𝑊𝑖𝑛𝑑= 1)
+5. Scenario 5: 100% of 𝑝𝑃𝑉(𝛿𝑃𝑉= 1) and 0% of 𝑝𝑊𝑖𝑛𝑑(𝛿𝑊𝑖𝑛𝑑= 0)
+4.3.1. Scenarios 2 & 4
+In these scenarios, the solar PV’s output power is reduced as a result
+of lower solar irradiance than the baseline conditions, shown in Figs. 7
+and 9, for scenarios 2 and 4, respectively. Considering the wind plant’s
+output power is available at any hour, the demand is fully met largely
+by 𝑝𝑊𝑖𝑛𝑑. Accordingly, 𝑝𝐵in scenarios 2 and 4 remains limited, as
+seen from the top subplot of Fig. 11, indicated by purple and green
+lines, respectively. Additionally, the figure shows a similar pattern of
+SOC across all scenarios, with scenario 1 storing the largest amount of
+energy. This is expected, as the availability of RESs is at its greatest
+level in scenario 1. Additionally, as shown in the bottom subplot of
+Fig. 11, the shutdown period of 𝑝𝐷𝑆is reduced to an hour less for
+scenario 2 and two hours less for scenario 4, indicated with purple and
+green lines respectively, when compared to scenario 1. This is because,
+as the RESs become limited, the MPC decides to dispatch more available
+energy resources.
+Fig. 6. Results comparison of the WDS components between scenarios 1–3 in case
+study 2.
+4.3.2. Scenarios 3 & 5
+These scenarios present a wind power loss of 60% in scenario 3 and
+100% loss in scenario 5, with energy dispatch distribution displayed in
+Figs. 8 and 10, respectively. In comparison to the baseline conditions,
+where wind power greatly contributed to satisfy the load requirement,
+even though 𝑝𝑊𝑖𝑛𝑑is reduced in these scenarios, demand is still satisfied
+at all hours. This is shown with the matched level between the elec-
+tricity demand (red lines) and the summation of the generated power
+(stacked bars) in Figs. 8 and 10. Referring to the pattern exhibited
+in Fig. 3, the output power of 𝑝𝑃𝑉is only available from hours 6 to
+18 with different rates depending on the solar irradiance in the area.
+Therefore, during the night, when the PV is absent and wind energy is
+reduced, larger power is dispatched from the 𝑝𝐵and 𝑝𝐷𝑆, compared
+
+Applied Energy 347 (2023) 121455
+11
+S.A. Putri et al.
+Fig. 7. 24-h electrical load dispatch, case study 3: 40% of 𝑝𝑃𝑉& 100% of 𝑝𝑊𝑖𝑛𝑑.
+Fig. 8. 24-h electrical load dispatch, case study 3: 100% of 𝑝𝑃𝑉& 40% of 𝑝𝑊𝑖𝑛𝑑.
+Fig. 9. 24-h electrical load dispatch, case study 3: 0% of 𝑝𝑃𝑉& 100% of 𝑝𝑊𝑖𝑛𝑑.
+to those in other scenarios. For scenarios 3 and 5, illustrated with
+orange and yellow lines in Fig. 11, the SOC is lower than that of other
+scenarios. In order to meet the demand at hour 22, the integrated MPC
+dispatched 𝑝𝐵until its minimum level of 20% was reached. Since the
+model formulation is intended to keep the SOC at a fixed point, 𝑝𝐷𝑆is
+heavily utilized in these scenarios within its physical limits. This can be
+seen in the bottom subplot of Fig. 11, where power shutoff from 𝑝𝐷𝑆is
+limited to only 4 and 3 h for scenarios 3 and 5, respectively.
+4.3.3. Performance evaluation and cost analysis of the microgrid operation
+in case study 3
+The cost analysis was conducted to further assess the performance
+of the MPC when the RESs were varied as demonstrated in Table 3. A
+positive value indicates that cost savings have been achieved, as seen in
+scenarios 2 and 4, while a negative value indicates that operating costs
+have increased, as observed in scenarios 3 and 5. A trade-off between
+different optimal performances was demonstrated in these scenarios.
+Firstly, by reducing 𝑝𝐷𝑆in scenario 1, we can conclude that WDS is
+associated with a lower carbon footprint. As illustrated in Fig. 5(a) and
+bottom subplot of Fig. 11, indicated by blue bars and lines, longest
+shutdown period of 𝑝𝐷𝑆is obtained (7 h) as a result of high penetration
+Fig. 10. 24-h electrical load dispatch, case study 3: 100% of 𝑝𝑃𝑉& 0% of 𝑝𝑊𝑖𝑛𝑑.
+Fig. 11. Results of 𝑆𝑂𝐶and 𝑝𝐷𝑆behavior over 24-h operation under case study 3.
+Table 3
+Operation cost for the microgrid system under case study 3 conditions.
+Scenario
+Cost ( $
+day )
+Cost (
+$
+year )
+Cost savings (
+$
+year )
+1
+32.385
+11.820.606
+N/A
+2
+32.357
+11.810.123
+10.483
+3
+33.123
+12.089.880
+−269.274
+4
+32.345
+11.806.065
+14.541
+5
+33.741
+12.315.399
+−494.794
+of RESs. Secondly, in scenario 4 the best smoothness of 𝑝𝐵can be
+achieved, thus extending its longevity. As illustrated in Fig. 9, demand
+is primarily derived from 𝑝𝑊𝑖𝑛𝑑at any given hour, thus charging and
+discharging modes of the BESS are restricted. Thirdly, scenario 4 also
+provides the greatest cost-savings, up to $14.500/year. Considering that
+the costs associated with 𝑝𝐵are higher than those of 𝑝𝐷𝑆, limiting its
+usage would result in higher operational and maintenance cost savings.
+Nonetheless, BESS utilization remains crucial to balancing a power
+system with a low carbon footprint and high storage capacity.
+4.4. Case study 4: Effect of penalty weights to the utilization of the MPC
+controllers
+In this case study, two scenarios for the water-energy microgrid are
+investigated to analyze the effect of adding penalty weights on utilizing
+the controllers. This is done by adding a quadratic term (‖𝜟𝒖(𝑘+ 𝑗−
+1)‖2
+𝑊𝑢2) to the objective function to minimize the cost of the controllers’
+usage, as indicated in (49). The modified objective function is adopted
+
+Applied Energy 347 (2023) 121455
+12
+S.A. Putri et al.
+Table 4
+Parameters implemented in case study 4.
+Variable
+Scenario 1
+Scenario 2
+WDS
+MG
+WDS
+MG
+𝑥0|𝑘
+ℎ0
+1 = ℎ0
+2 = 5 m
+𝑆𝑂𝐶0 = 80%
+Equivalent to scenario 1
+Equivalent to scenario 1
+𝑢0|𝑘
+𝑞𝑣,1 = 𝑞𝑊𝑃,1 = 𝑞𝑊𝑃,2 = 0
+m3
+s
+𝑝𝐷𝑆= 𝑝𝐵= 0 kW
+𝑥𝑠𝑝
+ℎ1 = ℎ2 = 8 m
+SOC = 50%
+𝑊𝑥
+𝑑𝑖𝑎𝑔{0.001 0.001}
+0.01
+𝑊𝑢1
+𝑑𝑖𝑎𝑔{0.001 1 1}
+N/A
+𝑑𝑖𝑎𝑔{0 1}
+𝑊𝑢2
+𝑑𝑖𝑎𝑔{1 1 1}
+𝑑𝑖𝑎𝑔{1 1}
+𝑑𝑖𝑎𝑔{1 1}
+Fig. 12. Results of Case Study 4 Scenario 1 for the WDS.
+from [35] and reformulated for the studied water-energy microgrid as
+follows:
+𝐽=
+𝑛𝑝
+∑
+𝑗=1
+(
+‖𝒙(𝑘+ 𝑗|𝑘) −𝒙𝒔𝒑‖2
+𝑊𝑥+ ‖𝒖(𝑘+ 𝑗−1)‖2
+𝑊𝑢1
++ ‖𝜟𝒖(𝑘+ 𝑗−1)‖2
+𝑊𝑢2
+)
+(49)
+The model layout remains the same as depicted in Fig. 1 with model
+parameters and penalty weights shown in Table 4.
+4.4.1. Scenario 1: Penalty to the water distribution actuators
+In the first scenario, only penalty weights to the controllers of
+the water distribution is implemented. The results of the microgrid
+operation in Scenario 1 will be further discussed in the second scenario.
+The goal of penalizing the controller of the WDS is to ensure that MPC
+utilizes the storage tanks interchangeably with the water pumps to meet
+the water demand. Fig. 12 illustrates the results for case study 4. Five
+variables are displayed in the graphs to provide clarity on the impact of
+penalizing the WDS’s controllers, such as the water levels, flow rates of
+the water pumps as the input flows to the storage tanks, output flows
+of the tanks denoted as 𝑞𝑜𝑢𝑡
+𝑇1 & 𝑞𝑜𝑢𝑡
+𝑇2 and water demand denoted as 𝑞𝑑1 &
+𝑞𝑑2, respectively.
+As illustrated in Fig. 12(a)–(b), demand compliance is consistently
+obtained throughout the iterations, indicated by the converging lines
+of the storage tanks’ output flows denoted by the green lines, with
+the water demand demonstrated by the dashed red lines. Due to the
+added penalty weights, MPC prioritizes minimizing the controller over
+the tracking setpoints objectives for most iterations while satisfying the
+water demand.
+Both graphs illustrate three operating conditions of the pumps; (1)
+when the lines associated with the controllers 𝑞𝑝,1 & 𝑞𝑝,2 overlap with
+the water demand, it means that the pumps were the sole source to
+satisfy the water demand, (2) when the 𝑞𝑝,1 & 𝑞𝑝,2 lines are higher than
+the water demand, pumps were utilized to store water in the water
+tanks to meet the setpoints, and (3) when the lines are lower than the
+water demand, stored water in the tanks is solely utilized to meet the
+demand.
+In the first hour, it is observed that the storage tanks and the water
+pumps collectively meet the water demand, as indicated by the reduced
+water level from 5 m to approximately 4.5 m, and the lines of the
+pumps’ flow rate are below the respective water demand. A similar
+condition can also be observed during hours 14 to 19 for Tank 1, and
+also 12 to 22 for Tank 2. Due to higher water consumption in Tank
+1’s outflow, Tank 2 is expected to supply water for a longer period.
+During hours 2–13, when water demand is stable, the pump is operated
+steadily to store water in the tanks (exhibited by the small deviation
+between two consecutive time steps). This allows stored water to be
+distributed during peak hours and fluctuations in demand. In addition,
+as required in the objective function, the rate of change of the actuators
+should also be minimized; therefore, it is also seen that when there is
+no fluctuation in the water demand, the flow rates of the pumps remain
+constant within two subsequent time steps. During hours 22 to 24,
+when water demand decreases, pumps were operated to reserve water
+in the tanks to comply with the tracking set points formulated in the
+MPC objective function. Notably, during hours when controllers were
+minimized, the maximum percentage of change of the pumps’ energy
+consumption compared to the baseline condition described in 4.1 was
+up to 30%.
+4.4.2. Scenario 2: Penalty to the power dispatch of the diesel generator unit
+In the second scenario, a penalty weight to the use of the diesel
+generator is included as shown in (49) with parameters provided in
+Table 4. In addition, start-up and shut-down costs, as exhibited in (12),
+are added to the problem formulation to sufficiently reflect the real
+diesel generator applications. The goal is to allow the MPC to minimize
+the power dispatch of the diesel generator and to optimally allocate the
+available remaining resources in the islanded microgrid model to meet
+the energy consumption from the WDS in case study 4 while still within
+the allowable physical limits.
+Fig. 13(a) depicts the power dispatch of the diesel generator from
+Scenario 1 and Scenario 2, denoted by the red and blue lines, respec-
+tively. Demand is always met during the iterations in both scenarios
+(for brevity, the graph is omitted). When the energy consumption of the
+pumps reaches peak levels (hours 16–20), power dispatch of the diesel
+generator (𝑝𝐷𝑆) between Scenario 1 and Scenario 2 converges (with a
+slight change in percentage from 0% −4%) as power balance remains
+the primary objective. However, in other periods when minimization
+of the controller is feasible, lower 𝑝𝐷𝑆is seen in Scenario 2 compared
+to Scenario 1 (with a maximum percentage change of 65% at hour
+
+Applied Energy 347 (2023) 121455
+13
+S.A. Putri et al.
+Fig. 13. 24-h dispatch of MG components under baseline and weighted scenario.
+7). Furthermore, RESs are fully utilized in both scenarios as they
+are regarded as deterministic system inputs. Therefore, when 𝑝𝐷𝑆is
+minimized, MPC dispatches the energy from the BESS to balance the
+microgrid system and meet the energy consumption from the WDS.
+The results of the power dispatch from the battery and the SOC can be
+observed in Fig. 13(b). As illustrated, the energy stored in the battery
+is higher in Scenario 1 compared to Scenario 2, indicated by the red
+and blue lines, respectively. Conversely, the power dispatch of the BESS
+in Scenario 1 is lower than in Scenario 2, indicated by the purple
+bar graph and green line, respectively. In addition, when comparing
+the total operating costs of the microgrid between Scenario 2 and 1,
+including and excluding the start-up and shutdown costs, a daily cost
+saving of $103 was obtained.
+5. Conclusion
+In this paper, a novel MIMO MPC algorithm is formulated for
+islanded and interdependent water-energy microgrid systems. The in-
+tegrated MPC allows simultaneous control of both water and power
+systems to obtain optimal demand management subject to operational
+standards and interdependencies. Real-world water demand data from
+Telford, Pennsylvania, is used as the disturbance to verify the reliability
+of the model against diurnal water demand fluctuations, which also
+affect the hourly electricity demand.
+Different case studies have been performed to verify the effec-
+tiveness of the proposed MIMO MPC, namely (1) baseline conditions
+of the water-energy microgrid, (2) the effect of limit on the rate of
+change of the actuators in the water system, (3) the effect of RESs
+deterministic uncertainty on the energy management system, and (4)
+the effect of penalty weights to the controllers. Cost analysis of the
+islanded microgrid system is performed by changing the operating
+conditions of the water system (presented in the second case study).
+The findings indicated that higher energy savings led to greater cost
+savings of up to $360k/year at the expense of lower security levels for
+storage tanks. The findings of this study also demonstrate that due to
+the interconnections between water and energy systems, it is essential
+to integrate their control models in order to achieve cost-effectiveness
+while simultaneously satisfying both water and electricity demands.
+Multiple optimal operation configurations (demonstrated in case
+study 3) led to significant outcomes which could potentially benefit
+both water and power systems: (1) WDS’s carbon footprint could be
+reduced by utilizing less fossil-fuel-based electricity (from the diesel
+generators) when an equal amount of solar and wind power is available.
+(2) Smoothness of operation and longer lifespan of BESS are obtained
+during high penetration of wind power. (3) A greater cost-saving of up
+to 14.5k/year is attained when the utilization of BESS remains limited.
+When the minimization of the controllers’ usage is added to the
+objective function in case study 4, the pumps’ energy consumption
+and the diesel generator’s power dispatch decreased up to 30% and
+60%, respectively, despite still maintaining demand compliance. The
+minimization was attained at the cost of disregarding the setpoints
+tracking for the stored water levels and the BESS’s state of the charge.
+This is anticipated as in a multi-objective function, the fulfillment of the
+objective function becomes Pareto optimum, in which no improvement
+can be made without deteriorating at least one other solution [35].
+Additionally, in the fourth case study, the expenses associated with
+starting up and shutting down the diesel generator were incorporated
+into the problem formulation to sufficiently model real-world opera-
+tions. The study found that by minimizing the diesel generator’s energy
+dispatch, a daily cost reduction of $103 was obtained compared to the
+baseline condition, which excludes the start-up and shutdown costs. In
+all the case studies and operating conditions performed in this paper,
+demand compliance to both water and electricity is always obtained.
+In future work, we will focus on (1) developing the MPC algorithm
+to deal with the nonlinearity of water-energy microgrid, (2) the dy-
+namic feature of the water pump’s efficiency, and (3) exploring the
+stochastic nature of RESs and demand.
+CRediT authorship contribution statement
+Saskia A. Putri: Data curation, Formal analysis, Methodology, Vali-
+dation, Visualization, Writing – original draft. Faegheh Moazeni: Con-
+ceptualization, Funding acquisition, Investigation, Supervision, Writing
+– review & editing. Javad Khazaei: Conceptualization, Investigation,
+Supervision, Writing – review & editing.
+Declaration of competing interest
+The authors declare the following financial interests/personal rela-
+tionships which may be considered as potential competing interests:
+Faegheh Moazeni reports financial support was provided by Lehigh
+University.
+Data availability
+All used data is presented in the paper.
+Acknowledgment
+We wish to thank Martz Technologies, Inc. for making the water
+demand data available for this study.
+Funding
+The funding for this work was partially provided by Lehigh Univer-
+sity’s 2022 Faculty Research Grant (#459803).
+Appendix
+Parameters of the water-energy microgrid are presented in Tables 5
+and 6, respectively.
+
+Applied Energy 347 (2023) 121455
+14
+S.A. Putri et al.
+Table 5
+Parameters of the microgrid system.
+Parameter
+Values
+𝑝𝑃𝑉
+𝑝𝑃𝑉= 0 𝑝𝑃𝑉= 600 kW
+𝑝𝑊𝑖𝑛𝑑
+𝑝𝑊𝑖𝑛𝑑= 0, 𝑝𝑃𝑉= 700 kW
+DS
+𝛼𝐷𝑆= 1300, 𝛽𝐷𝑆= 0.013, 𝛾𝐷𝑆= 0.000235
+𝑝𝐷𝑆= 0, 𝑝𝐷𝑆= 1700 kW
+𝑐𝑢𝑝= 0.01 $∕kW, 𝑐𝑑𝑛= 0.01 $∕kW
+B
+𝑘𝐵= 0.65, 𝑝𝑚𝑖𝑛
+𝐵
+= 0, 𝑝𝐵= 3500 kW
+𝑆𝑂𝐶= 20%, 𝑆𝑂𝐶= 100%
+𝛥𝑡= 1 h, 𝑛𝑠𝑎𝑚𝑝𝑙𝑒𝑠= 24
+Table 6
+Parameters of the WDS.
+Parameter
+Values
+Parameter
+Values
+𝑠1
+310 m2
+𝑠2
+210 m2
+ℎ1, ℎ2
+3 m
+ℎ1, ℎ2
+10 m
+𝑞𝑣,1, 𝑞𝑊𝑃,1, 𝑞𝑊𝑃,2
+0 m3∕s
+𝑞𝑣,1
+0.82
+m3∕s
+𝑑𝑣,1
+1.0160 m
+𝑞𝑊𝑃,1
+0.52
+m3∕s
+𝑑𝑝,1
+0.8128 m
+𝑞𝑊𝑃,2
+0.46
+m3∕s
+𝑑𝑝,2
+0.7620 m
+𝜂
+0.75
+𝑎𝑊𝑃
+0.0001433
+𝑐𝑊𝑃
+3.98
+𝑏𝑊𝑃
+0.00501
+𝛥𝑡= 1 h = 3600 s,
+𝑛𝑠𝑎𝑚𝑝𝑙𝑒𝑠= 24
+References
+[1] US-EPA. Energy Efficiency for Water Utilities. 2022, URL https://www.epa.gov/
+sustainable-water-infrastructure.
+[2] Sharif MN, Haider H, Farahat A, Hewage K, Sadiq R. Water–energy nexus for
+water distribution systems: a literature review. Environ Rev 2019;27(4):519–44.
+http://dx.doi.org/10.1139/er-2018-0106.
+[3] Moazeni F, Khazaei J. Optimal operation of water-energy microgrids; a mixed
+integer linear programming formulation. J Clean Prod 2020;275:122776. http:
+//dx.doi.org/10.1016/j.jclepro.2020.122776.
+[4] Clarke WC, Brear MJ, Manzie C. Control of an isolated microgrid using
+hierarchical economic model predictive control. Appl Energy 2020;280:115960.
+http://dx.doi.org/10.1016/j.apenergy.2020.115960.
+[5] Morato MM, Vergara-Dietrich J, Esparcia EA, Ocon JD, Normey-Rico JE.
+Assessing demand compliance and reliability in the Philippine off-grid is-
+lands with Model Predictive Control microgrid coordination. Renew Energy
+2021;179:1271–90. http://dx.doi.org/10.1016/j.renene.2021.07.012.
+[6] Zhang Y, Fu L, Zhu W, Bao X, Liu C. Robust model predictive control for
+optimal energy management of island microgrids with uncertainties. Energy
+2018;164:1229–41. http://dx.doi.org/10.1016/j.energy.2018.08.200.
+[7] Palma-Behnke R, Benavides C, Aranda E, Llanos J, Saez D. Energy management
+system for a renewable based microgrid with a demand side management
+mechanism. In: 2011 IEEE symposium on computational intelligence applications
+in smart grid (CIASG). Paris, French Guiana: IEEE; 2011, p. 1–8. http://dx.doi.
+org/10.1109/CIASG.2011.5953338.
+[8] Li Q, Yu S, Al-Sumaiti AS, Turitsyn K. Micro Water–Energy Nexus: Opti-
+mal Demand-Side Management and Quasi-Convex Hull Relaxation. IEEE Trans
+Control Netw Syst 2019;6(4):1313–22. http://dx.doi.org/10.1109/TCNS.2018.
+2889001.
+[9] Moazeni F, Khazaei J, Pera Mendes JP. Maximizing energy efficiency of is-
+landed micro water-energy nexus using co-optimization of water demand and
+energy consumption. Appl Energy 2020;266:114863. http://dx.doi.org/10.1016/
+j.apenergy.2020.114863.
+[10] Cherchi C, Badruzzaman M, Gordon M, Bunn S, Jacangelo JG. Investigation of
+Cost and Energy Optimization of Drinking Water Distribution Systems. Environ
+Sci Technol 2015;49(22):13724–32. http://dx.doi.org/10.1021/acs.est.5b03666.
+[11] Silva-Rodriguez J, Li X. Water-Energy Co-Optimization for Community-Scale
+Microgrids. In: 2021 North American power symposium (NAPS). College Sta-
+tion, TX, USA: IEEE; 2021, p. 1–6. http://dx.doi.org/10.1109/NAPS52732.2021.
+9654518.
+[12] Palma-Behnke R, Benavides C, Lanas F, Severino B, Reyes L, Llanos J, Saez D.
+A Microgrid Energy Management System Based on the Rolling Horizon Strategy.
+IEEE Trans Smart Grid 2013;4(2):996–1006. http://dx.doi.org/10.1109/TSG.
+2012.2231440.
+[13] Mayne DQ. Model predictive control: Recent developments and future promise.
+Automatica 2014;50(12):2967–86. http://dx.doi.org/10.1016/j.automatica.2014.
+10.128.
+[14] Wang Y, Puig V, Cembrano G. Non-linear economic model predictive control of
+water distribution networks. J Process Control 2017;56:23–34. http://dx.doi.org/
+10.1016/j.jprocont.2017.05.004.
+[15] Ringset RK. Efficient optimization in model predictive control (Ph.D. thesis),
+Norwegian University of Science and Technology; 2009.
+[16] Pour FK, Puig V, Cembrano G. Economic MPC-LPV Control for the Op-
+erational
+Management
+of
+Water
+Distribution
+Networks.
+IFAC-PapersOnLine
+2019;52(23):88–93. http://dx.doi.org/10.1016/j.ifacol.2019.11.014.
+[17] Schwenzer M, Ay M, Bergs T, Abel D. Review on model predictive control:
+an engineering perspective. Int J Adv Manuf Technol 2021;117(5–6):1327–49.
+http://dx.doi.org/10.1007/s00170-021-07682-3.
+[18] Fambrini V, Ocampo-Martinez C. Modelling and decentralized model predictive
+control of drinking water networks. Institut de Robotica Informatica Industrial
+(IRI); 2009, p. 56.
+[19] Berkel F, Caba S, Bleich J, Liu S. A modeling and distributed MPC approach for
+water distribution networks. Control Eng Pract 2018;81:199–206. http://dx.doi.
+org/10.1016/j.conengprac.2018.09.017.
+[20] Sun C, Morley M, Savic D, Puig V, Cembrano G, Zhang Z. Combining Model
+Predictive Control with Constraint-satisfaction Formulation for the Operative
+Pumping Control in Water Networks. Procedia Eng 2015;119:963–72. http://
+dx.doi.org/10.1016/j.proeng.2015.08.982.
+[21] Wang S, Taha AF, Gatsis N, Giacomoni MH. Receding Horizon Control for
+Drinking Water Networks: The Case for Geometric Programming. IEEE Trans
+Control Netw Syst 2020;7(3):1151–63. http://dx.doi.org/10.1109/TCNS.2020.
+2964139.
+[22] Zhang Y, Zheng Y, Li S, Zou Y. Economic model predictive control for the
+operation optimization of water distribution networks with risks. Asian J Control
+2021;23(1):128–42. http://dx.doi.org/10.1002/asjc.2218.
+[23] Sachs J, Sawodny O. A Two-Stage Model Predictive Control Strategy for
+Economic Diesel-PV-Battery Island Microgrid Operation in Rural Areas. IEEE
+Trans Sustain Energy 2016;7(3):903–13. http://dx.doi.org/10.1109/TSTE.2015.
+2509031, URL http://ieeexplore.ieee.org/document/7370817/.
+[24] Ouammi A, Achour Y, Zejli D, Dagdougui H. Supervisory Model Predictive
+Control for Optimal Energy Management of Networked Smart Greenhouses
+Integrated Microgrid. IEEE Trans Autom Sci Eng 2020;17(1):117–28. http://dx.
+doi.org/10.1109/TASE.2019.2910756.
+[25] Overloop P-Jv. Model predictive control on open water systems. Amsterdam,
+Netherlands, Fairfax, VA: Delft University Press ; Distributor in the USA and
+Canada, IOS Press, Inc; 2006, OCLC: ocm82466528.
+[26] Conde G, Quijano N, Ocampo-Martinez C. Modeling and control in open-channel
+irrigation systems: A review. Annu Rev Control 2021;51:153–71. http://dx.
+doi.org/10.1016/j.arcontrol.2021.01.003, URL https://linkinghub.elsevier.com/
+retrieve/pii/S1367578821000031.
+[27] Walski TM, Chase DV, Savic DA, Grayman W, Beckwith S, Koelle E. Advanced
+water distribution modeling and management. Haestad Press; 2003.
+[28] Eker I, Kara T. Operation and control of a water supply system. ISA Trans
+2003;42(3):461–73. http://dx.doi.org/10.1016/S0019-0578(07)60147-5.
+[29] Ulanicki B, Kahler J, Coulbeck B. Modeling the Efficiency and Power Characteris-
+tics of a Pump Group. J Water Resour Plan Manage 2008;134(1):88–93. http://
+dx.doi.org/10.1061/(ASCE)0733-9496(2008)134:1(88), URL https://ascelibrary.
+org/doi/10.1061/%28ASCE%290733-9496%282008%29134%3A1%2888%29.
+[30] Stoffel B. The Role of Pumps for Energy Consumption and Energy Saving. In:
+Assessing the energy efficiency of pumps and pump units. Elsevier; 2015, p.
+1–24. http://dx.doi.org/10.1016/B978-0-08-100597-2.00001-X.
+[31] NOAA. SURFRAD network: Penn state, pennsylvania. 2020, URL https://gml.
+noaa.gov/grad/surfrad/pennstat.html.
+[32] NOAA. Wind Speed Datasets. 2020, URL https://www.ncdc.noaa.gov/cdo-web/.
+[33] Notton G, Muselli M, Poggi P, Louche A. Decentralized wind energy systems pro-
+viding small electrical loads in remote areas. Int J Energy Res 2001;25(2):141–
+64. http://dx.doi.org/10.1002/er.670, URL https://onlinelibrary.wiley.com/doi/
+10.1002/er.670.
+[34] Hijjo M, Felgner F, Frey G. PV-battery-diesel microgrid design for buildings
+subject to severe power outages. In: 2017 IEEE PES PowerAfrica. Accra: IEEE;
+2017, p. 280–5. http://dx.doi.org/10.1109/PowerAfrica.2017.7991237.
+[35] Bordons C, Garcia-Torres F, Ridao MA. Model predictive control of microgrids.
+Advances in industrial control, Cham: Springer International Publishing; 2020,
+http://dx.doi.org/10.1007/978-3-030-24570-2.
+[36] Moazeni F, Khazaei J. Optimal energy management of water-energy networks
+via optimal placement of pumps-as-turbines and demand response through
+water storage tanks. Appl Energy 2021;283:116335. http://dx.doi.org/10.1016/
+j.apenergy.2020.116335.
+[37] Mongird K, Viswanathan V, Balducci P, Alam J, Fotedar V, Koritarov V,
+Hadjerioua B. Energy storage technology and cost characterization report. US
+Department of Energy; 2019, 2019 (PNNL-28866).
+
+Applied Energy 347 (2023) 121455
+15
+S.A. Putri et al.
+[38] Wang S, Taha AF, Abokifa AA. How Effective is Model Predictive Control in
+Real-Time Water Quality Regulation? State-Space Modeling and Scalable Control.
+Water Resour Res 2021;57(5). http://dx.doi.org/10.1029/2020WR027771, arXiv:
+2009.01298 [cs, eess, math].
+[39] Guo Z, Li S, Zheng Y. Feedback Linearization Based Distributed Model Pre-
+dictive Control for Secondary Control of Islanded Microgrid. Asian J Control
+2020;22(1):460–73. http://dx.doi.org/10.1002/asjc.1906.
+[40] Binder B, Johansen T, Imsland L. Improved predictions from measured distur-
+bances in linear model predictive control. J Process Control 2019;75:86–106.
+http://dx.doi.org/10.1016/j.jprocont.2019.01.007.
+[41] Nocedal J, Wright S. Numerical optimization. Springer series in op. res. and fin.
+eng., 2nd ed.. New York, NY; 2006.
+[42] Hoppe RH. Ch. 4 Sequential Quadratic Programming. 2006, URL https://www.
+math.uh.edu/~rohop/fall_06/Chapter4.pdf.
+[43] Verheijen P, Lazar M, Goswami D. Efficient Implementation and Sampling
+Period Analysis of MPC for Water Distribution Networks*. IFAC-PapersOnLine
+2022;55(33):42–7. http://dx.doi.org/10.1016/j.ifacol.2022.11.007.

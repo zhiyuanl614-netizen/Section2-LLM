@@ -1,0 +1,1039 @@
+Electric Power Systems Research 212 (2022) 108491
+Available online 16 July 2022
+0378-7796/© 2022 Elsevier B.V. All rights reserved.
+Contents lists available at ScienceDirect
+Electric Power Systems Research
+journal homepage: www.elsevier.com/locate/epsr
+Flexible drinking water pumping to provide multiple grid services✩
+Anna Stuhlmacher ∗, Johanna L. Mathieu
+Electrical Engineering and Computer Science, University of Michigan, Ann Arbor, MI, USA
+A R T I C L E
+I N F O
+Keywords:
+Distribution networks
+Flexible loads
+Frequency regulation
+Voltage support
+Water networks
+A B S T R A C T
+Drinking water distribution networks (WDNs) can be operated as flexible, controllable loads. In this paper, we
+consider using WDNs to provide local and grid level services simultaneously to the power grid. We formulate
+a robust water pumping problem to determine the amount of voltage support and frequency regulation that
+can be provided subject to network constraints while managing power demand uncertainty. We tractably
+reformulate the problem as a sequential optimization problem and solve for the scheduled water pumping
+operation, the frequency regulation capacity, and the optimal control policy parameters that update the pump
+operation based on the frequency regulation signal and power distribution network demand forecast error.
+We demonstrate our approach through detailed case studies. Additionally, we evaluate the performance of the
+reformulation and discuss the benefits and trade-offs of WDNs providing multiple services.
+1. Introduction
+Increasing amounts of flexibility are needed in the power grid to
+ensure reliable grid operation in the presence of higher penetrations of
+uncertain renewable energy sources. There is a significant body of work
+demonstrating that the control of demand-side resources can reduce
+the need for or replace traditional sources of flexibility in the power
+grid [1]. Typical sources of demand-side flexibility include energy
+storage units, thermostatically controlled loads, and plug-in electric
+vehicles. However, additional resources can also be leveraged, such as
+drinking water distribution networks (WDNs).
+WDNs are capable of providing flexibility to the power grid. By
+leveraging the capacities of storage tanks and the flexibility of water
+pumps at different locations in the WDN, water pumping loads in the
+power distribution network (PDN) can be shifted both temporally and
+spatially. Most WDNs have supervisory control and data acquisition
+(SCADA) systems that enable water system operators to provide fast
+operational control [2]. PDNs and WDNs are traditionally operated
+independently; however, both systems can benefit from coordinated
+operation. These benefits include improving system reliability, inte-
+grating larger quantities of renewable energy resources, and reducing
+operational costs [3]. The WDN can provide several local and grid level
+services to the power grid. However, for any one service, the flexibility
+in the WDN may be underutilized. To improve utilization, the WDN
+can be operated to simultaneously provide local and grid-level services,
+which provides more overall benefit to the power system and also can
+increase the value proposition to the WDN operator.
+✩This work was supported by NSF Grant 1845093.
+∗Corresponding author.
+E-mail addresses: akstuhl@umich.edu (A. Stuhlmacher), jlmath@umich.edu (J.L. Mathieu).
+The goal of this paper is to use WDNs to provide multiple simultane-
+ous grid services. In particular, we focus on providing voltage support
+to the power distribution network and frequency regulation to the
+bulk transmission system. In order to provide robust guarantees on the
+safe operation of the PDN and WDN, we need to account for network
+demand uncertainty. To do this, we formulate a robust water pump-
+ing problem to simultaneously provide voltage support and frequency
+regulation subject to power and water distribution network constraints
+in the presence of power demand uncertainty. We first develop the
+full optimization problem where the scheduled WDN operation, voltage
+support, and frequency regulation are co-optimized. The formulation is
+nonconvex and mixed-integer, and so we reformulate the problem into
+multiple sub-problems and solve the problems sequentially. We then
+evaluate the performance trade-offs of the co-optimized and sequential
+problems.
+There is a growing body of research that considers the integrated
+optimization of coupled PDN-WDN systems for power system services.
+In [4], water pumps are controlled in real-time to consume surplus
+energy from renewable energy sources. Refs. [5] and [6] solve for the
+demand response capacities of WDNs. In [7], the authors co-optimize
+WDN and PDN operation in order to minimize power loss in the PDN.
+Our previous work on coupled PDN-WDN systems considered providing
+a single local-level service (i.e., voltage support) while managing water
+and power demand uncertainties [8,9]. Most research assumes that the
+network demands are known and, to the best of our knowledge, no
+papers consider optimally controlling the water distribution network
+https://doi.org/10.1016/j.epsr.2022.108491
+Received 3 October 2021; Received in revised form 11 April 2022; Accepted 2 July 2022
+
+Electric Power Systems Research 212 (2022) 108491
+2
+A. Stuhlmacher and J.L. Mathieu
+to provide multiple services while managing demand uncertainty. How-
+ever, research on the use of flexible loads like battery energy storage to
+provide multiple simultaneous services [10] demonstrates the value of
+more fully utilizing available flexibility and harnessing multiple value
+streams.
+The contributions of this paper are the (1) formulation of a robust
+optimization problem to simultaneously solve for the pump schedule,
+voltage support control actions, and frequency regulation capacity
+subject to WDN and PDN constraints while managing uncertainty in
+power demand and the frequency regulation signal, (2) tractable refor-
+mulation of the problem into a robust, mixed-integer convex sequential
+problem, (3) evaluation of the challenges associated with providing
+voltage support and frequency regulation together, and (4) demonstra-
+tion of the performance of the proposed solution approach through a
+case study.
+2. Problem description
+Our goal is to optimize the WDN’s operation and capacity allocated
+to grid services subject to PDN and WDN constraints while managing
+power demand uncertainty over the scheduling horizon . Specifically,
+the operation of the supply pumps in the WDN should not violate WDN
+or PDN constraints. We co-optimize the WDN’s scheduled operation
+and the capacities reserved for voltage support and asymmetric up and
+down frequency regulation.
+There are several sources of uncertainty in this problem. The power
+demand at each bus, phase, and time period 𝑡∈is uncertain but
+bounded. We define the power demand at time 𝑡as the sum of the
+known, forecasted demand and the uncertain power demand forecast
+error vector 𝜟𝝆𝑡, which includes the error at all buses and phases.
+Additionally, in order to provide frequency regulation, the WDN pumps
+need to adjust their power consumption based on uncertain up and
+down frequency regulation signals̃ 𝑠𝑡
+up
+∈[−1, 0] and̃ 𝑠𝑡
+dn
+∈[0, 1],
+respectively. The frequency regulation signals are scaled by the up and
+down frequency regulation capacities, which are decision variables, to
+obtain the required change in power. We define the uncertainty as 𝝎,
+i.e., 𝝎= [𝜟𝝆𝑡,̃ 𝑠𝑡
+up,̃ 𝑠𝑡
+dn]𝑡∈∈where is the uncertainty set.
+We formulate the problem as an adjustable robust optimization
+problem [11] where 𝐱contains the operational variables and 𝐲contains
+the adjustable variables that are dependent on the uncertainty 𝝎,
+specifically,
+min
+𝐱
+𝐹(𝐱, 𝐲(𝝎, 𝐱))
+(Co-optimized)
+s.t.
+∀𝝎∈, ∃𝐲,
+𝛹1(𝐱, 𝐲(𝝎, 𝐱), 𝝎),
+𝛹2(𝐱, 𝐲(𝝎, 𝐱), 𝝎),
+𝛹3(𝐱, 𝐲(𝝎, 𝐱), 𝝎),
+𝛹4(𝐱, 𝐲(𝝎, 𝐱), 𝝎).
+The cost function 𝐹(⋅) includes the costs of scheduled pump operation
+and real-time adjustments to provide voltage support and frequency
+regulation. The constraint sets 𝛹1(⋅) and 𝛹2(⋅) include the voltage
+support and frequency regulation capacities and control actions, respec-
+tively. The constraint sets 𝛹3(⋅) and 𝛹4(⋅) are the quasi-steady state PDN
+and WDN constraints for every time step 𝑡∈of duration 𝛥𝑇.
+In our problem, the operational variable 𝐱includes the WDN sched-
+ule (in particular, the scheduled pump power consumption), the pump
+power capacity needed to provide voltage support, and the up and
+down frequency regulation capacity. Additionally, we solve for the
+affine control policy parameters used for voltage support and frequency
+regulation real-time adjustments. While an affine control policy re-
+stricts the feasible space of 𝐲(𝝎, 𝐱), a computationally tractable problem
+can be formulated and the real-time implementation of the control
+policy is simple for water utilities. The adjustable variables 𝐲are
+dependent on the control policy adjustments, e.g., the real-time pump
+power consumption and the bus voltages. We can define the real-time
+single-phase pump power consumption in terms of its schedule and
+real-time voltage support and frequency regulation adjustments
+𝑝𝑡
+𝑒= 𝑝𝑡
+nom,𝑒+ 𝛥𝑝𝑡
+vs,𝑒(𝝎𝑡) + 𝛥𝑝𝑡
+fr,𝑒(𝝎𝑡)
+∀𝜔∈, 𝑒∈, 𝑡∈,
+(1)
+where is the set of pumps in the WDN, 𝛥𝑝𝑡
+vs,𝑒is the real-time voltage
+support adjustment based on the power demand forecast error, and
+𝛥𝑝𝑡
+fr,𝑒is the real-time frequency regulation adjustments based on the
+up and down frequency regulation signals from the bulk transmission
+system. We assume that the pumps are balanced three-phase loads and
+therefore we do not specify the phase of the pump power consumption;
+the power consumed in each phase is equal. These real-time voltage
+support and frequency regulation control policies are described in Sec-
+tions 2.1 and 2.2. We next model the voltage support 𝛹1(⋅), frequency
+regulation 𝛹2(⋅), PDN 𝛹3(⋅), and WDN 𝛹4(⋅) constraints. The constraints
+are semi-infinite, since they must hold true for all uncertainty realiza-
+tions. However, we discuss how to tractably reformulate the constraints
+in Sections 2.4 and 3.
+2.1. Voltage support, 𝛹1(⋅)
+We first consider the set of constraints that make up 𝛹1(⋅). In order
+to ensure that voltages in the PDN are within safe operating conditions
+for all power demand uncertainty, we formulate a control policy to
+adjust the pump power setpoints in response to the real-time power
+demand forecast error realizations, leveraging the approach in [8]. The
+voltage support pump power adjustment in (1) can then be written as
+𝛥𝑝𝑡
+vs,𝑒= 𝑪𝑡
+vs,𝑒𝜟𝝆𝑡
+∀𝑒∈, 𝑡∈,
+(2)
+where decision variable 𝑪𝑡
+vs,𝑒is the voltage support control policy
+parameter row vector. The control policy relates the power demand
+forecast error at each bus and phase to a change in pump 𝑒’s power
+consumption. We can define the range of up and down pump power
+adjustments needed for voltage support by bounding the control policy
+-𝑅𝑡
+vs,dn,𝑒≤𝑪𝑡
+vs,𝑒𝜟𝝆𝑡≤𝑅𝑡
+vs,up,𝑒
+∀𝑒∈, 𝑡∈,
+(3a)
+𝑅𝑡
+vs,up,𝑒, 𝑅𝑡
+vs,dn,𝑒≥0
+∀𝑒∈, 𝑡∈,
+(3b)
+where 𝑅𝑡
+vs,dn,𝑒and 𝑅𝑡
+vs,up,𝑒are the largest decrease and increase in
+single-phase pump power consumption due to voltage support services.
+2.2. Frequency regulation, 𝛹2(⋅)
+We next define the set of frequency regulation constraints that make
+up 𝛹2(⋅). We consider both up and down frequency regulation services.
+Using generator sign convention, up frequency regulation corresponds
+to a decrease in pump power consumption and down frequency reg-
+ulation corresponds to an increase in pump power consumption. We
+solve for the amount of capacity that the WDN can provide at each time
+period as well as the participation of each pump in response to the up
+and down frequency regulation signals. The frequency regulation pump
+power adjustment in (1) can be written as
+𝛥𝑝𝑡
+fr,𝑒=𝐶𝑡
+fr,up,𝑒𝑅𝑡
+fr,up̃𝑠𝑡
+up + 𝐶𝑡
+fr,dn,𝑒𝑅𝑡
+fr,dñ𝑠𝑡
+dn
+∀𝑒∈, 𝑡∈,
+(4)
+where decision variables 𝑅𝑡
+fr,up and 𝑅𝑡
+fr,dn are the up and down single-
+phase frequency regulation capacities at time 𝑡. Decision variables
+𝐶𝑡
+fr,up,𝑒and 𝐶𝑡
+fr,dn,𝑒are the up and down control policy parameters of
+pump 𝑒at time 𝑡. The frequency regulation capacities are non-negative
+and the frequency regulation control policy parameters must sum to
+one to ensure that the requested power adjustment is being fully met
+by the pumps, i.e.,
+𝑅𝑡
+fr,up, 𝑅𝑡
+fr,dn ≥0
+∀𝑡∈,
+(5)
+∑
+𝑒∈
+𝐶𝑡
+fr,up,𝑒= 1
+∀𝑡∈,
+(6)
+
+Electric Power Systems Research 212 (2022) 108491
+3
+A. Stuhlmacher and J.L. Mathieu
+∑
+𝑒∈
+𝐶𝑡
+fr,dn,𝑒= 1
+∀𝑡∈.
+(7)
+To remove the bilinear terms in the control policy, we can replace the
+frequency regulation control policy parameters and capacity terms in
+(4)–(7) with
+𝐹𝑡
+up,𝑒∶= 𝐶𝑡
+fr,up,𝑒𝑅𝑡
+fr,up
+∀𝑒∈, 𝑡∈,
+(8)
+𝐹𝑡
+dn,𝑒∶= 𝐶𝑡
+fr,dn,𝑒𝑅𝑡
+fr,dn
+∀𝑒∈, 𝑡∈,
+(9)
+𝐹𝑡
+up,𝑒, 𝐹𝑡
+dn,𝑒≥0
+∀𝑒∈, 𝑡∈,
+(10)
+where 𝐹𝑡
+up,𝑒and 𝐹𝑡
+dn,𝑒are decision variables in 𝛹2(⋅). Then we can
+recover the up and down frequency regulation capacities and control
+policy parameters a posteriori, e.g., the recovered down frequency
+regulation variables are
+𝑅𝑡
+fr,dn ∶=
+∑
+𝑒∈
+𝐹𝑡
+dn,𝑒
+∀𝑡∈,
+(11)
+𝐶𝑡
+fr,dn,𝑒∶=
+𝐹𝑡
+dn,𝑒
+∑
+𝑒∈𝐹𝑡
+dn,𝑒
+∀𝑒∈, 𝑡∈.
+(12)
+2.3. Power distribution network modeling, 𝛹3(⋅)
+Next, we define 𝛹3(⋅), the power distribution network model. We
+consider a radial power distribution network that contains uncontrol-
+lable net loads (i.e., actual loads minus distributed generation) and
+controllable pumping loads that are connected to a set of buses and
+phases 𝛷= {𝑎, 𝑏, 𝑐}. We must ensure a feasible power flow where the
+minimum and maximum voltage limit constraints are satisfied, i.e.,
+𝑽2 ≤𝒀𝑡
+𝑘≤𝑽
+2
+∀𝑘∈, 𝑡∈,
+(13)
+where 𝒀𝑡
+𝑘is the three-phase voltage magnitude squared at bus 𝑘and
+time 𝑡. The voltage magnitude squared is calculated from the linearized,
+three-phase unbalanced power flow equations, which are commonly
+referred to as Lin3DistFlow [12]
+𝒀𝑡
+𝑘= 𝒀𝑡
+𝑛−𝑴𝑘𝑛𝑷𝑡
+𝑛−𝑵𝑘𝑛𝑸𝑡
+𝑛
+∀𝑘∈, 𝑡∈,
+(14)
+𝑷𝑡
+𝑘= 𝝆𝑡
+𝑘+ 𝒑𝑡
+𝑒+
+∑
+𝑛∈𝑘
+𝑷𝑡
+𝑛
+∀𝑘∈, 𝑡∈,
+(15)
+𝑸𝑡
+𝑘= 𝜻𝑡
+𝑘+ 𝜂𝑒𝒑𝑡
+𝑒+
+∑
+𝑛∈𝑘
+𝑸𝑡
+𝑛
+∀𝑘∈, 𝑡∈,
+(16)
+where 𝑷𝑡
+𝑘and 𝑸𝑡
+𝑘are the real and reactive three-phase power flows
+entering bus 𝑘at time 𝑡, 𝑴𝑘𝑛and 𝑵𝑘𝑛are 3 × 3 parameter matrices
+formed from the line impedance matrices, and 𝑘is the set of buses
+directly downstream of bus 𝑘. The three-phase real and reactive un-
+controllable power demand at bus 𝑘and time 𝑡is denoted 𝝆𝑡
+𝑘and 𝜻𝑡
+𝑘,
+respectively. The variable 𝒑𝑡
+𝑒is the three-phase pump power consump-
+tion vector of pump 𝑒at time 𝑡. In (15) and (16), the pump power
+consumption is zero if there are no pumps present at bus 𝑘. We model
+the pumps as three-phase balanced loads, with a constant power factor
+(i.e., 𝜂𝑒is the real-to-reactive power ratio of pump 𝑒). We note that
+other three-phase unbalanced linearized power flow formulations could
+be used, e.g., [13].
+2.4. Water distribution network modeling, 𝛹4(⋅)
+Last, we define 𝛹4(⋅), the water distribution network model. The
+WDN can be represented as a directed graph composed of a set of nodes
+and a set of edges . The nodes are made up of disjoint sets of
+junctions , elevated storage tanks , and reservoirs . The edges, or
+pipes, are bidirectional and connect nodes in the network, e.g., 𝑖𝑗∈is
+a pipe going from node 𝑖to node 𝑗. A pipe may contain a supply pump,
+i.e., ⊆. A WDN’s water flow can be described by the hydraulic
+head 𝐻𝑡
+𝑗for each node 𝑗∈and the volumetric flow rate 𝑥𝑡
+𝑖𝑗of water
+through each pipe 𝑖𝑗∈. We do not explicitly consider water demand
+uncertainty. In [8], we found it reasonable to assume that a portion of
+the tank volume is reserved to hedge against water demand uncertainty.
+To ensure safe operation, the hydraulic heads (which are composed of
+the elevation and pressure head) must be between the minimum and
+maximum head limits, i.e.,
+𝐻𝑗≤𝐻𝑡
+𝑗≤𝐻𝑗
+∀𝑗∈, 𝑡∈.
+(17)
+Additionally, the tank water levels 𝓁𝑡
+𝑗and supply pump flow rates are
+bounded
+𝓁𝑗≤𝓁𝑡
+𝑗≤𝓁𝑗
+∀𝑗∈, 𝑡∈,
+(18)
+0 ≤𝑥𝑖𝑗≤𝑥𝑡
+𝑖𝑗≤𝑥𝑖𝑗
+∀𝑖𝑗∈, 𝑡∈,
+(19)
+where 𝓁𝑗and 𝓁𝑗are the minimum and maximum tank levels of tank
+𝑗, and 𝑥𝑖𝑗and 𝑥𝑖𝑗are the minimum and maximum flow rates of pump
+𝑖𝑗∈. The hydraulic heads and flow rates are governed by the water
+flow equations
+∑
+𝑖∶𝑖𝑗∈
+𝑥𝑡
+𝑖𝑗= −𝑑𝑡
+𝑗
+∀𝑗∈, 𝑡∈,
+(20)
+𝑥𝑡
+𝑖𝑗= −𝑥𝑡
+𝑗𝑖
+∀𝑖𝑗∈, 𝑡∈,
+(21)
+𝐻𝑡
+𝑗−𝐻𝑡
+𝑖= 𝑘𝑖𝑗𝑥𝑡
+𝑖𝑗|𝑥𝑡
+𝑖𝑗|
+∀𝑖𝑗∈⧵, 𝑡∈,
+(22)
+𝐻𝑡
+𝑖−𝐻𝑡
+𝑗= 𝑚1
+𝑖𝑗𝑥𝑡
+𝑖𝑗+ 𝑚0
+𝑖𝑗
+∀𝑖𝑗∈, 𝑡∈,
+(23)
+𝐻𝑡
+𝑗= ℎ𝑗
+∀𝑗∈, 𝑡∈,
+(24)
+𝓁𝑡
+𝑗= 𝓁𝑡−1
+𝑗
++ 𝛥𝑇
+𝛾𝑗
+∑
+𝑖∶𝑖𝑗∈
+𝑥𝑡
+𝑖𝑗
+∀𝑗∈, 𝑡∈,
+(25)
+where 𝑑𝑡
+𝑗is the water injection at node 𝑗and time 𝑡, 𝑘𝑖𝑗is the resistance
+coefficient of pipe 𝑖𝑗, 𝑚1
+𝑖𝑗and 𝑚0
+𝑖𝑗are head loss parameters of pump
+𝑖𝑗, 𝛾𝑗is the cross-sectional area of tank 𝑗, and̄ ℎ𝑗is the elevation of
+node 𝑗. Conservation of water is ensured by (20) and (21) specifies
+skew symmetry of water flow through the pipes. In (22)–(23), the
+head loss and head gain as a function of flow rate is defined for
+pipes and pumps that are operating, respectively. The pipe head loss
+function is modeled using the Darcy–Weisbach formulation [14]. When
+a pump is on, the pump head gain of a fixed speed pump is generally
+modeled in the literature with either a linear or quadratic function of
+the flow rate through the pump. Here, we use a linear form. When the
+pump is off, the pump behaves like a closed valve and the pump head
+gain is arbitrary. To formulate this, we can introduce a binary pump
+status variable and use the big-M method to formulate this equation.
+Reservoirs are modeled as infinite sources of water with a fixed head,
+which is specified in (24). In (25), the water level of tank 𝑗is calculated
+based on the tank level in the previous time period and the net flow of
+water into and out of the tank.
+The single-phase pump power consumption is generally modeled as
+a linear, quadratic, or cubic function of the flow rate through the pump.
+Here, we model it with a linear function
+𝑝𝑡
+𝑒= ℎ1
+𝑖𝑗𝑥𝑡
+𝑖𝑗+ ℎ0
+𝑖𝑗
+∀𝑒= 𝑖𝑗∈, 𝑡∈,
+(26)
+where ℎ1
+𝑖𝑗and ℎ0
+𝑖𝑗are parameters. The water distribution network
+constraints are semi-infinite since the constraints must hold for all
+realizations of uncertainty (which enters the WDN constraints in the
+real-time pump power consumption equation (26)).
+We tractably reformulate the semi-infinite WDN constraints into
+three sets of deterministic constraints using the monotonicity properties
+of dissipative flow networks [15]. In order to apply the monotonicity
+properties to the WDN, several assumptions must be made [9]. We
+assume that the tank head is not strictly dependent on the tank level
+(i.e., there is either a booster pump and/or valve connected to the
+tank inlet and outlet pipe), the head loss functions are increasing in
+flow rate, and that an increase in reservoir water injections cause
+the deviation in tank water injections to be non-positive for all tanks
+(i.e., the tanks do not also increase their water injection). We also
+assume that the pump statuses do not change in real-time (i.e., the real-
+time on/off pump statuses are the same as the schedule) to minimize
+
+Electric Power Systems Research 212 (2022) 108491
+4
+A. Stuhlmacher and J.L. Mathieu
+pump wear-and-tear and ensure monotonicity. The robustness proof
+and implications of these assumptions are further discussed in [9].
+With these assumptions, we can prove that the hydraulic heads at all
+nodes, the tank levels, and pump flows are monotonic functions of the
+reservoir water injections (which vary based on the voltage support and
+frequency regulation control actions). The WDN constraints can then
+be reformulated as the schedule and extreme cases of the pump power
+consumption
+𝛤scheduled(𝒑nom) ≤0,
+(27a)
+𝛤extreme(𝒑) ≤0,
+(27b)
+𝛤extreme(𝒑) ≤0,
+(27c)
+where 𝛤scheduled(𝒑nom), 𝛤extreme(𝒑), and 𝛤extreme(𝒑)p are the sets of de-
+terministic WDN constraints (17)–(26) given the scheduled, minimum,
+and maximum power consumption
+𝑝𝑡
+𝑒= 𝑝𝑡
+nom,𝑒+ 𝑅𝑡
+vs,up,𝑒+ 𝑅𝑡
+fr,dn,𝑒
+∀𝑒∈, 𝑡∈,
+(28)
+𝑝𝑡
+𝑒= 𝑝𝑡
+nom,𝑒−𝑅𝑡
+vs,dn,𝑒−𝑅𝑡
+fr,up,𝑒
+∀𝑒∈, 𝑡∈,
+(29)
+where the pumps are balanced three-phase loads.
+2.5. Providing both voltage support and frequency regulation
+When treating the WDN as a flexible load, we must ensure that the
+tanks are not simply depleted over the scheduling horizon. This issue is
+magnified when we include asymmetric frequency regulation services.
+We address this by specifying a total volume of water that must be in
+the storage tanks at the end of the scheduling horizon
+∑
+𝑗∈
+𝛾𝑗𝓁𝑡=||
+𝑗
+=̂ 𝑣+
+∑
+𝑗∈
+𝛾𝑗𝓁𝑡=0
+𝑗
+,
+(30)
+wherê 𝑣is the water deficit from the previous scheduling horizon
+that must be recovered. We include (30) in (27a). Alternatively, if
+we wished to correct the tank levels in each time period, we could
+incorporate a random variable that compensates for the previous time
+period’s water deviation from the scheduled operation, but we leave
+this to future work.
+A challenge with providing both voltage support and frequency
+regulation simultaneously is to ensure that the frequency regulation
+services are not creating voltage issues within the PDN. The goal of
+voltage support is to provide the smallest pump power adjustments
+to ensure that the bus voltages are within their limits. Therefore, any
+additional pump adjustment in the opposite direction of the voltage
+support adjustments will counteract the voltage support control action
+and either require more voltage support capacity or cause voltage
+limit violations. To address this, we consider asymmetric frequency
+regulation services and require indicator functions to ensure up or
+down frequency regulation are only provided if it does not cancel
+out the voltage support control action. This can be done by checking
+whether there are maximum or minimum voltage limit violations given
+the scheduled pump operation and power demand uncertainty. For
+example, if a PDN is experiencing voltages that violate the minimum
+voltage limit, the voltage support control policy would reduce the
+pump power consumption which would then increase the voltages.
+In this case, no down frequency regulation services (increase pump
+power consumption) can be provided without requiring a larger voltage
+support capacity to counteract it. However, up frequency regulation
+(decrease pump power consumption) can still be provided. If there are
+no voltage limit violations given the scheduled pump operation and
+power demand uncertainty, both up and down frequency regulation
+can be provided. In Section 3, we tractably reformulate the problem
+as a robust, mixed-integer convex sequential problem.
+3. Sequential reformulation
+The formulation presented in Section 2 is a mixed-integer adjustable
+robust optimization problem due to the presence of the indicator
+functions and binary pump status variables. While there are some
+related approaches and results to tractably reformulate mixed-integer
+robust problems, they do not appear to directly apply to our problem.
+Instead, we solve this problem sequentially as three sub-problems. We
+first solve the robust voltage support and pump scheduling problem.
+Next, we identify whether the WDN is capable of providing up and/or
+down frequency regulation at each time period by solving for the
+worst-case voltages (i.e., minimum and maximum voltages) given the
+pump schedule and power demand forecast error. Last, we solve the
+appropriate robust frequency regulation problem.
+By separating (Co-optimized) into three sub-problems, we are able
+to eliminate the indicator functions needed to identify the direction(s)
+of frequency regulation that the WDN can provide and allows us
+to solve computationally tractable robust reformulations. Each sub-
+problem is described in the subsections below. It should be noted
+that the solution of the sequential problem will be a feasible solution
+of the (Co-optimized) problem; however, it may not be the optimal
+solution. The separate optimization problems no longer experience a
+trade-off between the cost of the WDN schedule and the profit of
+providing frequency regulation. In Section 4.2, we explore this trade-
+off by comparing the solutions of the sequential problem with special
+cases of (Co-optimized) problem, specifically, those in which we know
+in advance the type of frequency regulation that can be provided.
+This allows us to neglect the indicator functions so we can tractably
+reformulate (Co-optimized). Further investigation of how to tractably
+reformulate the adjustable robust optimization problem while ensuring
+that the voltage support and frequency regulation do not cancel each
+other out is a subject for future research.
+3.1. Step 1: Voltage support problem
+In the first sub-problem, we solve the scheduled pump power con-
+sumption and voltage support control policy parameters while satis-
+fying WDN and PDN constraints and managing power demand uncer-
+tainty. The decision variables are the scheduled pump power consump-
+tion 𝑝𝑡
+nom,𝑒, the voltage support control policy parameters 𝑪𝑡
+vs,𝑒, and the
+voltage support capacities 𝑅𝑡
+vs,up,𝑒and 𝑅𝑡
+vs,dn,𝑒for all pumps 𝑒∈and
+all time periods 𝑡∈. The optimization problem can be written as
+min
+𝐱
+∑
+𝑡∈
+∑
+𝑒∈
+3𝜋𝑡
+𝑒𝑝𝑡
+nom,𝑒+ 3𝜋𝑡
+vs,𝑒
+(
+𝑅𝑡
+vs,up,𝑒+ 𝑅𝑡
+vs,dn,𝑒
+)
+s.t.̂
+𝛹vs(𝐱) ≤0,
+(Seq-VS)
+𝑝𝑡
+𝑒= 𝑝𝑡
+nom,𝑒+ 𝑅𝑡
+vs,up,𝑒∀𝑒∈, 𝑡∈,
+𝑝𝑡
+𝑒= 𝑝𝑡
+nom,𝑒−𝑅𝑡
+vs,dn,𝑒∀𝑒∈, 𝑡∈,
+(27),
+where 𝜋𝑡
+𝑒and 𝜋𝑡
+vs,𝑒are the costs of electricity and voltage support
+capacity. We can substitute the power flow constraints (14)–(16), the
+voltage support control policy constraints (2)–(3b), and the coupling
+constraint between the pump load and power demand forecast error
+(i.e., 𝑝𝑡
+𝑒= 𝑝𝑡
+nom,𝑒+ 𝛥𝑝𝑡
+vs,𝑒(𝜟𝝆𝒕)) into (13). Since the resulting inequalities
+are linear in the decision variables and uncertainty, we can use explicit
+maximization [16] to robustly reformulate the problem. We denote the
+robust reformulation of the power constraints aŝ 𝛹vs(𝐱).
+In (27), we approximate the pipe head loss constraints using a quasi-
+convex hull proposed in [17]. While this approximation is not necessary
+to reformulate the semi-infinite water constraints as deterministic sets
+of constraints, it does make the formulation mixed-integer convex.
+
+Electric Power Systems Research 212 (2022) 108491
+5
+A. Stuhlmacher and J.L. Mathieu
+3.2. Step 2: Frequency regulation preprocessing
+Before solving the frequency regulation problem, we need to iden-
+tify the direction(s) of frequency regulation the WDN can provide.
+We robustly solve for the worst-case minimum and maximum voltages
+within the PDN at each time period given the pump schedule and all
+power demand forecast error uncertainty realizations. For example, to
+solve for the minimum voltage over all buses and phases at time 𝑡, the
+robust problem is
+max
+𝑌𝑡
+min
+𝑌𝑡
+min
+(Seq-Vmin)
+s.t.
+𝑌𝑡
+min ≤Y𝑡
+𝑘,𝜙(𝒑𝑡
+nom, 𝜟𝝆𝑡)
+∀𝜟𝝆∈.
+where Y𝑡
+𝑘,𝜙(𝒑𝑡
+nom, 𝜟𝝆𝑡) is the voltage magnitude squared at bus 𝑘and
+phase 𝜙which is an affine function of the power demand forecast errors
+𝜟𝝆𝑡and the scheduled three-phase pump power consumption vector
+𝒑𝑡
+nom. The robust problem can be reformulated as the deterministic ro-
+bust counterpart and solved for the worst-case minimum and maximum
+voltage magnitudes. At each time period, there are four possible cases:
+(i) if the voltage limits are satisfied, then the WDN can provide both
+up and down frequency regulation; (ii) if the minimum and maximum
+voltage limits are violated, then the WDN cannot provide frequency
+regulation; (iii) if only the maximum voltage limits are violated, then
+the WDN can only provide down frequency regulation; and (iv) if
+only the minimum voltage limits are violated, then the WDN can only
+provide up frequency regulation.
+3.3. Step 3: Frequency regulation
+In the third and final sub-problem, we solve for the up and down fre-
+quency regulation capacities subject to the WDN and PDN constraints
+while managing power demand forecast error and frequency regulation
+signals. If the WDN cannot provide either up or down frequency regula-
+tion, we force the respective up or down frequency regulation capacity
+to zero. We solve for 𝐹𝑡
+fr,up,𝑒and 𝐹𝑡
+fr,dn,𝑒and recover the frequency
+regulation capacity and control policy parameters a posteriori. The
+robust frequency regulation optimization problem is then
+max
+𝐱
+∑
+𝑡∈
+∑
+𝑒∈
+𝜋𝑡
+fr,up,𝑒𝐹𝑡
+fr,up,𝑒+ 𝜋𝑡
+fr,dn,𝑒𝐹𝑡
+fr,dn,𝑒
+(Seq-FR)
+s.t.
+(27b)–(29),̂
+𝛹fr(𝐱) ≤0
+where 𝜋𝑡
+fr,up,𝑒and 𝜋𝑡
+fr,dn,𝑒are the prices associated with providing up
+and down frequency regulation,̂ 𝛹fr(𝐱) is the robust reformulation of
+the power flow constraints (13)–(16), the frequency regulation control
+policy constraints (4), (8)–(10), and the coupling constraint between
+the pump load and real-time uncertainty (1).
+4. Case study
+In our case study, we consider a coupled PDN-WDN system, shown
+in Fig. 1. We first describe the setup of the case study and then present
+the results of the sequential problem. Additionally, we explore the
+value of co-optimizing the WDN schedule and the frequency regulation
+capacity.
+4.1. Set up
+The WDN is an example network (NET3) included in the EPANET
+software, a WDN simulator [18]. The network parameters are from
+the EPANET input file with several modifications. The pump param-
+eters are ℎ1
+𝑖𝑗
+= [0.12, 0.08] kW∕CMH, ℎ0
+𝑖𝑗
+= [53.22, 8.42] kW, 𝑚1
+𝑖𝑗
+=
+[−1.09 × 10-2, −1.3 × 10-2] m∕CMH, and 𝑚0
+𝑖𝑗= [60.96, 31.70]m with a
+minimum and maximum flow rate of 𝑥𝑖𝑗= [0, 0] CMHx and 𝑥𝑖𝑗=
+[2700, 905] CMH for pumps 1 and 2, respectively. The minimum head
+at each node is the sum of the elevation and a minimum pressure head
+of 15 m.
+For the PDN, we use the IEEE-13 bus topology [19] with the same
+modifications and assumptions as [8]. Pumps 1 and 2 are connected
+to buses 10 and 5, respectively. The voltage is constrained to 0.95–
+1.05 pu. We multiply the power demand loads by 1.4 in order to have
+a heavily loaded network that is close to the minimum voltage limit.
+The power demand forecast error at each bus, phase, and time period
+is unknown but bounded by a percentage of the forecasted load̄ 𝜌𝑡
+𝑘,𝜙,
+i.e., [−𝜎̄𝜌𝑡
+𝑘,𝜙, 𝜎̄𝜌𝑡
+𝑘,𝜙] where 𝜎is a user-specified percentage. We select
+different 𝜎values to change the size of the uncertainty set.
+We consider a 12-hour scheduling horizon. We set̂ 𝑣= 10 m3,
+𝜋𝑡
+vs,𝑒= 0.025 $/kWh, and 𝜋𝑡
+fr,𝑒= 0.025 $/kWh. The electricity prices are
+from the Midcontinent Independent System Operator (MISO) on July
+21st, 2021 [20]. We solve the mixed-integer convex sequential problem
+using the Gurobi solver [21] and the JuMP package in Julia.
+4.2. Results
+We first solve the sequential problem where 𝜎= 7.5%. In Fig. 2,
+the scheduled pump power consumption, the range of voltage support
+capacity and frequency regulation capacity around the schedule are
+depicted for each pump. In this case, we see that the voltage support
+capacity is nonzero. This indicates that, given the pump schedule
+and the power demand uncertainty set, voltage limit violations would
+occur without real-time voltage support control actions. In this case,
+the preprocessing sub-problem found that the PDN would violate the
+minimum voltage limit without the voltage support control actions.
+The voltage support control policy is responsible for taking the smallest
+pump power control action to reduce pumping so that the voltages
+are within the safe operating range. Any increase in pump power
+consumption would counteract the voltage support control policy. As
+a result, the WDN can only provide up frequency regulation capacity.
+Table 1 evaluates the robust sequential solutions as we vary the size
+of the uncertainty set (i.e., by varying 𝜎). We present the average range
+of three-phase voltage support pump power adjustments (i.e., 𝑅𝑡
+vs =
+∑
+𝑒∈3 ⋅(𝑅𝑡
+vs,up,𝑒+ 𝑅𝑡
+vs,dn,𝑒)) and the average three-phase up and down
+frequency regulation capacity over the scheduling horizon. For 𝜎=
+3.5–4.5%, there are no power demand uncertainty realizations that
+cause voltage limit violations (i.e., the voltage support control policy
+parameters and 𝑅vs are zero). As a result, the WDN can provide both
+up and down frequency regulation capacity. We observe that the WDN
+is generally able to provide more up capacity (consume less power)
+than down capacity (consume more power) since the network is closer
+to the minimum voltage limit. As 𝜎increases, the worst-case voltages
+given the scheduled pump power consumption and power demand
+uncertainty set are closer to or at the minimum voltage limit, reducing
+the amount of down frequency regulation that the WDN can provide.
+For 𝜎= 5.5–8.0%, there are now minimum voltage limit violations and
+the voltage support control policy has non-zero parameters. Because of
+this, the WDN can only provide up frequency regulation. As 𝜎increases,
+the frequency regulation capacity decreases since an increased amount
+of capacity is needed for voltage support and larger power demand
+uncertainty realizations cause the PDN to be closer to voltage limit
+violations. For 𝜎values larger than 8.0%, the WDN is unable to provide
+voltage support fully and so the problem is infeasible.
+One drawback with the sequential problem formulation is that the
+optimization problem no longer considers the trade-off between the
+pump scheduling cost and frequency regulation profit since they are
+now two separate optimization problems. In Fig. 2, the WDN operates
+pump 2 at its maximum setpoint. Pump 1 is used to provide the
+remaining water demand since it is more expensive than pump 2. In a
+sequential problem, the WDN cannot evaluate the cost/profit trade-offs
+of operating at a slightly more expensive schedule and providing more
+frequency regulation.
+
+Electric Power Systems Research 212 (2022) 108491
+6
+A. Stuhlmacher and J.L. Mathieu
+Fig. 1. Coupled power (left) and water (right) distribution networks. Pumps 1 and 2 are connected to buses 10 and 5, respectively.
+Fig. 2. Three-phase pump power consumption in the sequential problem (𝜎= 7.5%). The solid black lines indicates the schedule, blue and green bands indicate the range of pump
+power adjustments allocated for voltage support and frequency regulation.
+We next investigate the affect that the WDN schedule has on the
+frequency regulation capacity. We do this by comparing the solutions of
+the sequential problem with a special case of the co-optimized problem
+where the type of frequency regulation that the WDN can provide is
+known. Under this assumption, the sequential problem can be tractably
+reformulated into a deterministic, mixed-integer convex program. We
+focus on the specific case where the power demand uncertainty does
+not cause voltage violations in the PDN. In this case, the WDN does
+not provide voltage support (i.e., zero voltage support control policy
+parameters). We compare the solutions of the sequential problem and
+three co-optimized problems with differing up and down frequency
+regulation prices.
+Table 2 reports the average three-phase up and down frequency
+regulation capacity over the scheduling horizon. Since the WDN can
+provide both up and down frequency regulation when 𝜎= 4.5%, we
+can observe the trade-off between minimizing the cost of the pumping
+schedule and the profit from allocating frequency regulation capacity.
+In the first co-optimized case, the WDN provides more frequency
+regulation capacity than in the sequential case. As we decrease the
+frequency regulation prices 𝜋fr,up and 𝜋fr,dn, the co-optimized problem
+prioritizes minimizing the scheduled pumping operation cost over the
+profit from frequency regulation. In the third co-optimized case, the
+schedule and frequency regulation capacity are the same as in the
+Table 1
+Average three-phase results over 12-hour scheduling horizon.
+𝜎(%)
+𝑅vs (kW)
+𝑅fr,up (kW)
+𝑅fr,dn (kW)
+3.5
+0
+355.4
+128.5
+4.5
+0
+401.5
+65.7
+5.5
+53.4
+465.8
+0
+6.5
+340.6
+465.8
+0
+7.5
+627.7
+341.7
+0
+8.0
+771.3
+269.9
+0
+sequential case. While not illustrated in this example, we have also
+found that if the profit from up and down frequency regulation are
+different, the co-optimized problem may shift the scheduled pumping
+operation to a more expensive operating point to provide larger levels
+of the more profitable type of frequency regulation. When the WDN can
+only provide up or down frequency regulation, we can expect to see
+the co-optimized problem shifting the pump operation away from the
+least expensive operating point to realize higher profits from frequency
+regulation services.
+Last, we discuss the impact of the WDN approximations on our
+solution. While it is not required in the analytical reformulation of the
+semi-infinite robust water flow constraints, we employ approximations
+
+Electric Power Systems Research 212 (2022) 108491
+7
+A. Stuhlmacher and J.L. Mathieu
+Table 2
+Comparison of sequential and co-optimized solutions (𝜎= 4.5%).
+Case
+𝜋fr,up
+𝜋fr,dn
+𝑅fr,up
+𝑅fr,dn
+($/kWh)
+($/kWh)
+(kW)
+(kW)
+Sequential
+0.025
+0.025
+401.5
+65.7
+Co-optimized-1
+0.025
+0.025
+465.8
+116.9
+Co-optimized-2
+0.005
+0.005
+452.6
+116.9
+Co-optimized-3
+0.001
+0.001
+401.5
+65.7
+(i.e., quasi-convex hull relaxation of the pipe head loss Eq. (22) and
+an affine approximation of the pump performance curves (26)) to
+make the WDN mixed-integer convex. Ref. [17] empirically observed
+that the quasi-convex hull relaxation was exact when minimizing the
+pump power consumption. However, our formulation also maximizes
+a feasible range of pump power consumption and may cause the
+hydraulic heads to be inexact. We compared the scheduled pump power
+consumption of our solution using the approximated model with the
+original nonlinear pump curves. We found that the maximum relative
+error for pumps 1 and 2 was 8% and 15%, respectively. This motivates
+future work to evaluate and improve the accuracy of the approximated
+model.
+5. Conclusion
+In this paper, we formulated a robust water pumping problem
+subject to WDN and PDN constraints that provides voltage support and
+frequency regulation concurrently. We separate the problem into three
+sub-problems and solve for the solution to the robust reformulation
+sequentially. In a case study, we demonstrated the ability of the WDN
+to provide multiple services at the same time. One drawback we found
+was that the sequential formulation no longer considers the trade-offs
+between the cost of the pump schedule and the profits from frequency
+regulation services. However, the sequential solution will always be
+feasible within the co-optimized formulation. Future research includes
+exploring approaches to solve the co-optimized robust optimization
+problem with mixed integer adjustable variables in order to incorporate
+a binary voltage support control policy that is only implemented when
+needed and indicator functions to determine the type of frequency
+regulation to apply.
+CRediT authorship contribution statement
+Anna Stuhlmacher: Conceptualization, Methodology, Software,
+Data curation, Visualization, Writing – original draft , Writing – review
+& editing. Johanna L. Mathieu: Conceptualization, Methodology,
+Funding acquisition, Writing – review & editing.
+Declaration of competing interest
+The authors declare that they have no known competing finan-
+cial interests or personal relationships that could have appeared to
+influence the work reported in this paper.
+References
+[1] J.S. MacDonald, P. Cappers, D.S. Callaway, S. Kiliccote, Demand Response
+Providing Ancillary Services: A Comparison of Opportunities and Challenges in
+the US Wholesale Markets, Tech. Rep., (LBNL-5958E) 2012.
+[2] D. Denig-Chakroff, Reducing electricity used for water production: questions
+state commissions should ask regulated utilities, Tech. Rep., Water Research and
+Policy, 2008.
+[3] P. Mancarella, G. Andersson, J.A. Peças-Lopes, K.R.W. Bell, Modelling of in-
+tegrated multi-energy systems: drivers, requirements, and opportunities, Proc.
+Power Syst. Comput. Conf. (PSCC) (2016).
+[4] D. Fooladivanda, J.A. Taylor, Energy-optimal pump scheduling and water flow,
+IEEE Trans. Control Netw. Syst. 5 (3) (2018) 1016–1026.
+[5] K. Oikonomou, M. Parvania, Optimal coordination of water distribution energy
+flexibility with power systems operation, IEEE Trans. Smart Grid 10 (1) (2019)
+1101–1110.
+[6] Y. Liu, C. Barrows, J. Macknick, M. Mauter, Optimization framework to assess
+the demand response capacity of a water distribution system, J. Water Resour.
+Plan. Manag. 146 (8) (2020) 1–13.
+[7] K.S. Ayyagari, S. Wang, N. Gatsis, A.F. Taha, M. Giacomoni, Co-optimization
+of interdependent water and power distribution networks, in: IEEE PES Innov.
+Smart Grid Technol., ISGT, IEEE, 2021, pp. 1–5.
+[8] A. Stuhlmacher, J.L. Mathieu, Chance-constrained water pumping to manage
+water and power demand uncertainty in distribution networks, Proc. IEEE 108
+(9) (2020).
+[9] A. Stuhlmacher, L.A. Roald, J.L. Mathieu, Tractable robust drinking water
+pumping to provide power network voltage support, in: Proc. IEEE Conf. Decis.
+Control (CDC), 2021, pp. 4206–4213.
+[10] O. Mégel, J.L. Mathieu, G. Andersson, Scheduling distributed energy storage units
+to provide multiple services under forecast error, in: Proc. Power Syst. Comput.
+Conf., Vol. 72, PSCC, 2015, pp. 48–57.
+[11] A. Ben-Tal, L. El Ghaoui, A. Nemirovski, Robust Optimization, Vol. 28, Princeton
+University Press, 2009.
+[12] D.B. Arnold, M. Sankur, R. Dobbe, K. Brady, D.S. Callaway, A. Von Meier,
+Optimal dispatch of reactive power for voltage regulation and balancing in
+unbalanced distribution systems, in: Proc. IEEE Power Energy Soc. Gen. Meeting,
+2016.
+[13] A. Bernstein, C. Wang, E. Dall’Anese, J. Le Boudec, C. Zhao, Load flow in
+multiphase distribution networks: Existence, uniqueness, non-singularity and
+linear models, IEEE Trans. Power Syst. 33 (6) (2018) 5832–5843.
+[14] P.R. Bhave, R. Gupta, Analysis of Water Distribution Networks, Alpha Science
+International Ltd., Oxford, U.K., 2006.
+[15] S. Misra, M. Vuffray, A. Zlotnik, Monotonicity properties of physical network
+flows and application to robust optimal allocation, Proc. IEEE 108 (9) (2020)
+1558–1579.
+[16] J. Löfberg, Automatic robust convex programming, Optim. Methods Softw. 27
+(1) (2012) 115–129.
+[17] Q. Li, S. Yu, A. Al-Sumaiti, K. Turitsyn, Micro water-energy nexus: optimal
+demand-side management and quasi-convex hull relaxation, IEEE Trans. Control
+Netw. Syst. (2018).
+[18] OWA-EPA,
+EPANET, 2018, GitHub Repository, GitHub,
+http://github.com/
+OpenWaterAnalytics/EPANET.
+[19] W.H. Kersting, Radial distribution test feeders, in: Proc. IEEE Power Eng. Soc.
+Winter Meet., Vol. 2, 2001, pp. 908–912.
+[20] MISO actual energy price, 2022, http://www.energyonline.com/Data/Default.
+aspx (Accessed: 25 Feb 2022).
+[21] Gurobi Optimization (Ed.), Gurobi Optimizer 8.1, URL http://www.gurobi.com.

@@ -1,0 +1,1767 @@
+9382
+IEEE TRANSACTIONS ON INDUSTRIAL INFORMATICS, VOL. 19, NO. 9, SEPTEMBER 2023
+Efﬁcient Operation of Integrated Electrical-Water
+System for Wind Power Accommodation
+Yiming Yao
+, Chunyan Li
+, Member, IEEE, Changzheng Shao
+, Member, IEEE,
+Bo Hu
+, Member, IEEE, and Kaigui Xie
+, Senior Member, IEEE
+Abstract—This article investigates the operation of an
+integrated electrical-water system for wind power accom-
+modation. The efﬁcient operation can be considered as how
+well to handle the binary variables in a water distribution
+system (WDS) model. The optimization problem of WDS
+is NP-hard, and it often takes hours to ﬁnd the optimal
+solution. Since wind power varies in minutes, long com-
+putation time may hinder the WDS from being fully used
+by power system to deal with the wind power ﬂuctuation
+and uncertainties. This article develops a three-step opti-
+mization model to answer the challenges of the WDS op-
+timization problem. The solution hinges on the calculation
+of the binary variable values in advance. The ﬁrst step is
+to construct a linear power-WDS co-optimization model to
+ﬁnd the optimal electrical demand of WDS. The second
+step develops a tank ﬂow allocation based method and a
+greedy-based algorithm to determine the binary variable
+values of WDS. This allows the WDS optimization model to
+be efﬁciently solved by commercial solvers in the third step.
+The proposed three-step model converts the NP-hard opti-
+mization problem of WDS into a polynomial-time problem,
+which can be solved quickly. This allows the wind power
+system to leverage the energy ﬂexibility provided by WDS
+in the real-time operation. Results of case study show that,
+compared with existing methods, the proposed method can
+reduce the wind power curtailment and the operation cost
+by about 55% and 53%. More importantly, the solution time
+is reduced dramatically from hours to seconds, suitable for
+practical application.
+Index Terms—Binary variable, efﬁcient operation, inte-
+grated electrical-water system, power variation range, re-
+newable energy.
+NOMENCLATURE
+Most of the notations used throughout this article are deﬁned
+below. Others are deﬁned following their ﬁrst appearances, as
+needed.
+Manuscript received 17 June 2022; revised 9 November 2022; ac-
+cepted 8 December 2022. Date of publication 12 December 2022; date
+of current version 24 July 2023. This work was supported by the National
+Natural Science Foundation of China under Grant 52177073. Paper
+no. TII-22-2598. (Corresponding author: Chunyan Li.)
+The
+authors
+are
+with
+the
+State
+Key
+Laboratory
+of
+Power
+Transmission Equipment and System Security, Chongqing Univer-
+sity,
+Chongqing
+400040,
+China
+(e-mail:
+yao_cqu@163.com;
+lcy-
+cqu@cqu.edu.cn;
+cshao@cqu.edu.cn;
+hboy8361@163.com;
+kaigu-
+ixie@vip.163.com).
+Color versions of one or more ﬁgures in this article are available at
+https://doi.org/10.1109/TII.2022.3228691.
+Digital Object Identiﬁer 10.1109/TII.2022.3228691
+Sets
+ΩT /ΩW
+Set of conventional generating units/wind
+farms.
+ΩL
+Set of blocks in the piecewise function of
+the conventional generating unit.
+ΛE/ΨE
+Set of electrical buses/lines.
+ΩT
+n/ ΩW
+n /ΩWDS
+n
+Set of units/wind farms/WDSs that con-
+nected to bus n.
+ΛE
+n
+Set of electrical buses connected to bus n.
+Δ/ΔP /ΔV
+Set of water pipes/pumps/valves.
+Ωm
+Set of tanks connected to node m.
+ϖ/ϖT /ΩWDS
+Set of water nodes/tanks/WDS.
+Parameters
+Atank
+Jm
+Surface area of tank m (m2).
+aPm/bPm/cPm
+Coefﬁcients of the head-ﬂow equation of
+pump m (m-5/m-2/m).
+Bn,m
+Susceptance of electrical line n-m (S).
+cmn
+Loss coefﬁcient of pipe m-n (m-5).
+dwt
+Jk
+Demand of water node k at time t (m3).
+der
+n,t
+Forecasted demand of electrical load n at
+time t (MW).
+hmin
+Jm
+Minimum head of water node m (m).
+κ1/κ2/κ3
+Coefﬁcients of the power-ﬂow equation of
+pump (m-9 × MW/m-6 × MW/m-3 × MW).
+Ki,l
+Slope of block l of the piecewise function
+of unit i.
+L
+Number of piecewise linear cost function
+segments.
+M ′
+A very large positive constant.
+N W P
+h
+Number of pumps in WDS h.
+NWDS/NW /NEB
+Number of WDSs/wind farms/electrical
+loads.
+Ng
+Number of conventional units.
+P wr
+w,t
+Forecasted output of wind farm w at time t
+(MW).
+PFn,m
+Capacity limit of electrical transmission
+line n-m (MVA).
+ˆP WDS
+h,tp
+Optimal electrical demand of WDS at time
+tp(MW).
+P gmin
+i
+/P gmax
+i
+Minimum/maximum output of unit i (MW).
+ˆP g
+i,tp−1
+Optimized output of unit i at time tp −1
+(MW).
+qmin
+mn/qmax
+mn
+Minimum/maximum volume of pipe m-n
+(m3).
+1551-3203 © 2022 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:28:07 UTC from IEEE Xplore.  Restrictions apply. 
+
+YAO et al.: EFFICIENT OPERATION OF INTEGRATED ELECTRICAL-WATER SYSTEM FOR WIND
+9383
+qvmin
+mn/qvmax
+mn
+Minimum/maximum pipe ﬂow when valve
+m-n on (m3).
+qr
+Jm
+Maximum amount of ﬂows that can be
+transported in or out of the tank m by the
+inlet and outlet pipes in a 15-min scale (m3).
+Rampi
+Ramp power of unit i in a unit time (MW).
+T
+Number of time steps.
+ˆωPm
+Maximum allowable relative speed of the
+pump m.
+W min
+Jm / W max
+Jm
+Minimum/maximum water storage of tank
+m (m3).
+ˆxi,t
+Commitment status of the unit.
+λ/μ
+Penalty factor for wind power/electrical de-
+mand curtailment.
+λpricet
+Electricity price at time t ($/MWh).
+Variables
+ht
+Jm/ht
+Jn
+Head pressure of water node m/n at time t
+(m).
+ˆht
+Pm
+Pressure head gain of pump m at time t (m).
+P W P
+i,t
+Electricity consumption of pump i at time t
+(MW).
+P WDS
+h,t
+Electricity consumption of WDS h at time t
+(MW).
+P wc
+w,t/P ec
+n,t
+Amount of wind power curtailment in the
+wind farm w/electrical demand curtailment
+at node n at time t (MW).
+P g
+i,t,l
+Power produced in block l of the piecewise
+linear function of the unit i at time t (MW).
+P g
+i,t
+Output of the unit i at time t (MW).
+qt
+mn/qt
+Pm
+Flow in pipe m-n/pump m at time t (m3).
+qin
+Jm,t/qout
+Jm,t
+Water that ﬂows into/out of tank m at time t
+(m3).
+Rt
+mn
+Head loss along the pipe m-n equipped with
+a valve at time t (m).
+sign(qt
+mn)
+Sign function which denotes the direction of
+ﬂow in the pipe. It equals to 1 if qt
+mn > 0,
+zero when qt
+mn = 0, and -1 when qt
+mn < 0.
+WJm,t
+Volume of the stored water in tank m at time
+t (m3).
+ωt
+Pm
+Ratio of actual speed to the nominal speed
+of the pump m at time t.
+zt
+mn
+Binary variable indicating the ON/OFF status
+of the valve m-n at time t (equals 1 if on and
+0 otherwise).
+θn,t/θref,t
+Phase angle of electrical node n/reference
+node at time t (rad).
+I. INTRODUCTION
+R
+ENEWABLE energy has been widely used to build eco-
+friendly power system, and is estimated to meet 40% of the
+global electricity consumption by 2030 [1]. Renewable energy
+such as wind power, however, is uncertain and highly volatile
+compared with the power generated by conventional thermal
+generating units.
+Various models have been developed for wind power forecast-
+inganduncertaintyquantiﬁcation,suchastheroughautoencoder
+[2], the deep belief network [3], the interval probability distribu-
+tion learning [4], and the convolutional graph autoencoder [5].
+These models can extract quantitative features from historical
+data of wind power output considering the uncertainties of data.
+Although accurate wind power forecasting can be obtained by
+use of the above models, high penetration of wind power has
+brought great challenges to the balance of supply and demand
+in the power system [6]. It is in urgent need of ﬁnding effective
+means for efﬁcient operation of the wind power system.
+Water distribution system (WDS) has appeared as a promising
+answer to the challenge mentioned previously. Several reports
+and pilot programs have shown that the integration of WDS
+with the power system could balance the wind power variations
+and reduce the wind power curtailment [7], [8], [9], [10]. WDS
+accounts for 5% of the annual total electricity consumption in
+China, and up to 7.1% in California, USA [11], [12]. The elec-
+trical demand of WDS can be adjusted ﬂexibly by coordinating
+the operation of water pumps and tanks in the WDS. The water
+pump enables the increase of electricity consumption during the
+period of high wind power output and the decrease of electrical
+demand when the wind is scarce. The water tank is used to
+maintain the water balance in the WDS. More wind power can
+be incorporated into the power system through the optimization
+of WDS.
+The components of WDS can be formulated mathematically
+and the cooperative operation model of the WDS and power
+system has been developed [13], [14], [15], [16]. The energy
+ﬂexibility of WDS was leveraged to minimize the overall op-
+eration cost [17], [18]. The optimal bidding strategy for WDS
+to participate in the electricity market was also proposed [19],
+[20], [21]. The optimization model is generally formulated as a
+mixed-integer nonlinear programming (MINLP) problem [14],
+[15]. It consists of the binary variables and the continuous vari-
+ables. The MINLP problem is NP-hard and unable to obtain the
+solutions quickly using the commercial solvers such as Gurobi
+[22]. Two factors affect the efﬁciency of solving the MINLP
+model of WDS [23]. One is the nonlinear terms in the hydraulic
+equations of the water pipe and pump [14]. Another factor is the
+binary variables describing the direction of ﬂow in the pipe and
+the ON/OFF status of the pump and the valve [7].
+Many efforts have been made to tackle the nonlinear terms in
+the WDS model with some success, such as the piecewise linear
+approximation [24], the second-order cone relaxation [25], the
+convex approximation [26], and the quasi-convex hull relaxation
+[27]. These methods transform the original MINLP model into
+a mixed-integer second-order cone programming model or a
+mixed-integer linear programming (MILP) model.
+The binary variable concern in the MINLP model, however,
+remains unresolved. The quasi-convex hull relaxation method in
+[27] could remove the binary variables denoting the direction of
+ﬂow in the pipe from the model, but not the binary variables
+indicating the ON/OFF status of the pump and the valve. In
+addition, the quasi-convex hull is not an exact representation of
+the original pipe model and may result in the water ﬂow solution
+infeasible.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:28:07 UTC from IEEE Xplore.  Restrictions apply. 
+
+9384
+IEEE TRANSACTIONS ON INDUSTRIAL INFORMATICS, VOL. 19, NO. 9, SEPTEMBER 2023
+The number of binary variables increases drastically as the
+size of WDS expands. They split the feasible region of the
+optimization model into many discrete spaces and bring hefty
+computational expense. As the number of binary variables ex-
+pands, the computation time for solving the MINLP model
+increases faster than exponential [23]. It usually take hours
+to solve the optimization problem of a WDS [7]. The com-
+putation time becomes prohibitive when the size of system
+becomes very large [14]. Since the output of wind power varies
+rapidly, the optimization model of WDS should be solved in
+minutes to cope with the wind power uncertainties. The very
+long calculation time caused by the binary variables hinders
+the WDS from being fully used to optimize the wind power
+system operation. This makes the immediate response to the
+real-time variations of wind power impossible and poor handling
+of wind power uncertainties. As a result, the amount of wind
+power curtailment increases greatly, causing huge economic
+loss.
+To the best of our knowledge, not many researches regarding
+the binary variables have been reported. The existing methods
+generally consider the binary variables and continuous variables
+in the WDS optimization. This complicates the solution ﬁnding
+[24], [25], [26], [27]. Inthis article, thesevariables will betreated
+separately. The values of binary variables are calculated in
+advance.Withbinaryvariablesknown,theoptimizationproblem
+only consists of the continuous variables, which can be solved
+efﬁciently by commercial solvers.
+This article proposes a three-step optimization approach for
+efﬁcient operation of the integrated electrical-water system. The
+efﬁciency refers to lower wind power curtailment and shorter
+computation time. In speciﬁc, the time to obtain the solution
+is signiﬁcantly reduced from hours to seconds. To achieve the
+efﬁcient operation goal, the ﬁrst step proposes the power-tank
+linear (PTL) constraints to describe the maximum variation
+range of the WDS power consumption, and develops a lin-
+ear power-WDS co-optimization (LPWCO) model using these
+constraints. The LPWCO model is used to obtain the opti-
+mal electricity consumption proﬁle of WDS. The second step
+proposes a greedy-based algorithm to determine the values of
+binary variables, ensuring that the optimized electrical demand
+of WDS in the ﬁrst step is satisﬁed as much as possible. A tank
+ﬂow allocation based method is also developed to reduce the
+computation cost of ﬁnding water ﬂow solutions. The third step
+solves the WDS optimization model to obtain the optimal water
+ﬂow solutions using the binary variable values in step 2.
+The main contributions of this article can be summarized as
+follows.
+1) Develop a three-step cooperative approach to determine
+the binary variable values of WDS in advance so as to
+facilitate efﬁcient operation of the integrated electrical-
+water system.
+2) Provide PTL constraints to describe the maximum varia-
+tion range of the electricity consumption proﬁle of WDS.
+3) Propose a tank ﬂow allocation based method to obtain the
+water ﬂow solutions efﬁciently.
+The rest of this article is organized as follows. The proposed
+optimization approach is described in Section II. It is composed
+of three steps. Section III presents the ﬁrst step and Section IV
+describes the other two steps. Case studies are given in Section V
+to verify the advantages of the proposed three-step optimization
+approach. Finally, Section VI concludes this article.
+II. PROBLEM FORMULATION
+The optimization model of WDS is composed of many binary
+variables and nonlinear constraints. This makes the WDS model
+a MINLP problem, which is generally NP-hard and often takes
+hours to ﬁnd the optimal solution [7]. The constraints of WDS
+optimization model in this article can be formulated by equations
+described from [8]
+ht
+Jm −ht
+Jn
+= cmnsign
+
+qt
+mn
+ 
+qt
+mn
+2
+∀(Jm, Jn) ∈Δ
+(1)
+qmin
+mn ≤qt
+mn ≤qmax
+mn
+∀(Jm, Jn) ∈Δ
+(2)
+Pump on : ˆht
+Pm = aPm
+
+qt
+Pm
+2
++ bPmqt
+Pmωt
+Pm + cPm
+
+ωt
+Pm
+2
+∀Pm ∈ΔP
+(3)
+Pump on : 0 ≤ωt
+Pm ≤ˆωPm
+∀Pm ∈ΔP
+(4)
+Pump oﬀ: qt
+Pm= 0
+∀Pm ∈ΔP
+(5)
+−M ′ 
+1 −zt
+mn
+
+≤ht
+Jn −ht
+Jm
++ Rt
+mn ≤M ′ 
+1 −zt
+mn
+
+∀(Jm, Jn) ∈ΔV
+(6)
+Rt
+mn ≥0
+∀(Jm, Jn) ∈ΔV
+(7)
+qvmin
+mnzt
+mn ≤qt
+mn ≤qvmax
+mnzt
+mn
+∀(Jm, Jn) ∈ΔV
+(8)
+dwt
+Jk =
+
+Jn:(Jn,Jk)∈Δ
+qt
+nk
+−
+
+Jm:(Jk,Jm)∈Δ
+qt
+km
+∀Jk ∈ϖ
+(9)
+ht
+Jm ≥hmin
+Jm
+∀Jm ∈ϖ
+(10)
+WJm,t = ht
+JmAtank
+Jm
+∀Jm ∈ϖT
+(11)
+−qr
+Jm ≤qin
+Jm,t + qout
+Jm,t ≤qr
+Jm
+∀Jm ∈ϖT
+(12)
+WJm,t+1 = WJm,t + qin
+Jm,t + qout
+Jm,t
+∀Jm ∈ϖT
+(13)
+W min
+Jm ≤WJm,t ≤W max
+Jm
+∀Jm ∈ϖT
+(14)
+P W P
+i,t
+= κ1(qt
+Pi)
+3 + κ2(qt
+Pi)
+2
++ κ3qt
+Pi
+∀Pi ∈ΔP
+(15)
+P WDS
+h,t
+=
+N W P
+h
+i=1
+P W P
+i,t
+∀h ∈ΩWDS.
+(16)
+Constraint (1) describes the relationship between the head
+loss and the ﬂow in a pipe using the Darcy–Weisbach equation.
+The sign function sign(qt
+mn) indicates the direction of ﬂow in
+the pipe. Constraint (2) limits the water volume in the pipe.
+The variable-speed pump is used and modeled by (3) to (5). The
+pressure reducing valve is adopted, as formulated by (6), (7), and
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:28:07 UTC from IEEE Xplore.  Restrictions apply. 
+
+YAO et al.: EFFICIENT OPERATION OF INTEGRATED ELECTRICAL-WATER SYSTEM FOR WIND
+9385
+Fig. 1.
+Three-step optimization procedure.
+(8). Equation (9) describes the mass balance, and (10) restricts
+the pressure head of each node. Constraints from (11) to (14)
+model the water tank. The electricity consumption of the pump
+can be obtained by (15). The total electricity consumption of
+WDS is the sum of all the pumps, as shown in (16).
+The sign function, sign(qt
+mn), in the constraint (1) and the
+ON/OFF status of the pump in constraints (3), (4), and (5) are
+represented by binary variables using the Big-M approach [3].
+The binary variable zt
+mn, in (6) and (8) is used to indicate the
+ON/OFF status of the valve (equals to 1 if on and 0 otherwise).
+In addition, constraints (1), (3), and (15) are nonlinear. These
+binary variables and nonlinear constraints make the WDS model
+become a MINLP problem. The MINLP problem is NP-hard
+and it may take hours to solve it. The long computation time
+hinders the WDS from being fully used by power system to
+deal with the wind power uncertainties. Although the nonlinear
+constraints can be handled well by many recent researches [24],
+[25], [26], [27], the binary variable concern in the model remains
+unresolved. Handling of binary variables in the WDS model is
+a gap that needs to be ﬁlled.
+This article aims at tackling the long computation time prob-
+lem caused by the binary variables in the WDS model. A
+three-step solution approach is developed to tackle this problem
+andfacilitatetheefﬁcientoperation.Thisapproachcalculatesthe
+values of binary variables in advance. The solutions of the WDS
+model can be obtained very efﬁciently when binary variable
+values are known. The efﬁciency means that the solution time
+of WDS optimization model is reduced from hours to seconds.
+This makes it possible for the WDS to adjust its electricity
+consumption according to the wind power variations so that
+more wind power can be incorporated into the power system.
+As a result, the operation cost of the integrated electrical-water
+system can be signiﬁcantly reduced.
+Theproposedthree-stepapproachisshownbytheﬂowchartof
+Fig. 1. The ﬁrst step generates the optimal electricity consump-
+tion proﬁle of WDS by solving the LPWCO model. The second
+step calculates the values of binary variables using the tank ﬂow
+allocation based method and the greedy-based algorithm. With
+the values of binary variables, the optimization model of WDS
+can be solved to obtain the optimal water ﬂow solutions.
+III. LPWCO MODEL
+This section develops the mathematical formulation of the
+LPWCO model in Step 1 of the three-step procedure. Prior to the
+description of the LPWCO model, the PTL constraints of WDS
+are outlined. These constraints aim at using linear expressions
+to describe the maximum variation range of the WDS power
+consumption.
+A. PTL Constraints of WDS
+The hydraulic constraints from (1) to (16) are nonlinear and
+involve the binary variables. They should not be violated by the
+variation of WDS power consumption. These constraints face
+two shortcomings. One is the computation time is extremely
+large when incorporated into the real-time operation model of
+the integrated electrical-water system. Another is that these
+constraints do not provide an explicit range in which the WDS
+electricity consumption can vary.
+To alleviate the abovementioned two concerns, the PTL con-
+straintsweredevelopedtodescribethemaximumvariationrange
+of WDS power consumption. The PTL constraints do not incur
+much computation burden in real time. They represent the upper
+and lower bounds of the WDS power consumption as explicit
+functions of the water volume in the tank, which is critical in
+modeling the power variation range of WDS.
+The variation range of the electrical demand of WDS is
+affected by constaints (13) and (14). Equation (13) describes
+the relationship of water volumes in the tank between two
+consecutive time instants, while (14) imposes restrictions on the
+water volume in the tank. These two constraints imply that the
+water volume in the tank at each time instant would have impact
+on the allowable amounts of tank ﬂow during the next several
+time periods. For example, when WJm,t = W max
+Jm , no more water
+can be stored by the tank in the next time instant t + 1. This may
+lower the upper bound of the WDS power consumption later,
+because WDS is prevented from pumping more water into the
+tank for storage.
+Next, we describe the means to develop the PTL constraints.
+The volume of tank is partitioned into three ranges, as shown in
+Fig. 2. Fig. 2(a) shows the case when W min
+Jm + qr
+Jm ≤W max
+Jm −
+qr
+Jm and Fig. 2(b) the case when W min
+Jm + qr
+Jm > W max
+Jm −qr
+Jm.
+qr
+Jm denotes the maximum amount of ﬂows that can be trans-
+ported in or out of the tank by the inlet and outlet pipes. The
+size of W min
+Jm + qr
+Jm and W max
+Jm −qr
+Jm depends on the technical
+speciﬁcations of the tank.
+The partitioning of tank volume can be done by the maximum
+amount of water that can be stored or released by the tank, which
+is determined by two factors. One is the value of qr
+Jm, another
+is WJm,t. WJm,t is the water volume in the tank. The value of
+qr
+Jm depends on the technical limitations of the pipe. When the
+water volume is in the range of W min
+Jm ≤WJm,t < W min
+Jm + qr
+Jm,
+the maximum amount of water that can be released by the
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:28:07 UTC from IEEE Xplore.  Restrictions apply. 
+
+9386
+IEEE TRANSACTIONS ON INDUSTRIAL INFORMATICS, VOL. 19, NO. 9, SEPTEMBER 2023
+Fig. 2.
+Tank volume partitioning. (a) W min
+Jm + qr
+Jm ≤W max
+Jm −qr
+Jm.
+(b) W min
+Jm + qr
+Jm > W max
+Jm −qr
+Jm.
+Fig. 3.
+Maximum variation range of the WDS power consumption.
+(a) Situation 1. (b) Situation 2. (c) Situation 3.
+tank equals WJm,t −W min
+Jm , instead of qr
+Jm. This is due to
+the fact that the lower bound of the tank storage W min
+Jm pre-
+vents too much water from being released. Similarly, when
+W max
+Jm −qr
+Jm < WJm,t ≤W max
+Jm , the maximum amount of water
+that can be stored by the tank is W max
+Jm −WJm,t, obeying the
+upper bound limitation. It can be seen from Fig. 2(a) that the
+maximum amount of stored and released water equals qr
+Jm and
+no longer bounded by the tank volume when the value of WJm,t
+lies between W max
+Jm −qr
+Jm and W min
+Jm + qr
+Jm.
+In the following, Fig. 2(a) is taken as example to elaborate the
+process of generating the PTL constraints. This approach also
+can be applied to the situation of Fig. 2(b). Fig. 2(a) considers
+three situations of the water volume in the tank as follows:
+Situation 1: W min
+Jm ≤WJm,t < W min
+Jm + qr
+Jm;
+Situation 2: W min
+Jm + qr
+Jm ≤WJm,t ≤W max
+Jm −qr
+Jm;
+Situation 3: W max
+Jm −qr
+Jm < WJm,t ≤W max
+Jm .
+Fig. 3 shows the maximum variation range of the WDS power
+consumption under these three situations. The x-coordinate
+denotes the water volume in the tank and the y-coordinate
+denotes the electrical demand of WDS. Details for calculating
+the maximum variation range of the WDS power consumption
+under each situation are given below.
+1) Situation 1: WDS increases the electricity consumption
+by pumping more water into the tank for storage. Since WJm,t +
+qr
+Jm < W max
+Jm in this situation, constraints (13) and (14) are
+guaranteed to be satisﬁed when the tank stores water. The upper
+bound of the WDS power consumption can be calculated as the
+value of variable P WDS
+h,t
+after solving the optimization model
+max P WDS
+h,t
+s.t. (1)–(12), (15)–(16) .
+(17)
+The electrical demand of WDS can be lowered by reducing
+the electricity consumption of the pump and releasing the water
+stored in the tank to satisfy demands. The maximum amount of
+water that can be released by the tank equals WJm,t −W min
+Jm .
+The minimum electrical demand of WDS can be obtained by
+solving the optimization model
+min P WDS
+h,t
+s.t. (1)–(16)
+(18)
+when the water volume in the tank equals
+WJm,t = W min
+Jm + qr
+Jm
+ND
+k, for k = 0, 1, 2, . . . , ND.
+Each dot in Fig. 3(a) represents the optimization result under
+a given value of k. These dots are connected by a series of
+linear segments, which constitutes the lower bound of the WDS
+power consumption. As ND increases, the linear segments can
+approximate the lower bound more accurately, at the cost of
+increased computation time.
+The maximum variation range of the WDS power consump-
+tion in Situation 1 can be expressed as
+f1 (WJm,t) ≤P WDS
+h,t
+≤P ub
+h,t.
+(19)
+f1(WJm,t) is the function describing the lower bound of the
+WDS power consumption and P ub
+h,t is the upper bound.
+2) Situation 2: Situation 2 ensures that the calculated value
+of variable WJm,t+1 by (13) obeys the constraint (14). Under this
+circumstance, constraints (13) and (14) can be removed from
+the optimization model. The upper bound of the WDS power
+consumption can be obtained as the value of P WDS
+h,t
+by solving
+the optimization model (17) and the lower bound by solving the
+optimization model
+min P WDS
+h,t
+s.t. (1)–(12), (15)–(16) .
+(20)
+In this situation, the maximum variation range of the WDS
+power consumption is
+P lb
+h,t ≤P WDS
+h,t
+≤P ub
+h,t.
+(21)
+P lb
+h,t denotes the value of variable P WDS
+h,t
+after solving the
+optimization model (20).
+3) Situation 3: In this situation, WJm,t −qr
+Jm > W min
+Jm .
+Thus, constraints (13) and (14) are always satisﬁed when the
+tank releases water. The lower bound of the electrical demand
+of WDS equals the value of P WDS
+h,t
+after solving the optimization
+model (20).
+Fig. 3(c) shows the upper bound of the WDS power consump-
+tion, which can be obtained by solving the optimization model
+(22) and connecting the obtained dots with a series of linear
+segments
+⎧
+⎨
+⎩
+max P WDS
+h,t
+s.t. (1)–(16)
+WJm,t = W max
+Jm −
+qr
+Jm
+ND k
+for k = 0, 1, 2, . . . ND.
+(22)
+The power consumption of WDS in Situation 3 varies in the
+range of
+P lb
+h,t ≤P WDS
+h,t
+≤f3 (WJm,t) .
+(23)
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:28:07 UTC from IEEE Xplore.  Restrictions apply. 
+
+YAO et al.: EFFICIENT OPERATION OF INTEGRATED ELECTRICAL-WATER SYSTEM FOR WIND
+9387
+f3(WJm,t) is the function describing the upper bound of the
+WDS power consumption in Fig. 3(c).
+4) PTL Constraints: The PTL constraints consist of the con-
+straintsofWDSpowervariationrangeandtheconstraintsoftank
+ﬂow. The former includes (19), (21), and (23). They express the
+maximum power variation range of WDS as linear functions
+of the water volume in the tank. The latter is composed of the
+constraints from (10) to (14). They express the restrictions of
+water volume and the ﬂows of the tank.
+PTL constraints are generated by solving the optimization
+models (17), (18), (20), and (22). Due to the existence of binary
+variables and nonlinear constraints, these optimization models
+are solved in advance to avoid the concern of computation time.
+The generated PTL constraints are then incorporated into the
+LPWCO model for efﬁcient real-time operation of the integrated
+electrical-water system.
+f1(WJm,t) and f3(WJm,t) in PTL constraints (19) and (23)
+are linear approximated functions. They approximate the lower
+and upper bounds of the WDS power consumption. When ND
+is set as a fairly large number, f1(WJm,t) and f3(WJm,t) act the
+same as the boundaries of the WDS power consumption. Thus,
+the PTL constraints bring no loss of optimality to the proposed
+approach.
+B. LPWCO Model
+The LPWCO model aims at the cost-effective operation of the
+integrated electrical-water system in real time. It is solved every
+15 min given the updated wind power and electrical demand
+forecast. The objective function can be expressed as
+CA = min
+⎛
+⎜
+⎜
+⎜
+⎝
+NWDS
+
+h=1
+T
+t=tp
+λpricetP WDS
+h,t
++
+NW
+
+w=1
+T
+t=tp
+λP wc
+w,t
++
+NEB
+
+n=1
+T
+t=tp
+μP ec
+n,t +
+Ng
+
+i=1
+T
+t=tp
+L
+
+l=1
+Ki,lP g
+i,t,l
+⎞
+⎟
+⎟
+⎟
+⎠
+(24)
+λpricet is the electricity price during period t.
+Constraints of the LPWCO model consist of the constraints
+of the power system and the PTL constraints of WDS. The
+constraints of the power system are listed as follows:
+P g
+i,t =
+L
+
+l=1
+P g
+i,t,l
+∀i ∈ΩT
+(25)
+P g
+i,t,l ≥0
+∀i ∈ΩT , l ∈ΩL (26)
+P g
+i,t −P g
+i,t−1
+ ≤Rampiˆxi,t−1 + P gmin
+i
+(ˆxi,t −ˆxi,t−1)
++ P gmax
+i
+(1 −ˆxi,t) ∀i ∈ΩT , for t = tp + 1, tp + 2, . . . , T
+(27)
+P g
+i,tp −ˆP g
+i,tp−1
+ ≤Rampiˆxi,tp−1 + P gmin
+i
+
+ˆxi,tp −ˆxi,tp−1
+
++ P gmax
+i
+
+1 −ˆxi,tp
+
+∀i ∈ΩT
+(28)
+P gmin
+i
+ˆxi,t ≤P g
+i,t ≤P gmax
+i
+ˆxi,t
+∀i ∈ΩT
+(29)
+
+i∈ΩT
+n
+P g
+i,t +
+
+w∈ΩW
+n
+(P wr
+w,t −P wc
+w,t) −
+
+h∈ΩWDS
+n
+P WDS
+h,t
+−der
+n,t
++ P ec
+n,t =
+
+m∈ΛE
+n
+Bn,m (θn,t −θm,t)
+∀n ∈ΛE
+(30)
+0 ≤P wc
+w,t ≤P wr
+w,t
+∀w ∈ΩW
+(31)
+0 ≤P ec
+n,t ≤der
+n,t
+∀n ∈ΛE
+(32)
+−PFn,m ≤Bn,m (θn,t −θm,t) ≤PFn,m ∀(n, m) ∈ΨE
+(33)
+θref,t = 0.
+(34)
+Operation limitations of the unit are described in constraints
+from (25) to (29). ˆx denotes the commitment status of the
+unit (equals to 1 if on and 0 otherwise), which serves as the
+input parameter for the optimization model of power system.
+The value of ˆx is determined by solving the day-ahead unit
+commitment model [17]. Constraint (30) is the nodal ﬂow
+equation. Constraints from (31) to (32) give the value ranges
+of the wind power curtailment and electrical load curtailment.
+Constraint (33) shows the direct current power ﬂow limit of the
+line.Constraint(34)enforcesthephaseangleofthereferencebus
+to zero. Solving the LPWCO model yields the value of variable
+P WDS
+h,tp (i.e., ˆP WDS
+h,tp ), which denotes the optimal electrical demand
+of WDS at time tp.
+IV. DETERMINATION OF BINARY VARIABLE VALUES
+This sectionpresents theproposedmethodfor determiningthe
+values of binary variables in the WDS optimization model. The
+proposed method includes a tank ﬂow allocation based scheme
+to ﬁnd the maximum amount of input and output ﬂows of the
+tank. Then a greedy-based algorithm is developed to facilitate
+the computations in ﬁnding the appropriate combination of
+the binary variable values that satisﬁes the optimal electricity
+consumption of WDS obtained in Step 1.
+A. Tank Flow Allocation Based Method
+The tank ﬂow allocation based method allocates the tank ﬂows
+to the branches in the WDS network. The tank ﬂows are adjusted
+according to the allocation proportion to overloaded branch. The
+upper and lower bounds of the WDS power consumption can be
+obtained by use of this method. We also discuss the difference
+on the variation ranges of the WDS power consumption ob-
+tained from the tank ﬂow allocation based method and the PTL
+constraints.
+1) Tank Flow Allocation: The branch of a WDS denotes the
+pipe, pump or valve connecting two adjacent nodes. Given the
+water ﬂows along the branches in the WDS, the matrix R with
+a size of N × N is built. The element in the matrix R equals
+rh,m
+=
+⎧
+⎨
+⎩
+−qh,m
+for h̸ = m, qh,m > 0
+0
+for h̸ = m, qh,m ≤0
+
+Ji∈Ωm qJi,m + N
+k=1,k̸=m qk,mfor h = m, qk,m > 0.
+(35)
+N is the number of nodes in the WDS. qh,m denotes the
+amount of water ﬂowing from node nh to nm. qh,m > 0 when
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:28:07 UTC from IEEE Xplore.  Restrictions apply. 
+
+9388
+IEEE TRANSACTIONS ON INDUSTRIAL INFORMATICS, VOL. 19, NO. 9, SEPTEMBER 2023
+these two nodes are connected and the direction of ﬂow is from
+node nh to nm; qh,m < 0 when the direction of ﬂow is from nm
+to nh; qh,m = 0 when these two nodes are disconnected. Ωm
+denotes the set of tanks connected to node m, and qJi,m is the
+input/output ﬂow of tank i. Deﬁne E and D as matrices of size
+N × 1. E is a matrix of ones. dh denotes the hth element of the
+matrix D, which is equal to the water demand at node h (equal
+to 0 if no demand). The relationship between R, E, and D can
+be expressed as
+R · E = D.
+(36)
+Deﬁne W ′ as a N × N diagonal matrix with the diagonal
+element w′
+m,m = 
+Ji∈Ωm qJi,m. Let the matrix W be
+W = W ′ · E.
+(37)
+It follows from (36) and (37) that
+W = W ′ · R−1 · D = K · D.
+(38)
+Since R is a weakly chained diagonally dominant matrix,
+it is invertible [28]. K = W ′ · R−1 is a matrix representing
+the relationship between the input/output ﬂow of the tank and
+the water demand. Its element km,h denotes the relationship
+between the mth tank ﬂow and the demand at node h. Each
+element in W, wm, denotes the tank ﬂow at node m and is
+expressed as wm = N
+h=1 km,hdh. It means that wm supplies
+km,hdh of the demand at node h.
+The mass balance of node h is given as
+N
+
+k = 1,k̸=h
+qk,h = dh +
+N
+
+m = 1,m̸=h
+qh,m.
+(39)
+Substituting (39) into wm =
+N
+
+h=1
+km,hdh yields
+wm =
+N
+
+h=1
+⎛
+⎝km,h
+N
+
+k=1,k̸=h
+qk,h −km,h
+N
+
+m=1,m̸=h
+qh,m
+⎞
+⎠.
+(40)
+It says that the tank ﬂow at node m is equal to the sum of the
+ﬂow in the branch connected with node h multiply by km,h.
+The input and output ﬂows of the tank are allocated to the
+demand nodes and branches in the WDS network. Larger km,h
+means that more demand dh, and ﬂow connected with node h,
+qk,h, account for the tank ﬂow at node m.
+2) Tank Flow Allocation Based Method: The balance of sup-
+ply and demand in WDS may be threatened when the water
+ﬂows in the branches violate the maximum volume limitation.
+To prevent this situation from happening, the input and output
+ﬂows of the tank should be adjusted according to the ﬂow to
+overloaded branch. Thus, we develop the tank ﬂow allocation
+based method to limit the input/output ﬂow of the tank and to
+ﬁnd the proper maximum/minimum electrical demand of WDS.
+Procedure to obtain these limits is given as follows.
+1) Set the input/output ﬂow of the tank to the maximum
+threshold satisfying the technical limitations.
+2) Simulate the operation of WDS using the Newton–
+Raphson method [29]. Check whether there are over-
+loaded branches. If not, the calculated input/output ﬂow
+of the tank is the maximum; otherwise, use the tank ﬂow
+allocation method to calculate the allocation proportion of
+the input/output ﬂow of the tank to the overloaded branch.
+Repeat step 2).
+For example, for the branch connecting nodes nh and nk,
+reduce the input/output ﬂow of the tank at node m by
+
+qh,k −qmax
+h,k
+
+qh,k
+km,hqJi,m.
+qmax
+h,k is the maximum volume of the water ﬂow.
+The Newton–Raphson method is a widely used method for
+determining the ﬂows in the network [29]. The tank ﬂow al-
+location based method calculates the water ﬂow solutions by
+algebraic operations, instead of solving the optimization model.
+This can reduce the computation time greatly.
+3) Discussions: The tank ﬂow allocation based method en-
+ables the water ﬂow solutions to be found when the input/output
+ﬂow of the tank is set to the maximum. Water tank can be
+regarded as an auxiliary storage device for the power system.
+More water storage means that more electricity can be consumed
+by the pump and more wind power can be incorporated into the
+power system. The upper and lower bounds of the WDS power
+consumption can be obtained when the input and output ﬂows
+of the tank are set to the maximum. Equations (15) and (16) are
+usedtocalculatethemaximumandminimumelectrical demands
+of the WDS.
+The PTL constraints provide the possible maximum range that
+the electricity consumption of WDS can vary. But they did not
+offer what the variation range of the WDS power consumption
+is when the binary variable values are known. The maximum
+variation range of the WDS power consumption under given
+binaryvariablevalues canbeobtainedbythetankﬂowallocation
+method, which is developed based on the given water ﬂow
+directions. This method also can be used in real time with
+little computation cost, whereas the PTL constraints need to
+be generated day ahead.
+B. Greedy-Based Algorithm
+Algorithm 1 summarizes the solution procedure of the greedy-
+based algorithm. It contains ﬁve steps. The tank ﬂow allocation
+based method is used in Step 3 to ﬁnd the power variation range
+of WDS under the given binary variable values.
+The benchmark combinations of the binary variable values in
+Step 1 can be generated by solving an optimal water ﬂow (OWF)
+optimization problem as detailed in [25]. The ﬁtness function in
+Step 4 aims to evaluate the distance between the optimal electric-
+ity consumption of WDS and the boundaries of the WDS power
+variation range. Smaller ﬁtness function value means closer
+distance. NV and NM are hyperparameters of the greedy-based
+algorithm, and NV × NM represents the number of combina-
+tions the algorithm explores each iteration. Larger NV × NM
+means that more combinations the algorithm can explore. When
+NV × NM ≥2NT , it only takes one iteration for the algorithm
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:28:07 UTC from IEEE Xplore.  Restrictions apply. 
+
+YAO et al.: EFFICIENT OPERATION OF INTEGRATED ELECTRICAL-WATER SYSTEM FOR WIND
+9389
+Algorithm 1: Greedy-Based Algorithm.
+Step 1: Generate NV combinations of the binary variable
+values and include them into set B. Initialize the
+iteration number m as 1.
+Step 2: Generate NM matrices using the Monte Carlo
+simulation. These matrices are of size 1 × NT , where
+NT is the number of binary variables. The elements in
+the matrix equal 0 or 1 at random. If the jth element in
+the matrix is equal to 0, then change the value of the jth
+binary variable. For the ith (i = 1, 2, . . . , NV )
+combination in the set B, update the binary variable
+values with the elements in the kth (k = 1, 2, . . . , NM)
+matrix. If the updated combination has been explored
+before, resample the kth matrix and update the ith
+combination.
+Step 3: Use the Newton-Raphson method to solve the
+water ﬂow equations and check whether the updated
+binary variable values satisfy the hydraulic
+requirements. If satisﬁed, calculate the maximum
+electrical demand, UBi,k
+h,tp, and the minimum electrical
+demand, LBi,k
+h,tp, of the WDS using the tank ﬂow
+allocation method.
+Step 4: Update the ith combination using the kth matrix if
+the optimal electricity consumption of WDS at time tp
+is in the range of LBi,k
+h,tp ≤ˆP W DS
+h,tp
+≤UBi,k
+h,tp, and set
+the obtained binary variable values as the ﬁnal solutions.
+The iterative process is terminated. Otherwise, update
+the ith combination in the set B using the matrix with the
+minimum ﬁtness function value,
+fitk
+i = min{| ˆP W DS
+h,tp
+−LBi,k
+h,tp|, | ˆP W DS
+h,tp
+−UBi,k
+h,tp| }.
+Step 5: Let m = m+1. If m ≤mmax , go to Step 2;
+otherwise, update the gth combination using the pth
+matrix and ﬁx the obtained binary variable values as the
+ﬁnal solution
+fitp
+g =
+min{fitk
+i : i = 1, 2, . . . , NV ; k = 1, 2, . . . , NM}
+mmax is the maximum number of iterations.
+to converge. 2NT is equal to the total number of possible
+combinations.
+C. Optimal Operation of the WDS
+With the values of binary variables known, the WDS opti-
+mization model (41) can be solved to obtain the optimal water
+ﬂow solutions. The objective function of the WDS optimization
+model ensures that the optimized operation of WDS satisﬁes the
+optimal electricity consumption obtained in Step 1 as much as
+possible
+⎧
+⎪
+⎨
+⎪
+⎩
+min
+
+P WDS
+h,tp −ˆP WDS
+h,tp
+
+s.t. (1)–(16)
+P WDS
+h,tp ≥ˆP WDS
+h,tp
+.
+(41)
+D. Supplementary Remarks
+1) Original Model of Integrated Electrical-Water System:
+The original optimization model of integrated electrical-water
+system is given as
+⎧
+⎨
+⎩
+min CA
+s.t. (1)–(16)
+(25)–(34)
+(42)
+The detailed formulation of CA can be seen from (24), which
+aimsatminimizingtheoperationcostoftheintegratedelectrical-
+water system. The proposed three-step approach decomposes
+the solution process of the MINLP model (42) into three steps,
+which enables the efﬁcient operation of the integrated electrical-
+water system.
+2) Optimality of Greedy-Based Algorithm: The proposed
+greedy-based algorithm can guarantee that the global optimal
+solution is found. This is explained as follows.
+The greedy-based algorithm aims at ﬁnding the optimal com-
+bination of the binary variable values. Since there are limited
+numbers of possible combinations, the global optimal one is
+guaranteed to be found when mmax ≥
+2NT
+NV ×NM in Step 5. At each
+iteration, the greedy-based algorithm calculates the range that
+the electrical demand of WDS can vary for each updated com-
+bination. The combination is determined as the global optimal
+one when the optimal electricity consumption of WDS is in the
+calculated range. This greatly accelerates the convergence of the
+greedy-based algorithm since there are many combinations of
+binary variable values that satisfy LBi,k
+h,tp ≤ˆP WDS
+h,tp ≤UBi,k
+h,tp.
+Under this situation, any combination can be chosen as the ﬁnal
+solution without affecting the optimality in that the optimal
+electricity consumption of WDS is satisﬁed under these com-
+binations.
+3) Time Complexity Analysis: The big O notation is used to
+analyze the time complexity of the proposed three-step solution
+process. The time complexity is calculated by
+T (n) = T (n1) + T (n2) + T (n3)
+(43)
+T(n1), T(n2), and T(n3) denote the time complexity of Steps
+1, 2, and 3, respectively. Since the PTL constraints are generated
+in advance, the time complexity of Step 1 equals the time
+complexity for solving the LPWCO model. T(n3) also equals
+the time complexity for solving the linear programming model
+(41). According to [30], we have
+T (n1) = T (n3) = O
+
+n2
+.
+(44)
+The time complexity of Step 2 is calculated by
+T (n2) =
+5
+
+k=1
+T (Sk) = 1 + n + O
+
+max
+
+n3, n3
++ n + 1 = O
+
+n3
+(45)
+T(Sk) denotes the time complexity of Step k in the greedy-based
+algorithm. Substituting (44) and (45) into (43) yields
+T (n) = O
+
+max
+
+n2, n3, n2
+= O
+
+n3
+.
+(46)
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:28:07 UTC from IEEE Xplore.  Restrictions apply. 
+
+9390
+IEEE TRANSACTIONS ON INDUSTRIAL INFORMATICS, VOL. 19, NO. 9, SEPTEMBER 2023
+Fig. 4.
+WDS network comprising 21 nodes (the circles) and 22
+branches. The arrows denote the direction of ﬂow in the branches. P
+denotes the pump and V the valve. Demand loads are at nodes 9, 10,
+11, 12, and 15. The four reservoirs are located in nodes 1, 8, 17, and
+21. Two tanks are situated at nodes 4 and 18.
+Fig. 5.
+Daily wind power output and load demands.
+The abovementioned analysis shows that the NP-hard opti-
+mization problem (42) is turned into a polynomial-time prob-
+lem by use of the proposed three-step solution approach. This
+veriﬁes the advantage of the proposed approach in reducing the
+computational cost.
+V. CASE STUDY
+The proposed approach for efﬁcient operation of integrated
+electrical-water system is evaluated to show its merits: much
+lower wind power curtailment and signiﬁcantly shorter com-
+putation time. This makes it better equipped to deal with the
+uncertainty of wind power. Performance evaluation was carried
+out on a small-scale illustrative test system and a large-scale test
+system. In this article, the time horizon of each step is 24 h. The
+resolution is 15 min, corresponding to 96 time steps. The tests
+were performed on a PC with Intel Core i7-9700 and Gurobi
+9.0.1 on Python 3.7. This article considers the WDS connected
+to the power transmission system to evaluate the impact of WDS
+optimization on the entire power transmission system [17].
+A. Illustrative Test System
+Firstly, a relatively small test system is used to evaluate the
+performance of the proposed approach in detail. The test system
+iscomposedoftheIEEERTS24-buspowersystemandtheWDS
+with 22 branches [7]. The diagram of IEEE RTS 24-bus system
+can be found in [8]. Fig. 4 shows the test WDS. There are 17
+load buses in the power system and each load is connected with
+a WDS. The wind farms are located at nodes 3, 5, and 20 of the
+power system. Fig. 5(a) illustrates the daily wind power outputs
+for three different wind farms and Fig. 5(b) the daily electrical
+and water load demands. Parameters of the pump are given in
+TABLE I
+PARAMETER VALUES IN HYDRAULIC EQUATIONS OF PUMP
+TABLE II
+ELECTRICITY PRICE OF WDS
+TABLE III
+OPTIMIZATION RESULTS UNDER DIFFERENT CASES IN THE ILLUSTRATIVE
+TEST SYSTEM
+Table I. The electricity price for the WDS is presented in Table II.
+The penalty for wind power curtailment is 1000 $/MWh. In the
+greedy-based algorithm NV = 50 and NM = 100.
+Four cases are considered to demonstrate the advantage of the
+proposed optimization approach.
+Case 1: Power system and WDS operate independently.
+Case 2: Cooperative operation of power system and WDS not
+considering the handling of binary variables. The cooperative
+operation model is solved in a centralized way.
+Case 3: Cooperative operation of power system and WDS not
+considering the handling of binary variables. The cooperative
+operation model is solved by the Benders decomposition
+approach.
+Case 4: Cooperative operation of power system and WDS con-
+sidering the handling of binary variables with the proposed
+three-step optimization approach.
+In Case 1, the optimization models of power system and WDS
+are formulated as (47) and (48), respectively. The optimization
+modelsofCases2and3aregivenby(42).NotethatCase2solves
+the optimization model (42) directly, whereas Case 3 decom-
+poses the original model by use of the Benders decomposition.
+The process of Benders decomposition can be seen from [8]
+⎧
+⎪
+⎪
+⎪
+⎪
+⎪
+⎨
+⎪
+⎪
+⎪
+⎪
+⎪
+⎩
+min
+⎛
+⎜
+⎜
+⎜
+⎝
+NW
+
+w=1
+T
+t=tp
+λP wc
+w,t +
+NEB
+
+n=1
+T
+t=tp
+μP ec
+n,t
++
+Ng
+
+i=1
+T
+t=tp
+L
+
+l=1
+Ki,lP g
+i,t,l
+⎞
+⎟
+⎟
+⎟
+⎠
+s.t. (25)–(34)
+(47)
+⎧
+⎨
+⎩
+min
+NWDS
+
+h = 1
+T
+t=tp
+λpricetP WDS
+h,t
+s.t. (1)–(16)
+(48)
+Table III shows the optimization results under different cases.
+The time for solving the optimization model in different cases
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:28:07 UTC from IEEE Xplore.  Restrictions apply. 
+
+YAO et al.: EFFICIENT OPERATION OF INTEGRATED ELECTRICAL-WATER SYSTEM FOR WIND
+9391
+Fig. 6.
+Binary variable values denoting the direction of ﬂow in the 22
+branches over 96 time steps. When the direction of ﬂow in the branch
+is the same as that of Fig. 4, the binary variable has a value of 1,
+represented by yellow. Otherwise, the binary variable has a value of 0
+and represented by green.
+is shown in the fourth column. It is observed from Table III
+that Case 1 requires the largest wind power curtailment and
+operation cost. This indicates that the integration of WDS energy
+ﬂexibility into the power system operation greatly promotes the
+wind power accommodation. It is also observed from Table III
+that the amount of wind power curtailment and the operation
+cost in Case 4 are signiﬁcantly lower than that in Cases 2 and
+3. They are less, respectively, by about 55% and 53%. This is
+because, in Cases 2 and 3, it takes more than 15 min to solve the
+WDS optimization problem. Both the centralized optimization
+and the Benders decomposition approaches are not designed
+to handle the NP-hard problem caused by the binary variables.
+Under this circumstance, an immediate response according to
+the real-time variations of wind power is not available to deal
+with the wind power uncertainties. Considering the handling of
+binary variables, the computation time of Case 4 is reduced by
+99%. Since the computation time in Case 4 is short enough
+to adjust the operation strategy of WDS, proper response to
+the wind power variations could be provided. As a result, wind
+power curtailment and the operation cost are lowered.
+The greedy-based algorithm ﬁnds the 96 combinations of
+binary variable values. Eeach combination shows the branch
+status corresponding to a time step in the daily operation. Fig. 6
+shows the obtained binary variable values. It can be seen from
+Fig. 6 that the directions of ﬂow in branches 1 to 6 and 17 to
+22 remain ﬁxed. This is because these branches are not within
+the loop and the water ﬂow direction is generally from the water
+source to the demand load.
+Monte Carlo simulation was applied to generate 500 wind
+power output proﬁles based on the scaled data of the Irish grid
+[8]. Under each proﬁle, we compare the optimization results
+in Case 4 with the results in Cases 2 and 3 to further test
+the efﬁciency of the proposed approach. Fig. 7(a) shows the
+computation time of Case 4 versus the time in Cases 2 and 3 for
+500 proﬁles. Each dot represents the optimization result under
+a proﬁle. Note that the time scale for Case 4 is in the magnitude
+of seconds and that for Cases 2 and 3 in minutes. Fig. 7(b)
+depicts the percentage difference between the optimized wind
+power curtailment of Case 4 and that of the value in other cases
+versus the difference between the operation costs. Note that the
+optimization results in Cases 2 and 3 are the same. It can be
+seen from Fig. 7(b) that the proposed approach reduces the wind
+Fig. 7.
+Comparison of optimization results for 500 generated wind
+power output proﬁles.
+Fig. 8.
+Impact of the number of WDS on the computation time of the
+illustrative test system.
+power curtailment and the operation cost by about 60% and 54%,
+respectively. Results in Fig. 7 demonstrate that the proposed
+approach is computationally efﬁcient for WDS optimization
+problem. The gap between the optimization results in Case 4
+and the global optimal solution is narrowed down to 0 under
+the 500 wind power proﬁles. This indicates that the proposed
+approach is highly accurate.
+As the number of WDS connected to the power system
+increases, the binary variables indicating the direction of ﬂow
+in the pipe and the ON/OFF status of the pump and valve also
+increase. Fig. 8 shows the impact of the number of WDS on
+the computation time. It can be seen from Fig. 8 that, as the
+number of WDS grows, the average computation time to solve
+the optimization model in Cases 2 and 3 increases dramatically,
+while that in Case 4 remains small and almost unchanged. This
+is all because of the handling of binary variables in the proposed
+three-step optimization approach. Note that the computation
+time in Case 4 is in a few seconds, which fully meets the needs
+of dispatch in real time.
+B. Large-Scale Test System
+A realistic power system in a province of Northwest China is
+used to further verify the superiority of the proposed approach.
+The power system has 93 load buses and 179 transmission lines.
+The installed wind power capacity is 3667.2 MW, accounting for
+12% of the total generating capacity. The “D-Town” WDS with
+443 pipes is used [8], which often serves as the benchmark for
+WDS optimization models. Each load bus in the power system
+is connected with a WDS.
+Consider the same four cases as in the illustrative test system
+study. In each case, four scenarios are considered for seasonal
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:28:07 UTC from IEEE Xplore.  Restrictions apply. 
+
+9392
+IEEE TRANSACTIONS ON INDUSTRIAL INFORMATICS, VOL. 19, NO. 9, SEPTEMBER 2023
+TABLE IV
+OPTIMIZATION RESULTS UNDER DIFFERENT CASES IN THE LARGE-SCALE
+TEST SYSTEM
+Fig. 9.
+Comparison of optimization results for ten-year historical sce-
+narios.
+impact. Scenario a denotes the months from March to May,
+Scenario b from June to August, Scenario c from September to
+November, and Scenario d from December to February. Table IV
+shows the optimization results on wind power curtailment, oper-
+ation cost, and computation time under these four cases. It can be
+seen from Table IV that the amount of wind power curtailment
+and the operation cost are much lower in Case 4 compared
+with those in other cases. Besides, the computation time is
+signiﬁcantly reduced by nearly 99% with the consideration of
+binary variable handling in WDS model.
+Ten-year historical scenarios of the provincial power system
+were used to further test the optimality of the proposed approach.
+We compare the optimization results in Case 4 and the global
+optimal solutions, as shown in Fig. 9. It can be seen from Fig. 9
+that the proposed approach can always ﬁnd the global optimal
+solution, which veriﬁes the optimality of the proposed approach.
+Next, the number of WDS connected to the power system
+was set to vary from 93 to 203. Fig. 10 shows the impact of
+the number of WDS on computation time. It is observed from
+Fig. 10 that the computation time for solving the model in Case 4
+remains around 1 min as the number of WDS increases, whereas
+that in Cases 2 and 3 increases dramatically. This demonstrates
+that the proposed method can be applied to much larger systems
+with little increase on the computational cost.
+Fig. 10.
+Impact of the number of WDS on the computation time of the
+large-scale test system.
+VI. CONCLUSION
+This article presented a three-step optimization approach for
+efﬁcient operation of integrated electrical-water system. The
+efﬁciency is in terms of signiﬁcantly shorter computation time
+and much lower wind power curtailment. The ﬁrst step provide
+several linear constraints to model the maximum variation range
+of the electrical demand of WDS. The optimal electricity con-
+sumption proﬁle of WDS was obtained by solving the LPWCO
+model. The binary variable values of WDS were determined in
+the second step through the tank ﬂow allocation based method
+and the greedy-based algorithm. Then, the optimization model
+of WDS can be solved efﬁciently. Data privacy can also be
+protected, since only limited information needs to be shared
+between WDS and the power system.
+Results from case studies demonstrated that the proposed
+method offers signiﬁcant beneﬁts on lowering the computation
+timeandtheoperationcostincomparisontothepreviousstudies.
+The computation time remains nearly unchanged even as the
+number of WDS integrated with the power system increases
+from 93 to 203.
+REFERENCES
+[1] International Energy Agency, “World energy outlook 2020.” [Online].
+Available: https://www.iea.org/reports/world-energy-outlook-2020
+[2] M. Khodayar, O. Kaynak, and M. E. Khodayar, “Rough deep neural
+architecture for short-term wind speed forecasting,” IEEE Trans. Ind.
+Inform., vol. 13, no. 6, pp. 2770–2779, Dec. 2017.
+[3] H. Wei, X. Liu, W. Cao, G. Ye, X. Jiang, and Y. He, “Ultra-short-term wind
+power forecasting based on deep belief network and wavelet denoising,”
+in Proc. IEEE 4th Int. Elect. Energy Conf., 2021, pp. 1–6.
+[4] T. Yan, W. Liu, M. Zhao, Y. Liu, W. Yu, and L. Long, “Multi-state
+probability prediction of wind power based on deep learning model,” in
+Proc. IEEE Sustain. Power Energy Conf., 2020, pp. 155–160.
+[5] E. S. Miele, F. Bonacina, and A. Corsini, “Deep anomaly detection in
+horizontal axis wind turbines using graph convolutional auto-encoders for
+multivariate time series,” Energy AI, vol. 8, pp. 1–13, 2022.
+[6] International Energy Agency, “World energy outlook 2018.” [Online].
+Available: https://www.iea.org/reports/world-energy-outlook-2018
+[7] C. Li, Y. Yao, K. Xie, B. Hu, and T. Niu, “Integrated electrical, heating,
+and water distribution system to accommodate wind power,” IEEE Trans.
+Sustain. Energy, vol. 12, no. 2, pp. 1100–1114, Apr. 2021.
+[8] Y. Yao, C. Li, K. Xie, H.-M. Tai, B. Hu, and T. Niu, “Optimal design
+of water tank size for power system ﬂexibility and water quality,” IEEE
+Trans. Power Syst., vol. 36, no. 6, pp. 5874–5888, Nov. 2021.
+[9] D. Fooladivanda, A. D. Domínguez-Garcí, and P. W. Sauer, “Utilization
+of water supply networks for harvesting renewable energy,” IEEE Control
+Netw. Syst., vol. 6, no. 2, pp. 763–774, Jun. 2019.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:28:07 UTC from IEEE Xplore.  Restrictions apply. 
+
+YAO et al.: EFFICIENT OPERATION OF INTEGRATED ELECTRICAL-WATER SYSTEM FOR WIND
+9393
+[10] C. Ashley, L. Holmes, and G. Wikler, “Using more energy can be a
+good thing: C&I loads as a balancing resource for intermittent renewable
+energy,” EnerNOC Utility Solutions, White Paper, 2013.
+[11] K. Smith, “Understanding energy consumption for urban water supply in
+China,” M.S. thesis, Dept. Environ. Sci. Eng., Tsinghua Univ., Beijing,
+China, 2015.
+[12] World Bank, “World development indicators,” 2016.
+[13] S. Zuloaga and V. Vittal, “Integrated electric power/water distribution
+system modeling and control under extreme mega drought scenarios,”
+IEEE Trans. Power Syst., vol. 36, no. 1, pp. 474–484, Jan. 2021.
+[14] C. D’Ambrosio, A. Lodi, S. Wiese, and C. Bragalli, “Mathematical pro-
+gramming techniques in water network optimization,” Eur. J. Oper. Res.,
+vol. 243, no. 3, pp. 774–788, 2015.
+[15] H. Mala-Jetmarova, N. Sultanova, and D. Savic, “Lost in optimisation
+of water distribution systems? A literature review of system operation,”
+Environ. Model. Softw., vol. 93, pp. 209–254, 2017.
+[16] W. N. Lubega and A. M. Farid, “Quantitative engineering systems mod-
+eling and analysis of the energy–water nexus,” Appl. Energy, vol. 135,
+pp. 142–157, 2014.
+[17] K. Oikonomou and M. Parvania, “Optimal coordination of water distribu-
+tion energy ﬂexibility with power systems operation,” IEEE Trans. Smart
+Grid, vol. 10, no. 1, pp. 1101–1110, Jan. 2019.
+[18] K. Oikonomou and M. Parvania, “Optimal coordinated operation of in-
+terdependent power and water distribution systems,” IEEE Trans. Smart
+Grid, vol. 11, no. 6, pp. 4784–4794, Nov. 2020.
+[19] K. Oikonomou, M. Parvania, and R. Khatami, “Optimal demand response
+scheduling for water distribution systems,” IEEE Trans. Ind. Inform.,
+vol. 14, no. 11, pp. 5112–5122, Nov. 2018.
+[20] K. Oikonomou and M. Parvania, “Optimal participation of water desalina-
+tion plants in electricity demand response and regulation markets,” IEEE
+Syst. J., vol. 14, no. 3, pp. 3729–3739, Sep. 2020.
+[21] R.Menke,E.Abraham,P.Parpas,andI.Stoianov,“Demonstratingdemand
+response from water distribution system through pump scheduling,” Appl.
+Energy, vol. 170, pp. 377–387, 2016.
+[22] H. Shuai, J. Fang, X. Ai, J. Wen, and H. He, “Optimal real-time operation
+strategy for microgrid: An ADP-based stochastic nonlinear optimization
+approach,” IEEE Trans. Sustain. Energy, vol. 10, no. 2, pp. 931–942,
+Apr. 2019.
+[23] S. Leyffer and J. Lee, Mixed Integer Nonlinear Programming. Berlin,
+Germany: Springer, 2012.
+[24] D. Verleye and E. Aghezzaf, “Optimising production and distribution
+operations in large water supply networks: A piecewise linear optimisation
+approach,” Int. J. Prod. Res., vol. 51, no. 23/24, pp. 7170–7189, 2013.
+[25] D. Fooladivanda and J. A. Taylor, “Energy-optimal pump scheduling and
+water ﬂow,” IEEE Control Netw. Syst., vol. 5, no. 3, pp. 1016–1026,
+Sep. 2018.
+[26] A. S. Zamzam, E. Dall’Anese, C. Zhao, J. A. Taylor, and N. D. Sidiropou-
+los, “Optimal water-power ﬂow problem: Formulation and distributed
+optimal solution,” IEEE Control Netw. Syst., vol. 6, no. 1, pp. 37–47,
+Mar. 2019.
+[27] Q.Li,S.Yu,A.S.Al-Sumaiti,andK.Turitsyn,“Microwater-energynexus:
+Optimal demand-side management and quasi-convex hull relaxation,”
+IEEE Control Netw. Syst., vol. 6, no. 4, pp. 1313–1322, Dec. 2019.
+[28] A. Enshaee, G. R. Youseﬁ, and A. Ebrahimi, “Allocation of transmission
+active losses through a novel power tracing-based technique,” IET Gener.,
+Transmiss. Distrib., vol. 12, no. 13, pp. 3201–3211, 2018.
+[29] W. Viessmand Jr. et al., Water Supply and Polution Control, 8th ed.
+Englewood Cliffs, NJ, USA: Prentice-Hall, 2008.
+[30] M. B. Cohen, Y. T. Lee, and Z. Song, “Solving linear programs in the
+current matrix multiplication time,” J. ACM, vol. 68, no. 1, pp. 1–39, 2021.
+Yiming Yao received the B.S. degree from
+the School of Electrical Engineering, Chongqing
+University, Chongqing, China, in 2019. He is
+currently working toward the Ph.D. degree
+with the School of Electrical Engineering in
+Chongqing University.
+His research interests include the energy-
+water nexus and renewable energy accommo-
+dation.
+Chunyan Li (Member, IEEE) received the Ph.D.
+degree in electrical engineering from Chongqing
+University, Chongqing, China, in 2008.
+She is currently an Associated Professor with
+the School of Electrical Engineering, Chongqing
+University. Her research interests include power
+system analysis, renewable energy consump-
+tion, and smart grid dispatching.
+Changzheng Shao (Member, IEEE) received
+the B.S. degree from Shandong University, Ji-
+nan, China, and the Ph.D. degree from Zhejiang
+University, Hangzhou, China, in 2015 and 2020,
+respectively, both in electrical engineering.
+He is currently an Assistant Professor with
+Chongqing University, Chongqing, China. His
+research interests include the operation opti-
+mization and reliability evaluation of the inte-
+grated energy system.
+Bo Hu (Member, IEEE) was born in Henan,
+China, in 1983. He received the Ph.D. degree in
+electrical engineering from Chongqing Univer-
+sity, Chongqing, China, in 2010.
+He is currently a Professor with the School
+of Electrical Engineering, Chongqing University.
+His research interests include power system
+reliability and parallel computing techniques in
+power systems.
+Kaigui Xie (Senior Member, IEEE) received the
+Ph.D. degree in power system and its automa-
+tion from Chongqing University, Chongqing,
+China, in 2001.
+He is currently a Full Professor with the
+School of Electrical Engineering, Chongqing
+University. He has authored and coauthored
+more than 200 academic papers and six books.
+His main research interests include power sys-
+tem reliability, planning, and analysis.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:28:07 UTC from IEEE Xplore.  Restrictions apply. 

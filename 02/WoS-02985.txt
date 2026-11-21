@@ -1,0 +1,2151 @@
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+Available online 6 February 2025
+2212-4209/© 2025 The Authors.
+Published by Elsevier Ltd.
+This is an open access article under the CC BY-NC-ND license
+(http://creativecommons.org/licenses/by-nc-nd/4.0/).
+Novel methodology for resilience assessment of critical 
+infrastructure considering the interdependencies: A case study in 
+water, transportation and electricity sector
+Bawantha Rathnayaka a, Dilan Robert a,*, Varuna Adikariwattage b, 
+Chandana Siriwardana c, Erica Kuligowski a, Sujeeva Setunge a, 
+Dilanthi Amaratunga d
+a Civil Engineering Department, School of Engineering, Royal Melbourne Institute of Technology (RMIT) University, Melbourne, VIC, 3001, Australia
+b Civil Engineering Department, University of Moratuwa, Moratuwa,10400, Sri Lanka
+c School of Built Environment, Massey University, Albany, Auckland, 0632, New Zealand
+d Global Disaster Resilience Centre, University of Huddersfield, Queensgate, Huddersfield, HD1 3DH, United Kingdom
+A R T I C L E I N F O
+Keywords:
+Resilience assessment
+Critical Infrastructures
+Dynamic Bayesian Network
+Interdependencies
+Functionality curve
+A B S T R A C T
+Critical Infrastructures (CI) are vital for societal and economic stability, yet their resilience 
+against disasters remains inadequately understood with the increasing interdependencies among 
+the CIs. A better understanding of these interdependencies and the dynamic nature of CI func­
+tionalities is crucial for advancing disaster resilience assessment within engineering systems. This 
+paper introduces a novel approach using a Dynamic Bayesian Network (DBN) to assess resilience 
+in interdependent CI systems. The DBN method enables a probabilistic evaluation of system 
+resilience by incorporating interdependencies and capturing the temporal dynamics of system 
+capacities. This approach offers a more detailed perspective on resilience by modelling system 
+functionality using expected values of different functionality states over time. Using a case study 
+in Sri Lankan electricity, water distribution, and road infrastructure sectors and 34 experts, this 
+study examines the complex network of CIs. It demonstrates the applicability of the proposed 
+methodology. P-values of the Chi-Square test performed between the variation of model-predicted 
+resilience and expert assessments are significantly less than 0.05, confirming the model’s validity. 
+Additionally, this study explores the expansion of the methodology for resilience assessment 
+under multiple hazards, emphasizing its real-world effectiveness. The findings highlight the ef­
+ficacy of the proposed methodology and its potential to assist asset managers, owners, and 
+decision-makers in informed resilience planning and optimization strategies. This comprehensive 
+approach fills critical gaps in existing methodologies, offering a robust framework for assessing CI 
+resilience in a dynamic and systematic nature.
+1. Introduction
+The built environment has undergone rapid technological development in recent years, leading to a gradual increase in its 
+* Corresponding author.
+E-mail address: dilan.robert@rmit.edu.au (D. Robert). 
+Contents lists available at ScienceDirect
+International Journal of Disaster Risk Reduction
+journal homepage: www.elsevier.com/locate/ijdrr
+https://doi.org/10.1016/j.ijdrr.2025.105271
+Received 11 September 2024; Received in revised form 20 January 2025; Accepted 1 February 2025  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+2
+complexity [1,2]. Technological advancements have also significantly increased human interaction with the built environment [3–6]. 
+Critical Infrastructures (CIs) play a vital role within this environment. Broadly defined, CIs encompass assets, physical and virtual 
+infrastructure, networks, or processes that are essential for the well-being and proper functioning of society or communities [1,2,7]. 
+Rather than operating in isolation, CIs function as interconnected systems due to their interdependencies, which are intrinsic to CI 
+systems. Under normal operational conditions, these interdependencies typically enhance the reliability and efficiency of infra­
+structure services [1,8,9]. However, during significant disruptions, these interdependencies can lead to cascading failures and delays in 
+restoration, thereby introducing additional vulnerabilities and complexities [8,10–16]. Such failures are inherently unpredictable, 
+specially under uncertain operational circumstances where unexpected disruptions may arise randomly. These interruptions can result 
+from hazards or failures in system components, including natural disasters, human-made disasters, and unforeseen failure modes [1,6,
+17–20].
+Lessons learned from recent disaster events and the recognition of unknown hazards have shifted the focus of scholars from studies 
+on CI protection to the concept of resilience [18,21–25]. Holling [26] introduced the concept of resilience in ecology, which has been 
+expanded and adopted across various fields [23,25,27–29]. Resilience refers to a system’s ability to resist, absorb, accommodate, 
+adapt, transform, and recover from a hazard’s effects efficiently and in a timely manner. This includes safeguarding and restoring its 
+fundamental structures and functions through effective risk management [30–32]. Given the challenges posed by unprecedented 
+disruptions, designing resilient CI systems has become critical and complex task [1,33–37]. While redundancy is often used to enhance 
+system resilience, it is frequently impractical for complex systems due to the high costs associated with such measures [16,25,32]. In 
+this context, resilience assessment has emerged as a valuable tool to support decision-making in the planning and design of CI systems. 
+Unlike traditional risk assessment, resilience assessment is better suited for addressing the complexities of CI systems facing uncertain 
+disruptions. It places greater emphasis on unpredictable hazards and the cascading effects of failures following a disruption [16,20,25,
+32,38,39].
+In recent years, the study of CI resilience has gained increasing attention among scholars [1,33,40,41]. The existing literature has 
+expanded the scope of resilience assessment by presenting various methodologies for evaluating CI systems. These methodologies are 
+generally classified as qualitative, semi-quantitative, and quantitative approaches [21,23,25,42–44]. Additionally, several studies 
+employ diverse modeling techniques for CI resilience assessment, leveraging simulation paradigms and decision-making procedures 
+[42,45–47].
+These modeling and simulation methodologies encompass a wide range of techniques. For instance, Ouyang et al., [42] classified 
+modeling approaches into six main categories: empirical approaches, agent-based approaches, system dynamics-based approaches, 
+network-based approaches, economic-based approaches, and others. Similarly, Sun et al., [45] categorized these modeling techniques 
+into three primary groups: dependency tables, interaction rules, and data-driven approaches. Standard methodologies include 
+agent-based modeling, system dynamics, network theory, continuous time-step simulation (CS), discrete time-step simulation (DS), 
+Monte Carlo simulation (MC), decision trees (DT), Geographic Information Systems (GIS), event monitoring or real-time records 
+(RTR), and machine learning [21,42,43,45,47]. Various modeling techniques for resilience assessment of CIs have been systematically 
+compared across multiple studies (See Table A 1 in Appendix A). Descriptive approaches, such as descriptive tables and survey-based 
+matrices, are intuitive and straightforward to implement but rely heavily on subjective inputs and lack dynamic or probabilistic ca­
+pabilities. Network models effectively capture physical interdependence but require detailed knowledge of network topologies and are 
+computationally expensive. Input-output and computable general equilibrium models assess economic cascading impacts but are 
+limited to economic effects and do not account for redundancy representation. Simulation-based approaches, such as discrete event 
+simulation, agent-based models, and system dynamics, provide dynamic cause-and-effect analyses but are computationally intensive 
+and require extensive expert input. In contrast, Bayesian Networks (BNs), particularly Dynamic Bayesian Networks (DBNs), are 
+noteworthy for their ability to model resilience both dynamically and probabilistically. DBNs manage significant uncertainties by 
+integrating data from various sources such as simulations, measurements, and expert judgments; representing interdependencies using 
+directed graphs and conditional probabilities, and modeling evolving system states over time. Unlike static or deterministic methods, 
+DBNs allow real-time updates, capture cascading effects, and provide comprehensive assessments by combining physical, operational, 
+and functional interdependencies into a unified framework. Although machine learning models excel in processing large datasets, they 
+lack the interpretability and physical insights crucial for resilience assessment. DBNs emerge as the most suitable choice for resilience 
+modeling due to their flexibility, probabilistic nature, and ability to dynamically evaluate resilience trajectories while incorporating 
+complex interdependencies.
+Most studies assess resilience by examining the impact of disruptions on system functionality, typically focusing on functional loss. 
+The resilience of a system is contingent upon its possession of four distinct capacities: Anticipation, Absorption, Adaptation, and 
+Restorative capacity [48,49]. These capacities play a fundamental role in shaping the functionality states of the system [25,50,51]. In 
+this study, the state of system functionality emerges as a pivotal determinant of system resilience. These four capacities can be 
+comprehensively contextualized by delineating the operational dimensions of system functionality. Furthermore, the integration of 
+these capacities with disruptions constitutes a central tenet for evaluating system functionality. Anticipation capacity entails the ability 
+to foresee and prepare for potential disruptions or failures that may interrupt system functioning. Its significance lies in its facilitation 
+of preparedness and proactive measures aimed at risk mitigation [25,28,48]. Conversely, absorption pertains to the system’s capability 
+to withstand, absorb, and endure disruptions. Upon the occurrence of a disruption, the system’s capacity to absorb enables it to prepare 
+and adapt independently to reduce the impact of disruptions, thereby minimizing their resultant consequences [3,52,53]. Additionally, 
+adaptation capacity is a pivotal and indispensable aspect within the context of resilience when considering CI systems. It encapsulates 
+the inherent capability of a CI system to respond flexibly and adeptly to dynamic and evolving conditions, as well as emerging threats 
+that may pose risks to its functionality and integrity [23,24,54,55]. Restorative capacity pertains to the system’s ability to integrate 
+B. Rathnayaka et al.                                                                                                                                                                                                  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+3
+external interventions aimed at remedying the damage incurred by disruptions and facilitating its transition to a redefined state [21,
+23,24,54]. Acknowledging that this new state need not precisely mirror the pre-disruption condition is essential. The functionality of 
+this new system state may exceed or fail to meet that observed before the disruptions, but it remains within an acceptable range to meet 
+operational requirements [25,50,51].
+Enhancing system resilience involves reducing functional loss and increasing the capacity for recovery in the face of unforeseen 
+disruptions [21,23,25,42,56]. An overview of several studies that have developed resilience assessment models for CIs considering 
+interdependencies is provided in Table A 2 (See Appendix A). Ouyang [57] introduced a methodology for evaluating the resilience of 
+interdependent infrastructure systems. This approach incorporated unidirectional interdependencies and extends an existing resilience 
+assessment framework for single systems to encompass interdependent systems. The primary focus is on modeling and analysing the 
+Fig. 1. The proposed methodology for resilience assessment of the CIs under disaster event.
+B. Rathnayaka et al.                                                                                                                                                                                                  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+4
+contributions of resilience during the joint restoration processes of interconnected systems. Pederson et al. [58], and Goldbeck et al. 
+[59], have further explored methodologies for quantifying interdependencies and their impact on resilience during disruptions. These 
+studies highlight the value of capturing cascading effects and functional relationships in interconnected systems. Furthermore, Cai 
+et al., Nan and Sansavini, and Kammouh et al. [60–63], have demonstrated the applicability of DBNs for modeling multi-sector 
+interconnected networks and dynamic states of resilience. However, while these methodologies mark significant progress, gaps 
+remain in their ability to integrate diverse interdependencies (e.g., operational, functional, and structural), specially the effect of one 
+infrastructure’s capacity affects the other infrastructure’s functionality and account for multi-hazard scenarios across the lifecycle of CI 
+systems [57,59–61]. Many existing approaches, including DBN applications, focus narrowly on single-system evaluations or simplified 
+network configurations, leaving room for comprehensive multi-sector assessments under dynamic and uncertain conditions [21,23,25,
+34,42]. Additionally, during disruptions, system states undergo dynamic changes, necessitating the consideration of transitions be­
+tween these states when assessing resilience [1,9,64]. On the other hand, CI systems will be impacted by multiple hazard types during 
+their life cycle. Unfortunately, many current resilience assessment methodologies overlook these dynamic aspects and multiple hazard 
+types, highlighting the need for more comprehensive approaches for evaluating resilience of interconnected CI systems [1,9,16,65,66].
+In the current landscape of CI resilience assessment, considerable potential exists for further advancements beyond the state-of-the- 
+art. Therefore, this study builds upon and extends existing work by proposing a novel DBN-based methodology explicitly designed to 
+address these limitations. Unlike traditional DBN applications, the proposed framework integrates multi-sector interdependencies at 
+the component level while dynamically accounting for transitions between functionality states. This approach surpasses static models 
+by incorporating probabilistic evaluations that adapt to evolving system states and external disruptions in real time. A case study 
+involving the water distribution system, road infrastructure, and electricity infrastructure was conducted to demonstrate the appli­
+cability and validity of the proposed methodology. The proposed approach aims to provide a more comprehensive and detailed un­
+derstanding of CI resilience by considering both infrastructure interdependence and the evolving nature of resilience over time.
+2. Significance of the study
+CIs operate as interconnected systems rather than isolated entities. These interdependencies increase the risk of cascading failures 
+triggered by primary system malfunctions, resulting in increased vulnerability and delays in restoration efforts. In this evolving 
+context, resilience assessment has emerged as a critical tool for supporting decision-making in CI system planning and design. 
+However, existing resilience assessment methodologies often fall short of capturing the systemic nature and dynamic behavior of 
+interconnected CI systems. This study aims to address these gaps by introducing a novel methodology for CI resilience assessment. 
+Utilizing a DBN-based approach, the proposed methodology offers a dynamic and probabilistic assessment of resilience, accounting for 
+both the interconnected nature of CIs and the evolving dynamics of resilience over time. Additionally, a new metric based on the 
+expected value of functionality states is introduced to evaluate system resilience comprehensively. A case study on the water distri­
+bution system, road infrastructure, and electricity infrastructure in Sri Lanka is presented to demonstrate the applicability and validity 
+of the proposed methodology. The findings underscore the potential of the proposed approach to offer a more detailed understanding 
+of CI resilience, highlighting its relevance and contribution to advancing resilience assessment methodologies in the context of 
+interconnected and dynamic CI systems.
+3. Proposed methodology for resilience assessment
+This section introduces a methodology for evaluating the resilience of CI systems during disaster events, considering the dynamic 
+nature and interdependencies among CIs. Unlike conventional methods that typically address only a single type of infrastructure, this 
+approach integrates interdependencies, offering a more comprehensive evaluation. The proposed methodology consists of eight steps 
+to assess the resilience of the CI system, taking into account the interdependencies during a disaster, as depicted in Fig. 1. The proposed 
+methodology utilizes DBN for modeling the CI system. DBN can represent probabilistic relationships between causes and effects 
+dynamically, through nodes and directed lines, enabling both predictive and evaluative examinations [67–72]. More technical details 
+Fig. 2. Functionality curve of an infrastructure (Adopted from Refs. [25,51,78,81]).
+B. Rathnayaka et al.                                                                                                                                                                                                  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+5
+of the DBN are discussed in Appendix B. Significantly, the evaluation can integrate observed evidence to simulate the real-time 
+condition of a system.
+Therefore, any evidence provided at any moment permits the revision of probabilities for all points within the network’s 
+arrangement. DBN models have gained extensive use in risk assessment in recent years, owing to their capacity to blend multiple states 
+and include a temporal aspect [67–76].
+Furthermore, the proposed methodology incorporates the concept of functionality (F) in its definition of resilience. After disrup­
+tions, a system may malfunction or be in a weakened state, both of which are considered “low functionality”. Upon restoration to its 
+typical operational state, it achieves a status of “high functionality”. Therefore, the functionality of the system has been used to 
+measure resilience in previous studies [25,77–80]. The functionality curve offers a graphical representation of the system’s func­
+tionality, illustrating how its functionality evolves in response to external disturbances or disruptions, as depicted in Fig. 2. Accord­
+ingly, any system is assumed to operate in a finite set of functional states denoted by s =
+{
+s1,s2,..si,si+1,…,sn
+}
+, where si denotes the 
+mutually exclusive state of the system at any point in time and n is the finite number of possible states. The system’s functionality when 
+operating in the state si is denoted by fi. The occurrence of system state si at time point t is defined by the discrete probability dis­
+tribution P(Si)t.
+Furthermore, if we assume the time period from the disruption occurrence t1 until when the system achieves a new stable state (sn) 
+can be discretised to m number of small Δt time bins. Then the system functionality is given by Equation (1). 
+System functionality during the time of disruption =
+∑
+t=t1+mΔt
+t=t1
+∑
+n
+i=1
+Fi*P(Si)t
+(1) 
+t = discrete time bins.
+Fi = Expected Functionality level for ith state of system.
+S = State of the system.
+i = System state number.
+Assuming the disruption occurs at t1, the system transitions from state S1 to S2, accompanied by a substantial decrease in func­
+tionality from F1 to F2 following the disruptive event. Subsequently, the system initiates adaptation mechanisms, improving func­
+tionality to F3 as it adapts and undergoes repairs. Following restorative actions helps the system move from a disrupted condition to a 
+new stable state (S4) with the desired functionality (F4) depending on external maintenance interventions. This cycle initiates a new 
+state of S4, enriched with anticipation capabilities derived from the lessons gained from the preceding disruption. Systems endowed 
+with increased anticipation abilities typically exhibit swifter recovery rates. The system functionality can be quantified in terms of 
+expected functionality value at a given time, as depicted in Equation (1). As the present study utilizes the functionality terms in the 
+resilience definition, the system’s functionality is defined as the summation of the expected value of the system’s states as shown in 
+Equation (1). In Equation (1), the duration from the moment of disruption (t1 in Fig. 2) to the time when the infrastructure is fully 
+recovered (t4 in Fig. 2) is considered as the ‘time of disruption’. This equation captures the dynamic nature of system functionality, 
+accounting for changes in state probabilities over time and their overall impact on system. This definition of functionality introduces a 
+new approach to resilience assessment by incorporating dynamic and probabilistic characteristics. It is important to highlight that 
+users may need to specify the functionality level (Fi) for various system states. It should be noted that Fi represents the expected 
+percentage of available functionality of a system at a given state. The following eight steps outline the proposed methodology. 
+• Step 1: Define system boundaries and CI sectors that are considered for resilience assessment: In this step, the system 
+boundaries are defined, highlighting the CI sectors considered in the study. For instance, this case study examines three CI systems: 
+electricity, water distribution, and road infrastructure. Additionally, more information related to each CI sector, such as assets and 
+the main services provided by each sector is obtained. The definition of the functionality of each CI sector should be established at 
+this stage. This can be accomplished through a range of sources, including industry insights, operational conditions, or the expert 
+judgment from decision-makers.
+• Step 2: Identification of Critical Components in each CI sector within the system under assessment and identify the 
+interdependency of the component with other sectors and all required information: Step two of the proposed methodology 
+involves identifying the critical components within each CI sector and the interdependencies of these components with other CI 
+sectors. A critical component is defined as any part, subsystem, or infrastructure facility that is essential for maintaining the critical 
+service provided by a CI sector. It should be noted that zero functionality of any critical component would result in zero func­
+tionality of the services delivered by the corresponding CI sector. Additionally, identifying interdependencies between critical 
+services is necessary at this stage. Expert judgment can be used to identify critical components and interdependencies.
+• Step 3: Defining the Critical Component’s functionality and constructing a Markov Chain depicting the critical compo­
+nent’s states, considering it as sub-systems of a main system: In this step, the functionality state for each critical component is 
+defined. As shown in Fig. 2, four functionality states (S1, S2, S3 and S4) are used to define the functionality states. Then, a Markov 
+chain representing the component’s functionality states is developed. The transition rates between the states are established ac­
+cording to the four capacities of the system: Anticipation, Absorption, Adaptation, and Restoration. Additionally, the primary 
+factors influencing the system’s capacities are impacted by both external factors and the system itself. This study establishes the 
+influencing factors that contribute to the main capacities, building upon previous research conducted by the same scholars [55]. In 
+the related study, the authors developed an indicator framework based on these capacities, depicted in Fig. 3, which is utilized in 
+this research.
+B. Rathnayaka et al.                                                                                                                                                                                                  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+6
+• Step 4: Estimate the transition probabilities and convert each Markov chain to a set of DBNs: After defining the functionality 
+state of the critical components, the subsequent step is to estimate the transition states and translate the individual Markov chains 
+into DBNs. Fig. 4 depicts the transformation of a Markov chain model into a DBN, illustrating the transition between four functional 
+states and improving comprehension of the process. In Fig. 4 (a), the parameters λ, μ, α, and δ represent the transition probabilities 
+associated with the system’s capacities: absorption, adaptation, restoration, and anticipation. Fig. 4(b) showcases the DBN model, 
+that illustrates how the system’s functional state evolves, influenced by nodes representing resilience attributes. The ’ Functionality 
+State’ node in Fig. 4(b) encompasses states S1, S2, S3, and S4, which are influenced by the resilience capacities. The transition rates 
+for each state are transformed into the conditional probabilities of the ’ Functionality State’ node, considering the resilience in­
+dicators. The transition probabilities of system’s functionality states of the Markov chain are illustrated in Table 1.
+• Step 5: Compute the probability of each functional state of each Critical component: In this step, the probability of each 
+functional state for every critical component is calculated at each discrete time interval. The DBN model developed in the previous 
+step enables dynamic probability assessment. By employing forward and backward propagation analysis within the DBN, proba­
+bilities can be determined, allowing decision-makers to revise the model based on the most recent evidence and adjust the system 
+according to current conditions in real-time. The DBN structure for system resilience includes six nodes: a child node indicating the 
+functionality state, and others representing four capacities and one disruption. The probabilities of the individual states (S1, S2, S3, 
+and S4 as depicted in Fig. 2) are computed to quantify functionality and thereby resilience. The ‘Functionality state’ node en­
+compasses four distinct states aligning with those in the Markov chain depicted in Fig. 4. The transition rates listed in Table 1 for the 
+Markov chain are transformed into conditional probabilities. To represent the variation of the functionality state of a system over 
+time, a temporal arc connects the ‘Functionality state’ node from the previous time step, t-1, to the subsequent time step, t. In this 
+study, the nodes for the four capacities are assumed to have two states, high and low, indicating whether the system’s capacities are 
+‘High’ or ‘Low.’ These dynamic processes influence system functionality. Temporal arcs connect the nodes ‘anticipation,’ ‘ab­
+sorption,’ ‘adaptation,’ and ‘restoration’ to the ‘state of functionality’ node. Additionally, it is presumed that the ‘disruption’ node 
+possesses two states: ’yes’ and ‘no,’ denoting the occurrence or non-occurrence of a disruption. External disruptions may occur at 
+any point during operation. For modeling purposes, it is assumed that a disruption occurs at the initial time step (t = 0), and the 
+disruption state at this time is set to ’yes’. Fig. 5 illustrates the breakdown of the DBN and the evolving connections between nodes 
+across distinct time intervals. These intervals, shown from left to right, represent the states at t−1 and t, respectively. The shift in 
+system functionality is influenced by the current state’s disruption, resilience attributes, and the previous state’s system func­
+tionality. It’s important to highlight that resilience, as a built-in characteristic of an engineered system (excluding human ele­
+ments), remains unaffected by extrinsic influences such as disruptions. However, if an external influence impacts system 
+functionality, it will consequently affect resilience.
+• Step 6: Compute the probability of CI sector functional state: During this stage, the probability distribution of functionality 
+state for a given discrete time bucket within the CI sector is determined as follows. Let Sr(t) be the functional state of the critical 
+Fig. 3. Indicator framework for determining the four main capacities (Adopted from Ref. [55]).
+B. Rathnayaka et al.                                                                                                                                                                                                  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+7
+Fig. 4. Transformation of Markov chain to a DBN (Adopted from: [51]).
+Table 1 
+Transition probabilities for the system’s functionality states of the Markov chain.
+Transition probability
+S1
+S2
+S3
+S4
+S1
+1-λ
+λ
+0
+0
+S2
+0
+1- μ
+μ
+0
+S3
+0
+0
+1-α
+α
+S4
+δ
+0
+0
+1-δ
+Fig. 5. DBN nodes at discrete time slices (dashes arcs represent temporal links) (Adopted from: [51]).
+B. Rathnayaka et al.                                                                                                                                                                                                  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+8
+component Cr where Sr(t) ∈{s1r, s2r,… …., sir, …snr} and r = 1,2,3 …., k at a given time point t. k is the number of critical components 
+in the corresponding CI sector.
+Then, at time t the states of all the critical components can expressed as: S(t) = {S1(t), S2(t) … Sk(t)}. The corresponding set of 
+functional levels of each critical component is given by: F(t) = {F1(t), F2(t) … Fk(t)}, where Fr(t) ∈
+{
+f1,f2,…fn
+}
+. Defined earlier, a 
+Critical Component refers to any constituent part, subsystem, or infrastructure facility crucial for upholding the critical services 
+delivered by the CI sector. Then the functional states of the overall CI system FCI(t) can be expressed as: 
+FCI(t) = min{F1(t), F2(t)… Fk(t) }
+Thus, FCI(t) ∈
+{
+f1,f2,…fn
+}
+.
+This indicates that the sector’s overall functionality is determined by its weakest component. The overall CI system’s functionality 
+state at time t is depended on the set of functionality states achieved by the individual critical components at time t. Also, it should 
+be noted that there can be “n” number of possible functional states for each individual critical component. Thus, there is “nk “of 
+possible combinations for the overall CI system’s functionality state.
+Let Q(t) be the set of possible combinations of functional states of critical components. Then n{Q(t)} = nk. Also, it should be noted 
+that the F(t) ∈Q(t).
+Let Qfi(t)
+(
+Qfi(t) ⊆Q(t)
+)
+be the set such that {F(t) = Ffi(t)
+}
+∈Qfi(t) if min{F(t)
+}
+= fi. Also, let’s assume that there is p ≤nk number 
+of elements in Q(t) which satisfy the min{F(t)} = fi (i.e. n 
+{
+Qfi(t)
+}
+= p).
+Thus, 
+Ffi(t) =
+{
+Ffi 1(t), Ffi 2(t), Ffi 3(t), …, Ffi r(t)……………., Ffi k(t)
+}
+where Ffi r(t) ∈
+{
+f1, f2, …fn
+}
+.
+Then at time t the corresponding set of “functionality state” for the above set of “functional levels” can be written as follows, 
+Sfi(t) =
+{
+Sfi 1(t), Sfi 2(t), Sfi 3(t), …, Sfi r(t)……………., Sfi k(t)
+}
+where Sfi r(t) ∈{S1, S2, …Sn }.
+Let j be an index used to enumerate the possible functional state combinations in Qfi(t) where each combination satisfies 
+min{F(t)} = fi. Specifically, j indexes the individual elements of the set, Qfi(t) which consists of p possible combinations of the 
+functional states Ffi(t). Then the probability of any functionality state of the overall CI sector (FCI(t) = fi) at time t can be calculated 
+using Equation (2). 
+P(FCI(t) = fi) =
+∑
+p
+j=1
+{ ∏
+k
+r=1
+P
+{
+Sfi r(t)
+}
+}
+(2) 
+Thus, this equation provides a comprehensive framework for assessing the probability distribution of functionality states in a CI 
+sector, factoring in the interdependencies and states of its individual components. 
+• Step 7: Compute the functionality of each CI sector as a summation of expected values of functionality states from t ¼ t1 
+to t ¼ t4: In this stage, a functionality curve is constructed. As detailed in the preceding section 3, the functionality curve is 
+formulated based on the expected values of functionality states. Subsequently, in step six, the probabilities of functionality states 
+for each time slice are generated. Equation (1) is then applied to derive the system’s functionality curve. It should be noted that 
+the ‘system’ defined in Equation (1) can be a CI sector or a critical component. When deriving the functionality curve for the 
+overall CI sector, P
+(
+FCI(t) = fi
+)
+in Equation (2) should be used as P(Si)t in Equation (1). Bruneau et al., [81] introduced a 
+mathematical definition for resilience loss (R) based on the functionality curve outlined in Equation (3), where f(t) represents the 
+functionality curve.
+R =
+∫t4
+t1
+[100 −f(t)]dt
+(3) 
+B. Rathnayaka et al.                                                                                                                                                                                                  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+9
+In the present study, resilience was defined as the integral of functional loss of the infrastructure from the time of disruption to the 
+time of full recovery (t1 = time of disruption, t4 = time the infrastructure fully recovers), as proposed by Bruneau et al., [81]. 
+Equation (3) is utilized to calculate the resilience loss for each critical component and for the CI sector. It should be noted that ‘100’ 
+represents the infrastructure quality at the time of disruption, which is denoted by F1 in Fig. 2.
+• Step 8: Model validation and sensitivity analysis: In this stage, model validation should be carried out. Model validation can be 
+performed using available data or expert judgment. Afterward, sensitivity analysis can be conducted to pinpoint key and crucial 
+factors within the CI system. Both the functionality states and resilience indicators are assessed as focal points for sensitivity 
+analysis. For instance, all factors can be adjusted to high and low probabilities of operational states, after which the system’s 
+resilience is assessed over time.
+4. Application of proposed methodology: case study
+This section discusses the application of the proposed methodology for assessing resilience of CI system. The current study focuses 
+Table 2 
+Identified interdependencies between water, electricity, and transportation infrastructure sector.
+Affected critical 
+component
+Indicator
+Electricity
+Water
+Transportation
+Pump station and 
+distribution 
+network
+Building new 
+facilities
+Electricity is required for facility 
+restoration and building the new 
+facilities. Furthermore, electricity is 
+required for the functionality of the 
+pump house. The back up system will 
+be affected by the functionality of the 
+electricity sector.
+Not affected
+Roads are of utmost importance for 
+the transportation of the materials 
+and labour and accessing the asset/ 
+infrastructure facilities for 
+restoration or repair activities of 
+pump house.
+Asset backup
+Not affected
+Backup available 
+duration
+Percentage of asset 
+that have backup
+Availability of 
+interconnected 
+service
+Not affected
+Roads are of utmost importance for 
+the transportation of the materials 
+and labour and accessing the asset/ 
+infrastructure facilities for 
+restoration or repair activities of 
+pump house.
+Power plant
+Availability of 
+interconnected 
+service
+Not affected
+Not affected
+Roads are of utmost importance for 
+the transportation of the materials 
+and labour and accessing the asset/ 
+infrastructure facilities for 
+restoration or repair activities of 
+pump house.
+Replacement of 
+asset
+Building new 
+facility
+Facility relocation
+Time that CI is not 
+able serve it 
+function
+Water distribution systems 
+required for the functionality 
+of the cooling system within 
+the power plant.
+Not affected
+Transformers and 
+transmission 
+lines and grid 
+stations
+Facility relocation
+Not affected
+Not affected
+Roads are of utmost importance for 
+the transportation of the materials 
+and labour and accessing the asset/ 
+infrastructure facilities for 
+restoration or repair activities of 
+pump house.
+Building new 
+facility
+Availability of 
+interconnected 
+service
+Road
+Availability of 
+interconnected 
+service
+Communication systems will be 
+affected due to the disruption of the 
+electricity. Furthermore, signaling 
+system also become unfunctional due 
+to unavailability of the electricity.
+Not affected
+Not affected
+Functionality of 
+communication 
+system
+Time that CI is not 
+able serve it 
+function
+Partially damage 
+asset road
+Not affected
+Repairing activities of water 
+pipe distribution network due 
+to disruption may result 
+partial damages to the road 
+network.
+Not affected
+B. Rathnayaka et al.                                                                                                                                                                                                  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+10
+on the Sri Lankan electricity, transportation, and water infrastructure sectors as a case study. The details of the data collection process 
+are provided in Appendix C.
+4.1. Modelling of CI system using DBN
+The following sections 4.1.1- 4.1.8 demonstrate the stepwise application of the proposed methodology.
+4.1.1. Step one: Define the system boundaries and CI sectors that are considered for resilience assessment
+As aforementioned, the current investigation has elected to focus on the development of a model based on the integration of 
+electricity, water, and transportation infrastructure. The selection of these infrastructure components stems from their fundamental 
+importance in sustaining urban functionality and their susceptibility to disruption during adverse events. Assets located in Colombo 
+District, Sri Lanka were specifically included in the model. This deliberate choice is underpinned by the recognition of the increased 
+vulnerability of this geographical location to inundation events, primarily attributable to flood occurrences. Within the context of 
+disaster scenarios, the inundation resulting from floods has been identified as a principal disruptive force impacting CI systems and 
+their components. Therefore, flood events were selected as the primary disruption mechanism to assess and mitigate vulnerabilities in 
+urban infrastructure networks.
+4.1.2. Step two: Identification of critical components in each CI sector within the system under assessment and identify the interdependency of 
+the component with other sectors and all required information
+During this phase, the collection of relevant data on critical components and asset types is preceded by expert judgment, as 
+explained in section 3. Within the domain of electricity infrastructure, transmission lines, transformers, power plants, and grid stations 
+emerged as critical asset types. Likewise, within the water infrastructure, critical attention was directed towards the water distribution 
+system and pump stations recognizing as critical components. Similarly, based on expert judgment, road infrastructure was identified 
+as the critical component within the context of transportation infrastructure. Moreover, the interdependencies among the selected CI 
+systems were also identified during this step. Table 2 shows the identified interdependencies within the electricity, transportation, and 
+water infrastructure sectors.
+In the proposed methodology, the identified interdependencies between CIs are captured through directed arcs connecting nodes 
+that represent infrastructure sectors (i.e., nodes for Water, Electricity, and Transportation) to nodes representing the critical com­
+ponents of other infrastructure sectors. Specifically, each infrastructure sector (e.g., water, electricity, and transportation) is modeled 
+as a child node aggregating its critical components’ overall functionality. These child nodes are connected to the indicators of critical 
+components in other infrastructure sectors via directed arcs, signifying causal relationships and interdependencies. For example, the 
+functionality of the electricity sector is linked to the indicators of critical components of the water sector, such as pump stations, 
+through an arc. This connection reflects the dependency of the water infrastructure on electricity for operations, as depicted in Table 2. 
+The arcs are defined based on expert judgment, operational dependencies, and evidence from literature, with their strengths quantified 
+using Conditional Probability Tables (CPTs). DBN provides a dynamic and probabilistic framework for resilience assessment by 
+incorporating these interdependencies.
+4.1.3. Step three: Identification of critical component’s functionality and constructing Markov chain depicting critical component’s states 
+considering it as sub systems of a main system
+In this step, four functionality states (S1, S2, S3, and S4) of each critical component are defined. In addition to the primary resilience 
+capacities, functionality states are influenced by several parameters. The resilience of the CI system is defined based on the resilience of 
+its critical components as per Equation (2). The resilience of each critical component is determined using four different resilience 
+capacities: anticipation, absorption, restorative, and adaptive. Each capacity was further decomposed into sub-indicators to evaluate 
+these resilience capacities, as illustrated in Fig. 3. This system of indicators was established based on prior research conducted by the 
+same scholars [55]. Then, BN structures were developed for each critical component within the electricity, water, and transportation 
+infrastructures (See Fig. A.1, Fig. A.2, and Fig. A.3 in Appendix A). For this study, it is assumed that all resilience indicators exhibit only 
+two states: “High” or “Low.” In these BNs, three nodes were added to represent the functionality of the “Electricity,” “Water,” and 
+“Transportation” infrastructures.
+4.1.4. Step four: Estimate transition probabilities and convert each Markov chain to a set of DBNs
+As shown in Table 1 and Fig. 4, the transition rates from state one (S1) to state four (S4) are defined by the respective transitional 
+probabilities λ, μ, α, and δ. It is important to note that these transitional probabilities are ideally derived from historical data, if 
+available. To determine the values for states one through four, the CPTs for the corresponding nodes are subsequently used, guiding the 
+state of functionality for each node.
+Fig. 6 depicts the derived DBN resulting from the translation of the Markov chain, showing all potential contributing factors. 
+Notably, the resilience indicator nodes within the same time slice are represented by the contributing causes for the resilience capacity, 
+which are connected by normal arcs. Furthermore, interdependencies are illustrated by the normal arcs linking the sector nodes, which 
+impact the resilience indicators identified in step 02. The CPTs need to be established for all child nodes. Table 3 shows the CPTs for the 
+nodes representing ‘Electricity,’ ‘Water,’ and ‘Transportation’. The functionality states of these three nodes have four states (S1, S2, S3, 
+and S4). However, when defining the CPTs for the interdependencies, it is more complex to establish them with four states in the nodes 
+representing overall CI systems. Therefore, to build a preliminary model, the functionality states of the nodes representing the overall 
+B. Rathnayaka et al.                                                                                                                                                                                                  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+11
+Fig. 6. DBN structure for water, electricity, transportation infrastructure system with interdependencies.
+B. Rathnayaka et al.                                                                                                                                                                                                  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+12
+CI system are assumed to have two extreme states (i.e., Yes/No). Accordingly, if the critical components are in either state S1 or S4, the 
+overall CI system node functionality is set to ‘Yes.’ Otherwise, it is set to ‘No.’ Based on this, CPTs for the CI system nodes were defined 
+as illustrated in Table 3.
+For the remaining child nodes, the corresponding conditional probabilities capturing the interdependencies are established through 
+expert judgment, as demonstrated in Table 4. In this case study, the Analytic Hierarchy Process (AHP) is used to assess the effects of 
+parent nodes on child nodes, which are represented by conditional probabilities. AHP was utilized to determine the weights of 
+contributing factors through expert judgments. It is important to note that these weights differ across systems due to variability in their 
+operational conditions and external environments. As a result, the weighs heavily rely on expert system evaluations. The importance 
+weights of the causative elements are presented in Table D1 in Appendix D. Additionally, the impacts of the parent nodes’ contributing 
+parameters are regarded as independent. Therefore, all parent nodes’ influence on the associated child nodes is modeled using Leaky 
+“Noisy-OR” models.
+4.1.5. Step five: Compute the probability of each functional state of each critical component
+This step calculates the probability of each functional state of the critical components using the developed DBN. The DBN and 
+computations were performed in the GeNIe BN modeler [82]. The DBN over 30-time slices is depicted in Fig. 6. While the time slice is 
+considered to represent an hour in this analysis, it can also represent a second, minute, day, week, or year. For the resilience 
+assessment, status of the node “Disruption” is set to ‘High’ during t = 1 to t = 30.
+4.1.6. Step six: Compute the probability of each functional state of the CI sector
+In this step, the probability distribution for each functionality state of each sector is determined as outlined in Section 3.
+4.1.7. Step seven: Compute the functionality of each CI sector as a summation of expected values of functionality states t = t1 to t = t4
+As previously described, the functionality curve is used employed to assess the resilience of the system. The expected levels of 
+functionality (i.e., F1, F2, F3, and F4 in Fig. 2) are defined to calculate the expected values of the functionality states. These expected 
+functionality levels are based on expert judgment for each critical component. Table 5 presents the expected functionality levels 
+utilized in this study. Subsequently, Equation (2) is applied to derive the system’s functionality curve.
+Fig. 7 (a) and (b) depict the functionality curves of CI sectors and their individual components over a 30-hours period following a 
+disruptive event. Fig. 7 (a) focuses on the functionality of three CI sectors: water, electricity, and transportation, while Fig. 7 (b)
+provides a more detailed breakdown of the functionality curves for the critical components within these sectors. Both figures 
+demonstrate the dynamic recovery process and the interdependencies among these systems, offering valuable insights into their 
+vulnerabilities and the restoration sequence.
+In Fig. 7 (a), transportation infrastructure exhibits the fastest recovery, achieving 90 % functionality by the 8th hour and fully 
+recovering by the 12th hour. This rapid restoration highlights the importance of transportation in facilitating the mobility of repair 
+crews, equipment, and resources necessary to recover other sectors. On the other hand, electricity infrastructure experiences a sharp 
+Table 3 
+CPT for nodes (a) Electricity, (b) Water and (c) Transportation.
+B. Rathnayaka et al.                                                                                                                                                                                                  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+13
+drop in functionality, reaching its lowest point at the 4th hour. Recovery efforts accelerate between the 6th and 12th hours, with full 
+restoration occurring by the 20th hour. Water infrastructure demonstrates the slowest recovery, with functionality dropping to 
+approximately 20 % at the 5th hour. It’s recovery is heavily influenced by the restoration of electricity and transportation, achieving 
+full functionality only after 24 hours. These trends emphasize disruptions’ cascading impacts and interdependencies’ critical role in 
+recovery.
+Fig. 7 (b) provides a more granular perspective, illustrating the recovery patterns of individual components within the main 
+infrastructure sectors. Road infrastructure is the quickest to recover, achieving 90 % functionality by 6th hour and full recovery by 8th 
+hour. This rapid recovery is crucial as it enables access to repair sites and the transportation of necessary resources. Grid stations and 
+transmission lines, which are essential for electricity distribution, recover more slowly due to the complexity of repairs and their 
+dependency on road access and operational power plants. Grid stations achieve 80 % functionality by 12th hour and full recovery by 
+20th hour. Components of the water infrastructure, such as pump stations and distribution networks, recover even more gradually. 
+Their restoration is influenced by the delayed recovery of electricity infrastructure, with full functionality achieved only after the 24th 
+hour. The recovery curves highlight the significant interdependencies among infrastructure sectors and components. For instance, the 
+restoration of water infrastructure depends on the recovery of electricity for operating pump stations and distribution networks, as well 
+as on transportation for delivering repair crews and materials. Similarly, delays in restoring grid stations and transmission lines can 
+impede the recovery of power plants and, in turn, affect the functionality of dependent systems.
+These figures underscore the importance of prioritizing recovery efforts based on interdependencies and vulnerabilities. Trans­
+portation infrastructure, as a critical enabler, must be restored rapidly to facilitate repairs in other systems. The timely restoration of 
+electricity infrastructure, particularly grid stations and transmission lines, is essential for resuming the operation of water distribution 
+systems and other essential services. The insights provided by Fig. 7 can help policymakers and disaster recovery teams allocate re­
+sources effectively, minimize system downtime, and enhance infrastructure resilience during future disruptions.
+4.1.8. Step eight: Model validation and sensitivity analysis
+As the final step, validation was performe. The validation and verification of the resilience assessment for the case study require 
+data on functionality and system properties. However, obtaining the necessary historical data for each indicator is often challenging. 
+The model was validated using expert judgment. This approach, while common in data-scarce contexts, was implemented with careful 
+consideration to minimize potential confirmation bias [83–86]. In this study, the model was validated by comparing the changes in 
+resilience levels predicted by model with expert judgments against changes in the root node indicators.
+During data collection, experts were asked to evaluate the change in resilience levels on a (−2)-(+2) Likert scale (−2: Very High 
+reduction, −1: Slight reduction, 0: No Change, +1: Slight positive increment, +2: Very High positive increment) relative to the current 
+level of resilience against given changes in root node indicators. For example, experts assessed the change in the resilience level in the 
+absence of a ‘Backup system,’ compared to the presence of the current ‘Backup system’. It is important to note that the baseline 
+Table 4 
+Conditional probability table for the interdependencies.
+Affected critical component
+Indicator
+Electricity
+Water
+Transportation
+Yes
+No
+Yes
+No
+Yes
+No
+Pump station and distribution network
+Building new facilities
+0.59
+0.48
+​
+​
+0.74
+0.3
+Asset backup
+0.69
+0.09
+​
+​
+​
+​
+Backup available duration
+0.47
+0.12
+​
+​
+​
+​
+Percentage of asset that have backup
+0.72
+0.1
+​
+​
+​
+​
+Availability of interconnected service
+​
+​
+​
+​
+0.63
+0.21
+Power plant
+Availability of interconnected service
+​
+​
+​
+​
+0.36
+0.12
+Replacement of asset
+​
+​
+​
+​
+0.32
+0.09
+Building new facility
+​
+​
+​
+​
+0.12
+0.05
+Facility relocation
+​
+​
+​
+​
+0.13
+0.25
+Time that CI is not able serve it function
+​
+​
+0.82
+0.05
+​
+​
+Grid
+Facility relocation
+​
+​
+​
+​
+0.45
+0.21
+Building new facility
+​
+​
+​
+​
+0.39
+0.05
+Availability of interconnected service
+​
+​
+​
+​
+0.57
+0.12
+Road
+Availability of interconnected service
+0.74
+0.12
+​
+​
+​
+​
+Functionality of communication system
+0.13
+0.06
+​
+​
+​
+​
+Time that CI is not able serve it function
+0.71
+0.14
+​
+​
+​
+​
+Partially damage asset road
+​
+​
+0.45
+0.83
+​
+​
+Table 5 
+The expected level of functionality (Fi) for functionality states of the systems.
+Functionality state
+Water
+Electricity
+Transportation
+S1
+100 %
+100 %
+100 %
+S2
+10 %
+20 %
+15 %
+S3
+35 %
+35 %
+40 %
+S4
+98 %
+99 %
+98 %
+B. Rathnayaka et al.                                                                                                                                                                                                  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+14
+resilience is determined by the current capacity of each respective indicator (e.g., ‘Backup system’).
+Resilience loss for each change in the indicators was calculated based on the functionality curve predicted by the model, and 
+corresponding changes in resilience were assessed. At the same time, data was collected from the experts on the relative change in 
+resilience based on their judgment. These steps were executed for each individual component. Subsequently, a Chi-Square test (See 
+Table A 3 in Appendix A) was conducted to compare the variations in resilience levels predicted by the model with the expert 
+judgments for each critical component. Table 6 presents a summary of the Chi-Square test results from the validation exercise. Notably, 
+the P-values for all infrastructure sectors are less than 0.05, indicating a significant relationship between the variations in resilience 
+predicted by the model and the expert judgments. An Odds Ratio (OR) test was also performed to check the direction of the association. 
+The OR test results are depicted in Table 6. It should be noted that the OR for all infrastructure categories is greater than 1, indicating a 
+positive relationship between the variation of model-predicted values and expert judgment. These findings suggest that the model 
+output aligns with the expectations of the experts.
+Fig. 7. Derived functionality curves for (a) Sector wise (b) Critical component wise.
+Table 6 
+Results of the Chi-square test for the variation of model-predicted values and expert judgment.
+Chi-Square test statistics
+Pump station and distribution network
+Road infrastructure
+Transformers and grid station
+Power plant
+Chi-Square value
+25.04
+40.92
+20.20
+38.68
+Critical value
+9.488
+9.488
+9.488
+9.488
+P-value
+4.93999E-05
+2.79727E-08
+0.000457
+8.1E-08
+B. Rathnayaka et al.                                                                                                                                                                                                  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+15
+5. Discussion
+5.1. Assumptions and limitations
+Several issues should be addressed in the proposed approach. The methodology requires establishing the probabilities for the 
+parent nodes and the conditional probabilities for the interdependencies and the influence of parent nodes on their child nodes. Expert 
+judgment is utilized in this study, which constitutes a limitation due to the difficulty in obtaining data to establish these probabilities. 
+Fig. 8 shows the variation of standard deviations for different data types collected in the study. Fig. 8 (a) shows that the standard 
+deviation of input data for the sub-indicators ranges from 0.28 to 0.37, indicating a certain level of agreement among the input data. 
+Additionally, Fig. 8 (b) shows the box and whisker plots for the standard deviation of the importance weights for the indicators 
+assigned by individual experts for each critical component. It can be noted that there is a higher deviation in the individually assigned 
+weights for some sectors in Fig. 8 (b), particularly in the road, transmission, and transformers, grid stations, pump stations, and water 
+distribution networks. However, there is general agreement among the experts on the importance weights assigned to the sub- 
+indicators (parent nodes) influencing the main indicators (child nodes). Another dataset collected during the present study is the 
+interdependencies. Fig. 8 (c) presents variations in standard deviation of input data assigned by the experts, reflecting in­
+terdependencies among the CIs. The standard deviations of input data for the interdependencies vary from 0.32 to 0.49, indicating 
+slight agreement among the experts about interdependencies among CIs.
+Since the data for the study is mainly from subjective sources, the variation in input data significantly affects the model results. The 
+standard deviation of input data gathered from experts indicates a consensus to a certain degree. Therefore, the proposed methodology 
+is moderately reliable for predicting resilience. However, the robustness of the proposed methodology can be enhanced by engaging 
+Fig. 8. Variations in standard deviation of input data
+B. Rathnayaka et al.                                                                                                                                                                                                  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+16
+more experts and incorporating empirical data. Furthermore, Fig. 9 (a) and (b) show variation in standard deviations of the expert’s 
+judgments on the variation of resilience level for higher and lower states of the variables respectively. The analysis of expert judgments 
+on resilience variation for four infrastructure types under high and low variable states reveals moderate consensus overall, with some 
+variability across infrastructure types. The pump station and distribution network show moderate variability under high states, 
+indicating moderate agreement among experts, whereas roads exhibit narrower IQRs, suggesting stronger consensus. Transmission 
+lines and grid stations show moderate variability with occasional outliers, while power plants consistently demonstrate the least 
+variability and strongest consensus across both conditions. The findings highlight areas with strong expert agreement. While expert- 
+based validation is a well-established approach in resilience modeling, we acknowledge its limitations, particularly the risk of 
+confirmation bias. To mitigate this, a diverse panel of experts from multiple sectors was engaged in this study to reduce individual 
+biases and enhance the robustness of the validation. Furthermore, future work aims to incorporate empirical or independent data 
+sources when available to strengthen the validation process further. Additionally, to improve the proposed method, more advanced 
+functionality models should be applied. In the model, when a disruption occurs, the initial probability of state S1 = 1 indicates that 
+system’s functionality is at its peak at the moment of disruption. In this study, functionality degradation is presumed to be minimal, 
+and the loss of functionality due to this degradation is considered negligible compared to the loss caused by disruptions. Therefore, the 
+functionality before the disruption is assumed to be at its maximum value of 1 (i.e., S1 = 1).
+The DBN-based framework for measuring resilience can be adapted and applied to any complex industrial infrastructure in real-world 
+scenarios. Conditional probabilities will vary across different systems due to differences in resilience capacities, such as anticipation, 
+absorption, adaptation, and restoration. In this study, equal weighting is assumed for the resilience capacities of all critical components 
+considered. However, to accurately assess the resilience of various systems, different arrangements and conditional probabilities (node 
+weights) must be used to reflect the unique system configurations and the organization’s specific concerns. Furthermore, the case study 
+did not consider the dynamic characteristics of the indicators in the root nodes. In the real world, the capacities of the relevant orga­
+nizations change dynamically. This aspect was not considered in the case study conducted in the present study.
+5.2. Modelling resilience under multi-hazard situation
+The case study presented in the above sections demonstrates the validity of the proposed methodology for resilience assessment of 
+CI under single-hazard scenarios. However, in reality, CI systems frequently encounter multiple hazards throughout their lifecycle, a 
+factor often overlooked in the existing literature. The proposed methodology in this study could be extended to address this issue. This 
+extension is not merely a theoretical proposition but a practical enhancement that can significantly improve the utility of the model in 
+real-world applications. The multi-hazard approach acknowledges the complex interactions between different types of hazards and 
+Fig. 8. (continued).
+B. Rathnayaka et al.                                                                                                                                                                                                  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+17
+their cumulative impact on CI, thereby offering a more comprehensive and realistic resilience assessment.
+In a multi-hazard context, the proposed methodology must incorporate additional variables and dependencies to capture the in­
+teractions and correlations between different hazards. To extend the proposed methodology to multi-hazard scenarios, identifying 
+hazards and their interactions is critical during the first and second steps. These hazards may include natural hazards (e.g., earth­
+quakes, floods), technological hazards (e.g., cyber-attacks, power outages), and socio-political hazards (e.g., terrorism, civil unrest). 
+Understanding the interactions between these hazards is crucial for accurately representing real-world scenarios.
+Multi-hazard scenarios should also be developed to encapsulate the joint occurrence of multiple hazards. These scenarios should be 
+based on historical data, expert judgment, and probabilistic assessments, with each scenario defining the sequence and in­
+terdependencies of hazard events. During the fourth step, the BN structure should be extended to include nodes representing different 
+hazards and their interactions. The CPTs for these nodes must reflect the likelihood of each hazard given the occurrence of others. This 
+requires integrating data from diverse sources and ensuring that the CPTs accurately represent real-world dependencies.
+Furthermore, in a multi-hazard context, state of the CI and its components may transit differently based on combination of hazards. 
+The model must account for these transitions by updating the state transition probabilities to reflect multi-hazard impacts. To illustrate 
+the application of the extended model, a case study on the water infrastructure sector is provided. For demonstration purposes, data 
+collection for the modelling task was conducted with hypothetical experts, as this aspect falls outside the scope of the current study. 
+The following scenarios were considered to present the extension of the proposed methodology.
+5.2.1. Scenario 01: Second disruption occurs after the system is fully recovered
+In this scenario, two disruptions occur at different times. For demonstration purposes, the first hypothetical flood event occurs at 
+Fig. 9. Variation of the standard deviation of the expert’s judgement on variation in resilience for different states of the variables.
+B. Rathnayaka et al.                                                                                                                                                                                                  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+18
+time t = 0 (Disruption 01). Subsequently, at t = 30, when the water infrastructure’s critical components have fully recovered, a 
+hypothetical landslide (Disruption 02) occurs in the same area due to high-intensity rainfall. The respective BN structure for this 
+scenario can be modeled using the previously utilized software, as depicted in Fig. 10. After obtaining the probabilities of functionality 
+states for the critical components, the functionality curve can be developed as explained in Sections 3. The functionality curve for this 
+scenario is depicted in Fig. 11.
+5.2.2. Scenario 02: Second disruption occurs before the system is fully recovered
+Another possible scenario in a multi-hazard context is when the second disruption occurs before the system has fully recovered. As 
+illustrated in Fig. 11, the system fully recovers at t = 23 under a single-hazard scenario. In this alternate scenario, a subsequent hy­
+pothetical landslide (Disruption 02) occurs at t = 15. The corresponding BN structure for this scenario can be modeled by setting the 
+temporal order of the arc between the disruption node and the critical component in the BN structure, as shown in Fig. 10. This 
+adjustment indicates that the second disruption occurs at t = 15. Fig. 12 shows the functionality curve derived under this scenario.
+The extension of the DBN model for resilience assessment from a single hazard to multi-hazard context represents a significant 
+advancement in the field of CI protection. By incorporating multiple hazards and their interactions, the model offers a more 
+comprehensive and realistic assessment of resilience, which is essential for effective risk management and mitigation. While challenges 
+remain, ongoing advancements in data collection, modelling techniques, and computational resources offer potential solutions. Future 
+development and application of multi-hazard resilience assessment models will undoubtedly play a critical role in safeguarding CIs 
+against an increasingly complex and interconnected risk environment.
+5.3. Novelty and contribution of the proposed methodology
+The present study introduces a novel approach to resilience assessment CI systems by addressing gaps in existing methodologies 
+through a robust, dynamic, and probabilistic framework. Leveraging DBNs, the study dynamically captures the temporal evolution of 
+system functionality, enabling detailed assessment of transitions over time, which overcomes the limitations of static and steady-state 
+models seen in prior works (see Table 7). Unlike deterministic or scenario-based approaches, the framework incorporates detailed 
+probabilistic modeling to quantify uncertainties in functionality states and transitions, enhancing the robustness of resilience evalu­
+ations. The study broadens the scope of interdependencies by comprehensively modeling physical, operational, and functional con­
+nections, addressing cascading failures and systemic impacts holistically. It also enables resilience modeling at both the component 
+and sector levels, providing granular, multi-scale insights that traditional system-level analyses often neglect. Furthermore, the 
+methodology dynamically evaluates system state transitions, quantifying resilience as the summation of expected functionality states 
+over time, capturing detailed system behaviors more effectively than predefined restoration curves. By integrating these elements, the 
+proposed approach bridges critical gaps in existing research, offering a comprehensive framework for modeling interdependent CI 
+systems, considering multiple functionality states, and dynamically evaluating temporal and probabilistic aspects. This study provides 
+Fig. 10. BN structure for multi hazard type _Scenario 01.
+B. Rathnayaka et al.                                                                                                                                                                                                  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+19
+a significant advancement in resilience assessment, delivering a robust and adaptable tool to enhance the sustainability and reliability 
+of CIs.
+6. Conclusion
+Previous studies have suggested various methods for assessing CI system resilience, but these often overlook the interdependencies 
+that are intrinsic to CIs. These conventional methods are appropriate when the resilience measurement relies exclusively on the 
+intrinsic characteristics of the system. However, including human and external factors in modeling introduces uncertainty and 
+dynamism to resilience. Therefore, resilience evaluation necessitates a probabilistic and dynamic approach, augmented by subjective 
+judgments, to achieve a more precise and comprehensive assessment. Therefore, a novel methodology based on DBN has been pro­
+posed to assess the resilience of CI systems by incorporating the dynamic characteristics of system functionality and interdependencies.
+This method develops a model representing the CI system and derives the functionality curve through functionality states. By 
+defining system functionality in terms of these states, the methodology can assess system functionality in a probabilistic and dynamic 
+manner and generate the system’s functionality profile. Moreover, it (i) integrates both subjective and objective data, (ii) updates the 
+model with the arrival of new evidence, and (iii) evaluates the system’s functionality over time.
+Furthermore, a case study was conducted in the context of the Sri Lankan electricity, water, and transportation sectors. By applying 
+the methodology to a real-world case, it has been confirmed that the proposed methodology can produce a dynamic functionality 
+profile. This dynamic functionality profile allows decisionmakers to better understand the resilience capabilities of individual com­
+ponents, monitor component functionality, assess safety measures, prevent unwanted disruptions, and identify viable operational 
+system improvements. The case study demonstrates that the model developed using proposed methodology can produce accurate and 
+Fig. 11. Functionality curve for scenario 01.
+Fig. 12. Functionality curve for Scenario_2.
+B. Rathnayaka et al.                                                                                                                                                                                                  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+20
+Table 7 
+Comparison of the proposed approach with existing studies on CI resilience assessment.
+Reference
+Modelling 
+method
+Temporal Modeling of Resilience
+Probabilistic assessment
+Scope of Interdependencies
+Granularity of Analysis
+Dynamic Characteristics of the 
+System
+Proposed approach
+DBN
+Captures temporal evolution 
+dynamically using a DBN, 
+enabling continuous assessment 
+of system functionality state
+Incorporates detailed 
+probabilistic assessment through 
+DBN, modeling uncertainty and 
+dynamic transitions in 
+functionality states
+Models physical, operational, and 
+functional interdependencies 
+comprehensively, addressing 
+cascading and systemic impacts 
+holistically
+Provides granular analysis at both 
+the component and sector levels, 
+enabling in-depth understanding 
+of individual components’ 
+behavior
+Dynamically evaluates transitions 
+in system states over time, 
+quantifying resilience as a 
+function of expected functionality 
+levels
+[60]
+DBN
+Uses DBNs to predict steady- 
+state availability and time for 
+resilience evaluation
+Focuses on steady-state 
+availability and time under fixed 
+assumptions about shocks and 
+repairs
+Primarily models series, parallel, and 
+voting system dependencies but lacks 
+a broader consideration of 
+interdependencies
+Analyzes resilience at a 
+generalized system level, focusing 
+on abstract system representations
+Captures availability changes due 
+to degradation and repair but does 
+not fully explore functionality 
+transitions
+[61]
+DBN
+Time-varying resilience for 
+flood-affected housing 
+infrastructure
+Focuses on field-survey-based 
+resilience parameters with 
+conditional probabilities derived 
+from expert opinion
+–
+Models resilience at a system level 
+for specific infrastructure
+–
+[57]
+Network- 
+based 
+approach
+Uses time-dependent resilience 
+metrics based on performance 
+curves, considering discrete 
+stages (resistance, absorption, 
+restoration)
+Limited probabilistic modeling; 
+primarily deterministic or 
+scenario-based analysis for 
+cascading failures and 
+restorations
+Focuses on unidirectional 
+interdependencies (e.g., power-to- 
+gas), with limited consideration of 
+broader interconnections
+Operates at the system level; lacks 
+detailed modeling at the 
+component level
+Models restoration processes and 
+average performance curves under 
+fixed scenarios; less emphasis on 
+dynamic system state transitions
+[62]
+DBN
+Time-dependent resilience 
+assessment but focuses on 
+limited time steps
+Provides a probabilistic 
+framework incorporating 
+uncertainties in system states and 
+inputs through Bayesian models
+Models interdependencies between 
+system components with a focus on 
+physical and structural relationships
+Evaluates resilience at a 
+generalized system level with 
+illustrative examples of 
+transportation and national 
+systems
+Captures system recovery and 
+restoration processes but focuses 
+on predefined variables and 
+scenarios
+[63]
+Agent based 
+modelling
+Utilizes a time-phased approach, 
+focusing on steady-state metrics 
+and transition phases between 
+disruptions and recovery
+Integrates probabilistic measures 
+for resilience capabilities like 
+robustness, rapidity, and 
+recovery but focuses on 
+predefined metrics
+Explores interdependencies in multi- 
+layer systems using a hybrid modeling 
+approach but focuses primarily on 
+physical dependencies
+Focuses on system-level resilience 
+through multi-layer modeling but 
+lacks component-level insights
+Analyzes transitions between 
+resilience phases (disruptive, 
+recovery, steady-state) but with 
+predefined metrics for changes
+[59]
+Dynamic 
+Network 
+flow
+Utilizes a rolling planning 
+horizon and dynamic network 
+flow models to simulate 
+temporal recovery and asset 
+operability
+Incorporates stochastic asset 
+failure using scenario tree 
+generation but does not model 
+uncertainty in flow 
+redistribution
+Considering multiple dependency 
+relations (stochastic failure 
+propagation, resource input, logic) 
+among interdependent systems
+Focuses on system-level and asset- 
+level modeling with a detailed 
+representation of network flows 
+and repair resources
+Captures changes in asset 
+operability and network flows 
+during disruption and recovery 
+phases
+B. Rathnayaka et al.                                                                                                                                                                                                  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+21
+reliable results.
+However, two challenges that arose during the investigation call for further exploration. First, while the present investigation 
+focused on discrete time-dependent processes, the operational processes are continuous. This indicates that the discrete states of the 
+BN’s child nodes are present, which could be addressed using a continuous DBN. The simplicity of modeling CI system robustness while 
+accounting for interdependencies with a DBN was prioritized in this study, but it did not consider the use of a continuous model. 
+Additionally, past data could be used to determine the transition stages and probabilities of the child nodes. A data-driven approach 
+could help address the model’s epistemic uncertainty and establish the conditional probability tables.
+Moreover, the proposed methodology could be expanded to include resilience assessment of CIs under multiple hazards. The 
+authors have demonstrated how the methodology could be extended to assess resilience under multiple hazards, and this extension is 
+recommended for future research. The extension of the proposed methodology to multi-hazard contexts introduce following 
+challenges: 
+• Data availability and quality: Comprehensive data on the joint occurrence and impact of multiple hazards is often limited. 
+Improving data collection and sharing practices is essential for enhancing the model’s accuracy.
+• Complexity of interactions: The interactions between hazards can be highly complex and non-linear. Capturing these interactions 
+accurately requires sophisticated modeling techniques and substantial computational resources.
+• Uncertainty management: The inherent uncertainties in predicting hazard occurrences and their impacts are magnified in a 
+multi-hazard context. Advanced uncertainty management techniques are essential for ensuring the model’s predictions remain 
+reliable.
+• Integration with other models: Integrating the Dynamic Bayesian model with other types of models (e.g., physical models of 
+infrastructure systems, economic impact models) can provide a more comprehensive assessment. Developing seamless integration 
+methods is a key area for future research.
+• Real-Time data integration: Implementing real-time data integration and ensuring that the model can process, and update in 
+response to this data in a timely manner is crucial. This requires advances in data processing technologies and algorithms.
+Additionally, the model developed through this proposed methodology offers several benefits. First, it improves the accuracy of 
+resilience assessments by considering hazards and their interactions, leading to better-informed decision-making and more effective 
+mitigation strategies. It also ensures comprehensive risk management by promoting a holistic view of risk, where interdependencies 
+between CIs are explicitly accounted for, resulting in more robust preparedness plans. Furthermore, understanding the combined 
+impacts of multiple hazards enables CI operators and emergency responders to develop more effective preparedness and response 
+strategies, such as implementing mitigation measures for floods following earthquakes. The model also optimizes resource allocation 
+by predicting the cumulative impacts of disasters on CIs, which is crucial during emergencies with limited resources. Lastly, the in­
+sights gained from resilience assessments can inform policy and long-term planning, allowing policymakers to design regulations and 
+standards that enhance the resilience of CIs to a broader range of disasters.
+CRediT authorship contribution statement
+Bawantha Rathnayaka: Writing – review & editing, Writing – original draft, Visualization, Validation, Software, Methodology, 
+Investigation, Formal analysis, Data curation, Conceptualization. Dilan Robert: Writing – review & editing, Validation, Supervision, 
+Resources, Project administration, Methodology, Funding acquisition, Conceptualization. Varuna Adikariwattage: Writing – review 
+& editing, Validation, Supervision, Resources, Methodology, Formal analysis, Conceptualization. Chandana Siriwardana: Writing – 
+review & editing, Validation, Supervision, Resources, Methodology, Conceptualization. Erica Kuligowski: Writing – review & editing, 
+Validation, Supervision. Sujeeva Setunge: Writing – review & editing, Supervision, Project administration. Dilanthi Amaratunga: 
+Writing – review & editing, Supervision.
+Declaration of generative AI and AI-assisted technologies in the writing process
+During the preparation of this work the author(s) used ChatGPT in order to proofread. After using this tool/service, the author(s) 
+reviewed and edited the content as needed and take(s) full responsibility for the content of the published article.
+Declaration of competing interest
+The authors declare that they have no known competing financial interests or personal relationships that could have appeared to 
+influence the work reported in this paper.
+Acknowledgement
+Authors acknowledge the financial support provided by the School of Engineering, RMIT University, Australia and Faculty of 
+Engineering, University of Moratuwa, Sri Lanka. Further we wish to acknowledge all the respondents who participated in this study 
+and contributed to building the knowledge in the research domain.
+B. Rathnayaka et al.                                                                                                                                                                                                  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+22
+Appendix A. Additional figures and tables
+Table A 1Overview of different modeling techniques used in resilience assessment of CIs (Adopted from: [42,43,45]).
+Modelling 
+techniques
+Input data
+Advantage
+Disadvantage
+Interdependency 
+representation
+Complexity
+Maturity
+Descriptive table
+Expert Judgment
+• Intuitive representation
+• Easy implementation
+• Requiring sufficient 
+experience
+• Depending on the hazard 
+scenario
+• Potentially biased
+Descriptive terms, system 
+level
+Very low
+High
+Survey based 
+Matrix
+Survey data
+• Simple representation
+• Potentially biased
+• Requiring calibration
+Coefficient, system level
+Low
+Medium 
+to high
+Correlation 
+Analysis
+Historical data
+• Interpreting 
+interdependencies with 
+coupling strength and time 
+lag
+• Requiring functionality 
+recovery data
+• Assuming stationary in time 
+series analyses
+Pearson correlations, cross 
+correlation coefficients, 
+system level
+Low
+Medium 
+to high
+Network Model
+Topology capacity, 
+flow
+• Intuitive representation
+• Capturing 
+interdependencies at 
+component and system 
+levels
+• Requiring the complete 
+knowledge of network 
+features
+• Computationally expensive 
+for large networks
+Adjacency matrix, weight 
+matrix, component level 
+and system level
+Medium to 
+high
+High
+Input-Output 
+Model
+Inter sector 
+transaction data
+• Evaluating economic 
+cascading impacts
+• Simple linear modelling
+• Not applicable to forecasting
+• No representation of 
+redundancy
+• Only economic impact
+Interdependency 
+coefficient matrix, system 
+level
+Medium
+Medium 
+to high
+Computable 
+generalized 
+equilibrium
+Inter sector 
+transaction, 
+elasticity
+• Capturing static and 
+dynamic nonlinear 
+socioeconomic 
+interdependencies
+• Limited to economic impact 
+only
+• Requiring a large amount of 
+data
+Interdependency 
+coefficient matrix, system 
+level
+High
+Medium 
+to high
+Discrete event 
+simulation
+Expert judgement, 
+simulation data
+• Explicit cause consequence 
+analysis
+• Requiring expert knowledge 
+and assumptions for setting 
+up causal relations
+Possible scenarios and 
+associated probabilities; 
+component-level and 
+system-level
+High
+Medium 
+to high
+Agent Based 
+model
+Expert experience 
+and judgment
+• Dynamic model
+• Considering decisions and 
+consequences
+• Difficult to calibrate agent 
+behaviour
+• Modelling reactions after a 
+perturbation rather than a 
+whole picture
+Predefined rules; 
+component-level
+Medium to 
+high
+Medium
+System 
+dynamics
+Expert knowledge
+• Dynamically simulating 
+causes and effects in an 
+evolving process with 
+feedback
+• Requiring expert knowledge 
+and assumptions to establish 
+relations and diagrams
+System dynamics diagrams; 
+component-level
+Medium to 
+high
+Medium
+Bayesian 
+network
+Simulation data, 
+field measurement, 
+expert judgement
+• Generalized framework for 
+handling data with large 
+uncertainties
+• Requiring variable 
+discretization
+• Computationally expensive 
+for large problems
+Directed graphs; 
+component-level
+Medium to 
+high
+Medium
+Optimization
+Mathematical 
+formulation form 
+operational research
+• Generalized framework for 
+simulating and mitigation 
+and restoration decisions
+• Computationally expensive 
+for large problems
+Constraints of resource, 
+precedence, budget, and 
+time; 
+component-level and 
+system-level
+High
+Medium 
+to high
+Population 
+mobility 
+model
+Empirical data, 
+simulation data
+• Capturing human mobility 
+and location choices
+• Assuming certain mobility 
+decisions
+• Requiring a large amount of 
+travel data
+Logit model; gravity model, 
+random walk algorithm; 
+system-level
+Medium
+Medium
+Aggregate 
+supply and 
+demand 
+model
+Profit data, spending 
+data, price
+• Comprehensive assessment 
+of commodity flow
+• Limited to system level 
+interdependencies only
+Mult attribute utility 
+model; system-level
+Medium
+Medium
+Machine 
+learning
+Social media data, 
+new, simulation data
+• Processing big data 
+effectively and efficiently
+• No physical insights
+• Potentially biased
+Artificial intelligence; 
+system-level
+Low to high
+Low
+******Description of the complexity levels********
+• Very Low: Requires minimal computational effort and is straightforward to apply, typically relying on simple methods like expert judgment or descriptive 
+analysis
+• Low: Involves modest computational effort and data requirements. Methods are relatively simple to implement but may need basic calibration
+• Medium: Requires moderate computational resources, structured data inputs, and more advanced modeling techniques
+• High: Demands significant computational effort, large data sets, and advanced methodologies, often involving complex simulations or optimization models
+******Description of the Maturity levels ********
+(continued on next page)
+B. Rathnayaka et al.                                                                                                                                                                                                  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+23
+(continued)
+Modelling 
+techniques 
+Input data 
+Advantage 
+Disadvantage 
+Interdependency 
+representation 
+Complexity 
+Maturity
+• Low: The methodology is in its early stages of development or application. It may lack extensive validation and practical implementation in real-world scenarios.
+• Medium: The methodology has been applied in some contexts and demonstrates moderate validation. However, its application may still be limited to specific use 
+cases or controlled environments.
+• High: The methodology is well-established and widely accepted in the field. It has been extensively validated, applied in diverse real-world scenarios, and has 
+proven reliability.
+Table A 2Overview of resilience assessment of the interdependent CIs studies.
+Reference
+Objectives
+Time-dependent 
+Analysis
+Modelling 
+method
+Selected 
+infrastructure
+Interdependency 
+Consideration
+[60]
+Develop a CI resilience metric based on reliability 
+engineering
+Yes
+DBN
+–
+–
+[61]
+Develop a DBN framework to quantify housing resilience 
+against floods
+Yes
+DBN
+House
+No
+[57]
+Extend resilience frameworks to model and evaluate 
+interconnected systems during joint restoration
+Yes
+Network- based 
+approach
+Electricity, Gas
+Yes
+[62]
+Assess time-dependent resilience of engineering systems 
+using resilience indicators
+Yes
+DBN
+All infrastructure
+No
+[63]
+Assess system resilience across absorption, adaptation, 
+and recovery phases
+No
+Agent based 
+modelling
+SCADA and SUC
+Yes (Physical)
+[59]
+Model responses to disruptions considering 
+interdependencies, failure propagation, and optimal 
+resource deployment
+Yes
+Dynamic 
+Network flow
+Electricity and 
+Metro network
+Yes
+Fig. A. 1. Bayesian network structure for electricity infrastructure sector.
+B. Rathnayaka et al.                                                                                                                                                                                                  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+24
+Fig. A. 2. Bayesian network structure for water infrastructure sector.
+Fig. A. 3. Bayesian network structure for transportation infrastructure sector.
+B. Rathnayaka et al.                                                                                                                                                                                                  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+25
+Table A 3Chi-Square test results for variation in model prediction vs expert judgement.
+Appendix B. Dynamic Bayesian Network
+In the proposed methodology, a Bayesian Network (BN) is used to model the CI system. A BN is depicted as a directed acyclic graph, 
+which comprises nodes and directed arcs. In this graph, nodes represent variables, and directed arcs indicate the dependencies between 
+these variables through conditional probabilities. The arcs flow from parent nodes to child nodes. Marginal probabilities are assigned 
+to root nodes, which have no parent nodes [50,51,70,71]. Conditional probabilities are assigned to all other nodes. Once the marginal 
+and conditional probabilities are determined, the joint probability of nodes is calculated based on the topology of the BN.
+Let X = {X1, X2, … …, Xi, Xi+1, …………., Xq} be the series of nodes in the BN; then joint probability of the outcome variable, X can 
+be written as in Equation (4), 
+P(X) =
+∏
+q
+i=1
+P(Xi|Pa(Xi))
+(4) 
+Pa (Xi) = set of parent nodes of variable Xi.
+Furthermore, BN facilitate the adjustment of initial probabilities as new evidence is obtained, a procedure known as posterior 
+analysis. This feature permits BNs to integrate new evidence by employing Bayes’ theorem. The posterior probability P(X∣E), given the 
+new evidence E, is determined through Equation (5). 
+P(X|E) = P(X, E)
+P(E)
+=
+P(X, E)
+∑
+x
+P(X, E)
+(5) 
+BNs have the capacity to include several states for nodes and consider failures caused by common factors through causal con­
+nections between nodes. BNs can also forecast and adjust event probabilities with the emergence of new evidence. These capabilities 
+make BNs more adaptable and relevant compared to conventional risk assessment techniques [55,61]. Consequently, they excel in 
+evaluating causation, and assessing the impact of various options under uncertain conditions, making them well-suited for interde­
+pendency modeling [51,71,77]. Notably, BNs offer a distinct advantage of effectively handling uncertainties associated with data, as 
+they furnish a unified framework capable of accommodating disparate data types—ranging from expert surveys and field measure­
+ments to simulation data and facilitating data updates across various stages [70,71,74,75,77,87].
+Employing BNs for interdependency modelling may encounter two primary limitations. Firstly, BNs typically rely on discretised 
+B. Rathnayaka et al.                                                                                                                                                                                                  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+26
+variables rather than continuous variables, which differs from the continuous nature often encountered in practical applications. To 
+address this constraint, DBN is used, which can handle both discrete and continuous variables, in addition to temporal factors [47,50,
+51,69–72,74,75]. A DBN, an extension of BN, a series of variables is linked over a discretised timeline, taking into account the temporal 
+changes in the probabilities assigned to these variables [47,71,72,74,75]. Within a DBN model, a node at time t is impacted by both its 
+parent nodes at time t and its own states, as well as parent nodes, from the previous time step. The DBN structure includes two types of 
+arcs: a) regular arcs, linking nodes within the same time frame, and b) temporal arcs, connecting nodes across various time frames. 
+Mathematically, the joint probability of a series of variables is expressed using Equation (6): 
+P(Xt) = P
+(
+Xt
+1, Xt
+2, Xt
+3, ……………, Xt
+q
+)
+=
+∏
+q
+i=1
+P
+(
+Xt
+i⃒⃒Xt−1
+i
+, Pa
+(
+Xt
+i
+)
+, Pa
+(
+Xt−1
+i
+)
+, Pa
+(
+Xt−2
+i
+)
+, ….., Pa
+(
+X0
+i
+))
+(6) 
+Pa(Xi
+t) = parent nodes of variable Xi at time t.
+Appendix C. Methodology for data collection
+Case study data was collected through an expert survey. Therefore, the sampling was conducted using nonprobability sampling 
+techniques [88,89]. This is further explained by Keeney et al., who state that heterogeneous sampling (purposive sampling) is used for 
+expert judgment [88,90,91]. For homogeneous groups, a sample size of 10–15 is generally deemed adequate [92,93]. Therefore, this 
+study leveraged the expertise of 10–12 panelists from each infrastructure sector to obtain the data needed for the analysis. The selected 
+panelists included professionals in the fields of infrastructure planning, design, construction, and maintenance from the respective 
+organizations. When selecting the panel members, their experience in the infrastructure sector, education level, and their ability to 
+understand the research objectives were considered. Each member had a minimum of 5 years of working experience in their respective 
+infrastructure sector in Sri Lanka. All panel members had bachelor’s degrees in engineering, and 25 out of the 34 members had pursued 
+postgraduate degrees. The experts were chosen based on their professional experience. Accordingly, 12, 12, and 10 experts were 
+selected from the transportation, water, and electricity sectors, respectively. Among the experts selected from the water infrastructure 
+sector, four hold a PhD in civil engineering, while six hold postgraduate qualifications. In the electrical infrastructure, two experts hold 
+a PhD in Electrical Engineering, while five have postgraduate qualifications. In the road infrastructure sector, four experts hold a PhD 
+in civil engineering, while five hold postgraduate qualifications.
+Furthermore, these experts comprise 3 assistant general managers, 12 planning engineers, 13 civil engineers, and 6 electrical 
+engineers. The work experience of the experts is presented in Table C 1.
+Two questionnaires were developed to gather expert judgments in the modeling exercise. One questionnaire was designed to 
+determine the indicators and importance weights for each indicator. Another questionnaire was developed to identify the major assets, 
+facilities, and infrastructures belonging to the selected CIs, assess interdependencies, and measure each indicator.
+Table C 1Working experience of the experts.
+Working experience (x) in years
+Number of experts
+Transportation
+Water
+Electricity
+x < 15
+0
+0
+0
+15 ≤x < 20
+2
+3
+2
+20 ≤x < 25
+3
+4
+2
+25 ≤x < 30
+5
+3
+4
+30 ≤x
+2
+2
+2
+Total
+12
+12
+10
+Appendix D. CPTs of the node representing the main indicators and capacities
+Table D 1CPTs of the node representing the main indicators and capacities.
+Capacities/Main Indicators 
+(Child node)
+Main Indicator/Sub indicators 
+(Parent node)
+Road 
+infrastructure
+Transmission and 
+Transformers and grid 
+stations
+Power 
+plant
+Pump station and water 
+distribution network
+Anticipative
+Quality of mitigation features
+0.39
+Information sharing and 
+communication
+0.41
+Learnability and training capacity
+0.2
+Absorption
+System failure
+0.08
+Severity of failure
+0.07
+Reliability of asset
+0.19
+Resistance
+0.17
+(continued on next page)
+B. Rathnayaka et al.                                                                                                                                                                                                  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+27
+(continued)
+Capacities/Main Indicators 
+(Child node) 
+Main Indicator/Sub indicators 
+(Parent node) 
+Road 
+infrastructure 
+Transmission and 
+Transformers and grid 
+stations 
+Power 
+plant 
+Pump station and water 
+distribution network
+Robustness
+0.21
+Redundancy
+0.23
+Response
+0.05
+Restoration
+Recovery time
+0.22
+Resourcefulness
+0.78
+Adaptation
+Substitutability
+0.65
+Flexibility
+0.11
+Mitigative actions
+0.24
+Quality/extent of mitigating 
+features
+Availability of equipment and 
+procedure for the hazard mitigation
+0.57
+0.24
+0.57
+Availability of EW systems
+0.12
+0.14
+0.12
+Exceedance of capacity demands
+0.15
+0.17
+0.15
+Availability of response plans
+0.16
+0.45
+0.16
+Information sharing and 
+communication system
+Availability of communication and 
+information sharing system
+0.67
+0.67
+0.67
+Functionality of the communication 
+system
+0.12
+0.12
+0.12
+Availability of backup 
+communication system
+0.21
+0.21
+0.21
+Learnability/Training 
+capacity
+Existence of the training system
+0.17
+0.17
+0.17
+Number of training session 
+conducted for months
+0.83
+0.83
+0.83
+System failure
+Percentage of fully damaged assets 
+(Beyond the repairability)
+0.45
+0.45
+0.45
+0.64
+Percentage of partially damaged 
+assets
+0.45
+0.4
+0.45
+0.21
+Time that CI is not able serve it’s 
+intended function
+0.1
+0.15
+0.1
+0.15
+Resistance
+Ages of Infrastructure
+0.35
+0.12
+0.34
+0.72
+Implementation quality of safety 
+standards
+0.3
+0.14
+0.19
+0.12
+Level of regular Maintenance
+0.35
+0.74
+0.47
+0.16
+Robustness
+Asset back up
+0.64
+0.86
+0.53
+0.82
+Existence of the service replacement
+0.36
+0.14
+0.47
+0.18
+Redundancy
+Percentage of assets that have 
+backup.
+0.51
+0.74
+0.4
+How long backup is available
+0.32
+0.12
+After how much time backup is 
+available
+0.16
+0.14
+0.4
+Response
+Availability of response plan within 
+infrastructure/assets
+0.46
+0.34
+0.46
+0.2
+Time needed to response
+0.07
+0.24
+0.07
+0.13
+Emergency plans within assets
+0.47
+0.42
+0.47
+0.12
+Recovery time
+Availability of special recovery plan
+0.5
+0.85
+0.41
+0.75
+Availability of interconnected assets
+0.5
+0.15
+0.59
+0.73
+Resourcefulness
+Availability of interconnected assets
+0.45
+0.18
+0.32
+0.27
+Availability of financial support
+0.45
+0.24
+0.45
+0.18
+Restoration cost
+0.1
+0.58
+0.25
+0.24
+Substitutability
+Possibility of the replacement of 
+asset
+0.5
+0.58
+0.54
+0.58
+Possibility of the replacement of 
+Service
+0.5
+0.42
+0.46
+0.42
+Flexibility
+Availability of adaptation plan
+0.21
+0.78
+0.12
+0.5
+Adaptation for new conditions on 
+time
+0.79
+0.22
+0.88
+0.5
+Mitigative actions
+Facility relocation
+0.41
+0.87
+0.5
+0.87
+Building new facilities
+0.59
+0.13
+0.5
+0.13
+Data availability
+The data that has been used is confidential.
+B. Rathnayaka et al.                                                                                                                                                                                                  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+28
+References
+[1] B. Rathnayaka, C. Siriwardana, D. Robert, D. Amaratunga, S. Setunge, Improving the resilience of critical infrastructures: evidence-based insights from a 
+systematic literature review, Int. J. Disaster Risk Reduct. 78 (Aug. 2022) 103123, https://doi.org/10.1016/J.IJDRR.2022.103123.
+[2] U.S. Perera, C. Siriwardana, I.S. Pitigala Liyana Arachchi, Development of critical infrastructure resilience index for cities in Sri Lanka, Int. J. Disaster Resil. Built 
+Environ. 15 (2) (Jan. 2022) 193–211, https://doi.org/10.1108/IJDRBE-01-2022-0007.
+[3] P.L.A.I. Shehara, C.S.A. Siriwardana, D. Amaratunga, R. Haigh, in: R. Dissanayake, P. Mendis, K. Weerasekera, S. De Silva, S. Fernando (Eds.), Development of a 
+Framework to Examine the Transportation Infrastructure Resilience; Sri Lankan Context, Springer, Singapore, 2022, pp. 235–258, https://doi.org/10.1007/978- 
+981-16-4412-2_18. Singapore.
+[4] C. Randil, C. Siriwardana, B. Sandaruwan Rathnayaka, A statistical method for pre-estimating impacts from a disaster: a case study of floods in Kaduwela, Sri 
+Lanka, Int. J. Disaster Risk Reduct. 76 (Jun. 2022) 103010 [Online]. Available: https://linkinghub.elsevier.com/retrieve/pii/S2212420922002291. (Accessed 
+13 May 2022).
+[5] C. Malalgoda, D. Amaratunga, R. Haigh, Challenges in creating a disaster resilient built environment, Procedia Econ. Finance 18 (Jan. 2014) 736–744, https:// 
+doi.org/10.1016/S2212-5671(14)00997-6.
+[6] B. Rathnayaka, C. Siriwardana, D. Amaratunga, R. Haigh, D. Robert, Climate change impacts on built environment: a systematic review, Lect. Notes Civ. Eng. 
+266 (2023) 443–459 [Online]. Available: https://link.springer.com/chapter/10.1007/978-981-19-2886-4_31. (Accessed 18 November 2022).
+[7] B. Rathnayaka, et al., Identifying and prioritizing climate change adaptation measures in the context of electricity, transportation and water infrastructure: a 
+case study, Int. J. Disaster Risk Reduct. 99 (Dec. 2023) 104093, https://doi.org/10.1016/J.IJDRR.2023.104093.
+[8] D. Rehak, P. Senovsky, M. Hromada, T. Lovecek, P. Novotny, Cascading impact assessment in a critical infrastructure system, Int. J. Crit. Infrastruct. Prot. 22 
+(Sep. 2018) 125–138, https://doi.org/10.1016/J.IJCIP.2018.06.004.
+[9] D. Rehak, P. Senovsky, M. Hromada, T. Lovecek, Complex approach to assessing resilience of critical infrastructure elements, Int. J. Crit. Infrastruct. Prot. 25 
+(Jun. 2019) 125–138, https://doi.org/10.1016/J.IJCIP.2019.03.003.
+[10] T.D. Nguyen, X. Cai, Y. Ouyang, M. Housh, Modelling infrastructure interdependencies, resiliency and sustainability, Int. J. Crit. Infrastruct. 12 (1–2) (2016) 
+4–36, https://doi.org/10.1504/IJCIS.2016.075868.
+[11] J.P. Brashear, Managing risk to critical infrastructures, their interdependencies, and the region they serve: a risk management process, in: Optimizing Community 
+Infrastructure: Resilience in the Face of Shocks and Stresses, the Brashear Group LLC, Ashland, OR, United States, Elsevier, 2020, pp. 41–67, https://doi.org/ 
+10.1016/B978-0-12-816240-8.00003-3.
+[12] S.S. Chopra, V. Khanna, Interconnectedness and interdependencies of critical infrastructures in the US economy: implications for resilience, Phys. A Stat. Mech. 
+its Appl. 436 (Oct. 2015) 865–877, https://doi.org/10.1016/J.PHYSA.2015.05.091.
+[13] G.P. Cimellaro, P. Crupi, H.U. Kim, A. Agrawal, Modeling interdependencies of critical infrastructures after hurricane Sandy, Int. J. Disaster Risk Reduct. 38 
+(Aug. 2019) 101191, https://doi.org/10.1016/J.IJDRR.2019.101191.
+[14] T.C. Sharkey, S.G. Nurre, H. Nguyen, J.H. Chow, J.E. Mitchell, W.A. Wallace, Identification and classification of restoration interdependencies in the wake of 
+hurricane sandy, J. Infrastruct. Syst. 22 (1) (Jul. 2015) 04015007, https://doi.org/10.1061/(ASCE)IS.1943-555X.0000262.
+[15] Q. Mao, N. Li, Assessment of the impact of interdependencies on the resilience of networked critical infrastructure systems, Nat. Hazards 93 (1) (2018) 315–337, 
+https://doi.org/10.1007/S11069-018-3302-3. Apr. 2018.
+[16] D. Rehak, P. Senovsky, S. Slivkova, Resilience of critical infrastructure elements and its main factors, Syst. 2018 6 (2) (Jun. 2018) 21, https://doi.org/10.3390/ 
+SYSTEMS6020021.
+[17] X. Liu, E. Ferrario, E. Zio, Identifying resilient-important elements in interdependent critical infrastructures by sensitivity analysis, Reliab. Eng. Syst. Saf. 189 
+(2019) 423–434, https://doi.org/10.1016/j.ress.2019.04.017.
+[18] R. Osei-Kyei, V. Tam, M. Ma, F. Mashiri, Critical review of the threats affecting the building of critical infrastructure resilience, Int. J. Disaster Risk Reduct. 60 
+(Jun. 2021) 102316, https://doi.org/10.1016/J.IJDRR.2021.102316.
+[19] UNDRR and CRED, Human cost of disasters:An overview of the last 20 years. https://fas.org/sgp/crs/natsec/R45178.pdf, 2020.
+[20] S.M. Hoseyni, J. Cordiner, A novel framework for quantitative resilience assessment in complex engineering systems during early and late design stages, Process 
+Saf. Environ. Prot. 189 (Sep. 2024) 612–627, https://doi.org/10.1016/J.PSEP.2024.06.035.
+[21] R. Osei-Kyei, L.M. Almeida, G. Ampratwum, V. Tam, Systematic review of critical infrastructure resilience indicators, Constr. Innov. (2022), https://doi.org/ 
+10.1108/CI-03-2021-0047.
+[22] C. Varianou Mikellidou, L.M. Shakou, G. Boustras, C. Dimopoulos, Energy critical infrastructures at risk from climate change: a state of the art review, Saf. Sci. 
+110 (Dec. 2018) 110–120.
+[23] D. Guo, M. Shan, E.K. Owusu, Resilience assessment frameworks of critical infrastructures: state-of-the-art review, Buildings 11 (10) (Oct. 2021) 1–18, https:// 
+doi.org/10.3390/buildings11100464.
+[24] Z. Yang, et al., Indicator-based resilience assessment for critical infrastructures – a review, Saf. Sci. 160 (2023), https://doi.org/10.1016/j.ssci.2022.106049.
+[25] S. Hosseini, K. Barker, J.E. Ramirez-Marquez, A review of definitions and measures of system resilience, Reliab. Eng. Syst. Saf. 145 (Jan. 2016) 47–61, https:// 
+doi.org/10.1016/J.RESS.2015.08.006.
+[26] C.S. Holling, Resilience and stability of ecological systems, Annu. Rev. Ecol. Evol. Syst. 4 (4) (1973) 1–23, https://doi.org/10.1146/ANNUREV. 
+ES.04.110173.000245. Nov. 1973.
+[27] R. Setola, E. Luiijf, M. Theocharidou, Critical infrastructures, protection and resilience, Stud. Syst. Decis. Control 90 (2016) 1–18, https://doi.org/10.1007/978- 
+3-319-51043-9_1.
+[28] E.L.F. Schipper, L. Langston, “A Comparative Overview of Resilience Measurement Frameworks Approaches,”, July, 2015.
+[29] K. Rahi, Indicators to assess organizational resilience – a review of empirical literature, Int. J. Disaster Resil. Built Environ. 10 (2–3) (2019) 85–98, https://doi. 
+org/10.1108/IJDRBE-11-2018-0046.
+[30] Resilience | UNDRR.” Accessed: April. 19, 2022. [Online]. Available: https://www.undrr.org/terminology/resilience.
+[31] UNDRR, “Global Assessment Report on Disaster Risk Reduction ,” 2019. Accessed: October. 1, 2021. [Online]. Available: https://gar.undrr.org/sites/default/ 
+files/reports/2019-05/full_gar_report.pdf.
+[32] A. Panda, J.N. Ramos, Making critical infrastructure resilient: ensuring continuity of service policy and regulations in Europe and central Asia. www.undrr.org, 
+2020.
+[33] E.M. Wells, M. Boden, I. Tseytlin, I. Linkov, Modeling critical infrastructure resilience under compounding threats: a systematic literature review, Prog. Disaster 
+Sci. 15 (Oct. 2022) 100244, https://doi.org/10.1016/J.PDISAS.2022.100244.
+[34] Z. Yang, B. Barroca, A. Bony-Dandrieux, H. Dolidon, Resilience indicator of urban transport infrastructure: a review on current approaches, Infrastructure 7 (3) 
+(2022), https://doi.org/10.3390/infrastructures7030033.
+[35] H. Raoufi, V. Vahidinasab, Power system resilience assessment considering critical infrastructure resilience approaches and government policymaker criteria, 
+IET Gener. Transm. Distrib. 15 (20) (2021) 2819–2834, https://doi.org/10.1049/gtd2.12218.
+[36] B. Robert, L. Morabito, I. Cloutier, Y. H´emond, Interdependent critical infrastructures resilience: methodology and case study, Disaster Prev. Manag. An Int. J. 
+24 (1) (2015) 70–79, https://doi.org/10.1108/DPM-10-2013-0195.
+[37] F. Brauner, T. Münzberg, M. Wiens, F. Fiedrich, A. Lechleuthner, F. Schultmann, Critical infrastructure resilience: a framework for considering micro and macro 
+observation levels, in: L.A. P, C. T, B. M, A.L. H, L.A. P (Eds.), 12th International Conference on Information Systems for Crisis Response and Management, 
+ISCRAM 2015, Cologne University of Applied Sciences, Germany: Information Systems for Crisis Response and Management, ISCRAM, 2015. https://www. 
+scopus.com/inward/record.uri?eid=2-s2.0-84947712944&partnerID=40&md5=362372065bb5c840d9e358a41c996083.
+[38] S. Lim, T. Kim, J. Song, System-reliability-based disaster resilience analysis: framework and applications to structural systems, Struct. Saf. 96 (May 2022) 
+102202, https://doi.org/10.1016/J.STRUSAFE.2022.102202.
+B. Rathnayaka et al.                                                                                                                                                                                                  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+29
+[39] F.M.M. Ali, B. Ingirige, N.A. Zainal Abidin, Assembling and (Re)assembling critical infrastructure resilience in Khulna City, Bangladesh, Procedia Eng. 212 (Jan. 
+2018) 832–839, https://doi.org/10.1016/J.PROENG.2018.01.107.
+[40] G. Quitana, M. Molinos-Senante, A. Chamorro, Resilience of critical infrastructure to natural hazards: a review focused on drinking water systems, Int. J. 
+Disaster Risk Reduct. 48 (Sep. 2020) 101575, https://doi.org/10.1016/J.IJDRR.2020.101575.
+[41] M. Imani, D. Hajializadeh, A resilience assessment framework for critical infrastructure networks’ interdependencies, Water Sci. Technol. 81 (7) (Apr. 2020) 
+1420–1431, https://doi.org/10.2166/WST.2019.367.
+[42] M. Ouyang, Review on Modeling and Simulation of Interdependent Critical Infrastructure Systems, vol. 121, Jan. 2014, pp. 43–60, https://doi.org/10.1016/J. 
+RESS.2013.06.040.
+[43] J. Wang, W. Zuo, L. Rhode-Barbarigos, X. Lu, J. Wang, Y. Lin, Literature review on modeling and simulation of energy infrastructures from a resilience 
+perspective, Reliab. Eng. Syst. Saf. 183 (2019) 360–373, https://doi.org/10.1016/j.ress.2018.11.029.
+[44] K. Storesund, et al., Novel methodologies for analysing critical infrastructure resilience, in: G.C. van H.S.,B.A.,V.J.E., T. K (Eds.), 28th International European 
+Safety and Reliability Conference, ESREL 2018, RISE Fire Research, CRC Press/Balkema, Trondheim, Norway, 2018, pp. 1221–1230 [Online]. Available: 
+https://www.scopus.com/inward/record.uri?eid=2-s2.0-85058106056&partnerID=40&md5=239d661815f714624781c545849a18f4.
+[45] W. Sun, P. Bocchini, B.D. Davison, Overview of interdependency models of critical infrastructure for resilience assessment, Nat. Hazards Rev. 23 (1) (2022) 
+1–14, https://doi.org/10.1061/(asce)nh.1527-6996.0000535.
+[46] J.M. Yusta, G.J. Correa, R. Lacal-Ar´antegui, Methodologies and applications for critical infrastructure protection: state-of-the-art, Energy Policy 39 (10) (Oct. 
+2011) 6100–6119, https://doi.org/10.1016/J.ENPOL.2011.07.010.
+[47] Y. Bai, J. Wu, S. Yuan, G. Reniers, M. Yang, J. Cai, Dynamic resilience assessment and emergency strategy optimization of natural gas compartments in utility 
+tunnels, Process Saf. Environ. Prot. 165 (Sep. 2022) 114–125, https://doi.org/10.1016/J.PSEP.2022.07.008.
+[48] C.D. Date, et al., “D4.3 Eu-Circle Resilience Framework – Final Version,”, 2018.
+[49] C.D. Date, et al., “D3 . 4 Holistic CI Climate Hazard Risk Assessment Framework,”, 2020.
+[50] M. Yazdi, F. Khan, R. Abbassi, N. Quddus, Resilience assessment of a subsea pipeline using dynamic Bayesian network, J. Pipeline Sci. Eng. 2 (2) (Jun. 2022) 
+100053, https://doi.org/10.1016/J.JPSE.2022.100053.
+[51] Q. Tong, M. Yang, A. Zinetullina, A dynamic Bayesian network-based approach to resilience assessment of engineered systems, J. Loss Prev. Process. Ind. 65 
+(May 2020) 104152, https://doi.org/10.1016/J.JLP.2020.104152.
+[52] S.H. Alyami, et al., Developing a holistic resilience framework for critical infrastructure networks of buildings and communities in Saudi Arabia, Buildings 13 (1) 
+(2023), https://doi.org/10.3390/buildings13010179.
+[53] R. Molarius, J. Ker¨anen, T. Kekki, P. Jukarainen, Developing indicators to improve safety and security of citizens in case of disruption of critical infrastructures 
+due to natural hazards—case of a snowstorm in Finland, Saf. Now 8 (3) (2022), https://doi.org/10.3390/safety8030060.
+[54] M. Sathurshan, A. Saja, J. Thamboo, M. Haraguchi, S. Navaratnam, Resilience of critical infrastructure systems: a systematic literature review of measurement 
+frameworks, Infrastructure 7 (5) (2022), https://doi.org/10.3390/infrastructures7050067.
+[55] B. Rathnayaka, et al., A unified framework for evaluating the resilience of critical infrastructure: Delphi survey approach, Int. J. Disaster Risk Reduct. (Jun. 
+2024) 104598, https://doi.org/10.1016/J.IJDRR.2024.104598.
+[56] B. Pawar, M. Huffman, F. Khan, Q. Wang, Resilience assessment framework for fast response process systems, Process Saf. Environ. Prot. 163 (Jul. 2022) 82–93, 
+https://doi.org/10.1016/J.PSEP.2022.05.016.
+[57] M. Ouyang, Z. Wang, Resilience assessment of interdependent infrastructure systems: with a focus on joint restoration modeling and analysis, Reliab. Eng. Syst. 
+Saf. 141 (Sep. 2015) 74–82, https://doi.org/10.1016/J.RESS.2015.03.011.
+[58] P. Pederson, D. Dudenhoeffer, S. Hartley, M. Permann, Critical Infrastructure Interdependency Modeling: a Survey of US and International Research, Idaho Natl. 
+Lab., 2006, pp. 1–20. August, http://cip.management.dal.ca/publications/CriticalInfrastructureInterdependencyModeling.pdf.
+[59] N. Goldbeck, P. Angeloudis, W.Y. Ochieng, Resilience assessment for interdependent urban infrastructure systems using dynamic network flow models, Reliab. 
+Eng. Syst. Saf. 188 (Aug. 2019) 62–79, https://doi.org/10.1016/J.RESS.2019.03.007.
+[60] B. Cai, M. Xie, Y. Liu, Y. Liu, R. Ji, Q. Feng, A novel critical infrastructure resilience assessment approach using dynamic Bayesian networks, AIP Conf. Proc. 
+1890 (October) (2017), https://doi.org/10.1063/1.5005245.
+[61] M.K. Sen, S. Dutta, G. Kabir, Modelling and quantification of time-varying flood resilience for housing infrastructure using dynamic Bayesian Network, J. Clean. 
+Prod. 361 (2022) 132266, https://doi.org/10.1016/j.jclepro.2022.132266.
+[62] O. Kammouh, P. Gardoni, G.P. Cimellaro, Probabilistic framework to evaluate the resilience of engineering systems using Bayesian and dynamic Bayesian 
+networks, Reliab. Eng. Syst. Saf. 198 (Jun. 2020) 106813, https://doi.org/10.1016/j.ress.2020.106813.
+[63] C. Nan, G. Sansavini, A quantitative method for assessing resilience of interdependent infrastructures, Reliab. Eng. Syst. Saf. 157 (Jan. 2017) 35–53, https://doi. 
+org/10.1016/J.RESS.2016.08.013.
+[64] Z. Yang, et al., A resilience evaluation method of natural gas pipeline system based on uncertainty analysis, Process Saf. Environ. Prot. 177 (Sep. 2023) 891–908, 
+https://doi.org/10.1016/J.PSEP.2023.07.058.
+[65] D. Rehak, J. Markuci, M. Hromada, K. Barcova, Quantitative evaluation of the synergistic effects of failures in a critical infrastructure system, Int. J. Crit. 
+Infrastruct. Prot. 14 (Sep. 2016) 3–17, https://doi.org/10.1016/J.IJCIP.2016.06.002.
+[66] D. Rehak, A. Splichalova, Application of composite indicator in evaluation of resilience in critical infrastructure system, in: 2022 IEEE International Carnahan 
+Conference on Security Technology, ICCST 2022, Technical University of Ostrava, Faculty of Safety Engineering, Department of Public Safety, Ostrava, Czech 
+Republic, Institute of Electrical and Electronics Engineers Inc., 2022, https://doi.org/10.1109/ICCST52959.2022.9896610.
+[67] N. Khakzad, Application of dynamic Bayesian network to risk analysis of domino effects in chemical infrastructures, Reliab. Eng. Syst. Saf. 138 (2015) 263–272, 
+https://doi.org/10.1016/j.ress.2015.02.007.
+[68] N. Khakzad, G. Reniers, R. Abbassi, F. Khan, Vulnerability analysis of process plants subject to domino effects, Reliab. Eng. Syst. Saf. 154 (2016) 127–136, 
+https://doi.org/10.1016/j.ress.2016.06.004.
+[69] S. Rebello, H. Yu, L. Ma, An integrated approach for system functional reliability assessment using Dynamic Bayesian Network and Hidden Markov Model, 
+Reliab. Eng. Syst. Saf. 180 (Dec. 2018) 124–135, https://doi.org/10.1016/J.RESS.2018.07.002.
+[70] Martin Osvaldo, Bayesian analysis with python. http://repo.iain-tulungagung.ac.id/5510/5/BAB2.pdf, 2017.
+[71] D.W. Cintron, Bayesian Networks, 2022, https://doi.org/10.1016/B978-0-12-818630-5.10020-X.
+[72] R. Reichenberg, Dynamic Bayesian networks in educational measurement: reviewing and advancing the state of the field, Appl. Meas. Educ. 31 (4) (Oct. 2018) 
+335–350, https://doi.org/10.1080/08957347.2018.1495217.
+[73] N. Khakzad, F. Khan, P. Amyotte, Risk-based design of process systems using discrete-time Bayesian networks, Reliab. Eng. Syst. Saf. 109 (2013) 5–17, https:// 
+doi.org/10.1016/j.ress.2012.07.009.
+[74] J. Chang, et al., Dynamic Bayesian networks with application in environmental modeling and management: a review, Environ. Model. Software 170 (Dec. 2023) 
+105835, https://doi.org/10.1016/J.ENVSOFT.2023.105835.
+[75] P. Shiguihara, A. De Andrade Lopes, D. Mauricio, Dynamic Bayesian network modeling, learning, and inference: a survey, IEEE Access 9 (2021) 
+117639–117648, https://doi.org/10.1109/ACCESS.2021.3105520.
+[76] M. Rausand, S. Haugen, Risk assessment risk assessment risk assessment 24 (4) (2008).
+[77] W. Sun, P. Bocchini, B.D. Davison, Resilience metrics and measurement methods for transportation infrastructure: the state of the art, Sustain. Resilient 
+Infrastruct. 5 (3) (May 2020) 168–199, https://doi.org/10.1080/23789689.2018.1448663.
+[78] C. Poulin, M.B. Kane, Infrastructure resilience curves: performance measures and summary metrics, Reliab. Eng. Syst. Saf. 216 (Dec. 2021) 107926, https://doi. 
+org/10.1016/J.RESS.2021.107926.
+[79] P. Gasser, et al., A review on resilience assessment of energy systems, Sustain. Resilient Infrastruct. 6 (5) (Sep. 2021) 273–299, https://doi.org/10.1080/ 
+23789689.2019.1610600.
+B. Rathnayaka et al.                                                                                                                                                                                                  
+
+International Journal of Disaster Risk Reduction 119 (2025) 105271
+30
+[80] M. Iturriza, L. Labaka, J.M. Sarriegi, J. Hernantes, Modelling methodologies for analysing critical infrastructures, J. Simulat. 12 (2) (Apr. 2018) 128–143, 
+https://doi.org/10.1080/17477778.2017.1418640.
+[81] M. Bruneau, et al., A framework to quantitatively assess and enhance the seismic resilience of communities, Earthq. Spectra 19 (4) (Nov. 2003) 733–752, 
+https://doi.org/10.1193/1.1623497.
+[82] GeNIe modeler – BayesFusion. https://www.bayesfusion.com/genie/?gad_ 
+source=1&gclid=Cj0KCQjwxqayBhDFARIsAANWRnTPauSa73yDGXyvC6CLkSKCiixKFQlxETunvZZOS44F4nD43sQjlboaAq8REALw_wcB. (Accessed 20 May 
+2024).
+[83] A.R. Colson, R.M. Cooke, Cross validation for the classical model of structured expert judgment, Reliab. Eng. Syst. Saf. 163 (Jul. 2017) 109–120, https://doi. 
+org/10.1016/J.RESS.2017.02.003.
+[84] A.R. Colson, R.M. Cooke, in: Expert Elicitation: Using the Classical Model to Validate Experts’ Judgments, Feb. 2018, https://doi.org/10.1093/reep/rex022 vol. 
+12, no. 1, pp. 113–132.
+[85] R.M. Cooke, Validating expert judgment with the classical model, Ethical Econ. 50 (2014) 191–212, https://doi.org/10.1007/978-3-319-08551-7_10.
+[86] F. Flandoli, E. Giorgi, W.P. Aspinall, A. Neri, Comparison of a new expert elicitation model with the Classical Model, equal weights and single experts, using a 
+cross-validation technique, Reliab. Eng. Syst. Saf. 96 (10) (Oct. 2011) 1292–1310, https://doi.org/10.1016/J.RESS.2011.05.012.
+[87] “World population by country 2024 (live).”. https://worldpopulationreview.com/. (Accessed 2 May 2024).
+[88] S. Keeney, F. Hasson, H.P. McKenna, A critical review of the Delphi technique as a research methodology for nursing, Int. J. Nurs. Stud. 38 (2) (Apr. 2001) 
+195–200, https://doi.org/10.1016/S0020-7489(00)00044-4.
+[89] D. Beiderbeck, N. Frevel, H.A. von der Gracht, S.L. Schmidt, V.M. Schweitzer, Preparing, conducting, and analyzing Delphi surveys: cross-disciplinary practices, 
+new directions, and advancements, MethodsX 8 (2021) 101401, https://doi.org/10.1016/j.mex.2021.101401.
+[90] N.J. Shariff, Utilizing the Delphi survey approach: a review, J. Nurs. Care 4 (3) (2015) 246–251, https://doi.org/10.4172/2167-1168.1000246.
+[91] A.C. Tricco, et al., An international survey and modified Delphi approach revealed numerous rapid review methods, J. Clin. Epidemiol. 70 (Feb. 2016) 61–67, 
+https://doi.org/10.1016/J.JCLINEPI.2015.08.012.
+[92] G.J. Skulmoski, F.T. Hartman, J. Krahn, The Delphi method for graduate research, J. Inf. Technol. Educ. 6 (2007) 1–21.
+[93] M.J. Clayton, Delphi: a technique to harness expert opinion for critical decision-making tasks in education, Educ. Psychol. 17 (4) (1997) 373–386, https://doi. 
+org/10.1080/0144341970170401.
+B. Rathnayaka et al.                                                                                                                                                                                                  

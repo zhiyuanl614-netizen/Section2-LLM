@@ -1,0 +1,3556 @@
+ 
+Contents lists available at ScienceDirect
+Energy for Sustainable Development
+journal homepage: www.journals.elsevier.com/energy-for-sustainable-development
+ 
+Energy-water management for sustainable development: Low-carbon 
+coordinated scheduling of wastewater treatment plants, power and water 
+distribution networks via Nash bargaining$
+Shibo Liu a
+, Shiyi Shi b, Hailong Cui a
+, Xia Zhao a
+,∗
+a State Key Laboratory of Power Transmission Equipment Technology, School of Electrical Engineering, Chongqing University, Chongqing, 401331, China
+b State Grid Yibin Electric Power Supply Company, Yibin, 644000, China
+A R T I C L E  I N F O
+Dataset link: https://www.researchgate.net/pu
+blication/400344172_WWTP_parameters_and_e
+quipment_parameters
+Keywords:
+PV-integrated wastewater treatment plants
+Low-carbon operation
+Water-energy nexus
+Coordinated scheduling
+ 
+A B S T R A C T
+As the global community accelerates zero-carbon transitions toward 2030, decarbonizing energy-intensive 
+wastewater treatment plants (WWTPs) operating within the water-energy nexus has become an urgent 
+imperative. Integrating renewable energy and flexible resource recovery into WWTPs has therefore emerged 
+as a promising pathway to reduce operating costs and carbon emissions. While existing literature optimizes 
+WWTPs integrated with photovoltaics (PV), scheduling studies on utilizing CO2 hydrogenation for methanol 
+synthesis to enhance circular resource recovery and support denitrification remain scarce. Furthermore, 
+coordinated scheduling models for WWTPs, power distribution networks (PDNs), and water distribution 
+networks (WDNs) often overlook autonomous decision-making, rely on oversimplified WWTP constraints, and 
+lack cross-sector pricing mechanisms to mitigate the WDN’s cost burden for reclaimed water. To address 
+these gaps, this paper proposes a day-ahead scheduling model for a PV-integrated WWTP, incorporating 
+CO2 hydrogenation for methanol synthesis to support biological nitrogen removal and drive sustainable low-
+carbon operations. Based on water-energy coupling, an asymmetric Nash bargaining model is established to 
+facilitate tripartite cooperation among the WWTP, PDN, and WDN, introducing an electricity-water ratio-
+based bargaining power calculation to ensure equitable benefit allocation. Simulations on a 60,000 m3/d 
+WWTP, an IEEE 33-node PDN, and a 12-node WDN demonstrate that on-site methanol synthesis reduces 
+accounted operational carbon emissions and enhances PV self-consumption. Concurrently, tripartite scheduling 
+substantially lowers total operational costs and optimizes reclaimed water pricing.
+Introduction
+As the global community accelerates toward a zero-carbon future 
+by 2030, decarbonizing energy-intensive urban infrastructures has be-
+come an urgent imperative. Within the urban water-energy nexus, 
+wastewater treatment plants (WWTPs) serve as critical infrastructure 
+for safeguarding water circulation and ecological balance, with treated 
+reclaimed water emerging as a vital resource (Beijing Water Author-
+ity, 2024). However, wastewater treatment is an inherently energy-
+intensive process, and its high operational costs coupled with car-
+bon emissions have become bottlenecks constraining the industry’s 
+green development (Ma et al., 2022). From an energy consumption 
+perspective, electricity used in wastewater treatment accounts for ap-
+proximately 3% to 4% of total electricity consumption in developed 
+countries (National Energy Conservation Center, 2015). This not only 
+constitutes the primary operational cost for WWTPs but also generates 
+$ This article is part of a Special issue entitled: ‘RE4ZCF’ published in Energy for Sustainable Development.
+∗Corresponding author.
+E-mail address: zx@cqu.edu.cn (X. Zhao).
+substantial indirect carbon emissions through electricity consumption. 
+Combined with direct carbon emissions from the biological treatment 
+process, the total carbon emissions from WWTPs account for about 
+1% to 3% of total greenhouse gas emissions (National Development 
+and Reform Commission, 2024). Therefore, developing operational 
+strategies that simultaneously reduce carbon emissions and operating 
+costs is essential for the sustainable operation of WWTPs.
+Utilizing renewable energy sources and improving energy man-
+agement are widely regarded as effective pathways to alleviate these 
+issues. In recent years, China has successfully constructed several 
+photovoltaic-integrated WWTPs (PV-integrated WWTPs), including the 
+Wangxiaoying and Beihu plants (Solarbe, 2022), and commissioned the 
+world’s first WWTP that integrates generation, grid, load, and storage 
+in Yangluo (BJX Power News, 2022). Consequently, novel WWTPs char-
+acterized by multi-energy coupling and the coordinated integration of
+https://doi.org/10.1016/j.esd.2026.102063
+Received 28 March 2026; Received in revised form 15 June 2026; Accepted 17 June 2026
+Energy for Sustainable Development 94 (2026) 102063 
+Available online 25 June 2026 
+0973-0826/© 2026 International Energy Initiative. Published by Elsevier Inc. All rights are reserved, including those for text and data mining, AI training, and 
+similar technologies. 
+
+S. Liu et al.
+ Nomenclature
+ Symbol
+Description
+Unit
+ 
+ Sets and Indices
+ 𝑡
+Time index of the hourly day-ahead 
+scheduling horizon.
+–
+ 
+ 𝑇
+Total number of hourly scheduling 
+intervals.
+–
+ 
+ 𝛥𝑡
+Duration of each scheduling time 
+interval.
+h
+ 
+ 𝑖, 𝑗, 𝛺
+Indices of autonomous entities and the 
+set of the alliance 𝛺= {A, E, W}.
+–
+ 
+ 𝑐, 𝑟
+Subscripts for lift pumps and return 
+pumps, respectively.
+–
+ 
+ 𝑘1, 𝑘2, 𝑘3, 𝑘4
+Water flow conversion/loss coefficients 
+associated with 𝑞in–𝑞ad,in, 𝑞ad,out–𝑞c, 
+𝑞c–𝑞aer, and 𝑞th–𝑞te, respectively.
+–
+ 
+ WWTP Process & Blower System
+ ℎ𝑘
+Hydraulic head of pump 𝑘∈{c, r}.
+m
+ 
+ 𝑞𝑘
+Flow rate of pump 𝑘∈{c, r}.
+m3/h
+ 
+ 𝜔𝑘
+Relative speed of pump 𝑘∈{c, r}.
+p.u.
+ 
+ 𝑃𝑘
+Power consumption of pump 𝑘∈{c, r}.
+kW
+ 
+ 𝑞a
+Air mass flow rate supplied by the 
+blower.
+kg/s
+ 
+ 𝑝a
+Atmospheric pressure at the blower 
+inlet.
+kPa
+ 
+ 𝑅
+Universal gas constant.
+J/(mol K) 
+ 𝑀a
+Molar mass of air.
+kg/mol
+ 
+ 𝑛, 𝜂B
+Adiabatic index and mechanical 
+efficiency of the blower.
+–
+ 
+ 𝑇in
+Blower inlet temperature.
+K
+ 
+ 𝑎𝑘
+Quadratic flow-head coefficient of 
+pump 𝑘.
+m/(m3/h)2 
+ 𝑏𝑘
+Flow-speed head coefficient of pump 𝑘.
+m/(m3/h) 
+ 𝑐𝑘
+Speed-head coefficient of pump 𝑘.
+m
+ 
+ 𝜂𝑘
+Efficiency of pump 𝑘.
+–
+ 
+ 𝛾𝑘
+Specific weight of the wastewater 
+flowing through pump 𝑘.
+kN/m3
+ 
+ 𝑉ad, 𝑉se, 𝑉th
+Water storage volumes of the 
+regulating tank, secondary tank, and 
+tertiary tank.
+m3
+ 
+ 𝑓(⋅)
+Uncorrected blower power 
+consumption function.
+kW
+ 
+ 𝐼aer
+Binary variable for blower operation 
+state.
+–
+ 
+ 𝐼up
+Binary variable for blower start-up 
+state.
+–
+ 
+ 𝐼dn
+Binary variable for blower shut-down 
+state.
+–
+ 
+ 𝑁up
+Maximum allowable number of blower 
+start-ups.
+–
+ 
+ 𝑝st, 𝑝d
+Static pressure and dynamic pressure 
+at the diffuser outlet.
+kPa
+ 
+ 𝑞O2, 𝐾L
+Oxygen flow rate and transfer 
+efficiency under standard conditions.
+kg/h, –
+ 
+ 𝐶𝑇, 𝐶𝑇w0
+Oxygen saturation concentration of tap 
+water at temperature 𝑇 and reference 
+temperature 𝑇w0.
+mg/L
+ 
+ 𝐶d
+Dissolved oxygen concentration in 
+wastewater.
+mg/L
+ 
+ 𝛽W
+Ratio of oxygen saturation 
+concentration in wastewater to that in 
+tap water.
+–
+ 
+ Symbol
+Description
+Unit
+ 
+ 𝛼
+Ratio of oxygen transfer rate in 
+wastewater to that in tap water at 
+temperature 𝑇.
+–
+ 
+ 𝜃
+Temperature coefficient.
+–
+ 
+ 𝑞B, 𝑞T
+Carbonaceous oxygen demand and 
+nitrification oxygen demand in the 
+aeration tank.
+kg O2/h
+ 
+ 𝑞in
+Total wastewater inflow rate.
+m3/h
+ 
+ 𝑞ad,in
+Inflow rate of the regulating tank after 
+first-stage flow conversion/loss.
+m3/h
+ 
+ 𝑞ad,out
+Outflow rate of the regulating tank.
+m3/h
+ 
+ 𝑞c
+Wastewater flow rate into the primary 
+clarifier after primary-treatment flow 
+conversion/loss.
+m3/h
+ 
+ 𝑞aer
+Wastewater flow rate in the secondary 
+treatment stage after 
+secondary-treatment flow 
+conversion/loss.
+m3/h
+ 
+ 𝑞r
+Sludge return flow rate to the 
+biochemical equipment via the return 
+pump.
+m3/h
+ 
+ 𝑞ad,in, 𝑞ad,out
+Inflow and outflow rates of the 
+regulating tank.
+m3/h
+ 
+ 𝑞se,in, 𝑞se,out
+Inflow and outflow rates of the 
+secondary tank.
+m3/h
+ 
+ 𝑞th,in, 𝑞th,out
+Inflow and outflow rates of the tertiary 
+tank.
+m3/h
+ 
+ 𝑞se,dis
+Secondary discharge flow rate.
+m3/h
+ 
+ 𝑞th
+Wastewater flow rate directed to the 
+tertiary treatment stage before 
+tertiary-treatment flow 
+conversion/loss.
+m3/h
+ 
+ 𝑞th,dis
+Tertiary discharge flow rate.
+m3/h
+ 
+ 𝐶Bin, 𝐶Bout
+BOD concentrations of the influent and 
+the aeration tank effluent.
+mg/L
+ 
+ 𝐶Tin, 𝐶Tout
+TKN concentrations of the influent and 
+the aeration tank effluent.
+mg/L
+ 
+ 𝑚o2,B
+Oxygen required to oxidize a unit mass 
+of BOD.
+kg O2/kg 
+BOD
+ 
+ 𝑚o2,N
+Oxygen required to oxidize a unit mass 
+of TKN.
+kg O2/kg 
+TKN
+ 
+ 𝑃a,𝑡, 𝑘O2
+Corrected blower power and the power 
+correction factor for oxygen injection.
+kW, –
+ 
+ 𝑞aCO2
+Accounted carbon emission flow 
+associated with BOD removal in the 
+biological treatment stage.
+kg CO2/h 
+ 𝐶aCO2
+Accounted carbon emission factor for 
+BOD removal.
+kg CO2/kg 
+BOD
+ 
+ 𝐼se
+Binary variable for secondary effluent 
+usage.
+–
+ 
+ Energy & Methanol Synthesis System
+ 𝑞sl, 𝑞bg
+Sludge flow rate and biogas generation 
+rate of the digester.
+m3/h, 
+m3/h
+ 
+ 𝛽sl
+Sludge production coefficient after 
+sedimentation.
+–
+ 
+ 𝑇d, 𝑇0
+Fermentation temperature and 
+reference biogas digester temperature.
+◦C
+ 
+ 𝑓𝑡(𝑇d,𝑡)
+Biogas-yield correction function at 
+fermentation temperature 𝑇𝑑,𝑡.
+–
+ 
+ 𝑓𝑡(𝑇0)
+Biogas-yield correction function at 
+reference temperature 𝑇0.
+–
+ 
+ 𝐻sl, 𝐻l
+Thermal power required for sludge 
+heating and heat loss power of the 
+biogas digester.
+kW
+ 
+Energy for Sustainable Development 94 (2026) 102063 
+2 
+
+S. Liu et al.
+ Symbol
+Description
+Unit
+ 
+ 𝜌sl
+Density of sludge.
+kg/m3
+ 
+ 𝑐ps
+Specific heat capacity of sludge.
+kJ/(kg⋅ ◦C) 
+ 𝑘a, 𝑘g
+Heat transfer coefficients for air and 
+soil.
+kW/(m2 ⋅
+◦C)
+ 
+ 𝑇s0, 𝑇a, 𝑇s
+Influent sludge temperature of the 
+digester, ambient air temperature, and 
+soil temperature.
+◦C
+ 
+ 𝐴s, 𝐴b
+Lateral surface area and bottom area 
+of the biogas digester.
+m2
+ 
+ 𝑃th
+Power consumption of tertiary 
+treatment.
+kW
+ 
+ 𝑘th
+Power consumption coefficient of 
+tertiary treatment equipment.
+kWh/m3
+ 
+ 𝑞EH2, 𝑞EO2
+Hydrogen and oxygen flow rates 
+generated from electrolyzer.
+kg/h
+ 
+ 𝑃EL, 𝑃CC
+Power consumption of the electrolyzer 
+and carbon capture unit.
+kW
+ 
+ 𝜂EH2, 𝜂EO2
+Hydrogen and oxygen production 
+coefficients of the electrolyzer.
+kg/kWh
+ 
+ 𝜂CC
+Specific power consumption of the 
+carbon capture unit.
+kWh/kg
+ 
+ 𝑞CCO2
+CO2 capture flow rate of the carbon 
+capture unit.
+kg/h
+ 
+ 𝑞ch, 𝑞refch
+Methanol amount produced by the 
+methanol synthesis system and 
+methanol amount required for the 
+aeration process.
+kg/h
+ 
+ 𝑞chCO2
+Carbon emission flow associated with 
+methanol addition.
+kg CO2/h 
+ 𝐶chCO2
+Carbon emission factor of methanol 
+addition in the aeration process.
+kg CO2/kg 
+CH3OH
+ 
+ 𝑘ch, 𝑘ca, 𝑘ref
+Methanol conversion efficiency, 
+catalyst efficiency, and the methanol 
+requirement coefficient in the aeration 
+process.
+–, –, kg/m3 
+ 𝑃g
+Electricity generated by the 
+biogas-to-power unit.
+kW
+ 
+ 𝑞g
+Biogas consumption rate for power 
+generation.
+m3/h
+ 
+ 𝑞gCO2
+CO2 emission flow from biogas power 
+generation.
+kg CO2/h 
+ 𝐶gCO2
+CO2 emission factor of biogas power 
+generation.
+kg 
+CO2/kWh
+ 
+ 𝐿b, 𝜂g
+Heating value of biogas and electrical 
+efficiency of the biogas generator.
+kWh/m3, – 
+ 𝑞ACO2
+Carbon quota of the biogas generator.
+kg CO2/h 
+ 𝐶ACO2
+Carbon quota coefficient of the biogas 
+generator.
+kg 
+CO2/kWh
+ 
+ 𝐻eb, 𝑃eb, 𝜂eb
+Thermal power output, power 
+consumption, and heating efficiency of 
+the electric boiler.
+kW, kW, – 
+ 𝐸bt, 𝐸hr
+Stored energy of the battery and 
+stored thermal energy of the thermal 
+storage tank.
+kWh
+ 
+ 𝜎bt, 𝜎hr
+Self-discharge rate of the battery and 
+thermal loss rate of the thermal 
+storage tank.
+–
+ 
+ 𝑃bt,cha, 𝑃bt,dis
+Charging and discharging powers of 
+the battery.
+kW
+ 
+ 𝜂bt,cha, 𝜂bt,dis
+Charging and discharging efficiencies 
+of the battery.
+–
+ 
+ 𝐻hr,cha, 𝐻hr,dis
+Thermal charging and discharging 
+powers of the thermal storage tank.
+kW
+ 
+ Symbol
+Description
+Unit
+ 
+ 𝜂hr,cha, 𝜂hr,dis
+Thermal charging and discharging 
+efficiencies of the thermal storage 
+tank.
+–
+ 
+ 𝑃pv, 𝑃refpv
+Actual PV power output and predicted 
+PV power output.
+kW
+ 
+ 𝐷up
+𝑥
+Ramp-up rate limit of equipment or 
+process variable 𝑥.
+kW/h (or 
+kg/h per 
+h)
+ 
+ 𝐷dn
+𝑥
+Ramp-down rate limit of equipment or 
+process variable 𝑥.
+kW/h (or 
+kg/h per 
+h)
+ 
+ Economic & Cost Parameters
+ 𝐶EG
+Electricity and gas purchase cost.
+CNY
+ 
+ 𝐶OP
+Operation and maintenance (O&M) 
+costs of various equipment.
+CNY
+ 
+ 𝐶CO2
+Carbon-related costs.
+CNY
+ 
+ 𝐶PV
+PV curtailment penalty cost.
+CNY
+ 
+ 𝐶CH
+External methanol purchase cost.
+CNY
+ 
+ 𝐶AW
+Revenue from selling reclaimed water.
+CNY
+ 
+ 𝐶EV
+Environmental benefit of water quality 
+improvement.
+CNY
+ 
+ 𝜁EA, 𝜁AE
+Electricity purchasing price and selling 
+price.
+CNY/kWh 
+ 𝜁gb, 𝜁gs
+Biogas purchasing price and selling 
+price.
+CNY/m3
+ 
+ 𝜁bt, 𝜁hr
+O&M cost coefficients of the battery 
+and the thermal storage tank.
+CNY/kWh 
+ 𝜁eb, 𝜁g
+O&M cost coefficients of the electric 
+boiler and the biogas generator.
+CNY/kWh 
+ 𝜁c, 𝜁CC
+O&M cost coefficients of the lift pump 
+and the carbon capture unit.
+CNY/kWh 
+ 𝜁EL, 𝜁r
+O&M cost coefficients of the 
+electrolyzer and the return pump.
+CNY/kWh 
+ 𝜁a, 𝜁th
+O&M cost coefficients of the blower 
+system and the tertiary treatment 
+equipment.
+CNY/kWh 
+ 𝜁pv, 𝜁cp
+O&M cost coefficient of the PV and 
+penalty coefficient for PV curtailment.
+CNY/kWh 
+ 𝜁cet
+Carbon trading price.
+CNY/kg 
+CO2
+ 
+ 𝜁CO2
+Unit cost of accounted carbon 
+emissions.
+CNY/kg 
+CO2
+ 
+ 𝜁ch
+Methanol purchase price.
+CNY/kg
+ 
+ 𝜁AW
+Selling price of reclaimed water.
+CNY/m3
+ 
+ 𝜁enb
+Environmental benefit coefficient for 
+BOD removal.
+CNY/kg 
+BOD
+ 
+ 𝜁ent
+Environmental benefit coefficient for 
+TKN removal.
+CNY/kg 
+TKN
+ 
+ 𝜁3
+Environmental benefit coefficient for 
+tertiary treatment.
+–
+ 
+ 𝑃EA, 𝑃AE
+Power purchased from and sold to the 
+PDN, respectively.
+kW
+ 
+ 𝑞AW
+Reclaimed-water flow rate sold to the 
+WDN.
+m3/h
+ 
+ 𝑞se,dis, 𝑞th,dis
+Discharge flow rates of secondary 
+effluent and tertiary effluent.
+m3/h
+ 
+ Nash Bargaining & Cooperative Game
+ 𝐶0
+𝑖, 𝐶𝑖
+Operating costs of the 𝑖th entity under 
+independent and coordinated 
+operation.
+CNY
+ 
+ 𝐶tran
+𝑖
+, 𝐶tran
+𝑖,new
+Interaction costs (electricity and 
+reclaimed water) of the 𝑖th entity 
+under independent and coordinated 
+operation.
+CNY
+ 
+Energy for Sustainable Development 94 (2026) 102063 
+3 
+
+S. Liu et al.
+ Symbol
+Description
+Unit
+ 
+ 𝐶1, 𝐶2
+Objective values of Subproblem 1 and 
+Subproblem 2.
+CNY
+ 
+ 𝑤𝑖
+Comprehensive bargaining weight.
+–
+ 
+ 𝑤E
+𝑖, 𝑤W
+𝑖
+Electricity interaction weight and 
+reclaimed water interaction weight.
+–
+ 
+ 𝑃𝑖𝑗
+Electricity transaction power between 
+entity 𝑖 and entity 𝑗.
+kW
+ 
+ 𝑞𝑖𝑗
+Reclaimed-water transaction flow 
+between entity 𝑖 and entity 𝑗.
+m3/h
+ 
+ 𝐸out
+𝑖
+, 𝐸in
+𝑖
+Total output and input 
+electricity-equivalent quantities of 
+entity 𝑖.
+kWh
+ 
+ 𝑃te,𝑡
+WWTP electricity consumption 
+associated with producing 
+tertiary-treated reclaimed water, 
+including secondary treatment, tertiary 
+treatment, and auxiliary processes.
+kW
+ 
+ 𝑞te
+Actual production flow rate of 
+tertiary-treated reclaimed water after 
+tertiary-treatment flow 
+conversion/loss.
+m3/h
+ 
+ 𝛽
+Electricity-to-water conversion 
+coefficient for reclaimed water 
+production.
+kWh/m3
+ 
+ 𝜏
+Preference coefficient for electricity 
+and water trading.
+–
+ 
+ 𝑧
+Type of traded commodity 
+(electricity/reclaimed water).
+–
+ 
+Unit convention: Dimensionless variables are denoted by ‘‘–’’.
+generation, grid, load, and storage are rapidly emerging as the prevail-
+ing paradigm in the wastewater treatment industry.
+Currently, numerous studies have focused on the scheduling and 
+operation of novel WWTPs. Shao et al. (2024) investigated the coor-
+dinated scheduling of treatment equipment, such as blowers, with PV 
+within WWTPs. Zhao et al. (2025) proposed a day-ahead scheduling 
+method for PV-integrated WWTPs. Considering the stepwise wastew-
+ater treatment process and associated direct carbon emissions, Zhao 
+et al. (2024) proposed a water-energy-carbon coordinated scheduling 
+model for PV-integrated WWTPs. Liu et al. (2022) focused on WWTPs 
+equipped with biogas-fueled combined heat and power units, heat 
+pumps, and tailwater generation units, analyzing the impact of optimal 
+scheduling on energy conservation and carbon reduction. Beyond oper-
+ational scheduling, Abedini et al. (2022) proposed an electrochemical 
+device for converting CO2 into methanol, aiming to effectively manage 
+CO2 emissions from WWTPs. The aforementioned literature demon-
+strates that novel WWTPs, characterized by multi-energy coupling and 
+integrated generation, grid, load, and storage operations, significantly 
+outperform traditional plants in terms of economic and environmental 
+benefits. However, the optimization potential of individual WWTPs re-
+mains limited; therefore, exploring cross-sector coordinated scheduling 
+is essential for advancing urban sustainable development.
+Ali et al. (2020) evaluated the impact of load shifting characteristics 
+and biogas power regulation in WWTPs on reducing power distribution 
+network (PDN) operating costs and installed capacity. Zhao et al. 
+(2025) and Kirchem et al. (2018) discussed the regulation flexibility 
+of aeration processes, water pumps, and water storage facilities, as 
+well as the feasibility and strategies for their participation in electricity 
+demand response. Assuming that the WWTP and the PDN operate under 
+a unified dispatch center, Moazeni and Khazaei (2021) proposed an 
+integrated scheduling model that accounts for treatment processes and 
+water quality targets. Khatavkar and Mays (2019) utilized reclaimed 
+water and water distribution networks (WDNs) as cooling sources 
+for power plants, proposing a coordinated WWTP-WDN scheduling 
+method. By integrating reclaimed water into WDNs, Oikonomou and 
+Parvania (2020) and Joshi and Mohagheghi (2020) investigated the 
+integrated scheduling of the WWTP-PDN-WDN system (Oikonomou & 
+Parvania, 2020) and the coordinated scheduling of wastewater treat-
+ment equipment, WDNs, and microgrids (Joshi & Mohagheghi, 2020), 
+respectively.
+Although previous studies have enhanced energy and resource uti-
+lization through the coordinated scheduling of wastewater treatment 
+and energy equipment, as well as sludge-to-biogas conversion (Liu 
+et al., 2022; Zhao et al., 2024, 2025) and reclaimed water recycling 
+(Joshi & Mohagheghi, 2020; Oikonomou & Parvania, 2020; Zhao et al., 
+2024), there remains limited research regarding the coupling mecha-
+nisms of novel processes within scheduling frameworks. For instance, 
+external methanol addition is typically required in the biochemical 
+treatment process to adjust the Carbon-to-Nitrogen (C/N) ratio, thereby 
+facilitating denitrification and improving nutrient removal efficiency 
+(Liu et al., 2022; Zhao et al., 2024). Abedini et al. (2022) introduced a 
+novel process for CO2 hydrogenation for methanol synthesis. Integrat-
+ing this process with carbon capture from biogas generation and oxygen 
+supply from electrolyzers (to reduce aeration energy) into a day-ahead 
+scheduling model holds the promise of further elevating economic and 
+low-carbon benefits. However, to the best of our knowledge, no such 
+study has been reported to date. Furthermore, literature addressing the 
+tripartite coordinated scheduling of WWTPs, PDNs, and WDNs is scarce 
+[16, 17]. Specifically, Oikonomou and Parvania (2020) only considered 
+water pressure and flow constraints in the reverse osmosis stage, while 
+Joshi and Mohagheghi (2020) merely accounted for power demand and 
+water storage constraints. Consequently, the modeling of the complex 
+wastewater treatment process in these studies remains oversimplified. 
+Moreover, both Oikonomou and Parvania (2020) and Joshi and Mo-
+hagheghi (2020) adopt centralized scheduling models under a single 
+decision-maker, rendering them inapplicable to scenarios where the 
+WWTP, PDN, and WDN operate as distinct entities with autonomous 
+decision-making capabilities. Crucially, WWTPs and WDNs typically 
+operate under an unbundled operation mode, managed by distinct cor-
+porate entities. Although reclaimed water offers environmental and 
+freshwater-substitution benefits, its procurement cost may exceed that 
+of tap water due to the additional treatment and monitoring required 
+to meet reuse standards. Government subsidies for reclaimed water 
+procurement are customarily settled on an annual basis. Consequently, 
+the temporal mismatch between immediate operational costs and de-
+layed subsidy receipts imposes significant financial pressure on WDNs 
+during the day-ahead scheduling horizon, thereby dampening their 
+willingness to pay for reclaimed water. In this context, designing a ra-
+tional transaction-pricing mechanism for reclaimed water transactions 
+between the WDN and the WWTP is pivotal to ensuring the smooth 
+operation of the reclaimed water supply chain. However, the price 
+formation and coordination mechanisms specific to this transaction 
+have received scant attention in existing literature.
+In response to these challenges, this paper proposes a coordi-
+nated scheduling framework for a PV-integrated WWTP, PDN, and 
+WDN alliance based on asymmetric Nash bargaining. Specifically, a 
+novel WWTP configuration incorporating the CO2 hydrogenation for 
+methanol synthesis process is introduced to enhance internal energy 
+and resource flexibility. Building upon the water-energy nexus, a multi-
+entity cooperative game model is established to achieve system-wide 
+optimization while ensuring individual interests. It should be empha-
+sized that this study aims to develop a day-ahead water-energy-carbon
+coordinated scheduling model for the WWTP-PDN-WDN alliance, with 
+emphasis on energy-consumption characteristics and dispatchable op-
+erational decisions. Therefore, the wastewater treatment process is 
+represented at the hourly scheduling level, and detailed biological 
+mechanisms, including dynamic biological kinetics, sludge-age evo-
+lution, nutrient concentration propagation, and microbial community 
+Energy for Sustainable Development 94 (2026) 102063 
+4 
+
+S. Liu et al.
+Fig. 1. Wastewater treatment process flow.
+dynamics, are simplified into input–output relationships and opera-
+tional constraints consistent with the temporal resolution and decision-
+making scope of the proposed model. Accordingly, the methodology 
+is organized around three connected parts. First, the PV-integrated 
+WWTP is modeled at the scheduling level to characterize wastewater 
+treatment, methanol synthesis, carbon capture, energy storage, and 
+multi-energy balance. Second, the WWTP is coupled with the PDN 
+and WDN through electricity and reclaimed-water transactions, and 
+an asymmetric Nash bargaining model is developed for coordinated 
+scheduling and benefit allocation. Third, the decomposed problem is 
+solved by the A-ADMM and verified through comparative case studies. 
+The key contributions of this paper are summarized as follows:
+• Development of a low-carbon WWTP scheduling model integrat-
+ing CO2 hydrogenation for methanol synthesis: A comprehensive 
+day-ahead scheduling model for the PV-integrated WWTP is con-
+structed, explicitly accounting for the constraints of the methanol 
+synthesis unit, wastewater treatment process, and coupled multi-
+energy equipment.
+• Establishment of an asymmetric Nash bargaining framework for
+WWTP-PDN-WDN cooperation: By applying cooperative game 
+theory, this paper quantifies the water-energy nexus among the 
+three entities. The proposed model utilizes an improved bargain-
+ing power weight calculation method to reasonably distribute the 
+cooperative benefit based on each entity’s contribution.
+• Formulation of transaction pricing mechanisms for multi-resource 
+exchange: Considering the distinct water/energy production and 
+consumption characteristics of the entities, pricing strategies are 
+formulated for reclaimed water and bidirectional electricity trad-
+ing, thereby facilitating the sustainability of the multi-entity al-
+liance.
+• Verification of advantages of coordinated scheduling via an in-
+tegrated test case: Simulation results on a joint coupled system 
+comprising an IEEE 33-bus PDN, a 12-node WDN, and a medium-
+sized WWTP with a design capacity of 60,000 m3/d validate the 
+effectiveness of the proposed model in reducing operational costs, 
+enhancing PV consumption, and ensuring the fair distribution of 
+cooperative benefit.
+The remainder of this paper is organized as follows: ‘‘Theory and 
+Calculation: PV-Integrated WWTP with Methanol Synthesis System’’ 
+details the mathematical modeling of the PV-integrated WWTP and 
+the methanol synthesis system. ‘‘Coordinated Scheduling Model for 
+the WWTP-PDN-WDN Alliance’’ establishes the coordinated scheduling 
+framework based on asymmetric Nash bargaining and the Adaptive Al-
+ternating Direction Method of Multipliers (A-ADMM) algorithm. ‘‘Case 
+Studies’’ verifies the proposed method through simulation studies, and 
+‘‘Conclusion’’ concludes the paper.
+Theory and calculation: PV-integrated WWTP with methanol syn-
+thesis system
+Process flow and structure of the PV-integrated WWTP
+The WWTP investigated in this paper is not a conventional
+discharge-oriented plant, but a reclaimed-water-oriented plant that 
+supplies municipal-grade reclaimed water to the WDN. Therefore, as 
+illustrated in Fig. 1, tertiary advanced treatment is included after 
+primary physical treatment and secondary biological treatment. The 
+variables depicted in Fig. 1 (e.g., 𝑞𝑖𝑛) represent the flow rates at 
+various stages, with detailed descriptions provided in Nomenclature. 
+Primary treatment primarily involves units such as the screen, the 
+regulating tank, the lift pump, and the primary clarifier. Specifically, 
+the screen is employed to intercept suspended solids, the regulating 
+tank serves to stabilize and homogenize water quality, and the lift 
+pump elevates the wastewater to the primary clarifier for further 
+sedimentation and filtration. Secondary treatment widely adopts the 
+Anaerobic-Anoxic-Oxic process, utilizing microorganisms to remove 
+organic matter, nitrogen, and phosphorus. Notably, this stage generates 
+carbon emissions due to the release of CH4 and N2O. The core units 
+of this stage are the biochemical tank; in particular, the aerobic tank, 
+also referred to as the aeration tank, requires a blower system to 
+supply oxygen, thereby maintaining the dissolved oxygen concentration 
+necessary to facilitate microbial degradation of organic matter. The 
+outflow from the biochemical tank enters the secondary clarifier for 
+sludge-water separation. Although the supernatant following secondary 
+treatment still contains trace amounts of microorganisms, nitrogen, and 
+phosphorus, it generally meets standard discharge requirements. Since 
+the settled sludge possesses significant biochemical activity, a portion 
+is recirculated to the biochemical tank via return pumps, while the 
+excess activated sludge is collected together with the primary sludge 
+and sent to the anaerobic biogas digester. The biogas produced from 
+anaerobic digestion is used for power generation, whereas the residual 
+digestate is assumed to be dewatered and transported off-site as sludge 
+cake. Since sludge dewatering, transportation, and final disposal are 
+not hourly dispatchable processes, they are outside the day-ahead 
+scheduling boundary of this study. Finally, tertiary treatment processes 
+the wastewater according to municipal water standards. Techniques 
+such as adsorption, electrodialysis, and reverse osmosis are employed 
+to deeply remove residual organic matter, nitrogen, and phosphorus 
+from the secondary effluent. Ultimately, the tertiary effluent serves as 
+a reclaimed water source injected into the WDN.
+External methanol addition is required in the secondary biochemical 
+treatment stage to facilitate denitrification and enhance the efficiency 
+of nitrogen and phosphorus removal. The methanol synthesis system 
+comprises an electrolyzer, a carbon capture unit, and a methanol 
+synthesis unit. Specifically, the electrolyzer generates hydrogen and 
+Energy for Sustainable Development 94 (2026) 102063 
+5 
+
+S. Liu et al.
+Fig. 2. Energy and material flows in the WWTP.
+oxygen through water electrolysis, while the carbon capture unit ex-
+tracts CO2 from the flue gas of the biogas generator. Subsequently, 
+the captured CO2 reacts with the hydrogen in the methanol synthesis 
+unit to produce methanol through a catalytic reaction. The produced 
+methanol is dosed into the biochemical tank, while the oxygen gen-
+erated from electrolysis is injected into the biochemical tank of the 
+secondary treatment stage via the blower system.
+The schematic diagram of the PV-integrated WWTP is presented in 
+Fig. 2. The plant is equipped with PV power sources and batteries to 
+power the water treatment equipment, while simultaneously utilizing 
+sludge to produce biogas for electricity generation. To meet the tem-
+perature requirements for biogas fermentation, an electric boiler and 
+a thermal storage tank are configured to supply heat to the biogas 
+digester. Evidently, the PV-integrated WWTP functions as a micro-
+integrated energy system characterized by the mutual coupling and 
+interaction of electricity, gas, heat, water, and carbon flows.
+Equipment models
+Water pumps
+In the primary treatment stage, lift pumps are deployed to elevate 
+the hydraulic head of the wastewater, while in the secondary treatment 
+stage, return pumps are utilized to recirculate activated sludge to 
+the biochemical tank. Assuming that both types of pumps are elec-
+trically driven variable-speed centrifugal pumps, their hydraulic and 
+energy consumption characteristics are modeled as follows (Moazeni & 
+Khazaei, 2021): 
+{
+ℎc,𝑡= 𝑎c𝑞2
+c,𝑡+ 𝑏c𝑞c,𝑡𝜔c,𝑡+ 𝑐c𝜔2
+c,𝑡
+𝑃c,𝑡= 𝛾c𝑞c,𝑡ℎc,𝑡∕𝜂c
+(1)
+{
+ℎr,𝑡= 𝑎r𝑞2
+r,𝑡+ 𝑏r𝑞r,𝑡𝜔r,𝑡+ 𝑐r𝜔2
+r,𝑡
+𝑃r,𝑡= 𝛾r𝑞r,𝑡ℎr,𝑡∕𝜂r
+(2)
+Blower system
+The blower system typically comprises blowers, diffusers, and
+pipelines. The airflow drawn in by the blowers is conveyed through 
+the pipelines to the aeration tank, where diffusers disperse it into 
+bubbles to facilitate oxygen dissolution. Blowers represent the most 
+energy-intensive equipment in WWTPs, and their power consumption 
+primarily depends on the airflow rate and diffuser-related parameters 
+(Bolles, 2006): 
+𝑓=
+𝑞a,𝑡𝑅𝑇in
+𝑀a𝑛𝜂B
+[( 𝑝a + 𝑝st,𝑡+ 𝑝d,𝑡
+𝑝a
+)𝑛
+−1
+]
+(3)
+Static pressure depends on the diffuser immersion depth, while 
+dynamic pressure is related to air flow rate: 
+𝑝d,𝑡= 𝑘d
+(𝑞a,𝑡
+𝐴d
+)2
+(4)
+The airflow supplied by the blower depends on the oxygen demand 
+of the aerobic biochemical reaction: 
+𝑞a,𝑡=
+𝑞O2,𝑡
+𝐾L𝑛O2
+(5)
+Oxygen flow rate is influenced by multiple factors, including the 
+quality of influent and effluent water and the temperature of the 
+aeration tank (Bolles, 2006): 
+𝑞O2,𝑡=
+(𝑞B,𝑡+ 𝑞T,𝑡)𝐶𝑇w0
+(𝛽W𝐶𝑇−𝐶d)𝛼𝜃(𝑇−𝑇w0)
+(6)
+The formulas for calculating the aerobic oxygen demand and nitri-
+fication oxygen demand in the aeration tank are as follows: 
+{
+𝑞B,𝑡= 𝑞aer,𝑡(𝐶Bin,𝑡−𝐶Bout,𝑡)𝑚O2,B
+𝑞T,𝑡= 𝑞aer,𝑡(𝐶Tin,𝑡−𝐶Tout,𝑡)𝑚O2,N
+(7)
+In this scheduling-level formulation, 𝐶Bout and 𝐶Tout are not fixed 
+process parameters, but effluent-quality variables constrained by the 
+required water-quality standards. The influence of influent concen-
+tration and effluent-quality targets on aeration energy is represented 
+through Eqs. (6) and (7): a higher influent pollutant load or a lower 
+target effluent concentration increases the oxygen demand and thus the 
+blower power consumption. However, this formulation does not explic-
+itly model dynamic biological kinetics, sludge age or solids retention 
+time (SRT) evolution, nutrient concentration fluctuations inside the bi-
+ological reactor, microbial community dynamics, or the detailed kinetic 
+relationship among hydraulic retention time (HRT), microbial activity, 
+and pollutant removal efficiency. These process-level mechanisms are 
+simplified because the proposed day-ahead scheduling model focuses 
+on hourly energy management and dispatchable operational decisions 
+of the PV-integrated WWTP, rather than detailed biochemical process 
+control.
+Compared with air injection, injecting oxygen generated from the 
+electrolyzer into the biochemical tank contributes to reducing the en-
+ergy consumption of blowers (Mohammadpour et al., 2021). Therefore, 
+the blower power calculation is modified as follows: 
+𝑃a,𝑡=
+{
+𝑘O2𝑓(𝑞EO2,𝑡) + 𝑓(𝑞a,𝑡−𝑞EO2,𝑡),
+𝑞EO2,𝑡≤𝑞a,𝑡
+𝑘O2𝑓(𝑞EO2,𝑡),
+𝑞EO2,𝑡> 𝑞a,𝑡
+(8)
+Regarding carbon emissions from the biochemical treatment pro-
+cess, this paper assumes that the nitrification reaction is sufficient 
+and the generated N2O is negligible. Consequently, only fugitive CH4
+emissions arising from the removal of Biochemical Oxygen Demand 
+(BOD) substances in the wastewater are considered (Kyung et al., 
+2015): 
+𝑞aCO2,𝑡= 𝐶aCO2𝑞aer,𝑡
+(𝐶Bin,𝑡−𝐶Bout,𝑡
+)
+(9)
+Biogas digester
+The biogas digester collects the primary sludge and excess activated 
+sludge generated during the wastewater treatment process and pro-
+duces biogas through anaerobic digestion. It should be noted that this 
+model does not assume that all sludge is converted into biogas. Only 
+the biodegradable organic fraction contributes to biogas production, 
+while the inert and undigested fraction remains as residual digestate. 
+Energy for Sustainable Development 94 (2026) 102063 
+6 
+
+S. Liu et al.
+The biogas yield is therefore described by an empirical specific-yield re-
+lationship related to the sludge flow rate, sludge production coefficient, 
+and digester temperature (Tan et al., 2020): 
+⎧
+⎪
+⎨
+⎪⎩
+𝑞sl,𝑡= 𝑞aer,𝑡𝛽sl
+𝑞bg,𝑡=
+𝑓𝑡(𝑇d,𝑡)
+𝑓𝑡(𝑇0) 𝛽sl,𝑇0𝑞sl,𝑡
+(10)
+In Eq. (10), 𝑞sl,𝑡 denotes the sludge flow entering the anaerobic 
+digestion unit, and 𝑞bg,𝑡 denotes the biogas production rate. The co-
+efficient 𝛽sl,𝑇0 represents the specific biogas yield under the reference 
+digestion temperature, and 𝑓𝑡(𝑇𝑑,𝑡)∕𝑓𝑡(𝑇0) modifies the yield according 
+to the actual digester temperature. Therefore, Eq. (10) characterizes 
+the recoverable biogas from the digestible sludge fraction rather than 
+a complete conversion of sludge into biogas. The residual digestate 
+is treated as a non-dispatchable by-product and is assumed to be 
+dewatered and disposed of outside the plant boundary considered in 
+the day-ahead optimization.
+The temperature-dependent biogas-yield function is fitted using the 
+following quadratic function (Tan et al., 2020). 
+𝑓𝑡(𝑇d,𝑡) = 𝑤(𝑇d,𝑡−𝑇0)2 + 𝑧
+(11)
+To maintain the temperature required for the anaerobic digestion 
+reaction, heat must be supplied to the biogas digester. Considering the 
+heat transfer between the digester and both the ambient air and the 
+underground soil, the required heating power comprises the following 
+two components: 
+{
+𝐻sl,𝑡= 𝑞sl,𝑡𝜌sl𝑐ps(𝑇d,𝑡−𝑇s0)
+𝐻l,𝑡= 𝑘a𝐴s(𝑇d,𝑡−𝑇a,𝑡) + 𝑘g𝐴b(𝑇d,𝑡−𝑇s,𝑡)
+(12)
+Tertiary treatment process
+For tertiary treatment utilizing electrodialysis or reverse osmosis, 
+the energy consumption is described by the following relationship 
+(Yang & Guo, 2014): 
+𝑃th,𝑡= 𝑘th𝑞th,𝑡
+(13)
+Water collection facilities
+As shown in Fig. 1, the WWTP is equipped with various tanks, such 
+as the regulating tank, the secondary tank, and the tertiary tank, which 
+not only meet the requirements for influent collection but also provide 
+flexibility for water flow adjustment within the plant. The models for 
+these three types of tanks are similar: 
+⎧
+⎪
+⎨
+⎪⎩
+𝑉ad,𝑡= 𝑉ad,𝑡−1 + (𝑞ad,in,𝑡−𝑞ad,out,𝑡)𝛥𝑡
+𝑉se,𝑡= 𝑉se,𝑡−1 + (𝑞se,in,𝑡−𝑞se,out,𝑡)𝛥𝑡
+𝑉th,𝑡= 𝑉th,𝑡−1 + (𝑞th,in,𝑡−𝑞th,out,𝑡)𝛥𝑡
+(14)
+Eq. (14) describes the inter-temporal storage dynamics of the regu-
+lating tank, secondary tank, and tertiary tank, and therefore captures 
+the macroscopic hydraulic storage and flow-shifting capability of the 
+WWTP. Nevertheless, this model does not use a dynamic concentration 
+balance to describe the temporal propagation of BOD, Total Kjeldahl 
+Nitrogen (TKN), or other nutrient concentrations through the treatment 
+units. Therefore, the variation of effluent quality caused by changes in 
+primary-treatment HRT, sludge settling behavior, or biological reaction 
+kinetics is simplified. Such a dynamic water-quality model would re-
+quire detailed settling, sludge-age, and biological kinetic parameters, 
+which is beyond the scope of the day-ahead coordinated scheduling 
+problem considered in this paper.
+Methanol synthesis system
+The relationship between the power consumption of the electrolyzer 
+and the production of hydrogen and oxygen is expressed as follows 
+(Yang et al., 2023): 
+{
+𝑞EH2,𝑡= 𝜂EH2𝑃EL,𝑡
+𝑞EO2,𝑡= 𝜂EO2𝑃EL,𝑡
+(15)
+The power consumption of the carbon capture unit is directly pro-
+portional to the CO2 capture rate (Yang et al., 2023): 
+{
+𝑃CC,𝑡= 𝜂CC𝑞CCO2,𝑡
+𝑞CCO2,𝑡= 𝑘CO2𝑞ch,𝑡
+(16)
+The methanol synthesis unit is modeled as follows (Yang et al., 
+2023): 
+{
+𝑞ch,𝑡= 𝑘ch𝑘ca𝑞EH2,𝑡
+𝑞chCO2,𝑡= 𝐶chCO2𝑞refch,𝑡
+(17)
+The total amount of methanol required for the aeration process is 
+calculated as follows: 
+𝑞refch,𝑡= 𝑘ref𝑞aer,𝑡
+(18)
+Biogas generator
+Biogas power generation represents a vital pathway for biogas 
+utilization in WWTPs. The electric power output of the biogas generator 
+(Feng et al., 2019) is calculated as follows: 
+𝑃g,𝑡= 𝑞g,𝑡𝐿b𝜂g
+(19)
+The corresponding CO2 emission flow from biogas power generation 
+is calculated according to the electric power output: 
+𝑞gCO2,𝑡= 𝐶gCO2𝑃g,𝑡
+(20)
+A portion of the flue-gas CO2 can be captured by the carbon capture 
+unit and further used for methanol synthesis. In addition, biogas gener-
+ators are allocated free carbon quotas. By utilizing the carbon capture 
+unit to reduce the accounted net emissions, the WWTP can participate 
+in carbon emission trading. The carbon quota is calculated as follows: 
+𝑞ACO2,𝑡= 𝐶ACO2𝑃g,𝑡
+(21)
+Electric boiler
+The electric boiler is utilized to supply heat to the biogas digester. 
+The electric-to-thermal power conversion relationship is expressed as 
+follows: 
+𝐻eb,𝑡= 𝑃eb,𝑡𝜂eb
+(22)
+Battery and thermal storage
+The WWTP is equipped with battery and thermal storage tanks to 
+enhance the reliability and flexibility of the electricity and heat supply. 
+The models for the two types of storage devices are similar: 
+⎧
+⎪
+⎪
+⎨
+⎪
+⎪⎩
+𝐸bt,𝑡= (1 −𝜎bt)𝐸bt,𝑡−1 +
+(
+𝑃bt,cha,𝑡𝜂bt,cha −
+𝑃bt,dis,𝑡
+𝜂bt,dis
+)
+𝛥𝑡
+𝐸hr,𝑡= (1 −𝜎hr)𝐸hr,𝑡−1 +
+(
+𝐻hr,cha,𝑡𝜂hr,cha −
+𝐻hr,dis,𝑡
+𝜂hr,dis
+)
+𝛥𝑡
+(23)
+Operational constraints of the PV-integrated WWTP
+Electricity/heat / gas/water balance constraints
+Electricity balance constraints: 
+𝑃gen,𝑡+ 𝑃EA,𝑡+ 𝑃bt,dis,𝑡+ 𝑃pv,𝑡= 𝑃bt,cha,𝑡+ 𝑃CC,𝑡+ 𝑃AE,𝑡
++ 𝑃c,𝑡+ 𝑃a,𝑡+ 𝑃th,𝑡+ 𝑃eb,𝑡+ 𝑃r,𝑡+ 𝑃EL,𝑡
+(24)
+Thermal power balance constraints: 
+𝐻eb,𝑡+ 𝐻hr,dis,𝑡= 𝐻hr,cha,𝑡+ 𝐻l,𝑡+ 𝐻sl,𝑡
+(25)
+Biogas balance constraint: 
+𝑞bg,𝑡+ 𝑞g,𝑡= 𝑞b,𝑡
+(26)
+Energy for Sustainable Development 94 (2026) 102063 
+7 
+
+S. Liu et al.
+Water balance constraints for primary treatment: 
+{
+𝑞ad,in,𝑡= 𝑘1𝑞in,𝑡
+𝑞c,𝑡= 𝑘2𝑞ad,out,𝑡
+(27)
+Water balance constraints for secondary treatment: 
+𝑞aer,𝑡= 𝑘3𝑞c,𝑡
+(28)
+Water balance constraints for tertiary treatment: 
+{ 𝑞te,𝑡= 𝑘4𝑞th,𝑡
+𝑞th,in,𝑡+ 𝑞th,dis,𝑡= 𝑞te,𝑡
+(29)
+Wastewater treatment equipment and water quality control constraints
+Blower start-stop control constraints (Donald & Love, 2023): 
+⎧
+⎪
+⎪
+⎪
+⎪
+⎨
+⎪
+⎪
+⎪
+⎪⎩
+𝐼aer,𝑡𝑞min
+aer ≤𝑞aer,𝑡≤𝐼aer,𝑡𝑞max
+aer
+𝐼aer,𝑡−1 + 𝐼aer,𝑡+ 𝐼aer,𝑡+1 ≥1
+𝐼up,𝑡−𝐼dn,𝑡= 𝐼aer,𝑡−𝐼aer,𝑡−1
+𝐼up,𝑡+ 𝐼dn,𝑡≤1
+𝑇∑
+𝑡=1
+𝐼up,𝑡≤𝑁up
+(30)
+Biogas digester temperature control constraints: 
+𝑇min
+d
+≤𝑇d,𝑡≤𝑇max
+d
+(31)
+The BOD concentration requirements for secondary effluent and 
+tertiary treatment influent are higher than those for irrigation water, 
+meaning water quality control needs should be considered according 
+to the following formula: 
+𝐼se,𝑡𝐶min
+Bir ≤𝐶Bout,𝑡≤[𝐼se,𝑡𝐶max
+Bir + (1 −𝐼se,𝑡)𝐶max
+Bdis
+]
+(32)
+To prevent mixing of irrigation water with secondary effluent and 
+tertiary treatment influent, the following mutually exclusive constraints 
+must also be considered: 
+⎧
+⎪
+⎨
+⎪⎩
+0 ≤𝑞se,in,𝑡≤𝑞max
+se,in𝐼se,𝑡
+0 ≤𝑞se,dis,𝑡≤𝑞max
+se,dis(1 −𝐼se,𝑡)
+0 ≤𝑞th,𝑡≤𝑞max
+th (1 −𝐼se,𝑡)
+(33)
+The lift pump and return pump meet the following flow rate and 
+rotational speed upper and lower limits: 
+⎧
+⎪
+⎪
+⎨
+⎪
+⎪⎩
+𝑞min
+c
+≤𝑞c,𝑡≤𝑞max
+c
+𝜔min
+c
+≤𝜔c,𝑡≤𝜔max
+c
+𝑞min
+r
+≤𝑞r,𝑡≤𝑞max
+r
+𝜔min
+r
+≤𝜔r,𝑡≤𝜔max
+r
+(34)
+Capacity limits of the tank and upper/lower flow rate constraints 
+for inflow/outflow 
+⎧
+⎪
+⎪
+⎪
+⎪
+⎪
+⎨
+⎪
+⎪
+⎪
+⎪
+⎪⎩
+𝑉min
+ad
+≤𝑉ad,𝑡≤𝑉max
+ad
+0 ≤𝑞ad,in,𝑡≤𝑞max
+ad,in,
+0 ≤𝑞ad,out,𝑡≤𝑞max
+ad,out
+𝑉min
+se
+≤𝑉se,𝑡≤𝑉max
+se
+0 ≤𝑞se,in,𝑡≤𝑞max
+se,in,
+0 ≤𝑞se,out,𝑡≤𝑞max
+se,out
+𝑉min
+th
+≤𝑉th,𝑡≤𝑉max
+th
+0 ≤𝑞th,in,𝑡≤𝑞max
+th,in,
+0 ≤𝑞th,out,𝑡≤𝑞max
+th,out
+𝑉ad,0 = 𝑉ad,𝑇,
+𝑉se,0 = 𝑉se,𝑇,
+𝑉th,0 = 𝑉th,𝑇
+(35)
+Operational constraints for various sources/loads/storage
+Power range limits and ramping constraints for biogas genera-
+tor, carbon capture unit, electric boiler, electrolyzer, and methanol 
+synthesis unit: 
+⎧
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎨
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪⎩
+𝑃min
+g
+≤𝑃g,𝑡≤𝑃max
+g
+−𝐷dn
+g 𝛥𝑡≤𝑃g,𝑡−𝑃g,𝑡−1 ≤𝐷up
+g 𝛥𝑡
+𝑃min
+CC ≤𝑃CC,𝑡≤𝑃max
+CC
+−𝐷dn
+CC𝛥𝑡≤𝑃CC,𝑡−𝑃CC,𝑡−1 ≤𝐷up
+CC𝛥𝑡
+𝐻min
+eb
+≤𝐻eb,𝑡≤𝐻max
+eb
+−𝐷dn
+eb𝛥𝑡≤𝐻eb,𝑡−𝐻eb,𝑡−1 ≤𝐷up
+eb𝛥𝑡
+𝑃min
+EL
+≤𝑃EL,𝑡≤𝑃max
+EL
+−𝐷dn
+EL𝛥𝑡≤𝑃EL,𝑡−𝑃EL,𝑡−1 ≤𝐷up
+EL𝛥𝑡
+𝑞min
+EH2 ≤𝑞EH2,𝑡≤𝑞max
+EH2
+−𝐷dn
+ch𝛥𝑡≤𝑞EH2,𝑡−𝑞EH2,𝑡−1 ≤𝐷up
+ch𝛥𝑡
+(36)
+Capacity constraints, upper and lower limits on charging and dis-
+charging power, and mutual exclusion constraints between charging 
+and discharging states in battery: 
+⎧
+⎪
+⎪
+⎨
+⎪
+⎪⎩
+𝐼bt,cha,𝑡𝑃min
+bt,cha ≤𝑃bt,cha,𝑡≤𝐼bt,cha,𝑡𝑃max
+bt,cha
+𝐼bt,dis,𝑡𝑃min
+bt,dis ≤𝑃bt,dis,𝑡≤𝐼bt,dis,𝑡𝑃max
+bt,dis
+𝐼bt,dis,𝑡+ 𝐼bt,cha,𝑡≤1
+𝐸min
+bt
+≤𝐸bt,𝑡≤𝐸max
+bt ,
+𝐸bt,0 = 𝐸bt,𝑇
+(37)
+Thermal storage tank operational constraints: 
+⎧
+⎪
+⎪
+⎨
+⎪
+⎪⎩
+𝐼hr,cha,𝑡𝐻min
+hr,cha ≤𝐻hr,cha,𝑡≤𝐼hr,cha,𝑡𝐻max
+hr,cha
+𝐼hr,dis,𝑡𝐻min
+hr,dis ≤𝐻hr,dis,𝑡≤𝐼hr,dis,𝑡𝐻max
+hr,dis
+𝐼hr,dis,𝑡+ 𝐼hr,cha,𝑡≤1
+𝐸min
+hr
+≤𝐸hr,𝑡≤𝐸max
+hr ,
+𝐸hr,0 = 𝐸hr,𝑇
+(38)
+Actual output constraints of photovoltaic power sources: 
+0 ≤𝑃pv,𝑡≤𝑃refpv,𝑡
+(39)
+Day-ahead scheduling model for the PV-integrated WWTP with methanol 
+synthesis
+Given the day-ahead forecasts of influent flow rate, influent water 
+quality, PV generation, ambient conditions, and market prices, the 
+proposed day-ahead scheduling model for the PV-integrated WWTP 
+with the methanol synthesis system solves for the hourly decision 
+variables of the plant. The controlled decision variables in this schedul-
+ing model include wastewater flow allocation, tank storage variations, 
+operating states and outputs of treatment equipment, outputs of energy-
+conversion and resource-recovery devices, charging/discharging sched-
+ules of the battery and thermal storage tank, and electricity/reclaimed-
+water transaction quantities, subject to water-quality requirements, 
+multi-energy balance equations, equipment operating limits, and op-
+erational carbon-accounting constraints.
+The wastewater treatment process is represented at the hourly 
+scheduling level, consistent with the focus of this study on WWTP 
+energy management and dispatchable operational decisions rather 
+than detailed biological and water-quality state dynamics. Specifi-
+cally, hydraulic flexibility is captured by tank-storage dynamics and 
+flow-rate constraints, while water-quality requirements are represented 
+by BOD/TKN-related oxygen demand and effluent-quality constraints. 
+The model retains the process mechanisms that directly affect hourly 
+energy-management and scheduling decisions, including pollutant-
+load-related oxygen demand, blower power consumption, methanol ad-
+dition, electrolysis oxygen supply, sludge-to-biogas conversion, carbon 
+capture, and tertiary reclaimed-water production. Detailed biological 
+and water-quality dynamics, including dynamic biological kinetics, 
+sludge-age evolution, nutrient concentration fluctuations, microbial 
+community dynamics, and concentration propagation inside treatment 
+units, are not explicitly resolved; instead, they are represented through 
+Energy for Sustainable Development 94 (2026) 102063 
+8 
+
+S. Liu et al.
+Fig. 3. Modeling boundaries and water-energy interactions among the WWTP, PDN, and WDN.
+input–output relationships and operational constraints consistent with 
+the temporal resolution and decision-making scope of the proposed 
+model. Therefore, the model is suitable for evaluating day-ahead water-
+energy-carbon coordination, but it is not intended to replace detailed 
+activated sludge process simulation.
+The carbon accounting in this study is defined within the day-ahead 
+operational boundary of the WWTP. The accounted carbon-related 
+items include: (i) CO2 emissions associated with BOD removal in the 
+biological treatment stage, as described in Eq. (9); (ii) carbon emis-
+sions associated with methanol addition for denitrification; (iii) CO2
+emissions from biogas power generation, CO2 captured by the carbon 
+capture unit, and the free carbon quota allocated to the biogas gen-
+erator; and (iv) the resulting carbon trading cost. In addition, N2O 
+emissions from nitrification/denitrification are not explicitly modeled 
+because this study assumes sufficient nitrification and negligible N2O 
+generation, as stated in Eq. (9).
+The scheduling model aims to minimize the total operating cost of 
+the wastewater treatment plant: 
+min
+𝑇∑
+𝑡=1
+(
+𝐶EG,𝑡+ 𝐶OP,𝑡+ 𝐶CO2,𝑡+ 𝐶PV,𝑡
++ 𝐶CH,𝑡−𝐶AW,𝑡−𝐶EV,𝑡
+)
+(40)
+⎧
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎨
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪⎩
+𝐶EG,𝑡= 𝜁EA,𝑡𝑃EA,𝑡𝛥𝑡−𝜁AE,𝑡𝑃AE,𝑡𝛥𝑡
++ 𝜁gb max{𝑞g,𝑡, 0}𝛥𝑡−𝜁gs max{−𝑞g,𝑡, 0}
+𝐶OP,𝑡= [𝜁bt(𝑃bt,dis,𝑡+ 𝑃bt,cha,𝑡) + 𝜁hr(𝐻hr,cha,𝑡+ 𝐻hr,dis,𝑡)
++ 𝜁eb𝐻eb,𝑡+ 𝜁g𝑃g,𝑡+ 𝜁c𝑃c,𝑡+ 𝜁CC𝑃CC,𝑡
++ 𝜁EL𝑃EL,𝑡+ 𝜁r𝑃r,𝑡+ 𝜁a𝑃a,𝑡+ 𝜁th𝑃th,𝑡
++ 𝜁pv𝑃pv,𝑡]𝛥𝑡
+𝐶CO2,𝑡= 𝜁cet(𝑞gCO2,𝑡−𝑞CCO2,𝑡−𝑞ACO2,𝑡)𝛥𝑡
++ 𝜁CO2(𝑞aCO2,𝑡+ 𝑞chCO2,𝑡)𝛥𝑡
+𝐶PV,𝑡= 𝜁cp(𝑃refpv,𝑡−𝑃pv,𝑡)𝛥𝑡
+𝐶CH,𝑡= 𝜁ch(𝑞refch,𝑡−𝑞ch,𝑡)𝛥𝑡
+𝐶AW,𝑡= 𝜁AW,𝑡𝑞AW,𝑡𝛥𝑡
+𝐶EV,𝑡= (𝑞se,dis,𝑡+ 𝜁3𝑞th,dis,𝑡)[𝜁enb(𝐶Bin,𝑡−𝐶Bout,𝑡)
++ 𝜁ent(𝐶Tin,𝑡−𝐶Tout,𝑡)]𝛥𝑡
+(41)
+In Eq. (41), the carbon-related cost 𝐶CO2,𝑡 consists of two parts. 
+The first part, 𝜁cet(𝑞gCO2,𝑡−𝑞CCO2,𝑡−𝑞ACO2,𝑡)𝛥𝑡, represents the carbon 
+trading cost associated with the net accounted CO2 emissions from 
+biogas power generation after carbon capture and free carbon quota 
+allocation. The second part, 𝜁CO2(𝑞aCO2,𝑡+ 𝑞chCO2,𝑡)𝛥𝑡, represents the 
+carbon cost associated with CH4-derived emissions from biological 
+treatment and methanol addition in the denitrification process.
+Eqs. (40) and (41), together with the equipment models in ‘‘Equip-
+ment Models’’ and the operational constraints in ‘‘Operational Con-
+straints of the PV-Integrated WWTP’’, constitute the complete day-
+ahead scheduling model of the PV-integrated WWTP with the methanol 
+synthesis system.
+To improve the numerical tractability of the resulting mixed-integer 
+scheduling model, SOS2-based piecewise linear interpolation
+(D’Ambrosio et al., 2010) is used when necessary in the implementation 
+to represent nonlinear equipment and process characteristics in the 
+WWTP. This treatment is mainly applied to three nonlinear blocks: 
+(i) the anaerobic digestion block, where temperature-dependent biogas 
+production and sludge-heating demand involve nonlinear and bilinear 
+relationships; (ii) the blower aeration block, where aeration power 
+depends nonlinearly on air flow and pollutant-load-related variables; 
+and (iii) the biochemical oxygen demand (BOD) mass-load calculation, 
+where wastewater flow and BOD concentration are multiplied. These 
+approximations preserve the main scheduling-level input–output char-
+acteristics while avoiding direct optimization of strongly nonlinear or 
+bilinear terms.
+Coordinated scheduling model for the WWTP-PDN-WDN alliance
+Water-energy nexus in coordinated scheduling
+The water-energy nexus among the WWTP, PDN, and WDN is 
+illustrated in Fig. 3. The boundaries of the three autonomous entities 
+are defined according to ownership and operational decision-making. 
+The WWTP boundary covers the wastewater treatment units and the 
+coupled energy-conversion devices inside the plant, including PV gen-
+eration, battery storage, anaerobic digestion, biogas generation, carbon 
+capture, electrolysis, and methanol synthesis. The PDN boundary covers 
+the distribution network, distributed wind generation, electrical loads, 
+and the upstream-grid interface. The WDN boundary covers the water 
+distribution pipelines, pumps, water source, and water demand nodes. 
+The cross-boundary interactions considered in this paper include bidi-
+rectional electricity trading between the WWTP and PDN, electricity 
+supply from the PDN to WDN pumps, and reclaimed-water supply 
+from the WWTP to the WDN. Specifically, the WWTP engages in 
+Energy for Sustainable Development 94 (2026) 102063 
+9 
+
+S. Liu et al.
+bidirectional electricity exchange with the PDN and supplies reclaimed 
+water meeting municipal water quality standards to the WDN, while 
+a unidirectional power flow drives the WDN’s pumps from the PDN. 
+Although the WWTP also connects to an external gas network, given 
+its weak coupling with the WDN, the gas network is excluded from this 
+analysis. Consequently, this paper focuses specifically on the interest 
+correlations among the WWTP, PDN, and WDN, which constitute a 
+tripartite game for coordinated scheduling.
+In the coordinated framework, scheduling and pricing have differ-
+ent meanings. Scheduling determines the physical operating decisions 
+and transaction quantities, such as equipment power, pump operation, 
+electricity exchange, and reclaimed-water supply, over the 24-hour 
+horizon. Pricing refers to the settlement prices used for electricity and 
+reclaimed-water transactions among autonomous entities. In this study, 
+pricing has two forms. Exogenous price parameters, such as time-of-use 
+(TOU) electricity prices, benchmark reclaimed-water prices, methanol 
+prices, and biogas prices, are used as input data for operating cost 
+calculation. In contrast, the internal electricity and reclaimed-water 
+settlement prices among the WWTP, PDN, and WDN are endogenous 
+results of the Nash bargaining-based cooperative benefit distribution 
+subproblem.
+Nash bargaining is a prevalent cooperative game theory that has 
+been extensively applied to address multi-entity cooperation and ben-
+efit allocation issues. Typical application scenarios include microgrids 
+(Z. Zhang et al., 2024), integrated energy systems (Wu et al., 2024), 
+virtual power plant coalitions (Gougheri et al., 2022), load aggregators 
+(Wang et al., 2024) and building-integrated photovoltaic systems (Liu 
+et al., 2026). This paper specifically focuses on the cooperation among 
+the WWTP, PDN, and WDN. It is assumed that the three entities form 
+a cooperative alliance to achieve a mutually beneficial outcome via 
+price-quantity negotiation and coordinated scheduling. Different from 
+an additive social-welfare objective, the Nash bargaining objective 
+maximizes the weighted Nash product of the cooperative surplus of 
+all participants. Let 𝑆𝑖= 𝐶0
+𝑖−𝐶𝑖 denote the cost reduction obtained 
+by entity 𝑖 relative to its independent operation, i.e., its disagreement 
+point. The multiplicative form is adopted because it jointly reflects 
+system-wide cooperation and individual rationality: if any participant 
+obtains zero or very small surplus, the Nash product becomes zero 
+or is significantly reduced. Therefore, the solution cannot be highly 
+evaluated only because a single entity achieves a large cost reduction 
+while the other entities gain little benefit. In contrast, an additive 
+objective mainly maximizes the total surplus and may overlook the 
+balance of benefit allocation among autonomous entities.
+As illustrated in Fig. 3, the objective of each entity is to minimize 
+its respective operating cost. The WWTP scheduling model in Eq. (40) 
+describes the hourly operation of treatment equipment, coupled energy-
+conversion devices, storage units, and electricity/reclaimed-water
+transactions under water-quality and multi-energy balance constraints. 
+The PDN is described by the DistFlow model (Wang et al., 2023) to rep-
+resent radial distribution-network power flow, distributed generation, 
+wind curtailment, upstream-grid purchase, and electricity exchange 
+with the WWTP and WDN. The WDN model describes hydraulic con-
+straints, pump operation, water-source supply, water demand, and 
+reclaimed-water intake from the WWTP (Li, 2021). Therefore, the three 
+subsystem models provide the physical basis for the WWTP-PDN-WDN
+coordinated scheduling problem. Detailed PDN and WDN models are 
+provided in Appendix A.
+The Nash bargaining problem among the WWTP, PDN, and WDN 
+can be formulated as follows: 
+⎧
+⎪
+⎨
+⎪⎩
+max
+∏
+𝑖∈𝛺
+(𝐶0
+𝑖−𝐶𝑖)𝑤𝑖
+s.t. 𝐶0
+𝑖≥𝐶𝑖,
+∀𝑖∈𝛺= {A, E, W}
+(42)
+The following specific points require clarification:
+(1) 𝐶0
+𝑖 represents the operating cost of the WWTP, PDN, or WDN 
+under independent operation, which is obtained from the correspond-
+ing independent scheduling model under given electricity and water 
+transaction prices. This value is defined as the disagreement point of 
+entity 𝑖. Accordingly, 𝐶0
+𝑖−𝐶𝑖 represents the cooperative surplus, or 
+equivalently the cost reduction, obtained by entity 𝑖 after participating 
+in the alliance. The constraint 𝐶0
+𝑖≥𝐶𝑖 ensures individual rationality, 
+indicating that no entity accepts a cooperative solution that is worse 
+than its independent operation.
+(2) The Nash bargaining model presented in Eq. (42) can be decom-
+posed into two sub-problems: alliance cost minimization and coopera-
+tive benefit distribution. The first sub-problem uses an additive form 
+to minimize the total operating cost of the alliance, thereby improving 
+overall operational efficiency. The second sub-problem uses the Nash 
+product to allocate the cooperative surplus among entities, thereby 
+ensuring that the benefit distribution is individually rational and rea-
+sonably balanced. To preserve the data privacy of all entities, the 
+A-ADMM (Boyd et al., 2011) is employed to solve these sub-problems.
+(3) The bargaining power weight 𝑤𝑖 reflects the influence or contri-
+bution level of each entity within the cooperation, directly determining 
+its allocated share of the cooperative benefit (Yang et al., 2024). The 
+standard Nash bargaining framework ignores differences in bargain-
+ing power, allocating the benefit based on equal weights. However, 
+given the significant disparities in the water/energy production and 
+consumption characteristics of the WWTP, PDN, and WDN, this paper 
+adopts an asymmetric Nash bargaining approach based on bargaining 
+power weights, specifically focusing on the weight calculation method 
+to reasonably quantify each entity’s contribution to the cooperative 
+alliance.
+Improved calculation method for bargaining power weights
+In existing studies applying asymmetric Nash bargaining to the 
+cooperative operation of multiple energy entities (e.g., microgrids (Z. 
+Zhang et al., 2024), integrated energy systems (Chen et al., 2024; 
+Wu et al., 2024; Yang et al., 2024), and charging stations (Q. Zhang 
+et al., 2024)), the natural exponential function is commonly used to 
+characterize the contribution level of each entity. For instance, Chen 
+et al. (2024) calculates the bargaining power weight of the 𝑖th entity 
+for multi-entity energy sharing using the following formula: 
+⎧
+⎪
+⎪
+⎨
+⎪
+⎪⎩
+𝐸out
+𝑖
+=
+𝑇∑
+𝑡=1
+∑
+𝑗∈𝛺,𝑗≠𝑖
+max(0, 𝑃𝑖𝑗,𝑡),
+𝐸out
+max = max
+𝑖∈𝛺(𝐸out
+𝑖
+)
+𝐸in
+𝑖
+= −
+𝑇∑
+𝑡=1
+∑
+𝑗∈𝛺,𝑗≠𝑖
+min(0, 𝑃𝑖𝑗,𝑡),
+𝐸in
+max = max
+𝑖∈𝛺(𝐸in
+𝑖)
+(43)
+𝑤𝑖= 𝑤out
+𝑖
+−𝑤in
+𝑖= exp
+(
+𝐸out
+𝑖
+𝐸out
+max
+)
+−exp
+(
+−𝐸in
+𝑖
+𝐸in
+max
+)
+(44)
+Eq. (43) indicates that both the power output and input of entity 𝑖
+influence the bargaining power weight. Specifically, a larger trading 
+volume ratio (𝐸out
+𝑖
+∕𝐸out
+max or 𝐸in
+𝑖∕𝐸in
+max) corresponds to a greater 𝑤𝑖. 
+Given that 1 ≤𝑤out
+𝑖
+≤𝑒 and 1∕𝑒≤𝑤in
+𝑖
+≤1, it follows that 𝑤𝑖≥0. 
+Moreover, under identical ratio conditions, the weight derived from 
+energy output is greater than that from energy input.
+For asymmetric Nash bargaining problems involving multi-resource 
+trading among entities (e.g., electricity-carbon quota (Z. Zhang et al., 
+2024), electricity-gas (Wu et al., 2024), electricity-heat (Yang et al., 
+2024), and electricity-hydrogen (Q. Zhang et al., 2024)), weight cal-
+culation methods are generally categorized into two types. The first 
+type (Wu et al., 2024; Yang et al., 2024) calculates the aggregated 
+output and input quantities of various traded resources according to 
+Eq. (45) before determining the weight using Eq. (44). The second type 
+(Q. Zhang et al., 2024; Z. Zhang et al., 2024) calculates the weights for 
+each traded resource before deriving the overall weight. 
+𝐸out
+𝑖
+=
+𝑇∑
+𝑡=1
+𝑍
+∑
+𝑧=1
+∑
+𝑗∈𝛺,𝑗≠𝑖
+max
+(
+0, 𝑃𝑧
+𝑖𝑗,𝑡
+)
+(45)
+Energy for Sustainable Development 94 (2026) 102063 
+10 
+
+S. Liu et al.
+Evidently, the first type of method requires uniform dimensions for 
+traded quantities, which renders it inapplicable to the electricity-water 
+trading problem among the WWTP, PDN, and WDN investigated herein. 
+Therefore, the following analysis focuses on the applicability of the 
+second type of method to the proposed model.
+Following the separated multi-resource weighting methods of Q. 
+Zhang et al. (2024), Z. Zhang et al. (2024), the same input–output 
+weighting functions in Eqs. (43) and (44) are applied separately to 
+electricity and water transactions. Specifically, the electricity trading 
+weight 𝑤𝐸
+𝑖 is calculated using the power transaction quantity 𝑃𝑖𝑗,𝑡, 
+while the water trading weight 𝑤𝑊
+𝑖 is calculated by replacing 𝑃𝑖𝑗,𝑡
+with the water transaction quantity 𝑞𝑖𝑗,𝑡. Subsequently, the overall 
+bargaining power weight 𝑤𝑖 for entity 𝑖 is calculated according to 
+Eq. (46): 
+𝑤𝑖=
+𝜏𝑤E
+𝑖+ (1 −𝜏)𝑤W
+𝑖
+∑
+𝑖∈𝛺
+[𝜏𝑤E
+𝑖+ (1 −𝜏)𝑤W
+𝑖
+]
+(46)
+However, regarding the bargaining problem investigated herein, the 
+three entities differ significantly in their water/energy production and 
+consumption characteristics, with unidirectional water trading occur-
+ring solely between the WWTP and the WDN. This scenario contrasts 
+with the multiple entities with similar trading attributes considered 
+in Q. Zhang et al. (2024), Z. Zhang et al. (2024). If the separated 
+weighting methods of Q. Zhang et al. (2024), Z. Zhang et al. (2024) 
+were directly adopted, namely applying Eqs. (43) and (44) separately 
+to the electricity and water transactions, the water trading weight of 
+the WWTP would remain constant at (𝑒−1), while that of the WDN 
+would remain constant at (1 −1∕𝑒). This occurs because the WWTP 
+only outputs reclaimed water and the WDN only inputs reclaimed water 
+in the unidirectional water transaction. Consequently, the resulting 
+water-side weights cannot reflect variations in reclaimed-water trading 
+volume or seasonal operating conditions. Specifically, for unidirectional 
+water trading, 𝐸out
+A ∕𝐸out
+max = 1 and 𝐸in
+W∕𝐸in
+max = 1 in the water-side 
+calculation, which leads to fixed water-side weights independent of the 
+actual reclaimed-water trading volume.
+To further clarify the need for improving the bargaining-weight cal-
+culation method, three representative approaches are considered in this 
+study. The first is the equal-weight Nash bargaining method, in which 
+all entities are assigned identical bargaining weights. This method is 
+simple but ignores differences in transaction volume and resource con-
+tribution. The second is the separated multi-resource weighting method 
+in Q. Zhang et al. (2024), in which electricity and water weights are 
+calculated separately using Eqs. (43) and (44) and then aggregated. Al-
+though this method can distinguish different traded resources, it leads 
+to fixed water-side weights in the present problem because reclaimed 
+water is traded unidirectionally from the WWTP to the WDN. Therefore, 
+the key issue is not to redefine the input–output weighting functions in 
+Eqs. (43) and (44), but to establish a physically meaningful and dimen-
+sionally consistent conversion between electricity and tertiary-treated 
+reclaimed water before calculating the bargaining weights.
+To this end, this paper proposes an improved bargaining power 
+weight calculation method based on the electricity-to-water ratio. The 
+calculation steps are as follows:
+(1) Given that the water supplied from the WWTP to the WDN is 
+municipal-grade reclaimed water produced through tertiary advanced 
+treatment, the electricity-to-water ratio 𝛽 is defined as the average elec-
+tricity intensity required to produce one unit of tertiary-treated re-
+claimed water: 
+𝛽=
+∑𝑇
+𝑡=1 𝑃te,𝑡𝛥𝑡
+∑𝑇
+𝑡=1 𝑞te,𝑡𝛥𝑡
+(47)
+where 𝛽 has the unit of kWh/m3. Here, ∑𝑇
+𝑡=1 𝑃te,𝑡𝛥𝑡 denotes the total 
+electricity consumption related to the production of tertiary-treated 
+reclaimed water during the scheduling horizon, and ∑𝑇
+𝑡=1 𝑞te,𝑡𝛥𝑡 de-
+notes the total volume of tertiary-treated reclaimed water. There-
+fore, 𝛽 represents the average electricity intensity of producing one 
+unit of municipal-grade tertiary-treated reclaimed water. It should be 
+noted that 𝑃te,𝑡 does not represent the total electricity consumption 
+of the whole WWTP, but only the electricity consumption associated 
+with tertiary-treated reclaimed-water production considered in the 
+electricity-to-water conversion. Since 𝛥𝑡= 1 h in this study, Eq. (47) 
+is numerically equivalent to the original hourly formulation, but the 
+inclusion of 𝛥𝑡 clarifies the dimensional consistency.
+Physically, 𝛽 is not a water price or an empirical preference co-
+efficient. Rather, it serves as an electricity-equivalent conversion fac-
+tor that enables electricity transactions and tertiary-treated reclaimed-
+water transactions to be evaluated on a unified energy-equivalent con-
+tribution scale. The electricity consumption considered in 𝑃te,𝑡 includes 
+the power consumed by the lift pump, return pump, blower, tertiary 
+treatment unit, electric boiler, carbon capture unit, and electrolyzer 
+involved in producing tradable tertiary-treated reclaimed water.
+(2) The traded volume of municipal-grade tertiary-treated reclaimed 
+water between the WWTP and the WDN is converted into an equiva-
+lent electricity quantity using 𝛽. Subsequently, the electricity transac-
+tion quantity and the electricity-equivalent reclaimed-water transaction 
+quantity are jointly used to calculate the bargaining weight: 
+⎧
+⎪
+⎪
+⎨
+⎪
+⎪⎩
+𝐸out
+𝑖
+=
+𝑇∑
+𝑡=1
+∑
+𝑗∈𝛺,𝑗≠𝑖
+[max(0, 𝑃𝑖𝑗,𝑡)𝛥𝑡+ max(0, 𝛽𝑞𝑖𝑗,𝑡𝛥𝑡)]
+𝐸in
+𝑖
+= −
+𝑇∑
+𝑡=1
+∑
+𝑗∈𝛺,𝑗≠𝑖
+[min(0, 𝑃𝑖𝑗,𝑡)𝛥𝑡+ min(0, 𝛽𝑞𝑖𝑗,𝑡𝛥𝑡)]
+(48)
+where 𝑃𝑖𝑗,𝑡𝛥𝑡 and 𝛽𝑞𝑖𝑗,𝑡𝛥𝑡 both have the unit of kWh. Therefore, electric-
+ity and reclaimed-water transactions are aggregated only after being 
+converted into the same electricity-equivalent dimension. The normal-
+ized bargaining weights are then obtained using Eq. (44).
+After the alliance cost minimization subproblem is solved, the calcu-
+lated bargaining power weights 𝑤𝑖 are applied to the cooperative ben-
+efit distribution subproblem. Since the logarithmic transformation is 
+strictly increasing, maximizing the weighted Nash product is equivalent 
+to minimizing the negative weighted logarithmic surplus, which im-
+proves numerical tractability without changing the optimal bargaining 
+solution: 
+⎧
+⎪
+⎪
+⎪
+⎨
+⎪
+⎪
+⎪⎩
+𝐶1 = min
+∑
+𝑖∈𝛺
+(𝐶0
+𝑖−𝐶tran
+𝑖
+)
+𝐶2 = max
+∏
+𝑖∈𝛺
+(𝐶1 + 𝐶tran
+𝑖,new)𝑤𝑖
+= min
+∑
+𝑖∈𝛺
+−𝑤𝑖ln(𝐶1 + 𝐶tran
+𝑖,new)
+(49)
+Solution procedure
+The solution procedure for the coordinated scheduling problem of 
+the WWTP, PDN, and WDN is summarized in Table 1. The calculation 
+process consists of four sequential steps. First, each entity solves its 
+independent operation model to determine the disagreement point. 
+Second, the alliance cost minimization subproblem is solved to ob-
+tain equipment schedules and electricity/reclaimed-water transaction 
+quantities. Third, the bargaining weights are calculated according to 
+the converged transaction quantities. Finally, the cooperative benefit 
+distribution subproblem is solved to determine the internal electricity 
+and reclaimed-water settlement prices. The detailed A-ADMM update 
+equations are provided in Appendix B.
+In the A-ADMM iterations, convergence is evaluated by both primal 
+and dual residuals. The primal residual measures the mismatch between 
+the electricity/reclaimed-water transaction decisions of two interacting 
+entities, while the dual residual reflects the variation of the exchanged 
+variables between two consecutive iterations. The iteration is termi-
+nated only when both residuals satisfy the prescribed convergence 
+thresholds. In addition, the penalty parameter is adaptively adjusted 
+according to the relative magnitudes of the primal and dual residu-
+als, which helps balance feasibility restoration and solution stability. 
+Energy for Sustainable Development 94 (2026) 102063 
+11 
+
+S. Liu et al.
+Table 1
+Pseudocode solution process.
+Algorithm: A-ADMM for coordinated scheduling of WWTP, PDN, and WDN
+Input: Equipment and load parameters; market prices including electricity, biogas, 
+water, and methanol; algorithmic settings such as penalty parameter 𝜌 and 
+convergence thresholds 𝜎, 𝜉; and initial Lagrange multipliers.
+Phase I: Social cost minimization subproblem
+ 
+(1) 
+Execute A-ADMM iterations: update equipment schedules, trading 
+electricity/reclaimed-water quantities, Lagrange multiplier 𝜆1, penalty factor 
+𝜌1, primal and dual residuals until convergence.
+ 
+(2) 
+Intermediate step: calculate comprehensive bargaining weights based on the 
+converged trading quantities from Phase I.
+ 
+Phase II: cooperative benefit distribution subproblem
+ 
+(3) 
+Execute A-ADMM iterations: update internal electricity/reclaimed-water 
+settlement prices, Lagrange multiplier 𝜆2, and penalty factor 𝜌2 based on 
+bargaining weights until convergence.
+ 
+Output: Final equipment schedules, trading electricity/reclaimed-water quantities, 
+and internal settlement prices.
+Fig. 4. Topology of the test system.
+Therefore, the proposed distributed solution procedure reduces the 
+dependence on a fixed empirical penalty parameter and improves the 
+numerical stability of the A-ADMM iterations.
+Case studies
+Basic data and case design
+As illustrated in Fig. 4, the case study employs a joint coupled sys-
+tem comprising an IEEE 33-bus PDN, a 12-node WDN, and a medium-
+sized municipal WWTP with a design capacity of 60,000 m3/d and an 
+hourly average inflow baseline profile shown in Appendix D. Specif-
+ically, the WWTP is connected to bus E15 of the PDN and supplies 
+reclaimed water meeting municipal water quality standards to the WDN 
+via node W10; meanwhile, the PDN powers three electric water pumps 
+within the WDN through buses E17, E24, and E27. The proposed model 
+is solved using YALMIP with Gurobi and Mosek solvers in MATLAB 
+R2024a. All computations were performed on a Lenovo Legion Y7000P 
+IRX9 laptop equipped with an Intel(R) Core(TM) i7-14700HX 2.10 GHz 
+CPU and 16 GB of RAM. In the reported simulations, no infeasibility 
+or numerical failure was observed during the solution of the local 
+subproblems.
+The capacity configuration of the key equipment in the PV-
+integrated WWTP is summarized in Table 2. The remaining technical, 
+environmental, and economic parameters were not arbitrarily assumed; 
+instead, they were taken from published literature, official tariff docu-
+ments, and publicly available market data. Specifically, the wastewater-
+treatment-related parameters, including the hydraulic coefficients of 
+the lift and return pumps, biochemical reaction constants, aeration 
+and blower parameters, anaerobic-digestion temperature and heat-
+transfer parameters, tertiary-treatment electricity intensity, equipment 
+Table 2
+Capacity configuration of key equipment.
+ Subsystem
+Equipment
+Parameter
+Value
+Unit 
+ 
+Energy 
+Supply & 
+Conversion
+PV System
+Rated capacity
+1600
+kW 
+ 
+Biogas gen.
+Max power output
+60
+kW 
+ 
+Electric boiler
+Max heating power
+40
+kW 
+ 
+Electrolyzer
+Max input power
+434
+kW 
+ 
+Carbon capture
+Max input power
+100
+kW 
+ 
+Energy Storage
+Battery
+Rated capacity
+1000
+kWh 
+ 
+Max charge power
+120
+kW 
+ 
+Max discharge power
+200
+kW 
+ 
+Thermal tank
+Rated capacity
+200
+kWh 
+ 
+Max cha./dis. power
+40
+kW 
+ 
+Wastewater 
+Treatment
+Regulating tank
+Max storage vol.
+6000
+m3 
+ 
+Secondary tank
+Max storage vol.
+6000
+m3 
+ 
+Tertiary tank
+Max storage vol.
+6000
+m3 
+ 
+Lift pump
+Max flow (per unit)
+700
+m3/h 
+Fig. 5. The electricity prices and water prices.
+Table 3
+Comparison schemes.
+ Scheme Operation
+Methanol synthesis Weight
+Nash bargaining 
+ 1
+Independent No
+–
+–
+ 
+ 2
+Independent Yes
+–
+–
+ 
+ 3
+Coordinated Yes
+Equal
+Standard
+ 
+ 4
+Coordinated Yes
+Q. Zhang et al. (2024) Asymmetric
+ 
+ 5
+Coordinated Yes
+Proposed
+Asymmetric
+ 
+efficiencies, O&M coefficients, operational carbon-emission accounting 
+factors, biogas purchase/selling prices, and the main-grid electricity 
+purchase price for the PDN, were adopted from Zhao et al. (2024), 
+which provides a detailed water-energy-carbon coordinated scheduling 
+model for urban WWTPs. The capacity and equipment parameters are 
+provided in the online dataset (Liu, 2026). The capital-cost parameters 
+of the methanol synthesis system follow Hydrogen Energy Project 
+Department (2023), International Renewable Energy Agency (2020), 
+Sinopec News Network (2025), as explained in ‘‘Impact of Methanol 
+Production on WWTP Scheduling’’.
+As shown in Fig. 5, the TOU electricity prices used for the WWTP 
+were set with reference to the 2026 time-of-use electricity pricing 
+scheme of Chongqing. The biogas purchase/selling prices and the main-
+grid electricity purchase price for the PDN were adopted from Zhao 
+et al. (2024). The external methanol purchase price was set to 2800 
+CNY/t according to the local spot-market quotation of methanol (Sun-
+Sirs, 2026). The benchmark reclaimed-water selling price was set to 
+2.35 CNY/m3 according to the sixth-period wastewater-treatment ser-
+vice settlement price approved for Chongqing Water Group (Chongqing 
+Water Group Co., Ltd., 2024a). The water-source prices of the WDN 
+were set to 1.72 CNY/m3 and 1.99 CNY/m3 according to publicly avail-
+able tap-water pricing information for Chongqing (Chongqing Water 
+Group Co., Ltd., 2024b).
+To verify the effectiveness of the proposed WWTP scheduling model 
+and the Nash bargaining-based coordinated scheduling model for the
+Energy for Sustainable Development 94 (2026) 102063 
+12 
+
+S. Liu et al.
+Table 4
+Cost comparison between Scheme 1 and Scheme 2 (Unit: CNY)
+ Item
+Scheme 1
+Scheme 2 
+ Energy & Resources
+ Electricity Cost
+−859.92
+−315.78 
+ Gas Cost
+−167.28
+76.04
+ 
+ Methanol Cost
+2703.68
+696.60
+ 
+ Water Sales Revenue
+1151.74
+1151.74 
+ Carbon & Environment
+ Carbon-related Costs
+262.67
+61.22
+ 
+ Environmental Benefit
+201.60
+201.60
+ 
+ Operation & Investment
+ PV Curtailment Penalty
+498.33
+136.44
+ 
+ O&M Cost
+164.20
+188.85
+ 
+ Methanol System Inv.
+0.00
+1433.00 
+ Total Cost
+1248.42
+923.10 
+WWTP-PDN-WDN alliance, five comparison schemes are designed as 
+listed in Table 3. In Schemes 1 and 2, the WWTP, PDN, and WDN 
+are all included in the test system, but they optimize their own op-
+eration independently without cooperative bargaining. The electricity 
+and water prices are treated as exogenous market parameters, and no 
+internal transaction pricing is optimized. Schemes 1 and 2 differ only 
+in whether the WWTP is equipped with the methanol synthesis system, 
+and they are used to evaluate the impact of methanol synthesis on 
+the WWTP. In Schemes 3 to 5, the WWTP, PDN, and WDN participate 
+in coordinated operation. The transaction quantities and equipment 
+schedules are optimized in the alliance cost minimization subproblem, 
+while the internal electricity and reclaimed-water settlement prices are 
+determined in the cooperative benefit distribution subproblem. The 
+difference among Schemes 3 to 5 lies in the benefit allocation and 
+bargaining weight settings: Scheme 3 adopts equal weights, Scheme 
+4 uses the method in Q. Zhang et al. (2024), and Scheme 5 uses the 
+proposed electricity-to-water ratio-based method.
+The case-study design is aligned with the research objectives. ‘‘Im-
+pact of Methanol Production on WWTP Scheduling’’ evaluates the 
+effect of CO2 hydrogenation for methanol synthesis on WWTP op-
+eration. ‘‘Comparison of Coordinated and Independent Operations’’ 
+verifies whether Nash bargaining improves the coordinated operation 
+of the WWTP-PDN-WDN alliance. ‘‘Effectiveness of the Improved Cal-
+culation Method for Bar- gaining Power Weights’’ compares different 
+bargaining-weight calculation methods under summer and winter con-
+ditions to examine the adaptability of the proposed electricity-to-water 
+ratio-based method.
+Impact of methanol production on WWTP scheduling
+This section compares Scheme 1 and Scheme 2 to illustrate the 
+impact of methanol synthesis on the operating costs and energy-carbon 
+performance of the WWTP under the operational carbon-accounting 
+boundary defined in ‘‘Day-ahead Scheduling Model for the PV-
+Integrated WWTP with Methanol Synthesis’’. Since both schemes are 
+subject to the same wastewater flow and effluent-quality constraints, 
+the comparison does not rely on relaxing water-quality requirements. 
+Instead, it focuses on how the CO2 hydrogenation process affects 
+external methanol purchase, electrolyzer oxygen supply, blower energy 
+consumption, biogas utilization, carbon capture, PV accommodation, 
+and carbon-related costs.
+The detailed cost breakdown for both schemes is presented in Table 
+4. It is evident that the total cost for Scheme 1 is 1248.42 CNY, whereas 
+that for Scheme 2 is 923.10 CNY, indicating a significant improvement 
+in economic performance. A specific analysis is provided as follows:
+(1) In Scheme 1, the methanol purchase cost stands at 2703.68 
+CNY. In Scheme 2, owing to the adoption of the CO2 hydrogenation for 
+methanol synthesis process, the methanol purchase cost declines from 
+Fig. 6. Operating curves for electrolyzer and carbon capture unit.
+2703.68 CNY in Scheme 1 to 696.60 CNY. (representing a reduction of 
+over 74%).
+(2) In Scheme 1, as the PV output suffices to meet the electricity 
+demand of the WWTP, the utilization rate of the biogas generator 
+remains low, allowing the WWTP to generate an economic benefit 
+by selling surplus biogas. Conversely, Scheme 2 utilizes the CO2 cap-
+tured from biogas generation for methanol synthesis. This leads to a 
+significant increase in the utilization rate of the biogas generator, to 
+the extent that the procurement of external biogas is necessitated to 
+support its operation. On the other hand, in Scheme 2, the increased 
+biogas power generation elevates the carbon quota, significantly boost-
+ing carbon trading revenue compared to Scheme 1. Meanwhile, the 
+implementation of carbon capture technology reduces the accounted 
+net carbon emissions within the operational carbon-accounting bound-
+ary. Consequently, the dual contribution of increased carbon trading 
+revenue and reduced accounted net emissions results in a reduction of 
+approximately 76.69% in carbon-related costs.
+(3) In Scheme 1, although the WWTP exports a substantial amount 
+of electricity to the PDN after meeting its internal treatment demands, a 
+significant amount of PV power is still curtailed due to the high PV out-
+put. In contrast, Scheme 2 incorporates the electrolyzer for methanol 
+synthesis, which increases the internal power demand. Consequently, 
+the PV curtailment penalty decreases by approximately 72.62% com-
+pared to Scheme 1; however, this is accompanied by a marked reduc-
+tion in revenue from electricity sales.
+(4) Compared to Scheme 1, Scheme 2 introduces capital expenditure 
+(CAPEX) for the methanol synthesis system. Key parameters include a 1 
+t/d methanol yield at 5500 CNY/(t/year) (Hydrogen Energy Project De-
+partment, 2023), a 1.375 t/d CO2 capture capacity at 600 CNY/(t/year) 
+(Sinopec News Network, 2025), and a 434 kW electrolyzer at 5000 
+CNY/kW (International Renewable Energy Agency, 2020). Total CAPEX 
+is amortized daily using a Capital Recovery Factor (CRF) with a 15-
+year lifespan and an 8% discount rate. Despite potential real-world 
+CAPEX fluctuations for the methanol synthesis system, feasibility ul-
+timately hinges on whether operational savings offset this amortized 
+cost. Simulations confirm Scheme 2’s total day-ahead cost, inclusive 
+of amortization, remains significantly lower than that of Scheme 1. 
+This validates the integrated process’s current economic viability, with 
+profitability poised to expand as economies of scale reduce future 
+equipment costs.
+The operation curves of the electrolyzer and the carbon capture 
+unit in Scheme 2 are presented in Fig. 6. Given that the methanol 
+synthesis unit produces methanol using hydrogen and CO2 at a fixed 
+ratio, the power consumption of the electrolyzer and the carbon capture 
+unit exhibits a corresponding proportional relationship. Furthermore, 
+to minimize operating costs, the power consumption of both devices 
+is significantly higher during periods characterized by low electricity 
+prices and high PV output compared to other periods.
+Energy for Sustainable Development 94 (2026) 102063 
+13 
+
+S. Liu et al.
+Table 5
+Cost for each entity in Scheme 2 and Scheme 5 (Unit: CNY)
+ Scheme
+WWTP
+PDN
+WDN
+Cost
+ 
+ 2
+923.10
+12 095.14
+16 179.22
+29 197.46 
+ 5
+−4014.09
+8757.78
+14 825.29
+19 568.99 
+ Change
+−534.85%
+−27.59%
+−8.37%
+−32.98% 
+Fig. 7. Electricity trading under coordinated scheduling.
+Fig. 8. Water trading under coordinated scheduling.
+Comparison of coordinated and independent operations
+This section compares Scheme 2 and Scheme 5 to demonstrate the 
+impact of the proposed Nash bargaining model on the scheduling and 
+operation of each entity. The influence of different weight calcula-
+tion methods on the benefits of each entity will be further analyzed 
+in the subsequent subsection. The analysis focuses on three aspects: 
+economic performance, electricity/reclaimed-water coordination, and 
+the operational response of the WWTP. This structure links the nu-
+merical results with the objective of day-ahead water-energy-carbon 
+coordinated scheduling.
+The operating costs of each entity and the total system costs for both 
+Schemes are presented in Table 5. In the table, Increment % denotes 
+the percentage increment of Scheme 5 relative to Scheme 2, while the 
+total cost of Scheme 5 represents the total cost under cooperation. As 
+observed in Table 5, Scheme 5, based on Nash bargaining, achieves 
+a cost saving of 9628.47 CNY (a significant reduction of 32.98% in 
+total cost). Furthermore, the costs for all entities are reduced to varying 
+degrees, with the WWTP exhibiting the most significant economic 
+benefit.
+The trading volume results are illustrated in Figs. 7 and 8, while the 
+computational performance and convergence behavior of the two A-
+ADMM subproblems are further discussed in ‘‘Computational Scalabil-
+ity and Robustness’’. Detailed entity-level iteration curves are retained 
+in Appendix C. During periods of high photovoltaic output, the WWTP 
+sells electricity to the PDN and purchases electricity from the PDN 
+during other times, achieving full utilization of photovoltaic energy. 
+The amount of electricity purchased by the WDN from the PDN is 
+Fig. 9. Transaction prices of electricity and water in Scheme 5.
+Fig. 10. Electricity and water purchased from outside the cooperation.
+closely tied to its water demand. By purchasing large volumes of water 
+from the WWTP, the WDN reduces its own costs while strengthening 
+the close cooperative relationship among the three entities.
+It should be noted that the prices shown in Fig. 9 are endoge-
+nous internal settlement prices obtained from the cooperative benefit 
+distribution subproblem, rather than exogenous market prices. As il-
+lustrated in Fig. 9 and compared with Fig. 5, the bargaining model 
+yields an optimal reclaimed-water settlement price of 1.67 CNY/m3. 
+This significantly undercuts external sources (1.72 and 1.99 CNY/m3), 
+securing stable revenues for the WWTP while substantially reducing 
+the WDN’s water sourcing costs. Crucially, the internal electricity price 
+functions as a self-adjusting profit-sharing mechanism to balance these 
+water-side benefits. During periods of surplus PV generation, the model 
+suppresses the WWTP’s electricity selling price by approximately 50% 
+relative to the main grid tariff (0.48 CNY/kWh). This effectively trans-
+fers a portion of the WWTP’s water-sales revenue to compensate the 
+PDN for absorbing surplus PV generation, thereby averting curtailment 
+penalties for the WWTP. Conversely, during PV deficits or rigid WDN 
+pumping periods, localized power scarcity drives internal electricity 
+prices above standard TOU rates. This upward adjustment prevents the 
+WDN from monopolizing coordination benefits, obligating it to share its 
+water-cost savings to offset the PDN’s increased power supply burden. 
+Rather than a unilateral market intervention by the PDN, this dynamic 
+price differentiation is an intrinsic outcome of the Nash bargaining 
+model aimed at global cost minimization. Following the optimization 
+of spatiotemporal load shifting, this pricing mechanism guarantees fair 
+economic compensation, thereby ensuring the long-term sustainability 
+of the alliance.
+As illustrated in Fig. 10, the PDN and WDN in Scheme 5 substan-
+tially reduce their reliance on external power and water procurement 
+(decreasing by 644.79 kWh and 5102.27 m3, respectively). Instead, 
+they shift toward purchasing the required electricity and water from 
+the WWTP. Consequently, the WWTP’s revenue from electricity and 
+water sales increases significantly. Therefore, the WWTP emerges as 
+the primary beneficiary of this cooperation.
+By comparing the day-ahead optimal scheduling results shown in 
+Figs. 11 and 12, the advantages of the proposed strategy regarding 
+Energy for Sustainable Development 94 (2026) 102063 
+14 
+
+S. Liu et al.
+Fig. 11. Equipment power consumption of the WWTP in Scheme 2.
+Fig. 12. Equipment power consumption of the WWTP in Scheme 5.
+Fig. 13. PDN electrical load in Scheme 2.
+load smoothing and resource optimization are clearly observable. In 
+the independent operation, the decision-making of the WWTP is con-
+strained by the local TOU Response cost-minimization objective. Due to 
+the exclusive reliance on internal resources and the lack of coordination 
+with external networks, flexible loads (e.g., electrolyzers and carbon 
+capture units) are forced to overlap with the rigid loads of wastewater 
+treatment. This superposition results in a significant power peak of 
+1473 kW during the midday period.
+Furthermore, as evidenced by Fig. 13, the PDN operates within 
+rigid boundaries in the independent operation, strictly adhering to 
+established unit commitments and upstream power purchase plans. 
+Confronted with the strong stochasticity of the WWTP’s surplus PV 
+power during midday, the PDN lacks the incentive and mechanism 
+Fig. 14. PDN electrical load in Scheme 5.
+Fig. 15. The PV curtailment of the WWTP.
+to real-time down-regulate its conventional generation units to re-
+serve accommodation space. Consequently, the WWTP is forced to 
+curtail PV generation due to power limits at the point of common 
+coupling. Conversely, after introducing the WWTP-PDN-WDN coor-
+dinated mechanism, the system adopts a game-theoretic strategy of
+determining transaction volume prior to pricing. This strategy liberates 
+the WWTP’s device scheduling from being solely constrained by in-
+stantaneous electricity prices; instead, it optimizes operations with 
+the objective of global cost minimization for the three-entity alliance. 
+Under this mechanism, the WWTP’s operation curve exhibits distinct
+peak shaving and valley filling characteristics: peak power is reduced to 
+1082 kW (a decrease of approximately 26.54%), while valley power 
+increases from 204 kW to 385 kW.
+Additionally, Fig. 14 indicates that in the Coordinated operation, 
+the PDN integrates the WWTP into its economic dispatch framework. 
+During periods of peak PV output at the WWTP, the PDN responds 
+to the global cost minimization objective by actively down-regulating 
+its internal controllable units or reducing power purchases from the 
+main grid. This creates an accommodation gap for the surplus energy. 
+Furthermore, the substantial increase in traded water volume between 
+the WWTP and the WDN leads to increased power consumption for 
+tertiary treatment. Collectively, these actions facilitate superior PV ac-
+commodation, achieving 100% utilization of photovoltaic generation, 
+as shown in Fig. 15.
+Effectiveness of the improved calculation method for bargaining power 
+weights
+‘‘Impact of Methanol Production on WWTP Scheduling’’ and ‘‘Com-
+parison of Coordinated and Independent Operations’’ present the results 
+for a typical summer day. This section further supplements the cal-
+culation results for a typical winter day to verify the effectiveness of 
+the proposed improved bargaining power weight calculation method. 
+The comparison focuses on three aspects: whether the method can 
+Energy for Sustainable Development 94 (2026) 102063 
+15 
+
+S. Liu et al.
+Table 6
+Bargaining power weights and benefit improvements for each entity in different schemes.
+ Season
+Entity
+Elec. (kWh)
+Water (m3)
+Scheme 3
+Scheme 4
+Proposed
+ 
+Output
+Input
+Output
+Input
+𝑤𝑖
+benefit (CNY)
+𝑤E
+𝑖
+𝑤W
+𝑖
+𝑤𝑖
+benefit (CNY)
+𝑤𝑖
+benefit (CNY) 
+ 
+Summer
+PDN
+5615.04
+3940.07
+–
+–
+0.33
+3201.58
+1.33
+–
+0.21
+2014.23
+0.35
+3337.36
+ 
+ 
+WDN
+–
+1181.16
+–
+5592.33
+0.33
+3215.09
+0.27
+0.63
+0.14
+1351.94
+0.14
+1353.93
+ 
+ 
+WWTP
+4433.88
+3940.07
+5592.33
+–
+0.33
+3211.69
+2.35
+1.72
+0.65
+6261.75
+0.51
+4937.19
+ 
+ 
+Winter
+PDN
+5629.75
+1558.65
+–
+–
+0.33
+2792.63
+1.99
+–
+0.37
+3094.37
+0.45
+3763.42
+ 
+ 
+WDN
+–
+783.26
+–
+4468.25
+0.33
+2782.72
+0.15
+0.63
+0.14
+1170.84
+0.12
+1003.58
+ 
+ 
+WWTP
+1558.65
+4846.49
+4468.25
+–
+0.33
+2787.81
+0.95
+1.72
+0.49
+4097.95
+0.43
+3596.16
+ 
+distinguish the contribution differences among the WWTP, PDN, and 
+WDN; whether it can handle electricity-water transactions with dimen-
+sional consistency; and whether it can reflect seasonal changes in PV 
+output, wastewater treatment volume, and WDN water demand. Com-
+pared with the summer scenario, the PV output, wastewater treatment 
+volume, and water demand of the WDN significantly decrease during 
+the typical winter day; detailed data are provided in Appendix D. The 
+bargaining power weights and benefit enhancements for each entity 
+under the three coordinated scheduling schemes are summarized in 
+Table 6. As observed from Table 6:
+(1) Scheme 3 represents the equal-weight Nash bargaining bench-
+mark. Since all entities are assigned the same bargaining weight, the 
+cooperative benefit is distributed almost equally. This scheme is simple 
+but cannot reflect the differences in electricity output, electricity input, 
+reclaimed-water supply, and reclaimed-water consumption among the 
+three entities.
+(2) Scheme 4 represents the existing separated multi-resource
+weighting method in Q. Zhang et al. (2024). Although this method can 
+separately calculate electricity-related and water-related weights using 
+Eqs. (43) and (44), it is not fully suitable for the WWTP-PDN-WDN
+problem. The reason is that reclaimed water is traded only from the 
+WWTP to the WDN. Therefore, the water-related weight of the WWTP 
+remains fixed at 1.72, and that of the WDN remains fixed at 0.63 in 
+both summer and winter. This indicates that the existing method cannot 
+fully capture the seasonal variation in water-side contribution under 
+unidirectional reclaimed-water trading.
+(3) Scheme 5 adopts the proposed electricity-to-water ratio-based 
+method. By converting tertiary-treated reclaimed-water transactions 
+into equivalent electricity quantities, the proposed method jointly eval-
+uates electricity and water contributions on a unified scale. In summer, 
+the WWTP provides both surplus electricity and a large amount of 
+reclaimed water, and thus obtains the highest bargaining weight of 
+0.51. In winter, the PV output and reclaimed-water transaction volume 
+decrease, reducing the WWTP’s weight from 0.51 to 0.43. Meanwhile, 
+the PDN’s relative contribution increases, and its weight rises from 
+0.35 to 0.45. The WDN’s weight slightly decreases from 0.14 to 0.12 
+because both its reclaimed-water intake and electricity demand for 
+pumping decline. These results show that the proposed method avoids 
+the fixed water-weight problem of Scheme 4 and more accurately re-
+flects seasonal changes in each entity’s contribution to the cooperative 
+alliance.
+Computational scalability and robustness
+Computational performance
+To further evaluate the computational performance of the proposed 
+large-scale mixed-integer coordinated scheduling model, the conver-
+gence behavior and computational time of the A-ADMM-based solution 
+are analyzed in this section. The A-ADMM iterations of Scheme 5 
+are summarized in Fig. 16, where P1 denotes the scheduling and 
+transaction-quantity optimization subproblem, and P2 denotes the in-
+ternal settlement pricing and cooperative benefit distribution subprob-
+lem.
+As shown in Fig. 16, the two A-ADMM subproblems both reach 
+convergence under their prescribed primal and dual residual tolerances. 
+Fig. 16. Convergence behavior of the proposed A-ADMM algorithm.
+For P1, the primal and dual residual tolerances are both set to 10−2. Fig. 
+16(a) shows that the cost trajectories of the WWTP, PDN, WDN, and the 
+total alliance gradually stabilize during the scheduling and transaction-
+quantity optimization process. P1 converges after 54 iterations, with a 
+total computational time of 590.22 s. Although P1 requires fewer iter-
+ations than P2, it involves a much larger number of decision variables, 
+including the scheduling decisions of the WWTP, PDN, and WDN as 
+well as their expected transaction quantities; therefore, each iteration 
+is computationally more demanding.
+For P2, the primal and dual residual tolerances are both set to 10−3. 
+A stricter tolerance is adopted because the exchanged variables in P2 
+are settlement prices, whose numerical magnitudes are smaller than 
+transaction quantities and therefore require higher precision. As shown 
+in Fig. 16(b), the bargaining variables of the three entities converge to 
+stable values after the internal settlement pricing iterations. P2 reaches 
+convergence after 87 iterations, with a total computational time of 
+136.79 s. Although P2 requires more iterations, it only optimizes the 
+transaction prices for cooperative benefit distribution, and thus each 
+iteration is relatively simple.
+These results indicate that the proposed A-ADMM-based distributed 
+solution can stably coordinate both physical scheduling decisions and 
+cooperative benefit allocation. During the solution process, the WWTP, 
+PDN, and WDN only need to exchange their expected transaction quan-
+tities in P1 and expected transaction prices in P2. Detailed equipment 
+parameters, user data, network topology, and other private operational 
+Energy for Sustainable Development 94 (2026) 102063 
+16 
+
+S. Liu et al.
+information are not exchanged, which helps protect the privacy of 
+cooperative participants.
+Scalability and solver robustness
+The scalability of the proposed WWTP-PDN-WDN coordinated
+scheduling model is mainly supported by the mathematical tractability 
+of the subsystem models. For the PDN, the DistFlow-based power-
+flow model is transformed into a second-order cone programming 
+problem through second-order cone relaxation (Wang et al., 2023). 
+When the number of distribution-network buses increases, the number 
+of power-flow variables and network constraints increases accordingly, 
+but the conic optimization structure of the PDN model remains un-
+changed. For the WDN, after introducing the flow-direction variable, 
+the bilinear hydraulic terms are handled using McCormick envelope 
+techniques (Li, 2021), thereby reformulating the WDN model as a 
+mixed-integer convex optimization problem. Similarly, when the num-
+ber of water-network nodes or pipes increases, the number of hydraulic 
+variables and constraints increases, while the mixed-integer convex 
+structure of the WDN model is preserved. For the WWTP, nonlinear 
+and bilinear relationships in modules such as temperature-dependent 
+anaerobic digestion, blower aeration, and BOD mass-load calculation 
+are represented by SOS2-based piecewise linear interpolation when 
+necessary. Therefore, the WWTP model is also transformed into a 
+tractable mixed-integer optimization formulation.
+With the above tractability treatments, the local models of the PDN, 
+WDN, and WWTP can be solved by mature commercial solvers such 
+as Gurobi and Mosek. Therefore, the proposed coordinated scheduling 
+model remains applicable to larger urban water-energy systems with 
+more distribution-network buses or water-network nodes, although the 
+computational time may increase with the number of variables, integer 
+variables, and network constraints. In the reported simulations, all local 
+subproblems were solved successfully, and the A-ADMM residuals con-
+verged within the prescribed tolerances, indicating acceptable solver 
+robustness for the tested WWTP-PDN-WDN system.
+Conclusion
+This study investigates a PV-integrated WWTP utilizing CO2 hydro-
+genation for methanol synthesis and proposes a day-ahead scheduling 
+model for the WWTP, together with an asymmetric Nash bargaining 
+model for coordinated scheduling among the WWTP, PDN, and WDN. A 
+joint coupled system, consisting of a medium-sized WWTP, the IEEE 33-
+node PDN, and a 12-node WDN, is employed as a test case to verify the 
+effectiveness of the scheduling models. The simulation results indicate 
+that:
+• The CO2 hydrogenation for methanol synthesis process reduces 
+the WWTP operating cost, facilitates PV consumption, and in-
+creases carbon trading revenue, demonstrating economic and 
+low-carbon advantages.
+• Compared with the independent operation of the WWTP, PDN, 
+and WDN, Nash bargaining reduces the total social cost by 
+32.98% while improving the benefits of all three entities, achiev-
+ing coordination between individual and collective interests.
+• The proposed electricity-to-water ratio-based bargaining-weight 
+method converts tertiary-treated reclaimed-water transactions 
+into electricity-equivalent quantities. Compared with equal-
+weight Nash bargaining and the separated multi-resource weight-
+ing method in Q. Zhang et al. (2024), it avoids fixed water-
+side weights under unidirectional water trading and better re-
+flects seasonal changes in entity contributions, thereby reducing 
+the reclaimed-water settlement price and mitigating the WDN’s 
+short-term cash flow pressure.
+It should be noted that the proposed WWTP model is developed for 
+hourly energy management and day-ahead water-energy-carbon coordi-
+nated scheduling, rather than for detailed biochemical process control. 
+Therefore, dynamic biological kinetics, sludge-age evolution, nutrient 
+concentration fluctuations, microbial community dynamics, and con-
+centration propagation inside treatment units are simplified in the 
+present model. Future work will further investigate how these dynamic 
+wastewater-treatment processes can be represented in a form compat-
+ible with hourly day-ahead scheduling, thereby enhancing the process 
+fidelity of scheduling models for energy management of WWTPs and 
+coordinated operation.
+CRediT authorship contribution statement
+Shibo Liu: Writing – review & editing, Writing – original draft, Visu-
+alization, Validation, Software, Resources, Methodology, Investigation, 
+Funding acquisition, Formal analysis. Shiyi Shi: Project administra-
+tion, Data curation. Hailong Cui: Investigation, Conceptualization. Xia 
+Zhao: Writing – review & editing, Writing – original draft, Supervision.
+Funding
+This research did not receive any specific grant from funding agen-
+cies in the public, commercial, or not-for-profit sectors.
+Declaration of competing interest
+The authors declare that they have no known competing finan-
+cial interests or personal relationships that could have appeared to 
+influence the work reported in this paper.
+Appendix A. Scheduling models for the PDN and WDN
+A.1. PDN scheduling model
+A.1.1. PDN constraints
+The PDN is described using the DistFlow model. This radial PDN 
+can be represented as a directed graph (p, p), where p denotes the 
+node set and p denotes the branch set. For each branch (𝑖, 𝑗) ∈p, 
+where 𝑟𝑖𝑗+ 𝑗𝑥𝑖𝑗 is the series impedance, 𝑃𝑖𝑗+ 𝑗𝑄𝑖𝑗 is the branch power 
+from node 𝑖 to 𝑗, and 𝑃𝑖+ 𝑗𝑄𝑖 is the injection power at node 𝑖∈p. 
+𝑃𝑖𝑗,𝑡−𝑟𝑖𝑗𝑙𝑖𝑗,𝑡+ 𝑃𝑗,𝑡=
+∑
+𝑘∶𝑗→𝑘
+𝑃𝑗𝑘,𝑡
+(50)
+𝑄𝑖𝑗,𝑡−𝑥𝑖𝑗𝑙𝑖𝑗,𝑡+ 𝑄𝑗,𝑡=
+∑
+𝑘∶𝑗→𝑘
+𝑄𝑗𝑘,𝑡
+(51)
+𝑣𝑖,𝑡−𝑣𝑗,𝑡= 2 (𝑟𝑖𝑗𝑃𝑖𝑗,𝑡+ 𝑥𝑖𝑗𝑄𝑖𝑗,𝑡
+) −
+(
+𝑟2
+𝑖𝑗+ 𝑥2
+𝑖𝑗
+)
+𝑙𝑖𝑗,𝑡
+(52)
+𝑃2
+𝑖𝑗,𝑡+ 𝑄2
+𝑖𝑗,𝑡= 𝑣𝑖,𝑡𝑙𝑖𝑗,𝑡
+(53)
+Where 𝑙𝑖𝑗 represents the square of the current in branch (𝑖, 𝑗), and 𝑣𝑖
+represents the square of the voltage at node 𝑖.
+Eqs. (50) and (51) describe the node balance relationships at node 
+𝑗∈p. Eq. (52) represents Ohm’s law, while Eq. (53) describes the 
+branch power for branch 𝑗∈p. For the PDN connected to electrically 
+driven pumps at the WWTP and the WDN, the injection power 𝑃𝑗,𝑡 and 
+reactive power 𝑄𝑗,𝑡 at node 𝑗 are: 
+𝑃𝑗,𝑡= 𝑃E,𝑗,𝑡+ 𝑃w,𝑗,𝑡+ 𝑃AE,𝑗,𝑡−𝑃l,𝑗,𝑡−𝑃EW,𝑗,𝑡−𝑃EA,𝑗,𝑡
+(54)
+𝑄𝑗,𝑡= 𝑄E,𝑗,𝑡+ 𝑄w,𝑗,𝑡+ 𝑄AE,𝑗,𝑡−𝑄l,𝑗,𝑡
+(55)
+Where 𝑃E,𝑗,𝑡 and 𝑄E,𝑗,𝑡 represent the active and reactive power of the 
+power source, respectively. 𝑃w,𝑗,𝑡 and 𝑄w,𝑗,𝑡 denote the active and 
+reactive power of the wind power generation, 𝑃EW,𝑗,𝑡 represents the 
+electrical power of the electric drive pump connected to node 𝑗, 𝑃EA,𝑗,𝑡
+Energy for Sustainable Development 94 (2026) 102063 
+17 
+
+S. Liu et al.
+and 𝑃AE,𝑗,𝑡 denote the active power obtained from and returned to the 
+PDN by the WWTP, respectively, and 𝑃l,𝑗,𝑡 and 𝑄l,𝑗,𝑡 denote the active 
+and reactive load, respectively.
+In addition to the aforementioned power flow equations constraints, 
+the following constraints also apply: 
+⎧
+⎪
+⎪
+⎨
+⎪
+⎪⎩
+𝑙min
+𝑖𝑗
+≤𝑙𝑖𝑗,𝑡≤𝑙max
+𝑖𝑗
+,
+∀(𝑖, 𝑗) ∈P
+𝑣min
+𝑗
+≤𝑣𝑗,𝑡≤𝑣max
+𝑗
+,
+∀𝑗∈P
+𝑃min
+𝑖𝑗
+≤𝑃𝑖𝑗,𝑡≤𝑃max
+𝑖𝑗
+,
+∀(𝑖, 𝑗) ∈P
+𝑄min
+𝑖𝑗
+≤𝑄𝑖𝑗,𝑡≤𝑄max
+𝑖𝑗
+,
+∀(𝑖, 𝑗) ∈P
+(56)
+The output of wind turbines is also subject to limitations: 
+{
+0 ≤𝑃w,𝑗,𝑡≤𝑃refw,𝑗,𝑡,
+∀𝑗∈P
+0 ≤𝑄w,𝑗,𝑡≤𝑄refw,𝑗,𝑡,
+∀𝑗∈P
+(57)
+Where 𝑃refw,𝑗,𝑡 and 𝑄refw,𝑗,𝑡 represent the predicted values of active and 
+reactive power output from the wind turbine at node 𝑗, respectively.
+A.1.2.Objective function
+The PDN operation model can be formulated as the following opti-
+mization problem: 
+min 𝐶E =
+∑
+𝑡∈𝑇
+(𝐶Ee,𝑡+ 𝐶El,𝑡+ 𝐶Eop,𝑡+ 𝐶Ec,𝑡−𝐶AE,𝑡−𝐶EW,𝑡
+)
+(58)
+Where 𝐶E represents total operating costs, 𝐶Ee,𝑡 denotes electricity pur-
+chase costs from the upstream grid, 𝐶El,𝑡 indicates network loss costs, 
+𝐶Eop,𝑡 covers operation and maintenance expenses, 𝐶Ec,𝑡 reflects cur-
+tailed wind power costs, and 𝐶EW,𝑡 signifies transaction costs between 
+the PDN and the WDN.
+This optimization problem can be transformed into an easily solv-
+able second-order cone programming problem by applying the second-
+order cone relaxation method to the bilinear term in equation (A4).
+Below is a detailed breakdown of each cost and benefit: 
+𝐶Ee,𝑡= 𝜁Ee,𝑡𝑃Ee,𝑡𝛥𝑡
+(59)
+𝐶El,𝑡=
+∑
+(𝑖,𝑗)∈P
+𝜁l𝑟𝑖𝑗𝑙𝑖𝑗,𝑡𝛥𝑡
+(60)
+𝐶Eop,𝑡=
+∑
+𝑗∈P
+𝜁wi𝑃w,𝑗,𝑡𝛥𝑡
+(61)
+𝐶Ec,𝑡=
+∑
+𝑗∈P
+𝜁cw
+(𝑃W,𝑗,𝑡−𝑃w,𝑗,𝑡
+) 𝛥𝑡
+(62)
+𝐶EW,𝑡=
+∑
+𝑗∈P
+𝜁EW,𝑡𝑃EW,𝑗,𝑡𝛥𝑡
+(63)
+Where 𝜁Ee,𝑡 and 𝑃Ee,𝑡 represent the purchase price per unit and the 
+purchased electricity volume from the upstream grid, respectively; 𝜁l
+denotes the grid loss cost coefficient; 𝜁w and 𝜁cw denote the operation 
+and maintenance cost coefficient and the curtailment penalty coef-
+ficient for wind turbines, respectively; 𝜁EW,𝑡 denotes the transaction 
+electricity price between the PDN and the WDN.
+A.2.WDN scheduling model
+A.2.1.WDN constraints
+The WDN consists of nodes, pipes, pumps, and water sources. 
+Similar to the PDN, the WDN is described as a directed graph (W, 
+W) formed by a node set W and a branch set W. The node set 𝑁
+represents nodes and water sources, while the branch set W denotes 
+pipes and pumps, i.e., W = Pi ∪Pu.
+This paper employs the Darcy-Weisbach equation to describe the 
+pipeline: 
+𝐻𝑚,𝑡−𝐻𝑛,𝑡= sgn(𝐻𝑚,𝑡, 𝐻𝑛,𝑡)𝑓𝑚𝑛𝑞2
+𝑚𝑛,𝑡
+(64)
+Where 𝐻𝑚 denotes the head at node 𝑚∈W, 𝑞𝑚𝑛 and 𝑓𝑚𝑛 represent the 
+flow rate and friction coefficient of pipeline (𝑚, 𝑛) ∈Pi, respectively.
+The symbol function is expressed as: 
+sgn(𝐻𝑚,𝑡, 𝐻𝑛,𝑡) =
+{
+1,
+𝐻𝑚,𝑡≥𝐻𝑛,𝑡
+−1,
+𝐻𝑚,𝑡< 𝐻𝑛,𝑡
+(65)
+The hydraulic characteristics and power 𝑃𝑚𝑛,pump,𝑡 of pump (𝑚, 𝑛) 
+∈Pi in the set are calculated using the following formula: 
+⎧
+⎪
+⎨
+⎪⎩
+𝐻𝑛,𝑡−𝐻𝑚,𝑡= 𝑎𝑚𝑛𝜔2
+𝑚𝑛,𝑡−𝑏𝑚𝑛𝑞2
+𝑚𝑛,𝑡
+𝑃𝑚𝑛,pump,𝑡= 𝜌𝑔
+𝜂𝑚𝑛
+𝑞𝑚𝑛,𝑡
+(𝐻𝑛,𝑡−𝐻𝑚,𝑡
+)
+(66)
+Where 𝑎𝑚𝑛 and 𝑏𝑚𝑛 are positive coefficients, 𝜂𝑚𝑛 is the pump efficiency, 
+𝜔𝑚𝑛 is the relative rotational speed, 𝜌 is the density of water, and 𝑔 is 
+the gravitational constant.
+It should be noted that if the pump is powered by node 𝑗∈p in 
+the PDN, the pump power calculated in Eq. (67) is equivalent to 𝑃EW,𝑗,𝑡
+in Eq. (54).
+Additionally, each node 𝑚∈W must satisfy the law of mass 
+conservation, where the total inflow equals the total outflow: 
+𝑞W,𝑚,𝑡+ 𝑞AW,𝑚,𝑡+
+∑
+𝑘∶𝑘→𝑚
+𝑞𝑘𝑚,𝑡=
+∑
+𝑛∶𝑚→𝑛
+𝑞𝑚𝑛,𝑡−𝑞l,𝑚,𝑡
+(67)
+Where 𝑞W,𝑚,𝑡 and 𝑞AW,𝑚,𝑡 represent the water flow rates purchased from 
+external water sources and wastewater treatment plants, respectively; 
+𝑞l,𝑚,𝑡 denotes the water load.
+In addition to the aforementioned pipe equation constraints, the 
+head, flow rate, and pump speed within the WDN must not exceed their 
+respective limits. Therefore: 
+⎧
+⎪
+⎪
+⎨
+⎪
+⎪⎩
+𝑞min
+𝑚𝑛≤𝑞𝑚𝑛,𝑡≤𝑞max
+𝑚𝑛,
+∀(𝑚, 𝑛) ∈W
+𝐻min
+𝑚
+≤𝐻𝑚,𝑡≤𝐻max
+𝑚
+,
+∀𝑚∈W
+𝐻min
+𝑚𝑛≤𝐻𝑛,𝑡−𝐻𝑚,𝑡≤𝐻max
+𝑚𝑛,
+∀(𝑚, 𝑛) ∈Pu
+𝜔min
+𝑚𝑛≤𝜔𝑚𝑛,𝑡≤𝜔max
+𝑚𝑛,
+∀(𝑚, 𝑛) ∈Pu
+(68)
+Additionally, the WDN requires the selection of a reference node: 
+𝐻ref = const.
+(69)
+A.2.2.Objective function
+The objective function of the WDN includes the cost of purchasing 
+water from other sources and the WWTP, as well as the interaction costs 
+with the PDN: 
+min 𝐶W =
+∑
+𝑡∈𝑇
+(𝐶AW,𝑡+ 𝐶EW,𝑡+ 𝐶Wq,𝑡
+)
+(70)
+Where 𝐶w represents the total operating cost of the WDN, and 𝐶Wq,𝑡
+denotes the cost of purchasing water from other sources by the WDN.
+The cost of purchasing water from other sources for the WDN is 
+calculated using the following formula: 
+𝐶Wq,𝑡=
+∑
+𝑚∈W
+𝜁Wq,𝑡𝑞W,𝑚,𝑡𝛥𝑡
+(71)
+Where 𝜁Wq,𝑡 represents the unit price of purchased water.
+After introducing the sign function for the flow direction variable 
+to eliminate the sign function in Eq. (65), the bilinear terms in Eq. 
+(65) and (67) are handled using McCormick envelope techniques. 
+This transforms the problem into a mixed-integer convex optimization 
+problem.
+Appendix B. Solve two subproblems using the A-ADMM algorithm
+B.1.Social cost minimization subproblem (P1)
+To ensure that electricity/water purchases equal electricity/water 
+sales, indicating consensus has been reached in the interaction, auxil-
+iary variables 𝑧𝑖𝑗,𝑡 and 𝑧𝑗𝑖,𝑡 are introduced, where 𝑧 denotes the resource 
+Energy for Sustainable Development 94 (2026) 102063 
+18 
+
+S. Liu et al.
+type (𝑧= 𝑃 for electricity; 𝑧= 𝑞 for water). Transaction balance is then 
+transformed into a double-coupled constraint: 
+𝑧𝑖𝑗,𝑡+ 𝑧𝑗𝑖,𝑡= 0
+(72)
+When 𝑧𝑖𝑗,𝑡> 0, entity 𝑖 transfers resources to entity 𝑗; conversely, entity 
+𝑖 receives resources from entity 𝑗. The same applies to 𝑧𝑗𝑖,𝑡.
+The amount of electricity or water output or received at each time 
+interval t shall remain within the line/pipeline’s capacity limit 𝑧𝑖𝑗,𝑡,max:
+|||𝑧𝑖𝑗,𝑡||| ≤𝑧max
+𝑖𝑗
+(73)
+Since resource exchange costs within the alliance offset each other, 
+P1 reflects only resource exchange capacity without price factors. 
+Therefore, the total cooperation cost is simply the sum of the costs of 
+the WWTP, PDN, and WDN after excluding resource exchange costs. 
+Based on Eq. (42), construct P1: 
+𝐶1 = min
+∑
+𝑖∈𝛺
+(𝐶0
+𝑖−𝐶tran
+𝑖
+)
+(74)
+Eq. (74) is decomposed into subproblems based on the A-ADMM 
+algorithm: 
+𝐶1
+𝑖= min
+⎡
+⎢
+⎢
+⎢
+⎢
+⎢
+⎢
+⎢⎣
+(𝐶𝑖−𝐶𝑖𝑗,𝑡
+)
++
+∑
+𝑧
+∑
+𝑗∈𝛺,𝑗≠𝑖
+𝑇∑
+𝑡=1
+𝜆z
+1,𝑖𝑗,𝑡
+(𝑧𝑖𝑗,𝑡+ 𝑧𝑗𝑖,𝑡
+)
++
+∑
+𝑧
+∑
+𝑗∈𝛺,𝑗≠𝑖
+𝑇∑
+𝑡=1
+𝜌z
+1,𝑖𝑗
+2
+‖‖‖𝑧𝑖𝑗,𝑡+ 𝑧𝑗𝑖,𝑡‖‖‖
+2
+2
+⎤
+⎥
+⎥
+⎥
+⎥
+⎥
+⎥
+⎥⎦
+(75)
+Where 𝐶𝑖 represents the cost of entity 𝑖 excluding interaction costs; 
+𝜆𝑧
+1,𝑖𝑗 represents the Lagrange multiplier; 𝜌𝑧
+1,𝑖𝑗 represents the penalty 
+parameter.
+Each entity exchanges only electricity and water information. Let 
+𝑖𝑡𝑒𝑟 represent the iteration count. Each iteration requires the following 
+steps:
+(1) Each entity sends its own decisions and receives decisions from 
+other entities, updating its own decisions accordingly:
+• The entity 𝑖 updates decision 𝑧𝑖𝑗,𝑡(𝑘+ 1) through the following 
+process: 
+𝑧𝑖𝑗,𝑡(𝑘+ 1) = arg min 𝐿1
+𝑖
+(
+𝜆𝑧
+1,𝑖𝑗,𝑡(𝑘), 𝜌𝑧
+1,𝑖𝑗,𝑡(𝑘), 𝑧𝑖𝑗,𝑡(𝑘), 𝑧𝑗𝑖,𝑡(𝑘)
+)
+(76)
+• Entity 𝑗 receives the updated decision information 𝑧𝑖𝑗,𝑡(𝑘+ 1) to 
+update its decision 𝑧𝑗𝑖,𝑡(𝑘+ 1): 
+𝑧𝑗𝑖,𝑡(𝑘+ 1) = arg min 𝐿1
+𝑗
+(𝜆𝑧
+1,𝑗𝑖,𝑡(𝑘), 𝜌𝑧
+1,𝑗𝑖,𝑡(𝑘),
+𝑧𝑖𝑗,𝑡(𝑘+ 1), 𝑧𝑗𝑖,𝑡(𝑘) )
+(77)
+• Repeat the above two steps until each entity updates its trading 
+strategy during the current iteration.
+(2) Update penalty factors and Lagrange multipliers: 
+𝜌z,𝑘+1
+1,𝑖𝑗
+=
+⎧
+⎪
+⎨
+⎪⎩
+𝜏⋅𝜌z,𝑘
+1,𝑖𝑗,
+if ℎ𝑘+1
+1,𝑖𝑗> 𝜇⋅𝑙𝑘+1
+1,𝑖𝑗
+𝜌z,𝑘
+1,𝑖𝑗∕𝜏,
+if 𝑙𝑘+1
+1,𝑖𝑗> 𝜇⋅ℎ𝑘+1
+1,𝑖𝑗
+𝜌z,𝑘
+1,𝑖𝑗,
+otherwise
+(78)
+Where 𝜏 is the adjustment factor; 𝜇 is the balance parameter. 
+𝜆𝑧
+1,𝑖𝑗,𝑡(𝑘+ 1) = 𝜆𝑧
+1,𝑖𝑗,𝑡(𝑘) + 𝜌𝑧
+1,𝑖𝑗,𝑡(𝑘+ 1) (𝑧𝑖𝑗,𝑡(𝑘+ 1) + 𝑧𝑗𝑖,𝑡(𝑘+ 1))
+(79)
+(3) Update iteration count: 𝑖𝑡𝑒𝑟= 𝑖𝑡𝑒𝑟+ 1
+(4) Compute the primal residual and dual residual to determine 
+convergence. 
+⎧
+⎪
+⎪
+⎨
+⎪
+⎪⎩
+ℎ𝑘+1
+1,𝑖𝑗=
+𝑇∑
+𝑡=1
+𝛺
+∑
+𝑖=1
+‖‖‖𝑃Z,𝑖𝑗,𝑡(𝑘) + 𝑃Z,𝑗𝑖,𝑡(𝑘)‖‖‖2 ≤𝛿1
+𝑙𝑘+1
+1,𝑖𝑗=
+𝑇∑
+𝑡=1
+𝛺
+∑
+𝑖=1
+‖‖‖𝑃Z,𝑗𝑖,𝑡(𝑘+ 1) −𝑃Z,𝑗𝑖,𝑡(𝑘)‖‖‖2 ≤𝛿1
+(80)
+Fig. 17. WWTP electrical load in Scheme 2.
+Where 𝛿1 = 10−3.
+(5) If Eq. (80) is met, the iteration ends; otherwise, return to step 1 
+for the next iteration until the convergence condition is met.
+B.2.Cooperative benefit distribution subproblem (P2)
+Auxiliary variables 𝑧′
+𝑖𝑗,𝑡 and 𝑧′
+𝑗𝑖,𝑡 are introduced to represent the 
+interaction between electricity and water prices, while 𝑧′ denotes the 
+price category (𝑧′ = 𝑃 for electricity; 𝑧′ = 𝑞 for water). The transaction 
+equilibrium is then transformed into a dual coupling constraint: 
+𝑧′
+𝑖𝑗,𝑡+ 𝑧′
+𝑗𝑖,𝑡= 0
+(81)
+Electricity and water prices for each time period 𝑡 shall be within 
+limits: 
+𝑧′
+𝑖𝑗,𝑡,min ≤𝑧′
+𝑖𝑗,𝑡≤𝑧′
+𝑖𝑗,𝑡,max
+(82)
+Based on Eq. (42), construct P2: 
+min
+∏
+𝑖∈𝛺
+(
+𝐶0
+𝑖−𝐶1
+𝑖−
+∑
+𝑗∈𝛺,𝑗≠𝑖
+𝐶𝑖𝑗,𝑡
+)𝜔𝑖
+s.t.
+𝐶0
+𝑖−𝐶1
+𝑖−
+∑
+𝑗∈𝛺,𝑗≠𝑖
+𝐶𝑖𝑗,𝑡> 0,
+∀𝑖∈𝛺
+(83)
+The maximization problem is transformed into a minimization prob-
+lem for easier solution: 
+min
+∑
+𝑖∈𝛺
+−𝜔𝑖ln
+(
+𝐶0
+𝑖−𝐶1
+𝑖−
+∑
+𝑗∈𝛺,𝑗≠𝑖
+𝐶𝑖𝑗,𝑡
+)
+(84)
+Eq. (84) is decomposed into subproblems based on the A-ADMM 
+algorithm: 
+𝐶2
+𝑖= min
+⎡
+⎢
+⎢
+⎢
+⎢
+⎢
+⎢
+⎢
+⎢
+⎢⎣
+−𝜔𝑖ln
+(
+𝐶0
+𝑖−𝐶1
+𝑖−
+∑
+𝑗∈𝛺,𝑗≠𝑖
+𝐶𝑖𝑗,𝑡
+)
++
+∑
+𝑧′
+∑
+𝑗∈𝛺,𝑗≠𝑖
+𝑇∑
+𝑡=1
+𝜆𝑧′
+2,𝑖𝑗,𝑡
+(
+𝑧′
+𝑖𝑗,𝑡+ 𝑧′
+𝑗𝑖,𝑡
+)
++
+∑
+𝑧′
+∑
+𝑗∈𝛺,𝑗≠𝑖
+𝑇∑
+𝑡=1
+𝜌𝑧′
+2,𝑖𝑗
+2
+‖‖‖𝑧′
+𝑖𝑗,𝑡+ 𝑧′
+𝑗𝑖,𝑡
+‖‖‖
+2
+2
+⎤
+⎥
+⎥
+⎥
+⎥
+⎥
+⎥
+⎥
+⎥
+⎥⎦
+(85)
+Only electricity and water prices interact during the process, with 
+the iteration process similar to P1.
+Appendix C. Supplementary operating curves under independent 
+and coordinated scheduling
+See Figs. 17–20.
+Appendix D. Forecast curves of PV output and wastewater inflow 
+rate in summer and winter
+See Figs. 21–26.
+Energy for Sustainable Development 94 (2026) 102063 
+19 
+
+S. Liu et al.
+Fig. 18. WWTP electrical load in Scheme 5.
+Fig. 19. WDN water load in Scheme 2.
+Fig. 20. WDN water load in Scheme 5.
+Fig. 21. Summer PV output forecast curve.
+Fig. 22. Winter PV output forecast curve.
+Fig. 23. Summer wastewater inflow forecast curve.
+Fig. 24. Winter wastewater inflow forecast curve.
+Fig. 25. Summer water demand forecast curve for WDN.
+Energy for Sustainable Development 94 (2026) 102063 
+20 
+
+S. Liu et al.
+Fig. 26. Winter water demand forecast curve for WDN.
+Supplementary data
+Supplementary material related to this article can be found online 
+at https://doi.org/10.1016/j.esd.2026.102063.
+Data availability
+The data associated with this article can be found in the on-
+line version, at https://www.researchgate.net/publication/400344172_
+WWTP_parameters_and_equipment_parameters.
+References
+Abedini, S., Elektorowicz, M., & Fazeli, S. (2022). Sustainable management of CO2
+generated by a wastewater treatment plant. In Proc. annu. conf. can. soc. civ. eng. 
+(pp. 967–976). http://dx.doi.org/10.1007/978-3-031-35471-7_68.
+Ali, S. M. H., Lenzen, M., Sack, F., et al. (2020). Electricity generation and demand 
+flexibility in wastewater treatment plants: Benefits for 100% renewable electricity 
+grids. Applied Energy, 268, http://dx.doi.org/10.1016/j.apenergy.2020.114960.
+Beijing Water Authority (2024). 2023 beijing water statistical yearbook. (in 
+Chinese). [Online]. Available: https://swj.beijing.gov.cn/zwgk/swtjnj/202408/
+P020240828538524300133.pdf. (Accessed 4 January 2026).
+BJX Power News (2022). The world’s first multi-energy collaborative, intelligent 
+coupling wastewater treatment plant source-grid-load-storage microgrid will be re-
+leased. (in Chinese). [Online]. Available: https://news.bjx.com.cn/html/20221129/
+1272711.shtml. (Accessed 4 January 2026).
+Bolles, S. (2006). Modeling wastewater aeration systems to discover energy savings 
+opportunities: Tech. rep., Process Energy Services LLC.
+Boyd, S., Parikh, N., Chu, E., Peleato, B., & Eckstein, J. (2011). Distributed optimization 
+and statistical learning via the alternating direction method of multipliers. Founda-
+tions and Trends in Machine Learning, 3, 20–21, https://web.stanford.edu/~boyd/
+papers/pdf/admm_distr_stats.pdf.
+Chen, J., Tang, Z. Y., Huang, Y., et al. (2024). Asymmetric Nash bargaining-based 
+cooperative energy trading of multi-park integrated energy system under carbon 
+trading mechanism. Electric Power Systems Research, 228, http://dx.doi.org/10.
+1016/j.epsr.2023.110033.
+Chongqing Water Group Co. , Ltd. (2024a). Announcement on the wastewater treatment 
+service settlement price, sixth period. (in Chinese). [Online]. Available: https:
+//static.cninfo.com.cn/finalpage/2024-02-24/1219172481.PDF.
+Chongqing Water Group Co. , Ltd. (2024b). Water price information related to 
+chongqing water group. (in Chinese). [Online]. Available: https://xueqiu.com/
+1590090018/285040210.
+D’Ambrosio, C., Lodi, A., & Martello, S. (2010). Piecewise linear approximation of 
+functions of two variables in MILP models. Operations Research Letters, 38, 39–46. 
+http://dx.doi.org/10.1016/j.orl.2009.09.005.
+Donald, R., & Love, J. G. (2023). Energy shifting in wastewater treatment using 
+compressed oxygen from integrated hydrogen production. Journal of Environmen-
+tal Management, 331, Article 117205. http://dx.doi.org/10.1016/j.jenvman.2022.
+117205.
+Feng, Z., Lv, L., & Xu, L. (2019). Two-stage day-ahead and real-time optimal dispatch 
+model of biogas-wind-solar fully renewable energy system based on energy hub. 
+Power System Technology, 43, 3101–3109. http://dx.doi.org/10.13335/j.1000-3673.
+pst.2019.0596, (in Chinese).
+Gougheri, S. S., Dehghani, M., Nikoofard, A., et al. (2022). Economic assessment of 
+multi-operator virtual power plants in electricity market: A game theory based 
+approach. Sustainable Energy Technologies and Assessments, 53, Article 102733. 
+http://dx.doi.org/10.1016/j.seta.2022.102733.
+Hydrogen Energy Project Department (2023). (Hydrogen energy division of in-en.com),
+Yining carbon dioxide hydrogenation to low-carbon methanol project update—
+construction progress of the 15.58 billion RMB project. (in Chinese). [Online]. 
+Available: https://h2.in-en.com/html/h2-2427295.shtml.
+International Renewable Energy Agency (2020). Green hydrogen cost reduction: Scaling up 
+electrolysers to meet the 1.5 ◦C climate goal: Tech. rep., Abu Dhabi: International Re-
+newable Energy Agency, [Online]. Available: https://www.irena.org/publications/
+2020/Dec/Green-hydrogen-cost-reduction.
+Joshi, G., & Mohagheghi, S. (2020). Energy and water co-optimization for the resilient 
+neighborhood of future. In Proc. IEEE ind. appl. soc. annu. meet. (pp. 1–8). http:
+//dx.doi.org/10.1109/IAS44978.2020.9334726.
+Khatavkar, P., & Mays, L. W. (2019). Resilience of water distribution systems during 
+real-time operations under limited water and/or energy availability conditions. 
+Journal of Water Resources Planning and Management, 145, 1–10. http://dx.doi.org/
+10.1061/(ASCE)WR.1943-5452.0001112.
+Kirchem, D., Lynch, M., Bertsch, V., et al. (2018). Market effects of industrial demand 
+response and flexibility potential from wastewater treatment facilities. In Proc. 
+15th int. conf. eur. energy mark. (pp. 1–6). http://dx.doi.org/10.1109/EEM.2018.
+8469974.
+Kyung, D., Kim, M., Chang, J., et al. (2015). Estimation of greenhouse gas emissions 
+from a hybrid wastewater treatment plant. Journal of Cleaner Production, 95, 
+117–123. http://dx.doi.org/10.1016/j.jclepro.2015.02.032.
+Li, X. (2021). Convex Optimization Based Coordinated Scheduling of Integrated Electricity-
+Water System with Desalination Plants (Master’s thesis), (pp. 9–26). Chongqing, 
+China: Chongqing Univ., http://dx.doi.org/10.27670/d.cnki.gcqdu.2021.001214, 
+(in Chinese).
+Liu, S. (2026). WWTP parameters and equipment parameters. (in Chinese), 
+[Online]. Available: https://www.researchgate.net/publication/400344172_WWTP_
+parameters_and_equipment_parameters.
+Liu, Q., Li, R., Dereli, R. K., et al. (2022). Water resource recovery facilities as potential 
+energy generation units and their dynamic economic dispatch. Applied Energy, 318, 
+http://dx.doi.org/10.1016/j.apenergy.2022.119199.
+Liu, H., Yamaguchi, Y., Wu, W., et al. (2026). Incentivizing spatiotemporal flexibility 
+trading among buildings to mitigate the supply–demand mismatch. Energy and 
+Buildings, 357, Article 117100. http://dx.doi.org/10.1016/j.enbuild.2026.117100.
+Ma, X., Zhang, T., Xie, Y., et al. (2022). A simulation-assessment-optimization approach 
+towards energy self-sufficiency and carbon reduction in regional-scale sewage 
+systems. Resources, Conservation and Recycling, 187, Article 106595. http://dx.doi.
+org/10.1016/j.resconrec.2022.106595.
+Moazeni, F., & Khazaei, J. (2021). Co-optimization of wastewater treatment plants 
+interconnected with smart grids. Applied Energy, 298, http://dx.doi.org/10.1016/
+j.apenergy.2021.117150.
+Mohammadpour, H., Cord-Ruwisch, R., Pivrikas, A., et al. (2021). Utilisation of oxygen 
+from water electrolysis—Assessment for wastewater treatment and aquaculture. 
+Chemical Engineering Science, 246, Article 117008. http://dx.doi.org/10.1016/j.ces.
+2021.117008.
+National Development and Reform Commission (2024). Overall planning, precise policy 
+implementation, helping wastewater treatment pollution reduction and carbon 
+reduction synergy. (in Chinese). [Online]. Available: https://www.ndrc.gov.cn/
+fggz/hjyzy/sjyybh/202401/t20240105_1363113.html. (Accessed 4 January 2026).
+National Energy Conservation Center (2015). Wastewater treatment ranks among the 
+top ten energy-consuming industries, energy saving and consumption reduction has 
+become a new topic in the industry. (in Chinese). [Online]. Available: https://www.
+chinanecc.cn/website/News!view.shtml?id=160639. (Accessed 4 January 2026).
+Oikonomou, K., & Parvania, M. (2020). Optimal coordinated operation of interdepen-
+dent power and water distribution systems. IEEE Transactions on Smart Grid, 11, 
+4784–4794. http://dx.doi.org/10.1109/TSG.2020.3000173.
+Shao, Q., Li, C., Yi, Y., et al. (2024). Low-carbon scheduling of electricity consumption 
+in wastewater treatment plant by using photovoltaic system. Science of the To-
+tal Environment, 933, Article 173062. http://dx.doi.org/10.1016/j.scitotenv.2024.
+173062.
+Sinopec News Network (2025). China’s carbon capture technology urgently needs 
+generational upgrade. (in Chinese). [Online]. Available: http://www.sinopecnews.
+com.cn/xnews/content/2025-03/03/content_7120189.html.
+Solarbe (2022). 11 typical cases of ‘pv wastewater treatment plant’. (in Chinese). 
+[Online]. Available: https://news.solarbe.com/202204/14/353640.html. (Accessed 
+4 January 2026).
+SunSirs (2026). Real-time methanol quotation: SunSirs futures and spot real-time 
+quotation system. (in Chinese). [Online]. Available: https://pdata.100ppi.com/
+?dir=futures&f=basket_cap&id=817.
+Tan, H., Yan, W., & Wang, H. (2020). Optimal dispatching model of biogas-wind-
+solar isolated micro-energy network based on analysis of building thermal energy 
+flow. Power System Technology, 44, 2483–2492. http://dx.doi.org/10.13335/j.1000-
+3673.pst.2019.2434, (in Chinese).
+Wang, W., Gao, H., Xu, L., et al. (2023). Interactive coordination optimization of 
+electrical distribution network and agricultural irrigation park based on master–
+slave game. Power System Technology, 47, 4698–4711. http://dx.doi.org/10.19912/
+j.0254-0096.tynxb.2022-0942, (in Chinese).
+Wang, K., Wang, C. F., Yao, W. L., et al. (2024). Embedding P2P transaction into de-
+mand response exchange: A cooperative demand response management framework 
+for IES. Applied Energy, 367, http://dx.doi.org/10.1016/j.apenergy.2024.123319.
+Energy for Sustainable Development 94 (2026) 102063 
+21 
+
+S. Liu et al.
+Wu, Y. J., Wang, C. W., & Wang, Y. L. (2024). Cooperative game optimization 
+scheduling of multi-region integrated energy system based on ADMM algorithm. 
+Energy, 302, http://dx.doi.org/10.1016/j.energy.2024.131728.
+Yang, Z., & Guo, S. (2014). Engineering design of MBR and CMF for wastewater 
+treatment and reuse. China Water Wastewater, 30, 77–82. http://dx.doi.org/10.
+19853/j.zgjsps.1000-4602.2014.20.018, (in Chinese).
+Yang, M., Liu, Y. S., & Kobashi, T. (2024). Asymmetric Nash bargaining model for 
+operation optimization of multi-integrated energy systems considering peer-to-peer 
+energy trading. Sustainable Cities and Society, 114, http://dx.doi.org/10.1016/j.scs.
+2024.105791.
+Yang, H., Zhou, Z., Huang, W., et al. (2023). Integrated energy low-carbon economic 
+operation of industrial parks considering waste treatment and methanol synthesis. 
+Power System Technology, 47, 4201–4210. http://dx.doi.org/10.13335/j.1000-3673.
+pst.2022.2232, (in Chinese).
+Zhang, Q., Qin, T. X., Wu, J. Q., et al. (2024). Synergistic operation strategy of electric-
+hydrogen charging station alliance based on differentiated characteristics. Energy, 
+304, http://dx.doi.org/10.1016/j.energy.2024.132132.
+Zhang, Z., Xiong, X., Wan, C., et al. (2024). Multi-microgrids cooperative operation 
+optimization strategy considering electricity-carbon trading and comprehensive 
+contribution rate. Power System Technology, 48, 3259–3267. http://dx.doi.org/10.
+13335/j.1000-3673.pst.2023.2269, (in Chinese).
+Zhao, X., Shi, S., Mao, Y., et al. (2024). Coordinated ‘‘water-energy-carbon" dispatching 
+in urban wastewater treatment plants. Power System Technology, 48, 1918–1928. 
+http://dx.doi.org/10.13335/j.1000-3673.pst.2023.1160, (in Chinese).
+Zhao, C. D., Tu, J. C., Zhang, X. X., et al. (2025). Predict-then-optimise based day-
+ahead scheduling towards demand response and hybrid renewable generation for 
+wastewater treatment. Applied Energy, 384, Article 125434. http://dx.doi.org/10.
+1016/j.apenergy.2025.125434.
+Energy for Sustainable Development 94 (2026) 102063 
+22 

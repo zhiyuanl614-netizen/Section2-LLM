@@ -1,0 +1,1556 @@
+ 
+Contents lists available at ScienceDirect
+Computers & Security
+journal homepage: www.elsevier.com/locate/cose
+ 
+Full length article
+Decision tree based invariants for intrusion detection in industrial control 
+system
+Abdul Samiah a,b
+,∗, Muhammad Azmi Umer c
+, Shama Siddiqui a
+a DHA Suffa University, Karachi, Pakistan
+b National University of Sciences and Technology, Pakistan
+c Singapore University of Technology and Design, Singapore
+A R T I C L E  I N F O
+Keywords:
+Critical infrastructure
+Invariant Rules
+Intrusion
+Anomaly
+ICS
+Decision tree
+ 
+A B S T R A C T
+The proliferation of interconnected Industrial Control Systems (ICS) and their connectivity with internet is 
+expanding the attack surface, making them vulnerable to cyber-threats such as ransomware, malware, and 
+targeted attacks. A cyber-attack launched on a critical infrastructure (CI), such as a water treatment plant, 
+chemical plants or power grid could lead to anomalous behavior. Due to dynamic nature and variety of 
+attributes in cyber data, the detection and prevention of these anomalous behavior is still an open challenge. 
+Cyber physical systems (CPS) includes both the information technology (IT) and operational technology (OT) 
+data. The detection of anomalous behavior is possible using both the IT and the OT data. The study conducted 
+here has used the OT data. A supervised machine learning technique based on decision trees was used to mine 
+the invariants from the OT data. The proposed approach was also compared with the Association Rule Mining 
+(ARM) for generating invariants. The entire study was conducted in the context of scaled down version of 
+water distribution plant (WaDi). The validation of generated invariants was performed using the operational 
+plant and also using the physics of the plant.
+1. Introduction
+Cyber Physical Systems (CPS) are the combination of both the 
+computational and physical components. The example of such system 
+includes the smart power plants, water treatment and distribution 
+facilities, transportation, mechanical technologies, and autonomous 
+cars. These systems are usually massive and geographically dispersed, 
+therefore, they are connected with network for remote monitoring 
+and control. This connectivity makes them vulnerable to cyber attack. 
+The detection of these cyber attacks is possible using different ap-
+proaches like signature-based, specification-based, and behavior-based 
+approaches (Umer et al., 2022). The signature based approaches uses 
+a predefined dictionary of attack patterns, while specification based 
+approaches create a mathematical model which can be later used to de-
+tect the anomalies. The behavior based approaches rely on operational 
+data of CPS to detect these anomalies. The proposed study has used the 
+operational data of a water distribution plant to mine the invariants of 
+the system. An invariant is the normal behavior of the plant whenever 
+it is in the given state (Umer et al., 2020). There are studies in the 
+literature which have used the invariants for the same purpose (Adepu 
+and Mathur, 2016; Feng et al., 2019; Mujeeb Ahmed et al., 2021; 
+Hudani et al., 2022; Umer et al., 2017). However, the approach used by 
+∗Corresponding author at: National University of Sciences and Technology, Pakistan.
+E-mail addresses: abdulsamiah@pnec.nust.edu.pk (A. Samiah), azmi_umer@sutd.edu.sg (M.A. Umer), shama.siddiqui@dsu.edu.pk (S. Siddiqui).
+researchers differs, therefore, creates a level of quality and effectiveness 
+of these invariants in detecting the cyber attacks. For example, the 
+study conducted in Adepu and Mathur (2016) used a design-centric 
+approach to generate invariants which has its limitations, for example, 
+it is ineffective in tuning the parameters, since it uses the parameters 
+available at the time of plant design (Umer et al., 2020). Similarly, the 
+studies conducted in Mujeeb Ahmed et al. (2021), Hudani et al. (2022) 
+and Umer et al. (2017) have used the association rule mining (ARM) 
+to generate the invariants. ARM is an unsupervised machine learning 
+approach which works only on binary data. The CPS usually have a 
+variety of attributes, therefore, the use of ARM becomes challenging in 
+this scenario. This requirement of binary-valued attributes leads to a 
+significant reduction in the number of attributes, therefore, making a 
+less rich set of invariants, as evident in Umer et al. (2017). The study 
+conducted by us has used the decision trees to generate the invariants. 
+Decision tree is a supervised machine learning approach which works 
+well on different types of attributes. Therefore, it creates a richer set of 
+invariants as compare to ARM.
+The proposed study has generated the invariants for the water 
+distribution system (WaDi) using Classification and Regression Tree 
+(CART) algorithm. These invariants represents the normal behavior of 
+https://doi.org/10.1016/j.cose.2025.104511
+Received 31 October 2024; Received in revised form 23 March 2025; Accepted 26 April 2025
+Computers & Security 156 (2025) 104511 
+Available online 12 May 2025 
+0167-4048/© 2025 Elsevier Ltd. All rights are reserved, including those for text and data mining, AI training, and similar technologies. 
+
+A. Samiah et al.
+Table 1
+Summary of related work.
+ S/No
+Citation
+Summary of research work
+ 
+ 1
+Proposed approach
+Used decision tree algorithm to generate invariant for an operational water 
+distribution plant. These invariants can be used to detect abnormal behavior in the 
+plant.
+ 
+ 2
+Nathezhtha and Yaidehi (2018)
+Proposed an Improvised Long Short-Term Memory (ILSTM) model to detect anomaly 
+node on basis of normal or abnormal behavior.
+ 
+ 3
+Umer et al. (2021)
+Proposed a rule-based machine learning approach for automatically generating attack 
+patterns for ICS physical processes.
+ 
+ 4
+Umer et al. (2020)
+Used Association Rule Mining for generating invariants from operational data for 
+detection of anomalies.
+ 
+ 5
+Ramotsoela et al. (2020)
+A voting-based ensemble method was used for anomaly detection by applying the 
+output of the networks to a cross-validation dataset.
+ 
+ 6
+Oliveira et al. (2021)
+Suggested a sequential approach and evaluates the performance of Random Forest 
+(RF), Multi Layer Perceptron (MLP) and LSTM for capturing sequential patterns to 
+detect anomalies.
+ 
+ 7
+Jeffrey et al. (2024)
+Presented a hybrid based methodology that leverages signature-based detection 
+strategies, threshold-based detection strategies, and the use of one-class ML 
+algorithms for anomaly detection.
+ 
+ 8
+Kim et al. (2022)
+The proposed work shows that XG-Boost is appropriate for multi-class classification 
+of attacks.
+ 
+ 9
+Colelli et al. (2021)
+Random Forest algorithm was used to categorized the system behavior for the 
+development of an anomaly-based intrusion detection.
+ 
+ 10
+Faramondi et al. (2021)
+Presented a dataset to assist researchers in validating systems such as Intrusion 
+Detection Systems (IDS) in light of artificial intelligence and machine learning 
+approaches.
+ 
+ 11
+Maiti et al. (2023)
+Exhibited a variety of adversarial attacks on data-driven invariants, highlighting their 
+shortcomings.
+ 
+ 12
+Cheah et al. (2021)
+Presented a systematic technique for obtaining invariants from an examination of a 
+CPS design based on concepts of axiomatic design methodology.
+ 
+ 13
+Mahalakshmi et al. (2022)
+Employed a hybrid technique to alleviate the harmful consequences of the class 
+imbalance problem in ML-based IDS.
+ 
+ 14
+Ferrag et al. (2020)
+Presented a hierarchical intrusion detection model to decrease classification errors 
+and improve the performance of intrusion detection system.
+ 
+ 15
+Gauthama Raman et al. (2021)
+The decision tree was used to study component ageing by modeling the relationship 
+between a motorized valve and a flow transmitter in the Secure Water Treatment 
+Plant (SWaT) testbed.
+ 
+the plant, therefore, they can be used to detect the anomalous behavior 
+of the plant whenever it deviates from the normal operation. The 
+invariants were generated using the operational data of (WaDi) testbed 
+(Ahmed et al., 2017a). Following are the research questions which 
+motivated the proposed study.
+RQ1: Can decision trees be used to generate invariants for a water 
+distribution plant?
+RQ2: Does decision tree and ARM generate a same set of invariants?
+RQ3: How effective are the invariants generated using decision tree as 
+compare to the invariants generated using ARM?
+RQ4: Can we integrate both approaches to generate invariants? What 
+would be the benefit of the integration?
+Contributions: (a). The main contribution of the proposed study is 
+the application of a decision tree based machine learning approach to 
+generate invariants for a water distribution plant. It must be understood 
+that both invariants and decision tree are well known in the research 
+community. There are various applications of decision tree for anomaly 
+or intrusion detection in ICS but the novelty of the proposed study lies 
+in the usage of decision tree to generate the invariants. The authors 
+are unaware of any such study where invariants were generated using 
+decision trees. The suitability of decision trees to accommodate a 
+diverse nature of attributes makes it more suitable to generate a richer 
+set of invariants. These invariants would serve as monitors to detect 
+process anomalies. Therefore, a richer set of invariants in terms of 
+sensors and actuators would lead to a more robust intrusion detection 
+system.
+(b) A comparison of the proposed decision tree based approach against 
+the ARM based approach to generate the invariants. The authors have 
+evaluated and compared both the approaches using a common dataset 
+of the same water distribution testbed.
+(c). The authors are providing a validated set of invariants for WaDi 
+testbed. These invariants are validated using two approaches. One is the 
+validation by domain expert using the design knowledge of the plant. 
+The second is the live validation on the operational water distribution 
+testbed. We plan to public the validated set of invariants generated for 
+the WaDi testbed so that the researchers in the same domain can use 
+them to validate their approaches.
+2. Related work
+Intrusion Detection Systems (IDS) can perform a timely detection of 
+malicious events through the inspection of network traffic or host-based 
+logs. Internal attackers compromise a vulnerable user node and get 
+access to a system. They are connected to the cloud network internally 
+and launch attacks pretending to be trusted users. Though machine 
+learning approaches are widely used for cloud security issues. However, 
+the existing machine learning based security approaches classify a node 
+as a misbehaving node based on short term behavioral data. These 
+systems do not differentiate whether a misbehaving node is a malicious 
+node or a broken node. To address this problem, an Improvised Long 
+Short-Term Memory (ILSTM) model was proposed in Nathezhtha and 
+Yaidehi (2018). It learns the behavior of a user and automatically trains 
+Computers & Security 156 (2025) 104511 
+2 
+
+A. Samiah et al.
+Table 2
+Comparative analysis.
+ Reference
+Domain
+Approach
+Algorithm
+Dataset
+Data type
+Major contribution
+ 
+ Proposed 
+Approach
+Water
+Supervised and 
+Unsupervised
+Decision Trees
+WaDi
+Actual
+Robust invariants were produced using two 
+techniques and verified on an actual water 
+distribution system. These invariants can 
+identify anomalous behavior, which helps 
+CPS to detect intrusions.
+ 
+ Umer et al. 
+(2020)
+Water
+Unsupervised
+ARM
+SWaT
+Actual
+They generated invariants for SWaT using 
+association rule mining. Because their 
+proposed approach works only with binary 
+attributes, a large number of attributes were 
+excluded from the final dataset.
+ 
+ Ramotsoela 
+et al. (2020)
+Water
+Supervised
+Neural Networks
+BATADAL
+Actual
+The model does not explain why certain 
+actions are categorized as anomalies or how 
+it would address the difficulties presented 
+by bigger, more complex water distribution 
+networks.
+ 
+ Oliveira et al. 
+(2021)
+Network Traffic 
+of ICS
+Supervised
+RF, MLP and 
+LSTM
+CIDDS-001
+Simulated
+Further improvements in attention 
+mechanisms, window size, feature 
+engineering, and hyper-parameter tuning 
+are required, even if LSTM exhibits promise 
+in identifying network risks through 
+sequential flow patterns.
+ 
+ Jeffrey et al. 
+(2024)
+Temperature and 
+Humidity
+Supervised
+KNN and SVM
+Synthetic data
+Simulated
+The study points up shortcomings in CPS 
+threat detection, such as the requirement to 
+investigate more complex models like GANs 
+for increased precision and better threshold 
+adjustment to deal with misclassification 
+problems in unbalanced datasets.
+ 
+ Colelli et al. 
+(2021)
+MiniCPS
+Supervised
+Random Forest
+Dataset 
+composed of 
+different 
+intensity level 
+attack
+Simulated
+The work overcomes the shortcomings of 
+conventional IDS by presenting a novel 
+attack detection technique for Distributed 
+Control Systems (DCS). It still need more 
+testing with a variety of protocols, 
+scalability, and adaptability to various DCS 
+environments and changing threats.
+ 
+ Kim et al. 
+(2022)
+Oil Refinery
+Supervised
+XG Boost, 
+Random Forest, 
+Decision Tree
+Normal and 
+Abnormal events 
+of network 
+traffic data
+Actual
+The work overcomes the shortcomings of 
+conventional IDS by presenting a novel 
+attack detection technique for DCS. It still 
+need more testing with a variety of 
+protocols, scalability, and adaptability to 
+various DCS environments and changing 
+threats.
+ 
+ Faramondi et al. 
+(2021)
+Water
+Supervised
+KNN, RF, NB, 
+and SVM
+A hardware-in-
+the-loop Water 
+Distribution 
+Testbed (WDT)
+Physical and 
+Simulation of 
+WDT
+Presented a dataset to assist researchers in 
+validating systems such as Intrusion 
+Detection Systems (IDS) in light of artificial 
+intelligence and machine learning 
+approaches.
+ 
+ Maiti et al. 
+(2023)
+Water
+Supervised
+Decision Trees, 
+Axiomatic 
+Design Principles
+SWaT
+Actual
+There are two restrictions on the 
+methodology: (1) Functional needs may 
+differ as a result of designer 
+misinterpretations of CPS. (2) Data-driven 
+invariant checkers depend on the 
+adversarial logs being created by the 
+attacker.
+ 
+ Cheah et al. 
+(2021)
+Water
+Supervised
+Decision Trees, 
+Axiomatic 
+Design Principles
+SWaT
+Actual
+This technique breaks down a high-level 
+CPS design repeatedly to find sets of 
+dependent design parameters (actuators and 
+sensors), which enables the derivation of 
+invariants and invariant checks to happen 
+concurrently with system construction.
+ 
+ Mahalakshmi 
+et al. (2022)
+Gas
+Unsupervised
+SMOTE-SVM
+Dataset of the 
+gas pipeline 
+critical 
+infrastructure
+Actual
+Employed a hybrid technique to alleviate 
+the harmful consequences of the class 
+imbalance problem in ML-based IDS. The 
+system’s one main problem is its time 
+consumption, which may be mitigated by 
+using cloud computing resources like as 
+Apache Spark.
+ 
+ 
+(continued on next page)
+Computers & Security 156 (2025) 104511 
+3 
+
+A. Samiah et al.
+Table 2 (continued).
+ Reference
+Domain
+Approach
+Algorithm
+Dataset
+Data type
+Major contribution
+ 
+ Ferrag et al. 
+(2020)
+Water
+Supervised
+REP Tree 
+Classifiers, Jrip 
+Classifiers, 
+Forest PA
+CICIDS2017 and 
+BoT-IoT
+Actual
+The work presents a hierarchical intrusion 
+detection approach that reduces 
+classification mistakes and improves system 
+efficiency. However, merging multiple 
+classifiers may result in increased 
+computational overhead, impacting 
+scalability and training efficiency.
+ 
+itself and stores the behavioral data. The model can easily classify the 
+user behavior as normal or abnormal. The proposed ILSTM not only 
+identifies an anomaly node but also finds whether a misbehaving node 
+is a broken node or a new user node or a compromised node using the 
+calculated trust factor.
+A rule-based machine learning technique was proposed in Umer 
+et al. (2021) to generate attack patterns for the physical process of 
+an ICS. More than 110,000 attack patterns were generated in a real-
+world six stage water treatment plant (SWaT). These attack patterns 
+are huge compared to 36 public attack scenarios designed by domain 
+experts on the same test bed. The data-centric approach to generate 
+invariants for a water treatment plant was proposed in Umer et al. 
+(2020). These invariants, and their performance in detecting anomalies, 
+were compared against those generated by a design-centric approach. 
+Similarly, A study reported in Feng et al. (2019) used design-based 
+invariants, data-based invariants, and residual-error based models for 
+anomaly detection in WaDi and SWaT. They also considered the time 
+series property for mining the process invariants.
+The standard BATADAL dataset was utilized to train a variety 
+of neural network types in Ramotsoela et al. (2020). The collection 
+contains 14 sophisticated attacks with attack detection system defences. 
+To detect anomalies, the output of the networks was applied to a 
+cross-validation dataset and an error threshold was computed using the 
+multivariate MD rule. A voting-based ensemble strategy that combines 
+the outputs of the several algorithms was also employed to improve 
+outcomes. The algorithm performed admirably on the cross-validation 
+dataset, with only minor performance declines on the test dataset. The 
+only exception was Recurrent Neural Network (RNN), which under 
+performed when applied to test data.
+Many machine learning techniques have proven to be successful at 
+conducting anomaly detection but only a few considered the sequential 
+nature of data. A sequential approach was proposed in Oliveira et al. 
+(2021). The performance of a Random Forest (RF), a Multi-Layer Per-
+ceptron (MLP) and a Long-Short Term Memory (LSTM) was evaluated 
+on the CIDDS-001 dataset. LSTM showed better performance than RF 
+and MLP in capturing sequential patterns. In Jeffrey et al. (2024), 
+a hybrid methodology was developed that combines signature-based 
+detection techniques for known attack patterns, threshold-based detec-
+tion strategies for immutable CPS characteristics, and behavior-based 
+anomaly detection utilizing one-class machine learning algorithms. 
+The k-nearest neighbor (KNN) and Support Vector Machine (SVM) 
+algorithms were used to monitor the data collected by sensors from 
+operational technologies.
+The study in Kim et al. (2022) describes a host-based approach for 
+detecting and diagnosing abnormalities in an oil refinery’s distributed 
+control system (DCS) network using DCS vendor-proprietary protocols. 
+Normal and abnormal traffic were gathered in a nearly equivalent set-
+ting to the real working environment. Depending on the time window, 
+it was determined whether or not the traffic was usual. The traffic 
+attack types were determined by studying the TCP/IP layer-4, i.e., the 
+network’s basic hierarchical structure. Proposed work shows that XG-
+Boost is appropriate for multi-class classification attack identification. 
+However, ML-based random forest and decision trees are superior for 
+anomalies detection and attack identification.
+The study conducted in Gauthama Raman et al. (2021) used the 
+decision tree to analyze component ageing. They used the decision 
+tree to model the relationship between a motorized valve and a flow 
+transmitter in SWaT. This study found that the time delay for the 
+motorized valve (MV101) to change it’s state based on the state of the 
+flow transmitter (FIT101) increased to 12–15 s due to sensor drift.
+The authors in Colelli et al. (2021) have shown a feasible solution 
+using machine learning to create anomaly-based IDS when paired with 
+other existing approaches to improve the security of CPS. The machine 
+learning approach (Random Forest) was used to categorize the behavior 
+of the system in the development of an anomaly-based intrusion detec-
+tion system. The study provided in Faramondi et al. (2021) presents 
+a dataset to assist researchers in validating systems such as Intrusion 
+Detection Systems (IDS) in light of artificial intelligence and machine 
+learning approaches for detection and organization of threats in Cyber 
+Physical Systems. Two distinct datasets were used for each acquisition 
+in the work: a physical dataset that reports physical measurements of 
+sensors, solenoid valves, and pumps obtained from PLCs and saved by 
+the historical data recorder (Historian), and a network dataset that 
+reports packet features pertaining to traffic exchanged in the SCADA 
+network. The four algorithms that were examined are KNN, RF, Naive 
+Bayes (NB), and SVM. These algorithms were applied to both network 
+and physical datasets. The results showed that classification algorithms, 
+when applied independently to physical and network data, are unable 
+to detect all attack types. As a result, in order to improve performance, 
+both the network and the physical data must be considered. There is a 
+large body of work on simulation and model based anomaly detection 
+for CPS, e.g., Pasqualetti et al. (2011), Teixeira et al. (2012), Verma 
+et al. (2004), Narasimhan and Biswas (2007) and Hofbaur and Williams 
+(2002). However, these approaches require prior knowledge of the 
+system’s configuration, in addition to operation logs. The summary of 
+related work is given in Table 1 and comparative analysis is given in 
+Table 2.
+3. Water distribution testbed
+The Water Distribution (WaDi) is a testbed available at Singapore 
+University of Technology and Design (Ahmed et al., 2017b). It is a 
+valuable resource for researchers working to create safe and secure 
+cyber physical systems (CPS). WaDi is a natural extension of SWaT 
+available at the same geographical location (Mathur and Tippenhauer, 
+2016). WaDi has been in operation since 2016. WaDi accepts some 
+of SWaT’s reverse osmosis permeate and raw water, resulting in a 
+comprehensive and realistic water treatment, storage, and distribution 
+network. WaDi is made up of multiple pipes that traverse a vast, 
+and frequently less secure region. Physical attacks on a distribution 
+network like WaDi are highly vulnerable to cyber-attacks. In addition to 
+attacks and defenses on PLCs and networks, WaDi can provide valuable 
+information on the consequences of physical attacks such as water 
+leakage and malicious chemical injections.
+WaDi’s cyber component includes a multilayer communications 
+network, three National Instruments PLCs and two Schneider Electric 
+PLCs, Human Machine Interfaces (HMIs), Supervisory Control and Data 
+Acquisition (SCADA) workstations, and a Historian. Sensor data is 
+provided to the SCADA system and is recorded by the Historian for 
+further study.
+WaDi has three stages, P1:water supply, P2:distribution network, 
+and P3:return water system, as shown in Fig. 1. Each stage is connected 
+with PLCs and PLCs are controlled and monitored by SCADA system of 
+WaDi.
+Computers & Security 156 (2025) 104511 
+4 
+
+A. Samiah et al.
+Fig. 1. WaDi’s three-stage processes.
+Fig. 2. A CPS’s control section’s architecture. For PLCs, use P1, P2, ..., Pn. At Level 
+0, each PLC uses a local network to connect to its sensors and actuators. At Level 1, 
+PLCs communicate with one another through a different network. At Level 3, network 
+uses communication with SCADA and other systems.
+3.1. P1: Water supply
+In this stage, the water treated by SWaT is provided to the first 
+stage of WaDi where chlorination is performed in chemical dosing tanks 
+named as NaOCl (1-T-001) and NH4Cl (1-T-002) . Analyzer sensors are 
+used to ensure the quality of the water and then the water is stored in 
+the raw water tanks. This stored water is further transferred to stage 2 
+with the help of raw water pumps. Sensors, actuators and storage tanks 
+used in this stage are described in Table 3.
+3.2. P2: Distribution networks
+Distribution network is further divided in two stages. In first stage, 
+there are two elevated tanks, two booster pumps, organic and inorganic 
+tanks for chemical dosing to ensure water quality. Other section is 
+comprises of six consumer tanks and pipe leakage simulation. Raw 
+water tanks send water to higher reservoir tanks, which subsequently 
+deliver water to consumer tanks based on a predefined demand pattern. 
+When the consumer tanks are full, water drains to the return water grid. 
+Major attributes used in stage 2 are given in Table 3.
+3.3. P3: Return water system
+This section is comprises of return water tank, two return water 
+transfer pumps, and NaHSO3 tanks for chemical dosing. Attributes used 
+in this part are described in Table 3.
+The testbed include notable features such as segmented commu-
+nications networks, wired and wireless communications, distributed 
+dynamic control, connectivity across testbeds, and complete access 
+Fig. 3. An invariant based on a decision tree.
+to the control logic inside the PLCs and human machine interfaces 
+(HMIs) (Ahmed et al., 2017a). Fig. 2 shows that WaDi is equipped 
+with a network of monitoring sensors to ensure its safe operation. 
+Researchers may use them to write their own code and upload it to 
+the controllers for research and testing. It also enables them to exhibit 
+their technology in a regulated, safe, and realistic setting.
+4. Invariant mining using decision trees
+Decision Tree is a supervised learning machine learning approach. 
+It can be used for classification and regression problems. It is a tree-
+structured classifier in which internal nodes contain data set attributes, 
+branches represent decision rules, and each leaf node represents the re-
+sult. Decision trees have the ability to select the most relevant features. 
+This ensures that the generated rules are based on significant charac-
+teristics rather than noise. Because each path from the root to a leaf 
+represents a distinct decision rule, they offer excellent interpretability, 
+making it easy to identify patterns. Decision trees are also scalable and 
+effective in handling large datasets, which is essential for rule mining.
+The proposed approach was used to generate a number of decision 
+trees for different sensors or actuators. For example, Fig. 3 represents 
+a decision tree for 1-AIT-005-PV. We call this tree an invariant. The 
+decision node makes the decision based on the value of any particular 
+sensor or actuator. The leaf node represents the value of the particular 
+class, which in this case is 1-AIT-005-PV. The proposed approach 
+has used the Classification and Regression Tree (CART) algorithm to 
+generate these decision trees. The CART used the 14 days of operational 
+data from WaDi to generate the decision trees (Ahmed et al., 2017a). 
+However, the proposed approach can also be extended to other ICS 
+datasets. The dataset of WaDi contains 120 attributes and 1 048 571 
+transactions with a sampling rate of one second. For this study, we fo-
+cused on identifying attributes that exhibited dynamic behavior within 
+the dataset. This led us to concentrate primarily on attributes from 
+Stages 1 and 2, where we observed notable variations. After careful 
+analysis, we determined that the attributes in Stage 3 did not demon-
+strate significant behavioral changes; most remained in a constant state. 
+Consequently, we were unable to identify suitable Stage 3 attributes for 
+inclusion in our final attribute set. The selected attributes, derived from 
+Stages 1 and 2, are listed in the ‘‘Class Attribute’’ column of Table 4. The 
+dataset of WaDi contains the continuous valued-attributes. However, 
+the proposed approach aims to create decision rules based on each 
+attribute, therefore, the continuous valued attribute were discretized 
+into different classes using the binning method. Binning is the process 
+of converting continuous variables into discrete variables by defining 
+Computers & Security 156 (2025) 104511 
+5 
+
+A. Samiah et al.
+Table 3
+A summary of WaDi’s key attributes.
+ P1 Stage: Water Supply
+ Attribute
+Type
+Description
+ 
+ 1-MV-001/4/5
+Actuator
+Motorized Valve used for raw water and SWaT RO water inlet 
+ 1-LS-001/2
+Sensor
+Level Switch used in chemical dosing tanks
+ 
+ 1-LT-001
+Sensor
+Raw water tank Level Meter
+ 
+ 1-FS-001/2
+Sensor
+Raw water transfer pump 1/2 outlet flow switch
+ 
+ 1-P-005/6
+Actuator
+Raw Water transfer Pump 1/2
+ 
+ 1-T-001/2
+Tank
+Raw water tanks for water Storage
+ 
+ P2 Stage: Distribution Network
+ Attribute
+Type
+Description
+ 
+ 2-MV-001/2
+Actuator
+Elevated reservoir tank 1/2 inlet motorized valve
+ 
+ 2-T-001/2
+Tank
+Elevated reservoir Tank 1/2
+ 
+ 2-MV-003/4
+Actuator
+Elevated reservoir tank 1/2 outlet motorized valve
+ 
+ 2-LT-001/2
+Sensor
+Elevated reservoir tank 1/2 Level Meter
+ 
+ 2-PIT-001
+Sensor
+Reservoir outlet pressure meter
+ 
+ 2-T-001/2
+Tank
+Chemical dosing tanks
+ 
+ 2-MV-005
+Actuator
+Grid inlet (Gravity) valve
+ 
+ 2-MV-006
+Actuator
+Grid inlet (Booster) valve
+ 
+ 2-P-003/4
+Pumps
+Booster pumps
+ 
+ 2-FS-001/2
+Sensor
+Booster pumps for outlet flow switch
+ 
+ P3 Stage: Return Water System
+ Attribute
+Type
+Description
+ 
+ 3-MV-001/2
+Actuator
+Motorized Valve
+ 
+ 3-LS-001/2
+Sensor
+Level Switch
+ 
+ 3-LT-001
+Sensor
+Level Meter
+ 
+ 3-FS-001/2
+Sensor
+Flow Switch
+ 
+ 3-P-003/4
+Actuator
+Water Pump
+ 
+ 3-T-001/2
+Tank
+Store Water
+ 
+a collection of contiguous intervals, also known as bins, that span the 
+variable’s value range. The Equal Width Discretiser method was used 
+to divide the variable values into equal-sized contiguous intervals. The 
+interval size was computed as: 
+(𝑚𝑎𝑥(𝑋) −𝑚𝑖𝑛(𝑋))∕𝑏𝑖𝑛𝑠
+(1)
+The total number of rules or invariants generated for each sensor and 
+actuator are given in Table 4. The number of rules generated against 
+each sensor/ actuators shows their impact in the overall behavior of 
+the plant. The increase in number of rules is due to the involvement of 
+different sensors/ actuators in determining the class of attribute. From 
+Table 4 it can be seen that attribute 2-LT-002-PV has the highest num-
+ber of generated rules, that is, 1565, followed by 2-PIT-003-PV which 
+has 1319 generated rules. It shows that 2-LT-002-PV and 2-PIT-003-PV 
+are of great importance, particularly from the security perspective of 
+the plant. Contrary to this, for 1-P-002-STATUS and 1-P-004-STATUS, 
+only the 01 rule was found for each class and 02 rules for 1-P-001-
+STATUS and 1-P-003-STATUS. The total number of rules generated 
+by the algorithm were 14 639. The number of rules depends on the 
+intervals defined for each attribute. For example, In pump, only two 
+values of status were considered, that is, 0 or 1, which represents OFF 
+and ON, respectively. For this study, pump speed was not considered; 
+we focused solely on the ON and OFF states of the pumps to simplify 
+the model and manage the complexity of the generated invariants. 
+Similarly, for motorized valve, there exist three values, i.e. 0, 1 and 2, 
+where 0 represents the CLOSED state, 2 for the OPEN state, and 3 for 
+the valve transition state. In our analysis, we only considered the OPEN 
+and CLOSE states of the valve. The other attributes related to different 
+sensors are continuous-valued attributes. Since it was not feasible to 
+generate rules for these continuous-valued attributes, we discretized 
+these attributes by creating intervals. This makes the rules more effi-
+cient and accurate and limits the number of rules. In Table 5, some 
+samples of generated rules are shown for different sensors or actuators. 
+These generated rules (invariants) serves as monitors to detect process 
+anomalies. For example, the invariant in entry 5 of Table 5 states that 
+motorized valve (1-MV-001-STATUS) should be CLOSED given that 1-P-
+001-STATUS = ON, 1-MV-004-STATUS = OPEN, 1-LT-001-PV = HIGH, 
+1-AIT-005-PV = HIGH, 2-FIT-001-PV = HIGH, 1-P-005-STATUS = ON, 
+2-MCV-401-CO = OPEN, and 2-PIT-003-PV = HIGH. If an adversary 
+changes the value of any sensor or actuator (e.g., turns off pump 1-P-
+001-STATUS), the invariant will immediately generate an alert because 
+it will no longer be valid in the resulting scenario.
+4.1. Comparison of invariants generated using decision trees vs. invariants 
+generated using ARM
+There are studies in the literature that have used association rule 
+mining (ARM) to generate invariants (Umer et al., 2020; Pal et al., 
+2017). However, these studies have used the SWaT dataset to generate 
+invariants. We used the same approach discussed in, Umer et al. (2020) 
+to generate invariants for WaDi. The detailed discussion of invariant 
+generation using ARM is not the scope of this paper; therefore, we have 
+only presented the results obtained using ARM to draw a comparison 
+with decision trees. The invariants generated using the ARM are shown 
+in Table 6. ARM has the limitation that it works on binary data while 
+its strength lies on identifying relationships between existing or non-
+existing objects. Continuous variables, unless previously binarized, are 
+not well-suited for this approach. However, Decision Trees can process 
+the continuous or categorical data by creating splits (binned intervals) 
+that optimally separate classes. ARM uses binarization as a preprocess-
+ing that potentially reduces the granularity. Decision Trees can work 
+effectively with both raw and binned numerical data, hence, preserving 
+more information. Therefore, attributes which cannot be converted 
+into binary-valued attributes due to improper decision boundaries were 
+excluded from the rule mining process. Only 17 attributes of WaDi 
+were used to generate invariants using ARM. Therefore, it created a 
+less richer set of invariants. While, this is not the case with decision 
+trees as it does not impose the limitation of binary-valued attribute, 
+therefore, 28 attributes of WaDi were used to generate the invariants 
+using decision trees. This created a richer set of invariants as compare 
+to invariant generated using the ARM, as evident in Table 5, invariants 
+generated by decision trees and in Table 6 for ARM respectively. Rules 
+generated by decision tree in Table 5 entirely depends on threshold lev-
+els. Each attribute can have bin level above or below the threshold. For 
+Computers & Security 156 (2025) 104511 
+6 
+
+A. Samiah et al.
+Table 4
+Number of invariants generated for each sensor and actuator.
+ S/No
+Class attribute
+Type
+Description
+No. of rules 
+ 1
+1-AIT-005-PN
+Sensor
+Chemical Dosing Analyzer used for water quality analysis
+1236
+ 
+ 2
+1-LT-001-PV
+Sensor
+Raw water tank level meter
+1281
+ 
+ 3
+1-MV-001-STATUS
+Actuator
+Raw water inlet valve from SUTD
+169
+ 
+ 4
+1-MV-004-STATUS
+Actuator
+SWaT raw water valve
+588
+ 
+ 5
+1-P-001-STATUS
+Actuator
+Dosing pump No. 1 used for NaOCl dosing
+02
+ 
+ 6
+1-P-002-STATUS
+Actuator
+Dosing pump No. 2 used for NaOCl dosing
+01
+ 
+ 7
+1-P-003-STATUS
+Actuator
+Dosing pump No. 1 used for NH4Cl dosing
+02
+ 
+ 8
+1-P-004-STATUS
+Actuator
+Dosing pump No. 2 used for NH4Cl dosing
+01
+ 
+ 9
+1-P-005-STATUS
+Actuator
+Raw water transfer pump No. 1
+222
+ 
+ 10
+2-FIT-001-PV
+Sensor
+Flow indicator from raw water transfer pump
+1096
+ 
+ 11
+2-FIT-003-PV
+Sensor
+Flow indicator from booster pump
+629
+ 
+ 12
+2-LT-002-PV
+Sensor
+Elevated reservoir tank 2 level meter
+1565
+ 
+ 13
+2-MCV-101-CO
+Actuator
+Consumer tank 1 inlet motorized valve
+314
+ 
+ 14
+2-MCV-201-CO
+Actuator
+Consumer tank 2 inlet motorized valve
+440
+ 
+ 15
+2-MCV-301-CO
+Actuator
+Consumer tank 3 inlet motorized valve
+544
+ 
+ 16
+2-MCV-401-CO
+Actuator
+Consumer tank 4 inlet motorized valve
+314
+ 
+ 17
+2-MCV-501-CO
+Actuator
+Consumer tank 5 inlet motorized valve
+270
+ 
+ 18
+2-MCV-601-CO
+Actuator
+Consumer tank 6 inlet motorized valve
+17
+ 
+ 19
+2-MV-003-STATUS
+Actuator
+Elevated reservoir tank 2 inlet motorized valve
+375
+ 
+ 20
+2-MV-006-STATUS
+Actuator
+Grid inlet (Booster) motorized valve
+682
+ 
+ 21
+2-MV-101-STATUS
+Actuator
+Consumer tank 1 outlet motorized valve
+1223
+ 
+ 22
+2-MV-201-STATUS
+Actuator
+Consumer tank 2 outlet valve
+254
+ 
+ 23
+2-MV-301-STATUS
+Actuator
+Consumer tank 3 outlet motorized valve
+286
+ 
+ 24
+2-MV-401-STATUS
+Actuator
+Consumer tank 4 outlet motorized valve
+609
+ 
+ 25
+2-MV-501-STATUS
+Actuator
+Consumer tank 5 outlet motorized valve
+539
+ 
+ 26
+2-MV-601-STATUS
+Actuator
+Consumer tank 6 outlet motorized valve
+264
+ 
+ 27
+2-P-003-STATUS
+Actuator
+Booster pump 1
+392
+ 
+ 28
+2-PIT-003-PV
+Sensor
+Booster pump outlet pressure meter
+1319
+ 
+Fig. 4. Visual representation of Rule No. 4, Table 5.
+example, Rule 4 states that if the motorized valve (1−MV−004−STA-
+TUS) is at or below a threshold of 4.5 (indicating it is open), and the 
+flow indicator (2−FIT−002−PV) is at or below 4.5 (indicating high 
+water flow), and the water level in Tank 2 (2−LT−002−PV) is at or 
+below 4.5 (indicating a high water level), and the water pressure in 
+the pipe (2−PIT−003−PV) is at or below 4.5 (indicating high water 
+pressure), then the water level in Tank 1 will be low (class:0). A visual 
+representation of Rule 4 given in Table 5 is shown in Fig. 4.
+4.2. Rules validation
+There are multiple ways to validate the invariants generated using 
+the proposed decision tree approach. (i). Live validation on the opera-
+tional testbed. (ii). Offline validation using a different dataset collected 
+from the same testbed. (iii). Validation by domain expert using the 
+physics of the plant. (iv). Validation using the digital twin of the plant.
+We performed live validation on the operational testbed and also 
+validated the invariants against the plant design, using domain expert 
+input. A random subset of invariants was chosen and validated based 
+on the physics of the plant. However, due to operational issues with 
+the WaDi testbed (faulty sensor/actuator) at that time, we were unable 
+to conduct it in a more meaningful way and relied more heavily on 
+domain expert validation. Therefore, only one rule was validated on 
+WaDi, while the rest were verified using the physical principles of 
+the WaDi plant and the WaDi HMI/SCADA system. Table 7 presents 
+some of the rules, which were validated either live on the opera-
+tional plant or through the plant’s physics. For example, the first rule 
+given in Table 7 was validated on live plant which states that if 
+motorized valves (2-MV-601-STATUS), (2-MV-301-STATUS), (2-MCV-
+201-CO), (1-MV-004-STATUS), and (2-MV-201-STATUS) are open and 
+chemical analyzer (1-AIT-005-PV) level is high then the valve (2-MCV-
+101-CO) will be open. The second rule, which was validated using the 
+physics of WaDi states that if tank levels (1-LT-001-PV) and (2-LT-002-
+PV) are high, and line water flow indicator (2-FIT-001-PV) is high, then 
+the valve (1-MV-004-STATUS) will be closed. The third rule states that 
+the pump at stage 1 will be OFF if motorized valve (2-MV-003-STATUS) 
+is open and flow indicator (2-FIT-001-PV) is high. According to the 
+plant’s physics, this was not possible and therefore not validated. For 
+further verification, we also checked the operational data. We found 
+that the pump was ON in this situation, even though the rule states that 
+it should be OFF. The same approach can be adopted to understand the 
+other rules in Table 7.
+5. Research questions discussion
+RQ1: Decision trees can be used to generate invariants for water 
+distribution plant. They analyze the plant’s behavior and relationship 
+Computers & Security 156 (2025) 104511 
+7 
+
+A. Samiah et al.
+Table 5
+A subset of invariants generated using decision trees.
+ S/No
+Class attribute
+Rule
+Class value
+ 
+ 1
+1-AIT-005-PV
+if 1-P-003-STATUS = ON: if 1-LT-001-PV = HIGH: if 2-P-003-STATUS = ON: if 
+2-MV-301-STATUS = OPEN: if 2-MCV-101-CO = OPEN: if 2-MCV-501-CO = OPEN: if 
+2-MV-501-STATUS = OPEN: if 2-FIT-001-PV = HIGH:
+class: LOW
+ 
+ 2
+1-AIT-005-PV
+if 1-P-003-STATUS = ON: if 1-LT-001-PV = HIGH: if 2-FIT-001-PV = HIGH: if 
+2-MV-006-STATUS = OPEN: if 2-MV-301-STATUS = OPEN: if 2-MV-601-STATUS =
+OPEN: if 2-FIT-003-PV = HIGH: if 2-MV-501-STATUS = OPEN:
+class: HIGH 
+ 3
+1-LT-001-PV
+if 1-MV-004-STATUS = OPEN: if 1-AIT-005-PV = HIGH: if 2-P-003-STATUS = ON: if 
+2-MV-601-STATUS = OPEN: if 2-MCV-501-CO = OPEN: if 1-MV-001-STATUS =
+OPEN: if 2-MCV-401-CO = OPEN: if 2-MV-101-STATUS = OPEN: if 
+2-MV-003-STATUS = OPEN: if 1-P-001-STATUS = ON:
+class: HIGH 
+ 4
+1-LT-001-PV
+if 1-MV-004-STATUS = OPEN: if 2-FIT-001-PV = HIGH: if 2-LT-002-PV = HIGH: if 
+2-PIT-003-PV = HIGH:
+class: LOW
+ 
+ 5
+1-MV-001-STATUS
+if 1-P-001-STATUS = ON: if 1-MV-004-STATUS = OPEN: if 1-LT-001-PV = HIGH: if 
+1-AIT-005-PV = HIGH: if 2-FIT-001-PV = HIGH: if 1-P-005-STATUS = ON: if 
+2-MCV-401-CO = OPEN: if 2-PIT-003-PV = HIGH:
+class: CLOSED 
+ 6
+1-MV-004-STATUS
+if 1-LT-001-PV = HIGH: if 1-P-003-STATUS = ON: if 2-MCV-101-CO = OPEN: if 
+2-MV-301-STATUS = OPEN: if 1-AIT-005-PV = HIGH: if 2-MCV-201-CO = OPEN: if 
+2-MCV-501-CO = OPEN: if 1-P-005-STATUS = ON: if 2-LT-002-PV = HIGH:
+class: OPEN 
+ 7
+1-P-005-STATUS
+if 2-MV-003-STATUS = OPEN: if 2-FIT-001-PV = HIGH: if 1-MV-004-STATUS =
+OPEN: if 2-MCV-201-CO = OPEN: if 2-P-003-STATUS = ON: if 2-LT-002-PV = HIGH: 
+if 1-P-001-STATUS = ON: if 2-MV-301-STATUS = OPEN:
+class: OFF
+ 
+ 8
+2-FIT-001-PV
+if 1-P-005-STATUS = ON: if 2-LT-002-PV = HIGH: if 2-MV-006-STATUS = OPEN: if 
+1-LT-001-PV = HIGH: if 2-MCV-501-CO = OPEN: if 1-AIT-005-PV = HIGH: if 
+2-MV-401-STATUS = OPEN:
+class: LOW
+ 
+ 9
+2-MCV-101-CO
+if 2-MV-601-STATUS = OPEN: if 2-MV-301-STATUS = OPEN: if 2-MCV-201-CO =
+OPEN: if 1-MV-004-STATUS = OPEN: if 1-AIT-005-PV = HIGH: if 2-MV-201-STATUS 
+= OPEN:
+class: OPEN 
+ 10
+2-MCV-301-CO
+if 2-MV-401-STATUS = OPEN: if 2-P-003-STATUS = ON: if 2-MV-101-STATUS =
+OPEN: if 2-MV-501-STATUS = OPEN: if 2-MCV-501-CO = OPEN: if 2-FIT-001-PV =
+HIGH:
+class: CLOSED 
+ 11
+2-MCV-501-CO
+if 2-MV-201-STATUS = OPEN: if 2-MCV-201-CO = OPEN: if 2-MCV-301-CO = OPEN: 
+if 2-FIT-003-PV = HIGH: if 1-LT-001-PV = HIGH: if 2-MV-301-STATUS = OPEN: if 
+1-AIT-005-PV = HIGH: if 2-LT-002-PV = HIGH: if 2-FIT-001-PV = HIGH: if 
+2-PIT-003-PV = HIGH:
+class: OPEN 
+ 12
+2-MV-003-STATUS
+if 1-P-005-STATUS = ON: if 2-MV-201-STATUS = OPEN: if 2-LT-002-PV = HIGH: if 
+2-MCV-501-CO = OPEN: if 1-MV-004-STATUS = OPEN: if 2-MV-501-STATUS =
+OPEN:
+class: CLOSED 
+ 13
+2-MV-006-STATUS
+if 2-P-003-STATUS = ON: if 2-PIT-003-PV = HIGH: if 2-FIT-001-PV = HIGH: if 
+2-MCV-301-CO = OPEN: if 2-MV-201-STATUS = OPEN: if 2-MV-101-STATUS =
+OPEN: if 1-LT-001-PV = HIGH: if 1-AIT-005-PV = HIGH:
+class: CLOSED 
+ 14
+2-MV-101-STATUS
+if 2-MCV-301-CO = OPEN: if 2-MCV-201-CO = OPEN: if 1-P-003-STATUS = ON: if 
+1-LT-001-PV = HIGH: if 1-AIT-005-PV = HIGH: if 2-MCV-101-CO = OPEN:
+class: OPEN 
+ 15
+2-MV-201-STATUS
+if 2-MCV-501-CO = OPEN: if 2-MV-501-STATUS = OPEN: if 2-FIT-003-PV = HIGH: if 
+2-MCV-301-CO = OPEN: if 2-PIT-003-PV = HIGH: if 1-MV-001-STATUS = OPEN: if 
+1-AIT-005-PV = HIGH:
+class: OPEN 
+ 16
+2-MV-401-STATUS
+if 2-MCV-301-CO = OPEN: if 2-MV-101-STATUS = OPEN: if 2-MCV-501-CO = OPEN: 
+if 1-MV-004-STATUS = OPEN: if 1-LT-001-PV = HIGH: if 1-P-003-STATUS = ON: if 
+2-MCV-201-CO = OPEN: if 2-MV-601-STATUS = OPEN:
+class: OPEN 
+ 17
+2-MV-501-STATUS
+if 2-MCV-201-CO = OPEN: if 2-P-003-STATUS = ON: if 2-MV-401-STATUS = OPEN: 
+if 2-MCV-301-CO = OPEN: if 1-LT-001-PV = HIGH: if 2-PIT-003-PV = HIGH: if 
+2-MV-601-STATUS = OPEN: if 2-LT-002-PV = HIGH: if 1-AIT-005-PV = HIGH:
+class: CLOSED 
+ 18
+2-P-003-STATUS
+if 2-MV-006-STATUS = OPEN: if 2-PIT-003-PV = HIGH: if 2-FIT-003-PV = HIGH: if 
+2-MCV-501-CO = OPEN: if 2-LT-002-PV = HIGH: if 1-AIT-005-PV = HIGH: if 
+2-MCV-101-CO = OPEN: if 2-FIT-001-PV = HIGH: if 2-MV-501-STATUS = OPEN: if 
+2-MCV-201-CO = OPEN:
+class: ON
+ 
+ 19
+2-PIT-003-PV
+if 2-P-003-STATUS = ON: if 2-MV-601-STATUS = OPEN: if 1-AIT-005-PV = HIGH: if 
+2-MCV-201-CO = OPEN: if 2-MCV-501-CO = OPEN: if 2-MV-301-STATUS = OPEN: if 
+1-LT-001-PV = HIGH: if 2-FIT-001-PV = HIGH: if 2-LT-002-PV = HIGH: if 
+1-MV-001-STATUS = OPEN:
+class: HIGH 
+ 20
+2-PIT-003-PV
+if 2-P-003-STATUS = ON: if 2-MV-601-STATUS = OPEN: if 2-MCV-201-CO = OPEN: 
+if 2-FIT-003-PV = HIGH: if 2-MCV-501-CO = OPEN: if 2-LT-002-PV = HIGH: if 
+1-P-005-STATUS = ON: if 2-MV-301-STATUS = OPEN: if 1-AIT-005-PV = HIGH:
+class: LOW
+ 
+Computers & Security 156 (2025) 104511 
+8 
+
+A. Samiah et al.
+Table 6
+A subset of invariants generated using ARM.
+ SNo
+Number of invariants
+Antecedent size
+Sample of antecedents
+Consequent
+ 
+ 1
+251
+1
+2-LT-002=HIGH
+1-LS-001=LOW 
+ 2
+2204
+2
+1-P-001=OFF, 1-P-004=OFF
+1-LS-002=LOW 
+ 3
+11 102
+3
+2-MV-009=OPEN, 2-P-003=OFF, 2-MV-301=OPEN
+2-FIT-003=LOW 
+ 4
+614 801
+8
+1-LT-001=LOW, 2-MV-005=OPEN, 2-MV-006=CLOSED, 
+1-P-001=OFF, 1-P-005=OFF, 2-FIT-001=LOW, 2-P-003=OFF, 
+2-MCV-007=CLOSED
+2-MV-009=OPEN 
+ 5
+706 810
+9
+1-LS-001=LOW, 1-LS-002=LOW, 2-MV-003=CLOSED, 1-P-001=OFF, 
+2-MV-009=OPEN, 1-P-003=OFF, 1-P-005=OFF, 2-FIT-001=LOW, 
+2-FIT-003=LOW
+2-P-003=OFF
+ 
+ 6
+2562
+16
+1-LS-001=LOW, 1-LS-002=LOW, 1-LT-001=LOW, 
+1-MV-001=CLOSED, 1-P-001=OFF, 1-P-002=OFF, 1-P-003=OFF, 
+1-P-005=OFF, 2-FIT-001=LOW, 2-FIT-003=LOW, 2-LT-002=HIGH, 
+2-MCV-007=CLOSED, 2-MV-003=CLOSED, 2-MV-005=OPEN, 
+2-MV-006=CLOSED, 2-P-003=OFF
+2-MV-009=OPEN 
+ 7
+304
+17
+1-LS-002=LOW, 1-LT-001=LOW, 1-MV-001=CLOSED, 1-P-001=OFF, 
+1-P-002=OFF, 1-P-003=OFF, 1-P-004=OFF, 1-P-005=OFF, 
+2-FIT-001=LOW, 2-FIT-003=LOW, 2-LT-002=HIGH, 
+2-MCV-007=CLOSED, 2-MV-003=CLOSED, 2-MV-005=OPEN, 
+2-MV-006=CLOSED, 2-MV-009=OPEN, 2-P-003=OFF
+1-AIT-005=LOW 
+Table 7
+Validation of Invariants.
+ S/No
+Class attribute
+Rule
+Validated
+Validated by 
+ 1
+2-MCV-101-CO
+if 2-MV-601-STATUS = OPEN: if 2-MV-301-STATUS = OPEN: if 
+2-MCV-201-CO = OPEN: if 1-MV-004-STATUS = OPEN: if 1-AIT-005-PV =
+HIGH: if 2-MV-201-STATUS = OPEN: then class: OPEN
+Yes
+WaDi Plant 
+ 2
+1-MV-004-STATUS
+if 1-LT-001-PV = HIGH: if 2-FIT-001-PV = HIGH: if 2-LT-002-PV = HIGH: 
+then class: OPEN
+Yes
+WaDi Design 
+ 3
+1-P-005-STATUS
+if 2-MV-003-STATUS = OPEN: if 2-FIT-001-PV = HIGH: then class: OFF
+No
+WaDi Design 
+ 4
+1-LT-001-PV
+if 1-MV-004-STATUS = OPEN: if 1-AIT-005-PV = HIGH: if 2-FIT-003-PV =
+LOW: if 2-MV-401-STATUS = OPEN: if 2-MCV-401-CO = OPEN: if 
+1-P-003-STATUS = ON: if 2-MV-101-STATUS = OPEN: if 2-MV-601-STATUS =
+OPEN: if 2-LT-002-PV = HIGH: if 2-MV-003-STATUS = OPEN: if 2-PIT-003-PV 
+= HIGH: if 2-MV-501-STATUS = OPEN: if 2-FIT-001-PV = HIGH: if 
+2-MV-201-STATUS = OPEN: if 2-MV-006-STATUS = OPEN: then class: LOW
+Yes
+WaDi Design 
+ 5
+2-MCV-101-CO
+if 2-MV-601-STATUS = OPEN: if 2-MV-301-STATUS = OPEN: if 
+2-MCV-201-CO = OPEN: if 1-MV-004-STATUS = OPEN: if 1-AIT-005-PV =
+HIGH: if 2-MV-201-STATUS = OPEN: then class: OPEN
+Yes
+WaDi Design 
+ 6
+2-MV-006-STATUS
+if 2-P-003-STATUS = ON: if 1-AIT-005-PV = HIGH: if 2-FIT-003-PV = LOW: if 
+2-PIT-003-PV = HIGH: if 2-MCV-201-CO = OPEN: if 2-MV-201-STATUS =
+OPEN: if 2-MCV-301-CO = OPEN: if 2-MV-601-STATUS = OPEN: if 
+2-LT-002-PV = HIGH: if 2-MCV-401-CO = OPEN: if 1-P-003-STATUS = ON: 
+then class: OPEN
+Yes
+WaDi Design 
+ 7
+1-MV-001-STATUS
+if 1-P-001-STATUS = ON: if 1-MV-004-STATUS = OPEN: if 1-LT-001-PV =
+HIGH: if 1-AIT-005-PV = HIGH: if 2-MCV-201-CO = OPEN: if 2-LT-002-PV =
+HIGH: then class: OPEN
+Yes
+WaDi Design 
+ 8
+2-FIT-001-PV
+if 1-P-005-STATUS = ON: if 2-LT-002-PV = HIGH: if 2-MCV-201-CO = OPEN: 
+if 2-MV-101-STATUS = OPEN: if 1-MV-001-STATUS = OPEN: if 2-MCV-401-CO 
+= OPEN: if 2-MV-401-STATUS = OPEN: if 1-LT-001-PV = HIGH: if 
+1-MV-004-STATUS = OPEN: if 1-AIT-005-PV = HIGH: then class: HIGH
+Yes
+WaDi Design 
+ 9
+2-LT-002-PV
+if 2-MV-003-STATUS = OPEN: if 2-MCV-301-CO = OPEN: if 2-MCV-101-CO =
+OPEN: if 2-PIT-003-PV = HIGH: if 2-MV-501-STATUS = HIGH: if 
+2-FIT-001-PV = HIGH: if 1-MV-004-STATUS = OPEN: if 1-AIT-005-PV =
+HIGH: if 2-MV-101-STATUS = OPEN: if 1-MV-001-STATUS = OPEN: if 
+1-P-001-STATUS = ON: then class: HIGH
+Yes
+WaDi Design 
+ 10
+2-MCV-101-CO
+if 2-MV-601-STATUS = OPEN: if 2-MV-301-STATUS = OPEN: if 
+2-MCV-201-CO = OPEN: if 1-MV-004-STATUS = OPEN: if 1-AIT-005-PV =
+HIGH: if 2-MV-201-STATUS = OPEN: then class: OPEN
+Yes
+WaDi Design 
+ 11
+2-MCV-201-CO
+if 2-MV-501-STATUS = OPEN: if 2-P-003-STATUS = ON: if 2-MV-401-STATUS 
+= OPEN: if 2-MCV-301-CO = OPEN: if 2-MV-101-STATUS = OPEN: if 
+1-AIT-005-PV = HIGH: if 1-LT-001-PV = HIGH: if 2-MCV-401-CO = OPEN: 
+then class: CLOSED
+Yes
+WaDi Design 
+Computers & Security 156 (2025) 104511 
+9 
+
+A. Samiah et al.
+of attributes in various outcomes of the operational data of the plant. 
+It uncover the conditions that hold true across different scenarios 
+and correlate features that consistently influence decisions in specific 
+manners. Few of such invariants are shown in Table 5.
+RQ2: Decision trees and ARM are two different techniques and their 
+method of analyzing data is also different. They do not generate same 
+set of invariant even with same dataset. Reason is that decision trees 
+are mostly used for regression and classification tasks while ARM is 
+employed to identify interesting relationships or associations between 
+variables in large datasets. Decision tree invariants are frequently con-
+nected to decision rules that continue across branches. These invariants 
+are typically the thresholds or conditions that influence the tree’s 
+decisions whereas, ARM discovers invariants as patterns or relation-
+ships that persist throughout the dataset. They describe how features 
+interact or co-occur, and they are often statistical associations instead 
+of decision rules.
+RQ3: Invariants produced with decision trees (DT) usually con-
+centrate on identifying patterns based on important characteristics 
+and offer unambiguous understandable rules, particularly for big and 
+varied data sets. Conversely, invariants produced by Association Rule 
+Mining (ARM) identify stronger associations and capture common co-
+occurrences in the data. The effectiveness of the comparison depends on 
+the purpose and the complexity of the dataset. In general, ARM works 
+well with binary and categorical data, but it can produce a lot of rules, 
+which can be hard to maintain. ARM offers broader pattern discovery, 
+potentially revealing more nuanced invariants, while Decision Trees 
+give superior interpretability and structure.
+RQ4: In ARM, invariants are based on antecedents and a conse-
+quent. While in decision trees, invariant derived are typically rules 
+or conditions that based on the split of the tree. These invariants 
+represent logical conditions that classify or predict outcomes based 
+on feature values. These outcomes are similar as antecedents in ARM 
+and predicted class in decision tree, e.g., class 0 or class 1 is similar 
+as consequent in ARM approach. This means there is a similarity in 
+both invariants and feasibility of integration is possible. Moreover, the 
+invariants generated by both the approaches are different, therefore, 
+it will be good to integrate the invariants generated through both the 
+approaches. The combined set of invariants can serve as monitors to 
+detect process anomalies in the plant.
+6. Conclusion and future work
+The work presents a decision tree-based supervised machine learn-
+ing approach to generate invariants for a water distribution plant. 
+In this context, invariants are conditions or rules that remain consis-
+tently true under typical operating conditions; deviations from these 
+conditions may indicate potential system malfunctions or anomalies. 
+The proposed approach used operational data of the plant to generate 
+invariants using decision trees. A comparison of the proposed approach 
+with ARM is also provided. These invariants can serve as monitors to 
+detect the irregularities in the water distribution process. A subset of 
+generated invariants was validated live on operational testbed, and also 
+against the design of the plant. However, during live validation, faulty 
+sensor/actuator caused challenges for the investigation, increasing the 
+need for domain expert validation. The robustness of invariants can be 
+further tested by generating various cyberattacks on the ICS, ensuring 
+no faulty sensor/actuator influence. Future work will extend this con-
+cept to other ICS by applying other machine learning and deep learning 
+algorithms.
+CRediT authorship contribution statement
+Abdul Samiah: Writing – original draft, Conceptualization, Method-
+ology, Validation, Investigation, Data curation. Muhammad Azmi 
+Umer: Writing – review & editing, Conceptualization, Methodology, 
+Validation, Supervision, Resources, Funding acquisition. Shama Sid-
+diqui: Writing – review & editing, Supervision.
+Declaration of competing interest
+The authors declare that they have no known competing finan-
+cial interests or personal relationships that could have appeared to 
+influence the work reported in this paper.
+Acknowledgments
+This research is supported by the National Research Foundation, 
+Singapore, under its National Satellite of Excellence Programme ‘‘De-
+sign Science and Technology for Secure Critical Infrastructure: Phase 
+II’’ (Award No: NRF-NCR25-NSOE05-0001). Any opinions, findings and 
+conclusions or recommendations expressed in this material are those 
+of the author(s) and do not reflect the views of National Research 
+Foundation, Singapore.
+Data availability
+Data will be made available on request.
+References
+Adepu, Sridhar, Mathur, Aditya, 2016. Using process invariants to detect cyber attacks 
+on a water treatment system. In: ICT Systems Security and Privacy Protection: 31st 
+IFIP TC 11 International Conference, SEC 2016, Ghent, Belgium, May 30-June 1, 
+2016, Proceedings 31. Springer, pp. 91–104.
+Ahmed, Chuadhry Mujeeb, Palleti, Venkata Reddy, Mathur, Aditya P., 2017a. WADI: 
+A water distribution testbed for research in the design of secure cyber physical 
+systems. In: Proceedings of the 3rd International Workshop on Cyber-Physical 
+Systems for Smart Water Networks. CySWATER ’17, Association for Computing 
+Machinery, New York, NY, USA, pp. 25–28.
+Ahmed, Chuadhry Mujeeb, Palleti, Venkata Reddy, Mathur, Aditya P, 2017b. WADI: 
+A water distribution testbed for research in the design of secure cyber physical 
+systems. In: Proceedings of the 3rd International Workshop on Cyber-Physical 
+Systems for Smart Water Networks. pp. 25–28.
+Cheah, Huei Yoong, Palleti, Venkata Reddy, Maiti, Rajib Ranjan, Silva, Arlindo, 
+Poskitt, Christopher M, 2021. Deriving invariant checkers for critical infrastructure 
+using axiomatic design principles. Cybersecurity 4 (6), 6. http://dx.doi.org/10.
+1186/s42400-021-00069-7.
+Colelli, Riccardo, Magri, Filippo, Panzieri, Stefano, Pascucci, Federica, 2021. Anomaly-
+based intrusion detection system for cyber-physical system security. In: 2021 29th 
+Mediterranean Conference on Control and Automation. MED, pp. 428–434.
+Faramondi, L., Flammini, F., Guarino, S., Setola, R., 2021. A hardware-in-the-loop 
+water distribution testbed dataset for cyber-physical security testing. IEEE Access 
+9, 122385–122396. http://dx.doi.org/10.1109/ACCESS.2021.3109465.
+Feng, Cheng, Palleti, Venkata Reddy, Mathur, Aditya P., Chana, Deeph, 2019. A 
+systematic framework to generate invariants for anomaly detection in industrial 
+control systems. In: Proceedings 2019 Network and Distributed System Security 
+Symposium.
+Ferrag, Mohamed Amine, Maglaras, Leandros, Ahmim, Ahmed, Derdour, Makhlouf, 
+Janicke, Helge, 2020. RDTIDS: Rules and decision tree-based intrusion detection 
+system for internet-of-things networks. Futur. Internet (ISSN: 1999-5903) 12 (3), 
+http://dx.doi.org/10.3390/fi12030044.
+Gauthama Raman, M.R., Ahmed, Chaudhry Mujeeb, Mathur, Aditya, 2021. Machine 
+learning for intrusion detection in industrial control systems: challenges and lessons 
+from experimental evaluation. Cybersecurity 4 (27), http://dx.doi.org/10.1186/
+s42400-021-00095-5.
+Hofbaur, Michael W., Williams, Brian C., 2002. Mode estimation of probabilistic 
+hybrid systems. In: Proceedings of the 5th International Workshop on Hybrid 
+Systems: Computation and Control. HSCC ’02, Springer-Verlag, Berlin, Heidelberg, 
+pp. 253–266.
+Hudani, Danish, Haseeb, Muhammad, Taufiq, Muhammad, Umer, Muhammad Azmi, 
+Kandasamy, Nandha Kumar, 2022. A data-centric approach to generate invariants 
+for a smart grid using machine learning. In: Proceedings of the 2022 ACM 
+Workshop on Secure and Trustworthy Cyber-Physical Systems. pp. 31–36.
+Jeffrey, Nicholas, Tan, Qing, Villar, José R., 2024. A hybrid methodology for anomaly 
+detection in cyber–physical systems. Neurocomputing (ISSN: 0925-2312) 568, 
+127068. http://dx.doi.org/10.1016/j.neucom.2023.127068.
+Kim, Kyoung Ho, Kwak, Byung Il, Han, Mee Lan, Kim, Huy Kang, 2022. Intrusion 
+detection and identification using tree-based machine learning algorithms on DCS 
+network in the oil refinery. IEEE Trans. Power Syst. 37, 4673–4682.
+Mahalakshmi, M., Ramkumar, M. P., Emil Selvan, G. S. R., 2022. SCADA intrusion 
+detection system using cost sensitive machine learning and SMOTE-SVM. In: 2022 
+4th International Conference on Advances in Computing, Communication Control 
+and Networking. ICAC3N, pp. 332–337.
+Computers & Security 156 (2025) 104511 
+10 
+
+A. Samiah et al.
+Maiti, Rajib Ranjan, Yoong, Cheah Huei, Palleti, Venkata Reddy, Silva, Arlindo, 
+Poskitt, Christopher M., 2023. Mitigating adversarial attacks on data-driven invari-
+ant checkers for cyber-physical systems. IEEE Trans. Dependable Secur. Comput. 
+20 (4), 3378–3391. http://dx.doi.org/10.1109/TDSC.2022.3194089.
+Mathur, Aditya P., Tippenhauer, Nils Ole, 2016. SWaT: A water treatment testbed 
+for research and training on ics security. In: 2016 International Workshop on 
+Cyber-Physical Systems for Smart Water Networks (CySWater). IEEE, pp. 31–36.
+Mujeeb Ahmed, Chuadhry, Umer, Muhammad Azmi, Binte Liyakkathali, Beebi Siti Sal-
+imah, Jilani, Muhammad Taha, Zhou, Jianying, 2021. Machine learning for cps 
+security: Applications, challenges and recommendations. Mach. Intell. Big Data 
+Anal. Cybersecur. Appl. 397–421.
+Narasimhan, Sriram, Biswas, Gautam, 2007. Model-based diagnosis of hybrid systems. 
+IEEE Trans. Syst. Man, Cybern. - Part A: Syst. Humans 37 (3), 348–361. http:
+//dx.doi.org/10.1109/TSMCA.2007.893487.
+Nathezhtha, T., Yaidehi, V., 2018. Cloud insider attack detection using machine learn-
+ing. In: 2018 International Conference on Recent Trends in Advance Computing. 
+ICRTAC, pp. 60–65.
+Oliveira, Nuno, Praça, Isabel, Maia, Eva, Sousa, Orlando, 2021. Intelligent cyber attack 
+detection and classification for network-based intrusion detection systems. Appl. 
+Sci. (ISSN: 2076-3417) 11 (4), http://dx.doi.org/10.3390/app11041674.
+Pal, Koyena, Adepu, Sridhar, Goh, Jonathan, 2017. Effectiveness of association rules 
+mining for invariants generation in cyber-physical systems. In: Proceedings of the 
+18th IEEE Symposium on High Assurance Systems Engineering. IEEE Computer 
+Society, Washington, D.C., USA, pp. 124–127.
+Pasqualetti, Fabio, Dörfler, Florian, Bullo, Francesco, 2011. Cyber-physical attacks in 
+power networks: Models, fundamental limitations and monitor design. In: 2011 
+50th IEEE Conference on Decision and Control and European Control Conference. 
+pp. 2195–2201.
+Ramotsoela, Tsotsope Daniel, Hancke, Gerhard Petrus, Abu-Mahfouz, Adnan M., 2020. 
+Behavioural intrusion detection in water distribution systems using neural net-
+works. IEEE Access 8, 190403–190416. http://dx.doi.org/10.1109/ACCESS.2020.
+3032251.
+Teixeira, André, Pérez, Daniel, Sandberg, Henrik, Johansson, Karl Henrik, 2012. Attack 
+models and scenarios for networked control systems. In: Proceedings of the 1st 
+International Conference on High Confidence Networked Systems. HiCoNS ’12, 
+Association for Computing Machinery, New York, NY, USA, pp. 55–64.
+Umer, Muhammad Azmi, Ahmed, Chuadhry Mujeeb, Jilani, Muhammad Taha, 
+Mathur, Aditya P., 2021. Attack rules: An adversarial approach to generate attacks 
+for industrial control systems using machine learning. In: Proceedings of the 2th 
+Workshop on CPS & IoT Security and Privacy. CPSIoTSec ’21, Association for 
+Computing Machinery, New York, NY, USA, pp. 35–40.
+Umer, Muhammad Azmi, Junejo, Khurum Nazir, Jilani, Muhammad Taha, 
+Mathur, Aditya P, 2022. Machine learning for intrusion detection in industrial 
+control systems: Applications, challenges, and recommendations. Int. J. Crit. 
+Infrastruct. Prot. 38, 100516.
+Umer, Muhammad Azmi, Mathur, Aditya, Junejo, Khurum Nazir, Adepu, Sridhar, 2017. 
+Integrating design and data centric approaches to generate invariants for distributed 
+attack detection. In: Proceedings of the 2017 Workshop on Cyber-Physical Systems 
+Security and Privacy. pp. 131–136.
+Umer, Muhammad Azmi, Mathur, Aditya, Junejo, Khurum Nazir, Adepu, Sridhar, 2020. 
+Generating invariants using design and data-centric approaches for distributed 
+attack detection. Int. J. Crit. Infrastruct. Prot. 28, 100341.
+Verma, V., Gordon, G., Simmons, R., Thrun, S., 2004. Real-time fault diagnosis [robot 
+fault diagnosis]. IEEE Robot. Autom. Mag. 11 (2), 56–66. http://dx.doi.org/10.
+1109/MRA.2004.1310942.
+Abdul Samiah is an Assistant Professor at National University of Sciences and 
+Technology in NUST campus PN Engineering College in Department of Electrical 
+Engineering, Karachi, Pakistan since 2007. He was awarded as best teacher in 2018.
+ 
+Email: abdulsamiah@pnec.nust.edu.pk
+Muhammad Azmi Umer obtained a Ph.D. degree in Computer Science from Karachi 
+Institute of Economics and Technology (KIET), Pakistan in 2022. His Ph.D. thesis 
+was mainly related to the security of Cyber-Physical Systems (CPS) using Machine 
+Learning techniques. Prior to joining iTrust he has been working as a Team Lead (Data 
+Engineering) at Codex LLC, Karachi. He has worked on developing Machine Learning, 
+Natural Language Processing, and Information Retrieval based solutions. He has been 
+a visiting fellow at the iTrust in 2017 and 2022. He has conducted several hands-on 
+sessions related to Machine Learning including 14th IEEE LatinAmerican Conference on 
+Communications in Rio de Janeiro, Brazil, & at University of Strathclyde, UK. Azmi has 
+several publications in different venues in the domain of Machine Learning and Cyber 
+Security. He has been the recipient of several scholarships including ACM SIGSOFT 
+CAPS Travel Grant , University of Karachi Alumni Association Washington Baltimore 
+Scholarship, & merit scholarships from Karachi Institute of Economics and Technology. 
+Email: azmi_umer@sutd.edu.sg
+Dr. Shama Siddiqui Experienced Researcher Of Computer Science with a demonstrated 
+history of working in Academics. Skilled in Internet of Things (IoT), Wireless Sensor 
+Networks (WSNs), and wireless communications, in general. Holds a Doctor of Philos-
+ophy (Ph.D.) focused on MAC protocols in Wireless Sensor Networks from Faculty of 
+Computer science Institute of Business Administration. Present research interests include 
+design and optimization of link layer protocols for WSNs & IoT and implementation of 
+real-world IoT applications.
+ 
+Shama Siddiqui currently works at the Department of Computer Science, DHA Suffa 
+University, Karachi, Pakistan.
+Computers & Security 156 (2025) 104511 
+11 

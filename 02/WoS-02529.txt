@@ -1,0 +1,2041 @@
+Received 12 November 2023, accepted 3 February 2024, date of publication 12 February 2024, date of current version 21 February 2024.
+Digital Object Identifier 10.1109/ACCESS.2024.3365270
+Adversarial Inference Control in Cyber-Physical
+Systems: A Bayesian Approach With
+Application to Smart Meters
+RAMANA R. AVULA
+1, TOBIAS J. OECHTERING
+2, (Senior Member, IEEE),
+AND DANIEL MÅNSSON
+3
+1Department of Electrification and Reliability, RISE Research Institutes of Sweden, 504 62 Borås, Sweden
+2Division of Intelligent Systems, KTH Royal Institute of Technology, 100 44 Stockholm, Sweden
+3Division of Electromagnetic Engineering and Fusion Science, KTH Royal Institute of Technology, 100 44 Stockholm, Sweden
+Corresponding author: Tobias J. Oechtering (oech@kth.se)
+ABSTRACT With the emergence of cyber-physical systems (CPSs) in utility systems like electricity, water,
+and gas networks, data collection has become more prevalent. While data collection in these systems
+has numerous advantages, it also raises concerns about privacy as it can potentially reveal sensitive
+information about users. To address this issue, we propose a Bayesian approach to control the adversarial
+inference and mitigate the physical-layer privacy problem in CPSs. Specifically, we develop a control
+strategy for the worst-case scenario where an adversary has perfect knowledge of the user’s control
+strategy. For finite state-space problems, we derive the fixed-point Bellman’s equation for an optimal
+stationary strategy and discuss a few practical approaches to solve it using optimization-based control design.
+Addressing the computational complexity, we propose a reinforcement learning approach based on the
+Actor-Critic architecture. To also support smart meter privacy research, we present a publicly accessible
+‘‘Co-LivEn’’ dataset with comprehensive electrical measurements of appliances in a co-living household.
+Using this dataset, we benchmark the proposed reinforcement learning approach. The results demonstrate
+its effectiveness in reducing privacy leakage. Our work provides valuable insights and practical solutions for
+managing adversarial inference in cyber-physical systems, with a particular focus on enhancing privacy in
+smart meter applications.
+INDEX TERMS
+Adversarial inference, Bayesian control, cyber-physical systems, deep reinforcement
+learning, privacy control, smart meters.
+I. INTRODUCTION
+A cyber-physical system (CPS) integrates physical compo-
+nents with computational and communication elements to
+enable real-time monitoring and control of physical systems.
+CPSs provide substantial advantages in utility systems
+such as electricity grids, water and gas supply networks,
+and transportation systems, including enhanced efficiency,
+stability, and automated network control. For instance, smart
+electric grids can use CPSs to monitor power usage and
+adjust supply and demand in real time, reducing energy
+waste and costs. However, the integration of CPSs in utility
+The associate editor coordinating the review of this manuscript and
+approving it for publication was Junggab Son
+.
+systems can also pose potential privacy risks as the usage
+patterns of resources can reveal sensitive private information
+about users to anyone with access to the data. For example,
+energy consumption data from smart meters (SMs) can be
+used to infer the types of household appliances [1] and
+their usage patterns, thereby disclosing sensitive private
+information about users, including presence or absence and
+the number of occupants, daily routines, and entertainment
+habits of occupants, medical equipment usage [2]. This
+information is susceptible to exploitation by malicious actors
+or unauthorized third parties for various purposes, such as
+targeted advertising or surveillance. The General Data Pro-
+tection Regulation (GDPR) in Europe establishes stringent
+guidelines for handling data containing sensitive personal
+VOLUME 12, 2024
+ 2024 The Authors. This work is licensed under a Creative Commons Attribution 4.0 License.
+For more information, see https://creativecommons.org/licenses/by/4.0/
+24933
+
+R. R. Avula et al.: Adversarial Inference Control in Cyber-Physical Systems
+information. Specifically, the GDPR forbids processing data
+that could disclose such information without obtaining users’
+informed consent. For instance, this means that, when using
+SM data, one should not be able to infer appliance usage
+patterns that may reveal the religious beliefs of consumers
+without their explicit consent. Hence, it is crucial to develop
+privacy-enhancing methods for CPSs that safeguard users’
+privacy while still enabling their benefits.
+Consider a hypothetical scenario where a third-party
+energy service provider is not only aware of the user’s energy
+consumption patterns but also has perfect knowledge of the
+privacy-enhancing control strategy employed by the user.
+This situation presents a significant challenge for the user
+as the adversary is well-equipped to exploit any weaknesses
+in the control strategy, potentially leading to the exposure
+of private information about the user’s habits, preferences,
+or lifestyle. In our previous work [3], we studied the problem
+of optimally controlling the sequential Bayesian hypothesis
+testing (SBHT) of an adversary who is unaware of the
+presence of a control system. In this work, we address an
+even stronger privacy question: How can a user protect their
+privacy against an adversary who has perfect knowledge
+about the control strategy employed by the user? By
+addressing this question, we aim to design conservative
+privacy control strategies against a worst-case adversary
+performing SBHT, which can serve as a benchmark.
+A. RELATED WORKS
+Addressing the privacy risks associated with smart meter
+data, several privacy-enhancing techniques have been pro-
+posed in the literature to protect sensitive user information
+without compromising the overall utility and benefits of smart
+meters. These techniques can be broadly classified into two
+approaches: Data Manipulation and Demand Shaping.
+1) DATA MANIPULATION
+Data manipulation techniques aim to protect user privacy
+by altering measured smart meter data before transmission.
+[4] presents a privacy-preserving smart metering approach
+using homomorphic encryption that allows computation of
+the aggregated energy consumption of a given set of users
+without accessing individual user data directly. In [5], the
+authors present a more efficient and scalable approach
+for data aggregation using Secure Multi-Party Computation
+(SMPC) cryptographic technique. The authors in [6] propose
+a privacy-preserving protocol using zero-knowledge proofs
+that enables billing with time-of-use tariffs without disclosing
+the actual consumption profile to the supplier. In [7], a simple
+and efficient method to preserve differential privacy is
+proposed by adding noise to the SM data in such a way
+that makes it difficult to learn anything about an individual,
+but still allows for accurate statistics to be computed.
+More recently, in [8] a data obfuscation method utilizing
+both differential privacy preserving data perturbation and a
+cryptographic noise distribution.
+Data manipulation techniques, while useful, have certain
+drawbacks. First, altering the reported values may reduce
+their usefulness for grid management and load prediction,
+ultimately undermining the benefits of smart meters. Second,
+since these techniques do not address the issue at the physical
+layer level, adversaries with access to power lines could have
+potentially installed separate sensors, thereby circumventing
+the privacy protection offered by such methods.
+2) DEMAND SHAPING
+Demand shaping techniques physically alter the actual user
+energy demand from the grid in real-time to obfuscate
+sensitive information that can be inferred from SM data. This
+is achieved using energy storage systems (ESSs), flexible
+loads such as heating systems, and renewable energy sources.
+These physical layer techniques are highly effective in
+enhancing privacy since they limit information leakage even
+before data generation.
+Several analytical techniques have been proposed in
+literature that quantify privacy using differential privacy
+measures [9], information-theoretic measures such as mutual
+information [10], [11], [12], [13], conditional entropy [14],
+and others, providing axiomatic guarantees on the maximum
+possible information leakage. Detection-theoretic privacy-
+enhancing techniques, on the other hand, offer operational
+privacy guarantees, such as protection against hypothesis
+tests [3], [15], [16], [17]. Related to controller-aware adver-
+sarial hypothesis testing, few attempts have been made in the
+literature to develop control policies to worsen adversarial
+detection performance. Li et al. [15] presented an optimal
+control strategy against a greedy and informed adversary
+conducting independent single-shot hypothesis tests. In [17],
+an informed adversary performing hypothesis tests on a static
+binary state is studied, and fundamental limits on achievable
+privacy are presented. In [16], the authors formulate a
+partially observable Markov decision process (POMDP)
+control problem, where the belief state of an informed
+adversary is optimally controlled over a given horizon,
+and the adversary is assumed to perform instantaneous
+hypothesis tests using only current observation. In another
+system setting, Liao et al. [13] proposed a privacy-enhancing
+mechanism to aid hypothesis testing while constrained by
+mutual information privacy measure, which differs from our
+work where hypothesis testing is used to model the adversary.
+In another related work, Salehkalaibar et al. [18] define
+a binary hypothesis state at the control level, where the
+controller is either in idle or privacy-enhancing state, and
+analyze hypothesis testing at the utility provider with access
+to some side information.
+Heuristic-based computationally efficient techniques have
+also been proposed in literature. Notable approaches are the
+Best Effort Moderation approach [19] that aims to maintain
+a constant metered load by using a battery, and the Lazy
+stepping approach [20] that provides privacy by increasing
+the quantization error of the smart meter data by converting
+24934
+VOLUME 12, 2024
+
+R. R. Avula et al.: Adversarial Inference Control in Cyber-Physical Systems
+the grid load into a step function using an arbitrary number
+of quantization levels. While these heuristic approaches are
+easier to implement in practice, their ability to provide formal
+privacy guarantees and comply with legal standards could be
+limited due to their reliance on simplistic and pre-defined
+rules, especially when faced with adversaries with knowledge
+about these rules.
+B. CONTRIBUTIONS
+In this paper, we address a strong physical layer privacy
+case by considering an adversary with complete knowledge
+of the user’s control strategy and modeling the adversary’s
+inferences using the SBHT inference model. Using the
+Markov decision process (MDP) framework, we measure
+privacy leakage in the physical layer using the Bayesian
+risk (adversarial reward) in the SBHT. For a finite state-
+space system, we derive a fixed-point equation for an optimal
+stationary strategy that minimizes the discounted aggregate
+value of the infinite-horizon Bayesian risk. The fixed-point
+equation is similar to Bellman’s fixed-point equation of a
+continuous MDP with infinite state and action spaces and
+with a non-linear objective function that is impractical to
+solve exactly without making simplifying approximations.
+In this paper, we present a few practical approaches to solve
+it using optimization-based control design, highlighting their
+computational complexities.
+Although exact optimal policies are theoretically com-
+putable using optimization-based approaches, they become
+intractable
+for
+high-dimensional
+state-space
+problems.
+To tackle the computational complexity, we introduce an
+actor-critic reinforcement learning (RL) algorithm named
+Adversarial Model-based Deterministic Policy Gradient
+(AMDPG). In an actor-critic RL, the actor is parameterized
+using a neural network, which can be used to generate
+continuous actions easily without the need for optimization
+procedures. The critic provides a low-variance performance
+knowledge of the actor by parameterizing the expected return
+of its actions [21]. This model-free approach allows us to
+handle the complex and dynamic nature of cyber-physical
+systems effectively where traditional MDP dynamic pro-
+gramming approaches are intractable. The proposed AMDPG
+algorithm is inspired by the Deep Deterministic Policy
+Gradient (DDPG) method [22]. A key difference between our
+proposed AMDPG and the DDPG algorithms can be observed
+in the noise generation process. In AMDPG, we not only
+integrate randomly generated noise into the actor output but
+also add noise obtained from the solution of an optimization
+problem, which computes an instantaneously optimal policy.
+This modification is intuitively expected to encourage more
+effective policy exploration and take into account long-term
+rewards by functioning near instantaneously optimal control
+during the learning process.
+Furthermore, to facilitate smart meter privacy research,
+we introduce the publicly accessible ‘‘Co-LivEn’’ dataset,
+which contains detailed electrical measurements of appli-
+ances in a co-living household. This dataset provides a valu-
+able resource for studying the privacy implications of NILM
+and the effectiveness of various privacy-enhancing tech-
+niques. Finally, we benchmark the proposed reinforcement
+approach using the presented household energy consumption
+data. The results show the effectiveness of the proposed
+control strategy in reducing the privacy leakage even in the
+worst-case scenario when the adversary is aware of the exact
+control strategy employed by the user.
+The important contributions of the paper can be summa-
+rized as follows:
+1) A novel and implementable RL approach to address a
+worst-case adversary with complete knowledge of the
+user’s control strategy.
+2) Derivation of a fixed-point equation for an optimal
+stationary strategy that minimizes the discounted
+aggregate value of the infinite-horizon Bayesian risk
+and practical approaches to solve it.
+3) A publicly accessible energy consumption dataset that
+includes comprehensive electrical measurements of
+appliances in a co-living household.
+4) Benchmarking of the proposed strategies using both
+synthetic and real data.
+C. ORGANIZATION OF THE PAPER
+The rest of the paper is organized as follows. In Section II,
+we present an overview of the system along with its
+modeling. In Section III, we present the preliminaries on the
+adversarial inference using SBHT framework. In Section IV,
+we formulate the optimal inference control problem. Subse-
+quently, in Section V, we present several optimization-based
+approaches to achieve adversarial inference control. Using
+reinforcement learning, we present a novel control approach
+in Section VI. Furthermore, numerical studies using synthetic
+and real data are presented in Section VII and Section VIII.
+Lastly, we conclude the paper in Section IX.
+In this paper, unless otherwise stated, we use capital
+letters to denote random variables, lowercase letters for
+their realizations, and calligraphic letters for their alphabets.
+We use Ak:k+i to denote the vector [Ak, Ak+1, . . . , Ak+i]⊺,
+and Ak:k+i to denote the Cartesian product Ak × Ak+1 ×
+· · · × Ak+i. The expectation operator is denoted by E[·],
+and the matrix transpose operator by (·)⊺. PA(a) denotes a
+probability distribution function, and I denotes an indicator
+function with Ia
+= 1 if a is true, and 0 otherwise. 0n
+and 1n are n-dimensional vectors with all entries as zeros
+and ones, respectively. 1n denotes an (n −1)-dimensional
+simplex. In summations, if not otherwise specified, the
+domain of a variable is its complete alphabet. Throughout
+the paper, we use the term policy to refer to a map from
+some information set to some action at a certain time
+instance, and the term strategy to refer to a sequence of
+policies.
+VOLUME 12, 2024
+24935
+
+R. R. Avula et al.: Adversarial Inference Control in Cyber-Physical Systems
+FIGURE 1. The proposed metering system that enables physical layer user
+privacy by altering the actual consumption using a storage. Here, the solid
+lines denote the physical resource flow and the dotted lines denote the
+information flow.
+II. SYSTEM MODEL
+We consider a privacy-concerned user consuming resource in
+a cyber-physical system as shown in Fig. 1. At the beginning
+of each slot k ∈N in a discrete-time infinite-horizon N =
+{1, 2, . . . }, the user’s consumption is altered by a control
+strategy using a storage system. We restrict our analysis
+to discrete-time and discrete resource levels, designing a
+control strategy for systems with digital signal processing
+capabilities. We define random variables Xk and Dk on finite
+alphabets X and D, respectively, where Xk represents the
+user’s resource consumption, Dk represents the additional
+demand or usage of the stored resource specified by the
+control strategy, and Yk := Xk +Dk denotes the consumption
+measured by the sensor on a finite alphabet Y = {x +d : x ∈
+X, d ∈D}.
+We model the storage system’s state transitions using a
+first-order Markov model characterized by the conditional
+distribution PZk+1|Zk,Dk, where Zk represents the quantized
+value of the storage system state on a finite discrete alphabet
+Z. We estimate the conditional distribution PZk+1|Zk,Dk
+using Monte Carlo simulations and a sample-based density
+estimation approach [3]. In this work, we further simplify
+the storage system model by parametrizing the conditional
+distribution PZk+1|Zk,Dk for each (zk, dk) ∈Z × D using the
+beta distribution.
+Moreover, to capture the sensitivity of user behavior,
+we introduce a privacy-sensitive state denoted by Hk, defined
+on a finite alphabet H. This state, referred to as the hypothesis
+state, can represent various user activities such as cooking,
+taking a shower, and more, which are potentially of interest
+to an adversary seeking to infer personal information.
+We model the dependency between the sequence of user
+demands and hypothesis states [H1:N, X1:N] corresponding to
+the horizon N using a first-order time-homogeneous hidden
+Markov model (HMM) characterized by a set of parameters
+denoted as θ and is given by
+θ := {PXk|Hk, PHk|Hk−1, PH0 : k ∈N},
+where PXk|Hk represents the observation probability of user
+demands, PHk|Hk−1 represents the transition probability of
+hypothesis states, and PH0 represents the prior probability of
+hypothesis states.
+As we will discuss in the subsequent analysis, the statistics
+of the ESS state Zk are also relevant to the adversary
+when attempting to guess the hypothesis state. For analytical
+simplicity, we replace the state pair (Zk, Hk) with a 1-
+dimensional random variable Ak. Let A := {1, . . . , |Z| ×
+|H|} denote the alphabet of Ak. We define Ik as the causal
+information available to the controller at the start of slot k,
+which is a discrete set defined on Ik = (X × Y × A)k−1
+and includes [X1:k−1, Y1:k−1, A1:k−1]. Let µk ∈Uk denote a
+randomized control policy which represents the conditional
+distribution PYk|Xk,Hk,Ik, where Uk denotes the set of all
+randomized control policies.
+III. ADVERSARIAL INFERENCE
+Here we assume a strong adversary who knows the HMM
+parameter set θ, the storage system state transition probability
+PZk|Zk−1,Dk, and the exact control strategy µ1:∞employed
+by the user. We model the adversary’s inferences about the
+hypothesis state Hk in the infinite-horizon case using the
+SBHT framework. Let ˆHk denote the hypothesis state esti-
+mate of the adversary, which is defined on H. We also define
+a randomized detection policy for the adversary, denoted
+by ζk ∈Ck, which represents the conditional distribution
+P ˆHk|Y1:k, where Ck denotes the set of all randomized detection
+policies for the adversary.
+In the SBHT framework [23], a reward is assigned to each
+possible test outcome denoted by c(h, ˆh) with h, ˆh ∈H.
+An optimal detection strategy is designed by maximizing the
+expected reward. The expected reward at time slot k, known
+as the Bayesian reward, is denoted by rk and is given by
+rk = E
+
+c(Hk, ˆHk)
+
+= P
+(hk,ˆhk) c(hk, ˆhk)PHk, ˆHk(hk, ˆhk). (1)
+where PHk, ˆHk is the joint distribution of the hypothesis state
+estimate ˆHk and the true hypothesis state Hk. Note that rk
+represents the Bayesian risk, which is the average privacy
+cost for the user given a fixed function c(h, ˆh). In this work,
+we assume that c(h, ˆh)
+≥
+0 and that the reward for a
+correct guess is greater than that for an incorrect guess. As a
+result, the adversary seeks to maximize the average Bayesian
+reward, while the user aims to minimize it.
+For any finite horizon KN = {1, 2, . . . , N} of arbitrary
+length N, an optimal detection strategy of the adversary
+for any given control strategy µ1:N, denoted by ζ ∗
+1:N, that
+maximizes the average Bayesian reward can be expressed as
+ζ ∗
+1:N(µ1:N) = argmax
+ζ1:N ∈C1:N
+ 1
+N
+N
+X
+k=1
+rk(ζk, µ1:k)
+
+= argmax
+ζ1:N ∈C1:N
+
+E
+h N
+X
+k=1
+rk|k(Y1:k; ζk, µ1:k)
+i
+,
+(2)
+24936
+VOLUME 12, 2024
+
+R. R. Avula et al.: Adversarial Inference Control in Cyber-Physical Systems
+where rk|k denotes the conditional Bayesian reward of the
+adversary given the causal data y1:k ∈Yk, expressed as
+rk|k(y1:k; ζk, µ1:k)
+= E
+
+c(Hk, ˆHk)
+Y1:k = y1:k
+
+= P
+(hk,ˆhk) c(hk, ˆhk) PHk, ˆHk|Y1:k(hk, ˆhk|y1:k).
+(3)
+Lemma 1: Let ˆπk denote the belief state of the adversary
+at time slot k, which represents the conditional probability
+vector PAk|Y1:k. For any given data y1:k and control strategy
+µ1:k, the belief state of the adversary evolves according to the
+recursion:
+ˆπk(yk, ¯µk, ˆπk−1) =
+M ˆπ
+ yk, ¯µk
+
+· ˆπk−1
+1⊺
+|A| · M ˆπ
+ yk, ¯µk
+
+· ˆπk−1
+,
+(4)
+=
+M ¯µ
+ yk, ˆπk−1
+
+· ¯µk
+1⊺
+|A| · M ¯µ
+ yk, ˆπk−1
+
+· ¯µk
+,
+(5)
+where M ˆπ and M ¯µ are |A| × |A| and |A| × |W| dimensional
+matrices respectively, and ¯µk denotes the control sub-policy,
+which represents the conditional probability PWk|Y1:k−1, and
+Wk denotes the conditional random variable Yk|Xk, Hk, Ak−1
+defined on the alphabet W := {1, . . . , |Y × X × H × A|}.
+The proof of Lemma 1 can be found in Appendix A. Note that
+the conditional Bayesian reward rk|k depends on the causal
+data y1:k−1 only through the sub-policy ¯µk and the belief
+state ˆπk−1. Furthermore, for a fixed control strategy µ1:N,
+the sub-policy ¯µk and the belief state ˆπk−1 do not depend
+on the detection strategy ζ1:N. Therefore, the optimization
+problem for the optimal SBHT adversarial detection strategy
+ζ ∗
+1:N in (2) can be decomposed into N linear programs:
+ζ ∗
+k (yk, ¯µk, ˆπk−1) = argmax
+ˆhk∈H
+h
+c⊺(ˆhk) · ˆπk(yk, ¯µk, ˆπk−1)
+i
+,
+(6)
+where c(ˆhk) is a |A|-dimensional vector with its elements
+defined as [c(ˆhk)]a
+= c(fH(a), ˆhk) and fH
+: A →H
+is any deterministic function that maps the state Ak to its
+corresponding hypothesis state Hk. The adversarial detection
+policy given by (6) can be represented using a time-invariant
+and deterministic decision rule ζ ∗: 1|A| →H given by
+ζ ∗( ˆπk) = argmax
+ˆhk∈H
+h
+c⊺(ˆhk) · ˆπk
+i
+.
+(7)
+Remark 1: In the computation of the belief state using (4)
+and (5), the current belief state ˆπk depends on the past
+observations y1:k−1 only through the sub-policy ¯µk and the
+previous belief state ˆπk−1. However, the computation of the
+sub-policy ¯µk using (47) requires complete data y1:k−1 at
+each time slot k if the control policy µk is explicitly designed
+in the form PYk|Xk,Hk,Ik. As we will show in the coming
+section, using a control policy in this form with complete
+historical data does not help the user in minimizing the
+average Bayesian reward.
+The information flow in the adversarial SBHT detection
+process is illustrated in Fig. 2. The optimization problem
+FIGURE 2. Information flow in the adversarial SBHT detection process
+with a control policy of the form PYk |Xk ,Hk ,Ik .
+in (7) defining the adversarial decision rule ζ ∗can also be
+represented using polyhedral decision regions in the simplex
+space 1|A|. For each hypothesis state h ∈H, the optimal
+adversarial decision region Rh is defined by
+Rh =
+n
+ˆπk ∈1|A| :
+
+c⊺(h′) −c⊺(h)
+
+ˆπk < 0, ∀h′ ∈H \ h
+o
+.
+The set of all decision regions is denoted by R := {Rh :
+h
+∈
+H}, and it satisfies ∪h∈HRh
+=
+1|A|. Since the
+adversarial detection policy ζ ∗given in (7) is time-invariant,
+the stationary strategy ζ ∗
+1:∞:= [ζ ∗, ζ ∗, . . . ] also maximizes
+both the average and discounted Bayesian rewards, denoted
+by ¯w and wρ respectively. Specifically, for a given control
+strategy µ1:∞, the average and discounted Bayesian rewards
+of the informed adversary can be expressed as
+¯w(µ1:∞) = lim
+N→∞
+1
+N
+N
+X
+k=1
+rk(ζ ∗, µ1:k),
+(8)
+wρ(µ1:∞) =
+∞
+X
+k=1
+ρk−1 rk(ζ ∗, µ1:k),
+(9)
+where ρ ∈[0, 1) is a discount factor.
+IV. INFERENCE CONTROL PROBLEM FORMULATION
+The SBHT adversarial inference poses a significant threat
+to the privacy of users in CPSs. To mitigate this threat,
+we aim to find a stationary control strategy for the infinite
+horizon N that minimizes the discounted Bayesian risk wρ.
+While the infinite horizon average Bayesian risk ¯w is also
+a suitable optimization objective, it may not perform well
+in practice due to the dynamic nature of user demands.
+Therefore, we focus on minimizing wρ to derive an optimal
+control policy that ensures the privacy of the CPS.
+Given any control strategy µ1:∞and any ϵ > 0, for a
+bounded reward function c(h, ˆh) and a sufficiently large N,
+we have
+∞
+X
+k=N+1
+ρk−1rk(ζ ∗, µ1:k) < ϵ,
+(10)
+since ρk−1
+→0 as k
+→∞. Hence, we approximate
+the minimum discounted Bayesian risk, denoted by w∗
+ρ,
+VOLUME 12, 2024
+24937
+
+R. R. Avula et al.: Adversarial Inference Control in Cyber-Physical Systems
+FIGURE 3. Information flow in the control system with the policy
+designed using the sufficient statistic ˆπk.
+as follows:
+w∗
+ρ ≈min
+µ1:N
+ N
+X
+k=1
+ρk−1 rk(ζ ∗, µ1:k)
+
+= min
+µ1:N
+
+E
+h N
+X
+k=1
+ρk−1 rk|k−(Y1:k−1; ζ ∗, µ1:k)
+i
+.
+(11)
+Here, rk|k−denotes the conditional Bayesian risk given any
+y1:k−1 ∈Yk−1, which is expressed as
+rk|k−(y1:k−1; ζ ∗, µ1:k)=E
+
+c(Hk, ˆHk)
+Y1:k−1 = y1:k−1
+
+=c⊺(ˆh∗
+k) · M ˆπ
+ yk, ¯µk
+
+· ˆπk−1
+(12)
+=c⊺(ˆh∗
+k) · M ¯µ
+ yk, ˆπk−1
+
+· ¯µk, (13)
+where ˆh∗
+k
+=
+ζ ∗( ˆπk) is the optimal hypothesis guess of
+the adversary given the belief state ˆπk which is updated
+according to (4) or (5) given (yk, ¯µk, ˆπk−1). As mentioned
+in Remark 1, computing ¯µk when the control policy µk
+is explicitly designed in the form PYk|Xk,Hk,Ik requires the
+complete data y1:k−1 at each k. In Theorem 1, we show that
+the belief state ˆπk−1 is a sufficient statistic of the information
+vector ik for finding an optimal control strategy that achieves
+the minimum achievable discounted Bayesian risk. Thus,
+using policies that rely on the entire data history y1:k−1
+does not provide any performance improvement against the
+adversary.
+Theorem 1: Let ˜U = { ˜µ : 1|A| →¯U} denote the set of all
+mappings from 1|A| to ¯U. For any discount factor ρ ∈(0, 1],
+at each k ∈KN, there exists an optimal policy ˜µ∗
+k ∈˜U that
+achieves the minimum discounted Bayesian risk achievable
+by any policy µk ∈Uk and is given by
+˜µ∗
+k( ˆπk−1)=argmin
+¯µk∈¯U
+h
+ˆπ⊺
+k−1
+
+Mc(¯ζ ∗
+k )+ρMv(¯vn−1)
+
+¯µk
+i
+, (14)
+vn( ˆπk−1) = min
+¯µk∈¯U
+h
+ˆπ⊺
+k−1
+
+Mc(¯ζ ∗
+k ) + ρMv(¯vn−1)
+
+¯µk
+i
+,
+(15)
+where n = N −k +1 is the backward iteration index starting
+from k = N for some arbitrarily large N. Here, vn, known
+as the value function, is the aggregate value of discounted
+conditional Bayesian risk due to optimal strategy ˜µ∗
+k:N.
+The proof of Theorem 1 can be found in Appendix B. Fig. 3
+illustrates the information flow in the control system with the
+policy ˜µk ∈˜U designed using the sufficient statistic ˆπk.
+Corollary 1: For any discount factor ρ ∈(0, 1), there
+exists a unique fixed point value function v∗: 1|A| →
+R+ to which the Bellman’s recursion in (15) converges.
+Consequently, the optimal stationary policy ˜µ∗∈
+˜U that
+achieves the minimum discounted Bayesian risk w∗
+ρ is the
+solution to the fixed point equation:
+v∗( ˆπk−1)
+= min
+¯µk∈¯U
+h
+ˆπ⊺
+k−1
+
+Mc(¯ζ ∗
+k ) + ρMv(¯v∗)
+
+¯µk
+i
+= min
+¯µk∈¯U
+h
+max
+¯ζ∈H|Y|
+
+ˆπ⊺
+k−1Mc(¯ζ) ¯µk
+
++ ρ ˆπ⊺
+k−1Mv(¯v∗) ¯µk
+i
+,
+(16)
+where [¯v∗]y = v∗ ˆπk(y, ¯µk, ˆπk−1)
+
+.
+Proof: Due to the monotonicity and contraction proper-
+ties of the Bellman’s recursion [24], the Banach’s fixed point
+theorem [25] implies that there exists a unique fixed point
+v∗∈V to which the Bellman’s recursion in (15) converges.□
+Remark 2: The optimal SBHT control problem of mini-
+mizing the infinite-horizon discounted Bayesian risk can be
+formulated as a POMDP problem with continuous state ˆπk−1,
+continuous action ¯µk, and a piecewise-linear convex cost
+function: max¯ζ
+
+ˆπ⊺
+k−1 · Mc(¯ζ) · ¯µk
+
+.
+V. OPTIMIZATION-BASED CONTROL
+In this section, we discuss several practical optimization-
+based approaches for solving the inference control prob-
+lem (16) introduced in Section IV. These approaches take
+advantage of the problem’s structure and apply various
+constraints on the discount factor, control policy space, and
+belief state space to simplify the optimization problem. These
+methods are particularly useful for scenarios where the state
+and action spaces of the system model are small. We also
+provide a discussion on the computational complexity of each
+approach.
+A. INSTANTANEOUSLY-OPTIMAL CONTROL
+An empirical upper bound on the minimum discounted
+Bayesian risk w∗
+ρ can be obtained by using the instantaneously-
+optimal control policy with ρ = 0. The objective function
+in (16) becomes piecewise-linear with respect to ( ˆπk−1, ¯µk)
+when ρ = 0, enabling efficient computation of an exact
+instantaneously-optimal policy. The minimum instantaneous
+risk, denoted by r∗
+k|k−is given by
+r∗
+k|k−( ˆπk−1) = min
+¯µk∈¯U
+
+max
+¯ζ∈H|Y|
+h
+ˆπ⊺
+k−1Mc(¯ζ) ¯µk
+i
+=
+min
+¯ζ∈H|Y|,
+¯µk∈¯Ur(¯ζ, ˆπk−1)
+h
+ˆπ⊺
+k−1Mc
+ ¯ζ
+
+¯µk
+i
+,
+(17)
+where ¯Ur(¯ζ, ˆπk−1) denotes the set of all policies ¯µk ∈¯U that
+satisfy the set of constraints imposed by the decision regions
+R corresponding to the decision vector ¯ζ and the belief state
+24938
+VOLUME 12, 2024
+
+R. R. Avula et al.: Adversarial Inference Control in Cyber-Physical Systems
+ˆπk−1, given by
+¯Ur(¯ζ, ˆπk−1)
+=
+n
+¯µk ∈¯U : ˆπk(y, ¯µk, ˆπk−1) ∈Rh, h = [¯ζ ]y, y ∈Y
+o
+.
+(18)
+Note that ¯Ur(¯ζ, ˆπk−1) is a polyhedron in R|W|
++
+since the
+belief state ˆπk−1 evolves to ˆπk following the linear-fractional
+transformation given in (4) and the adversarial decision
+regions R are also polyhedrons in the belief space 1|A|.
+As a result, the exact instantaneously-optimal policy can be
+obtained in real-time by solving a linear program for the
+observed belief state ˆπk−1.
+Remark 3: Computing the exact instantaneously-optimal
+policy requires solving a piecewise minimum over the set
+H|Y| as given in (17). Therefore, the worst-case time
+complexity of the instantaneously-optimal control policy is
+O(H|Y|), which may grow exponentially with the size of the
+observation space |Y|.
+B. OPTIMAL CONTROL WITH FINITE SUB-POLICY SPACE
+Here, we present an approach to solve the SBHT control
+problem by restricting the feasible space of the control
+policies in (15) to a finite set of control sub-policies, denoted
+by ¯UF. For example, ¯UF can be chosen to be the finite set of
+all degenerate sub-policies. With a finite control sub-policy
+space, for each ˆπk−1 ∈1|A|, the Bellman’s equation in (15)
+can be rewritten as
+vn( ˆπk−1)= min
+¯µk∈¯UF
+h
+ˆπ⊺
+k−1 · γk( ¯µk, ˆπk−1, vn−1)
+i
+,
+(19)
+where γk( ¯µk, ˆπk−1, vn−1) is a vector in R|A|
++ with its elements
+given by
+
+γk( ¯µk, ˆπk−1, vn−1)
+
+ak−1
+=P
+(hk,ak,yk) PHk,Ak,Yk|Ak−1 ×
+
+c(hk, ζ ∗( ˆπk(yk, ¯µk, ˆπk−1))
++ ρvn−1( ˆπk(yk, ¯µk, ˆπk−1))
+
+.
+The set of all hyperplanes in R|A|
++
+that define the boundaries
+of the decision regions R is denoted by ¯B, and is given by
+¯B=
+n
+c⊺(ˆh′) −c⊺(ˆh)
+
+b = 0 : (h, h′) ∈H2, h̸ = h′o
+.
+(20)
+Let ¯B0 =
+¯B and for n ≥
+1, ¯Bn denotes the set of all
+hyperplanes in R|A|
++
+given by
+¯Bn =
+n
+β⊺
+i M ˆπ(y, ¯µ)b = 0 : {β⊺
+i ˜b = 0} ∈¯Bn−1,
+i ∈[1, | ¯Bn−1|], y ∈Y, ¯µ ∈¯UF
+o
+.
+(21)
+Since the control sub-policy space ¯UF is finite, by initializing
+with vN+1( ˆπN) = 0, we can solve the optimization problem
+in (19) at each k ≤N by recursively partitioning 1|A| into
+a finite set of polyhedral partitions using all hyperplanes
+in ¯Bn ∪¯B. These resulting polyhedral regions are called
+Markov partitions, similar to those in a POMDP control
+problem [26]. Within each Markov partition, the adversarial
+inference ˆh∗
+k = ζ ∗( ˆπk) and the vector γk are constant with
+respect to the belief state ˆπk−1. These Markov partitions
+along with corresponding γk vectors completely characterize
+the value function vk in the Bellman’s recursion (19).
+In a POMDP control problem with a linear cost function,
+the value function vk can be characterized without the need
+to compute Markov partitions at each iteration. Instead, it can
+be completely characterized by computing all possible γk
+vectors in the belief space 1|A| [24, §7.5.1]. Remarkably, this
+result also holds true for a SBHT control problem, even when
+the cost function is piecewise-linear.
+Proposition 1: Let F
+denote the set of all Markov
+partitions obtained by partitioning the unit simplex 1|A|
+using all the hyperplanes in ¯B1 ∪¯B. Within each partition
+Fi ∈F, the value function vk is piecewise-linear and concave
+with respect to ˆπk−1 ∈Fi. That is,
+vn( ˆπk−1)=
+min
+¯µ∈¯UF,
+γ ∈0i( ¯µ,n)
+h
+ˆπ⊺
+k−1 · γ
+i
+,
+(22)
+where n = N −k + 1 denotes the backward iteration index
+starting from k
+= N for some arbitrarily large N, and
+0i( ¯µ, n) is a finite set of vectors given by
+0i( ¯µ, n) = ⊕y∈Y
+Mc(¯ζ ∗) ¯µ
+|Y|
++ M⊺
+ˆπ
+ y, ¯µ
+
+˜γ :
+˜γ ∈0+
+i ( ¯µ, n −1)
+
+,
+(23)
+0+
+i ( ¯µ, n −1) = ∪¯µ′∈¯UF
+n
+0j( ¯µ′, n −1) :
+Fj ∩T
+ Fi, M ˆπ(y, ¯µ)
+̸
+= ∅, ∀j ∈[1, |F|]
+o
+,
+(24)
+initialized with
+0j( ¯µ′, 0) = 0|A|, ∀j ∈[1, |F|], ¯µ′ ∈¯UF.
+(25)
+Here, [¯ζ ∗]y
+=
+ζ ∗( ˆπk(y, ¯µ, ˆπk−1)) and T
+ Fi, M ˆπ(y, ¯µ)
+
+denotes the affine transformation of the polyhedron Fi w.r.t.
+the belief transformation matrix M ˆπ(y, ¯µ) defined in (4); and
+⊕denotes the cross-sum operation, which is the pairwise
+addition of vectors from two sets.
+The finite set 0i( ¯µ, n) in (23) is constructed backward
+recursively by taking a cross-sum of |Y| sets, where each
+set corresponding to a control action y
+∈
+Y contains
+all possible vectors Mc(¯ζ ∗) ¯µ
+|Y|
++ M⊺
+ˆπ
+ y, ¯µ
+
+˜γ , as a result of
+Bellman’s dynamic programming. Here, ˜γ belongs to the
+set 0j( ¯µ′, n −1) corresponding to each ¯µ′ ∈¯UF and each
+partition Fj ∈F that can be reached from Fi ∈F using
+an affine transformation using M ˆπ(y, ¯µ). The Prop. 1 can
+be shown using an induction technique similar to the proof
+of [24, Theorem 7.4.1] for a POMDP control problem. The
+construction of the Markov partitions set F using all the
+hyperplanes in ¯B1 ∪¯B ensures that the adversarial decision
+vector ¯ζ ∗and consequently, the instantaneous reward r∗
+k|k−
+in (17) are constants w.r.t. ˆπk−1
+∈Fi at each iteration
+n. Furthermore, as the belief state ˆπk evolves according to
+VOLUME 12, 2024
+24939
+
+R. R. Avula et al.: Adversarial Inference Control in Cyber-Physical Systems
+the linear fractional transformation in (4), the value function
+in (19) becomes piecewise-linear with respect to ˆπk−1 within
+each Markov partition Fi.
+Remark 4: Although Prop. 1 shows that it is theoretically
+possible to compute the exact optimal stationary policy over a
+finite control sub-policy space ¯UF using (22), the worst-case
+space complexity of this approach is exponential with respect
+to | ¯UF|, |A|, |Y|, and |H|, and double exponential with
+respect to n, since | ¯B1| = O(|A| × |Y| × | ¯UF| × |H|), |F| =
+O(δ| ¯B1|), where 1 < δ < 2, and |0i( ¯µ, n)| = O
+ (| ¯UF| ×
+|F|)|Y|n
+. Due to the high computational complexity of the
+approach, computing the optimal policy may not be feasible
+even for low-dimensional problems.
+C. SUB-OPTIMAL CONTROL WITH FINITE SUB-POLICY
+SPACE
+As mentioned in Section V-B, computing the exact optimal
+stationary policy over a finite control sub-policy space is
+intractable, even for small state-space problems. To overcome
+this issue, we propose a sub-optimal approach based on
+the method proposed by Lovejoy [27] for POMDP control
+problems with a linear cost function with respect to the belief
+state. Since the cost function of the SBHT control problem
+is piecewise-linear, we use a similar approach to find an
+upper bound on the minimum discounted Bayesian risk w∗
+ρ
+empirically.
+The key idea in this approach is to retain only a subset of
+the γ vectors in the set 0i( ¯µ, n) at each iteration, denoted
+by ¯0i( ¯µ, n), thereby avoiding the double-exponential growth
+of the γ vectors. Given a set 0i( ¯µ, n) computed using (23),
+we first choose a finite set of arbitrary belief states within the
+corresponding partition Fi, denoted by ¯Fi. We then construct
+¯0i( ¯µ, n) for each ¯µ ∈¯UF as
+¯0i( ¯µ, n) =
+
+argmin
+γ ∈0i( ¯µ,n)
+
+ˆπ⊺γ
+
+: ˆπ ∈¯Fi
+
+(26)
+We then iterate (23) using ¯0i( ¯µ, n) instead of 0i( ¯µ, n) until
+convergence of the vectors in each set ¯0i( ¯µ, n) up to some
+finite precision. This approach gives a sub-optimal stationary
+policy that yields an upper bound to w∗
+ρ with a fixed space
+complexity of O
+ (| ¯UF| × | ¯F|)|Y|
+at each iteration, where
+| ¯F| = P
+i | ¯Fi| is the number of all belief states we choose
+within the simplex 1|A|.
+D. SUB-OPTIMAL CONTROL WITH DISCRETE BELIEF
+SPACE
+Here, we consider the SBHT control problem with a restricted
+belief state space that is discretized with some precision
+ϵ > 0 for the probability measure. Let ¯1|A| ⊂1|A| denote
+the resulting finite discrete space, and let ξi ∈
+¯1|A| for
+1 ≤i ≤m represent the discrete belief states. We use the
+nearest-neighbour (NN) classification boundaries in ¯1|A| to
+define the Voronoi region Ni of each ξi, which is a polyhedron
+in 1|A| given by
+Ni =
+n
+ˆπ ∈1|A| :
+ξi −ˆπ
+ ≤
+ξj −ˆπ
+ , ∀ξj ∈¯1|A|\ξi
+o
+.
+(27)
+Fig. 4 illustrates the approximation of belief space in R3
++ to a
+discrete belief space obtained using 0.25 as the precision for
+the probability measure.
+Let ¯gk be a |Y|-dimensional vector representing the indices
+of belief state ˆπk in ¯1|A|. We denote by ¯Ub(¯gk, ξi) the set
+of all control policies ¯µk ∈¯U that satisfy the set of linear
+constraints:
+
+M ¯µ(y, ξi) · ¯µk
+1⊺
+|A| · M ¯µ(y, ξi) · ¯µk
+∈N[¯gk]y : y ∈Y
+
+.
+(28)
+Then, the Bellman’s equation in (15) for each ˆπk−1 = ξi ∈
+¯1|A| can be rewritten as a linear programming problem:
+vn(ξi)=
+min
+¯gk∈¯1|Y|
+|A|,
+¯µk∈¯Ub(¯gk,ξi)
+h
+α⊺
+k (¯gk, ξi, vn−1) · ¯µk
+i
+.
+(29)
+Here, αk(¯gk, ξi, vn−1) is a vector in R|W|
++
+with elements:
+h
+αk(¯gk, ξi, vn−1)
+i
+wk
+= P
+(ak,yk,xk,hk,ak−1)PHk|Ak
+× PWk|Yk,Xk,Hk,Ak−1PXk,Ak|Yk,Ak−1[ξi]ak−1
+×
+
+c(hk, ζ ∗(ξ[¯gk]yk )) + ρvn−1(ξ[¯gk]yk )
+
+.
+(30)
+Remark 5: Due to the linear fractional constraint in (28),
+the optimal solution ¯µ∗
+k( ˆπk−1) in this case may not necessar-
+ily be a non-randomized control sub-policy.
+Remark 6: The cardinality of the belief space ¯1|A| with
+precision ϵ is O(|H × Z|(1/ϵ)). Since (29) requires computing
+the piecewise minimum over
+¯1|A|, finding the optimal
+stationary policy has a worst-case time complexity of
+O(| ¯1|A|||Y|) = O((|H × Z|(1/ϵ))|Y|). Thus, the computation
+time may grow double exponentially with respect to the
+cardinality of the observation space |Y|.
+Note that approximating ˆπk to the nearest discrete belief
+state ξj ∈
+¯1|A| introduces an approximation error in the
+value function vn at each iteration n. This error can propagate
+through the recursive iterations and may lead to a sub-optimal
+policy against an adversary that uses a more precise belief
+state ˆπk. Therefore, the trade-off between the precision of
+the belief state space and the computational cost needs to be
+carefully considered when using this approach.
+VI. REINFORCEMENT LEARNING-BASED CONTROL
+Although the SBHT inference control problem (16) can
+be solved approximately using the approaches presented in
+Section V, due to their complexity, they are only computa-
+tionally tractable for low-dimensional problems. To address
+this challenge, we present a reinforcement learning-based
+control approach based on the Actor-Critic architecture [28].
+Our approach, called Adversarial Model-based Deterministic
+24940
+VOLUME 12, 2024
+
+R. R. Avula et al.: Adversarial Inference Control in Cyber-Physical Systems
+FIGURE 4. Illustration of belief space discretization in R3
++.
+Policy Gradient (AMDPG), is inspired by the Deep Deter-
+ministic Policy Gradient (DDPG) algorithm [22] and enables
+tractable policy computation even in high-dimensional prob-
+lems. The AMDPG algorithm is presented in Alg. 1.
+The goal of the AMDPG algorithm is to learn a deter-
+ministic policy that maps the current belief state to an
+optimal control sub-policy based on a critic’s evaluation of
+the quality of the action. Like the DDPG algorithm, the
+critic evaluates the actor by estimating the state-action value
+function, denoted by Qµ, corresponding to any stationary
+policy µ, which is expressed as
+Qµ( ˆπk−1, ¯µk) = Eµ
+" ∞
+X
+k=1
+ρk−1 c(Hk, ˆHk)
+ ˆπk−1, ¯µk
+#
+= Eµ
+
+rk|k−( ˆπk−1, ¯µk) + ρQµ( ˆπk, ¯µk+1)
+
+,
+(31)
+The optimal state-action value function Q ˜µ∗and the state
+value function v∗in (16) for the optimal stationary policy
+˜µ∗are related through the stationary distribution of the belief
+states, denoted by P ˆΠ∞( ˆπ), as:
+wρ( ˜µ∗) =
+Z
+ˆπ
+P ˆΠ∞( ˆπ)v∗( ˆπ) =
+Z
+ˆπ
+P ˆΠ∞( ˆπ)Q ˜µ∗( ˆπ, ˜µ∗( ˆπ)).
+(32)
+In the AMDPG algorithm, the actor network selects
+a control sub-policy at each time step by observing the
+belief state ˆπk−1. The resulting belief state transition and
+adversarial Bayesian reward rk|k
+= c⊺(ˆhk) ˆπk are stored
+in a replay buffer. By using random sample batches, the
+critic network estimates the expected reward, and the actor
+network updates its parameters by minimizing the expected
+reward using the gradient descent algorithm. To map the
+actor network outputs to the control sub-policy action space
+W, the AMDPG algorithm employs an additive-logistic
+transformation denoted by L. For η ∈Rn−1, L : Rn−1 →1n
+Algorithm 1 Adversarial Model-Based Deterministic Policy
+Gradient (AMDPG)
+Require: Replay buffer B, critic network Q, actor network
+ψ, exploration noise ϵ1, ϵ2, batch size M, learning rates
+χQ and χψ, network parameter ηQ and ηψ.
+1: Initialize Q( ˆπ, ¯µ|ηQ), µ( ˆπ|ηψ).
+2: Initialize replay buffer B.
+3: for episode = 1 to Tepisodes do
+4:
+Initialize state ˆπ0.
+5:
+for k = 1 to N do
+6:
+¯µ#
+k ←ψ( ˆπk−1|ηψ)
+7:
+Sample rand randomly from (0, 1).
+8:
+if rand < ϵ1 then
+9:
+Compute PYk|Y1:k−1 for ¯µ#
+k using (36).
+10:
+Choose top Yexp ⊂Y based on PYk|Y1:k−1.
+11:
+Solve (35) to get ˆµ∗
+k( ¯φa, ˆπk−1), ∀¯φa ∈8a.
+12:
+Solve (38) to get ˆµ†
+k.
+13:
+¯µk ←ˆµ†
+k.
+14:
+else if rand < ϵ1 + ϵ2 then
+15:
+¯µk ←L
+ ¯µ#
+k + N
+
+16:
+else
+17:
+¯µk ←L
+ ¯µ#
+k
+
+18:
+end if
+19:
+Execute action ¯µk and next state ˆπk
+20:
+Compute expected reward rk|k = c⊺(ˆhk) ˆπk.
+21:
+Store experience ( ˆπk−1, ¯µk, rk, ˆπk) in B.
+22:
+Sample random batch from B of size B.
+23:
+Compute ∇ηQQ, the critic gradient using the loss:
+1
+B
+B
+X
+i=1
+(ωi −Q( ˆπi−1, ¯µi|ηQ)2,
+where ωi = ri + ρQ( ˆπi, ψ( ˆπi|ηψ)|ηQ).
+24:
+Compute ∇ηψ ψ, the sample policy gradient [22]:
+Ebatch[∇ηψ Q( ˆπ, ψ( ˆπ|ηψ)|ηQ)],
+using the batch samples.
+25:
+Update the actor and critic network parameters:
+ηQ ←ηQ + χQ∇ηQQ,
+ηψ ←ηψ + χψ∇ηψ ψ.
+26:
+end for
+27: end for
+is given by
+L(η)=
+"
+eη1
+1+Pn−1
+i=1 eηi , . . . ,
+eηn−1
+1+Pn−1
+i=1 eηi ,
+1
+1+Pn−1
+i=1 eηi
+#⊺
+,
+(33)
+and its unique inverse transformation L−1 for κ ∈1n is
+L−1(κ) =
+
+log
+κ1
+κn
+
+, . . . , log
+κn−1
+κn
+⊺
+.
+(34)
+VOLUME 12, 2024
+24941
+
+R. R. Avula et al.: Adversarial Inference Control in Cyber-Physical Systems
+Because of the piecewise-linear structure of the reward
+as shown in (17), the AMDPG algorithm aims to enhance
+exploration by occasionally selecting an action based on a
+pool of solutions to the optimization problems that minimize
+the instantaneous rewards, that is:
+ˆµ∗
+k( ¯φa, ˆπk−1) =
+min
+¯µk∈¯Ua( ¯φa, ˆπk−1)
+h
+ˆπ⊺
+k−1Mc
+ ¯ζ( ¯φa)
+
+¯µk
+i
+, (35)
+where ¯φa
+∈
+8a
+⊆
+A|Yexp|, Yexp
+⊆
+Y contains only
+the top e elements from Y, which are chosen according to
+the likelihood probability of observation yk given the actor
+network output ¯µ#
+k, given by
+PYk|Y1:k−1(y|y1:k−1) = 1⊺
+|A| · M ¯µ
+ y, ˆπk−1
+
+· L( ¯µ#
+k),
+(36)
+the constraint set ˜Ua, similar to (18) as:
+˜Ua( ¯φa, ˆπk−1) =
+n
+¯µ ∈¯U : ˆπk(y, ¯µ, ˆπk−1) ∈Na,
+a = [ ¯φa ]y, y ∈Yexp
+o
+,
+(37)
+and Na is the Voronoi region of a simplex vertex a ∈A given
+in (27). Then, the exploratory action ˆµ†
+k is given by
+ˆµ†
+k( ˆπk−1) =
+min
+ˆµ∗
+k( ¯φa, ˆπk−1),∀¯φa∈8a
+h
+Eµ
+
+rk|k−( ˆπk−1, ˆµ∗
+k)
++ ρQµ( ˆπk, ¯µk+1)
+i
+.
+(38)
+Further, the set of potential vectors in 8a can be condensed
+by randomly selecting a pre-defined finite number of vectors
+from the AYexp space. This allows for a more manageable
+computation process to generate adversarial model-based
+noise. Then, to balance exploration and exploitation, the
+agent selects the exploratory action ˆµ†
+k with probability ϵ1,
+L( ¯µ#
+k +N) with probability ϵ2, and the network output L( ¯µ#
+k)
+with probability 1 −ϵ1 −ϵ2, where N is any randomly
+generated noise.
+The presented model-free RL approach allows us to
+handle the dynamic nature of complex CPSs effectively
+where traditional MDP dynamic programming approaches
+are insufficient. Note that the computational steps consist of
+solving a few linear programs and computing gradients of
+actor and critic. Due to the usage of a replay buffer, depending
+on the computational power of the agent, these computational
+steps can be spread across a few or several time steps of the
+controller. Moreover, a noteworthy feature of this approach
+is its runtime adaptability, as the policy can be learned and
+adjusted dynamically during system operation. This enables
+real-world deployability, even in situations where system
+dynamics may evolve or are not entirely known a priori.
+Overall, the AMDPG algorithm provides a computationally
+tractable approach for solving the SBHT inference control
+problem even in high-dimensional cases. Our simulation
+results in the next sections demonstrate that it achieves
+competitive performance compared to other approaches.
+VII. NUMERICAL STUDY WITH SYNTHETIC DATA
+In this section, we present a numerical study using synthetic
+data to evaluate the effectiveness of the proposed approaches
+for the SBHT inference control problem. We consider a
+simple system with binary state-spaces of H, X, Y, and Z.
+The system has three control actions D, a horizon length
+of N
+=
+96. We generate synthetic data using different
+HMMs with the same prior and observation probabilities,
+but varying transition probability with parameters λ0, λ1 ∈
+{0.2, 0.4, 0.6, 0.8}. The HMM model parameters are set for
+all k ∈N as follows:
+PH0 =
+0.5
+0.5
+
+,
+PXk|Hk =
+0.95
+0.15
+0.05
+0.85
+
+,
+PHk|Hk−1 =
+
+λ0
+1 −λ1
+1 −λ0
+λ1
+
+.
+To investigate the attainable privacy levels in relation
+to various system dynamics, we develop and assess the
+performance of the proposed control methods for different
+HMM transition probabilities. We model the state transitions
+of the storage system using the conditional distribution
+PZk|Zk−1,Dk with the following elements:
+PZk|Zk−1,Dk(1|1, 0) = PZk|Zk−1,Dk(2|2, 0) = 1,
+PZk|Zk−1,Dk(1|1, 1) = PZk|Zk−1,Dk(2|2, −1) = 0.05,
+PZk|Zk−1,Dk(2|1, 1) = PZk|Zk−1,Dk(1|2, −1) = 0.95.
+We select a cost function that protects less frequently
+occurring hypothesis states since they are more informa-
+tive. Specifically, we set c(hi, hi)
+=
+1/PH∞(hi), where
+PH∞denotes the stationary probability of the HMM; and
+c(hi, hj) = 0, ∀hi̸ = hj.
+Before evaluating the privacy control approaches presented
+in the previous sections, we first implement an approach
+based on our previous work [3], where we design a policy that
+minimizes the discounted Bayesian reward of an adversary
+who is unaware of the control system’s existence. We also
+discretize the belief states with a precision of 0.2 for the
+probability measure, as discussed in Section V-D, and use
+a discount factor of ρ
+=
+0.9. We then evaluate this
+approach against an adversary with complete knowledge of
+the control system. Fig. 5 shows the average Bayesian reward
+corresponding to both the aware adversary (AA) and the
+unaware adversary (UA). This demonstrates that when the
+control system is designed for a weaker adversarial case,
+a stronger adversary can improve its detection performance
+with knowledge of the implemented control strategy. This
+result highlights the potential necessity to employ privacy
+control measures against the most extreme adversaries,
+ensuring that the system remains secure even in the face of
+worst-case scenarios.
+As noted in Remark 4 in Section V-B, computing an exact
+optimal policy for even a simple binary system can be highly
+computationally complex. To illustrate this, we computed
+the γ vectors for an HMM with (λ0, λ1)
+=
+(0.2, 0.2)
+using a finite control sub-policies space
+¯UF consisting
+24942
+VOLUME 12, 2024
+
+R. R. Avula et al.: Adversarial Inference Control in Cyber-Physical Systems
+FIGURE 5. Comparison of average Bayesian rewards of aware adversary
+(AA) and unaware adversary (UA) when the control system is designed to
+minimize the Bayesian reward of the UA.
+FIGURE 6. Double-exponential growth of γ vectors for a binary-state
+problem using the exact optimal approach in Section V-B.
+of degenerate sub-policies and with belief transformation
+matrices M ˆπ(yk, ¯µ) such that det(M ˆπ(y, ¯µ)) > 0.01∀y ∈Y.
+This results in | ¯UF| = 4, | ¯B1| = 8, |F| = 12. Fig. 6 shows the
+double-exponential growth of the total number of γ vectors
+in all the sets 0i( ¯µ, n) for up to three iterations. Due to the
+impracticality of this approach, stemming from its excessive
+computational complexity, we exclude it from the following
+numerical study.
+To design the sub-optimal policy with a finite control
+sub-policy space, as presented in Section V-C, we select
+the control sub-policy space ¯UF to be the set of degenerate
+policies ¯µ with transformation matrices M ˆπ(y, ¯µ) such that
+det(M ˆπ(y, ¯µ)) > 10−5. To reduce computational complexity,
+we only choose 12 degenerate policies ¯µ with the highest
+miny
+
+det(M ˆπ(y, ¯µ))
+
+. To design the sub-optimal policy with
+a discretized belief space, as discussed in Section V-D, we use
+a precision of ϵ = 0.2 for the probability measure, resulting in
+| ¯1|A|| = 56. Here, we design two such sub-optimal policies
+by discretizing belief states of an aware adversary (AA) and
+an unaware adversary (UA).
+In addition, we simulate the Best Effort Moderation (BEM)
+approach [19] where the controller aims to maintain a
+constant metered load by charging or discharging the battery
+based on previous load yk−1, current battery state zk and
+current consumption xk. We also simulate a differential
+privacy (DP) mechanism with a Laplacian noise distribution
+given by
+fL(x) = exp(−|x|/b)
+2b
+,
+(39)
+where b = xmax/ϵ, and ϵ > 0 is a parameter which denotes
+level of the privacy guarantee the user desires. The lower the
+ϵ, the higher is the privacy due to more added noise.
+Furthermore, to design the AMDPG control policy, we use
+an exploration probability of ϵ1
+=
+0.03, where the
+adversarial model-based noise is generated by solving an
+instantaneously optimal policy with relaxed constraints using
+|Yexp| = 1. In addition, a uniformly distributed random
+noise in [0, 0.05] is used to generate noisy action with an
+exploration probability of ϵ2 = 0.03. The actor and critic
+neural networks are designed with 170 and 279 learnable
+parameters, respectively. We train the actor and critic for
+2000 episodes, each containing 96 time slots. We set the
+discount factor ρ to 0.9 for all other policies to expedite
+convergence, but for AMDPG, we set it to 0.99.
+The performance of the designed control policies is eval-
+uated using an aware adversary in Monte Carlo simulations
+comprising 2000 episodes. Fig. 7 shows the average Bayesian
+reward of the aware adversary under different control
+policies. The results indicate that the sub-optimal policies
+obtained by restricting either the control sub-policy space
+or the belief state-space perform poorly against an informed
+adversary. Additionally, in this binary state system, both the
+instantaneously-optimal and the AMDPG control policies
+yield the lowest Bayesian reward among the evaluated control
+policies. Furthermore, we evaluate the control policies using
+the adversarial precision metric given by the formula:
+Precision =
+True Positives
+True Positives + False Positives
+(40)
+Precision is useful when dealing with cases where one
+state is significantly more frequent than the other. In such
+cases, accuracy can be misleading, and precision provides
+a better understanding of how well the model performs for
+the less-frequent state. As illustrated in Fig. 8, the precision
+of the aware adversary follows a similar pattern as the
+average Bayesian reward across various HMM parameter
+settings, represented by λ0 and λ1. This result highlights
+the effectiveness of our proposed Bayesian approach in
+mitigating the precision of adversarial inference, thereby
+enhancing user privacy within the system.
+VIII. NUMERICAL STUDY WITH REAL DATA
+In this section, we present an experimental study with real
+data to evaluate the effectiveness of the proposed AMDPG
+control policy for the SBHT inference control problem.
+We first describe the Co-LivEn dataset, which was collected
+VOLUME 12, 2024
+24943
+
+R. R. Avula et al.: Adversarial Inference Control in Cyber-Physical Systems
+FIGURE 7. Comparison of the average Bayesian rewards of the aware
+adversary when using different inference control approaches.
+FIGURE 8. Comparison of the precision (true positive rate) of the aware
+adversary when using different inference control approaches.
+from a multi-occupancy household with energy consumption
+data for a variety of appliances. Next, we evaluate the
+proposed AMDPG control policy on this dataset and compare
+its performance with that of a control policy designed against
+an unaware adversary.
+A. CO-LIVEN DATASET
+The Co-LivEn dataset used in this study is available as
+a public repository at https://zenodo.org/record/6480220.
+The dataset contains detailed electricity measurements of
+various appliances in a collective living (co-living) student
+household at KTH Live-in-Lab in Stockholm, Sweden.
+The household comprises four single rooms with attached
+bathrooms, a shared kitchen, and a common living room.
+The measurements include root-mean-square (RMS) voltage,
+RMS current, real power, and power factor of each appliance
+in the household. The data was collected with a sampling rate
+of 1 second and over a period of 277 days between August
+28, 2020, and May 31, 2021. This energy dataset is unique
+and comes from a Nordic country, providing insights into the
+energy consumption patterns of students living in a shared
+household throughout different seasons.
+The data was collected using off-the-shelf smart plugs that
+were connected to the sockets for each appliance. The smart
+plugs were equipped with Wi-Fi modules that transmitted the
+data wirelessly to a local server. The server stored the data
+in its raw format, which was then pre-processed to eliminate
+missing data, outliers, and noise. The dataset contains
+detailed electrical measurements of 32 unique appliances as
+shown in Table 1. A detailed visualization of the appliance
+usage data over a single day can be seen in Fig. 9, which is
+derived from the Co-LivEn dataset. It is important to note that
+this figure does not depict all appliances, as those with low
+power consumption are difficult to visualize and have been
+excluded for clarity. To facilitate access to the data, it has
+been made available in two formats. The first is a compressed
+file called ‘‘appliance_csv.zip,’’ which contains the data in
+plain CSV file format. The second is a compressed file called
+‘‘appliance_mat.zip,’’ which contains the data in MATLAB
+file format. Both files are publicly accessible and can be
+downloaded from the repository.
+The dataset is organized into folders according to the
+location of the appliances, such as the common living
+room, kitchen, and each individual room. Each location
+folder contains folders for each appliance, and within each
+appliance folder, there is a separate file for each day of
+data collection. This structure allows for easy navigation and
+selection of specific appliances and time periods of interest.
+The high resolution and wide range of appliances present in
+the co-living household energy dataset make it a valuable
+resource for evaluating the effectiveness of proposed control
+policies in a real-world setting.
+B. EVALUATION OF THE AMDPG CONTROL POLICY
+In this section, we present an experimental study with real
+data to evaluate the effectiveness of the proposed AMDPG
+control policy for the SBHT inference control problem.
+We performed numerical simulations using the Co-LivEn
+Dataset. Specifically, we consider a scenario where users
+aim to conceal their cooking activities during the daytime
+to prevent potential disclosure of their presence at home.
+To model the system, we combine the consumption of
+high-power consuming kitchen appliances, such as the stove
+and oven, and define a hypothesis state with two possible
+outcomes, representing whether at least one of them is on or
+all of them are off. The consumption from all other appliances
+is assumed to be independent noise. We used the first 60%
+of the dataset to train the HMM parameters (using the
+FHMM approach [29]) and the remaining 40% for evaluating
+the designed control policy. In the simulations, we used 5-
+minute time slots between 10:00-14:00 each day, resulting
+in a horizon length of 48. We discretized the mean power
+consumption data in each time slot using a 400W quantization
+and set |X| = |Y| = 5. Additionally, we consider a 48V-
+24944
+VOLUME 12, 2024
+
+R. R. Avula et al.: Adversarial Inference Control in Cyber-Physical Systems
+FIGURE 9. Visualization of appliance usage data over a single day, obtained from the Co-LivEn dataset.
+TABLE 1. Appliance types by location.
+30Ah battery with |Z| = 35. As a result, we have the belief
+state dimension as |A| = 70 and the control sub-policy
+dimension as |W| = 3500. To reduce the computational
+complexity, we generated parameters of a three-circuit energy
+storage model [3] at a higher discretization value than the
+storage state Zk using Monte Carlo simulations and used
+them to estimate state transitions at each discrete state Zk
+that fall within the high-level state. The estimated storage
+state transition probability PZk|Zk−1,Dk was used to simulate
+a battery in both the reinforcement learning and evaluation
+phases. Further, to design the AMDPG control policy, we use
+a discount factor of ρ = 0.99, an exploration probability of
+ϵ1 = 0.03, a random noise probability of ϵ2 = 0.03, and
+actor and critic neural networks with 8 × 106 and 19.5 × 106
+learnable parameters, respectively. We train the actor and
+critic for 15000 episodes, each containing 48 time slots.
+In addition, we also implement the approach based on our
+previous work [3], where we design a policy that minimizes
+the discounted Bayesian reward of an adversary who is
+unaware of the control system’s existence, using discretized
+belief states with a precision of 0.2. The performance
+of the designed control policies is evaluated using an
+aware adversary in Monte Carlo simulations comprising
+2000 episodes, which are generated by randomly picking
+each episode from the available 111 episodes (40%) reserved
+for evaluation from the dataset. In addition, we simulate the
+BEM approach [19] and a differential privacy mechanism
+with a Laplacian noise distribution for ϵ ∈{0.1, 1, 10}.
+Table 2 shows the average Bayesian reward and precision
+of the aware adversary when using the designed control
+policies. It was observed that, with original data, the
+adversarial precision to identify the cooking (stove and oven)
+state of household is 0.6. That is, when adversary makes a
+guess that someone is using stove or oven at the household,
+it is accurate around 60% of the time. By using the proposed
+AMDPG control policy, the precision is reduced to 0.29,
+which is a 52% reduction compared to the original data,
+demonstrating its effectiveness in reducing privacy risk. BEM
+and differential privacy (with ϵ
+= 0.1) approaches also
+perform reasonably well in this case, with each achieving
+a precision of 0.4 and 0.33. In this case, although these
+heuristic approaches perform relatively well compared to the
+original data, they are not guaranteed to work as well in other
+cases as they operate based on pre-defined rules. In addition,
+we observe that when using a control policy designed
+against an unaware adversary, the aware adversarial precision
+actually increases to 0.95. This result further emphasizes the
+importance of employing a control policy against a worst-
+case adversary.
+VOLUME 12, 2024
+24945
+
+R. R. Avula et al.: Adversarial Inference Control in Cyber-Physical Systems
+TABLE 2. Comparison of the aware adversarial performance using
+AMDPG control policy and the policy designed by discretizing the
+unaware adversarial belief state.
+In this study, we evaluated the effectiveness of the
+proposed control strategies against a privacy scenario related
+to hiding cooking patterns. Other interesting potential
+scenarios could be related to hiding occupancy patterns,
+electric vehicle ownership, usage patterns of entertainment
+devices such as TV, stereo etc. The MATLAB code used
+for computing the control policies is publicly available
+at
+https://github.com/r2avula/AdversarialInferenceControl.
+In this work, we use YALMIP [30], MPT3 [31], and
+Gurobi [32] for mathematical modeling and optimization.
+IX. CONCLUSION
+In this paper, we presented a Bayesian approach to control
+adversarial inference and address the physical-layer privacy
+problem in CPSs. We considered a worst-case privacy
+scenario, assuming an adversary with complete knowledge
+of the user’s control strategy and modeling the adversary’s
+inferences using SBHT. We employed the MDP framework to
+quantify privacy leakage in the physical layer by calculating
+the Bayesian risk (adversarial reward) in the SBHT.
+For finite state-space problems, we derived the fixed-
+point Bellman’s equation for an optimal stationary strategy
+and proposed practical optimization-based control design
+approaches to solve it. While these optimization-based
+methods can produce finite or infinite horizon optimal
+policies by discretizing either the belief state or sub-
+policy space, they are not computationally tractable for
+high-dimensional problems. However, they can serve as
+useful benchmarks for smaller-scale, toy problems. To tackle
+the computational complexity of exact optimal policies
+for high-dimensional state-space problems, we introduced
+the Adversarial Model-based Deterministic Policy Gradient
+(AMDPG) RL algorithm, providing a more practical solution
+for protecting privacy against adversaries with perfect
+knowledge of the user’s control strategy in complex systems.
+The numerical simulations with a toy problem demonstrate
+that a stronger adversary can enhance their detection perfor-
+mance when the control system is designed to counter weaker
+adversaries by acquiring knowledge of the implemented
+control strategy. We also found that the achievable privacy
+is dependent on the HMM transition probabilities, implying
+that some HMM systems inherently possess higher risks
+than others. In a binary state-space system, both the
+instantaneously optimal and proposed AMDPG strategies
+achieve the minimum Bayesian risk compared to other
+evaluated strategies.
+Additionally, we presented the Co-LivEn dataset, a pub-
+licly available energy consumption dataset containing com-
+prehensive electrical measurements of appliances in a co-
+living household. Using this dataset, we benchmarked
+the proposed AMDPG strategy and compared it with a
+control strategy designed for a controller-unaware adversary.
+Notably, the AMDPG control policy significantly reduced
+the aware adversary’s precision compared to the original
+data, indicating its effectiveness in mitigating privacy risks.
+The results reveal that when using a control policy designed
+against an unaware adversary, not only does it fail to achieve
+the primary objective of minimizing adversarial performance,
+but it inadvertently assists the aware adversary in improving
+their performance relative to the original data. This further
+emphasizes the importance of implementing a control policy
+against a worst-case adversary.
+In conclusion, the proposed Bayesian privacy control
+approach and the RL-based policy design can help mitigate
+privacy risks and limit information leakage in CPSs. The
+Co-LivEn dataset supports smart meter privacy research by
+offering real-world data for benchmarking and comparison of
+privacy-enhancing techniques. Overall, this work contributes
+to the advancement of privacy-enhancing techniques for
+CPSs, enabling the full realization of the benefits these
+systems provide while safeguarding user privacy.
+APPENDIX A
+PROOF OF LEMMA 1
+Since the adversarial guess ˆHk follows the detection policy
+P ˆHk|Y1:k, the joint probability of (Hk, ˆHk) in (3) becomes
+PHk, ˆHk|Y1:k = P ˆHk|Y1:kPHk|Y1:k.
+(41)
+Further, using Bayes’ rule, we have
+PHk|Y1:k = PHk,Yk|Y1:k−1
+PYk|Y1:k−1
+.
+(42)
+To compute PHk,Yk|Y1:k−1, we use the law of total probability
+and the conditional independence structure of the model to
+obtain:
+PHk,Yk|Y1:k−1
+= P
+(xk,zk−1,hk−1) PXk,Hk|Hk−1
+× PYk|Xk,Hk,Zk−1,Hk−1,Y1:k−1PZk−1,Hk−1|Y1:k−1,
+(43)
+Similarly, we can express PZk,Hk|Y1:k as:
+PZk,Hk|Y1:k = PZk,Hk,Yk|Y1:k−1
+PYk|Y1:k−1
+,
+(44)
+PYk|Y1:k−1 = P
+(zk,hk) PZk,Hk,Yk|Y1:k−1,
+(45)
+PZk,Hk,Yk|Y1:k−1 = P
+(xk,zk−1,hk−1) PZk|Zk−1,Dk
+× PXk,Hk|Hk−1PYk|Xk,Hk,Zk−1,Hk−1,Y1:k−1
+PZk−1,Hk−1|Y1:k−1.
+(46)
+24946
+VOLUME 12, 2024
+
+R. R. Avula et al.: Adversarial Inference Control in Cyber-Physical Systems
+Further, given a control policy PYk|Xk,Hk,Ik, we have
+PYk|Xk,Hk,Zk−1,Hk−1,Y1:k−1
+=P
+(x1:k−1,a1:k−2)PXk−1|Hk−1
+× PYk|Xk,Hk,Ik
+Qk−2
+j=1 PZj|Zj−1,DjPXj,Hj|Hj−1.
+(47)
+The lemma follows directly from (44) - (46), where M ˆπ ∈
+R|A|×|A|
++
+and M ¯µ ∈R|A|×|W|
++
+are matrices whose elements
+are obtained by reformulating (46) into a matrix equation in
+terms of ˆπk−1 and ¯µk.
+APPENDIX B
+PROOF OF THEOREM 1
+To obtain an optimal control strategy µ∗
+1:N associated with
+the finite-horizon optimization problem in (11), we use
+Bellman’s dynamic programming equation [24]:
+vk(y1:k−1)= min
+µk∈Uk
+h
+rk|k−(y1:k−1; ζ ∗
+k , µ1:k)
++ ρE
+
+vk+1(Y1:k)|Y1:k−1 = y1:k−1
+i
+,
+(48)
+where vk, known as the value function, is the aggregate value
+of discounted conditional Bayesian risk from k to N due to
+optimal strategy µ∗
+k:N.
+For a given observation sequence y1:k−1, the objective
+function in (48) can be expressed using (12) and (46) as:
+rk|k−(y1:k−1; ζ ∗
+k , µ1:k) + ρE
+
+vk+1(Y1:k)|Y1:k−1 =y1:k−1
+
+= P
+(ˆhk,yk,ak) P ˆHk|Y1:kPAk,Yk|Y1:k−1
+×
+
+c(fH(ak), ˆhk) + ρvk+1(y1:k)
+
+(49)
+= ˆπ⊺
+k−1Mc(¯ζ ∗
+k ) ¯µk + ρ ˆπ⊺
+k−1Mv(¯vk+1) ¯µk,
+(50)
+where ¯ζ ∗
+k and ¯vk+1 are |Y| dimensional vectors with elements
+as [¯ζ ∗
+k ]yk=ζ ∗( ˆπk(yk, ¯µk, ˆπk−1)), [¯vk+1]yk = vk+1(y1:k); Mc,
+Mv are |A| × |W| dimensional matrices whose elements are
+given by (46) and (49). From (48) and (50), we note that
+the value function vk depends on y1:k−1 only through the
+variables ( ˆπk−1, ¯µk, ¯ζ ∗
+k , ¯vk+1). Therefore, if the optimization
+routine (48) is initialized using ¯vN+1 that only depends on
+y1:N through ˆπN, then at each k ∈KN and for any given
+y1:k−1 ∈Yk, there exists a policy ˜µk ∈
+˜U that results in
+the same value vk as an optimal policy µ∗
+k ∈Uk. Therefore,
+the belief state ˆπk−1 forms a sufficient statistic of y1:k−1 to
+compute an optimal policy ˜µ∗
+k that achieves the minimum
+discounted Bayesian risk achievable by any µk ∈Uk.
+Let n = N −k + 1 denote the backward iteration index
+starting from k = N for some arbitrarily large N. Using (50),
+the Bellman’s recursive equation in (48) can be expressed in
+terms of the sufficient statistic ˆπk−1 as:
+vn( ˆπk−1)= min
+¯µk∈¯U
+h
+ˆπ⊺
+k−1
+
+Mc(¯ζ ∗
+k ) + ρMv(¯vn−1)
+
+¯µk
+i
+,
+(51)
+where [¯vn−1]y = vn−1
+ ˆπk(y, ¯µk, ˆπk−1)
+
+.
+ACKNOWLEDGMENT
+The authors would like to acknowledge the valuable support
+and assistance provided by the KTH Live-in Lab Team in the
+collection and processing of the energy consumption data,
+which enabled the creation of the Co-LivEn dataset used
+in this study. Their contributions are greatly appreciated.
+They also extend their appreciation to the residents of the
+Live-in Lab for their cooperation in the data collection
+process. They also acknowledge that this article includes
+content that has been adapted from the Ramana R. Avula’s
+Ph.D. thesis [33], submitted to the KTH Royal Institute
+of Technology, in May 2023. Ramana R. Avula was with
+the Division of Intelligent Systems, KTH Royal Institute of
+Technology, 100 44 Stockholm, Sweden, where the majority
+of the work was done.
+REFERENCES
+[1] A. Zoha, A. Gluhak, M. Imran, and S. Rajasegarar, ‘‘Non-intrusive load
+monitoring approaches for disaggregated energy sensing: A survey,’’
+Sensors, vol. 12, no. 12, pp. 16838–16866, Dec. 2012.
+[2] A. Molina-Markham, P. Shenoy, K. Fu, E. Cecchet, and D. Irwin, ‘‘Private
+memoirs of a smart meter,’’ in Proc. 2nd ACM Workshop Embedded Sens.
+Syst. Energy-Efficiency Build., 2010, pp. 61–66.
+[3] R. R. Avula, J.-X. Chin, T. J. Oechtering, G. Hug, and D. Månsson,
+‘‘Design framework for privacy-aware demand-side management with
+realistic energy storage model,’’ IEEE Trans. Smart Grid, vol. 12, no. 4,
+pp. 3503–3513, Jul. 2021.
+[4] F. D. Garcia and B. Jacobs, ‘‘Privacy-friendly energy-metering via homo-
+morphic encryption,’’ in Proc. 6th Int. Int. Workshop Secur. Trust Manage.,
+Athens, Greece. Cham, Switzerland: Springer, 2010, pp. 226–238.
+[5] M. A. Mustafa, S. Cleemput, A. Aly, and A. Abidin, ‘‘A secure and privacy-
+preserving protocol for smart metering operational data collection,’’ IEEE
+Trans. Smart Grid, vol. 10, no. 6, pp. 6481–6490, Nov. 2019.
+[6] M. Jawurek, M. Johns, and F. Kerschbaum, ‘‘Plug-in privacy for smart
+metering billing,’’ in Proc. Int. Symp. Privacy Enhancing Technol. Symp.
+Cham, Switzerland: Springer, 2011, pp. 192–210.
+[7] G. Ács and C. Castelluccia, ‘‘I have a DREAM! (differentially private
+smart metering),’’ in Information Hiding, vol. 6958. Berlin, Germany:
+Springer, 2011, pp. 118–132.
+[8] H.-Y. Tran, J. Hu, and H. R. Pota, ‘‘Smart meter data obfuscation with
+a hybrid privacy-preserving data publishing scheme without a trusted
+third party,’’ IEEE Internet Things J., vol. 9, no. 17, pp. 16080–16095,
+Sep. 2022.
+[9] M. Backes and S. Meiser, ‘‘Differentially private smart metering with
+battery recharging,’’ in Data Privacy Management and Autonomous
+Spontaneous Security. Berlin, Germany: Springer, 2014, pp. 194–212.
+[10] L. Sankar, S. R. Rajagopalan, S. Mohajer, and H. V. Poor, ‘‘Smart meter
+privacy: A theoretical framework,’’ IEEE Trans. Smart Grid, vol. 4, no. 2,
+pp. 837–846, Jun. 2013.
+[11] J. Gómez-Vilardebó and D. Gündüz, ‘‘Smart meter privacy for multiple
+users in the presence of an alternative energy source,’’ IEEE Trans. Inf.
+Forensics Security, vol. 10, no. 1, pp. 132–141, Jan. 2015.
+[12] G. Giaconi, D. Gündüz, and H. V. Poor, ‘‘Smart meter privacy with
+renewable energy and an energy storage device,’’ IEEE Trans. Inf.
+Forensics Security, vol. 13, no. 1, pp. 129–142, Jan. 2018.
+[13] J. Liao, L. Sankar, V. Y. F. Tan, and F. du Pin Calmon, ‘‘Hypothesis testing
+under mutual information privacy constraints in the high privacy regime,’’
+IEEE Trans. Inf. Forensics Security, vol. 13, no. 4, pp. 1058–1071,
+Apr. 2018.
+[14] J. Yao and P. Venkitasubramaniam, ‘‘On the privacy-cost tradeoff of an
+in-home power storage mechanism,’’ in Proc. 51st Annu. Allerton Conf.
+Commun., Control, Comput., Oct. 2013, pp. 115–122.
+[15] Z. Li and T. J. Oechtering, ‘‘Privacy-aware distributed Bayesian detection,’’
+IEEE J. Sel. Topics Signal Process., vol. 9, no. 7, pp. 1345–1357,
+Oct. 2015.
+[16] Z. Li, T. J. Oechtering, and M. Skoglund, ‘‘Privacy-preserving energy flow
+control in smart grids,’’ in Proc. IEEE Int. Conf. Acoust., Speech Signal
+Process. (ICASSP), Mar. 2016, pp. 2194–2198.
+[17] Z. Li, T. J. Oechtering, and D. Gündüz, ‘‘Privacy against a hypothesis
+testing adversary,’’ IEEE Trans. Inf. Forensics Security, vol. 14, no. 6,
+pp. 1567–1581, Jun. 2019.
+VOLUME 12, 2024
+24947
+
+R. R. Avula et al.: Adversarial Inference Control in Cyber-Physical Systems
+[18] S. Salehkalaibar, F. Aminifar, and M. Shahidehpour, ‘‘Hypothesis testing
+for privacy of smart meters with side information,’’ IEEE Trans. Smart
+Grid, vol. 10, no. 2, pp. 2059–2067, Mar. 2019.
+[19] G. Kalogridis, C. Efthymiou, S. Z. Denic, T. A. Lewis, and R.
+Cepeda, ‘‘Privacy for smart meters: Towards undetectable appliance load
+signatures,’’ in Proc. 1st IEEE Int. Conf. Smart Grid Commun., Oct. 2010,
+pp. 232–237.
+[20] W. Yang, N. Li, Y. Qi, W. Qardaji, S. McLaughlin, and P. McDaniel,
+‘‘Minimizing private data disclosures in the smart grid,’’ in Proc. ACM
+Conf. Comput. Commun. Secur. Raleigh, NC, USA: ACM, Oct. 2012,
+pp. 415–427.
+[21] I. Grondman, L. Busoniu, G. A. D. Lopes, and R. Babuska, ‘‘A
+survey of actor-critic reinforcement learning: Standard and natural policy
+gradients,’’ IEEE Trans. Syst., Man, Cybern., C Appl. Rev., vol. 42, no. 6,
+pp. 1291–1307, Nov. 2012.
+[22] T. P. Lillicrap, J. J. Hunt, A. Pritzel, N. Heess, T. Erez, Y. Tassa, D. Silver,
+and D. Wierstra, ‘‘Continuous control with deep reinforcement learning,’’
+2015, arXiv:1509.02971.
+[23] P. K. Varshney, Distributed Detection and Data Fusion. Berlin, Germany:
+Springer, 2012.
+[24] V. Krishnamurthy, Partially Observed Markov Decision Processes.
+Cambridge, U.K.: Cambridge Univ. Press, 2016.
+[25] V. Pata, Fixed Point Theorems and Applications, vol. 116. Berlin, Germany:
+Springer, 2019.
+[26] E. J. Sondik, ‘‘The optimal control of partially observable Markov
+processes over the infinite horizon: Discounted costs,’’ Oper. Res., vol. 26,
+no. 2, pp. 282–304, 1978.
+[27] W. S. Lovejoy, ‘‘Computationally feasible bounds for partially observed
+Markov decision processes,’’ Oper. Res., vol. 39, no. 1, pp. 162–175,
+Feb. 1991.
+[28] R. S. Sutton and A. G. Barto, Reinforcement Learning: An Introduction.
+Cambridge, MA, USA: MIT Press, 2018.
+[29] J. Z. Kolter and T. Jaakkola, ‘‘Approximate inference in additive factorial
+HMMs with application to energy disaggregation,’’ in Proc. 15th Int. Conf.
+Artif. Intell. Statist., 2012, pp. 1472–1482.
+[30] J. Lofberg, ‘‘YALMIP: A toolbox for modeling and optimization in
+MATLAB,’’ in Proc. IEEE Int. Conf. Robot. Autom., Taipei, Taiwan,
+Sep. 2004, pp. 284–289.
+[31] M. Herceg, M. Kvasnica, C. N. Jones, and M. Morari, ‘‘Multi-parametric
+toolbox 3.0,’’ in Proc. Eur. Control Conf. (ECC), Zürich, Switzerland,
+Jul. 2013, pp. 502–510. [Online]. Available: http://control.ee.ethz.ch/~mpt
+[32] Gurobi Optimization, LLC. (2023). Gurobi Optimizer Reference Manual.
+[Online]. Available: https://www.gurobi.com
+[33] R. R. Avula, ‘‘Towards realistic smart meter privacy against Bayesian
+inference,’’ Ph.D. dissertation, KTH Roy. Inst. Technol., Stockholm,
+Sweden, 2023.
+RAMANA R. AVULA received the B.Tech. and
+M.Tech. degrees in electrical engineering from
+the Indian Institute of Technology, Madras, India,
+in 2015, and the Ph.D. degree in electrical
+engineering from the KTH Royal Institute of
+Technology, Sweden, in 2023. From 2015 to 2017,
+he was a Senior Engineer with Robert Bosch
+Engineering and Business Solutions, India. Cur-
+rently, he is a Researcher with the Department
+of Electrification and Reliability, RISE Research
+Institutes of Sweden. His research interests include statistical signal
+processing and cybersecurity.
+TOBIAS
+J.
+OECHTERING
+(Senior Member,
+IEEE) received the Dipl.-Ing. degree in electrical
+engineering and information technology from
+RWTH Aachen University, Germany, in 2002,
+and the Dr.-Ing. degree in electrical engineering
+from Technische Universität Berlin, Germany,
+in 2007. In 2008, he joined the KTH Royal
+Institute of Technology, Stockholm, Sweden, and
+has been a Professor, since 2018. His research
+interests include communication and information
+theory and physical layer privacy and security, including in particular
+smart meter privacy, statistical signal processing, and communication for
+networked control. In 2009, he received the ‘‘Förderpreis 2009’’ from
+the Vodafone Foundation. He has served on numerous technical program
+committees for IEEE sponsored conferences. He was the General Co-Chair
+of IEEE ITW 2019. He has been a Senior Editor of IEEE TRANSACTIONS
+ON INFORMATION FORENSICS AND SECURITY, since May 2020. Previously,
+he served as an Associate Editor for IEEE TRANSACTIONS ON INFORMATION
+FORENSICS AND SECURITY, in June 2016; and IEEE COMMUNICATIONS LETTERS,
+from 2012 to 2015.
+DANIEL MÅNSSON received the M.Sc. and
+Ph.D. degrees in engineering physics from Upp-
+sala University, Uppsala, Sweden, in 2003 and
+2008, respectively, and the Docent degree in
+electrical engineering, in 2016. He is a Professor
+with the KTH Royal Institute of Technology,
+Stockholm, Sweden, working in smart electricity
+grids and power system components. His current
+research is mainly focused on different aspects of
+energy storage systems and their implementation
+and ability to deliver services to prosumers and the grids.
+24948
+VOLUME 12, 2024

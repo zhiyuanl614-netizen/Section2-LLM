@@ -1,0 +1,1433 @@
+ 
+Contents lists available at ScienceDirect
+Reliability Engineering and System Safety
+journal homepage: www.elsevier.com/locate/ress
+ 
+Landmark-node based reliability assessment for critical infrastructure 
+networks$
+Manuel Herrera a
+,∗, Carlo Giudicianni b
+, Manu Sasidharan c
+, Robert Wright d, 
+Enrico Creaco b, Ajith Kumar Parlikad e
+a School of Engineering, Newcastle University, Newcastle upon Tyne, NE1 7RU, United Kingdom
+b Dipartimento di Ingegneria Civile e Architettura, Università Degli Studi di Pavia, Pavia, 27100, Italy
+c Department of Civil, Environmental and Geomatic Engineering, University College London, London, WC1E 6BT, United Kingdom
+d Department of Civil and Environmental Engineering, Imperial College London, London, SW7 2AZ, United Kingdom
+e Institute for Manufacturing, Department of Engineering, University of Cambridge, Cambridge, CB3 0FS, United Kingdom
+A R T I C L E  I N F O
+Keywords:
+Reliability
+Infrastructure systems
+Asset management
+Network analysis
+Water networks
+ 
+A B S T R A C T
+Assessing the reliability of critical infrastructure networks, such as urban systems essential for city functions 
+like electricity and water, is key for robust operation and risk management. Traditional methods for reliability 
+estimation, such as minimal cut-sets and path enumeration, often become computationally infeasible for 
+large-scale, complex networks due to the need to evaluate all possible node-to-node paths. This paper 
+introduces a novel approach based on landmark nodes – critical nodes essential for maintaining network 
+connectivity – to estimate reliability more efficiently. Instead of analysing all paths between nodes, the method 
+focuses on those connecting regular nodes to landmark nodes, significantly reducing the number of paths 
+considered and improving computational efficiency. The network is first decomposed using a graph clustering 
+algorithm, producing internally dense subgraphs. Reliability is then evaluated through intra-subgraph and inter-
+subgraph paths. A bipartite network model is also employed to represent inter-cluster structure, accounting 
+for failures in both nodes and links. This supports a multi-scale reliability analysis across local areas and 
+the full network. The methodology is validated using benchmark power distribution networks to ensure 
+reproducibility. To demonstrate practical relevance, it is also applied to a real-world case study involving the 
+water distribution system of Pavia, Italy. This application highlights how key urban areas and components can 
+be efficiently identified to prioritise maintenance and guide resource allocation, contributing to more resilient 
+and sustainable infrastructure management.
+1. Introduction
+Sustainable urban management requires assessing the reliability 
+and resilience of critical infrastructure systems, including electricity, 
+water distribution, transportation, and communication networks [1]. 
+These systems ensure the continuous delivery of essential services 
+that underpin societal well-being and environmental stewardship. Reli-
+able infrastructure reduces service disruptions, enhances public safety, 
+and contributes to efficient resource utilisation and adaptive capac-
+ity. In transport networks, reliability is typically evaluated in terms 
+of the probability of meeting a given demand within specific time 
+and cost constraints, accounting for stochastic travel times [2]. In 
+$ Support from Italian MIUR and University of Pavia is acknowledged within the programme Dipartamenti di Eccellenza 2023–2027. The authors gratefully 
+acknowledge the insightful discussions about this topic with the Special Interest Group in Statistical Engineering of the Royal Statistical Society. For open access, 
+the authors have applied a Creative Commons Attribution (CC BY) licence to any Author Accepted Manuscript version arising.
+∗Corresponding author.
+E-mail address: manuel.herrera@newcastle.ac.uk (M. Herrera).
+telecommunication networks, it is assessed through connectivity, re-
+source availability, and capacity constraints [3], with methods such 
+as path disjointness [4] and binary decision diagrams [5] used to 
+identify and protect critical links. Power systems face challenges in-
+cluding cascading failures and load curtailment, which are addressed 
+using robust models such as security criteria [6] and bilevel pro-
+gramming [7] to estimate load shedding probabilities and conditional 
+value-at-risk. Bus voltage also serves as a key indicator of opera-
+tional reliability, with new indices proposed to evaluate performance 
+under varying conditions and contingencies [8]. In district heating net-
+works, reliability-oriented design ensures consistent heat distribution 
+and overall system resilience [9].
+https://doi.org/10.1016/j.ress.2025.111563
+Received 19 January 2025; Received in revised form 22 July 2025; Accepted 6 August 2025
+Reliability Engineering and System Safety 265 (2026) 111563 
+Available online 16 August 2025 
+0951-8320/© 2025 The Authors. Published by Elsevier Ltd. This is an open access article under the CC BY license ( http://creativecommons.org/licenses/by/4.0/ ). 
+
+M. Herrera et al.
+An extensive body of research has been dedicated to investigating 
+the reliability of water distribution systems (WDSs). Yang et al. [10] 
+and Shinstine et al. [11] demonstrated the application of minimal cut-
+sets to estimate WDS reliability. This was done in conjunction with 
+supply path availability, and the results’ dependency on network design 
+was emphasised. Giustolosi et al. [12] shifted the focus to mechanical 
+reliability. They developed indices that link WDS reliability with the 
+network’s structural and topological features. This concept was also 
+highlighted in the works of Walski [13] and Ostfeld et al. [14], who 
+integrated graph theory into WDS reliability estimation. Building on 
+these methodologies, Scheidegger et al. [15] introduced a statisti-
+cal framework for analysing WDS reliability. Furthermore, Hajibabaei 
+et al. [16] employed complex network theory to address missing data 
+reconstruction in WDSs, enhancing the accuracy and robustness of 
+reliability assessments by mitigating data gaps. Guidotti et al. [17] 
+expanded the scope of this research by incorporating spatial analysis 
+and examining the interaction with urban social systems. Other re-
+cent frameworks have focused on dynamic vulnerability assessment, 
+using advanced structural models like multilayer networks to identify 
+critical nodes [18]. Jeong et al. [19] provided a comparative analysis 
+of WDS reliability, considering various indices related to hydraulic, 
+mechanical, and network topology aspects. These diverse approaches 
+collectively enhance the understanding of WDS reliability, offering 
+valuable feedback for its improvement and underscoring the impor-
+tance of considering multiple factors, from mechanical components to 
+socio-environmental interactions.
+Assessing the reliability of complex systems involves a variety of 
+strategies that address the challenges posed by diverse network struc-
+tures and operational conditions. Key approaches in the literature 
+include: (1) Sample average approximation methods [20], (2) exact 
+methods for multi-state series–parallel systems, typically for redun-
+dancy allocation issues [21], and (3) meta-heuristic or evolutionary 
+algorithms [22]. These techniques are effective for simpler network 
+topologies. However, estimating reliability in complex networks, es-
+pecially those with multi-state nodes, becomes more challenging due 
+to the increased computational demands and mathematical complex-
+ity [23,24]. For such networks, methods like stochastic models [25], 
+system dynamics [26], Markov models [27], and Petri-nets [28] are 
+commonly used. Despite these approaches, a significant challenge in 
+real-world applications is the network size and associated scalability 
+issues. As a result, practical reliability estimation in complex networks 
+often involves min-cut decomposition [29], simulations for determin-
+ing network states and failure probabilities [30], and the use of ap-
+proximate methods [31]. Hitherto, the estimation of complex system 
+reliability remains an open challenge, owing to the computational dif-
+ficulty inherent in system reliability evaluation, known as NP-hardness. 
+Additionally, the problem is compounded by the non-linear character-
+istics of reliability functions (non-convexity) and the unpredictability 
+of the system’s lifespan distribution, which gives rise to inaccuracy in 
+predicting system reliability. These factors make the task challenging 
+and necessitate advanced analytical approaches.
+This paper introduces a novel approach to estimate the reliabil-
+ity of infrastructure networks through the use of landmark nodes - 
+selected nodes that are critical for maintaining network connectivity. 
+The proposed methodology evaluates network reliability by analysing 
+potential paths from any node to these landmark nodes, incorporating 
+the probabilities of path failures. The proposed method offers two 
+significant advantages:
+• Reduces the number of paths that need to be considered, thereby 
+enhancing computational efficiency in reliability assessment.
+• Naturally uses network communities, allowing for the estimation 
+of reliability in distinct network areas.
+This paper makes several original contributions to the field of 
+network reliability analysis. It introduces a modular framework that 
+uses community detection to decompose large networks into man-
+ageable subgraphs. It also formalises a landmark-node strategy that 
+enables scalable reliability estimation by identifying landmark nodes, 
+as those that connect different subgraphs (boundary nodes). The pro-
+posed approach supports reliability analysis across multiple parts of the 
+network, via subgraphs, and accounts for both node and link failures. 
+In the particular case of urban water networks, the method further 
+incorporates a logistic surrogate model for pipe failure probability, 
+enabling the use of hydraulic data even when detailed failure records 
+are sparse.
+Initially, the method assumes that failures occur at the link level, 
+reflecting the higher vulnerability of physical assets (e.g., pipes or 
+cables). Reliability is first estimated independently within each sub-
+graph, based on the network’s modular decomposition. In the literature, 
+node failures are commonly approximated by assuming that a node’s 
+failure results in the simultaneous failure of all its incident links, 
+thereby reducing the problem to a link-only reliability calculation [32]. 
+This assumption is conceptually simple and avoids the need to model 
+node failure explicitly, while still capturing its functional impact. In 
+the current proposal, however, node failures are explicitly represented 
+by adopting a bipartite network model. This preserves the original 
+topology while allowing simultaneous or independent failures of nodes 
+and links, as well as configurations with multiple parallel links. The 
+resulting formulation enables a more comprehensive and structurally 
+accurate representation of failure scenarios in networked infrastructure 
+systems [33].
+The reliability estimation process is validated using IEEE power dis-
+tribution benchmark networks to ensure repeatability, available at the 
+urls http://ieee...reliability-based-studies-1 and http://ieee...reliability-
+studies-2 [34,35]. Additionally, the case study on the WDS in Pavia, 
+Italy, [36] demonstrates the practical application of this method in 
+real-world complex networks, informing stakeholders and engineers to 
+support informed decision-making in network reliability, maintenance, 
+and resource allocation [37].
+Section 2 presents an overview of the main methods for reliability 
+assessment in complex networks, emphasising minimal cut-sets. Sec-
+tion 3 addresses reliability estimation on complex systems allowing 
+failures to happen on both network links and nodes. Section 4 illustrates 
+how to proceed when the probability of failure is not directly provided. 
+This approach is tailored for urban water distribution systems. Section 5 
+closes the paper presenting the work conclusions and future work.
+2. Reliability assessment in complex networks: current approaches
+The minimal cut-set method is a prominent technique for assessing 
+the reliability of complex networks [38]. It identifies critical groups 
+of components whose simultaneous failure results in network collapse. 
+The method includes: (1) identifying network components (nodes and 
+links); (2) assigning reliability parameters; (3) determining minimal 
+cut-sets; (4) calculating failure probabilities of these cut-sets; and (5) 
+deriving the overall network reliability from these probabilities.
+Despite its strengths, the minimal cut-set method faces limitations in 
+large-scale applications due to combinatorial complexity [39]. As net-
+works grow, identifying all potential minimal paths or cut-sets becomes 
+computationally impractical. Nevertheless, the method remains funda-
+mental, particularly when integrated with complementary approaches 
+to manage computational demands.
+To determine cut-sets effectively, various approaches exist: topo-
+logical and path-enumeration methods, simulation and sampling pro-
+cedures, and approximate heuristic techniques. Related approaches, 
+such as percolation methods and dismantling frameworks, systemati-
+cally identify critical components whose removal can trigger cascading 
+network failures [40].
+Reliability Engineering and System Safety 265 (2026) 111563 
+2 
+
+M. Herrera et al.
+2.1. Topological and path-enumeration methods
+Topological analysis for estimating network reliability scrutinises 
+the network’s structure by identifying minimal cut-sets using its graph 
+representation. This involves examining all possible paths between a 
+source and a sink, as each minimal cut-set is a minimal group of 
+components whose simultaneous failure disconnects the sink from the 
+source. Minimal cut-sets are determined by identifying components that 
+intersect all available paths, such that the removal of these components 
+leads inevitably to network failure. Soh et al. [41] developed the 
+subset-cut technique, enhancing the efficiency of path enumeration 
+in communication networks, though their tests were on networks of 
+limited size. This type of approach exemplifies how approximating 
+reliability often involves identifying and focusing on a strategic subset 
+of critical paths or components rather than exhaustive enumeration. 
+To apply reliability assessments to larger and more complex networks, 
+concepts like centrality metrics from network science become essential. 
+Amani et al. [28] highlighted these challenges in power grids, advocat-
+ing for measures based on complex network analysis to assess reliability 
+in larger, information-rich, and interconnected systems [42].
+Path enumeration algorithms, such as depth-first search and
+breadth-first search, complement the minimal cut-set method by sys-
+tematically identifying all paths from a network’s source to its sink, 
+aiding in the extraction of critical paths and minimal cut-sets [43,44]. 
+Xu et al. [45] and Mishra et al. [46] have furthered this approach 
+by linking reliability to the network’s ability to maintain connectivity 
+between nodes and by using network spanning trees and k-trees to 
+select path sets. This highlights the strategy of considering multiple 
+minimal cut-sets as an effective approximation for reliability, a concept 
+aligned with Zhao et al. [47], who emphasised the NP-hard challenge in 
+network reliability estimation. Such methods often involve identifying 
+specific nodes or links for removal or analysis to simplify the problem 
+and achieve computational efficiency in large-scale networks. To ad-
+dress these computational difficulties, other methods, such as Monte 
+Carlo simulation and sampling, are also proposed, offering alternative 
+solutions to the challenge of reliability estimation in complex networks.
+2.2. Approximate and heuristic techniques
+The main methods employed in approximate and heuristic tech-
+niques to estimate reliability are topological and path-enumeration 
+methods, simulation and sampling procedures, and heuristic tech-
+niques. These approaches aim to simplify the calculation of reliability 
+by reducing the dimensions and complexity of the problem on the 
+interrelationships of network elements.
+2.2.1. Simulation and sampling procedures
+Monte Carlo simulation, a probabilistic technique, is employed for 
+estimating network reliability. This method involves generating ran-
+dom samples of component failures based on their known reliability 
+probabilities. The aggregation of numerous such simulations makes it 
+possible to statistically estimate the probabilities of various cut-sets, 
+thus arriving at an overall assessment of network reliability [48,49]. 
+Although this method might not yield exact results, it offers statistically 
+significant reliability estimates.
+In addition to this, other heuristic approaches include using graph 
+simplification methods to manage the network’s complexity while re-
+taining its key features. For example, Chen et al. [50] suggested em-
+ploying graph theory algorithms like breadth-first search for efficient 
+network sampling, thereby facilitating reliability estimation. Similarly, 
+Dey et al. [51] introduced a method to simplify reliability estimation 
+by extracting network motifs to form building blocks, aiding in both 
+component-level and overall network reliability analysis. A key aspect 
+of any simulation-based method is the preliminary identification of 
+the most critical elements in the network’s topology. This involves 
+techniques like dismantling frameworks or targeted removal heuristics, 
+where influential nodes or links are systematically identified to approx-
+imate network reliability by focusing on essential connectivity. This 
+approach ensures that the analysis is both focused and efficient, thereby 
+enhancing the effectiveness of the reliability assessment [52].
+2.2.2. Birnbaum’s importance measure for heuristic techniques
+Heuristic strategies, such as the iterative removal of multiple se-
+quences of network nodes and links, play a pivotal role in ascertaining 
+which are critical within a network. These components are essential 
+because their failure can significantly impact the system’s overall re-
+liability [53,54]. An integral tool within these heuristic methods is 
+Birnbaum’s importance measure [55], which quantitatively assesses the 
+significance of each component in maintaining system reliability.
+Birnbaum’s importance measure is mathematically defined as the 
+differential probability of the system’s failure with the presence and 
+absence of a specific component. In essence, Birnbaum’s measure calcu-
+lates the change in system failure probability attributable to a particular 
+component, providing a precise quantification of its impact on system 
+reliability as shown by Eq. (1): 
+𝐼𝐵(𝐶) = 𝑃(𝐹|̄𝐶) −𝑃(𝐹|𝐶),
+(1)
+where 𝐼𝐵(𝐶) is the Birnbaum’s importance measure for component 
+𝐶; 𝑃(𝐹|𝐶) represents the probability of system failure 𝐹 given that 
+the component 𝐶 is present in the system; and 𝑃(𝐹|̄𝐶) represents the 
+probability of system failure 𝐹 when the component 𝐶 is removed 
+from the system or fails. A high value of 𝐼𝐵(𝐶) indicates that the 
+component 𝐶 has a significant impact on the system’s reliability. In 
+contrast, a lower or zero value implies that the component has little to 
+no significant impact on the overall reliability of the system.
+3. Network decomposition using landmark nodes for reliability 
+estimation
+This section introduces the core of the proposal: a novel approach 
+for estimating network reliability through dimension reduction, lever-
+aging network decomposition and landmark nodes. The overall work-
+ing perspective involves decomposing the network into subgraphs, 
+identifying critical landmark nodes, and modelling reliability using a 
+bipartite network representation. The following subsections detail the 
+methodology and analyse its computational efficiency.
+3.1. Methodology
+The proposed approach starts by considering a graph 𝐺= {𝑉, 𝐸,
+𝑊}, where 𝑉 is the set of vertices (or nodes), 𝐸 is the set of edges 
+(or links), and 𝑊 is the set of weights on those edges, representing the 
+probability of failure.
+The methodology begins with a network decomposition into clus-
+ters, referred to as subgraphs throughout the remainder of this paper, to 
+manage the computational complexity inherent in large-scale network 
+reliability assessment. These subgraphs, obtained through a clustering 
+process, consist of node groups with denser internal connections than 
+external ones.
+The decomposition process formally partitions the entire set of 
+nodes 𝑉 into 𝑞 disjoint subsets 𝑉1, … , 𝑉𝑞, where each 𝑉𝑖 constitutes a 
+unique cluster (Algorithm 1, Step 3). Concurrently, the set of edges 𝐸
+is categorised into two types: those connecting nodes within the same 
+cluster, denoted as 𝐸𝑖, and those connecting nodes between different 
+clusters, denoted as 𝐸𝑖𝑗, for 𝑖≠𝑗. This explicit partitioning establishes 
+the structural boundaries within the network.
+The clustering can be typically computed using graph-based algo-
+rithms [56], such as graph spectral clustering [32], node embedding 
+processes [57,58], and techniques based on computing network com-
+munities [59], among others. The choice of this paper is to employ 
+community detection methods, particularly the Louvain algorithm [60], 
+Reliability Engineering and System Safety 265 (2026) 111563 
+3 
+
+M. Herrera et al.
+Fig. 1. Example of a network decomposition into 4 subgraphs.
+due to its demonstrated efficiency and effectiveness in detecting modu-
+lar structures in large graphs [61]. This algorithm iteratively optimises 
+modularity through local node movements and aggregation of nodes, 
+allowing for rapid identification of community structures without prior 
+specification of the number of communities. The Louvain algorithm 
+detects communities in networks by iteratively maximising modularity; 
+measuring how densely nodes are connected within communities versus 
+between them. This maximisation of modularity serves as the optimal-
+ity criterion for the network decomposition, ensuring that the resulting 
+subgraphs exhibit high internal edge density and minimal external con-
+nectivity. The resulting modular structure supports both computational 
+scalability and structural interpretability in the subsequent reliability 
+analysis. Nodes are iteratively reassigned to neighbouring communi-
+ties to maximise local modularity gains, after which communities are 
+aggregated into larger nodes, continuing until no further improvement 
+occurs. Its efficiency makes it particularly suited for large networks. It 
+is important to note that the Louvain method was selected for its perfor-
+mance. However, this stage of the methodology is adaptable, and other 
+clustering algorithms could be interchangeably applied based on spe-
+cific network characteristics or analytical objectives. The identification 
+of these community structures is fundamental to understanding system-
+wide resilience, as the vulnerability of these distinct communities often 
+dictates the failure propagation pathways of the entire network [62].
+Following the network decomposition, the most critical nodes in 
+terms of maintaining connectivity between subgraphs are identified 
+as landmark nodes. These correspond to boundary nodes in standard 
+graph terminology and serve as key connectors for inter-subgraph 
+communication.
+The set of landmark nodes of cluster 𝑉𝑖, denoted as 𝐿𝑖, is defined as 
+the set of all nodes 𝑣∈𝑉𝑖 such that there exists an edge (𝑣, 𝑥) ∈𝐸, 
+where 𝑥∈𝑉𝑗, for some 𝑗≠𝑖 (Algorithm 1, Step 3). These nodes 
+form the interface between subgraphs and are essential for preserving 
+inter-cluster connectivity. Fig. 1 shows an example of the network 
+decomposition process based on community detection.
+Algorithm 1 summarises the main procedure for reliability esti-
+mation in complex networks. This algorithm outlines the steps of 
+our proposed methodology, which strategically integrates established 
+techniques, such as graph clustering for network decomposition and 
+bipartite network modelling for inter-subgraph analysis, into a novel 
+overall approach. The methodology involves decomposing 𝑉 into 𝑞
+disjoint subsets 𝑉1, … , 𝑉𝑞, where each 𝑉𝑖 is a unique subgraph. Edges 
+are categorised as 𝐸𝑖 (within subgraph 𝑉𝑖) or 𝐸𝑖𝑗 (connecting 𝑉𝑖 and 
+𝑉𝑗). Landmark nodes 𝐿𝑖 are defined as nodes in 𝑉𝑖 with at least one 
+connection to another subgraph 𝑉𝑗.
+After partitioning the network into subgraphs (as Fig. 1(b)), the 
+proposed method proceeds to estimate reliability within each of these 
+subgraphs by computing paths to the landmark nodes.
+Algorithm 1 Network reliability estimation
+1: Input: Weighted graph 𝐺= (𝑉, 𝐸, 𝑊), where 𝑊 defines probability 
+of failure on edges.
+2: Output: Overall network reliability 𝑅.
+3: Perform graph clustering:
+3.1. Decompose node set 𝑉 into 𝑞 disjoint subgraphs 
+𝑉1, 𝑉2, … , 𝑉𝑞.
+3.2. Identify intra-subgraph edges 𝐸𝑖⊆𝐸 within each 𝑉𝑖.
+3.3. Identify inter-subgraph edges 𝐸𝑖𝑗⊆𝐸 connecting nodes 
+between 𝑉𝑖 and 𝑉𝑗 (𝑖≠𝑗).
+3.4. Define set of landmark nodes 𝐿𝑖⊆𝑉𝑖 as all nodes in 𝑉𝑖
+with at least one edge in 𝐸𝑖𝑗, 𝑗≠𝑖.
+4: For each node 𝑡∈𝑉𝑖⧵𝐿𝑖, compute a set of link-disjoint paths, 𝑃(𝑡), 
+from the landmark nodes 𝐿𝑖.
+5: Estimate the reliability 𝑅𝑖 of each subgraph 𝑉𝑖 using paths from Step 
+4, as per Equation (2).
+6: Construct a bipartite network model:
+6.1. Represent each subgraph 𝑉𝑖 as a left-side hyper-node with 
+associated reliability 𝑅𝑖 (from Step 5).
+6.2. Represent each inter-subgraph edge as a right-side 
+hyper-node, assigning its original failure probability.
+6.3. Connect left- and right-side hyper-nodes based on original 
+inter-subgraph connections.
+7: Compute 𝑅 on the bipartite network (Step 6), using Equation (3).
+The approach shown in Algorithm 1 significantly reduces the com-
+putational burden of the process, as it only calculates paths connecting 
+to landmark nodes. This is under the assumption that any disruption 
+in the other links may lead to disconnections, but only of limited 
+extent. The most critical network disconnections are those that result 
+in the entire subgraph being disconnected from the rest of the network, 
+which, by definition, involves landmark nodes. It is important to note 
+that each subgraph may have multiple landmark nodes, which are 
+linked not only to other nodes within the same subgraph but also to 
+landmark nodes in neighbouring subgraphs. The presence of multiple 
+landmark nodes increases the robustness of the reliability estimation, 
+as it allows for multiple potential paths between subgraphs. These 
+paths, connecting different landmark nodes across subgraphs, are as-
+signed weights based on their probability of link failure, simplifying 
+Reliability Engineering and System Safety 265 (2026) 111563 
+4 
+
+M. Herrera et al.
+the computation of reliability through multiplication. This ensures that 
+the method captures various redundancy scenarios by accounting for 
+all critical paths between landmark nodes (Steps 3 and 4 of Algorithm 
+1).
+The process continues by estimating the probability of failure at 
+each of the network subgraphs and probability of failure at links con-
+necting landmark nodes from different subgraphs. The way to put all 
+the information together for the reliability estimation is by modelling 
+a new network composed by hypernodes representing subgraphs and 
+links connecting individual landmark nodes between such subgraphs. 
+This modelling is performed using a bipartite network representation. 
+In this case, the bipartite network comprises a set of hypernodes as a 
+collapsed representation of the network subgraphs, and a set of hyper-
+nodes representing the links connecting landmark nodes of different 
+subgraphs. This approach provides a form of functional connectivity 
+analysis, allowing the system’s reliability to be evaluated based on the 
+operational relationships between its high-level components [63].
+The reliability of a subgraph 𝑉𝑖 is defined as the probability that 
+all its non-landmark nodes remain connected to the landmark set 
+𝐿𝑖. To estimate this, we assume that (i) individual edge failures are 
+independent, and (ii) paths from each non-landmark node to 𝐿𝑖 can 
+be selected to be link-disjoint. This latter condition ensures that the 
+survival probabilities of these paths are independent, which is required 
+for the reliability formulation in Eq. (2), 
+𝑅𝑖=
+∏
+𝑡∈𝑉𝑖⧵𝐿𝑖
+(
+1 −
+∏
+𝑝∈𝑃(𝑡)
+(
+1 −
+∏
+𝑒∈𝑝
+(1 −𝑝𝑒)
+))
+(2)
+where 𝑃(𝑡) denotes a set of link-disjoint paths from node 𝑡 to the 
+landmark set 𝐿𝑖, and 𝑝𝑒 is the failure probability of edge 𝑒. The inner 
+term represents the survival probability of path 𝑝, while the outer 
+expression computes the probability that at least one such path remains 
+operational for each target node 𝑡.
+The process of estimating overall network reliability is simplified by 
+modelling the decomposed network as a bipartite graph, as illustrated 
+in Fig. 2. A bipartite network is a type of graph comprising hypernodes 
+that are divided into two distinct and non-overlapping subsets [64]. A 
+characteristic of bipartite networks is that hypernodes in one subset 
+are connected only to hypernodes in the other subset, that is, the 
+hypernodes of the same subset are not directly connected (only con-
+nected through hypernodes of the other subset as intermediary actors). 
+This model provides a clear, high-level representation of the network’s 
+modular topology.
+In this representation, the graph consists of two distinct sets of hy-
+pernodes: The left-side nodes represent the subgraphs, with each node 
+assigned the internal reliability, 𝑅𝑖, calculated previously. The right-
+side nodes represent the individual inter-subgraph links (e.g., pipes or 
+cables). An edge in the bipartite graph connects a subgraph node to 
+a link node if that link is physically connected to the corresponding 
+subgraph in the original network. This structure encodes both the 
+internal robustness of each subgraph and the failure probability of the 
+specific links that connect them.
+The overall network reliability is calculated from this bipartite 
+representation. The model considers two types of components: the 
+subgraph hypernodes and the ‘connection blocks’ that join them. A 
+connection block 𝐶𝑖𝑗 is defined as the set of all parallel links connecting 
+any two subgraphs, 𝑖 and 𝑗. This block is considered operational if at 
+least one of its constituent links remains operational.
+The entire network is considered reliable if all subgraph hypernodes 
+are reliable and all connection blocks are operational. The overall 
+reliability using the bipartite representation, 𝑅, is therefore defined as 
+the probability of this joint event and is calculated using Eq. (3), 
+𝑅=
+(
+∏
+𝑖∈𝐴
+𝑅𝑖
+)
+⋅
+⎛
+⎜
+⎜⎝
+∏
+(𝑖,𝑗)
+⎛
+⎜
+⎜⎝
+1 −
+∏
+𝑙∈𝐶𝑖𝑗
+𝑝𝐵𝑙
+⎞
+⎟
+⎟⎠
+⎞
+⎟
+⎟⎠
+,
+(3)
+where 𝐴 is the set of all subgraph hypernodes; 𝑅𝑖 is the internal 
+reliability of subgraph 𝑖 from Eq. (2); the second product is taken over 
+Fig. 2. Bipartite network based on the graph decomposition of Fig. 1(a), with subgraph 
+hypernodes on the left and hypernodes representing inter-subgraph links on the right.
+all unique pairs of connected subgraphs (𝑖, 𝑗); 𝐶𝑖𝑗 is the set of link 
+hypernodes connecting subgraph 𝑖 and subgraph 𝑗; 𝑝𝐵𝑙 is the failure 
+probability of an individual link hypernode 𝑙 within the connection 
+block, 𝐶𝑖𝑗.
+The estimation in Eq. (2) is based on two simplifying assumptions. 
+Link failure independence, for which each network link is assumed 
+to fail independently. And node connectivity independence, for which 
+the product across nodes 𝑡∈𝑉𝑖⧵𝐿𝑖 presumes that the event of one 
+node remaining connected to the landmark set is independent from 
+another. This holds approximately in sparse networks, but introduces 
+a degree of approximation in denser subgraphs. These assumptions are 
+widely used in large-scale network analysis [31], allowing for tractable 
+computation. Future work may extend this framework to incorporate 
+correlated failures or more expressive probabilistic models.
+3.2. Computational efficiency
+The computational efficiency of the proposed methodology is de-
+termined by the complexity of its main stages: network decomposition, 
+intra-subgraph path finding, and reliability aggregation.
+The initial network decomposition using the Louvain method is 
+highly efficient, with a time complexity of approximately (|𝐸|) for 
+most practical networks. The final reliability aggregation steps, which 
+involve multiplying probabilities, are computationally inexpensive rel-
+ative to the preceding steps.
+The most computationally intensive stage is the determination of 
+link-disjoint paths within each subgraph (Algorithm 1, Step 4). This 
+problem can be solved using algorithms based on the max-flow min-cut 
+theorem. A standard approach is to use the Edmonds–Karp algorithm, 
+which is an efficient implementation of Ford–Fulkerson method [65]. 
+To find a set of link-disjoint paths from the landmark set 𝐿𝑖 to a single 
+target node 𝑡, one can add a source-node connected to all landmarks 
+and then compute the max-flow to 𝑡. The complexity of this operation 
+for a single target node in subgraph 𝑖 (with |𝑉𝑖| nodes and |𝐸𝑖| edges) 
+is (|𝑉𝑖||𝐸𝑖|2) [66]. This process must be performed for all target nodes 
+in 𝑉𝑖⧵𝐿𝑖.
+Therefore, the total time complexity is dominated by the path-
+finding step across all subgraphs. The overall complexity is given by Eq. 
+(4), 
+
+(
+max
+{
+|𝐸|,
+𝑞
+∑
+𝑖=1
+(|𝑉𝑖| −|𝐿𝑖|) ⋅|𝑉𝑖||𝐸𝑖|2
+})
+,
+(4)
+Reliability Engineering and System Safety 265 (2026) 111563 
+5 
+
+M. Herrera et al.
+Table 1
+Main network descriptive metrics for the IEEE benchmark database [68] and results 
+on reliability estimation.
+ Nodes/Links
+𝐷(𝐺)
+𝑙(𝐺)
+𝑐𝑐(𝐺)
+𝑑(𝐺)
+𝑎(𝐺)
+Reliability 
+ 24/33
+7
+3.27
+0.15
+0.12
+0.21
+0.9445
+ 
+ 54/63
+14
+6.02
+0.01
+0.04
+0.05
+0.9988
+ 
+ 118/125
+25
+10.97
+0.00
+0.02
+0.01
+0.9999
+ 
+where 𝑞 is the number of subgraphs.
+While other algorithms for finding disjoint paths, such as those 
+based on Dinic’s algorithm [67], offer improved performance, they 
+exhibit a similar polynomial dependency on the number of nodes and 
+edges. Because the analysis operates on smaller subgraphs (|𝑉𝑖| ≪|𝑉|
+and |𝐸𝑖| ≪|𝐸|), the method remains computationally feasible and 
+scalable for large-scale infrastructure networks.
+4. Experimental studies
+This section is divided into two parts. The first part uses an IEEE 
+power distribution benchmark networks to test the reliability esti-
+mation of general networks of varied size and topology. This initial 
+analysis allows the proposal to be reproducible. The second part of 
+the experimental studies focuses on estimating the reliability of a 
+water network in Pavia, Italy, and delves into the particular hydraulic 
+implications associated with its network reliability.
+4.1. Benchmark database and network metrics
+The IEEE benchmark database is founded on the test cases generated 
+by [68]. The networks employed in this context have sizes of 24, 
+54, and 118 nodes, available at the url http://ieee...reliability-based-
+studies-1. Additional networks with sizes of 37, 85, 137, 145, and 230 
+nodes are available at the different url, http://ieee...reliability-based-
+studies-2. In all cases, the network information includes variables such 
+as link ID, node 1, node 2, link length, failure rate, and repair time. 
+Additional node-specific information, such as demand and number of 
+customers, is provided because the benchmark databases are related to 
+power distribution networks. This node information allows for reliabil-
+ity assessment not only in terms of network connectivity but also in 
+terms of the impact of failures, supporting risk-related analyses.
+Table 1 summarises key network topology measures and reliability 
+estimations for the benchmark networks. The diameter, 𝐷(𝐺), repre-
+sents the longest of all the shortest paths between any pair of nodes and 
+indicates the maximum distance over which information or resources 
+must travel across the network. In addition to the diameter, the average 
+path length, 𝑙(𝐺), provides a more typical measure of the effort required 
+for information or resources to flow through the network. Another 
+important metric is the average clustering coefficient, 𝑐𝑐(𝐺), which 
+measures the tendency of nodes to form interconnected groups. A 
+higher clustering coefficient suggests greater local redundancy and, 
+consequently, a network that is better able to withstand individual node 
+failures [69].
+Table 1 presents the results of the landmark-node-based approach 
+for estimating reliability across multiple network topologies. The dif-
+ference in reliability estimation between using the bipartite network 
+of subgraphs and the direct all-paths approximation is negligible, with 
+an error margin of less than 0.0001. However, the computational 
+efficiency of the landmark-node approach is evident, as execution times 
+increase only marginally with network size: 0.0560 s for a 24-node 
+network, 0.0619 s for a 54-node network, and 0.0721 s for a 118-
+node network. In contrast, the computational time for the all-paths 
+approximation grows significantly with network size: 8.2209 s for 
+24 nodes, 116.6295 s for 54 nodes, and 753.6948 s for 118 nodes. 
+This stark difference highlights the scalability of the landmark-node 
+approach, making it a far more efficient option for larger networks. 
+All computations were performed in Python 3.11 on a Google Colab 
+instance equipped with an Intel Xeon CPU @ 2.20 GHz and 13 GB of 
+RAM.
+The column Nodes/Links of Table 1 may be directly associated 
+to the measure of density; i.e., how close the network is to being a 
+complete graph. Hence, from the number of nodes (𝑛) and links (𝑚) it 
+is straightforward computing a density index, 𝑑(𝐺), as shown in Eq. (5). 
+𝑑(𝐺) =
+2𝑚
+𝑛(𝑛−1) .
+(5)
+A denser network typically implies better fault tolerance and re-
+silience, as there are more alternative routes that can reroute the 
+network flow when certain nodes or links fail. A related concept is 
+the network redundancy. One way to estimate it is by calculating the 
+algebraic connectivity, 𝑎(𝐺), which is the second smallest eigenvalue of 
+the Laplacian matrix, 𝐿, of the graph, 𝐺. Eq. (6) shows this relationship. 
+𝑎(𝐺) = 𝜆2(𝐿)
+(6)
+Network metrics, such as those presented in Section 4.1, offer a 
+preliminary assessment of the network’s connectivity strength and, by 
+extension, an indication of its reliability. This can be particularly useful 
+when detailed information about the network’s failure probabilities is 
+unavailable. However, in this case, failure probabilities for network 
+links were provided in advance, allowing for direct reliability estima-
+tion. In contrast, Section 4.2 deals with a real urban water distribution 
+system, where failure probabilities are not directly available. Instead, 
+these probabilities are inferred from partial information about the 
+network infrastructure. This estimation process enables the application 
+of the proposed approach to determine link failure probabilities and, 
+subsequently, overall network reliability, as outlined in this paper.
+4.2. Water distribution system
+The proposed topology-based approach for complex network re-
+liability assessment was also tested on a real hydraulic engineering 
+infrastructure. Indeed, water distribution systems (WDSs) have al-
+ready been successfully studied using graph theory and topological 
+approaches [70–72], especially in site-specific data scarcity scenar-
+ios [73], which hamper the application of physically-based methods. 
+In this regard, the real WDS serving the city of Pavia, Northern 
+Italy [74], was considered for the case study. Fig. 3 shows the network 
+representation of Pavia WDS partitioned into 9 subgraphs, or supply 
+clusters (SCs) following the notation of Herrera et al. [75]. Although 
+these areas are not strictly defined as district metered areas (DMAs) in 
+the conventional hydraulic sense [76], this paper refers to them as SCs, 
+or simply as subgraphs.
+This WDS includes 12 source nodes (representing groundwater wells 
+with elevation ranging between 55.0 m and 88.1 m), 4277 demand 
+nodes (with ground elevation ranging from 57.19 m to 86.11 m above 
+sea level), 4733 pipes (with diameter ranging between 25 mm and 
+500 mm, Hazen–Williams (H-W) roughness coefficient 𝐶 between 130 
+and 150, and a total length of about 213 km), and 12 pumps drawing 
+water from the wells, grouped in six pumping stations.
+Numerous factors contribute to pipe failures, broadly categorised 
+into three main areas [77]: pipe-related factors, which include age, 
+material, diameter, length, manufacturing flaws, installation quality, 
+and burial depth; environment-related factors, encompassing corrosion, 
+soil type, soil pH, temperature, traffic, chemical and microbiological 
+agents, and external loads; and operational-related factors, involving 
+internal pressure, water type, water hammer, and water quality. Each 
+of these categories encompasses a variety of specific elements that can 
+impact the integrity and performance of water pipes.
+Table 2 shows a summary information of Pavia’s WDS at each 
+SC after running the Water Network Tool for Resilience (WNTR) in 
+Reliability Engineering and System Safety 265 (2026) 111563 
+6 
+
+M. Herrera et al.
+Fig. 3. Water distribution system of Pavia (Italy) partitioned into SCs.
+Table 2
+Summary statistics of SC partitions in Pavia WDS.
+ SC
+Nodes
+Links
+𝛴𝐿
+𝛴𝑄
+𝑀𝑜𝑑𝑒(𝐷)
+𝑅𝑎𝑛𝑔𝑒(𝑃)
+𝐶≥ 140 
+ 1
+1125
+1260
+27 845
+6572
+150
+55
+50
+ 
+ 2
+677
+756
+11 589
+4265
+80
+45
+64
+ 
+ 3
+529
+594
+12 094
+3670
+150
+43
+60
+ 
+ 4
+438
+469
+10 763
+2225
+80
+22
+60
+ 
+ 5
+430
+461
+13 634
+5271
+150
+23
+62
+ 
+ 6
+405
+444
+8236
+3640
+100
+26
+62
+ 
+ 7
+256
+274
+4389
+1718
+100
+43
+84
+ 
+ 8
+246
+260
+7862
+1848
+150
+53
+51
+ 
+ 9
+183
+192
+6962
+1335
+150
+57
+73
+ 
+Python [78], a United States Environmental Protection Agency (EPA) 
+software.
+Table 2 shows 𝛴𝐿 [m] as the total pipe length, 𝛴𝑄 [m3] the 
+simulated total demand in 1 day, 𝑀𝑜𝑑𝑒(𝐷) [mm] the most frequent 
+pipe diameter considering all pipes at each SC, 𝑅𝑎𝑛𝑔𝑒(𝑃) [mH2O] the 
+min–max range of nodal pressure, considering all pipes at each SC 
+and a 24 h hydraulic simulation. Table 2 also provides information on 
+the percentage of pipes with a roughness coefficient of 140 of higher 
+(typical value, according to the adopted H-W head-loss formulation, 
+of pipe made of plastic material). This information, combined with 
+diameters, facilitates an estimation of the pipe materials [79].
+Table 2 features show the main part of the information used to 
+estimate the pipe failure probability, helping in assessing the overall 
+system reliability and subgraph criticality. To this end, an initial as-
+sumption is that the likelihood of failure decreases as the diameter 
+increases [80]. Small-diameter pipes have thinner walls, which makes 
+them more susceptible to damage from external factors such as ground 
+and soil movements or nearby construction activities. They are also 
+more prone to clogging and blockages, leading to increased pressure 
+and stress that can ultimately cause failure [77]. Additionally, the 
+reduced wall thickness of smaller pipes makes them more vulnerable to 
+corrosion [81]. This combination of heightened risk of blockages and 
+accelerated corrosion makes small-diameter pipes vulnerable to fail pre-
+maturely compared to their larger pipes. However, longer pipes have an 
+overall higher likelihood of failure due to the increased exposure to en-
+vironmental stressors and the greater number of joints and connections 
+that can serve as potential vulnerability points. Long-diameter pipes 
+also present other challenges related to their size that lead to greater 
+structural stresses, especially under high-pressure conditions [82].
+The probability of failure increases for all pipe materials as internal 
+water pressure rises; however, this is particularly significant for cast-
+iron and polyethylene, as they are among the most susceptible to 
+leakage [83]. Finally, the higher the pressure variation along a day, 
+the higher the stress on the pipes (especially at junction sites). Eq. 
+(7) brings these factors into a surrogate measure of probability of pipe 
+failure during a time period, 𝑡, 
+𝑃𝐹(𝑡) = 1 −
+1
+1 + 𝑒−𝑘𝐹(𝑡) ,
+(7)
+where 𝑘 is a scaling factor that needs to be calibrated based on his-
+torical pipe failure data or expert knowledge. This will ensure that the 
+predicted probabilities align with actual failure rates. The expression 
+in Eq. (7) represents a logistic probability distribution function of the 
+pipe failure. 𝐹(𝑡), defined by the relationship expressed at Equation 
+(8), represents the influence of multiple pipe characteristics in the 
+probability of failure, 
+𝐹(𝑡) = 𝑃(𝑡) ⋅
+𝑃𝑛𝑖𝑔ℎ𝑡(𝑡)
+𝑃𝑝𝑒𝑎𝑘(𝑡) ⋅𝐿𝛼
+𝐷⋅1
+𝐸∗,
+(8)
+where 𝑃(𝑡) is the average pipe pressure over the considered time period, 
+based on observed data or hydraulic simulation results. In this regard, 
+pipe pressure is calculated as the average of nodal pressure at pipe ends. 
+Furthermore, 𝐸∗, that follows Eq. (9), stands for mechanical proper-
+ties of the pipe material (i.e., elasticity modulus, minimum required 
+strength) standardised by the same value 𝐸(𝐶𝐼) for the cast-iron (CI), 
+here taken it as a reference as it is the most resistant/stiff material 
+for the analysed case study. For demonstration purposes, this paper 
+employs the H-W roughness coefficient to ascertain pipe materials, 
+using a fixed reference value of 𝐶= 140. Pipes with 𝐶< 140 are 
+categorised as cast iron, while those with 𝐶≥140 are classified as 
+plastic. Following material identification, the ratio of their mechanical 
+strengths is determined based on their respective minimum required 
+strength, assuming 𝐸CI = 420 MPa for cast iron and 𝐸PVC = 20 MPa for 
+plastic, as illustrated in Eq. (9)
+𝐸∗= 𝐸(𝑝𝑖𝑝𝑒)
+𝐸(𝐶𝐼) .
+(9)
+Other elements used in Eq. (8) are 𝑃𝑝𝑒𝑎𝑘(𝑡) and 𝑃𝑛𝑖𝑔ℎ𝑡(𝑡) representing 
+the minimum (in peak demand condition) and maximum (at lowest 
+demand condition, usually at night time) pressures, respectively, over 
+the observed/simulated time. Pressure units in this paper are always 
+considered in meter of water column [mH2O]. 𝐿 is the length of the pipe 
+in meters [m], and 𝐷 is the pipe diameter also in metres [m]. The ratio 
+𝐿∕𝐷 comes with a scale parameter, 𝛼, that should be tuned to avoid any 
+possible overrepresentation of this relation in the equation. Giving the 
+typical range of values for 𝐿∕𝐷, 𝛼 should move between the values 0.2 
+and 0.5, as initial recommendation. For further use of this expression, it 
+is worth noting that it is only necessary tuning two parameters, 𝑘 and 𝛼, 
+after collecting real data of pipe failures. At the moment, we use 𝛼= 0.5
+and 𝑘= 0.05 as they offer plausible values for reliability estimation, 
+upon considering the aforementioned calibration with the historical of 
+pipe leakages. Nevertheless, the work as it is contains a high value for 
+water utilities and researchers, since it can be universally adapted and 
+used. More when it is a common practice to have anticipated results 
+before getting access to critical infrastructure data as it is the case of 
+pipe failures.
+Once the probability of failure is estimated at each pipe following 
+the above described process, the estimation of the reliability follows the 
+steps highlighted by this proposal, similarly to the process shown over 
+the benchmark database at Section 4.1. Fig. 4 shows Pavia WDN de-
+composition in the 9 SCs or subgraphs in which reliability is computed, 
+considering the estimation of pipe failure from Eq. (7).
+Table 3 shows the ability of the landmark-node based approach to 
+estimate reliability on multiple network topologies related to each of 
+the SCs. Table 3 summarises key network theory characteristics and 
+descriptive metrics for the Pavia WDN across 9 SCs. The scalability 
+of the solutions is achieved as only 65 landmark nodes are required 
+out of the total 4283 nodes in the network, significantly reducing 
+Reliability Engineering and System Safety 265 (2026) 111563 
+7 
+
+M. Herrera et al.
+Fig. 4. Pavia WDN SCs (or subgraphs) with landmark nodes highlighted by colour (blue) and (larger) size.
+Table 3
+Main network characteristics and descriptive metrics for Pavia WDN.
+ SC
+Nodes/Links
+𝐷(𝐺)
+𝑙(𝐺)
+𝑑(𝐺)
+𝑎(𝐺)
+Reliability 
+ 1
+1125/1260
+77
+29.48
+0.0020
+0.0015
+0.9918
+ 
+ 2
+677/756
+70
+25.22
+0.0033
+0.0015
+0.9999
+ 
+ 3
+529/594
+74
+25.61
+0.0042
+0.0012
+0.9999
+ 
+ 4
+438/469
+87
+31.25
+0.0049
+0.0009
+0.9999
+ 
+ 5
+430/461
+86
+32.18
+0.0050
+0.0007
+0.9999
+ 
+ 6
+405/444
+59
+21.33
+0.0054
+0.0014
+0.9999
+ 
+ 7
+256/274
+89
+31.61
+0.0084
+0.0005
+0.9491
+ 
+ 8
+246/260
+96
+32.60
+0.0086
+0.0006
+0.8054
+ 
+ 9
+183/192
+70
+22.01
+0.0115
+0.0020
+0.9999
+ 
+computational complexity by limiting the shortest path calculations to 
+those connecting the landmark nodes.
+As presented in Section 4.1, it is possible to observe correlations 
+between network metrics and reliability. The diameter 𝐷(𝐺) and the 
+average length of the path 𝑙(𝐺) indicate the extensiveness and efficiency 
+of the network, respectively. SC 7 and 8 have the highest diameters 
+(𝐷(𝐺) = 89 and 96) and average path lengths (𝑙(𝐺) = 31.61 and 32.60), 
+suggesting longer routes for water flow, which can impact delivery 
+efficiency. All subgraphs exhibit a clustering coefficient 𝑐𝑐(𝐺) = 0, re-
+flecting a tree-like topology without closed loops—common in WDNs to 
+prevent water stagnation but potentially reducing redundancy. In par-
+ticular, SC 1, although it is the largest subgraph with 1125 nodes and 
+1260 links, does not have the longest diameter 𝐷(𝐺) or average path 
+length 𝑙(𝐺) among the SCs. This suggests a more efficient connectivity 
+structure that can potentially incorporate subtle loop configurations 
+that do not significantly impact the overall clustering coefficient. The 
+network density 𝑑(𝐺) remains low in all subgraphs, ranging from 
+0.0020 in SC 1 to 0.0115 in SC 9, indicating sparse connectivity typical 
+of cost-effective WDN designs. Algebraic connectivity 𝑎(𝐺) remains low 
+(between 𝑎(𝐺) = 0.0005 and 0.0020), with the lowest values for SC 7 
+Reliability Engineering and System Safety 265 (2026) 111563 
+8 
+
+M. Herrera et al.
+Fig. 5. Bipartite network representation of Pavia WDN, with hypernodes of subgraphs 
+on the left subset and hypernodes of the inter-SC pipes on the right subset.
+and 8, implying limited robustness to failures. Reliability is high for 
+most subgraphs (Reliability ≈0.9999), except SC 7 and 8, which have 
+lower reliability scores (0.9491 and 0.8054), possibly due to their larger 
+diameters and path lengths. In summary, Pavia’s WDN shows variability 
+in network metrics across subgraphs, with SCs 7 and 8 potentially more 
+vulnerable due to structural characteristics. These results highlight the 
+need for targeted improvements to improve network resilience and 
+efficiency.
+The bipartite network of Fig. 5 comprises the subset of hypernodes 
+each of them that collapse each subgraph and its corresponding relia-
+bility as estimated above. The other subset is the subset of hypernodes 
+that represent the original pipes connecting landmark nodes of different 
+SCs.
+The bipartite network representation is not only useful for sum-
+marising the key elements of a WDN at a larger scale, it is also key for 
+estimating the overall reliability of the network. This bipartite network 
+effectively captures the modular structure of the network, highlighting 
+both the intra-SC robustness and the inter-SC connectivity. These inter-
+SC pipes are the most critical pipes for water to flow between WDN 
+areas. If the connecting pipes have high failure probabilities, they can 
+become bottlenecks, isolating SCs and preventing the network from 
+compensating for failures within a district by rerouting water through 
+neighbouring SCs.
+The combined effect of intra-SC and inter-SC link reliabilities deter-
+mines the global reliability of the WDN, 0.9999 in this case. Although 
+high intra-SC reliability ensures that each district can function effec-
+tively in isolation, the overall network reliability is dependent on the 
+robustness of the interconnections. In the case of the Pavia WDN, if the 
+links between subgraphs with lower reliability (such as SC 7 and 8) 
+and their neighbouring districts are also weak, the network’s ability to 
+maintain service during failures is compromised. In addition, SC 7 and 
+8 are particularly vulnerable since they are the subgraphs with lowest 
+inter-SC connectivity, apart from SC 9 which is only connected by 1 
+pipe to the rest of the WDN.
+The heat map in Fig. 6 considers reliability as a critical factor, with 
+SCs 8, 7, and 1 being the top priorities for maintenance based on their 
+reliability scores. It is also important to consider areas with higher 
+pressure ranges, as they are more prone to failures, and to analyse 
+demand levels to assess the potential impact of disruptions on each 
+SC. In addition to computing a ranking directly based on pressure 
+range and demand levels, the proposal also considers a combined 
+ranking which assigns weighted scores to each criterion to balance their 
+respective impacts. For demonstration purposes, the following weights 
+are assumed: 0.5 for reliability, 0.3 for pressure, and 0.2 for demand, 
+after scaling all three to the same range.
+According to Fig. 6, when considering the combined ranking, main-
+tenance efforts should be strategically aligned to focus on SC 8 and SC 
+1, while also monitoring other SCs with significantly low reliability, 
+such as SC 7. Water authorities can use such results to inform econom-
+ically justifiable maintenance prioritisation. One particular application 
+is on the identification of at-risk subgraphs, aiming to provide a direct 
+input for advanced predictive group maintenance models that optimise 
+strategies for multi-component systems [84].
+5. Conclusions
+Complex networks serve as representative models for engineering 
+systems such as critical infrastructure, making an accurate estimation 
+of their reliability paramount for infrastructure operation and man-
+agement, particularly in maintenance strategies. This paper presents a 
+novel approach to reliability estimation that enhances the traditional 
+cut-set method through the efficient selection of landmark nodes, an 
+innovation that reduces computational complexity while preserving 
+accuracy. Another original contribution is the use of a bipartite network 
+representation, which provides a unified framework to model failures 
+in both nodes and links across subgraphs. Furthermore, the method 
+introduces a decentralised reliability estimation process based on com-
+munity structure, which allows estimations to be conducted at different 
+network scales and nested across all levels to enhance precision.
+The proposed methodology was tested on a synthetic benchmark 
+of power distribution networks, where the results demonstrated sig-
+nificant benefits in network reliability computation. These benefits, 
+especially the computational efficiency of the method, are evident in 
+dynamic network environments, which is a common scenario for many 
+technological networks exposed to environmental factors and/or vary-
+ing internal conditions, leading to continuous changes. In addition to 
+the benchmark networks, the approach was also tested in a real-world 
+case study of the water distribution system of the city of Pavia in Italy. 
+The results highlight the advantages of the reliability computation for 
+asset management, particularly by providing efficient and detailed re-
+sults, at network element, subnetwork, and whole system, for network 
+analysis and maintenance prioritisation. Hence, the method enables 
+more informed and effective decision-making processes, supporting the 
+resilience and sustainability of critical infrastructure systems.
+The water case study introduces the additional novelty of a surro-
+gate expression for pipe failure, which has shown great utility for es-
+timating reliability, conditional upon the availability of failure records 
+Reliability Engineering and System Safety 265 (2026) 111563 
+9 
+
+M. Herrera et al.
+Fig. 6. Maintenance and resource allocation prioritisation of Pavia WDN based on reliability and other criteria for each supply cluster.
+for further tuning. The surrogate expression of pipe failure considers 
+three main components – geometry, hydraulic, and physical properties 
+– before its transformation into a logistic-type probability distribution 
+expression.
+Overall, the approach presented in this paper offers a significant 
+advancement in network reliability estimation. The landmark-node 
+strategy provides computational efficiency, while the bipartite model 
+offers a clear framework to account for both subgraph and link failures. 
+The method’s capacity for area-based and nested reliability assessments 
+directly supports targeted maintenance and management strategies, 
+which are crucial for enhancing the robustness of critical infrastructure 
+networks. This contributes to the creation of more resilient and sustain-
+able urban environments, ensuring the continuous provision of essen-
+tial services and minimising the environmental impact of infrastructure 
+failures.
+Future research directions include the extension of the proposed 
+methodology to other types of critical infrastructure networks, such 
+as transportation and communication systems, to assess its versatility 
+and adaptability. The incorporation of more complex failure models, 
+such as dependent and cascading failures, could enhance the robustness 
+of the reliability estimation. An exploration of the impact of differ-
+ent network topologies and configurations on reliability assessments 
+may provide deeper insights into the structural factors that influence 
+network resilience.
+CRediT authorship contribution statement
+Manuel Herrera: Writing – original draft, Visualization, Software, 
+Methodology, Investigation, Formal analysis, Data curation, Conceptu-
+alization. Carlo Giudicianni: Writing – review & editing, Validation, 
+Investigation, Data curation, Conceptualization. Manu Sasidharan: 
+Writing – review & editing, Validation, Investigation, Conceptualiza-
+tion. Robert Wright: Writing – review & editing, Validation. Enrico 
+Creaco: Writing – review & editing, Supervision, Data curation. Ajith 
+Kumar Parlikad: Writing – review & editing, Validation, Supervision.
+Declaration of competing interest
+The authors declare that they have no known competing finan-
+cial interests or personal relationships that could have appeared to 
+influence the work reported in this paper.
+Data availability
+Data will be made available on request.
+References
+[1] Liu W, Song Z. Review of studies on the resilience of urban critical infrastructure 
+networks. Reliab Eng Syst Saf 2020;193:106617. http://dx.doi.org/10.1016/j.
+ress.2019.106617.
+[2] Fathabadi HS, Khezri S, Khodayifar S. A simple algorithm for reliability eval-
+uation in dynamic networks with stochastic transit times. J Ind Prod Eng 
+2015;32(2):115–20. http://dx.doi.org/10.1080/21681015.2015.1015460.
+[3] Herrera M, Sasidharan M, Cassidy S, Parlikad AK. Performance assessment of 
+a communication infrastructure with redundant topology: A complex network 
+approach. Comput Netw 2023;228:109747. http://dx.doi.org/10.1016/j.comnet.
+2023.109747.
+[4] Inoue T. Reliability analysis for disjoint paths. IEEE Trans Reliab 
+2018;68(3):985–98. http://dx.doi.org/10.1109/TR.2018.2877775.
+[5] Ahmad W, Hasan O, Pervez U, Qadir J. Reliability modeling and analysis of 
+communication networks. J Netw Comput Appl 2017;78:191–215.
+[6] Bagheri A, Zhao C. Distributionally robust reliability assessment for transmis-
+sion system hardening plan under 𝑛𝑘 security criterion. IEEE Trans Reliab 
+2019;68(2):653–62. http://dx.doi.org/10.1109/TR.2019.2893138.
+[7] Chen B, Chen Y, Zhou H, Bai X, Li B, Guo X. A bi-level gaming programming 
+for regional integrated energy system considering the users’ reliability incentive. 
+Reliab Eng Syst Saf 2023;229:108839. http://dx.doi.org/10.1016/j.ress.2022.
+108839.
+[8] Qin W, Song J, Han X, Wang P. Operational reliability assessment of power 
+systems based on bus voltage. IET Gener Transm Distrib 2015;9(5):475–82. 
+http://dx.doi.org/10.1049/iet-gtd.2014.0198.
+[9] Mao D, Wang P, Wang W, Ni L. Reliability segment design in single-source 
+district heating networks based on valve network models. Sustain Cities Soc 
+2020;63:102463. http://dx.doi.org/10.1016/j.scs.2020.102463.
+[10] l. Yang S, Hsu N-S, Louie PW, Yeh WW. Water distribution network reliability: 
+Connectivity analysis. J Infrastruct Syst 1996;2(2):54–64. http://dx.doi.org/10.
+1061/(ASCE)1076-0342(1996)2:2(54).
+[11] Shinstine DS, Ahmed I, Lansey KE. Reliability/availability analysis of mu-
+nicipal water distribution networks: Case studies. J Water Resour Plan 
+Manag 2002;128(2):140–51. http://dx.doi.org/10.1061/(ASCE)0733-9496(2002)
+128:2(140).
+[12] Giustolisi O. Water distribution network reliability assessment and isolation valve 
+system. J Water Resour Plan Manag 2020;146(1):04019064. http://dx.doi.org/
+10.1061/(ASCE)WR.1943-5452.0001128.
+[13] Walski TM. Water distribution valve topology for reliability analysis. Reliab Eng 
+Syst Saf 1993;42(1):21–7. http://dx.doi.org/10.1016/0951-8320(93)90051-Y.
+[14] Ostfeld A, Shamir U. Incorporating reliability in optimal design of water distribu-
+tion networks—review and new concepts. Reliab Eng Syst Saf 1993;42(1):5–11. 
+http://dx.doi.org/10.1016/0951-8320(93)90049-5.
+Reliability Engineering and System Safety 265 (2026) 111563 
+10 
+
+M. Herrera et al.
+[15] Scheidegger A, Leitao JP, Scholten L. Statistical failure models for water distri-
+bution pipes–a review from a unified perspective. Water Res 2015;83:237–47. 
+http://dx.doi.org/10.1016/j.watres.2015.06.027.
+[16] Hajibabaei M, Hesarkazzazi S, Minaei A, Dastgir A, Sitzenfrei R. Using com-
+plex network theory for missing data reconstruction in water distribution 
+networks. Sustain Cities Soc 2024;101:105114. http://dx.doi.org/10.1016/j.scs.
+2024.105114.
+[17] Guidotti R, Gardoni P, Rosenheim N. Integration of physical infrastructure and 
+social systems in communities’ reliability and resilience analysis. Reliab Eng Syst 
+Saf 2019;185:476–92. http://dx.doi.org/10.1016/j.ress.2019.01.008.
+[18] Tornyeviadzi HM, Owusu-Ansah E, Mohammed H, Seidu R. A systematic 
+framework for dynamic nodal vulnerability assessment of water distribution 
+networks based on multilayer networks. Reliab Eng Syst Saf 2022;219:108217. 
+http://dx.doi.org/10.1016/j.ress.2021.108217.
+[19] Jeong G, Kang D. Comparative analysis of reliability indices and hy-
+draulic measures for water distribution network performance evaluation. Water 
+2020;12(9):2399. http://dx.doi.org/10.3390/w12092399.
+[20] Zhang H, Sun M, Li Y-F. Reliability–redundancy allocation problem in multi-
+state flow network: minimal cut-based approximation scheme. Reliab Eng Syst 
+Saf 2022;225:108564. http://dx.doi.org/10.1016/j.ress.2022.108564.
+[21] Li Y-F, Zhang H. The methods for exactly solving redundancy allocation optimiza-
+tion for multi-state series–parallel systems. Reliab Eng Syst Saf 2022;221:108340. 
+http://dx.doi.org/10.1016/j.ress.2022.108340.
+[22] Du M, Li Y-F. An investigation of new local search strategies in memetic 
+algorithm for redundancy allocation in multi-state series-parallel systems. Reliab 
+Eng Syst Saf 2020;195:106703. http://dx.doi.org/10.1016/j.ress.2019.106703.
+[23] Forghani-elahabad M, Kagan N, Mahdavi-Amiri N. An mp-based approximation 
+algorithm on reliability evaluation of multistate flow networks. Reliab Eng Syst 
+Saf 2019;191:106566. http://dx.doi.org/10.1016/j.ress.2019.106566.
+[24] Niu Y-F, Wang J-F, Xu X-Z, Xu Q-X. Reliability evaluation for a multi-commodity 
+multi-state distribution network under transportation emission consideration. 
+Reliab Eng Syst Saf 2025;254:110599. http://dx.doi.org/10.1016/j.ress.2024.
+110599.
+[25] Cui L, Frenkel I, Lisnianski A. Stochastic models in reliability engineering. CRC 
+Press; 2020, http://dx.doi.org/10.1201/9780429331527.
+[26] Yu Y, Xiao G, Zhou J, Wang Y, Wang Z, Kurths J, Schellnhuber HJ. System crash 
+as dynamics of complex networks. Proc Natl Acad Sci 2016;113(42):11726–31. 
+http://dx.doi.org/10.1073/pnas.1612094113.
+[27] Liang Q, Yang Y, Zhang H, Peng C, Lu J. Analysis of simplification in markov 
+state-based models for reliability assessment of complex safety systems. Reliab 
+Eng Syst Saf 2022;221:108373. http://dx.doi.org/10.1016/j.ress.2022.108373.
+[28] Amani AM, Jalili M. Power grids as complex networks: Resilience and reliability 
+analysis. IEEE Access 2021;9:119010–31. http://dx.doi.org/10.1109/ACCESS.
+2021.3107492.
+[29] Zhu H, Zhang C. Expanding a complex networked system for enhancing 
+its reliability evaluated by a new efficient approach. Reliab Eng Syst Saf 
+2019;188:205–20. http://dx.doi.org/10.1016/j.ress.2019.03.029.
+[30] Zuev KM, Wu S, Beck JL. General network reliability problem and its efficient 
+solution by subset simulation. Probabilistic Eng Mech 2015;40:25–35. http:
+//dx.doi.org/10.1016/j.probengmech.2015.02.002.
+[31] Caşcaval P. Approximate method to evaluate reliability of complex networks. 
+Complexity 2018;2018:1–11. http://dx.doi.org/10.1155/2018/5967604.
+[32] Ding C, Wei P, Shi Y, Liu J, Broggi M, Beer M. Sampling and active learning 
+methods for network reliability estimation using k-terminal spanning tree. Reliab 
+Eng Syst Saf 2024;250:110309. http://dx.doi.org/10.1016/j.ress.2024.110309.
+[33] Guidotti R, Gardoni P, Chen Y. Network reliability analysis with link and nodal 
+weights and auxiliary nodes. Struct Saf 2017;65:12–26. http://dx.doi.org/10.
+1016/j.strusafe.2016.12.001.
+[34] Jooshaki M, Karimi-Arpanahi S, Lehtonen M, Millar RJ, Fotuhi-Firuzabad M. 
+Test distribution networks for reliability-based studies. 2020, http://dx.doi.org/
+10.21227/79a7-3x76, dataset.
+[35] Jooshaki M, Lehtonen M, Fotuhi-Firuzabad M, Muñoz-Delgado G, Contreras J, 
+Arroyo JM. Test distribution networks for reliability-based studies. 2020, http:
+//dx.doi.org/10.21227/tj2p-6t88, dataset.
+[36] Creaco E, Giudicianni C, Mottahedin A. Improved community detection for 
+wdn partitioning in the dual topology based on segments and valves. J 
+Hydroinformatics 2023;25(4):1341–57. http://dx.doi.org/10.2166/hydro.2023.
+209.
+[37] Zheng Y, Zhang X, Dong Z, Shi H, Guo Y. Optimal double-layer preventive 
+maintenance decision-making of natural gas pipeline networks based on gas 
+supply reliability and vulnerability assessment. Reliab Eng Syst Saf 2025;111407. 
+http://dx.doi.org/10.1016/j.ress.2025.111407.
+[38] Stoer M, Wagner F. A simple min-cut algorithm. J ACM 1997;44(4):585–91. 
+http://dx.doi.org/10.1145/263867.263872.
+[39] Todinov M. 3 - methods for analysis of complex reliability networks. In: 
+Todinov M, editor. Risk-based reliability analysis and generic principles for risk 
+reduction. Oxford: Elsevier; 2007, p. 31–58.
+[40] Artime O, Grassia M, De Domenico M, Gleeson JP, Makse HA, Mangioni G, 
+Perc M, Radicchi F. Robustness and resilience of complex networks. Nat Rev 
+Phys 2024;1–18. http://dx.doi.org/10.1038/s42254-023-00676-y.
+[41] Soh S, Rai S. An efficient cutset approach for evaluating communication-
+network reliability with heterogeneous link-capacities. IEEE Trans Reliab 
+2005;54(1):133–44. http://dx.doi.org/10.1109/TR.2004.842530.
+[42] Gong L, Zhang Y, Yang M, Li Y, Liu F, Yao Q. A review of reliability, 
+vulnerability and resilience analysis of smart grid based on complex network. 
+In: 2021 IEEE 21st international conference on software quality, reliability and 
+security companion. QRS-C, IEEE; 2021, p. 117–26. http://dx.doi.org/10.1109/
+QRS-C55045.2021.00026.
+[43] Rosenthal A. Computing the reliability of complex networks. SIAM J Appl Math 
+1977;32(2):384–93, URL https://www.jstor.org/stable/2100423.
+[44] Al-Zahrani MA, Syed JL. Evaluation of municipal water distribution sys-
+tem reliability using minimum cut-set method. J King Saud Univ, Eng Sci 
+2005;18(1):67–81. http://dx.doi.org/10.1016/S1018-3639(18)30822-5.
+[45] Xu X-Z, Niu Y-F, Li Q, et al. Efficient enumeration of-minimal paths in reliability 
+evaluation of multistate networks. Complex 2019;2019. http://dx.doi.org/10.
+1155/2019/4561845.
+[46] Mishra R, Saifi M, Chaturvedi SK. Enumeration of minimal cutsets for directed 
+networks with comparative reliability study for paths or cuts. Qual Reliab Eng 
+Int 2016;32(2):555–65. http://dx.doi.org/10.1002/qre.1772.
+[47] Zhao P, Yu J, Zhang H, Qin Z, Wang C. How to securely outsource finding 
+the min-cut of undirected edge-weighted graphs. IEEE Trans Inf Forensics Secur 
+2019;15:315–28. http://dx.doi.org/10.1109/TIFS.2019.2922277.
+[48] Chen XG. A novel reliability estimation method of complex network based on 
+monte carlo. Clust Comput 2017;20:1063–73. http://dx.doi.org/10.1007/s10586-
+017-0826-3.
+[49] Yeh W-C. Enhancing binary-state network reliability with layer-cut bat-mcs. 
+Reliab Eng Syst Saf 2025;111446. http://dx.doi.org/10.1016/j.ress.2025.111446.
+[50] Chen X, Xu Z, Wu Y, Wu Q. Heuristic algorithms for reliability estimation based 
+on breadth-first search of a grid tree. Reliab Eng Syst Saf 2023;232:109083. 
+http://dx.doi.org/10.1016/j.ress.2022.109083.
+[51] Dey AK, Gel YR, Poor HV. What network motifs tell us about resilience and 
+reliability of complex networks. Proc Natl Acad Sci 2019;116(39):19368–73. 
+http://dx.doi.org/10.1073/pnas.1819529116.
+[52] Yu E-Y, Chen D-B, Zhao J-Y. Identifying critical edges in complex networks. Sci 
+Rep 2018;8(1):14469. http://dx.doi.org/10.1038/s41598-018-32631-8.
+[53] Pan X, Wang H. Resilience of and recovery strategies for weighted networks. PloS 
+One 2018;13(9):e0203894. http://dx.doi.org/10.1371/journal.pone.0203894.
+[54] Bellingeri M, Bevacqua D, Scotognella F, Alfieri R, Cassi D. A comparative 
+analysis of link removal strategies in real complex weighted networks. Sci Rep 
+2020;10(1):3911. http://dx.doi.org/10.1038/s41598-020-60298-7.
+[55] Miziuła P, Navarro J. Birnbaum importance measure for reliability systems with 
+dependent components. IEEE Trans Reliab 2019;68(2):439–50. http://dx.doi.org/
+10.1109/TR.2019.2895400.
+[56] Schaeffer SE. Graph clustering. Comput Sci Rev 2007;1(1):27–64. http://dx.doi.
+org/10.1016/j.cosrev.2007.05.001.
+[57] Ghanbari M, Chehreghani MH, Chehreghani MH. Graph clustering using 
+node embeddings: An empirical study. In: 2022 IEEE international conference 
+on big data. Big Data, IEEE; 2022, p. 5488–93. http://dx.doi.org/10.1109/
+BigData55660.2022.10020377.
+[58] Wang C, Pan S, Celina PY, Hu R, Long G, Zhang C. Deep neighbor-aware embed-
+ding for node clustering in attributed graphs. Pattern Recognit 2022;122:108230. 
+http://dx.doi.org/10.1016/j.patcog.2021.108230.
+[59] Fortunato S, Hric D. Community detection in networks: A user guide. Phys Rep 
+2016;659:1–44. http://dx.doi.org/10.1016/j.physrep.2016.09.002.
+[60] Blondel VD, Guillaume J-L, Lambiotte R, Lefebvre E. Fast unfolding of 
+communities in large networks, journal of statistical mechanics:. The-
+ory Exp 2008;2008(10):P10008. http://dx.doi.org/10.1088/1742-5468/2008/
+10/P10008.
+[61] Sattar NS, Arifuzzaman S. Scalable distributed louvain algorithm for community 
+detection in large graphs. J Supercomput 2022;78(7):10275–309. http://dx.doi.
+org/10.1007/s11227-021-04224-2.
+[62] Zhou K, Yan C, Xu Y. The vulnerability of communities in complex networks: 
+A causal perspective on dynamic retentivity. Reliab Eng Syst Saf 2025;111171. 
+http://dx.doi.org/10.1016/j.ress.2025.111171.
+[63] Yu J, Sharma N, Gardoni P. Functional connectivity analysis for modeling flow in 
+infrastructure. Reliab Eng Syst Saf 2024;247:110042. http://dx.doi.org/10.1016/
+j.ress.2024.110042.
+[64] Valejo A, Góes F, Romanetto L, Ferreira de Oliveira MC, de Andrade Lopes A. 
+A benchmarking tool for the generation of bipartite network models with 
+overlapping communities. Knowl Inf Syst 2020;62:1641–69. http://dx.doi.org/
+10.1007/s10115-019-01411-9.
+[65] Edmonds J, Karp RM. Theoretical improvements in algorithmic efficiency for 
+network flow problems. J ACM 1972;19(2):248–64. http://dx.doi.org/10.1145/
+321694.321699.
+[66] Zadeh N. Theoretical efficiency of the edmonds-karp algorithm for computing 
+maximal flows. J ACM 1972;19(1):184–92. http://dx.doi.org/10.1145/321679.
+321693.
+[67] Ahuja RK, Kodialam M, Mishra AK, Orlin JB. Computational investigations of 
+maximum flow algorithms, e. Uropean J Oper Res 1997;97(3):509–42. http:
+//dx.doi.org/10.1016/S0377-2217(96)00269-X.
+Reliability Engineering and System Safety 265 (2026) 111563 
+11 
+
+M. Herrera et al.
+[68] Kabirifar M, Fotuhi-Firuzabad M, Moeini-Aghtaie M, Pourghaderi N, Shahideh-
+pour M. Reliability-based expansion planning studies of active distribution 
+networks with multiagents. IEEE Trans Smart Grid 2022;13(6):4610–23. http:
+//dx.doi.org/10.1109/TSG.2022.3181987.
+[69] Newman M, Barabási A-L, Watts DJ. The structure and dynamics of networks. 
+Princeton University Press; 2011, URL https://www.jstor.org/stable/j.ctt7ssgv.
+[70] Herrera M, Abraham E, Stoianov I. A graph-theoretic framework for assessing 
+the resilience of sectorised water distribution networks. Water Resour Manag 
+2016;30:1685–99. http://dx.doi.org/10.1007/s11269-016-1245-6.
+[71] Giudicianni C, Di Nardo A, Di Natale M, Greco R, Santonastaso GF, Scala A. 
+Topological taxonomy of water distribution networks. Water 2018;10(4):444. 
+http://dx.doi.org/10.3390/w10040444.
+[72] Di Nardo A, Giudicianni C, Greco R, Herrera M, Santonastaso GF. Applications 
+of graph spectral techniques to water distribution network management. Water 
+2018;10(1):45. http://dx.doi.org/10.3390/w10010045.
+[73] Giudicianni C, Di Nardo A, Greco R, Scala A. A community-structure-based 
+method for estimating the fractal dimension, and its application to water 
+networks for the assessment of vulnerability to disasters. Water Resour Manag 
+2021;35:1197–210. http://dx.doi.org/10.1007/s11269-021-02773-y.
+[74] Creaco E, Giudicianni C, Tosco A. Service pressure and energy consumption 
+mitigation-oriented partitioning of closed water distribution networks. Water 
+2023;15(18):3218. http://dx.doi.org/10.3390/w15183218.
+[75] Herrera M, Izquierdo J, Pérez-García R, Montalvo I. Multi-agent adaptive boost-
+ing on semi-supervised water supply clusters. Adv Eng Softw 2012;50:131–6. 
+http://dx.doi.org/10.1016/j.advengsoft.2012.02.005.
+[76] Bui XK, Kang D. A strategy for sustainable urban water management using water 
+network partitioning with optimal booster pump configuration: A case study. 
+Sustain Cities Soc 2023;90:104391. http://dx.doi.org/10.1016/j.scs.2023.104391.
+[77] Barton NA, Farewell TS, Hallett SH, Acland TF. Improving pipe failure pre-
+dictions: Factors affecting pipe failure in drinking water networks. Water Res 
+2019;164:114926. http://dx.doi.org/10.1016/j.watres.2019.114926.
+[78] Klise K, Hart D, Bynum M, Hogge J, Haxton T, Murray R, Burkhardt J. 
+Water network tool for resilience (wntr). user manual, version 0.2. Tech. rep., 
+Albuquerque, NM (United States), vol. 3, Sandia National Lab.SNL-NM; 2020.
+[79] Jun S, Arbesser-Rastburg G, Fuchs-Hanusch D, Lansey K. Response surfaces 
+for water distribution system pipe roughness calibration. J Water Resour 
+Plan Manag 2022;148(3):04021105. http://dx.doi.org/10.1061/(ASCE)WR.1943-
+5452.0001518.
+[80] Laven K, Ge S, Dignum M, Zantingh M, Gill N, Ponnambalam K, Krinas H. Pipe 
+diameter is a dominant factor in pipe failure risk. In: Pipelines 2024. ASCE; 
+2024, p. 489–98. http://dx.doi.org/10.1061/9780784485569.053.
+[81] Ji J, Lai JH, Fu G, Zhang C, Kodikara J. Probabilistic failure investigation 
+of small diameter cast iron pipelines for water distribution. Eng Fail Anal 
+2020;108:104239. http://dx.doi.org/10.1016/j.engfailanal.2019.104239.
+[82] Muddassir M, Zayed T, Taiwo R, Ben Seghier MEA. Advancing the analysis of 
+water pipe failures: a probabilistic framework for identifying significant factors. 
+Sci Rep 2024;14(1):19218. http://dx.doi.org/10.1038/s41598-024-69855-w.
+[83] Mora-Rodríguez J, Delgado-Galván X, Ramos HM, López-Jiménez PA. An 
+overview of leaks and intrusion for different pipe materials and failures. Urban 
+Water J 2014;11(1):1–10. http://dx.doi.org/10.1080/1573062X.2012.739630.
+[84] Liang Z, Parlikad AK. Predictive group maintenance for multi-system multi-
+component networks. Reliab Eng Syst Saf 2020;195:106704. http://dx.doi.org/
+10.1016/j.ress.2019.106704.
+Reliability Engineering and System Safety 265 (2026) 111563 
+12 

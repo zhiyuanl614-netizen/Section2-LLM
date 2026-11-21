@@ -1,0 +1,1749 @@
+Reliability Engineering and System Safety 230 (2023) 108931
+Available online 2 November 2022
+0951-8320/© 2022 Elsevier Ltd. All rights reserved.
+Contents lists available at ScienceDirect
+Reliability Engineering and System Safety
+journal homepage: www.elsevier.com/locate/ress
+A nexus approach to infrastructure resilience planning under uncertainty
+Rachel L. Moglen a,∗, Julius Barth b, Shagun Gupta a, Eiji Kawai c, Katherine Klise d, Benjamin
+D. Leibowicz a
+a Operations Research and Industrial Engineering, University of Texas at Austin, 204 E Dean Keeton St, Austin, TX 78712, USA
+b Information, Risk, and Operations Management, University of Texas at Austin, 2110 Speedway, Austin, TX 78705, USA
+c Energy and Earth Resources, University of Texas at Austin, 2305 Speedway Stop C1160, Austin, TX 78712, USA
+d Energy Water Systems Integration, Sandia National Laboratories, PO Box 5800, Mail Stop 0750, Albuquerque, NM 87185-1137, USA
+A R T I C L E
+I N F O
+Keywords:
+Infrastructure hardening
+Resilience
+Stochastic optimization
+Disaster planning
+Critical infrastructure systems
+Energy-water nexus
+A B S T R A C T
+Natural disasters pose serious threats to Critical Infrastructure (CI) systems like power and drinking water,
+sometimes disrupting service for days, weeks, or months. Decision makers can mitigate this risk by hardening
+CI systems through actions like burying power lines and installing backup generation for water pumping.
+However, the inherent uncertainty in natural disasters coupled with the high costs of hardening activities
+make disaster planning a challenging task. We develop a disaster planning framework that recommends asset-
+specific hardening projects across interdependent power and water networks facing the uncertainty of natural
+disasters. We demonstrate the utility of our model by applying it to Guayama, Puerto Rico, focusing on the risk
+posed by hurricanes. Our results show that our proposed optimization approach identifies hardening decisions
+that maintain a high level of service post-disaster. The results also emphasize power system hardening due to
+the dependency of the water system on power for water treatment and a higher vulnerability of the power
+network to hurricane damage. Finally, choosing optimal hardening decisions by hedging with respect to all
+potential hurricane scenarios and their probabilities produces results that perform better on extreme events
+and are less variable compared to optimizing for only the average hurricane scenario.
+1. Introduction
+The complex interactions between different CI systems are some-
+thing we all experience in our day-to-day lives. The drinking water
+that flows from our taps depends on the electricity sector to power
+the purification and distribution processes. Transportation networks
+require electricity to operate traffic signals. The electricity we consume
+when we turn on the light may have been generated from hydropower,
+steam heated in a coal or natural gas power plant, or a nuclear plant
+cooled by water.
+The interconnections between CI systems become more apparent
+when disasters occur. After a disturbance, limited resource availability
+stresses interdependencies between systems. This can cause failures in
+one system to cascade into the systems that depend on it, resulting
+in disruptions throughout the dependent systems [1]. CI systems are
+systems whose failure ‘‘would have a debilitating impact on the defense
+and economic security’’ of a nation [2]. This includes drinking and
+waste water, natural gas, telecommunications, transportation, electric
+power systems, and emergency services [1]. Recent worldwide disasters
+such as the 2001 World Trade Center attack, the 2011 Japan Earth-
+quakes, the 2017 Puerto Rico hurricanes, and the 2021 Texas freeze
+∗Corresponding author.
+E-mail address: rmoglen@utexas.edu (R.L. Moglen).
+reveal both the interconnections between CIs and the importance of CIs
+to the functioning of our society [1,3,4]. In these and similar events,
+CI interdependencies include outages of traffic signals due to loss of
+electricity, loss of water pressure due to electricity loss at pumping
+stations, water main breaks from co-located utility failures, and disrup-
+tion in communication services for emergency response and repair due
+to electricity and telecommunication system outages. Power outages
+result in $20 to $50 billion in damages annually to the United States
+(U.S.) economy alone, and data suggest that outages are becoming more
+frequent and more severe with time [5]. The frequency and impacts of
+natural disasters have exhibited nearly exponential growth in recent
+decades [6]. The growth of the world’s population combined with
+the threat of climate change places more stress on already vulnerable
+infrastructure systems [6,7]. Therefore, disaster modeling and analysis
+of our CI and its vulnerabilities is an important and active area of
+study [1].
+In this paper, we develop a decision-making framework that systems
+planners can use to make interconnected CI more resilient to a disaster
+or disturbance. Resilience is the ability of a system to withstand,
+https://doi.org/10.1016/j.ress.2022.108931
+Received 15 February 2022; Received in revised form 26 August 2022; Accepted 25 October 2022
+
+Reliability Engineering and System Safety 230 (2023) 108931
+2
+R.L. Moglen et al.
+absorb, adapt, and rapidly recover from disturbances like hurricanes,
+floods, earthquakes, and malicious attacks [1,6,8,9]. In this study, we
+focus on long-term resilience planning or mitigation, exploring the
+paradigm where decision makers seek to harden existing infrastructure.
+These hardening activities include repairing water pipe leaks, installing
+backup generation at pumping stations, undergrounding power lines,
+and protecting water storage facilities. The inherent uncertainty in
+predicting the occurrence and impact of natural disasters presents a
+key challenge in resilience planning [8]. In this work, we consider
+the impacts of natural disasters, specifically hurricanes, on connected
+power and drinking water infrastructure by modeling the problem as
+a two-stage stochastic program, a paradigm widely employed in the
+literature for disaster planning [10–12]. The first stage (here-and-now)
+decisions are the decision maker’s investment decisions to make the
+systems more resilient to disturbances. The second stage (recourse)
+decisions are the operations that meet as much demand as possible,
+given a realization of the disturbance. In this study, we characterize
+the uncertainty in disaster realization through the capacities of infras-
+tructure components after the disaster, which depend on the disaster
+scenario and the first stage hardening decisions. In contrast to other
+models employing scenario- or simulation-based approaches [13–18],
+we are thus able to develop an optimal decision-making framework
+that hedges with respect to potential disaster realizations and their
+probabilities. A cost-minimization objective forces decision makers to
+prioritize which components they choose to harden in the face of
+disaster uncertainty. The primary factors causing the model to identify
+an infrastructure component for hardening are trade-offs among its
+probability of failure, its criticality in being able to serve demand across
+infrastructure systems, and the relative cost of hardening the asset
+compared to the possible cost of repairing it.
+In summary, our work contributes to the literature by:
+1. Developing a framework for identifying optimal hardening de-
+cisions across interdependent power and water infrastructure
+systems
+2. Exploring the relationship between power and water infrastruc-
+ture in a disaster context
+3. Characterizing the uncertainty in natural disaster realization and
+the threats that disasters pose to power and water infrastructure
+4. Applying our framework to a detailed, empirically grounded
+case study to demonstrate its efficacy for real-world disaster
+planning
+We implement our model for a case study based on the city of
+Guayama, Puerto Rico. In this case study, we demonstrate the ways our
+methods can be used to guide a decision maker’s planning decisions by
+prescribing hardening actions they should undertake. At optimality, our
+model recommends more hardening of the power network than the wa-
+ter network. This phenomenon is driven both by the power network’s
+greater vulnerability to hurricanes and the water network’s dependency
+on power to treat its water supply. We find that hedging over potential
+hurricane scenarios yields decisions that are less variable and perform
+better in the event of extreme disasters relative to planning only for
+the average hurricane scenario, validating our advanced treatment of
+disaster uncertainty. We also find that system performance is largely
+insensitive to the relative cost of repairing assets versus hardening
+them. Finally, we find that service level requirements imposed by
+decision makers are able to be maintained across a wide variety of
+simulated disaster scenarios when optimal hardening is implemented.
+The remainder of this paper is organized as follows. We provide
+an overview of the most relevant literature on resilience planning
+in Section 2, paying special attention to resilience planning for in-
+terdependent infrastructure systems. In Section 3, we present our
+two-stage stochastic programming formulation for the interconnected
+water-power resilience planning problem. We describe a case study of
+interdependent power and water infrastructure in Section 4, focusing
+on the city of Guayama, Puerto Rico. We then explore the case study
+results in detail in Section 5. Finally, we discuss our conclusions in
+Section 6.
+2. Literature review
+While this paper focuses specifically on the resilience of interdepen-
+dent infrastructures, the resilience of individual infrastructure systems
+has a long history as an active area of interest in the literature. Works
+that focus on individual CI systems often model relationships that may
+be too computationally intensive in papers studying interdependent
+infrastructure systems. Power [3,10,19], drinking water [14,15], and
+transportation [11,12,16] infrastructure systems are most frequently
+studied in the literature. For example, power grid resilience work often
+captures nonlinearities of power flow using the AC or DC approxi-
+mation, thus capturing the real-world response of these systems to
+disturbances [10,19]. The resilience literature adopts different plan-
+ning horizons. Some work explores long-term hardening decisions that
+decision makers face months or years in advance to prepare for dis-
+asters [3], while other work focuses on short-term planning as system
+operators prepare for an upcoming disaster and then repair any damage
+made to the infrastructure, restoring service [12,16]. In the context
+of individual CI planning, researchers often take the perspective of
+the system operator or utility in their study [3,11,12]. In contrast,
+researchers in the interdependent infrastructure literature often take
+the perspective of a system-of-systems planner, such as the Federal
+Emergency Management Agency (FEMA), where the decision maker is
+coordinating responses across multiple systems [20]. In the case of the
+individual system planner, the objective may be more cost-based [11,
+19], rather than the service-based objectives of system-of-systems plan-
+ners. However, because individual CI utilities still serve the public
+good, they still typically evaluate the risk of lost service, either as
+part of the objective function or through a constraint [16,19]. While
+resilience planning for individual infrastructure systems can improve
+the computational tractability of models, the interactions between CI
+systems and their impacts on overall system performance [1] serve to
+motivate our nexus approach to CI planning.
+Modeling of interdependent CI is a growing area of the litera-
+ture. Some work has been done on interdependent CI modeling in a
+non-disaster context [21,22]. Because the interactions between interde-
+pendent CI become more apparent and relevant to system performance
+in the case of disasters, interdependent CI is typically studied in the
+context of resilience and emergency response. Classification and mod-
+eling of infrastructure interdependencies are discussed in [23]. [23]
+classifies interdependencies along two orthogonal dimensions: ontology
+and epistemology. The dimension of ontology describes when and how
+the interdependencies appear, whereas the dimension of epistemology
+classifies the interdependencies into modeling stages. [23] describes
+two classifications in the dimension of ontology: episodic (interde-
+pendencies that appear only under certain conditions) and chronic
+(interdependencies that always exist). We focus on a chronic interde-
+pendency; we assume that the water system depends on the power
+system to operate across our decision making time horizon. In the
+dimension of epistemology, [23] identifies four stages of the resilience
+modeling process: hazard and exposure, policy and control, operation
+and performance, and deterioration and recovery. Our framework spans
+the first three stages. First, we develop a hazard and exposure model
+to simulate the impacts of a hurricane on a network. Then, our model’s
+first stage forms a policy and control model capturing the economic
+considerations of resilience planning. Finally, our model describes the
+operation and performance of the system for each disaster realization
+in the second stage.
+There are five main approaches to modeling the resilience of in-
+terdependent CI systems in the literature: empirical approaches, agent-
+based approaches, system dynamics-based approaches, approaches
+based on economic theory, and network-based approaches. Ouyang [1]
+provides an in-depth comparison of the different approaches and their
+relative advantages and disadvantages. Empirical studies explore events
+from historic case studies after a disaster using both quantitative
+and qualitative approaches. In such studies, data are gathered from
+
+Reliability Engineering and System Safety 230 (2023) 108931
+3
+R.L. Moglen et al.
+a number of sources including newspapers and media reports [24],
+expert opinions [25], and utility owners and operators [26]. In these
+empirical studies, failure consequences are characterized both by their
+impact, defined by duration and severity, and their extent, defined
+by the geographic area and the population impacted [27]. Empirical
+studies range from system-level to component-level analyses [1]. By
+contrast, agent-based approaches use a bottom-up approach, modeling
+the complex behaviors of individual CI as individual agents interacting
+with other CI and their environment based on a set of rules [1].
+This modeling paradigm is popular at the U.S. National Labs, with
+agent-based resilience modeling tools developed at Sandia National
+Labs [28], Argonne National Lab [29], and Idaho National Lab [30].
+While agent-based modeling is a bottom-up paradigm, system dynamics
+approaches use a top-down modeling approach to capture the feedbacks
+between different CI [1]. The challenge presented by model structure
+selection, parametrisation, and model validation are all weaknesses
+of this modeling approach [1]. The fourth modeling approach to
+interdependent CI modeling is based on economic theory, e.g., Leontief
+models and equilibrium-based models. Under the Leontief input–output
+economic model [31] the impacts of a disturbance are captured as
+decreased output or level of service from one sector, and the model
+structure captures the impact of that sector on others. However, these
+models do not capture component-level interdependencies, and the
+matrix of sector interdependencies can be difficult to parameterize [1].
+Economic theory-based approaches can also include equilibrium-based
+models capturing the behavioral responses of consumers and producers
+for infrastructure, e.g. [20]. Finally, network-based resilience models
+illustrate CI components as nodes and connections between nodes
+as links [1]. In these network-based studies, a hazard eliminates or
+reduces the capacities of nodes and edges, simulating the impacts
+of a disaster [9,17,32]. Some network-based approaches may explore
+network topology, such as connectivity changes and redundancies [33],
+while others model network flows, either as generic commodities [34]
+or including nonlinearities such as power and water flows [10,19,21].
+As Ouyang [1] notes, network flow-based approaches capture opera-
+tional mechanisms, providing more realism in system behavior than the
+other four modeling approaches. Our paper employs a network flow-
+based approach to resilience planning, modeling the flows in power and
+water infrastructure as generic commodities, a simplification that al-
+lows for more computationally-intensive modeling of other dimensions
+of the problem, such as uncertainty. We find that our rigorous treatment
+of uncertainty through two-stage stochastic programming produces
+hardening recommendations that perform better on extreme events and
+are less variable compared to optimizing for only the average hurricane
+scenario. This performance improvement helps justify our selection of
+a network-based approach and related modeling assumptions.
+2.1. Treatment of uncertainty
+In resilience planning, the treatment of uncertainty presents a sig-
+nificant modeling challenge due to the low probabilities, but high
+consequences, of many disaster types [1]. While some resilience work
+does not consider the uncertainty from natural disasters [20,35], most
+models include some notion of uncertainty in the analysis and decision-
+making framework. Treatment of uncertainty ranges from less rigor-
+ous, in the form of scenario-based analysis [17,18], to more rigorous
+simulation-based modeling [13–16], to the most rigorous approaches
+that include uncertainty hedging in the model structure, either through
+robust optimization [9] or two-stage stochastic programming [9–11,
+36]. While scenario analysis and simulation are common approaches to
+disaster uncertainty modeling in the literature, they do not guarantee
+optimality of the actions they recommend, or even make clear the
+degree of suboptimality [10]. Therefore, in this study we employ two-
+stage stochastic programming to fully embed uncertainty within the
+optimization framework. This paradigm guarantees that the solution it
+finds is optimal with respect to the set of disaster scenarios incorporated
+into the stochastic program [37]. Frequently, there are many or infinite
+possible realizations of uncertainty, for example when the distribution
+of possible uncertainty realizations is continuous. In this case, it is
+common to use Monte Carlo methods to sample scenarios from the
+distribution of possible uncertainty realizations [37], called Sample
+Average Approximation (SAA). SAA does not guarantee optimality
+across all possible uncertainty realizations, though it does guarantee
+optimality across the specific scenarios that are sampled. It is for this
+reason that we employ an out-of-sample evaluation of the hardening
+decisions. We find that constraints imposed in the in-sample formu-
+lation are, with few exceptions, able to be met in the out-of-sample
+evaluation. This suggests that the SAA, and the number of scenarios
+we select in our approximation, are sufficient to fully characterize the
+uncertainty in disaster realization and deliver optimal or near-optimal
+hardening decisions.
+For most paradigms, scenario generation is a key component of
+modeling uncertainty. Some papers employ an in-depth scenario gener-
+ation process, relying on historical data to derive representative disaster
+scenario distributions [13,15,38]. Then a disaster scenario is sampled
+from the distribution, and fragility curves are used to ascribe the
+corresponding level of infrastructure damage to the sampled disaster
+magnitude [15,38]. Other works employ a more abstract process to de-
+fine scenarios by directly sampling the amount of damage experienced
+by the infrastructure, generally from uniform, normal, or lognormal
+distributions [3,16]. We selected the former method for its higher
+degree of realism; an empirically-grounded case study is one of the
+contributions of this work. First, we sample a category of hurricane
+based on historical observations from our area of interest. Then we ap-
+ply fragility curves to determine asset failure probabilities throughout
+the network. Last, we sample network damage realizations according
+to these computed failure probabilities.
+While we largely focus on optimal decision making uncertainty,
+indeed this is the reason for our selected modeling paradigm, through
+sensitivity analysis we also consider the impact of uncertainty in our
+model parametrisation. This backwards propagation of uncertainty
+helps quantify the amount of uncertainty each uncertain aspect of
+the model and its inputs contribute to the overall uncertainty in the
+model’s response [39]. [40] classifies sources of error in the resilience
+modeling process into sample error, uncertain inputs, and model error.
+We focus on input uncertainty by perturbing three model parameters:
+the system performance requirement, the relative cost parameter, and
+infrastructure prioritization. Often, the computational challenges of
+stochastic programming prohibit sensitivity analyses [11,41], while
+others include at least a sensitivity analysis of the impact of available
+budget [42,43] similar to the analysis we conduct on the impact of our
+three most uncertain model parameters. More rigorous sensitivity anal-
+ysis techniques include Global Sensitivity Analysis (GSA) [39,40] and
+Reliability-Oriented Sensitivity Analysis (ROSA) [44]. These sensitivity
+analysis techniques can help guide future data collection by identifying
+characteristics of the system and hazards that contribute significantly
+to uncertainty [40] but were out of scope for this study.
+2.2. Decision objectives
+In this paper, as with all research in the resilience space, the
+objective has implications for system performance, cost, and fairness.
+Because many papers take the perspective of a system planner, max-
+imizing system performance or minimizing service loss are the most
+common objectives [10,13,14,16,35]. Some works combine both cost-
+based and service-based objectives in their optimization problem by
+quantifying the financial cost or value of lost service [9,17,18]. In these
+works, the financial cost of hardening and disaster response is usually
+included in the objective, creating a cost-effectiveness framework. In
+our work, we choose to minimize total expected costs. We measure
+resilience using an unmet demand constraint bounded by a service
+level requirement, favoring a cost-effectiveness structure. We define
+
+Reliability Engineering and System Safety 230 (2023) 108931
+4
+R.L. Moglen et al.
+unmet demand as the difference between exogenous demand and the
+amount of a commodity (power or water) that is actually delivered.
+We selected this framework because it most closely matches the system
+planner’s perspective. Fairness is typically considered in concert with
+other decision objectives, for example Karakoc et al. [17] normalize
+individual lost service by the social vulnerability of the individuals.
+Additionally, many works include a spatial dimension of their proposed
+resilience metrics quantifying the criticality of a node [9,14,32,45,46].
+Node weighting can capture critical loads like hospitals, schools, and
+nursing homes, vulnerable populations, or differences in the impor-
+tance of different infrastructure types. We include equity consideration
+and spatial resolution in our resilience metric through individualized
+node weighting, with a parameter describing the criticality of satisfying
+demand at each node in each infrastructure system. In our case study,
+we use this parameter to establish a prioritization between power and
+water unmet demand. Finally, a measure of risk is often included in
+resilience models, either as an expected value of service level [10–12],
+a worst-case service level [9], or another metric for recovery, such as
+the difference in minimum and maximum recovery times across simu-
+lations [16]. In our formulation, we impose the minimum service level
+requirement across all scenarios, thereby dictating that the worst-case
+unmet demand does not exceed the service level requirement.
+2.3. Temporal resolution and planning horizon
+The temporal dimension of resilience planning is another differ-
+entiating model characteristic in the literature. Resilience planning
+takes the form of long-term mitigation and short-term preparedness and
+repair. Mitigation, or long-term resilience planning, is where decision
+makers proactively improve the resilience of CI systems by either
+hardening existing components or by expanding networks to introduce
+redundancies [10,20]. Preparedness, the first step of short-term re-
+silience planning, describes the process of staging disaster repair and
+response infrastructure such as gathering repair materials, installing
+temporary protection equipment like flood barriers, and operating CI
+to best prepare, for example by filling water storage tanks in advance
+of anticipated loss of service [12]. Repair or restoration, the second
+stage of short-term resilience planning, involves systematically restor-
+ing service by repairing damaged infrastructure [16–18]. Adaptation, a
+key component of resilience planning, means that service may not be
+restored to pre-disaster status [6]. Some works include a combination
+of long-term and short-term resilience planning [9,11]. In our work,
+we focus on long-term disaster planning or mitigation, but include the
+ability of the system operators to operate the systems differently in each
+realization of the disaster. This methodology is consistent with other
+two-stage stochastic programs implemented in the literature [10–12].
+While we choose to model the resilience problem with two stages, one
+of which represents the post-disaster stage, other works in the literature
+explore multiple time periods [9,13,15–19,32,35,45–49]. These works
+generally model the restoration and repair logistics of CI, therefore
+necessitating the multi-stage approach. The computational complexity
+this entails generally requires simulation or other non-prescriptive
+methods, which does not guarantee optimal decision-making guidance.
+In contrast, our model does guarantee optimality of hardening decisions
+with respect to the set of disaster scenarios included in the stochastic
+program, as previously discussed. Restoration-focused works like [47,
+48] may feature more computationally-intensive modeling assump-
+tions like binary decision variables and restoration crew scheduling.
+Conversely, we assume all decision variables are continuous, making
+our model a Linear Program (LP) as compared to the Mixed Integer
+Linear Program (MILP) explored in [47,48]. This difference is in part
+because detailed modeling of crew scheduling requires the use of binary
+variables to define assignments, while hardening decisions are closer to
+continuous. Decision makers face a range of hardening options in terms
+of cost (e.g., tree trimming versus burying power lines) and spatial reso-
+lution (i.e., hardening only a portion of a link). Additionally, restoration
+models typically prescribe rebuilding sequences for a specific disaster
+realization. In comparison, the hardening problem explored in this
+paper identifies a resilience plan that is optimal with respect to the
+set of all disaster scenarios, though represents a significant additional
+computational burden. Thus, by assuming that hardening decisions
+are continuous, we not only capture some of the range in possible
+hardening decisions, but are also able to prescribe decisions that are
+optimal across a range of disaster scenarios.
+2.4. Case study selection
+We demonstrate our proposed framework on a detailed real-world
+case study, a primary contribution of this work. We represent the city
+of Guayama, Puerto Rico with a combined 2203 nodes and 2468 edges
+for the power and water systems, making our case study among the
+largest that we have found in the literature [11]. With this scale, we
+are able to demonstrate our model’s efficacy for real-world disaster
+planning. Many other case studies demonstrate their models on net-
+works with around 100 or fewer nodes [9,17,19,32], often on synthetic
+examples [18,21,35,50]. Our ability to implement our model on a real-
+world case study was aided by the availability of public data from the
+government of Puerto Rico [51]. As noted by Ouyang [1], data access
+is a fundamental problem in CI modeling, in part driving the selection
+of our case study. A symbiosis can exist between stakeholders and
+researchers that we hope to see leveraged as the field of CI resilience
+modeling grows. In our case study, we also develop scenarios tailored to
+real-world disasters, specifically hurricanes. The disaster types explored
+in the literature include hurricanes [13,19], earthquakes [11,12,14–
+17,32], and generalized infrastructure disturbances [3,9,18,20]. The
+disaster type selected is usually motivated by the geographic region
+of the case study. In our case, hurricanes pose a severe threat to
+Puerto Rico, a fact highlighted by the 2017 Category 5 hurricanes
+Irma and Maria [3]. Our disaster scenario generation algorithm is
+therefore designed to simulate the effects of hurricanes on the network
+in Guayama, Puerto Rico.
+3. Formulation
+We construct the resilience hardening problem as a two-stage
+stochastic program. This modeling paradigm is well-suited for modeling
+disaster planning problems, capturing both the planning decisions
+made before the realization of the uncertain natural disaster and the
+operational decisions made in the aftermath. We assume that there is
+a central decision maker allocating funds to the water network and
+power network and that there is coordination between power and
+water hardening decisions. Fig. 1 illustrates the conceptual relationship
+between the power and water networks ideated in this study. Power
+generation (Red ‘‘G’’) and reservoir (Blue ‘‘R’’) nodes represent the
+supply nodes in the power and water networks, respectively. The red
+‘‘R’’ node in the power network corresponds to the power demand for
+water treatment. Ovals are demand nodes, denoting either individual
+customers or aggregations at the neighborhood scale. Demand nodes
+may or may not have non-zero demands, shown by the presence of
+a ‘‘D’’. Thick dashed lines in the water network in Fig. 1 represent
+pumps, and the linkage between these assets and pump stations (‘‘P’’) in
+the power network. If a disaster occurs, then the capacities of certain
+system assets – power stations, water reservoirs, water pumps, water
+links, and power links – can be reduced if these assets are not suffi-
+ciently hardened. Our framework allows the system planner to hedge
+their hardening decisions with respect to a probability distribution of
+potential disaster realizations. We model the system planner’s primary
+objective as minimizing expected costs, consisting of preparedness
+and expected repair expenditures, given a required service level. The
+flexibility of our proposed framework allows the system planner to
+assign weights to service losses, thereby prioritizing specific loads and
+infrastructure types.
+
+Reliability Engineering and System Safety 230 (2023) 108931
+5
+R.L. Moglen et al.
+Table 1
+Nomenclature.
+Sets and Indices
+𝑠∈𝑆
+Infrastructure systems 𝑆= {𝑊∪𝑃} where 𝑊is water and 𝑃is power
+𝑖∈𝑠
+Nodes 𝑠= {𝑊∪𝑃} in infrastructure system network 𝑠∈𝑆
+(𝑖, 𝑗) ∈𝑠
+Edges 𝑠= {𝑊∪𝑃} in infrastructure system network 𝑠∈𝑆
+𝜔∈𝛺
+Disaster scenarios characterized as realized network failures
+Decision variables
+𝑦𝑠
+𝑖
+First stage node hardening decisions for node 𝑖
+𝑧𝑠
+𝑖𝑗
+First stage edge hardening decisions for link (𝑖, 𝑗)
+𝑢𝑠
+𝑖𝜔
+Second stage nodal unmet demand at node 𝑖under scenario 𝜔
+𝑥𝑠
+𝑖𝑗𝜔
+Second stage link flowrates for link (𝑖, 𝑗) under scenario 𝜔
+𝜎𝑠
+𝑖𝜔
+Second stage node supply capacity used under scenario 𝜔for node 𝑖
+𝜏𝑠
+𝑖𝑗𝜔
+Second stage fraction of link capacity available (undamaged) under scenario 𝜔for link (𝑖, 𝑗)
+𝜃𝑠
+𝑖𝜔
+Second stage fraction of node capacity available (undamaged) under scenario 𝜔for node 𝑖
+𝜌𝑖𝜔
+Second stage endogenously calculated power demand at node 𝑖required by the water
+system in scenario 𝜔
+Parameters
+𝑑𝑠
+𝑖
+Demand on infrastructure system 𝑠∈𝑆at node 𝑖
+𝑝𝜔
+Occurrence probability of disaster scenario 𝜔
+𝑤𝑠
+𝑖
+Weight placed on node 𝑖’s unmet demand for system 𝑠
+𝑐𝑠
+𝑖, 𝑐𝑠
+𝑖𝑗
+Hardening cost for nodes 𝑖and links (𝑖, 𝑗), respectively, in system 𝑠̄
+𝑐𝑠
+𝑖,̄ 𝑐𝑠
+𝑖𝑗
+Repair cost for nodes 𝑖and links (𝑖, 𝑗), respectively, in system 𝑠
+𝑈
+Allowable weighted service level of the two systems across scenarios 𝜔
+𝜅𝑊
+𝑗, 𝑄𝑊
+𝑖𝑗
+Power-dependent supply capacity at node 𝑖and link (𝑖, 𝑗), respectively
+𝑎𝑖𝑘
+Conversion of power to water flowrate for water treatment. 0 if [𝑖, 𝑘] is not a mapping
+between water treatment plant 𝑖and 𝑘in the water and power networks, respectively
+𝑏𝑖𝑗𝑘
+Conversion of power to water flowrate for pumping. 0 if [(𝑖, 𝑗), 𝑘] is not a mapping between
+pump stations (𝑖, 𝑗) and 𝑘in the water and power networks, respectively
+𝜓𝑠
+𝑖𝜔, 𝜉𝑠
+𝑖𝑗𝜔
+Realization of undamaged fraction without hardening under scenario 𝜔for nodes 𝑖and
+links (𝑖, 𝑗), respectively. 0 if asset has failed, 1 otherwise
+Fig. 1. Conceptual model of power-water network interdependencies.
+The system planner’s decisions consist of first stage ‘‘here-and-now’’
+planning decisions and second stage ‘‘recourse’’ decisions. We model
+the problem using interconnected infrastructure systems 𝑠∈𝑆
+=
+{𝑊∪𝑃} where 𝑊is the drinking water infrastructure and 𝑃is power
+infrastructure. These systems are fundamentally networks consisting of
+nodes 𝑖∈𝑠and links (𝑖, 𝑗) ∈𝑠going from node 𝑖∈𝑠to node
+𝑗∈𝑠for system 𝑠∈𝑆. Continuous first stage variables 𝑦𝑠
+𝑖capture the
+amount of hardening done at each node 𝑖. Additional continuous first
+stage variables 𝑧𝑠
+𝑖𝑗represent the amount of hardening done on the link
+(𝑖, 𝑗). Both 𝑦𝑠
+𝑖and 𝑧𝑠
+𝑖𝑗are bounded between 0 and 1, describing the frac-
+tion of original capacity that is protected by hardening. The bounds on
+the hardening decision variables could be tightened by decision makers
+to better match their fragility assessments. Fractional hardening can be
+interpreted as investment in either less expensive hardening activities
+or only partial hardening along a link. Nonlinear representations of
+the impact of mitigation exist in the literature [42,43], though these
+studies are computationally limited to smaller case studies or heuristic
+methods. The planner’s second stage decisions focus on operation of
+the networks after the realization of the disaster scenario 𝜔∈𝛺.
+We model this as a multi-commodity network flow problem, with 𝑥𝑠
+𝑖𝑗𝜔
+representing the flow along link (𝑖, 𝑗) in infrastructure system 𝑠under
+scenario 𝜔. The variable 𝑢𝑠
+𝑖𝜔denotes the unmet demand under scenario
+𝜔at node 𝑖in system 𝑠. The fractions of node and link capacity available
+(i.e., undamaged) under scenario 𝜔, respectively, are represented by 𝜃𝑠
+𝑖𝜔
+and 𝜏𝑠
+𝑖𝑗𝜔. The amounts of nodal and link capacity used are represented
+by 𝜎𝑠
+𝑖𝜔and 𝑥𝑠
+𝑖𝑗𝜔, respectively. Finally, the second stage decision variable
+𝜌𝑖𝜔captures the nexus power consumption at node 𝑖∈𝑃, which is the
+endogenously calculated power demand required by the water system.
+The nomenclature used in this paper is summarized in Table 1.
+min
+∑
+𝑠∈𝑆
+∑
+𝑖∈𝑠
+𝑐𝑠
+𝑖𝑦𝑠
+𝑖+
+∑
+𝑠∈𝑆
+∑
+(𝑖,𝑗)∈𝑠
+𝑐𝑠
+𝑖𝑗𝑧𝑠
+𝑖𝑗+
+∑
+𝜔∈𝛺
+𝑝𝜔
+[
+∑
+𝑠∈𝑆
+∑
+𝑖∈𝑠̄
+𝑐𝑠
+𝑖(1 −𝜃𝑠
+𝑖𝜔)
++
+∑
+𝑠∈𝑆
+∑
+(𝑖,𝑗)∈𝑠̄
+𝑐𝑠
+𝑖𝑗(1 −𝜏𝑠
+𝑖𝑗𝜔)
+]
+(1)
+s.t.
+∑
+𝑠∈𝑆
+∑
+𝑖∈𝑠
+𝑤𝑠
+𝑖
+𝑢𝑠
+𝑖𝜔
+∑
+𝑗∈𝑠𝑑𝑠
+𝑗
+≤𝑈
+∀𝜔∈𝛺
+(2)
+𝑧𝑠
+𝑖𝑗= 𝑧𝑠
+𝑗𝑖
+∀𝑠∈𝑆, (𝑖, 𝑗) ∈𝑠
+(3)
+𝜎𝑊
+𝑗𝜔+
+∑
+𝑖|(𝑖,𝑗)∈𝑊
+𝑥𝑊
+𝑖𝑗𝜔=
+∑
+𝑖|(𝑗,𝑖)∈𝑊
+𝑥𝑊
+𝑗𝑖𝜔+ 𝑑𝑊
+𝑗
+−𝑢𝑊
+𝑗𝜔
+∀𝑗∈𝑊, 𝜔∈𝛺
+(4)
+𝜎𝑃
+𝑗𝜔+
+∑
+𝑖|(𝑖,𝑗)∈𝑃
+𝑥𝑃
+𝑖𝑗𝜔=
+
+Reliability Engineering and System Safety 230 (2023) 108931
+6
+R.L. Moglen et al.
+Fig. 2. Event sequence in the system planner’s disaster hardening problem.
+∑
+𝑖|(𝑗,𝑖)∈𝑃
+𝑥𝑃
+𝑗𝑖𝜔+ 𝑑𝑃
+𝑗−𝑢𝑃
+𝑗𝜔+ 𝜌𝑗𝜔
+∀𝑗∈𝑃, 𝜔∈𝛺
+(5)
+𝑎𝑖𝑘𝜎𝑊
+𝑖𝜔≤𝜌𝑘𝜔
+∀𝑖∈𝑊, 𝑘∈𝑃, 𝜔∈𝛺
+(6)
+𝑏𝑖𝑗𝑘𝑥𝑊
+𝑖𝑗𝜔≤𝜌𝑘𝜔
+∀(𝑖, 𝑗) ∈𝑊, 𝑘∈𝑃, 𝜔∈𝛺
+(7)
+𝜃𝑠
+𝑖𝜔≤𝜓𝑠
+𝑖𝜔+ 𝑦𝑠
+𝑖
+∀𝑠∈𝑆, 𝑖∈𝑠, 𝜔∈𝛺
+(8)
+𝜏𝑠
+𝑖𝑗𝜔≤𝜉𝑠
+𝑖𝑗𝜔+ 𝑧𝑠
+𝑖𝑗
+∀𝑠∈𝑆, (𝑖, 𝑗) ∈𝑠, 𝜔∈𝛺
+(9)
+𝜏𝑠
+𝑖𝑗𝜔= 𝜏𝑠
+𝑗𝑖𝜔
+∀𝑠∈𝑆, (𝑖, 𝑗) ∈𝑠, 𝜔∈𝛺
+(10)
+0 ≤𝑦𝑠
+𝑖≤1
+∀𝑠∈𝑆, 𝑖∈𝑠
+(11)
+0 ≤𝑧𝑠
+𝑖𝑗≤1
+∀𝑠∈𝑆, (𝑖, 𝑗) ∈𝑠
+(12)
+𝜌𝑖𝜔≥0
+∀𝑖∈𝑃, 𝜔∈𝛺
+(13)
+0 ≤𝑥𝑠
+𝑖𝑗𝜔≤𝑄𝑠
+𝑖𝑗𝜏𝑠
+𝑖𝑗𝜔
+∀𝑠∈𝑆, (𝑖, 𝑗) ∈𝑠𝜔∈𝛺
+(14)
+0 ≤𝜎𝑠
+𝑖𝜔≤𝜅𝑠
+𝑖𝜃𝑠
+𝑖𝜔
+∀𝑠∈𝑆, 𝑖∈𝑠, 𝜔∈𝛺
+(15)
+0 ≤𝑢𝑊
+𝑖𝜔≤𝑑𝑊
+𝑖
+∀𝑖∈𝑊, 𝜔∈𝛺
+(16)
+0 ≤𝑢𝑃
+𝑖𝜔≤𝑑𝑃
+𝑖+ 𝜌𝑖,𝜔
+∀𝑖∈𝑃, 𝜔∈𝛺
+(17)
+0 ≤𝜃𝑠
+𝑖𝜔≤1
+∀𝑠∈𝑆, 𝑖∈𝑠, 𝜔∈𝛺
+(18)
+0 ≤𝜏𝑠
+𝑖𝑗𝜔≤1
+∀𝑠∈𝑆, (𝑖, 𝑗) ∈𝑠, 𝜔∈𝛺
+(19)
+We model all decisions using continuous decision variables, making
+our two-stage stochastic program an LP. The objective function (1)
+minimizes the total expected cost of first stage hardening and post-
+disaster repairs applied to the two CI systems. Constraints (2) place
+service level limits on the system across all scenarios 𝜔, normalized
+by the total demand across the whole infrastructure network 𝑠. Critical
+nodes 𝑖for a specific infrastructure system 𝑠can be prioritized using
+the weighting parameter 𝑤𝑠
+𝑖as we demonstrate in our experiments.
+Decision makers can also adjust these weighting parameters 𝑤𝑠
+𝑖for
+vulnerable or otherwise disadvantaged populations to include equity
+consideration in their hardening plan. Constraints (3) impose symmetry
+of hardening in both link flow directions, because the decision variables
+correspond to a single section of pipe or power line that can be
+hardened, regardless of flow direction. Constraints (4) and (5) establish
+flow balance at all nodes in the water and power systems, respectively.
+Constraints (5) include the additional variable 𝜌𝑖𝜔capturing the en-
+dogenous power demand required by the water system. Constraints (6)
+bound the drinking water supply by the electricity available to treat it.
+Similarly, (7) constrain pump capacity by the amount of power avail-
+able. Constraints (8) and (9) determine the realized capacities of nodes
+and links to supply demand and permit flow, respectively, based on the
+disaster realization and the first stage hardening decisions. Constraints
+(10) impose symmetry of link status. Constraints (11) through (19)
+impose bounds on the decision variables.
+Depending on the parametrisation of the model, our formulation can
+model the system planner’s problem across a variety of different dis-
+asters. Each disaster scenario is characterized by infrastructure failure
+realizations (𝜓𝑠
+𝑖𝜔, 𝜉𝑠
+𝑖𝑗𝜔) and occurrence probability 𝑝𝜔. These scenarios
+represent the next upcoming disaster for which the planner is prepar-
+ing. Fig. 2 illustrates the sequence of events in the system planner’s
+problem. The system starts in a pre-hardened state (blue in Fig. 2). Once
+the planner makes their hardening decisions, the system is hardened
+(green in Fig. 2). Then, a disaster occurs, resulting in unmet demand,
+and requiring repairs, inducing the damaged state (red in Fig. 2). The
+planner’s constraint on system service level, i.e., unmet demand, is
+assessed before damage is repaired. While Fig. 2 shows a timeline,
+we assume steady-state network flow conditions in our assessment of
+unmet demand after the disaster realization. We also assume that after
+every disaster, the network is repaired to full working order. At its core,
+our formulation adopts a cost-effectiveness point of view where the
+system’s desired service level is set at level 𝑈(constraints (2) will be
+binding for one or more scenarios). An alternative formulation would
+pose the problem as a cost-benefit study where constraints (2) enter
+the objective function and a value of lost service is used to assign a
+monetary cost to unmet demand.
+Our model formulation employs simplifications to improve its com-
+putational complexity. We acknowledge these limitations but feel the
+trade-off is justified by the scale of the problem they allow us to
+explore. On the power side, common approaches to power system
+modeling include the AC or DC power flow problem. Phenomena like
+frequency control may also be included in these high fidelity operation
+models. On the water side, our model ignores energy constraints, water
+storage, and pipe friction losses. Some of these limitations may become
+more significant in a disaster context when the networks are stressed.
+For example, [52,53] develop high fidelity failure and operational
+modeling representations of interdependent infrastructure. However,
+with this level of detail, [52,53] are not able to rigorously explore
+the impacts of uncertainty on optimal resilience planning as we do
+in this paper. Furthermore, as noted in
+Section 2, simplifications
+like the ones we make in our model are not without precedent [1].
+These simplifications are sufficient to capture operational mechanisms
+in a model whose focus is long-run planning, while avoiding the large
+computational burden of detailed mechanisms like energy balances [1].
+Moreover, these simplifications allow us to more fully explore other
+dimensions of disaster modeling, such as the uncertainty of disaster
+impacts on a real-world sized network, while determining optimal
+here-and-now hardening decisions.
+4. Case study
+A significant and novel contribution of this work is the development
+of a large-scale case study involving a detailed representation of both
+power and water infrastructure, and therefore our framework’s ability
+to aid real-world decision makers. As discussed in Section 2, many
+works either focus on an individual CI, do not employ optimization to
+provide prescriptive guidance to decision makers, or demonstrate their
+models only on small-scale synthetic examples. We address this gap by
+demonstrating our optimization framework’s efficacy through a case
+study of the city of Guayama in Puerto Rico. Guayama, shown in Fig. 3,
+is a city located on the southeastern coast of Puerto Rico. The Guayama
+Municipality has a population of 45,362 as per the 2010 census [54].
+Our AOI includes a portion of the Guayama Municipality extending
+from the more sparsely-populated northwestern reaches, south to the
+city center, and west along the coast. The AOI for our study contains
+a population of 20,394 [54]. As with all of Puerto Rico, Guayama is
+vulnerable to a number of natural disasters, including earthquakes,
+landslides, and hurricanes. In particular, hurricanes constitute a sig-
+nificant threat to the region, demonstrated by the 2017 Category 5
+hurricanes Irma and Maria that left many without power or water
+for months. In this study, we focus on the threat hurricanes pose to
+Guayama, Puerto Rico.
+
+Reliability Engineering and System Safety 230 (2023) 108931
+7
+R.L. Moglen et al.
+Fig. 3. Case study AOI shown in green.
+Fig. 4. Case study networks.
+4.1. Guayama power and water networks
+The network topology used in this case study comes from data
+made publicly available by the Government of Puerto Rico [51]. For
+our region of interest, the water utility is Puerto Rico Aqueducts and
+Sewers Authority (PRASA), and the power utility is Puerto Rico Electric
+Power Authority (PREPA). From our communications with PRASA, the
+two entities operate independently, but do work together to coordinate
+disaster preparedness and response.
+Fig. 4(a) illustrates the water network used in our case study. Darker
+nodes and edges indicate larger diameter pipes. This network has one
+water treatment plant located in the northeastern part of the city:
+Guayama Urbano with a capacity of 6 million gallons/ day (0.26 m3/s).
+The water network is composed of approximately 200 km of pipes with
+859 nodes and 1095 edges. 13 pumping stations are located throughout
+the network. Pipes range in diameter from 2 inches (5.08 cm) to
+24 inches (60.96 cm). Nodal water demands were populated from
+2010 census data [54] and an estimated per-capita residential water
+consumption of 51.46 gallons/ day (2.255 × 10−6m3/s) [55]. Thus, the
+network’s total population of 20,394 [54] generated 738.80 gallons/
+minute (0.0466 m3/s) of drinking water demand.
+Fig. 4(b) shows the power network used in our case study. This
+network has two power plants. The larger one, Complejo Aguirre, is
+located in the western region of Guayama and is connected to the
+power distribution system (light red) by transmission lines (darker red).
+Complejo Aguirre is an oil-fired plant with a capacity of 1540 MW. The
+second power plant, AES, is a coal-fired plant located in the southern
+part of Guayama and has a capacity of 454 MW. The power network
+has 370 km of transmission and distribution power lines with 1344
+nodes and 1373 edges. The power demand at each node was again
+parameterized based on the population of the surrounding area [54].
+We calculated the demand on the network to be about 11.76 MW
+based on a population of 20,394 [54] and an average instantaneous
+residential power use of 576 W per-capita [56].
+We employ synthetically generated hardening and repair costs in
+our case study, informed by the rough order of magnitude of costs
+found in the literature [57–59]. In reality, hardening and repair costs
+are highly variable, depending on the existing condition of infrastruc-
+ture, the geographic region being studied, the specific hardening and
+repair methods selected, and the extent of damage [60]. Furthermore,
+because costs appear only in the objective function of our formulation,
+their absolute values do not impact the optimal solution, and only
+relative cost differences affect decision making. Therefore, one of our
+sensitivity analyses focuses on the repair cost factor 𝑅given in (20) and
+(21).̄
+𝑐𝑠
+𝑖= 𝑅𝑐𝑠
+𝑖
+(20)̄
+𝑐𝑠
+𝑖𝑗= 𝑅𝑐𝑠
+𝑖𝑗
+(21)
+We assume that the hardening cost of power lines is $10/m. This
+cost is of the same order of magnitude as activities like vegetation
+trimming and line inspection in [58]. We parameterize the hardening
+cost of power plants as $1 million. This power plant hardening cost is
+based on the repair costs listed in [57]; we assume that power plant
+hardening costs can be of the same order of magnitude as repairs in
+our base case parametrisation. The hardening cost of water pipes is
+
+Reliability Engineering and System Safety 230 (2023) 108931
+8
+R.L. Moglen et al.
+assumed to be $100/m [59] and water treatment plant hardening is
+assumed to be $1 million. As previously mentioned, our formulation
+permits fractional hardening of both nodes and edges (𝑦𝑠
+𝑖and 𝑧𝑠
+𝑖𝑗are
+continuous decision variables) indicating investment in less hardening
+spatially or in less expensive activities. Because all costs in our model
+are variable costs, the costs listed above are the maximum cost of the
+activity (i.e., if the corresponding decision variable equals 1). Real-
+world hardening is more discrete than is modeled in this paper and
+includes fixed costs rather than exclusively variable costs. Therefore,
+costs for the actions prescribed by our model may be higher when they
+are actually implemented.
+4.2. Hurricane scenario generation
+In this study, we explore the threats that hurricanes pose to CI.
+Hurricanes constitute a significant threat to the region. Since 1851,
+Puerto Rico has been hit by six Category 4 or 5 hurricanes [61].
+In the 170 years of data available in the National Oceanic and At-
+mospheric Administration (NOAA) database [61], 31 hurricanes have
+passed within 100 km of Guayama. Of those hurricanes, 11 were
+Category 1 as they passed our AOI, eight were Category 2, six were
+Category 3, three were Category 4, and three were Category 5. From
+these historical storms, we estimate that the next hurricane’s severity
+will be Category 1 with probability 35.4% (11/31), Category 2 with
+a 25.8% (8/31) chance, Category 3 with probability 19.4% (6/31),
+or a Category 4 and 5 storm each with a probability of 9.7% (3/31).
+While we parameterize the distribution of hurricane severities based on
+historical occurrences, as in [38], the probability of extreme storms is
+increasing, driven by climate change. Decision makers looking to hedge
+against the changes could easily modify the distribution of hurricane
+severities to match a future climate change scenario.
+We assign asset failure probabilities for both infrastructures based
+on the most common failure mode for the specific type of infrastructure
+in a hurricane. For electrical power systems, high winds, specifically
+wind gusts, cause the most damage to infrastructure. Water system
+infrastructure is most vulnerable to flooding [62], which in the coastal
+city of Guayama is largely caused by storm surge.
+In power infras-
+tructure, winds bring down above-ground support structures for power
+lines and falling branches or trees can knock down the power lines
+themselves. Hurricane severity is defined on the Saffir–Simpson scale
+by the hurricane’s sustained wind speed. Category 1 storms produce
+speeds 74–95 mph (119–153 km/h), Category 2 storms produce speeds
+96–110 mph (154–177 km/h), Category 3 storms are ‘‘devastating’’
+with speeds 111–129 mph (178–208 km/h), and Category 4 (speeds
+130–156 mph (209–251 km/h)) and Category 5 (speeds greater than
+157 mph (252 km/h)) are ‘‘catastrophic’’ [61]. For a given hurricane
+category, we assume that the wind gust speed (𝑊𝑠) is approximately
+25% higher than the sustained wind speed [60]. [38] defines the failure
+probability (Pr(failure)) of a transmission pole as (22) with 230 m
+between poles and the probability of distribution pole failure as (23)
+with an average 42 m between support poles. For both equations, 𝑊𝑠
+is assumed to be in mph. Eqs. (22) and (23) are visualized in Fig. 5.
+Pr(transmission pole failure) = min{(2𝐸−7)𝑒𝑥𝑝(0.0834𝑊𝑠), 1}
+(22)
+Pr(distribution pole failure) = min{0.0001𝑒𝑥𝑝(0.0421𝑊𝑠), 1}
+(23)
+These values were calibrated in [60] for Harris County, Texas
+which experiences a similar frequency of hurricanes as Puerto Rico
+and is also located in the United States. Therefore, we use the same
+parametrisation in our implementation. By dividing the length of each
+link in the power network by the distance between support poles, we
+obtain the number of support poles (𝑁) for that link. We assume that
+the failure of each support pole is independent, and that the whole link
+will fail if any of the support poles along its length fail. We assume
+no spatial correlation between nearby power lines, instead generating
+the realization of each link failure as a Bernoulli random variable (RV)
+Fig. 5. Support pole failure probabilities.
+with a failure probability calculated using (24). This procedure results
+in a 91.4% power line failure rate with a Category 5 hurricane in our
+case study. This value is similar to the 80% power system failure rate
+observed in the wake of Irma and Maria [3].
+Pr(link failure) = 1 −(1 −Pr(support pole failure))𝑁
+(24)
+Water infrastructure is naturally more protected from hurricanes
+than power infrastructure, because it is typically below ground, pro-
+tected from wind and falling trees. Its primary direct vulnerability is
+from flooding [62]. Indirect vulnerabilities due to CI interdependencies
+are also captured by our model, such as loss of power at pump stations
+for water treatment. As a coastal city, Guayama’s primary flooding risk
+comes from storm surge. Fig. 6 shows the Category 1 and Category 5
+storm surge zones, a NOAA data product generated using their Sea,
+Lake, and Overland Surges from Hurricanes (SLOSH) model [63]. By in-
+tersecting the water distribution network with these storm surge maps,
+we determine the inundation depths under Category 1 to Category 5
+hurricane scenarios along all water pipes. As seen in Fig. 6(b), even in
+the most severe hurricane scenario, most of the infrastructure is outside
+the storm surge zone. Still, inundation depths up to 11 ft are possible
+in the AOI. We assume an inundation depth of 0.5 m or greater causes
+damage to the water infrastructure [62], and assume deterministic
+failure if flood depths exceed this threshold. No critical assets such as
+water treatment plants, pumps, or power stations fall in any storm surge
+zones in our case study’s AOI.
+Algorithm 1 details the scenario generation process. First, the user
+determines the number of scenarios desired. In our implementation,
+we generate |𝛺| = 50 scenarios to determine the system planner’s
+optimal hardening decisions. Then, the storm severity for each scenario
+is generated. Next, for the power network, link failure probabilities
+are calculated using (22), (23), wind speeds for the scenario’s storm
+severity, and the length of the link. Then, power link failure realizations
+are generated Bernoulli RVs. Pipe outages are determined determin-
+istically from the generated storm severity and the data presented in
+Fig. 6. Supply node failures in both networks are generated as Bernoulli
+RVs independent of storm severity. If the required number of scenarios
+has not been reached, this process is repeated for the next scenario.
+Otherwise, the sets of link and node failure realizations are output for
+each scenario, along with the occurrence probability of that scenario.
+Algorithm 1 uses stratified sampling, a variance reduction technique.
+With Algorithm 1, we first divide the population of possible failure
+realizations into strata by hurricane severity, then sample asset failures
+for each category of hurricane. Similar works have employed other vari-
+ance reduction techniques such as Latin Hypercube sampling [36,64]
+to ensure that the sampling covers a representative set of scenarios.
+
+Reliability Engineering and System Safety 230 (2023) 108931
+9
+R.L. Moglen et al.
+Fig. 6. Storm surge zone (gray) in the AOI. The power infrastructure is shown in red, the water infrastructure in blue, and the AOI in green.
+Algorithm 1 Scenario Generation
+1: Input: number of scenarios |𝛺|
+2: For scenario 𝜔in |𝛺|:
+3:
+Generate hurricane category (discrete RV) with occurrence
+probability from historical hurricane data
+4:
+Define 𝑊𝑠as the median wind gust speed for the simulated
+hurricane category
+5:
+Calculate power link failure probabilities using (22)–(24)
+6:
+Generate power line (𝜉𝑃
+𝑖𝑗𝜔) and power supply node (𝜓𝑃
+𝑖𝜔) outages
+(Bernoulli RV)
+7:
+Generate water pipe outages based on hurricane category and
+storm surge (𝜉𝑃
+𝑖𝑗𝜔)
+8:
+Generate water supply node outage (𝜓𝑃
+𝑖𝜔) realizations (Bernoulli
+RV)
+9: Return: Post-disaster working capacity realizations 𝜓𝑠
+𝑖𝜔, 𝜉𝑠
+𝑖𝑗𝜔
+5. Results
+We demonstrate our optimal hardening decision-making framework
+by implementing it on the Guayama power and water networks. The
+model defined by (1)–(19) was used to determine the optimal harden-
+ing decisions across 50 disaster scenarios. We implemented the model
+in Pyomo [65,66] and solved it using the Gurobi solver [67]. The
+original formulation selects hardening decisions based on direct con-
+sequences of the first stage decisions. The original formulation takes
+approximately 15 min to solve with the base case parametrisation on
+a Windows 10 laptop with 16 GB of RAM and an Intel(R) Core(TM)
+i7-8550U CPU @ 1.80 GHz processor. We then assessed the quality
+of the optimal hardening decisions using 1000 out-of-sample scenarios
+with the first stage hardening decisions (𝑦𝑠
+𝑖and 𝑧𝑠
+𝑖𝑗) fixed. For the
+out-of-sample experiments, we determined the decisions’ performance
+on constraints defined by Eqs. (4)–(19) and the objective function
+defined by Eq. (25). With the first stage decisions fixed, the problem
+decomposes into separate optimization problems for the second stage
+decisions in each scenario. Thus, for each scenario, we computed the
+aggregate service loss using Eq. (25):
+min
+∑
+𝜔∈𝛺
+𝑝𝜔
+[
+𝛽
+∑
+𝑖∈𝑊
+𝑢𝑊
+𝑖𝜔
+∑
+𝑗∈𝑊𝑑𝑊
+𝑗
++ (1 −𝛽)
+∑
+𝑖∈𝑃
+𝑢𝑃
+𝑖𝜔
+∑
+𝑗∈𝑃𝑑𝑃
+𝑗
+]
+(25)
+The original service level requirement, 𝑈, may not be met in all out-
+of-sample hurricane scenarios when the first stage decisions (𝑦𝑠
+𝑖and 𝑧𝑠
+𝑖𝑗)
+are fixed, requiring the reformulation for the out-of-sample assessment.
+We use 𝛽to represent the prioritization applied to the water network,
+and (1 −𝛽) to capture the weight applied to the power network.
+5.1. Base case
+Parametrisation consistently presents challenges when building op-
+timization models. For our most uncertain parameters, specifically the
+service level threshold, 𝑈, the repair cost factor, 𝑅, and the weighting
+between power and water demands, 𝛽, we perform sensitivity analyses
+exploring different values and their impacts on the optimal solution.
+For the base case, we first select a base value for each of these
+parameters, and explore the results for this case in more depth. For
+the base case, we assumed a service level requirement of 𝑈= 20%,
+a water weighting of 𝛽= 50%, and a repair cost factor of 𝑅= 1.2.
+In reality, decision makers would set their own values for 𝑈and 𝛽,
+and 𝑅would be determined from actual costs. Our base values were
+selected to be approximately average across the parameter’s range of
+possible values. With these base case assumptions, the optimal harden-
+ing decisions are shown in Fig. 7. Lighter links (blue for water, red
+for power) are unhardened, while darker links are chosen for some
+level of hardening. At optimality, all supply nodes are selected for
+hardening. These decisions cost $1.81 million for hardening and an
+expected $0.826 million for repairs. $1.83 million is spent on the water
+network for both hardening and repairs, while $0.807 million is spent
+on the power network. One supply node in each network is selected for
+hardening, as are 11 water pipes and 738 power lines. Because partial
+hardening is permitted, some assets are not hardened to their maximum
+capacity. We find that out of the 851 assets that are recommended
+for hardening, only 12 are hardened more than 90%. By contrast, 822
+assets are recommended for a small amount (less than 20% hardening)
+of hardening. Very few assets receive a middling amount (between
+20% and 90%) of hardening. In practice, this provides two useful
+pieces of information to decision makers. First, there are a few assets
+that decision makers should be certain to harden, and to harden them
+completely. For decision makers with little time to spend on a diffuse
+amount of hardening throughout the networks, this indicates which
+assets they should focus on. Second, there are many assets for which a
+small amount of hardening is optimal. For these assets, decision makers
+could consider more modest hardening activities, like inspections and
+tree-trimming for above-ground infrastructure. Overall, our assumption
+of linear hardening decisions yields results that suggest the degree of
+hardening decision makers should consider for all assets throughout the
+
+Reliability Engineering and System Safety 230 (2023) 108931
+10
+R.L. Moglen et al.
+Fig. 7. Optimal power hardening decisions (dark red) and water hardening decisions
+(dark blue).
+network. These results can help decision makers prioritize which assets
+to focus on for their hardening efforts.
+For the base case, we find an Expected Value of Perfect Information
+(EVPI) of 14.6%, meaning even if the utility knew exactly which assets
+were going to fail in the next hurricane (i.e., had perfect information)
+and could harden accordingly, they would expect to save only 14.6%
+on hardening and repairs over the optimal hedging solution generated
+by the stochastic program. The EVPI is an upper bound on how much
+the utility would pay for information about the next disaster and its
+impacts. For example, utilities could more accurately estimate asset
+failure probabilities by inspecting assets for degradation or by studying
+historical asset failures. Practically however, because any information
+that the utility would gather would only marginally reduce uncertainty
+and because these activities would be relatively expensive (asset in-
+spection in particular is challenging for underground infrastructure),
+investing in improved ability to predict disaster damages has limited
+value from a cost perspective.
+The hardening decisions illustrated in Fig. 7 include a path from one
+of the power plants to the water treatment plant where all power lines
+are hardened. This helps ensure that power can be supplied to the water
+treatment plant, which is necessary for water supply and a prerequisite
+for operation of the water network. It also shows hardening of some
+of the longer links in the transmission infrastructure. Because longer
+links have a higher probability of failure, the preferential hardening of
+longer links follows intuition. Finally, Fig. 7 shows more hardening in
+the power network than the water network, both because it is more
+vulnerable to hurricanes, and because power link hardening is less
+expensive because the assets (power lines) are above-ground.
+Fixing the hardening decisions in Fig. 7, we then simulated this
+hardening plan’s performance on 1000 new hurricane scenarios, again
+using Algorithm 1. We determine the performance of the hardening de-
+cisions using the optimization problem defined by constraints (4)–(19)
+and the objective function (25) for each of the 1000 newly generated
+hurricane scenarios. The average aggregate service loss across these
+1000 out-of-sample hurricanes is 1.03%, with a 95% confidence inter-
+val of [0.96%, 1.10%] and a maximum value of 5.93%. The narrow 95%
+confidence interval indicates that the 1000 out-of-sample scenarios are
+sufficiently many, so we continue to use 1000 out-of-sample scenarios
+throughout the remaining analyses. This maximum aggregate service
+loss is much lower than the threshold required by the original harden-
+ing problem, 𝑈= 20%, suggesting that the service level requirements
+that infrastructure system managers aim to achieve can reliably be
+satisfied despite uncertainty in potential hurricane realizations for the
+selected parametrisation. Fig. 8 shows the service level achieved for
+Fig. 8. Performance of the base case and expected value optimal hardening decisions
+on 1000 out-of-sample hurricane scenarios, for each category of hurricane.
+different category hurricanes, both for the base case parametrisation
+and the expected value case. The expected value case sets each asset’s
+failure realization (𝜓𝑠
+𝑖𝜔and 𝜉𝑠
+𝑖𝑗𝜔) deterministically at their respective
+probabilities of failure and determines the optimal hardening decisions
+using Eqs. (1)–(19). The expected value case is a standard point of
+comparison in stochastic optimization. Fig. 8 shows that more demand
+is met for less severe hurricanes in the mean base case and mean
+expected value case, as would be expected. This trend does not hold
+for the maximum value of the base case and expected value case,
+likely because the maximum value is significantly more sensitive to the
+specific 1000 out-of-sample scenarios generated. In Fig. 8, the mean
+base case hardening performs similarly to the mean expected value
+case for less severe hurricanes, and outperforms the mean expected
+value case for the more severe hurricanes. The maximum base case
+also outperforms the maximum expected value case for all hurricane
+severities. This difference in performance helps validate the utility
+of our framework in the highly-uncertain disaster planning context;
+the expected value case does not sufficiently capture the range of
+potential disaster realizations, leaving the system more vulnerable to
+more extreme weather events and the potential for worse performance.
+We also compared the performance of our framework’s hardening
+decisions against the case where no hardening is permitted. We found
+that without mitigation, repair costs were expected to be $1.17 million.
+This value is less than the total cost ($2.636 million) of hardening
+and expected recovery with optimal hardening decisions. However, no
+mitigation results in significantly higher expected unmet demand, with
+values as high as 35.5% and an expected unmet demand of 7.40%.
+Thus, without mitigation the expected unmet demand is higher than
+the maximum value experienced with mitigation (5.93%). The trade-
+off between mitigation and recovery is explored in further detail in
+Section 5.3.
+5.2. Service threshold
+The selection of the service level requirement 𝑈is a challenge for
+any systems planner. If they select a service level that is too low, then
+they are exposing their customers to the brunt of the disaster impacts,
+forcing them to subsist without fundamental services while repairs are
+made in the wake of a disaster. If they select a service level that is
+too high, then more money will be spent on hardening projects than
+is necessary. In this sensitivity analysis, we explore the impact of the
+service level requirement 𝑈on the optimal hardening decisions while
+keeping the water prioritization as 𝛽= 50% and the repair cost factor
+as 𝑅= 1.2, as in the base case’s parametrisation.
+Fig. 9 shows the simulation results for the sensitivity analysis on
+service level requirement 𝑈. The results show that as the original
+service level requirement is relaxed, the aggregate service loss tends to
+
+Reliability Engineering and System Safety 230 (2023) 108931
+11
+R.L. Moglen et al.
+Fig. 9. Sensitivity analysis for the service level requirement 𝑈.
+increase for both the maximum and mean values. This result indicates
+that the service level requirement 𝑈performs as it should, helping
+induce higher levels of reliability when dictated by the decision maker.
+Fig. 9 also shows that for less stringent service level requirements (𝑈≥
+15%) the maximum simulated service loss is lower than the original
+service level requirement 𝑈. However, for 𝑈≥15%, the maximum
+aggregate service loss can exceed the service level requirement 𝑈,
+though the mean value did meet the requirement for all tested parame-
+terizations. This indicates that the performance of hardening decisions
+is relatively robust to the service level requirement set by the decision
+maker for less stringent service level requirements. While the maximum
+service loss may exceed the original service level requirement 𝑈, the
+mean service loss is always bounded by the original service level
+requirement. Finally, plateauing behavior is exhibited for the mean
+aggregate service loss for 𝑈≥15%. Our original formulation requires
+that the service level requirement 𝑈be met in every scenario, making
+investment highly sensitive to the worst-case scenario. The plateauing
+behavior indicates that the service level constraints (2) may no longer
+be as binding; this reasoning is confirmed by the fact that the out-of-
+sample maximum aggregate service loss is less than the service level
+requirement 𝑈for all parameterizations.
+5.3. Repair costs
+Because synthetic values were used to partially parameterize the
+hardening and repair costs in our model, we perform a sensitivity
+analysis to determine the potential impacts of our assumptions. We
+vary the repair cost parameter, 𝑅, which is defined in (20) and (21)
+as the multiplicative coefficient converting hardening costs to repair
+costs. A low 𝑅value indicates that hardening costs are higher than
+repair costs, and a high 𝑅value indicates repair costs are higher than
+hardening costs. Hardening and repair costs are equal when 𝑅= 1. In
+this experiment, we explore a single value of 𝑅for conversion between
+hardening and repair costs for all assets. In the literature, costs are
+highly dependent on location, type of hardening, degree of damage,
+and other factors [60]. Some hardening activities such as power line
+inspections and vegetation management are inexpensive compared to
+repair costs, while others like water line upgrades and power line
+undergrounding may be more expensive. Therefore, we test different
+values of 𝑅ranging over four orders of magnitude.
+The impacts of repair cost factor 𝑅are explored in Fig. 10. On the
+right axis, repair costs increase dramatically as the repair cost factor,
+𝑅, increases. Intuitively, it makes sense that as repair costs increase,
+more money is expected to be spent on repairs. Hardening costs also
+increase with 𝑅, as higher repair costs encourage more hardening
+investment to avoid high repair costs. Notably, aggregate service loss
+does not show a clear trend as 𝑅is perturbed; both high and low
+Fig. 10. Sensitivity analysis for the repair cost factor 𝑅.
+Fig. 11. Sensitivity analysis for the water prioritization parameter 𝛽. 𝛽= 0% indicates
+100% power prioritization and 𝛽= 100% indicates 100% water prioritization.
+values of 𝑅produce similar aggregate service loss. This suggests that
+the additional hardening, in this case driven by higher repair costs, does
+not necessarily translate to better service.
+5.4. Power-water prioritization
+Our formulation combines water and power decision-making into
+a single optimization framework. However, when assessing hardening
+performance through aggregate service loss (defined in Eq. (25)), deci-
+sion makers have to determine the weighting of unmet water demand
+relative to unmet power demand. While both power and water unmet
+demands are normalized by total demand in their respective networks,
+it is possible that the value of lost service is higher for one infrastructure
+type than the other. For example, customers may have been able to
+store water in preparation for a disaster, so power outages could present
+a more immediate concern. We therefore explore the impacts of the
+prioritization of water service, 𝛽, on optimal hardening decisions and
+the resulting simulated achievable service levels and costs. For this
+experiment, we hold constant the base case parameter assumptions for
+the service level requirement (𝑈= 20%) and the repair cost factor
+(𝑅= 1.2).
+Fig. 11 shows the trade-off between power and water service losses
+depending on the value of the water prioritization parameter 𝛽. 𝛽=
+0% indicates 100% power prioritization and 0% water prioritization
+while 𝛽= 100% indicates 100% water prioritization and 0% power
+prioritization. For low values of 𝛽, service loss for water is much higher.
+Conversely, for high values of 𝛽, corresponding to high water service
+priority, service loss for power is high, while service loss for water is
+low. Fig. 11 reveals a region (10% ≤𝛽≤50%) over which the solution is
+fairly insensitive to the power-water prioritization. For all values of 𝛽,
+
+Reliability Engineering and System Safety 230 (2023) 108931
+12
+R.L. Moglen et al.
+the aggregate service loss (black in Fig. 11) remains relatively constant.
+Service loss for power and water are not symmetric about 𝛽= 50%,
+producing lower service loss in the water network even for 𝛽≤50%.
+This indicates that the power side may be more difficult to harden, both
+because the power network is longer (370 km as compared to the water
+network’s 200 km) and because it is more vulnerable to hurricanes.
+6. Conclusions
+In this study, we explore the energy-water nexus in a disaster
+context. Natural disasters often exacerbate interdependencies between
+infrastructure systems, resulting in cascading failures. Natural disasters
+are becoming more frequent and severe, a trend driven by climate
+change. Infrastructure system managers aim to mitigate these effects
+by hardening CI to better withstand disasters, helping preserve service
+levels. The criticality of power and water to human life makes this not
+only a financial decision, but also an existential imperative. However,
+the uncertainty inherent in natural disasters poses a challenge to dis-
+aster planning. In this paper, we therefore develop a decision-making
+framework for infrastructure system managers designed to determine
+optimal hardening decisions across interdependent power and water
+networks. The optimization framework is a two-stage stochastic pro-
+gram, with infrastructure hardening as the first stage decisions, and
+network operation as the second stage decisions. Thus, guided by our
+model, the infrastructure system manager can hedge their hardening
+decisions with respect to a suite of potential natural disaster scenarios.
+We implement the optimal decision-making framework for a case
+study focusing on the city of Guayama in Puerto Rico. Puerto Rico is
+highly vulnerable to hurricanes; the two Category 5 hurricanes, Irma
+and Maria, that struck the island in 2017 devastated infrastructure for
+months, leaving thousands without power and water. In our case study,
+we demonstrate that our optimal decision-making framework can be
+used effectively to make real-world hardening decisions. We find the
+following:
+1. The decisions prescribed by our model favor hardening the
+power network; in the base case, all power lines connecting one
+of the power plants to the water treatment facility are hardened,
+helping to ensure that power is delivered to the origin of the
+water supply. The emphasis on hardening the power network
+over the water network is driven in large part by the power
+network’s greater vulnerability to hurricanes; the entirety of the
+water network is buried, offering it some natural protection.
+The smaller scale of the water network combined with the
+one-way dependency of water on power also help explain this
+phenomenon.
+2. We find an EVPI of 14.6% in the base case parametrisation.
+Practically, utilities would only be able to marginally reduce
+their uncertainty about exactly which assets are likely to fail
+in a disaster through activities like line and pipe inspections.
+Therefore, the EVPI of 14.6%, an upper bound on cost savings
+possible from these activities, suggests that data collection to
+reduce asset survival uncertainty would not hold much value to
+the decision maker from a system resilience perspective.
+3. In the base parametrisation, we find that hedging with respect to
+the full set of possible disaster scenarios produces less variable
+aggregate service loss than planning only for the average hur-
+ricane scenario. We also find that this same hedging produces
+hardening decisions that perform better in the case of more
+severe hurricanes than planning only for the average hurri-
+cane scenario. Overall, these results show the necessity of the
+advanced treatment of uncertainty present in our formulation.
+4. A tighter service level requirement in the planning stage im-
+proves the system’s ability to provide service after a disaster.
+Additionally, hardening decisions are generally able to meet the
+service level requirement in out-of-sample assessments.
+5. Significantly higher and significantly lower repair costs than
+hardening costs may lead to similar levels of aggregate ser-
+vice loss. Because higher repair costs encourage more harden-
+ing investment, this indicates that more hardening does not
+necessarily translate to reduced service loss.
+6. The relative prioritization of water versus power service im-
+pacts the hardening decisions. While this conclusion is hardly
+unexpected, our model does reveal a fairly wide range over
+which the decisions are relatively insensitive to water versus
+power service prioritization. In general, our framework is able to
+demonstrate to decision makers the trade-offs between meeting
+service in the water network and meeting service in the power
+network, allowing them to select a prioritization that best suits
+their needs.
+The findings enumerated above should be considered in tandem
+with the limitations of our formulation. Our model excludes some
+features that exist in reality; addressing these limitations suggests direc-
+tions for future work. First, to ensure the tractability of the numerical
+study, the model defines hardening decisions as continuous. The most
+realistic representation would be an IP formulation with both inte-
+ger and continuous decision variables describing specific hardening
+activities. Future work could relax our assumption of linearity, per-
+haps by identifying a subset of candidate links for hardening, thereby
+preserving tractability while also allowing discrete decision variables.
+A second limitation is the lack of energy balances in the power and
+water network modeling. We model both systems as generic commodi-
+ties, ignoring pipe friction losses and reactive power. This could be
+of critical importance for a system under high stress during a disas-
+ter (e.g. balancing frequencies becomes challenging for a power grid
+system operating under disaster). Future research could address this
+limitation by modeling energy balances in addition to mass balances in
+the model. Finally, we aggregate time to a steady-state representation
+of post-disaster operations. Disaster resilience typically includes both a
+measurement of magnitude of service loss, which we do include, and an
+assessment of time spent without service, which our steady-state model
+lacks. Inclusion of multiple time periods in the model will significantly
+increase the computational intensity of the model, potentially requiring
+other simplifications to the model and making this extension a focus for
+future work.
+CRediT authorship contribution statement
+Rachel L. Moglen: Writing – review & editing, Writing – original
+draft, Visualization, Validation, Supervision, Project administration,
+Methodology, Investigation, Formal analysis, Data curation, Conceptu-
+alization. Julius Barth: Writing – review & editing, Methodology, In-
+vestigation, Formal analysis, Conceptualization. Shagun Gupta: Writ-
+ing – review & editing, Methodology, Investigation, Formal analysis,
+Conceptualization. Eiji Kawai: Writing – review & editing, Investi-
+gation, Data curation, Conceptualization. Katherine Klise: Writing
+– review & editing, Supervision, Resources, Project administration,
+Funding acquisition, Data curation, Conceptualization. Benjamin D.
+Leibowicz: Writing – review & editing, Supervision, Resources, Project
+administration, Funding acquisition, Conceptualization.
+Declaration of competing interest
+The authors declare that they have no known competing finan-
+cial interests or personal relationships that could have appeared to
+influence the work reported in this paper.
+Data availability
+Data will be made available on request.
+
+Reliability Engineering and System Safety 230 (2023) 108931
+13
+R.L. Moglen et al.
+Acknowledgments
+Sandia National Laboratories is a multimission laboratory managed
+and operated by National Technology and Engineering Solutions of
+Sandia, LLC., a wholly owned subsidiary of Honeywell International,
+Inc., for the U.S. Department of Energy’s National Nuclear Security
+Administration under contract DE-NA0003525. This paper describes
+objective technical results and analysis. Any subjective views or opin-
+ions that might be expressed in the paper do not necessarily represent
+the views of the U.S. Department of Energy or the United States Govern-
+ment. This work was supported by the Department of Energy’s Office
+of Electricity and the Federal Emergency Management Agency (FEMA).
+This research was supported by the National Science Foundation of
+the U.S. through Award #1828974 (NRT-INFEWS: Graduate Student
+Education: Reducing Energy Barriers For Novel Water Supply Use in
+Sustainable Agriculture) granted to The University of Texas at Austin.
+References
+[1] Ouyang Min. Review on modeling and simulation of interdependent critical
+infrastructure systems. Reliab Eng Syst Saf 2014;121:43–60.
+[2] Foundations Critical. Protecting America’s infrastructures: The report of the
+President’s commission on critical infrastructure protection. 1997, Washington,
+DC: The President’s Commission on Critical Infrastructure Protection.
+[3] Aros-Vera Felipe, Gillian Shayne, Rehmar Austin, Rehmar Landon. Increasing
+the resilience of critical infrastructure networks through the strategic location of
+microgrids: A case study of Hurricane Maria in Puerto Rico. Int J Disaster Risk
+Reduct 2021;55:102055.
+[4] Busby Joshua W, Baker Kyri, Bazilian Morgan D, Gilbert Alex Q, Grubert Emily,
+Rai Varun, et al. Cascading risks: Understanding the 2021 winter blackout in
+Texas. Energy Res Soc Sci 2021;77:102106.
+[5] Campbell Richard J, Lowry Sean. Weather-related power outages and electric
+system resiliency. 2012, Congressional Research Service, Library of Congress
+Washington, DC.
+[6] Rus Katarina, Kilar Vojko, Koren David. Resilience assessment of complex urban
+systems to natural disasters: A new literature review. Int J Disaster Risk Reduct
+2018;31:311–30.
+[7] Levi
+Patricia
+J,
+Kurland
+Simon
+Davidsson,
+Carbajales-Dale
+Michael,
+Weyant John P, Brandt Adam R, Benson Sally M. Macro-energy systems:
+Toward a new discipline. Joule 2019;3(10):2282–6.
+[8] Panteli Mathaios, Mancarella Pierluigi. Influence of extreme weather and climate
+change on the resilience of power systems: Impacts and possible mitigation
+strategies. Electr Power Syst Res 2015;127:259–70.
+[9] Ghorbani-Renani Nafiseh, González Andrés D, Barker Kash, Morshedlou Nazanin.
+Protection-interdiction-restoration: Tri-level optimization for enhancing interde-
+pendent network resilience. Reliab Eng Syst Saf 2020;199:106907.
+[10] Bynum Michael, Staid Andrea, Arguello Bryan, Castillo Anya, Knueven Bernard,
+Laird Carl D, et al. Proactive operations and investment planning via stochastic
+optimization to enhance power systems’ extreme weather resilience. J Infrastruct
+Syst 2021;27(2):04021004.
+[11] Gomez Camilo, Baker Jack W. An optimization-based decision support framework
+for coupled pre-and post-earthquake infrastructure risk management. Struct Saf
+2019;77:1–9.
+[12] Cavdur Fatih, Kose-Kucuk Merve, Sebatli Asli. Allocation of temporary disaster
+response facilities under demand uncertainty: An earthquake case study. Int J
+Disaster Risk Reduct 2016;19:159–66.
+[13] He Xian, Cha Eun Jeong. Risk-informed decision-making for predisaster risk
+mitigation planning of interdependent infrastructure systems: Case study of
+Jamaica. J Infrastruct Syst 2021;27(4):04021035.
+[14] Pudasaini Binaya, Shahandashti Mohsen. Seismic rehabilitation optimization of
+water pipe networks considering spatial variabilities of demand criticalities and
+seismic ground motion intensities. J Infrastruct Syst 2021;27(4):04021028.
+[15] Klise Katherine A, Bynum Michael, Moriarty Dylan, Murray Regan. A software
+framework for assessing the resilience of drinking water systems to disasters with
+an example earthquake case study. Environ Model Softw 2017;95:420–31.
+[16] Aydin Nazli Yonca, Duzgun H Sebnem, Heinimann Hans Rudolf, Wenzel Friede-
+mann, Gnyawali Kaushal Raj. Framework for improving the resilience and
+recovery of transportation networks under geohazard risks. Int J Disaster Risk
+Reduct 2018;31:832–43.
+[17] Karakoc
+Deniz
+Berfin,
+Almoghathawi
+Yasser,
+Barker
+Kash,
+González
+An-
+drés
+D,
+Mohebbi
+Shima.
+Community
+resilience-driven
+restoration
+model
+for
+interdependent
+infrastructure
+networks.
+Int
+J
+Disaster
+Risk
+Reduct
+2019;38:101228.
+[18] Almoghathawi Yasser, Barker Kash, Albert Laura A. Resilience-driven restora-
+tion model for interdependent infrastructure networks. Reliab Eng Syst Saf
+2019;185:12–23.
+[19] Javanbakht Pirooz, Mohagheghi Salman. A risk-averse security-constrained opti-
+mal power flow for a power grid subject to hurricanes. Electr Power Syst Res
+2014;116:408–18.
+[20] Reilly
+Allison
+C,
+Samuel
+Andrew,
+Guikema
+Seth
+D.
+‘‘Gaming
+the
+sys-
+tem’’: Decision making by interdependent critical infrastructure. Decis Anal
+2015;12(4):155–72.
+[21] Zamzam Ahmed S, Dall’Anese Emiliano, Zhao Changhong, Taylor Josh A,
+Sidiropoulos Nicholas D. Optimal water–power flow-problem: Formulation and
+distributed optimal solution. IEEE Trans Control Netw Syst 2018;6(1):37–47.
+[22] Pereira-Cardenal
+Silvio
+J,
+Mo
+Birger,
+Gjelsvik
+Anders,
+Riegels
+Niels
+D,
+Arnbjerg-Nielsen Karsten, Bauer-Gottwein Peter. Joint optimization of regional
+water-power systems. Adv Water Resour 2016;92:200–7.
+[23] Sharma Neetesh, Nocera Fabrizio, Gardoni Paolo. Classification and mathemat-
+ical modeling of infrastructure interdependencies. Sustain Resil Infrastructure
+2021;6(1–2):4–25.
+[24] Luiijf Eric, Nieuwenhuijs Albert, Klaver Marieke, van Eeten Michel, Cruz Edite.
+Empirical findings on critical infrastructure dependencies in Europe. In: Interna-
+tional workshop on critical information infrastructures security. Springer; 2008,
+p. 302–10.
+[25] Utne IB, Hokstad P, Vatn J. A method for risk modeling of interdependencies in
+critical infrastructures. Reliab Eng Syst Saf 2011;96(6):671–8. http://dx.doi.org/
+10.1016/j.ress.2010.12.006, ESREL 2009 Special Issue.
+[26] Chang Stephanie E, McDaniels Timothy L, Mikawoz Joey, Peterson Krista. Infras-
+tructure failure interdependencies in extreme events: Power outage consequences
+in the 1998 Ice Storm. Nat Hazards 2007;41(2):337–58.
+[27] McDaniels
+Timothy,
+Chang
+Stephanie,
+Peterson
+Krista,
+Mikawoz
+Joey,
+Reed Dorothy. Empirical framework for characterizing infrastructure failure
+interdependencies. J Infrastruct Syst 2007;13(3):175–84.
+[28] Barton Dianne C, Eidson Eric D, Schoenwald David A, Stamber Kevin L,
+Reinert Rhonda K. Aspen-EE: An agent-based model of infrastructure in-
+terdependency. 2000, SAND2000-2925. Albuquerque, NM: Sandia National
+Laboratories.
+[29] North Michael J. Multi-agent social and organizational modeling of electric
+power and natural gas markets. Comput Math Organ Theory 2001;7(4):331–7.
+[30] Dudenhoeffer Donald D, Permann May R, Manic Milos. CIMS: A framework for
+infrastructure interdependency modeling and analysis. In: Proceedings of the
+2006 winter simulation conference. 2006, p. 478–85. http://dx.doi.org/10.1109/
+WSC.2006.323119.
+[31] Leontief Wassily W. Input-output economics. Sci Am 1951;185(4):15–21, Full
+publication date: October 1951.
+[32] Gomez Camilo, González Andrés D, Baroud Hiba, Bedoya-Motta Claudia D. In-
+tegrating operational and organizational aspects in interdependent infrastructure
+network recovery. Risk Anal 2019;39(9):1913–29.
+[33] Duenas-Osorio Leonardo, Craig James I, Goodno Barry J. Seismic response of
+critical interdependent networks. Earthq Eng Struct Dynam 2007;36(2):285–306.
+[34] Lee II Earl E, Mitchell John E, Wallace William A. Restoration of services in
+interdependent infrastructure systems: A network flows approach. IEEE Trans
+Syst Man Cybern C (Appl Rev) 2007;37(6):1303–17.
+[35] Zuloaga Scott, Khatavkar Puneet, Vittal Vijay, Mays Larry W. Interdependent
+electric and water infrastructure modelling, optimisation and control. IET Energy
+Systems Integration 2020;2(1):9–21.
+[36] Alkhaleel Basem A, Liao Haitao, Sullivan Kelly M. Risk and resilience-based
+optimal post-disruption restoration for critical infrastructures under uncertainty.
+European J Oper Res 2022;296(1):174–202.
+[37] Shapiro
+Alexander,
+Dentcheva
+Darinka,
+Ruszczynski
+Andrzej.
+Lectures
+on
+stochastic programming: modeling and theory. SIAM; 2021.
+[38] Ouyang Min, Duenas-Osorio Leonardo. Multi-dimensional hurricane resilience
+assessment of electric power systems. Struct Saf 2014;48:15–24.
+[39] Kapusuzoglu Berkcan, Mahadevan Sankaran. Information fusion and machine
+learning for sensitivity analysis using physics knowledge and experimental data.
+Reliab Eng Syst Saf 2021;214:107712.
+[40] Tabandeh Armin, Sharma Neetesh, Gardoni Paolo. Uncertainty propagation
+in risk and resilience analysis of hierarchical systems. Reliab Eng Syst Saf
+2022;219:108208.
+[41] Peeta Srinivas, Salman F Sibel, Gunnec Dilek, Viswanath Kannan. Pre-disaster
+investment decisions for strengthening a highway network. Comput Oper Res
+2010;37(10):1708–19.
+[42] Liu Chuang, Ouyang Min, Wang Naiyu, Mao Zijun, Xu Xiaolin. A heuristic
+method to identify optimum seismic retrofit strategies for critical infrastructure
+systems. Comput-Aided Civ Infrastruct Eng 2021;36(8):996–1012.
+[43] Romero Natalia, Nozick Linda K, Dobson Ian, Xu Ningxiong, Jones Dean A.
+Seismic retrofit for electric power systems. Earthq Spectra 2015;31(2):1157–76.
+[44] Sarazin Gabriel, Morio Jérôme, Lagnoux Agnès, Balesdent Mathieu, Brevault Loïc.
+Reliability-oriented sensitivity analysis in presence of data-driven epistemic
+uncertainty. Reliab Eng Syst Saf 2021;215:107733.
+[45] Sharma Neetesh, Tabandeh Armin, Gardoni Paolo. Regional resilience analysis: A
+multiscale approach to optimize the resilience of interdependent infrastructure.
+Comput-Aided Civ Infrastruct Eng 2020;35(12):1315–30.
+[46] Kammouh Omar, Gardoni Paolo, Cimellaro Gian Paolo. Probabilistic framework
+to evaluate the resilience of engineering systems using Bayesian and dynamic
+Bayesian networks. Reliab Eng Syst Saf 2020;198:106813.
+
+Reliability Engineering and System Safety 230 (2023) 108931
+14
+R.L. Moglen et al.
+[47] González
+Andrés
+D,
+Dueñas-Osorio
+Leonardo,
+Sánchez-Silva
+Mauricio,
+Medaglia
+Andrés
+L.
+The
+interdependent
+network
+design
+problem
+for
+optimal infrastructure system restoration. Comput-Aided Civ Infrastruct Eng
+2016;31(5):334–50.
+[48] Cavdaroglu Burak, Hammel Erik, Mitchell John E, Sharkey Thomas C, Wal-
+lace William A. Integrating restoration and scheduling decisions for disrupted
+interdependent infrastructure systems. Ann Oper Res 2013;203(1):279–94.
+[49] El-Rayes Khaled, Moselhi Osama. Optimizing resource utilization for repetitive
+construction projects. J Constr Eng Manag 2001;127(1):18–27.
+[50] Zhang Yanlu, Yang Naiding, Lall Upmanu. Modeling and simulation of the
+vulnerability of interdependent power-water infrastructure networks to cascading
+failures. J Syst Sci Syst Eng 2016;25(1):102–18.
+[51] Government of Puerto Rico. Infrastructures geodata download. 2020, https:
+//gis.pr.gov/descargaGeodatos/Infraestructuras/Pages/default.aspx. [Accessed 30
+September 2021].
+[52] Nan Cen, Sansavini Giovanni. A quantitative method for assessing resilience of
+interdependent infrastructures. Reliab Eng Syst Saf 2017;157:35–53.
+[53] Sharma Neetesh, Gardoni Paolo. Mathematical modeling of interdependent
+infrastructure: An object-oriented approach for generalized network-system
+analysis. Reliab Eng Syst Saf 2022;217:108042.
+[54] US Census Bureau. 2010 Census. 2011, US Department of Commerce.
+[55] Molina-Rivera Wanda L, Gómez-Gómez Fernando. Estimated water use in Puerto
+Rico, 2010. Technical report, U.S. Geological Survey; 2014, http://dx.doi.org/
+10.3133/ofr20141117.
+[56] USEnergy Information Administration. Electric power annual 2020. Technical
+report, US Energy Information Administration; 2021.
+[57] Watson Eileen B, Etemadi Amir Hossein. Modeling electrical grid resilience under
+hurricane wind conditions with increased solar and wind power generation. IEEE
+Trans Power Syst 2019;35(2):929–37.
+[58] Public Service Commission of Wisconsin. Underground electric transmission lines.
+Technical report, Public Service Commission of Wisconsin; 2011.
+[59] Eidinger John. Replacing seismically weak and aging water pipes. In: Proceeding
+of the 2nd Japan and US workshop on seismic measures for water supply. 2001.
+[60] Brown RE. Cost-benefit analysis of the deployment of utility infrastructure
+upgrades and storm hardening programs. 2009, Quanta Technology, Raleigh.
+[61] National Oceanic and Atmospheric Administration. Historical hurricane tracks.
+2021.
+[62] Arrighi Chiara, Tarani Fabio, Vicario Enrico, Castelli Fabio. Flood impacts on a
+water distribution network. Nat Hazards Earth Syst Sci 2017;17(12):2109–23.
+[63] Zachry Brian C, Booth William J, Rhome Jamie R, Sharon Tarah M. A national
+view of storm surge risk and inundation. Weather Clim Soc 2015;7(2):109–17.
+[64] Alkhaleel Basem A, Liao Haitao, Sullivan Kelly M. Model and solution method
+for mean-risk cost-based post-disruption restoration of interdependent critical
+infrastructure networks. Comput Oper Res 2022;144:105812.
+[65] Hart William E, Laird Carl D, Watson Jean-Paul, Woodruff David L, Hacke-
+beil Gabriel A, Nicholson Bethany L, et al. Pyomo-optimization modeling in
+Python, vol. 67. Springer; 2017.
+[66] Hart
+William
+E,
+Watson
+Jean-Paul,
+Woodruff
+David
+L.
+Pyomo:
+Model-
+ing and solving mathematical programs in Python. Math Program Comput
+2011;3(3):219–60.
+[67] Gurobi Optimization LLC. Gurobi optimizer reference manual. 2022.

@@ -1,0 +1,2628 @@
+Smart Water-IoT: Harnessing IoT and AI for Eficient Water
+Management
+VLASTIMIL SLANY, Department of Agricultural, Food and Environmental Engineering, Mendel University
+in Brno, Brno, Czech Republic
+EVA KRCALOVA, Department of Agricultural, Food and Environmental Engineering, Mendel University in
+Brno, Brno, Czech Republic
+JIRI BALEJ, Department of Informatics, Mendel University in Brno, Brno, Czech Republic
+MARTIN ZACH, Expert Engineering Department, Mendel University in Brno, Brno, Czech Republic
+TEREZA KUCOVA, Faculty of Electrical Engineering and Computer Science, VSB Technical University of
+Ostrava, Ostrava, Czech Republic
+MICHAL PRAUZEK, Faculty of Electrical Engineering and Computer Science, VSB Technical University of
+Ostrava, Ostrava, Czech Republic
+RADEK MARTINEK, Faculty of Electrical Engineering and Computer Science, VSB Technical University of
+Ostrava, Ostrava, Czech Republic
+The treatment, monitoring and distribution of drinking water is an integral component of critical national infrastructure and
+therefore places continually increasing demands on Water Distribution Networks (WDNs). This domain and its sub-sectors
+face several major problems, namely climate change and drought-induced rises in water consumption from surface and
+underground reservoirs, in addition to the existence of signiicant water leaks during transmission to end users. These
+problems can be addressed by deploying Internet of Things (IoT) systems and smart distribution grids to improve the eiciency
+and safety of water distribution and to easily detect leaks or unauthorised consumption. This type of smart grid is referred
+to as Smart Water-IoT (SW-IoT), a novel, comprehensive water management concept. This review article discusses the
+application of IoT components and artiicial intelligence (AI) in ive basic categories (agriculture, water treatment, security,
+water distribution networks and wastewater). Relevant legislation in the EU, USA, Canada, Australia, China, Japan and India
+is also reviewed. In this context, the mandatory implementation of smart remote data reading solutions into the critical
+infrastructure of EU member states is outlined to highlight the importance of responsible water handling. The article provides
+a detailed analysis of the current research in SW-IoT and deines the main research challenges for future investigation.
+CCS Concepts: · General and reference →Surveys and overviews.
+Authors’ Contact Information: Vlastimil Slany, Department of Agricultural, Food and Environmental Engineering, Mendel University in Brno,
+Brno, Czech Republic; e-mail: vlastimil.slany@mendelu.cz; Eva Krcalova, Department of Agricultural, Food and Environmental Engineering,
+Mendel University in Brno, Brno, Czech Republic; e-mail: eva.krcalova@mendelu.cz; Jiri Balej, Department of Informatics, Mendel University
+in Brno, Brno, Czech Republic; e-mail: jiri.balej@mendelu.cz; Martin Zach, Expert Engineering Department, Mendel University in Brno, Brno,
+Czech Republic; e-mail: martin.zach@mendelu.cz; Tereza Kucova, Faculty of Electrical Engineering and Computer Science, VSB Technical
+University of Ostrava, Ostrava, Moravskoslezsk?, Czech Republic; e-mail: tereza.kucova@vsb.cz; Michal Prauzek, Faculty of Electrical
+Engineering and Computer Science, VSB Technical University of Ostrava, Ostrava, Czech Republic; e-mail: michal.prauzek@vsb.cz; Radek
+Martinek, Faculty of Electrical Engineering and Computer Science, VSB Technical University of Ostrava, Ostrava, Czech Republic; e-mail:
+radek.martinek@vsb.cz.
+Permission to make digital or hard copies of all or part of this work for personal or classroom use is granted without fee provided that
+copies are not made or distributed for proit or commercial advantage and that copies bear this notice and the full citation on the irst page.
+Copyrights for components of this work owned by others than the author(s) must be honored. Abstracting with credit is permitted. To copy
+otherwise, or republish, to post on servers or to redistribute to lists, requires prior speciic permission and/or a fee. Request permissions from
+permissions@acm.org.
+© 2025 Copyright held by the owner/author(s). Publication rights licensed to ACM.
+ACM 1557-7341/2025/6-ART
+https://doi.org/10.1145/3744338
+ACM Comput. Surv.
+
+2
+•
+V. Slany et al.
+Additional Key Words and Phrases: Digital Water Management, Smart Water Management, AMI, IoT, Artiicial Intelligence,
+Smart Water-IoT (SW-IoT), Water 4.0, wastewater, smart agriculture
+1
+Introduction
+Water is essential to life, and for this reason, the treatment, monitoring, and distribution of drinking water
+forms a part of critical national infrastructure which is indispensable to economic and even social development.
+Continuous urbanisation and migration of populations to large agglomerations place enormous demands on Water
+Distribution Networks (WDNs). According to Eurostat [1], approximately 40 % of the EU’s population currently
+live in large cities, while a United Nations report suggests that by 2050, nearly 84 % of the population will live in
+urban environments (cities and towns/suburbs) [2]. Previously published data indicate that the requirements for
+transmitting, storing, and treating potable water will change fundamentally. Eurostat [3] reports that there is no
+current increase in water consumption per resident in the European Union (EU); however, climate change and
+the increasing incidence of drought on the continent have led to greater exploitation of surface and underground
+reservoirs. In this context and in relation to water handling procedures, the problem of leaks and the loss of
+signiicant volumes of water during the supply to the end user must be corrected. The average leakage rates vary
+signiicantly between EU countries and depend largely on the condition of the infrastructure and the type of
+technologies applied. European Federation of National Associations of Water Services (EurEau) [4] states that the
+average volume of water leaked in the EU during transmission amounts to approximately 25 %, the lowest losses
+reported from Germany (approximately 5 %) and the highest in Bulgaria (approx. 60 %). These statistics can be
+juxtaposed with the fact that roughly 95 % of the EU population has access to potable water. These losses arise
+mainly from unauthorized consumption, metering inaccuracies, leakage during transmission or at the distribution
+mains, leakage and overlow at utility storage tanks, and leakage at service connections up to the measurement
+point.
+Already today, the Smart City concept is supporting the large scale deployment of Internet-of-Things (IoT)
+systems into almost all the functional areas and subdomains that will be embedded in or controlled in cities of
+the future. This concept is becoming a standard for building smart distribution networks [5, 6], in which the goal
+is not only to improve the eiciency of resource distribution, but also to increase security and detect possible
+leaks or unauthorized consumption from distribution systems. A shift can be seen from conventional approaches
+towards smart IoT technologies for collecting grid data and Artiicial Intelligence (AI) tools for evaluating and
+detecting possible water leaks. The huge growth of these technologies has enabled a new branch of the IoT to
+emerge, a subdomain that could be referred to as the Smart Water Internet of Things (SW-IoT).
+The most recent and highly cited research articles (not published before 2020) which discuss the same topic as
+in the current article are summarised in Table 1. The table lists details of the authors and main topics discussed
+and compares the studies to the work explored here. Most of the studies focused on concrete applications of the
+IoT or AI in speciic areas. The most common topics covered by these research papers were water treatment,
+detection of leaks in WDNs, and water use in agriculture.
+By contrast, the current review investigates the deployment of IoT systems and use of AI in ive basic water
+management domains (agriculture, water treatment, security, water distribution networks and wastewater). These
+areas of interest are examined in the context of Czech and European Union legislation, including the mandatory
+implementation of smart solutions for remote reading into the critical infrastructures of EU member states,
+namely Directive (EU) 2018/2002 of the European Parliament and European Council [18], which was formulated
+to facilitate more responsible management of natural resources such as water. It is worth highlighting that none
+of the articles listed in the table below dealt with the area of legislation. Table 2 compares the thematic areas
+discussed by individual studies listed in Table 1 to the review presented here. Most of the studies focused on
+one or two speciic areas of water management whereas the review here comprehensively describes the roles of
+ACM Comput. Surv.
+
+Smart Water-IoT: Harnessing IoT and AI for Eficient Water Management
+•
+3
+Table 1: Summary and comparison of water management surveys.
+Author, source
+Study
+Comparison to the current study
+Alshami et al. [7]
+IoT Innovations in Sustainable Water and
+Wastewater Management and Water Qual-
+ity Monitoring: A Comprehensive Review
+of Advancements, Implications, and Future
+Directions
+Focuses exclusively on Water / Wastewater
+Management and Water Quality Monitor-
+ing, primary focused is on IoT
+Abdelmageed et al. [8]
+Criteria-based critical review of artiicial in-
+telligence applications in water-leak man-
+agement
+Investigates only the application of AI in
+detecting, localising and determining the
+extent of pipeline leaks.
+Gupta et al. [9]
+Smart Water Technology for Eicient Wa-
+ter Resource Management: A Review
+Not especially oriented towards the IoT or
+AI. Discusses WDNs, water treatment and
+smart farming.
+Oberascher et al. [10]
+Towards a smart water city: a comprehen-
+sive review of applications, data require-
+ments and communication technologies for
+integrated management
+Examines mainly Urban Water Infrastruc-
+ture (UWI) and the application of IoT com-
+ponents in this infrastructure. Compares
+data transmission technologies applicable
+to UWI.
+Rehman et al. [11]
+A Revisit of Internet of Things Technolo-
+gies for Monitoring and Control Strategies
+in Smart Agriculture
+In-depth analysis of IoT applications in
+smart agriculture, highlighting ways to
+boost productivity through automation
+and data collection
+Farmanullah et al. [12]
+IoT-Based Smart Water Quality Monitor-
+ing: Recent Techniques, Trends and Chal-
+lenges for Domestic Applications
+Examines the role and potential of the IoT
+in water quality monitoring. No discussion
+of AI or multiple sub-sectors.
+Velayudhan et al. [13]
+IoT-Enabled Water Distribution Systems -
+A Comparative Technological Review
+Discusses the IoT and data transmission
+technologies. Covers multiple sub-sectors
+and briely AI.
+Tuptuk et al. [14]
+A Systematic Review of the State of Cyber-
+Security in Water Systems
+Focuses especially on the security of WDNs
+and analyses water treatment. Discussion
+of the IoT and AI.
+Friha et al. [15]
+Internet of Things for the Future of Smart
+Agriculture: A Comprehensive Survey of
+Emerging Technologies
+Explores the use of the IoT in smart agri-
+culture and security.
+Lowe et al. [16]
+A Review on Machine Learning, Artiicial
+Intelligence and Smart Technology in Wa-
+ter Treatment and Monitoring
+Studies the applicability of AI and the
+IoT in monitoring the water quality and
+wastewater.
+Qazi et al. [17]
+IoT-Equipped and AI-Enabled Next Gener-
+ation Smart Agriculture: A Critical Review,
+Current Challenges and Future Trends
+Discusses the use of the IoT and AI in smart
+agriculture.
+ACM Comput. Surv.
+
+4
+•
+V. Slany et al.
+the IoT, AI and other state-of-the-art technologies throughout the entire water management cycle, including
+monitoring and metering.
+The core contributions of the review are as follows:
+• Comprehensive review of all important areas of smart water management ś these include the current areas
+where IoT technologies and AI are applied. This review is based mainly on the most up-to-date knowledge
+and legislation in these areas.
+• Outlines of research challenges ś based on conducted research, the most current topics from the given
+areas were selected and research challenges for each were deined.
+• Describes the concept of SW-IoT - refers to the concept of applying the IoT and AI in relation to the use of
+water resources.
+The structure of the article corresponds to its contributions, containing ten sections: Section 1 introduces the
+topic and reviews related works in water management and the outputs of other researchers; Section 2 discusses a
+new trend in water management focused on digitizing the entire process through IoT elements and AI algorithms;
+Section 3 discusses the related legislation in the European Union, USA, China, Japan, Australia, Canada and India;
+Section 4 outlines the application of the Preferred Reporting Items for Systematic reviews and Meta-Analyses
+(PRISMA) search strategy with clearly deined criteria; Sections 5, 6 and 7 deal with the acqusition, processing and
+description of results based on established criteria; Section 8 discusses cybersecurity risks and incidents in water
+management, highlighting the vulnerability of IoT-connected devices to cyberattacks that threaten operational
+safety and public health; Section 9 outlines current trends and identiies research challenges for the coming years;
+Section 10 summarises and concludes the article. A graphical abstract of the paper is shown in Figure 1.
+Table 2: Comparison of the content discussed in the listed studies.
+Reference
+[7]
+[8]
+[9]
+[10]
+[11]
+[12]
+[13]
+[14]
+[15]
+[16]
+[17]
+This review
+AI
+✓
+✓
+×
+×
+×
+×
+✓
+✓
+×
+✓
+✓
+✓
+IoT
+✓
+×
+×
+✓
+✓
+✓
+✓
+✓
+✓
+✓
+✓
+✓
+Agricutlure
+×
+×
+✓
+×
+✓
+×
+×
+×
+✓
+×
+✓
+✓
+Water treatment
+✓
+×
+✓
+×
+×
+✓
+✓
+✓
+×
+✓
+×
+✓
+Security
+×
+×
+×
+✓
+×
+×
+×
+✓
+✓
+×
+✓
+✓
+WDN
+✓
+✓
+✓
+✓
+×
+×
+✓
+✓
+×
+×
+×
+✓
+Wastewater
+✓
+×
+×
+×
+×
+×
+×
+×
+×
+✓
+×
+✓
+Legislation
+×
+×
+×
+×
+×
+×
+×
+×
+×
+×
+×
+✓
+ACM Comput. Surv.
+
+Smart Water-IoT: Harnessing IoT and AI for Eficient Water Management
+•
+5
+Internet of Things
+Artiﬁcial Intelligence
+Security
+Agriculture
+ Monitoring & 
+metering
+Drinking and 
+Wastewater
+treatment
+Legislation
+Comprehensive review of all 
+major areas
+ 
+Outlining the speciØc research 
+challenges
+ 
+Novel concept description for 
+SW-IoT 
+ 
+Relating the Internet of Things 
+and artiØcial intelligence in 
+relevant segments to the 
+exploitation of water resources
+ 
+Describing the beneØts for each 
+domain
+ 
+ THE MAIN ASSETS OF THE ARTICLE:
+Smart Water Internet of Things (SW-IoT)
+Fig. 1: Graphical abstract and depiction of the main contributions.
+2
+IoT-enabled Smart Water Systems with integrated AI: SW-IoT
+The adoption of advanced technologies in water management has become imperative in response to the growing
+global demand for water. This demand is primarily driven by dynamic climatic conditions, population growth,
+urbanisation, and increasing water requirements from the agricultural and industrial sectors.
+IoT-enabled Smart Water Systems, integrated with artiicial intelligence (referred to in this study as SW-IoT),
+ofer a viable solution to address these escalating consumption pressures by enabling more sustainable and
+eicient management of this critical resource, thereby reducing unnecessary water waste. Such innovations are
+vital for progressing toward sustainable water resource management.
+The application of IoT technology is especially beneicial for monitoring essential parameters within water
+supply networks, including water quality, consumption levels, and network pressure. Leveraging this data,
+predictive maintenance can be implemented to mitigate water losses resulting from system malfunctions, and
+responses to emergency situations can be optimized. [7, 19, 20]
+AI in water management facilitates advanced real-time data analysis and enables the prediction of potential
+issues within water supply networks. Machine Learning (ML) algorithms, trained on historical datasets, enhance
+the accuracy of these predictive capabilities, allowing for the implementation of preventive measures to avert
+potential problems and system failures. Additionally, these algorithms provide robust predictions of water
+consumption patterns, which subsequently supports the optimization of processes across the entire water supply
+network. [7, 21]
+The deployment of IoT and AI technologies in water management introduces several challenges. Among the
+most prominent are the high initial capital costs, security vulnerabilities, and the need to ensure interoperability
+between devices produced by various manufacturers [19, 20]. Reliable data transmission presents another critical
+challenge, as current connectivity solutionsÐsuch as Low Power Wide Area Network (LPWAN) technologies (e.g.,
+SigFox, LoRaWAN, and NB-IoT) or LTE networks, which are constrained by relatively high power consumption,
+which limits their applicability to locations without consistent access to the power grid [22, 23]. In addition,
+deploying these technologies in extreme environments, such as underground water utilities, poses additional
+complexities. In such conditions, it is essential to address not only adverse microclimatic factors but also the
+challenge of maintaining suicient signal strength [24].
+ACM Comput. Surv.
+
+6
+•
+V. Slany et al.
+The articles included in this review are evaluated in terms of the integration of IoT and AI in various aspects of
+water management. Each article is assessed for its use of IoT technologies in conjunction with artiicial intelligence
+methods. For articles that employ AI methods, the speciic methods used are identiied. Articles incorporating
+both IoT and AI can be classiied as fulilling the SW-IoT concept.
+3
+Legislation
+Legislation has a signiicant impact on water management at both national and international levels. Legal
+regulations in this ield focus on water consumption measurement, water management practices, and establish
+requirements for water quality and the protection of water resources. With recent advancements in artiicial
+intelligence, regulations are also emerging for its application across various sectors. For instance, the EU AI
+Act: First Regulation on Artiicial Intelligence [25] includes critical infrastructure among regulated areas, which
+encompasses water infrastructure.
+3.1
+International standards
+Currently, there are two international standards from International Organization of Legal Metrology (OIML) and
+International Organization for Standardization (ISO), that align with the national legislation of most countries.
+Adhering to these standards ensures compliance with the legislative requirements of the majority of nations,
+facilitating export and enabling broad standardization across continents.
+3.1.1
+OIML R49. Like water meters themselves, global approvals for water meters have undergone signiicant
+changes over the past 10 years, primarily aimed at unifying the requirements of independent countries within
+a single certiication process. As a result, OIML R49 has now become the internationally recognized standard
+for measuring cold potable water. The International Recommendations (OIML R) are model regulations that
+establish the metrological characteristics required of certain measuring instruments and specify methods and
+equipment for verifying their compliance. The OIML R49 standard is an international recommendation outlining
+the requirements and testing procedures used to evaluate water meter models.
+The OIML R49 standard has been legally adopted for measuring cold potable water and represents a synthesis
+of BS 5728, ISO 4064, EN 14154, and numerous other standards from around the world, encompassing regulations
+for each water measurement criterion.
+3.1.2
+ISO 4064. is a set of international standards developed by the International Organization for Standardization
+(ISO) that speciies requirements and testing methods for water meters intended for residential, commercial,
+and industrial use. These standards are designed to ensure accurate water consumption measurement, promote
+consistency in meter design and performance, and facilitate interoperability between products from diferent
+manufacturers.
+3.2
+National legislation
+This chapter provides a detailed analysis of various regulatory standards and presents an overview of selected
+national legislation. A summary of these national regulations across selected countries is illustrated in Figure 2.
+Each standard is examined in greater detail in the respective subsections below.
+3.2.1
+European Union. The European Parliament Directive 2009/34/EC and the Measuring Instruments Directive
+(MID) 2014/32/EU harmonize the requirements for type approval, veriication, and metrological control of
+measuring instruments within the EU. If a water meter complies with the applicable standards and regulations,
+it is valid for transactional purposes in all countries recognizing MID, which includes most parts of the world.
+Since its implementation, MID takes precedence over national regulations in EU member states. In subsequent
+years, various countries outside the European Union have also recognized MID, with the primary goal being the
+ACM Comput. Surv.
+
+Smart Water-IoT: Harnessing IoT and AI for Eficient Water Management
+•
+7
+Part 1:
+Metrological 
+and technical 
+requirments
+Part 2:
+Test methods
+Part 3:
+Test report format
+OIML R49
+ISO 4064-2:
+Test methods
+ISO 4064-3:
+Test report format
+ISO 4064
+International Standards
+ISO 4064-1:
+Metrological 
+and technical 
+requirments
+ISO 4064-4:
+Installation 
+requirements
+ISO 4064-5:
+Pattern approval 
+and initial 
+veriØcation test
+National Legislation
+CHINA
+INDIA
+AUSTRALIA
+USA
+CANADA
+EU
+JAPAN
+AWWA C700-20
+•
+AWWA C701-12
+•
+AWWA C702-15
+•
+AWWA C703-19
+•
+AWWA C708-11
+•
+AWWA C712-10
+•
+AWWA C713-19
+•
+AWWA M6
+•
+NIST Handbook 44
+•
+2009/34/EC
+•
+MID
+2014/32/EU
+•
+IS 779:1994
+•
+IS 6784:1984
+•
+IS 2373:1981
+•
+IS 1264:2005
+•
+IS 2372:1981
+•
+IS 2373:1981
+•
+IS 9264:1980
+•
+IS 14697:1999
+•
+IS 13343:1992
+•
+NMI R 49
+•
+The Weights and
+Measures Act
+•
+Regulations
+Governing Type
+Approval of
+Measuring
+Instruments
+•
+Weights and
+Measures
+Regulations 
+•
+Measurement
+Act last
+revision - Act
+No. 69 of
+2014 
+•
+Fig. 2: Visualization of International Standards and National Laws
+harmonization of measurement instrument requirements before distribution and application in the European
+market, as well as the elimination of regulatory diferences at the national level to facilitate international trade.
+3.2.2
+USA. The measurement principles applied in the USA difer signiicantly from those used in most other
+countries, and in practice, they subsequently apply the standards of the American Water Works Association
+(AWWA). These standards complement the OIML standards. An overview of all applicable standards is shown in
+Figure 2.
+National Institute of Standards and Technology (NIST) Handbook 44 is adopted by many state, local, and
+some federal weights and measures authorities to apply to commercial weighing and measuring equipment and
+associated equipment and for use in applications for law enforcement and the collection of statistical information
+by government agencies. Edition (2024) includes amendments made through the Committee on Speciications
+and Tolerances of the National Conference on Weights and Measures (NCWM) with technical guidance from the
+Oice of Weights and Measures (OWM) of NIST and input from weights and measures oicials and industry
+representatives.
+3.2.3
+Australia. implements the National Measurement Institute (NMI) R 49 standard in its legislation, which
+establishes technical and metrological requirements for cold and hot water meters in accordance with Australia’s
+legislative and regulatory requirements. This standard is based on the international standard OIML R 49. The
+corresponding sections of this document are:
+ACM Comput. Surv.
+
+8
+•
+V. Slany et al.
+(1) NMI 49-1: Metrological and technical requirements
+(2) NMI 49-2: Test Methods
+(3) NMI 49-3: Installation requirements
+3.2.4
+Canada. Weights and Measures Regulations (C.R.C., c. 1605) is a Canadian regulatory framework that
+governs the use, accuracy, and calibration of weighing and measuring devices used in commerce. These regulations
+are part of Canada’s Weights and Measures Act, which is designed to ensure that measurements used in trade are
+fair, reliable, and consistent. The key aspects of this legislative framework can be divided as follows:
+(1) Scope of Application
+(2) Approval and Veriication
+(3) Accuracy Requirements
+(4) Inspection and Enforcement
+(5) Marking and Sealing
+(6) Record-Keeping
+(7) Consumer Protection
+3.2.5
+Japan. implements The Measurement Act No. 69 of 2014 which refers to a Japanese law that revises and
+updates the previous Measurement Act, focusing on maintaining the integrity and accuracy of measurements
+used in commerce, industry, science, and public safety in Japan. Key aspects of this law:
+(1) Legal Metrology Framework
+(2) Standards and Units
+(3) Approval and Veriication of Measuring Instru-
+ments
+(4) Calibration and Testing
+(5) Penalties and Enforcement
+(6) Consumer Protection
+(7) International Alignment
+(8) Technological Advancements
+(9) National Metrology Institute
+(10) Public Safety and Environmental Measurements
+3.2.6
+China. implements a national standard under the designation GB/T 778.1-2018 - Meters for Cold Potable
+Water and Hot Water ś Part 1: Metrological Requirements and Technical Requirements, which closely aligns
+with the international standards ISO 4064-1 and OIML R 49. Legislatively, this is enforced under the Metrology
+Law of the People’s Republic of China, which governs type approval. The General Administration of Quality
+Supervision, Inspection, and Quarantine (AQSIQ), along with the National Institute of Metrology (NIM), ensures
+that measuring instruments used in trade undergo type approval testing.
+3.2.7
+India. In India, weights and measures must be approved under § 22 of the Legal Metrology Act (2009).
+Speciications for weights and measures are deined in the Legal Metrology (General) Rules of 2011. Additionally,
+standards developed by the Bureau of Indian Standards (BIS) are applied to each type of water meter to ensure
+measurement accuracy, operational reliability, and consumer protection. The speciic standards used in India for
+each type of water meter are shown in Figure 2.
+4
+Research methodology
+The aim of the present study is to deliver a detailed and systematic review of available scientiic articles on the
+use of AI and IoT elements in the ield of smart water management. Based on the indings, the study also includes
+a forecast for the development of smart water management in the medium to long term.
+To gather relevant results, the PRISMA search strategy was employed [26], applied individually to each selected
+area (Agriculture, Monitoring & Metering for Water Distribution, Drinking and Wastewater Treatment).
+ACM Comput. Surv.
+
+Smart Water-IoT: Harnessing IoT and AI for Eficient Water Management
+•
+9
+4.1
+Search strategy
+The search strategy for academic articles is centered on two primary scientiic publication databases, Web of
+Science (WoS) and Scopus, which ofer comprehensive access to peer-reviewed journals, books, conference
+proceedings, and various forms of academic literature. For the initial identiication of relevant articles, the search
+string (as outlined in Table 3) was applied to investigate:
+(1) Title of article
+(2) Abstract
+(3) Keywords
+4.2
+Inclusion and Exclusion Criteria
+The inclusion criteria for the article were as follows:
+(1) Only articles or review
+(2) Peer-reviewed
+(3) Publication not older than 5 years
+(4) The journal meets the Q1 / Q2 metric according to the IF/SJR for the given year of publication
+(5) Describes the use of IoT or AI (ideally a combination) in smart water management.
+(6) English language
+The exclusion criteria for the article were as follows:
+(1) Share diferent titles but are diferent versions of the same paper
+(2) AI or IoT are not involved at all in full text of the article
+(3) Experiments do not use known baseline methods
+Table 3: Parameters used to search for relevant articles
+Agriculture:
+WoS + SCOPUS
+"Water Management" AND "Agriculture" AND ( "IoT" OR "ai" OR "Internet of
+Things" OR "artiicial intelligence" )
+Water Distribution Net-
+works (WDN):
+SCOPUS
+"water management" OR ( "AMI" AND "water" ) AND ( "measuring technology"
+OR "sensing technology" OR "monitoring technology" OR "measurement sys-
+tem" OR "meter" OR "metering" ) AND ( "IoT" OR "ai" OR "Internet of Things"
+OR "artiicial intelligence" )
+Water Distribution Net-
+works (WDN):
+WoS
+(("water management" OR ( "AMI" AND "water" )) AND ( "measuring technol-
+ogy" OR "sensing technology" OR "monitoring technology" OR "measurement
+system" OR "meter" OR "metering" )) AND ( "IoT" OR "ai" OR "Internet of
+Things" OR "artiicial intelligence" )
+Wastewater:
+WoS + SCOPUS
+("Water Management" AND ( "Wastewater" OR "Waste water" )) AND ( "IoT"
+OR "ai" OR "Internet of Things" OR "artiicial intelligence" )
+Date of publication
+2020 - 2024
+Document type
+Article and Review
+Source type
+Journal
+WoS (IF) / SCOPUS (SJR)
+ranking
+Q1 + Q2
+ACM Comput. Surv.
+
+10
+•
+V. Slany et al.
+5
+Agriculture
+The use of water in agriculture is a key problem in the entire water resources management sector. According to
+[27], the proportion of agricultural water consumption in the EU is almost 30%, with only approximately one-third
+of water returning into circulation. Recirculated water, however, is often polluted and must be treated to allow
+further handling. Reducing consumption in this sector thus constitutes a critical precondition for sustainable
+planting and responsible management of natural resources. This goal currently appears more optimistic, mainly
+because the deployment of IoT systems and AI in agriculture has simpliied water care and economisation.
+The parameters used for searching and processing the results according to the PRISMA strategy are presented
+in Table 3 and illustrated in Figure 3. After review, the relevant results obtained were divided into ive categories,
+each of which is discussed in detail in separate subsections.
+WoS - 103 records
+SCOPUS - 160 records
+Duplicate records removed = 78 records
+Records screened
+n = 185 articles
+Records excluded
+n = 78
+Full texts of articles assessed for eligibility
+n = 107
+Records excluded
+n = 52
+Articles meeting all the criteria for the topic
+n = 55
+Identification
+Screening
+Eligibility
+Included
+Fig. 3: The PRISMA flow diagram used for Agriculture category
+5.1
+Smart Irrigation
+Irrigation is fundamental to agricultural production in numerous countries, particularly in response to rapidly
+changing climatic conditions, where natural rainfall is often insuicient to sustain healthy crop growth. In this
+context, irrigation is vital for stabilizing agricultural output and supporting food self-suiciency across various
+regions.
+In described SW-IoT scheme in agriculture, IoT devices collect data and artiicial intelligence algorithms analyse
+soil moisture and weather data to determine the optimum crop irrigation time, reducing the volumes of water
+uselessly consumed or lost through evaporation and drain outlow. Some research projects [28] have employed
+AI to compute crop water stress, and consequently, appropriate irrigation. This approach has already assisted
+users in saving up to 30% of the normally consumed quantity of water. The impact is not merely one-sided,
+however. The algorithms also lessen the risk of excessive watering, a problem which potentially leads to soil
+ACM Comput. Surv.
+
+Smart Water-IoT: Harnessing IoT and AI for Eficient Water Management
+•
+11
+degradation and poorer soil fertility. The expert community has explored related or identical problems extensively,
+for example [29], [30], and [31].
+Table 4: Results included in the Smart Irrigation category
+Author, source
+Topic
+IoT
+AI
+Abdelmoneim et al.
+[32]
+IoT vs. Weather-Based Irrigation for Crop Productiv-
+ity
+✓
+×
+Al Mashhadany et al.
+[33]
+IoT Sensors for Smart Agriculture.
+✓
+×
+Arafa et al. [34]
+Optimizing IoT Sensor Placement for Smart Irrigation
+✓
+×
+Bamurigire et al. [35]
+IoT-Based Irrigation Control for Rice Farming in
+Rwanda
+✓
+×
+Bhardwaj et al. [36]
+IoT-Enabled Smart Water Management for Irrigation
+✓
+×
+Dolaptsis et al. [37]
+Hybrid LSTM Model for Maize Irrigation Prediction
+×
+ML: LSTM
+Et-taibi et al. [38]
+Cloud-Based IoT solution for Smart Irrigation Systems
+✓
+×
+Maia et al. [39]
+IoT Microservice Platform for Large-Scale Irrigation
+✓
+×
+Kumar et al. [40]
+IoT-Enabled Intelligent Irrigation with Hybrid K-
+Means SVM Classiier
+✓
+SVM,
+K-
+Means
+Lin et al. [41]
+IoT-Driven Optimization for Irrigation and Fertiliza-
+tion
+✓
+×
+Maria
+Manuel
+Vianny et al. [42]
+Hybrid ML Model for Energy and Water Eicient Pre-
+cision Irrigation
+✓
+KNN,
+GBT,
+LSTM
+Mohammed
+et
+al.
+[43]
+IoT-Driven Subsurface Irrigation for Date Palms
+✓
+×
+Preite & Vignali [44]
+ML for Water-Eicient Irrigation Management
+✓
+MLPNN, SVM,
+k-NN
+Roy et al. [45]
+AgriSens: IoT-Based Dynamic Irrigation System for
+Crops
+✓
+×
+Tyagi et al. [46]
+IoT and ML-Driven Automated Irrigation
+✓
+Various ML al-
+gorithms
+Tzerakis et al. [47]
+IoT Monitoring System for Olive Irrigation and Pest
+Control
+✓
+×
+Table 4 shows that the deployment of IoT technologies for data collection currently dominates. Publications
+that incorporate both IoT and AI methods can, according to the described concept, be classiied as SW-IoT in the
+ield of smart irrigation.
+5.2
+Evapotranspiration
+Evapotranspiration can be described as a process that encompasses two key phenomena: evaporation (the loss
+of water from soil surfaces, water bodies, or rain intercepted by vegetation) and transpiration (the release of
+water by vegetation, primarily through plant leaves). This process is fundamental to the natural water cycle and
+ACM Comput. Surv.
+
+12
+•
+V. Slany et al.
+agriculture, as accurately measured and controlled evapotranspiration allows for not only optimized irrigation
+but also enhanced overall water management in agriculture.
+As illustrated in Table 5, recent publications involving IoT and AI technologies focus on the collection and
+analysis of data from various sensors measuring parameters such as temperature, soil moisture, and wind
+speed, thereby enabling accurate prediction of evapotranspiration. Insights generated from these systems allow
+for optimized irrigation practices, which are essential to minimizing environmental impacts and supporting
+sustainable agriculture. Publications that integrate both IoT and AI methods are classiied, according to the
+described framework, as SW-IoT within the domain of evapotranspiration measurement and prediction.
+Table 5: Results included in the Evapotranspiration category
+Author, source
+Topic
+IoT
+AI
+Gul et al. [48]
+ML for Estimating Evapotranspiration in Agriculture
+×
+SVR
+Hou et al. [49]
+Forecasting Evapotranspiration Using VAR in Agri-
+culture
+×
+VAR
+Karahan et al. [50]
+ANN-Based Estimation of Actual Evapotranspiration
+Using RS Data
+×
+ANN
+Küçüktopcu
+et
+al.
+[51]
+Hybrid ARIMA-ML Models for Enhanced Evapotran-
+spiration Forecasting
+×
+ANN, GRNN,
+ANFIS
+Nauman et al. [52]
+IoT and Ensemble LSTM for Accurate ETo Forecasting
+✓
+LSTM
+Raza et al. [53]
+ML Models for Reference Evapotranspiration Estima-
+tion
+×
+RBFNN
+Sarıgöl & Katipoğlu
+[54]
+Hybrid ML Models for Evaporation Prediction in
+Drought-Prone Areas
+×
+GBM,
+EMD,
+REMD, EEMD,
+VMD
+Tausif et al. [55]
+Ensemble Learning for Evapotranspiration Estimation
+×
+Random
+for-
+est, Gradient
+Boost
+Torres et al. [56]
+Hydra: Multilevel Data Fusion for IoT in Smart Agri-
+culture
+✓
+ESD,
+WRKF
+ilter, SVM
+Valipour et al. [57]
+Three Hybrid ML Models for Multi-Step Evapotran-
+spiration Forecasting
+×
+WLSTM, WG-
+MDH, WGA-
+ANFIS
+5.3
+Water management in Agriculture
+The following publications address the most current issues in the ield of comprehensive water management,
+impacting not only the eiciency and availability of water resources but, with a changing climate, increasingly
+emphasize the sustainability and optimization of the entire water management process in agriculture. Among
+these critical issues are, primarily, water scarcity in certain regions, insuicient irrigation eiciency, water
+resource pollution, and the related soil degradation. The publications listed in Table 6 focus on the deployment of
+IoT sensors to optimize water management eiciency. Publications incorporating artiicial intelligence primarily
+explore the development of predictive models aimed at improving the efectiveness of water management in
+agriculture. According to the described framework, studies that integrate both IoT and AI methods are designated
+as SW-IoT for Water Management in Agriculture.
+ACM Comput. Surv.
+
+Smart Water-IoT: Harnessing IoT and AI for Eficient Water Management
+•
+13
+Table 6: Results included in the Water management in Agriculture
+Author, source
+Topic
+IoT
+AI
+Al-Naemi
+&
+Al-
+Otoom [58]
+Smart Sustainable Greenhouse Model Using Renew-
+able Energy and IoT
+✓
+×
+Bouali et al. [59]
+Smart Agriculture System for Sustainable Water and
+Energy Use
+✓
+×
+Cordeiro et al. [60]
+Deep Learning and Fog Computing for Soil Moisture
+Prediction
+✓
+DNN
+Dinar & Quinn [61]
+Real-Time Water Quality Management for Salinity
+Control
+×
+DSS
+Emami et al. [62]
+Predicting Irrigation Demand Using GPR
+×
+GPR, SVM
+Hadipour et al. [63]
+IoT-Based Multi-Intelligent Control System for Water
+Pumps
+✓
+×
+Jain & Choudhary
+[64]
+Machine Learning Framework for Soil-Based Crop
+Yield Prediction
+×
+NB, LG, SVM,
+RF
+Khan et al. [65]
+Smart Sensing DSS for Irrigation in Orange Orchards
+✓
+×
+Mohammed
+Baljon
+[66]
+IoT-AWMS for Enhanced Water Management
+✓
+×
+Muñoz et al. [67]
+IoT-Enabled Predictive Control for WDN in Agricul-
+ture
+✓
+×
+Pincheira et al. [68]
+Energy-Eicient IoT and Blockchain Integration for
+Smart Agriculture
+✓
+×
+Rahman et al. [69]
+IoT Framework for Data-Driven Agriculture in
+Bangladesh
+✓
+×
+Shah et al. [70]
+WORA-Based Decision Support for Water Manage-
+ment
+×
+DSS
+Vandôme et al. [71]
+Low-Cost Wireless Sensors for Eicient Irrigation
+✓
+×
+Zia et al. [72]
+IoT and DSS for Optimized Irrigation in Lemon Farms
+✓
+×
+5.4
+Environmental monitoring in Agriculture
+Table 7 describes environmental monitoring in agriculture, where publications primarily focus on novel approaches
+to soil property mapping and measurement (including soil moisture, salinity, evapotranspiration sensor design,
+pH, and others) through the application of IoT concepts and various AI algorithms for evaluating the data thus
+obtained.
+Table 7: Results included in the Environmental Monitoring in Agriculture
+Author, source
+Topic
+IoT
+AI
+Bashir et al. [73]
+IoT-Assisted Soil Salinity Mapping for Agriculture
+✓
+ML:ANN
+Custódio & Prati [74]
+Predicting Soil Moisture for Eicient Irrigation Using
+Time Series Models
+×
+ML, DL, RF,
+ARIMA
+ACM Comput. Surv.
+
+14
+•
+V. Slany et al.
+Hegazi et al. [75]
+CNN-Based Soil Moisture Prediction Using Sentinel-2
+×
+ML:CNN
+Kulmány et al. [76]
+Calibration of Low-Cost IoT Soil Moisture Sensors for
+Various Soil Textures
+✓
+×
+Lloret et al. [77]
+Low-Cost Wireless Sensor Network for Soil Moisture
+in Precision Agriculture
+✓
+×
+Maia et al. [78]
+Estimating Soil Matric Potential Using IoT and Satel-
+lite Data in Cotton Fields
+×
+DMP, SVR
+5.5
+Reviews
+Table 8 provides an overview of recent review papers in the ield of Smart Water Management in Agriculture.
+These review studies comprehensively cover the areas outlined above, including an assessment of IoT and AI
+technologies applied in irrigation, evapotranspiration, and broader aspects of agricultural water management.
+Table 8: Results included in the Review category
+Author, source
+Topic
+IoT
+AI
+Ashraf Rather et al.
+[79]
+AI-Driven Technological Advancements in Sustain-
+able Aquaculture
+✓
+Overview of
+AI methods
+Carella et al. [80]
+Integrating Proximal and Remote Sensing for Fruit
+Tree Water Management
+✓
+×
+Del-Coco et al. [81]
+Machine Learning-Driven Smart Irrigation: A The-
+matic Survey
+✓
+Current trend
+overview
+Hammouch et al. [82]
+Systematic Review of Smart Irrigation Technologies
+and Methods
+✓
+Overview of
+AI methods
+Hosny et al. [83]
+Advances in IoT-Based Greenhouse Farming: A Com-
+prehensive Survey
+✓
+×
+Lakhiar et al. [84]
+Precision Irrigation Systems for Sustainable Water
+Management
+✓
+×
+Mucchiani et al. [85]
+Automation and AI in Plant Water Status Determina-
+tion
+×
+Overview of
+AI methods
+Yang et al. [86]
+Bibliometric Analysis of Evapotranspiration Research
+Trends
+×
+Overview of
+AI methods
+5.6
+Discussion of Applied AI Algorithms in Agriculture
+AI in agricultural water management is used to optimize irrigation timing, evapotranspiration prediction, water
+resource management and environmental monitoring. Support Vector Machines (SVM) and k-Nearest Neighbors
+(kNN) are used in soil moisture classiication, while Long Short-Term Memory (LSTM) networks support time-
+series forecasting of weather and water needs. For evapotranspiration, models such as Support Vector Regression
+(SVR), Artiicial Neural Network (ANN), and hybrid approaches like AutoRegressive Integrated Moving Average
+(ARIMA) capture complex environmental relationships. DNNs (Deep Neural Networks) are used for soil moisture
+prediction and Decision Support System (DSS) for Real-Time Water Management. AI algorithms are used in
+environmental monitoring for soil salinity mapping (ANN) and for soil moisture prediction with diferent
+algorithms, such as ARIMA, Convolutional Neural Network (CNN), Random Forest (RF) or Support Vector
+Regression (SVR).
+ACM Comput. Surv.
+
+Smart Water-IoT: Harnessing IoT and AI for Eficient Water Management
+•
+15
+6
+Distribution networks,water leakages and smart metering
+The average leakage rate in potable water mains in the EU amounts to an average of 25% of distributed water. These
+statistics can be evaluated against the fact that approximately 95% of the EU population have access to potable
+water [4]. Leakages are predominantly due to failing, damaged or outdated water transmission infrastructure. The
+energy requirements for treating (0.38 kWh/�3) and distributing (0.2 kWh/�3) potable water incurs considerable
+losses of energy which could be used otherwise.
+This section outlines the latest trends in water network monitoring, speciically for detecting leaks, malfunctions,
+and unauthorized water withdrawals through the application of IoT and AI. The parameters utilized for searching
+and processing the results, in alignment with the PRISMA strategy, are detailed in Table 3 and illustrated in
+Figure 4. The relevant results obtained were classiied into three categories following the review, each of which is
+further detailed in separate subsections.
+WoS - 21records
+SCOPUS - 48 records
+Duplicate records removed = 14 records
+Records screened
+n = 55 articles
+Records excluded
+n = 18
+Full texts of articles assessed for eligibility
+n = 37
+Records excluded
+n = 13
+Articles meeting all the criteria for the topic
+n = 24
+Identification
+Screening
+Eligibility
+Included
+Fig. 4: The PRISMA flow diagram used for Smart Water Management category
+6.1
+Smart Water Meters
+The articles included in this chapter, as listed in Table 9, focus on the development of new approaches or devices,
+such as water meters, for measuring water consumption directly at the customer’s location, with the aim of
+optimizing consumption or analyzing consumer behavior. A subset of these publications also presents technical
+solutions for water meter readings designed speciically for manual (optical) reading, using OCR and other
+artiicial intelligence methods.
+ACM Comput. Surv.
+
+16
+•
+V. Slany et al.
+Table 9: Results included in the Smart Water Meters category
+Author, source
+Topic
+IoT
+AI
+Ali et al. [87]
+IoT-Based Smart Water Management for Leakage De-
+tection
+✓
+×
+Bawankar et al. [88]
+IoT-Based Water Management via Analog Meter
+Retroitting
+✓
+×
+Bruno et al. [89]
+Low-Cost IoT-Based Pressure Monitoring in WDN
+✓
+×
+Lall et al. [90]
+IoT and Deep Learning for Campus Water Supply
+Analysis
+✓
+CNN
+Mamede et al. [91]
+IoT and Cloud-Based Architecture for Smart Domestic
+Water Management
+✓
+×
+Reddy et al. [92]
+Smart Water Meter with LoRa and SARIMA Forecast-
+ing for Households
+✓
+×
+Santiago & Alvares
+[93]
+Automated Analog Water Meter Reading via Com-
+puter Vision and SVM
+✓
+SVM,
+MLP,
+kNN
+Slany et al. [94]
+Modular IoT Platform for Smart Water Management
+✓
+×
+Syrmos et al. [95]
+Modular IoT System for Water Monitoring and Smart
+Metering
+✓
+MLP,
+CNN,
+LSTM
+Zhao et al. [96]
+Deep Learning for Word-Wheel Water Meter Detec-
+tion and Recognition
+✓
+CNN
+6.2
+AMI - Advanced Metering Infrastructure
+The articles included in Table 10 fall under the "smart water network" concept, which primarily aims to integrate
+the latest technologies from IoT and artiicial intelligence to achieve optimal management eiciency. AMI
+section focuses on systems for leak detection in the distribution network caused by malfunctions, improving
+consumption management, reducing water waste, and, importantly, suitable transmission systems that meet
+speciic requirements for deployment in this type of environment.
+Table 10: Results included in the AMI category
+Author, source
+Topic
+IoT
+AI
+Ahmed et al. [97]
+IoT-Enabled Water Resource Management and Distri-
+bution System for Rural Areas
+✓
+IWRM-DMS
+vs.
+other
+methods
+Antzoulatos
+et
+al.
+[98]
+SMART-WATER: IoT and Machine Learning for Urban
+Water Management
+✓
+SVM,
+ANN,
+LSTM
+Batista et al. [99]
+BIM-IoT-FM Integration for Water Management
+(Buildings)
+✓
+×
+Kavya et al. [100]
+AI-Based Short-Term Water Demand Forecasting for
+Eicient Water Management
+✓
+DT, SVR, RF,
+KNN,
+ANN,
+LSTM
+ACM Comput. Surv.
+
+Smart Water-IoT: Harnessing IoT and AI for Eficient Water Management
+•
+17
+Lin et al. [101]
+Microservice-Based Real-Time Storm Sewer Simula-
+tion System for Smart Cities
+✓
+×
+Maroli et al. [102]
+IoT-Based Water Distribution System for Rural India
+✓
+×
+Nie et al. [103]
+SCADA-Based IoT and Big Data Analytics for Smart
+City Water Management
+✓
+×
+Rousso et al. [104]
+Facilitating Digital Transformation in Water Utilities:
+Australian Best Practices
+✓
+×
+Zese et al. [105]
+Machine Learning for Automatic Detection of House-
+hold Water Leaks
+✓
+FCN,
+CNN,
+RNN,
+LSTM,
+RF
+6.3
+Review
+Table 11 describes recent review papers in the ield of Smart Water Management in distribution networks. The
+works included in review section provide an overview of the aforementioned areas, mapping the development of
+smart water meters, IoT applications for water management, and a summary of LPWAN protocols for long-distance
+data transmission.
+Table 11: Results included in the review category
+Author, source
+Topic
+IoT
+AI
+Kiran et al. [106]
+Development of Intelligent Water Networks for Leak
+Detection and Management
+✓
+AI application
+for WNM
+Lalle et al. [23]
+LPWAN Technologies for Smart Water Grid Commu-
+nication Networks
+✓
+AI for Real-
+time data anal-
+ysis
+More et al. [107]
+Digital Technologies for Smart Mine Water Manage-
+ment
+✓
+AI overview
+Okoli et al. [108]
+IoT-Based Smart Water Applications for Sustainable
+Cities
+✓
+×
+Zapata-Sierra et al.
+[109]
+Global Research Trends in Smart Water Meter Tech-
+nologies
+✓
+×
+6.4
+Discussion of Applied AI Algorithms in WDNs
+In smart water metering, CNNs, SVM, kNN or Multi-Layer Perceptron (MLP) can be used for automated reading of
+analog meters via image recognition, while LSTM models help forecast consumption trends and detect anomalies.
+Algorithms such as kNN, SVM, ANN, and LSTM support water demand forecasting for eicient water management.
+Within AMI systems, ANN, RF, and eXtreme Gradient Boosting (XGBoost) are commonly employed for demand
+prediction and fault detection across networks. These models enhance leak detection accuracy, optimize WDNs
+management and support scalable real-time diagnostics within IoT-enabled infrastructures.
+7
+Wastewater and water quality/quantity monitoring and metering
+Wastewater handling and treatment are essential environmental and public health services are becoming increas-
+ingly critical as cities and industries grow and expand. The entire water management cycle, including distribution
+networks, water quality and microbial contamination control, end-user consumption, and other areas, beneits
+ACM Comput. Surv.
+
+18
+•
+V. Slany et al.
+from monitoring and subsequent water treatment. Measured inputs are additionally processed with tools such as
+AI, the cloud, and edge/fog computing.
+The implementation of advanced technologies, such as IoT and AI, is becoming increasingly critical due to
+changing climate, population growth, and increased demands for improved water quality. These technologies
+improve the operational eiciency of treatment plants, optimize energy consumption, and improve treatment
+efectiveness, particularly through real-time monitoring. Such innovations are essential to ensure the sustainability
+and long-term viability of water resource management. Figure 5 shows the number of results obtained using the
+PRISMA strategy for processing in this area, based on the criteria described in Table 3.
+WoS - 62 records
+SCOPUS - 137 records
+Duplicate records removed = 28 records
+Records screened
+n = 171 articles
+Records excluded
+n = 76
+Full texts of articles assessed for eligibility
+n = 95
+Records excluded
+n = 47
+Articles meeting all the criteria for the topic
+n = 48
+Identification
+Screening
+Eligibility
+Included
+Fig. 5: The PRISMA flow diagram is used for wastewater management category
+The relevant results obtained can be divided into the following subsections.
+7.1
+Process Optimization in Wastewater Treatment Plants
+The articles categorized here and presented in Table 12 focus on the application of advanced IoT technologies
+and AI methods to enhance wastewater treatment eiciency, with the goal of optimizing energy consumption
+and improving pollutant removal.
+As shown in Table 12, current trends in this ield include the integration of AI methods, particularly ML
+techniques, into control systems for wastewater treatment processes. This integration allows for more accurate
+predictions of water quality and more eicient real-time process management. In addition, there is signiicant
+emphasis on the development of IoT sensors to monitor critical parameters, thereby facilitating increased
+automation across all processes.
+ACM Comput. Surv.
+
+Smart Water-IoT: Harnessing IoT and AI for Eficient Water Management
+•
+19
+Table 12: Results categorized as Process Optimization
+Author, source
+Topic
+IoT
+AI
+Bellamoli et al. [110]
+Machine Learning for Anomaly Detection in Wastew-
+ater Treatment
+✓
+SVM, MP, RF,
+LightGBM,
+XGBoost
+Elsayed et al. [111]
+AI-Driven Eluent Quality Prediction Using MGGP
+in Wastewater Treatment
+×
+Genetic
+Programming
+Gao et al. [112]
+BPNN Modeling for Sulide and Nitrate Removal in
+Wastewater Treatment
+×
+BPNN
+Hejabi et al. [113]
+AI-Based Eluent Quality Prediction
+×
+SVM, ANN
+Li et al. [114]
+Deep Learning for Predicting Anaerobic Membrane
+Bioreactor Performance
+✓
+DLNN
+Li. et al. [115]
+Neural Network Soft Sensor for Wastewater Treat-
+ment Optimization
+✓
+ANN
+Setshedi et al. [116]
+ANN Models for Predicting Water Quality Changes
+×
+ANN
+Wang et al. [117]
+Interpretable Machine Learning for Pollutant Control
+in WWTPs
+×
+XGBoost,
+LightGBM, RF
+Wang et al. [118]
+AI-Based Precision Aeration Control for Wastewater
+Treatment Plants
+×
+6 algorithms
+for ML
+Yokohama et al. [119]
+Deep Learning-Based Flocculation Sensor for Wastew-
+ater Treatment
+×
+ANN
+7.2
+Advanced Methods of Water Purification and Recycling
+The articles categorized here and presented in Table 13 primarily focus on innovative techniques and materials
+for the removal of pollutants from wastewater, with special emphasis on the elimination of heavy metals, organic
+pollutants, and hazardous substances such as Per- and Polyluoroalkyl Substances (PFAS).
+Recent trends in this ield focus on the application of AI methods, particularly machine learning, to optimize
+process parameters, thereby improving treatment eiciency while reducing operational costs and energy con-
+sumption. These AI models are employed to predict the efectiveness of pollutant removal and determine optimal
+operating conditions.
+Table 13: Results categorised as advanced water purification methods
+Author, source
+Topic
+IoT
+AI
+Alhajeri et al. [120]
+AI-Optimized Photocatalytic Degradation
+✓
+ANN
+Boubakri et al. [121]
+Lead Removal from Wastewater via FOśMD Hybrid
+Process Using Seawater
+×
+ANN
+Karbassiyazdi et al.
+[122]
+AI-Driven XGBoost Model for PFAS Removal Opti-
+mization
+×
+XGBoost
+Ke et al. [123]
+AI-Based Models for Predicting Heavy Metal Sorption
+on Biochar
+×
+SVM,
+RF,
+ANN,
+GP,
+M5Tree
+ACM Comput. Surv.
+
+20
+•
+V. Slany et al.
+Khalil et al. [124]
+Machine Learning for Predicting N2O Emissions in
+Wastewater Treatment
+×
+KNN, DNN,
+AdaBoost
+Khan et al. [125]
+Prediction of Transmembrane Pressure Using ML
+models
+×
+BBD-ANN
+Khan et al. [126]
+AI and Statistical Optimization of Electro-Fenton Pro-
+cess for Dye Removal
+×
+BBD-ANN
+Mohammadi
+et
+al.
+[127]
+Steroid Hormone Removal in MBBR Using ANN and
+PSO
+×
+ANN
+Nguyen et al. [128]
+AI-Powered Ecotoxicity Prediction in Industrial
+Wastewater
+×
+XGBoost, Ad-
+aBoost
+Xie et al. [129]
+Predicting Hazardous Waste Generation Using
+Wastewater Big Data
+✓
+ML, DL
+7.3
+Utilization of IoT and AI for Water System Management and Treatment
+The articles categorized here and presented in Table 14 primarily focus on the application of IoT and AI in
+optimizing and automating comprehensive wastewater treatment and drinking water management systems.
+Recent trends in this ield emphasize the integration of IoT sensors into water quality monitoring systems,
+enabling real-time tracking of critical water parameters. This data is analyzed using AI methods to provide
+predictions and optimizations for key parameters such as low rates, pollutant concentrations, and energy
+consumption. In practice, this allows for more precise and rapid responses to changes in water and wastewater
+treatment systems.
+The deployment of IoT throughout these processes also enhances infrastructure management through predictive
+maintenance, where systems can detect potential issues, such as sensor malfunctions or suboptimal operating
+conditions, before they escalate.
+Table 14: Results included in the IoT a AI pro řízení category
+Author, source
+Topic
+IoT
+AI
+Aiche et al. [130]
+Trust Assessment in IoT-Based Water Treatment Sys-
+tems
+✓
+×
+Alshehri et al. [131]
+IoT-Driven Smart Desalination System Using Solar
+Energy
+✓
+×
+Brad et al. [132]
+Optimization of SCADA Systems for Wastewater
+Treatment
+✓
+×
+Jang et al. [133]
+Real-Time Detection of Chironomid Larvae in Tap
+Water Using Deep Learning
+×
+CNN, YOLO,
+ResNet
+Karn et al. [134]
+IoT-Based Real-Time Monitoring in Wastewater Treat-
+ment
+✓
+×
+Kubiak et al. [135]
+LED-IoT Photoreactor for Enhanced Water Puriica-
+tion
+✓
+×
+Kwon et al. [136]
+IoT-Enhanced Sequencing Batch Reactor for Nitrogen
+Removal
+✓
+×
+Shah et al. [137]
+AI-Ensembled Machine Learning for Predicting TWW
+Salinity
+✓
+HWM, SVR
+ACM Comput. Surv.
+
+Smart Water-IoT: Harnessing IoT and AI for Eficient Water Management
+•
+21
+Villar Miguelez et al.
+[138]
+IoT-Based Smart Water Supply and Treatment Sys-
+tems for Smart Cities
+✓
+×
+7.4
+Review
+Table 15 presents the selected relevant review publications focusing on the use of IoT and AI in wastewater
+management. The reviewed articles primarily summarize methods of utilizing AI/IoT in this ield to improve the
+eiciency of the entire wastewater treatment process.
+Table 15: Results included in the Review category
+Author, source
+Topic
+IoT
+AI
+Alvi et al. [139]
+Comparative Review of Deep Learning and Mecha-
+nistic Models in Wastewater Treatment.
+✓
+ANN
+Cairone et al. [140]
+AI-Driven Optimization of Membrane Technologies
+in Wastewater Treatment
+×
+AI Overview
+Croll et al. [141]
+Reinforcement Learning for Wastewater Treatment
+Process Control Optimization
+×
+RL
+Ding et al. [142]
+AI Applications in Water/Wastewater Disinfection
+and By-Product Control.
+×
+AI Overview
+Chowdhury & Karan-
+il [143]
+AI Applications in Water Treatment Processes
+×
+AI Overview
+Ibrahim et al. [144]
+Artiicial Neural Networks in Wastewater Treatment
+×
+ANN
+Kumar et al. [145]
+Carbon Neutrality in Algae-Based Wastewater Treat-
+ment Systems
+×
+AI Overview
+Kumari et al. [146]
+AI Applications in Adsorption-Based Water Treat-
+ment
+✓
+AI Overview
+Malviya
+&
+Jaspal
+[147]
+AI Models for Enhancing Wastewater Treatment Ei-
+ciency
+✓
+ANN, GA
+Maurya et al. [148]
+AI and ML Applications in Heavy Metal Detection
+and Removal
+×
+AI Overview
+Nagpal et al. [149]
+AI Applications in Wastewater Treatment: Prediction,
+Monitoring, and Fault Detection
+×
+SVM,
+ANN,
+GA, DT
+Nthunya et al. [150]
+Membrane Distillation, AI for Dye Wastewater Treat-
+ment
+×
+ANN, SVM
+Oruganti et al. [151]
+AI and ML for Microalgae-Based Wastewater Treat-
+ment
+×
+AI Overview
+Pandey et al. [152]
+Industry 4.0 and Wastewater Management for Sus-
+tainable Development
+✓
+AI Overview
+Pérez-Beltrán et al.
+[153]
+AI and Machine Learning in Spectroscopic Water
+Quality Assessment
+×
+ANN
+Sheik et al. [154]
+AI-Driven Phosphorus Recovery in Wastewater Treat-
+ment
+✓
+AI Overview
+Singh et al. [155]
+AI and ML Applications in Biological Wastewater
+Treatment Systems
+×
+ANN, FL, RF,
+LSTM
+ACM Comput. Surv.
+
+22
+•
+V. Slany et al.
+Vaishnav et al. [156]
+Comprehensive Treatment of Livestock and Poultry
+Wastewater
+×
+ANN
+Viet et al. [157]
+AI-Based Optimization of Membrane Technologies in
+Water Treatment
+×
+ANN, SVR
+7.5
+Discussion of Applied AI Algorithms in Wastewater Management
+AI in wastewater treatment focuses on process optimization, pollutant prediction, and intelligent control. Algo-
+rithms such as ANN, SVM, XGBoost, and Light Gradient Boosting Machine (LightGBM) are applied in advanced
+tasks including pollutant control, anomaly detection, and wastewater quality prediction. These algorithms are
+also used in smart puriication systems to optimize the removal of persistent pollutants such as PFAS, steroid
+hormones, and heavy metals, with applied models including ANN, SVM, Random Forest, Gaussian Processes
+(GP), and XGBoost. Furthermore, AI integrated with IoT and Supervisory Control and Data Acquisition (SCADA)
+platforms enables real-time monitoring and predictive maintenance across wastewater treatment networks.
+8
+The IoT and security
+Any device connected to a network has an inherent potential risk, especially with inadequate or unreliable
+cybersecurity. Cyberattacks occur frequently, and are often designed to harm operational technology and IoT
+systems or to steal data. IoT honeypots operated by Symantec, for example, discovered approximately 5200 attacks
+every month in 2018 [158]. An attack which impacts an organisation is classiied as a cybersecurity incident
+and should be oicially reported. However, most incidents remain unreported [159], and in many cases even
+undetected. An estimated 43% of cyberattacks are communicated to authorities, and the remainder are either
+concealed or disclosed through the news media [160].
+Details of some major security incidents in the past have been released through government reports and
+specialised institutions, also in the mass media. Incidents which afect drinking water generally classify as
+high-proile events. In 2016, a chemical attack targeted a water treatment plant serving several regions [161].
+In this incident, the attacker progressively altered the quantity of chemicals difused in the water. The attack
+was discovered and eventually terminated by applying secondary measures. In 2019, the U.S. Attorney Oice for
+Kansas prosecuted a case [162] in which a former water treatment plant employee had logged remotely into the
+plant’s operating software and shut down its processes. A similar and more serious ofence was committed by
+an attacker who gained remote access to a water treatment facility’s systems and deleted all its programs [163].
+Not long after, in February 2021, a hacker with stolen credentials attempted to remotely increase the amount of
+sodium hydroxide used at another treatment plant [164]. If successful, this would have resulted in poisoning of
+the drinking water. The process was reversed by an operator who reduced the chemical’s amount to a normal
+level.
+An incident involving illicit manipulation with systems at a small reservoir occurred in New York state in 2013
+[165]. In recent years, several water treatment plants [166] have been targeted with ransomware attacks, causing
+temporary data loss which required manual operation of the facility’s systems. Hssanyadeh et al. [167] presented
+an important study which analysed security incidents in the water sector. The article discussed incidents which
+occurred before May 2019. Although most of the attacks exhibited the potential to jeopardise human lives, they
+ended harmlessly.
+Nevertheless, the rising number of attacks in this sector presents a concerning outlook. The growth in IoT
+devices connected to networks has paralleled an increase in security incidents, fueling greater interest in IoT
+security research. Aslam et al. [168] conducted a survey focused on cyber attacks targeting potable water
+systems, while Bello et al. [169] provided a systematic review of cybersecurity challenges in water infrastructure
+management, particularly in Australia.
+ACM Comput. Surv.
+
+Smart Water-IoT: Harnessing IoT and AI for Eficient Water Management
+•
+23
+Several studies have ofered comprehensive surveys of IoT security attacks, vulnerabilities, and current solutions
+[170ś173]. The state of IoT security using blockchain technology was examined by Khan et al. [174], and a review
+of AI-based approaches to IoT security was conducted by Ahanger et al. [175]. Jaafar et al. [176] addressed the
+challenges of penetration testing in IoT networks, and Pirbhulal et al. [177] thoroughly reviewed cybersecurity
+considerations for next-generation IoT networks, including 5G.
+Various authorities and organisations pursue many avenues of action to reduce the volume of incidents,
+for example drafting mandatory standards and issuing recommendations, performing critical infrastructure
+inspections, and retiring vulnerable plants, machinery and equipment [178]. Karie et al. [179] authored an
+inspiring review of the current security standards and frameworks. The authorities try to protect the water
+infrastructure through oicial legislature [180]. Relevant to the areas discussed here, globally recognised standards
+governing cybersecurity can be found in the ISO/IEC 27000 series. All associated documents are archived in
+[181]. The series which speciically governs the IoT is indicated with the code 274xx. Most items in this class
+nevertheless still remain in the preparatory stage.
+The general cybersecurity standards in the USA are managed by the NIST. The NIST Cybersecurity Framework,
+Risk Management Framework, and Privacy Framework cover the main areas of security. The NIST Cybersecurity
+for IoT Program is designed to advance cybersecurity in the IoT ecosystem, across multiple industry sectors and at
+scale [182]. The relevant standards for European countries are administered by the European Telecommunications
+Standards Institute (ETSI), but the geographical validity of this organisation is not strictly limited to Europe. In
+view of the subject matter, approximately 30 of these documents govern IoT security. All of the standards can be
+opened or downloaded at [183]. The European Union member states are required to follow Directive 2022/2555
+[184], which establishes a common level of security in networks and information systems. The regulation also
+applies to operators of essential services, including those enabling water supply and distribution.
+9
+Research challenges, Future Trends and Emerging Technologies
+The most current trends in the application of IoT and AI across various domains focus primarily on maximizing
+management eiciency, sustainability, and the precision of monitoring selected water resources or key areas.
+This efort aims to optimize the entire water management process in these areas, making the handling of this
+valuable natural resource sustainable for future generations.
+In the ield of water management, there is an observable shift toward the complete digitization of processes, a
+paradigm commonly termed "Digital Water Management." This approach relies fundamentally on IoT for data
+acquisition and on AI algorithms for advanced data analysis. The concept is further strengthened through the
+integration of digital twin technology, Geographic Information Systems (GIS), and remote sensing [185ś187].
+Another highly relevant topic is the use of blockchain, whose beneits primarily lie in ensuring data reliability,
+increasing transparency and trust among stakeholders, and supporting resource management through decen-
+tralized systems. Currently, however, gaps remain between theoretical potential and practical implementation,
+particularly in terms of scalability and interoperability. [188, 189].
+9.1
+Monitoring and Metering
+Among the most current topics in this ield is the detection of water leaks throughout the water distribution
+network using smart IoT water meters [88, 89, 94] and the deployment of artiicial intelligence methods for
+analyzing and processing the data collected in this way [90, 98, 100].
+The data collected in this way must be transmitted over long distances with optimized power consumption.
+For instance, Boccadoro et al. [190] describe the use of IoT and Sigfox technology for water quality monitoring,
+designed for continuous tracking of parameters such as pH, conductivity, oxygen content, and temperature. The
+dataset from the Tiziano project is used to train a predictive model based on LSTM neural networks, aiming
+ACM Comput. Surv.
+
+24
+•
+V. Slany et al.
+for accurate water quality predictions with low energy consumption - an essential factor for long-term ield
+deployment. Other LPWAN networks suitable for long-distance data transmission in the ield are also increasingly
+utilized, as detailed by [7, 191, 192].
+As indicated by current trends, IoT technologies are anticipated to play a central role in future water manage-
+ment by enabling real-time monitoring of low rates, pressure, and water quality within distribution networks.
+The power supply for sensor devices varies according to their speciic applications, with energy harvesting
+emerging as a common solution. This approach harnesses energy from sources such as solar radiation, wind,
+mechanical motion or vibrations, radio frequency signals, and temperature diferentials [193ś196].
+Advancements in this ield will also inluence future methods for predictive maintenance through the use of
+artiicial intelligence algorithms. Deploying these next-generation systems will enable the prediction of water
+consumption, the identiication of potential high-leakage areas, and the subsequent optimization of network
+maintenance. Altogether, this will allow minimizing costs associated with reactive maintenance due to sudden
+failures. [197]
+9.2
+Agriculture
+Agriculture is characterised by large-scale water consumption for crop growing and supporting livestock (es-
+timated at approx. 1/3 of the total volume of drinking water consumed). Due to changing climatic conditions,
+current trends focus on eiciency, sustainability, and digital transformation to increase productivity, reduce water
+waste, and optimize consumption by directing water precisely where it is needed.
+In this context, one of the main challenges will be adapting to dry periods and potential climate extremes.
+Future irrigation systems will incorporate predictive AI models that forecast water consumption and determine
+optimal irrigation times based on meteorological data and current ield conditions, monitored via IoT sensors.
+This approach will allow for targeted irrigation, such as watering only speciic ield areas or precisely designated
+spots. [198, 199]
+With the continually growing population, increasing crop yields is essential, which often necessitates the
+use of agrochemicals (such as pesticides, fertilizers, and others). However, these substances iniltrate the water
+cycle, leading to signiicant pollution. Currently, there is increasing pressure to reduce the quantity of chemicals
+used, achievable only through highly precise monitoring of plant health (e.g., via machine vision and monitoring
+of surrounding climatic conditions with IoT sensors) and highly targeted sprayingÐsuch as with drones. The
+number of these autonomous robotic systems in agriculture is expected to grow each year. [11, 17]
+Another signiicant emerging trend is the deployment of optical inspection with artiicial intelligence methods
+using remote sensing. With advancements in remote sensing technologies and imaging techniques, these tech-
+nologies are already being applied in agriculture, not only for monitoring water conditions in landscapes but also
+for other agricultural applications. This is achieved through both standard methods and multispectral cameras.
+[200, 201].
+9.3
+Drinking and Wastewater Treatment
+A primary research challenge in this ield is the development of advanced wastewater treatment systems with
+capabilities for real-time monitoring and control. Smart technologies enable continuous data acquisition on
+parameters such as water quality and volume, facilitating the optimization of the entire water treatment process.
+Additionally, there is an increasing emphasis on the potential of wastewater as a valuable resource, focusing on
+the recovery of essential raw materials for subsequent use [154, 202]. Given the growing importance of resource
+recycling and reuse, this trend is expected to intensify.
+ACM Comput. Surv.
+
+Smart Water-IoT: Harnessing IoT and AI for Eficient Water Management
+•
+25
+With advances in materials engineering, nanotechnology, and the development of increasingly sophisticated
+advanced oxidation processes (AOPs), these technologies are expected to be used more frequently for mem-
+brane iltration or nanoiltration, enhancing the removal of small and currently challenging pollutants, such
+as microplastics [203]. AOPs, in turn, enable the removal of emerging contaminants, such as pharmaceutical
+compounds, PFAS and other persistent organic pollutants [204].
+New methods, such as Wastewater-based Epidemiology (WBE), are expected to be increasingly deployed. WBE
+is an innovative approach for monitoring public health through the analysis of biological markers (e.g., viruses)
+and chemical markers (e.g., medications, drugs, and others) present in wastewater. Recently, this method has
+been used for advanced analysis of viruses and their mutations during the Covid-19 pandemic, as well as for
+detecting Antimicrobial Resistance (AMR) [205, 206].
+Widespread implementation of these methods will enable the development of early warning systems that can
+detect pathogens and predict their spread, allowing authorities to respond more promptly to potential public
+health threats without the need for individual testing.
+Beyond infectious diseases and AMR, authors focus on environmental factors, such as pesticides, microplastics,
+and heavy metals, enabling to monitor ecological burdens and their impacts on public health [206].
+9.4
+Legislation
+Smart water management technologies are relatively new tools, therefore the regulations for their use must be
+properly established to ensure safe and eicient operation. Since these technologies collect and process data
+which contain personal and sensitive information, a key area for legislation is privacy protection and data security.
+A legal framework to protect user privacy is therefore an essential ś the collection, storage and use of data
+requires legislative instruments to protect it from unauthorised access and misuse.
+New legislation addressing the deployment of AI systems across various societal sectors is already emerging.
+Among the latest directives is the Artiicial Intelligence Act (AI Act) [25], which regulates the use of these systems
+in multiple industries. Within this framework, smart water management is classiied as a high-risk AI system,
+which may signiicantly impact the health, safety, or fundamental rights of individuals in the EU. To ensure the
+safe and ethically responsible use of these systems, strict requirements are established, including provisions for
+human oversight to enable intervention by a human operator when necessary.
+Similar legislation broadly governing the use of AIÐthough typically in a less restrictive formÐis also being
+developed in other countries. Examples include the Blueprint for an AI Bill of Rights [207] in the USA, the Digital
+Charter Implementation Act (Artiicial Intelligence and Data Act) [208] in Canada, and the White Paper on AI
+Regulation [209] in the United Kingdom. In all cases, these laws and guidelines are responses to rapidly advancing
+AI technologies, having been introduced after 2022.
+9.5
+Security
+With the increasing integration of smart technologies in water management systems and critical infrastructures
+(e.g., reservoirs, water treatment plants, pumping stations), the number of cybersecurity threats also rises. Need
+for comprehensive security solutions across all aspects of these systems is a constant requirement [173] and
+the especially for water, where such solutions are life-critical [168]. Current systems address many security
+challenges, including conidentiality, integrity, availability, authentication, access control, and more [170, 177, 210].
+However, future solutions will need to incorporate advanced methods for cybersecurity incident detection, novel
+authentication techniques, and enhanced data validation. The anticipated arrival of quantum computing will pose
+signiicant challenges for existing cryptographic standards, especially given the limited computational power
+of most IoT devices. Furthermore, the trend toward increased automation and minimal human involvement
+emphasizes the need for scalable, automated processes for IoT device deployment and security.
+ACM Comput. Surv.
+
+26
+•
+V. Slany et al.
+Today, AI plays a vital role in IoT security, and the use of machine and deep learning in next-generation IoT
+networks is expected to grow [211]. One of the primary beneits is cybersecurity incident detection, which relies
+on attack signatures and anomaly detection [212ś214], with comprehensive datasets being developed to support
+these applications [215]. However, future challenges include resource limitations for these computations, where
+edge computing advancements may help to mitigate [216, 217].
+The ongoing proliferation of IoT devices increases the volume of data generated by end devices, creating
+challenges in data veriication and authentication. Novel systems utilize blockchain mechanisms to verify data
+transaction [218, 219], and this approach is likely to expand to other areas, including incident detection and
+authentication, where Physically Unclonable Functions (PUFs) are currently deployed [220].
+While current cryptographic algorithms provide adequate security for today’s computational capabilities,
+the advent of quantum computers is poised to transform the ield of cryptography. Preparing IoT devices for a
+quantum-resistant cryptographic future is therefore a crucial upcoming challenge [210, 221].
+The widespread availability and ubiquity of IoT devices drive the need for automated deployment processes
+with minimal human intervention. This necessitates touchless deployment methods [216], which emphasize
+well-designed coniguration frameworks based on established security protocols and avoid human errors [177].
+10
+Conclusion
+The article discussed current trends in the use of the IoT and AI in smart water management. The irst section
+introduced relevant areas (drinking water and wastewater treatment, agriculture, monitoring and metering,
+legislation and security) and a comparative review of recent related research articles and other related works
+which explored and addressed the issues discussed in this article. A novel concept, the SW-IoT (Smart Water ś
+Internet of Things), and its individual areas were deined and elaborated.
+Future directions and challenges for the current research were outlined and proposed. These research challenges
+were classiied into several smart water management areas, with a special emphasis on the application of
+IoT systems and AI. For monitoring and metering, the main research area is in developing IoT and LPWAN
+technologies in monitoring systems for deployment in locations without any signal coverage or connection
+to a power grid. Remote monitoring systems can greatly aid in monitoring water distribution network nodes,
+responding to emergencies or other hazardous conditions, remote ground sensing, and real-time monitoring.
+Real-time monitoring and control also enables rapid acquisition of water quantity and quality data, which is
+useful for optimising water treatment procedures and energy eiciency since drinking water and wastewater
+treatment is an energy-intensive process.
+From a security perspective, smart technologies deployed for monitoring are not without inherent risks and
+may be misused for illegal purposes. It is therefore necessary to develop cybersecurity and early warning systems
+to protect water infrastructure. In agriculture, research should aim for irrigation eiciency and water-saving
+techniques to make the most efective use of water resources. Smart technologies cold be deployed, for example,
+to provide accurate weather forecasting to support efective water management. An especially important future
+research area is the establishment of a legal framework to regulate smart water management and the collection,
+storage and processing of data obtained through deployed water monitoring systems. The primary aim here
+would be protection of data from unauthorised access and handling. Liability for injury and damage to health or
+property due to malfunction of these smart systems is also major area for research to address.
+Acknowledgments
+This work was supported by the project SP2025/019, “Development of algorithms and systems for control,
+measurement and safety applications XIž of Student Grant System, VSB-TU Ostrava.
+ACM Comput. Surv.
+
+Smart Water-IoT: Harnessing IoT and AI for Eficient Water Management
+•
+27
+This article has been produced with the inancial support of the European Union under the REFRESH ś Research
+Excellence For REgion Sustainability and High-tech Industries project number CZ.10.03.01/00/22_003/0000048
+via the Operational Programme Just Transition.
+This work was also supported by the European Regional Development Fund for the Research Centre of
+Advanced Mechatronic Systems project, project number CZ.02.1.01/0.0/0.0/16_019/0000867 under the Operational
+Programme Research, Development and Education.
+References
+[1] European Union. 2024. Facts and Figures about the European Union. (2024). Retrieved October 28, 2024 from https://european-
+union.europa.eu/principles-countries-history/facts-and-igures-european-union_en
+[2] Department of Economic United Nations and Population Division Social Afairs. 2018. World Urbanization Prospects. (July 2018).
+Retrieved October 28, 2024 from https://population.un.org/wup/Download
+[3] Eurostat. 2021. Europe’s Water in Figures 2021. (July 2021). Retrieved October 28, 2024 from https://ec.europa.eu/eurostat/statistics-
+explained/index.php?title=Water_statistics#Water_as_a_resource
+[4] EurEau. 2021. Europe’s Water in Figures 2021. (July 2021). Retrieved October 28, 2024 from https://www.eureau.org/resources/
+publications/eureau-publications/5824-europe-s-water-in-igures-2021/ile
+[5] Tanveer Ahmad, Dongdong Zhang, Chao Huang, Hongcai Zhang, Ningyi Dai, Yonghua Song, and Huanxin Chen. 2021. Artiicial
+intelligence in sustainable energy industry: Status Quo, challenges and opportunities. Journal of Cleaner Production 289 (2021), 125834.
+[6] Zaib Ullah, Fadi Al-Turjman, Leonardo Mostarda, and Roberto Gagliardi. 2020. Applications of Artiicial Intelligence and Machine
+learning in smart cities. Computer Communications 154 (2020), 313ś323. DOI:http://dx.doi.org/10.1016/j.comcom.2020.02.069
+[7] Ahmad Alshami, Eslam Ali, Moustafa Elsayed, Abdelrahman E. E. Eltoukhy, and Tarek Zayed. 2024. IoT Innovations in Sustainable
+Water and Wastewater Management and Water Quality Monitoring: A Comprehensive Review of Advancements, Implications, and
+Future Directions. IEEE Access 12 (2024), 58427ś58453. DOI:http://dx.doi.org/10.1109/ACCESS.2024.3392573
+[8] Sherif Abdelmageed, Salman Tariq, Vincent Boadu, and Tarek Zayed. 2022. Criteria-based critical review of artiicial intelligence
+applications in water-leak management. ENVIRONMENTAL REVIEWS 30, 2 (JUN 2022), 280ś297. DOI:http://dx.doi.org/10.1139/er-2021-
+0046
+[9] Aditya Dinesh Gupta, Prerna Pandey, Andrés Feijóo, Zaher Mundher Yaseen, and Neeraj Dhanraj Bokde. 2020. Smart Water Technology
+for Eicient Water Resource Management: A Review. Energies 13, 23 (2020). DOI:http://dx.doi.org/10.3390/en13236268
+[10] Martin Oberascher, Wolfgang Rauch, and Robert Sitzenfrei. 2022. Towards a smart water city: A comprehensive review of applications,
+data requirements, and communication technologies for integrated management. SUSTAINABLE CITIES AND SOCIETY 76 (JAN 2022).
+DOI:http://dx.doi.org/10.1016/j.scs.2021.103442
+[11] Amjad Rehman, Tanzila Saba, Muhammad Kashif, Suliman Mohamed Fati, Saeed Ali Bahaj, and Huma Chaudhry. 2022. A Revisit
+of Internet of Things Technologies for Monitoring and Control Strategies in Smart Agriculture. Agronomy 12, 1 (2022). DOI:http:
+//dx.doi.org/10.3390/agronomy12010127
+[12] Farmanullah Jan, Nasro Min-Allah, and Dilek Düştegör. 2021. IoT Based Smart Water Quality Monitoring: Recent Techniques, Trends
+and Challenges for Domestic Applications. Water 13, 13 (2021). DOI:http://dx.doi.org/10.3390/w13131729
+[13] Nibi Kulangara Velayudhan, Preeja Pradeep, Sethuraman N. Rao, Aryadevi Remanidevi Devidas, and Maneesha Vinodini Ramesh.
+2022. IoT-Enabled Water Distribution Systems-A Comparative Technological Review. IEEE ACCESS 10 (2022), 101042ś101070. DOI:
+http://dx.doi.org/10.1109/ACCESS.2022.3208142
+[14] Nilufer Tuptuk, Peter Hazell, Jeremy Watson, and Stephen Hailes. 2021. A Systematic Review of the State of Cyber-Security in Water
+Systems. WATER 13, 1 (JAN 2021). DOI:http://dx.doi.org/10.3390/w13010081
+[15] Othmane Friha, Mohamed Amine Ferrag, Lei Shu, Leandros Maglaras, and Xiaochan Wang. 2021. Internet of Things for the Future of
+Smart Agriculture: A Comprehensive Survey of Emerging Technologies. IEEE-CAA JOURNAL OF AUTOMATICA SINICA 8, 4 (APR
+2021), 718ś752. DOI:http://dx.doi.org/10.1109/JAS.2021.1003925
+[16] Matthew Lowe, Ruwen Qin, and Xinwei Mao. 2022. A Review on Machine Learning, Artiicial Intelligence, and Smart Technology in
+Water Treatment and Monitoring. WATER 14, 9 (MAY 2022). DOI:http://dx.doi.org/10.3390/w14091384
+[17] Sameer Qazi, Bilal A. Khawaja, and Qazi Umar Farooq. 2022. IoT-Equipped and AI-Enabled Next Generation Smart Agriculture: A
+Critical Review, Current Challenges and Future Trends. IEEE ACCESS 10 (2022), 21219ś21235. DOI:http://dx.doi.org/10.1109/ACCESS.
+2022.3152544
+[18] European Union. 2018. DIRECTIVE (EU) 2018/2002 OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL of 11 December 2018
+amending Directive 2012/27/EU on energy eiciency, Oicial Journal of the European Union. (Dec. 2018). Retrieved September 23, 2024
+from https://eur-lex.europa.eu/eli/dir/2018/2002/oj
+ACM Comput. Surv.
+
+28
+•
+V. Slany et al.
+[19] Che Zalina Zulkili, Salem Garfan, Mohammed Talal, A. H. Alamoodi, Amneh Alamleh, Ibraheem Y. Y. Ahmaro, Suliana Sulaiman,
+Abu Bakar Ibrahim, B. B. Zaidan, Amelia Ritahani Ismail, O. S. Albahri, A. S. Albahri, Chin Fhong Soon, Nor Hazlyna Harun, and Ho Hong
+Chiang. 2022. IoT-Based Water Monitoring Systems: A Systematic Review. Water 14, 22 (2022). DOI:http://dx.doi.org/10.3390/w14223621
+[20] Érico Soares Ascenção, Fernando Melo Marinangelo, Carlos Frederico Meschini Almeida, Nelson Kagan, and Eduardo Mário Dias. 2023.
+Applications of Smart Water Management Systems: A Literature Review. Water 15, 19 (2023). DOI:http://dx.doi.org/10.3390/w15193492
+[21] Shereen Ismail, Diana W. Dawoud, Nadhem Ismail, Ronald Marsh, and Ali S. Alshami. 2022. IoT-Based Water Management Systems:
+Survey and Future Research Direction. IEEE Access 10 (2022), 35942ś35952. DOI:http://dx.doi.org/10.1109/ACCESS.2022.3163742
+[22] Yandja Lalle, Lamia Chaari Fourati, Mohamed Fourati, and João Paulo Barraca. 2019. A Comparative Study of LoRaWAN, SigFox, and
+NB-IoT for Smart Water Grid. In 2019 Global Information Infrastructure and Networking Symposium (GIIS). IEEE, Cambridge, UK, 1ś6.
+DOI:http://dx.doi.org/10.1109/GIIS48668.2019.9044961
+[23] Yandja Lalle, Mohamed Fourati, Lamia Chaari Fourati, and João Paulo Barraca. 2021. Communication technologies for Smart Water Grid
+applications: Overview, opportunities, and research directions. Computer Networks 190 (5 2021), 107940. DOI:http://dx.doi.org/10.1016/j.
+comnet.2021.107940
+[24] Vlastimil Slany, Petr Koudelka, Eva Krcalova, Jan Jobbagy, Lukas Danys, Rene Jaros, Zdenek Slanina, Michal Prauzek, and Radek
+Martinek. 2022. New Hybrid IoT LoRaWAN/IRC Sensors: SMART Water Metering System. Computers, Materials & Continua 71, 3 (2022),
+5201ś5217. DOI:http://dx.doi.org/10.32604/cmc.2022.021349
+[25] European Parliament and Council of the European Union. 2024. Artiicial Intelligence Act (AI Act). (Aug. 2024). Retrieved September 29,
+2024 from https://eur-lex.europa.eu/eli/reg/2024/1689/oj
+[26] Matthew J Page, David Moher, Patrick M Bossuyt, Isabelle Boutron, Tammy C Hofmann, Cynthia D Mulrow, Larissa Sham-
+seer, Jennifer M Tetzlaf, Elie A Akl, Sue E Brennan, Roger Chou, Julie Glanville, Jeremy M Grimshaw, Asbjørn Hróbjartsson,
+Manoj M Lalu, Tianjing Li, Elizabeth W Loder, Evan Mayo-Wilson, Steve McDonald, Luke A McGuinness, Lesley A Stewart, James
+Thomas, Andrea C Tricco, Vivian A Welch, Penny Whiting, and Joanne E McKenzie. 2021. PRISMA 2020 explanation and elabora-
+tion: updated guidance and exemplars for reporting systematic reviews. BMJ 372 (2021). DOI:http://dx.doi.org/10.1136/bmj.n160
+arXiv:https://www.bmj.com/content/372/bmj.n160.full.pdf
+[27] European Environment Agency. 2024. Water resources across Europe - confronting water stress: an updated assessment. (Oct. 2024).
+Retrieved September 8, 2024 from https://www.eea.europa.eu/publications/water-resources-across-europe-confronting
+[28] Zhe Gu, Zhiming Qi, Liwang Ma, Dongwei Gui, Junzeng Xu, Quanxiao Fang, Shouqi Yuan, and Gary Feng. 2017. Development of an
+irrigation scheduling software based on model predicted crop water stress. COMPUTERS AND ELECTRONICS IN AGRICULTURE 143
+(DEC 2017), 208ś221. DOI:http://dx.doi.org/10.1016/j.compag.2017.10.023
+[29] M.N. Elnesr and A.A. Alazba. 2017. Simulation of water distribution under surface dripper using artiicial neural networks. Computers
+and Electronics in Agriculture 143 (2017), 90ś99. DOI:http://dx.doi.org/10.1016/j.compag.2017.10.003
+[30] Takaaki Kawai and Hiroshi Mineno. 2020. Evaluation environment using edge computing for artiicial intelligence-based irrigation
+system. In 2020 16TH INTERNATIONAL CONFERENCE ON MOBILITY, SENSING AND NETWORKING (MSN 2020). IEEE, Tokyo, Japan,
+214ś219. DOI:http://dx.doi.org/10.1109/MSN50589.2020.00046
+[31] Andres-F Jimenez, Pedro-F Cardenas, and Fabian Jimenez. 2022. Intelligent IoT-multiagent precision irrigation approach for improving
+water use eiciency in irrigation systems at farm and district scales. COMPUTERS AND ELECTRONICS IN AGRICULTURE 192 (JAN
+2022). DOI:http://dx.doi.org/10.1016/j.compag.2021.106635
+[32] Ahmed A. Abdelmoneim, Roula Khadra, Angela Elkamouh, Bilal Derardja, and Giovanna Dragonetti. 2023. Towards Afordable Precision
+Irrigation: An Experimental Comparison of Weather-Based and Soil Water Potential-Based Irrigation Using Low-Cost IoT-Tensiometers
+on Drip Irrigated Lettuce. Sustainability 16 (12 2023), 306. Issue 1. DOI:http://dx.doi.org/10.3390/su16010306
+[33] Yousif Al Mashhadany, Hamid R. Alsanad, Mohanad A. Al-Askari, Sameer Algburi, and Bakr Ahmed Taha. 2024. Irrigation intelli-
+genceÐenabling a cloud-based Internet of Things approach for enhanced water management in agriculture. Environmental Monitoring
+and Assessment 196 (5 2024), 438. Issue 5. DOI:http://dx.doi.org/10.1007/s10661-024-12606-1
+[34] Yasser Arafa, Abdel-Ghany M. El-Gindy, Mohammed El-Shirbeny, Mohamed Bourouah, Ahmed M. Abd-ElGawad, Younes M. Rashad,
+Mohamed Hafez, and Mohamed A. Youssef. 2024. Improving the spatial deployment of the soil moisture sensors in smart irrigation
+systems using GIS. Cogent Food & Agriculture 10 (12 2024). Issue 1. DOI:http://dx.doi.org/10.1080/23311932.2024.2361124
+[35] Peace Bamurigire, Anthony Vodacek, Andras Valko, and Said Rutabayiro Ngoga. 2020. Simulation of Internet of Things Water Manage-
+ment for Eicient Rice Irrigation in Rwanda. Agriculture 10 (9 2020), 431. Issue 10. DOI:http://dx.doi.org/10.3390/agriculture10100431
+[36] Akashdeep Bhardwaj, Manoj Kumar, Mohammed Alshehri, Ismail Keshta, Ahed Abugabah, and Sunil Kumar Sharma. 2024. Smart
+water management framework for irrigation in agriculture. Environmental Technology 45 (5 2024), 2320ś2334. Issue 12. DOI:http:
+//dx.doi.org/10.1080/09593330.2022.2039783
+[37] Konstantinos Dolaptsis, Xanthoula Eirini Pantazi, Charalampos Paraskevas, Selçuk Arslan, Yücel Tekin, Bere Benjamin Bantchina, Yahya
+Ulusoy, Kemal Sulhi Gündoğdu, Muhammad Qaswar, Danyal Bustan, and Abdul Mounem Mouazen. 2024. A Hybrid LSTM Approach for
+Irrigation Scheduling in Maize Crop. Agriculture 14 (1 2024), 210. Issue 2. DOI:http://dx.doi.org/10.3390/agriculture14020210
+ACM Comput. Surv.
+
+Smart Water-IoT: Harnessing IoT and AI for Eficient Water Management
+•
+29
+[38] Bouali Et-taibi, Mohamed Riduan Abid, El-Mahjoub Boufounas, Abdennabi Morchid, Safae Bourhnane, Tareq Abu Hamed, and Driss
+Benhaddou. 2024. Enhancing water management in smart agriculture: A cloud and IoT-Based smart irrigation system. Results in
+Engineering 22 (6 2024), 102283. DOI:http://dx.doi.org/10.1016/j.rineng.2024.102283
+[39] Rodrigo Filev Maia, Carlos Ballester Lurbe, Arbind Agrahari Baniya, and John Hornbuckle. 2020. IRRISENS: An IoT Platform Based on
+Microservices Applied in Commercial-Scale Crops Working in a Multi-Cloud Environment. Sensors 20 (12 2020), 7163. Issue 24. DOI:
+http://dx.doi.org/10.3390/s20247163
+[40] G.K. Kumar, M.L. Bangare, P.M. Bangare, C.R. Kumar, R. Raj, J.L. Arias-Gonzáles, B. Omarov, and M.S. Mia. 2024. Internet of things
+sensors and support vector machine integrated intelligent irrigation system for agriculture industry. Discover Sustainability 5 (2024).
+Issue 1. DOI:http://dx.doi.org/10.1007/s43621-024-00179-5
+[41] Na Lin, Xuping Wang, Yihao Zhang, Xiangpei Hu, and Junhu Ruan. 2020. Fertigation management for sustainable precision agriculture
+based on Internet of Things. Journal of Cleaner Production 277 (12 2020), 124119. DOI:http://dx.doi.org/10.1016/j.jclepro.2020.124119
+[42] D. Maria Manuel Vianny, A. John, Senthil Kumar Mohan, Aliza Sarlan, Adimoolam, and Ali Ahmadian. 2022. Water optimization
+technique for precision irrigation system using IoT and machine learning. Sustainable Energy Technologies and Assessments 52 (8 2022),
+102307. DOI:http://dx.doi.org/10.1016/j.seta.2022.102307
+[43] Maged Mohammed, Khaled Riad, and Nashi Alqahtani. 2021. Eicient IoT-Based Control for a Smart Subsurface Irrigation System to
+Enhance Irrigation Management of Date Palm. Sensors 21 (6 2021), 3942. Issue 12. DOI:http://dx.doi.org/10.3390/s21123942
+[44] Luca Preite and Giuseppe Vignali. 2024. Artiicial intelligence to optimize water consumption in agriculture: A predictive algorithm-based
+irrigation management system. Computers and Electronics in Agriculture 223 (8 2024), 109126. DOI:http://dx.doi.org/10.1016/j.compag.
+2024.109126
+[45] Sanku Kumar Roy, Sudip Misra, Narendra Singh Raghuwanshi, and Sajal K. Das. 2021. AgriSens: IoT-Based Dynamic Irrigation
+Scheduling System for Water Management of Irrigated Crops. IEEE Internet of Things Journal 8 (3 2021), 5023ś5030. Issue 6. DOI:
+http://dx.doi.org/10.1109/JIOT.2020.3036126
+[46] Shivangi Tyagi, Rishika Anand, Aditi Sabharwal, and SRN Reddy. 2024. Plant Recommendation System Using Smart Irrigation Integrated
+with IoT and Machine/Deep Learning. Communications in Soil Science and Plant Analysis 55 (9 2024), 2488ś2508. Issue 16. DOI:
+http://dx.doi.org/10.1080/00103624.2024.2367035
+[47] Konstantinos Tzerakis, Georgios Psarras, and Nektarios N. Kourgialas. 2023. Developing an Open-Source IoT Platform for Optimal
+Irrigation Scheduling and Decision-Making: Implementation at Olive Grove Parcels. Water 15 (4 2023), 1739. Issue 9. DOI:http:
+//dx.doi.org/10.3390/w15091739
+[48] S. Gul, J. Ren, K. Wang, and X. Guo. 2023. Estimation of reference evapotranspiration via machine learning algorithms in humid and
+semiarid environments in Khyber Pakhtunkhwa, Pakistan. International Journal of Environmental Science and Technology 20 (5 2023),
+5091ś5108. Issue 5. DOI:http://dx.doi.org/10.1007/s13762-022-04334-1
+[49] Phon Sheng Hou, Lokman Mohd Fadzil, Selvakumar Manickam, and Mahmood A. Al-Shareeda. 2023. Vector Autoregression Model-
+Based Forecasting of Reference Evapotranspiration in Malaysia. Sustainability 15 (2 2023), 3675. Issue 4. DOI:http://dx.doi.org/10.3390/
+su15043675
+[50] Halil Karahan, Mahmut Cetin, Muge Erkan Can, and Omar Alsenjar. 2024. Developing a New ANN Model to Estimate Daily Actual
+Evapotranspiration Using Limited Climatic Data and Remote Sensing Techniques for Sustainable Water Management. Sustainability 16
+(3 2024), 2481. Issue 6. DOI:http://dx.doi.org/10.3390/su16062481
+[51] Erdem Küçüktopcu, Emirhan Cemek, Bilal Cemek, and Halis Simsek. 2023. Hybrid Statistical and Machine Learning Methods for Daily
+Evapotranspiration Modeling. Sustainability 15 (3 2023), 5689. Issue 7. DOI:http://dx.doi.org/10.3390/su15075689
+[52] Muhammad Asif Nauman, Mahlaqa Saeed, Oumaima Saidani, Tayyaba Javed, Latifah Almuqren, Rab Nawaz Bashir, and Rashid Jahangir.
+2023. IoT and Ensemble Long-Short-Term-Memory-Based Evapotranspiration Forecasting for Riyadh. Sensors 23 (9 2023), 7583. Issue 17.
+DOI:http://dx.doi.org/10.3390/s23177583
+[53] Ali Raza, Romana Fahmeed, Neyha Rubab Syed, Okan Mert Katipoğlu, Muhammad Zubair, Fahad Alshehri, and Ahmed Elbeltagi. 2023.
+Performance Evaluation of Five Machine Learning Algorithms for Estimating Reference Evapotranspiration in an Arid Climate. Water
+15 (11 2023), 3822. Issue 21. DOI:http://dx.doi.org/10.3390/w15213822
+[54] Metin Sarıgöl and Okan Mert Katipoğlu. 2023. Estimation of monthly evaporation values using gradient boosting machines and mode
+decomposition techniques in the Southeast Anatolia Project (GAP) area in Turkey. Acta Geophysica 72 (3 2023), 999ś1016. Issue 2. DOI:
+http://dx.doi.org/10.1007/s11600-023-01067-8
+[55] Muhammad Tausif, Sania Dilshad, Qasim Umer, Muhammad Waseem Iqbal, Zohaib Latif, Choonhwa Lee, and Rab Nawaz Bashir.
+2023. Ensemble learning-based estimation of reference evapotranspiration (ET0. Internet of Things 24 (12 2023), 100973. DOI:
+http://dx.doi.org/10.1016/j.iot.2023.100973
+[56] Andrei B.B. Torres, Atslands R. da Rocha, Ticiana L. Coelho da Silva, José N. de Souza, and Rubens S. Gondim. 2020. Multilevel
+data fusion for the internet of things in smart agriculture. Computers and Electronics in Agriculture 171 (4 2020), 105309. DOI:
+http://dx.doi.org/10.1016/j.compag.2020.105309
+ACM Comput. Surv.
+
+30
+•
+V. Slany et al.
+[57] Mohammad Valipour, Helaleh Khoshkam, Sayed M. Bateni, Changhyun Jun, and Shahab S. Band. 2023. Hybrid machine learning
+and deep learning models for multi-step-ahead daily reference evapotranspiration forecasting in diferent climate regions across the
+contiguous United States. Agricultural Water Management 283 (6 2023), 108311. DOI:http://dx.doi.org/10.1016/j.agwat.2023.108311
+[58] Salem Al-Naemi and Awni Al-Otoom. 2023. Smart sustainable greenhouses utilizing microcontroller and IOT in the GCC countries;
+energy requirements; economical analyses study for a concept model in the state of Qatar. Results in Engineering 17 (3 2023), 100889.
+DOI:http://dx.doi.org/10.1016/j.rineng.2023.100889
+[59] Et-Taibi Bouali, Mohamed Riduan Abid, El-Mahjoub Boufounas, Tareq Abu Hamed, and Driss Benhaddou. 2022. Renewable Energy
+Integration Into Cloud; IoT-Based Smart Agriculture. IEEE Access 10 (2022), 1175ś1191. DOI:http://dx.doi.org/10.1109/ACCESS.2021.
+3138160
+[60] Matheus Cordeiro, Catherine Markert, Sayonara S. Araújo, Nídia G.S. Campos, Rubens S. Gondim, Ticiana L. Coelho da Silva, and
+Atslands R. da Rocha. 2022. Towards Smart Farming: Fog-enabled intelligent irrigation system using deep neural networks. Future
+Generation Computer Systems 129 (4 2022), 115ś124. DOI:http://dx.doi.org/10.1016/j.future.2021.11.013
+[61] Ariel Dinar and Nigel W. T. Quinn. 2022. Developing a Decision Support System for Regional Agricultural Nonpoint Salinity Pollution
+Management: Application to the San Joaquin River, California. Water 14 (8 2022), 2384. Issue 15. DOI:http://dx.doi.org/10.3390/w14152384
+[62] Mohammad Emami, Arman Ahmadi, Andre Daccache, Sara Nazif, Sayed-Farhad Mousavi, and Hojat Karami. 2022. County-Level
+Irrigation Water Demand Estimation Using Machine Learning: Case Study of California. Water 14 (6 2022), 1937. Issue 12. DOI:
+http://dx.doi.org/10.3390/w14121937
+[63] Morteza Hadipour, Javad Farrokhi Derakhshandeh, and Mohsen Aghazadeh Shiran. 2020. An experimental setup of multi-intelligent
+control system (MICS) of water management using the Internet of Things (IoT). ISA Transactions 96 (1 2020), 309ś326. DOI:http:
+//dx.doi.org/10.1016/j.isatra.2019.06.026
+[64] Kalpana Jain and Naveen Choudhary. 2022. Comparative analysis of machine learning techniques for predicting production capability
+of crop yield. International Journal of System Assurance Engineering and Management 13 (3 2022), 583ś593. Issue S1. DOI:http:
+//dx.doi.org/10.1007/s13198-021-01543-8
+[65] Rahim Khan, Muhammad Zakarya, Venki Balasubramanian, Mian Ahmad Jan, and Varun G. Menon. 2021. Smart Sensing-Enabled
+Decision Support System for Water Scheduling in Orange Orchard. IEEE Sensors Journal 21 (8 2021), 17492ś17499. Issue 16. DOI:
+http://dx.doi.org/10.1109/JSEN.2020.3012511
+[66] Mohammed Baljon. 2023. Revolutionizing Saudi Arabia’s Agriculture: The IoT Transformation of Water Management. Journal of Advanced
+Research in Applied Sciences and Engineering Technology 36 (12 2023), 217ś240. Issue 1. DOI:http://dx.doi.org/10.37934/araset.36.1.217240
+[67] Manuel Muñoz, Juan Gil, Lidia Roca, Francisco Rodríguez, and Manuel Berenguel. 2020. An IoT Architecture for Water Resource
+Management in Agroindustrial Environments: A Case Study in Almería (Spain). Sensors 20 (1 2020), 596. Issue 3. DOI:http://dx.doi.org/
+10.3390/s20030596
+[68] Miguel Pincheira, Massimo Vecchio, Rafaele Giafreda, and Salil S. Kanhere. 2021. Cost-efective IoT devices as trustworthy data sources
+for a blockchain-based water management system in precision agriculture. Computers and Electronics in Agriculture 180 (1 2021), 105889.
+DOI:http://dx.doi.org/10.1016/j.compag.2020.105889
+[69] Md. Bayazid Rahman, Joy Dhon Chakma, Abdul Momin, Shahidul Islam, Md Ashraf Uddin, Md Aminul Islam, and Sunil Aryal. 2023.
+Smart Crop Cultivation System Using Automated Agriculture Monitoring Environment in the Context of Bangladesh Agriculture.
+Sensors 23 (10 2023), 8472. Issue 20. DOI:http://dx.doi.org/10.3390/s23208472
+[70] Tavseef Mairaj Shah, Chidinma Onyekaozuoro Egwu, Mohammad Hammad, and Ralf Otterpohl. 2024. Decision Support Systems Based
+on a Multiple-Criteria Decision Analysis to Promote a Whole-of-Resource Approach for Water Management, with a Case Study of Rural
+Bengaluru in India. Water 16 (6 2024), 1674. Issue 12. DOI:http://dx.doi.org/10.3390/w16121674
+[71] Paul Vandôme, Crystele Leauthaud, Simon Moinard, Oliver Sainlez, Insaf Mekki, Abdelaziz Zairi, and Gilles Belaud. 2023. Making
+technological innovations accessible to agricultural water management: Design of a low-cost wireless sensor network for drip irrigation
+monitoring in Tunisia. Smart Agricultural Technology 4 (8 2023), 100227. DOI:http://dx.doi.org/10.1016/j.atech.2023.100227
+[72] Huma Zia, Ahsan Rehman, Nick R. Harris, Sundus Fatima, and Muhammad Khurram. 2021. An Experimental Comparison of IoT-
+Based and Traditional Irrigation Scheduling on a Flood-Irrigated Subtropical Lemon Farm. Sensors 21 (6 2021), 4175. Issue 12. DOI:
+http://dx.doi.org/10.3390/s21124175
+[73] Rab Nawaz Bashir, Imran Sarwar Bajwa, Muhammad Zahid Abbas, Amjad Rehman, Tanzila Saba, Saeed Ali Bahaj, and Hoshang Kolivand.
+2022. Internet of things (IoT) assisted soil salinity mapping at irrigation schema level. Applied Water Science 12 (5 2022), 105. Issue 5.
+DOI:http://dx.doi.org/10.1007/s13201-022-01619-1
+[74] Gilliard Custódio and Ronaldo Cristiano Prati. 2024. Comparing modern and traditional modeling methods for predicting soil moisture
+in IoT-based irrigation systems. Smart Agricultural Technology 7 (3 2024), 100397. DOI:http://dx.doi.org/10.1016/j.atech.2024.100397
+[75] Ehab H. Hegazi, Abdellateif A. Samak, Lingbo Yang, Ran Huang, and Jingfeng Huang. 2023. Prediction of Soil Moisture Content from
+Sentinel-2 Images Using Convolutional Neural Network (CNN). Agronomy 13 (2 2023), 656. Issue 3. DOI:http://dx.doi.org/10.3390/
+agronomy13030656
+ACM Comput. Surv.
+
+Smart Water-IoT: Harnessing IoT and AI for Eficient Water Management
+•
+31
+[76] István Mihály Kulmány, Ákos Bede-Fazekas, Ana Beslin, Zsolt Giczi, Gábor Milics, Barna Kovács, Márk Kovács, Bálint Ambrus, László
+Bede, and Viktória Vona. 2022. Calibration of an Arduino-based low-cost capacitive soil moisture sensor for smart agriculture. Journal
+of Hydrology and Hydromechanics 70 (9 2022), 330ś340. Issue 3. DOI:http://dx.doi.org/10.2478/johh-2022-0014
+[77] Jaime Lloret, Sandra Sendra, Laura Garcia, and Jose M. Jimenez. 2021. A Wireless Sensor Network Deployment for Soil Moisture
+Monitoring in Precision Agriculture. Sensors 21 (10 2021), 7243. Issue 21. DOI:http://dx.doi.org/10.3390/s21217243
+[78] Rodrigo Filev Maia, Carlos Ballester Lurbe, and John Hornbuckle. 2022. Machine learning approach to estimate soil matric potential in
+the plant root zone based on remote sensing data. Frontiers in Plant Science 13 (8 2022). DOI:http://dx.doi.org/10.3389/fpls.2022.931491
+[79] Mohd Ashraf Rather, Ishtiyaq Ahmad, Azra Shah, Younis Ahmad Hajam, Adnan Amin, Saba Khursheed, Irfan Ahmad, and Showkat
+Rasool. 2024. Exploring opportunities of Artiicial Intelligence in aquaculture to meet increasing food demand. Food Chemistry: X 22 (6
+2024), 101309. DOI:http://dx.doi.org/10.1016/j.fochx.2024.101309
+[80] Alessandro Carella, Pedro Tomas Bulacio Fischer, Roberto Massenti, and Riccardo Lo Bianco. 2024. Continuous Plant-Based and
+Remote Sensing for Determination of Fruit Tree Water Status. Horticulturae 10 (5 2024), 516. Issue 5. DOI:http://dx.doi.org/10.3390/
+horticulturae10050516
+[81] Marco Del-Coco, Marco Leo, and Pierluigi Carcagnì. 2024. Machine Learning for Smart Irrigation in Agriculture: How Far along Are
+We? Information 15 (5 2024), 306. Issue 6. DOI:http://dx.doi.org/10.3390/info15060306
+[82] Hajar Hammouch, Mounim El-Yacoubi, Huafeng Qin, and Hassan Berbia. 2024. A Systematic Review and Meta-Analysis of Intelligent
+Irrigation Systems. IEEE Access (2024), 1ś1. DOI:http://dx.doi.org/10.1109/ACCESS.2024.3421322
+[83] Khalid M. Hosny, Walaa M. El-Hady, and Farid M. Samy. 2024. Technologies, Protocols, and applications of Internet of Things in
+greenhouse Farming: A survey of recent advances. Information Processing in Agriculture (4 2024). DOI:http://dx.doi.org/10.1016/j.inpa.
+2024.04.002
+[84] Imran Ali Lakhiar, Haofang Yan, Chuan Zhang, Guoqing Wang, Bin He, Beibei Hao, Yujing Han, Biyu Wang, Rongxuan Bao, Tabinda Naz
+Syed, Junaid Nawaz Chauhdary, and Md. Rakibuzzaman. 2024. A Review of Precision Irrigation Water-Saving Technology under
+Changing Climate for Enhancing Water Use Eiciency, Crop Yield, and Environmental Footprints. Agriculture 14 (7 2024), 1141. Issue 7.
+DOI:http://dx.doi.org/10.3390/agriculture14071141
+[85] Caio Mucchiani, Daniele Zaccaria, and Konstantinos Karydis. 2024. Assessing the potential of integrating automation and artiicial
+intelligence across sample-destructive methods to determine plant water status: A review and score-based evaluation. Computers and
+Electronics in Agriculture 224 (9 2024), 108992. DOI:http://dx.doi.org/10.1016/j.compag.2024.108992
+[86] Fan Yang and Xiong Xiong. 2024. Carbon emissions, wastewater treatment and aquatic ecosystems. Science of The Total Environment
+921 (4 2024), 171138. DOI:http://dx.doi.org/10.1016/j.scitotenv.2024.171138
+[87] Ahmed S. Ali, Mahmoud N. Abdelmoez, M. Heshmat, and Khalil Ibrahim. 2022. A solution for water management and leakage detection
+problems using IoTs based approach. Internet of Things 18 (5 2022), 100504. DOI:http://dx.doi.org/10.1016/j.iot.2022.100504
+[88] Nilesh Bawankar, Ankit Kriti, Shailesh Singh Chouhan, and Sachin Chaudhari. 2024. IoT-Enabled Water Monitoring in Smart Cities With
+Retroit and Solar-Based Energy Harvesting. IEEE Access 12 (2024), 58222ś58238. DOI:http://dx.doi.org/10.1109/ACCESS.2024.3392852
+[89] Federica Bruno, Mauro De Marchis, Barbara Milici, Domenico Saccone, and Fabrizio Traina. 2021. A Pressure Monitoring System for Water
+Distribution Networks Based on Arduino Microcontroller. Water 13 (8 2021), 2321. Issue 17. DOI:http://dx.doi.org/10.3390/w13172321
+[90] Ayush Kumar Lall, Aakash Terala, Archit Goyal, Sachin Chaudhari, K. S. Rajan, and Shailesh Singh Chouhan. 2024. Behavioural Analysis
+of Water Consumption Using IoT-Based Smart Retroit Meter. IEEE Access 12 (2024), 113597ś113607. DOI:http://dx.doi.org/10.1109/
+ACCESS.2024.3436889
+[91] Henrique Mamede, João Cortez Neves, José Martins, Ramiro Gonçalves, and Frederico Branco. 2023. A Prototype for an Intelligent
+Water Management System for Household Use. Sensors 23 (5 2023), 4493. Issue 9. DOI:http://dx.doi.org/10.3390/s23094493
+[92] D. Giridhar Reddy, Darshan V, N. S. Girish Rao Salanke, Shobha G., and Manas M.N. 2024. Aadhaar Enabled Water Distribution System.
+Water Resources Management 38 (5 2024), 2279ś2291. Issue 7. DOI:http://dx.doi.org/10.1007/s11269-024-03759-2
+[93] Gaubert V. Santiago and Alberto J. Alvares. 2020. Deployment framework for the Internet of water meters using computer vision on ARM
+platform. Journal of Ambient Intelligence and Smart Environments 12 (1 2020), 35ś60. Issue 1. DOI:http://dx.doi.org/10.3233/AIS-200544
+[94] Vlastimil Slaný, Adam Lučanský, Petr Koudelka, Jan Mareček, Eva Krčálová, and Radek Martínek. 2020. An Integrated IoT Architecture
+for Smart Metering Using Next Generation Sensor for Water Management Based on LoRaWAN Technology: A Pilot Study. Sensors 20, 17
+(2020). DOI:http://dx.doi.org/10.3390/s20174712
+[95] Evangelos Syrmos, Vasileios Sidiropoulos, Dimitrios Bechtsis, Fotis Stergiopoulos, Eirini Aivazidou, Dimitris Vrakas, Prodromos
+Vezinias, and Ioannis Vlahavas. 2023. An Intelligent Modular Water Monitoring IoT System for Real-Time Quantitative and Qualitative
+Measurements. Sustainability 15 (1 2023), 2127. Issue 3. DOI:http://dx.doi.org/10.3390/su15032127
+[96] Shunyi Zhao, Qingxin Lu, Chengxi Zhang, Choon Ki Ahn, and Kunming Chen. 2024. Efective Recognition of Word-Wheel Water Meter
+Readings for Smart Urban Infrastructure. IEEE Internet of Things Journal 11 (5 2024), 17283ś17291. Issue 10. DOI:http://dx.doi.org/10.
+1109/JIOT.2024.3357839
+[97] Sameh S. Ahmed, Rekha Bali, Hasim Khan, Hassan Ibrahim Mohamed, and Sunil Kumar Sharma. 2021. Improved water resource
+management framework for water sustainability and security. Environmental Research 201 (10 2021), 111527. DOI:http://dx.doi.org/10.
+ACM Comput. Surv.
+
+32
+•
+V. Slany et al.
+1016/j.envres.2021.111527
+[98] Gerasimos Antzoulatos, Christos Mourtzios, Panagiota Stournara, Ioannis-Omiros Kouloglou, Nikolaos Papadimitriou, Dimitrios Spyrou,
+Alexandros Mentes, Efstathios Nikolaidis, Anastasios Karakostas, Dimitrios Kourtesis, Stefanos Vrochidis, and Ioannis Kompatsiaris.
+2020. Making urban water smart: the SMART-WATER solution. Water Science and Technology 82 (12 2020), 2691ś2710. Issue 12. DOI:
+http://dx.doi.org/10.2166/wst.2020.391
+[99] Luciana Teixeira Batista, José Ricardo Queiroz Franco, Ricardo Hall Fakury, Marcelo Franco Porto, and Carmela Maria Polito Braga.
+2022. Methodology for Determining Sustainable Water Consumption Indicators for Buildings. Sustainability 14 (5 2022), 5695. Issue 9.
+DOI:http://dx.doi.org/10.3390/su14095695
+[100] M Kavya, Aneesh Mathew, Padala Raja Shekar, and Sarwesh P. 2023. Short term water demand forecast modelling using artiicial
+intelligence for smart water management. Sustainable Cities and Society 95 (8 2023), 104610. DOI:http://dx.doi.org/10.1016/j.scs.2023.
+104610
+[101] Shiu-Shin Lin, Kai-Yang Zhu, Xian-Hao Zhang, Yi-Chuan Liu, and Chen-Yu Wang. 2023. Development of a Microservice-Based Storm
+Sewer Simulation System with IoT Devices for Early Warning in Urban Areas. Smart Cities 6 (12 2023), 3411ś3426. Issue 6. DOI:
+http://dx.doi.org/10.3390/smartcities6060151
+[102] Ankit Anilkumar Maroli, Vaibhav S. Narwane, Rakesh D. Raut, and Balkrishna E. Narkhede. 2021. Framework for the implementation
+of an Internet of Things (IoT)-based water distribution and management system. Clean Technologies and Environmental Policy 23 (1
+2021), 271ś283. Issue 1. DOI:http://dx.doi.org/10.1007/s10098-020-01975-z
+[103] Xiangtian Nie, Tianyu Fan, Bo Wang, Zhiyong Li, Achyut Shankar, and Adhiyaman Manickam. 2020. Big Data analytics and
+IoT in Operation safety management in Under Water Management. Computer Communications 154 (3 2020), 188ś196. DOI:http:
+//dx.doi.org/10.1016/j.comcom.2020.02.052
+[104] Benny Z. Rousso, Nhu C. Do, Li Gao, Ian Monks, Wenyan Wu, Rodney A. Stewart, Martin F. Lambert, and Jinzhe Gong. 2024.
+Transitioning practices of water utilities from reactive to proactive: Leveraging Australian best practices in digital technologies and data
+analytics. Journal of Hydrology 641 (9 2024), 131808. DOI:http://dx.doi.org/10.1016/j.jhydrol.2024.131808
+[105] Riccardo Zese, Elena Bellodi, Chiara Luciani, and Stefano Alvisi. 2021. Neural Network Techniques for Detecting Intra-Domestic Water
+Leaks of Diferent Magnitude. IEEE Access 9 (2021), 126135ś126147. DOI:http://dx.doi.org/10.1109/ACCESS.2021.3111113
+[106] Kiran Joseph, Ashok K. Sharma, and Rudi van Staden. 2022. Development of an Intelligent Urban Water Network System. Water 14 (4
+2022), 1320. Issue 9. DOI:http://dx.doi.org/10.3390/w14091320
+[107] Kagiso S. More, Christian Wolkersdorfer, Ning Kang, and Adel S. Elmaghraby. 2020. Automated measurement systems in mine
+water management and mine workings ś A review of potential methods. Water Resources and Industry 24 (12 2020), 100136. DOI:
+http://dx.doi.org/10.1016/j.wri.2020.100136
+[108] Nwakego Joy Okoli and Boniface Kabaso. 2024. Building a Smart Water City: IoT Smart Water Technologies, Applications, and Future
+Directions. Water 16 (2 2024), 557. Issue 4. DOI:http://dx.doi.org/10.3390/w16040557
+[109] Antonio Jesús Zapata-Sierra, Esther Salmerón-Manzano, Alfredo Alcayde, María Lourdes Zapata-Castillo, and Francisco Manzano-
+Agugliaro. 2023. The Scientiic Landscape of Smart Water Meters: A Comprehensive Review. Water 16 (12 2023), 113. Issue 1. DOI:
+http://dx.doi.org/10.3390/w16010113
+[110] Francesca Bellamoli, Mattia Di Iorio, Marco Vian, and Farid Melgani. 2023. Machine learning methods for anomaly classiication in
+wastewater treatment plants. Journal of Environmental Management 344 (10 2023), 118594. DOI:http://dx.doi.org/10.1016/j.jenvman.
+2023.118594
+[111] Ahmed Elsayed, Maysara Ghaith, Ahmed Yosri, Zhong Li, and Wael El-Dakhakhni. 2024. Genetic programming expressions for
+eluent quality prediction: Towards AI-driven monitoring and management of wastewater treatment plants. Journal of Environmental
+Management 356 (4 2024), 120510. DOI:http://dx.doi.org/10.1016/j.jenvman.2024.120510
+[112] Hong Gao, Bilong Chen, Mahmood Qaisar, Juqing Lou, Yue Sun, and Jing Cai. 2023. Machine learning-based model construction and
+identiication of dominant factor for simultaneous sulide and nitrate removal process. Bioresource Technology 390 (12 2023), 129848.
+DOI:http://dx.doi.org/10.1016/j.biortech.2023.129848
+[113] Nasim Hejabi, Seyed Mahdi Saghebian, Mohammad Taghi Aalami, and Vahid Nourani. 2021. Evaluation of the eluent quality
+parameters of wastewater treatment plant based on uncertainty analysis and post-processing approaches (case study). Water Science
+and Technology 83 (4 2021), 1633ś1648. Issue 7. DOI:http://dx.doi.org/10.2166/wst.2021.067
+[114] Gaoyang Li, Jiayuan Ji, Jialing Ni, Sirui Wang, Yuting Guo, Yisong Hu, Siwei Liu, Sheng-Feng Huang, and Yu-You Li. 2022. Application
+of deep learning for predicting the treatment performance of real municipal wastewater based on one-year operation of two anaerobic
+membrane bioreactors. Science of The Total Environment 813 (3 2022), 151920. DOI:http://dx.doi.org/10.1016/j.scitotenv.2021.151920
+[115] Dong Li, Chunhua Yang, Yonggang Li, Yan Chen, Daoping Huang, and Yiqi Liu. 2024. Learning a neural network-based soft sensor
+with double-errors parallel optimization towards eluent variable prediction in wastewater treatment plants. Journal of Environmental
+Management 366 (8 2024), 121907. DOI:http://dx.doi.org/10.1016/j.jenvman.2024.121907
+[116] Koketso J. Setshedi, Nhamo Mutingwende, and Nosiphiwe P. Ngqwala. 2021. The Use of Artiicial Neural Networks to Predict the
+Physicochemical Characteristics of Water Quality in Three District Municipalities, Eastern Cape Province, South Africa. International
+ACM Comput. Surv.
+
+Smart Water-IoT: Harnessing IoT and AI for Eficient Water Management
+•
+33
+Journal of Environmental Research and Public Health 18 (5 2021), 5248. Issue 10. DOI:http://dx.doi.org/10.3390/ijerph18105248
+[117] Dong Wang, Sven Thunéll, Ulrika Lindberg, Lili Jiang, Johan Trygg, and Mats Tysklind. 2022. Towards better process management in
+wastewater treatment plants: Process analytics based on SHAP values for tree-based machine learning methods. Journal of Environmental
+Management 301 (1 2022), 113941. DOI:http://dx.doi.org/10.1016/j.jenvman.2021.113941
+[118] Yu-Qi Wang, Hong-Cheng Wang, Yun-Peng Song, Shi-Qing Zhou, Qiu-Ning Li, Bin Liang, Wen-Zong Liu, Yi-Wei Zhao, and Ai-Jie
+Wang. 2023. Machine learning framework for intelligent aeration control in wastewater treatment plants: Automatic feature engineering
+based on variation sliding layer. Water Research 246 (11 2023), 120676. DOI:http://dx.doi.org/10.1016/j.watres.2023.120676
+[119] Hiroshi Yokoyama, Takahiro Yamashita, Yoichiro Kojima, and Kazuyuki Nakamura. 2024. Deep learning-based locculation sensor for
+automatic control of locculant dose in sludge dewatering processes during wastewater treatment. Water Research 260 (8 2024), 121890.
+DOI:http://dx.doi.org/10.1016/j.watres.2024.121890
+[120] Nawaf S. Alhajeri, Ahmed Tawik, Mahmoud Nasr, and Ahmed I. Osman. 2024. Artiicial intelligence-enabled optimization of
+Fe/Zn@biochar photocatalyst for 2,6-dichlorophenol removal from petrochemical wastewater: A techno-economic perspective. Chemo-
+sphere 352 (3 2024), 141476. DOI:http://dx.doi.org/10.1016/j.chemosphere.2024.141476
+[121] Ali Boubakri, Sarra Elgharbi, Imen Dhaouadi, Dorsaf Mansour, and Salah Al-Tahar Bouguecha. 2023. Optimization and prediction of
+lead removal from aqueous solution using FOśMD hybrid process: Statistical and artiicial intelligence analysis. Journal of Environmental
+Management 337 (7 2023), 117731. DOI:http://dx.doi.org/10.1016/j.jenvman.2023.117731
+[122] Elika Karbassiyazdi, Fatemeh Fattahi, Negin Yousei, Amirhessam Tahmassebi, Arsia Afshar Taromi, Javad Zyaie Manzari, Amir H
+Gandomi, Ali Altaee, and Amir Razmjou. 2022. XGBoost model as an eicient machine learning approach for PFAS removal: Efects of
+material characteristics and operation conditions. Environmental Research 215 (12 2022), 114286. DOI:http://dx.doi.org/10.1016/j.envres.
+2022.114286
+[123] Bo Ke, Hoang Nguyen, Xuan-Nam Bui, Hoang-Bac Bui, Yosoon Choi, Jian Zhou, Hossein Moayedi, Romulus Costache, and Thao
+Nguyen-Trang. 2021. Predicting the sorption eiciency of heavy metal based on the biochar characteristics, metal sources, and
+environmental conditions using various novel hybrid machine learning models. Chemosphere 276 (8 2021), 130204. DOI:http://dx.doi.
+org/10.1016/j.chemosphere.2021.130204
+[124] Mostafa Khalil, Ahmed AlSayed, Yang Liu, and Peter A. Vanrolleghem. 2023. Machine learning for modeling N2O emissions from
+wastewater treatment plants: Aligning model performance, complexity, and interpretability. Water Research 245 (10 2023), 120667. DOI:
+http://dx.doi.org/10.1016/j.watres.2023.120667
+[125] Hammad Khan, Saad Ullah Khan, Sajjad Hussain, and Asmat Ullah. 2022. Modelling of transmembrane pressure using slot/pore
+blocking model, response surface and artiicial intelligence approach. Chemosphere 290 (3 2022), 133313. DOI:http://dx.doi.org/10.1016/j.
+chemosphere.2021.133313
+[126] Hammad Khan, Sajjad Hussain, Muhammad Amad Ud Din, Muhammad Arshad, Fazal Wahab, Usman Hassan, and Abad Khan. 2023.
+Multiple design and modelling approaches for the optimisation of carbon felt electro-Fenton treatment of dye laden wastewater.
+Chemosphere 338 (10 2023), 139510. DOI:http://dx.doi.org/10.1016/j.chemosphere.2023.139510
+[127] Farzaneh Mohammadi, Zeinab Yavari, Mohammad Reza Nikoo, Ali Al-Nuaimi, and Hossein Karimi. 2023. Machine learning model
+optimization for removal of steroid hormones from wastewater. Chemosphere 343 (12 2023), 140209. DOI:http://dx.doi.org/10.1016/j.
+chemosphere.2023.140209
+[128] Duc-Viet Nguyen, Jihae Park, Hojun Lee, Taejun Han, and Di Wu. 2024. Assessing industrial wastewater eluent toxicity using boosting
+algorithms in machine learning: A case study on ecotoxicity prediction and control strategy development. Environmental Pollution 341
+(1 2024), 123017. DOI:http://dx.doi.org/10.1016/j.envpol.2023.123017
+[129] Wenjun Xie, Qingyuan Yu, Wen Fang, Xiaoge Zhang, Jinghua Geng, Jiayi Tang, Wenfei Jing, Miaomiao Liu, Zongwei Ma, Jianxun Yang,
+and Jun Bi. 2024. Data-driven approaches linking wastewater and source estimation hazardous waste for environmental management.
+Nature Communications 15 (6 2024), 5432. Issue 1. DOI:http://dx.doi.org/10.1038/s41467-024-49817-6
+[130] Aicha Aiche, Pierre-Martin Tardif, and Mohammed Erritali. 2024. Modeling Trust in IoT Systems for Drinking-Water Management.
+Future Internet 16 (7 2024), 273. Issue 8. DOI:http://dx.doi.org/10.3390/i16080273
+[131] Mohammed Alshehri, Akashdeep Bhardwaj, Manoj Kumar, Shailendra Mishra, and Jayadev Gyani. 2021. Cloud and IoT based smart
+architecture for desalination water treatment. Environmental Research 195 (4 2021), 110812. DOI:http://dx.doi.org/10.1016/j.envres.2021.
+110812
+[132] Stelian Brad, Mircea Murar, Grigore Vlad, Emilia Brad, and Mariut,a Popanton. 2021. Lifecycle Design of Disruptive SCADA Systems
+for Waste-Water Treatment Installations. Sustainability 13 (4 2021), 4950. Issue 9. DOI:http://dx.doi.org/10.3390/su13094950
+[133] Goeun Jang, Wooseong Yeo, Meeyoung Park, and Yong-Gyun Park. 2023. RT-CLAD: Artiicial Intelligence-Based Real-Time Chironomid
+Larva Detection in Drinking Water Treatment Plants. Sensors 24 (12 2023), 177. Issue 1. DOI:http://dx.doi.org/10.3390/s24010177
+[134] Arodh Lal Karn, Sharnil Pandya, Abolfazl Mehbodniya, Farrukh Arslan, Dilip Kumar Sharma, Khongdet Phasinam, Muhammad Nauman
+Aftab, Regin Rajan, Ravi Kumar Bommisetti, and Sudhakar Sengan. 2023. An integrated approach for sustainable development of
+wastewater treatment and management system using IoT in smart cities. Soft Computing 27 (4 2023), 5159ś5175. Issue 8. DOI:
+http://dx.doi.org/10.1007/s00500-021-06244-9
+ACM Comput. Surv.
+
+34
+•
+V. Slany et al.
+[135] Adam Kubiak, Hubert Fuks, Anna Szymczyk, Marcin Frankowski, and Michał Cegłowski. 2024. Development of a novel LED-IoT
+photoreactor for enhanced removal of carbamazepine waste driven by solar energy. Journal of Environmental Management 362 (6 2024),
+121331. DOI:http://dx.doi.org/10.1016/j.jenvman.2024.121331
+[136] Hyuck Kwon, Hyun-Jin Kang, Yuchan Park, and Jaeho Bae. 2023. Optimization of a sequencing batch reactor with the application of
+the Internet of Things. Water Research 229 (2 2023), 119511. DOI:http://dx.doi.org/10.1016/j.watres.2022.119511
+[137] Syed Muzzamil Hussain Shah, Sani I. Abba, Mohamed A. Yassin, Dahiru U. Lawal, Farouq Aliyu, Ebrahim Hamid Hussein Al-
+Qadami, Haris U. Qureshi, Isam H. Aljundi, Hamza A. Asmaly, Saad Sh. Sammen, and Miklas Scholz. 2024. New strategy based on
+HammersteinśWiener and supervised machine learning for identiication of treated wastewater salinization in Al-Hassa region, Saudi
+Arabia. Environmental Sciences Europe 36 (6 2024), 114. Issue 1. DOI:http://dx.doi.org/10.1186/s12302-024-00914-9
+[138] Cristina Villar Miguelez, Victor Monzon Baeza, Raúl Parada, and Carlos Monzo. 2023. Guidelines for Renewal and Securitization of a
+Critical Infrastructure Based on IoT Networks. Smart Cities 6 (2 2023), 728ś743. Issue 2. DOI:http://dx.doi.org/10.3390/smartcities6020035
+[139] Maira Alvi, Damien Batstone, Christian Kazadi Mbamba, Philip Keymer, Tim French, Andrew Ward, Jason Dwyer, and Rachel
+Cardell-Oliver. 2023. Deep learning in wastewater treatment: a critical review. Water Research 245 (10 2023), 120518. DOI:http:
+//dx.doi.org/10.1016/j.watres.2023.120518
+[140] Stefano Cairone, Shadi W. Hasan, Kwang-Ho Choo, Chi-Wang Li, Tiziano Zarra, Vincenzo Belgiorno, and Vincenzo Naddeo. 2024.
+Integrating artiicial intelligence modeling and membrane technologies for advanced wastewater treatment: Research progress and
+future perspectives. Science of The Total Environment 944 (9 2024), 173999. DOI:http://dx.doi.org/10.1016/j.scitotenv.2024.173999
+[141] Henry C. Croll, Kaoru Ikuma, Say Kee Ong, and Soumik Sarkar. 2023. Reinforcement learning applied to wastewater treatment process
+control optimization: Approaches, challenges, and path forward. Critical Reviews in Environmental Science and Technology 53 (10 2023),
+1775ś1794. Issue 20. DOI:http://dx.doi.org/10.1080/10643389.2023.2183699
+[142] Yizhe Ding, Qiya Sun, Yuqian Lin, Qian Ping, Nuo Peng, Lin Wang, and Yongmei Li. 2024. Application of artiicial intelligence in
+(waste)water disinfection: Emphasizing the regulation of disinfection by-products formation and residues prediction. Water Research
+253 (4 2024), 121267. DOI:http://dx.doi.org/10.1016/j.watres.2024.121267
+[143] Shakhawat Chowdhury and Tanju Karanil. 2024. Applications of artiicial intelligence (AI) in drinking water treatment processes:
+Possibilities. Chemosphere 356 (5 2024), 141958. DOI:http://dx.doi.org/10.1016/j.chemosphere.2024.141958
+[144] Muhammad Ibrahim, Adnan Haider, Jun Wei Lim, Bandita Mainali, Muhammad Aslam, Mathava Kumar, and Muhammad Kashif Shahid.
+2024. Artiicial neural network modeling for the prediction, estimation, and treatment of diverse wastewaters: A comprehensive review
+and future perspective. Chemosphere 362 (8 2024), 142860. DOI:http://dx.doi.org/10.1016/j.chemosphere.2024.142860
+[145] Amit Kumar, Saurabh Mishra, Nitin Kumar Singh, Manish Yadav, Hirendrasinh Padhiyar, Johnson Christian, and Rupesh Kumar. 2024.
+Ensuring carbon neutrality via algae-based wastewater treatment systems: Progress and future perspectives. Journal of Environmental
+Management 360 (6 2024), 121182. DOI:http://dx.doi.org/10.1016/j.jenvman.2024.121182
+[146] Sheetal Kumari, Jyoti Chowdhry, and Manoj Chandra Garg. 2024. AI-enhanced adsorption modeling: Challenges, applications, and
+bibliographic analysis. Journal of Environmental Management 351 (2 2024), 119968. DOI:http://dx.doi.org/10.1016/j.jenvman.2023.119968
+[147] Arti Malviya and Dipika Jaspal. 2021. Artiicial intelligence as an upcoming technology in wastewater treatment: a comprehensive
+review. Environmental Technology Reviews 10 (1 2021), 177ś187. Issue 1. DOI:http://dx.doi.org/10.1080/21622515.2021.1913242
+[148] Brij Mohan Maurya, Nidhi Yadav, Amudha T, Satheeshkumar J, Sangeetha A, Parthasarathy V, Mahalaxmi Iyer, Mukesh Kumar Yadav,
+and Balachandar Vellingiri. 2024. Artiicial intelligence and machine learning algorithms in the detection of heavy metals in water and
+wastewater: Methodological and ethical challenges. Chemosphere 353 (4 2024), 141474. DOI:http://dx.doi.org/10.1016/j.chemosphere.
+2024.141474
+[149] Mudita Nagpal, Miran Ahmad Siddique, Khushi Sharma, Nidhi Sharma, and Ankit Mittal. 2024. Optimizing wastewater treatment
+through artiicial intelligence: recent advances and future prospects. Water Science & Technology 90 (8 2024), 731ś757. Issue 3. DOI:
+http://dx.doi.org/10.2166/wst.2024.259
+[150] Lebea N. Nthunya, Kok Chung Chong, Soon Onn Lai, Woei Jye Lau, Eduardo Alberto López-Maldonado, Lucy Mar Camacho, Mohammad
+Mahdi A. Shirazi, Aamer Ali, Bhekie B. Mamba, Magdalena Osial, Paulina Pietrzyk-Thel, Agnieszka Pregowska, and Oranso T. Mahlangu.
+2024. Progress in membrane distillation processes for dye wastewater treatment: A review. Chemosphere 360 (7 2024), 142347. DOI:
+http://dx.doi.org/10.1016/j.chemosphere.2024.142347
+[151] Raj Kumar Oruganti, Alka Pulimoottil Biji, Tiamenla Lanuyanger, Pau Loke Show, Malinee Sriariyanun, Venkata K.K. Upadhyayula,
+Venkataramana Gadhamshetty, and Debraj Bhattacharyya. 2023. Artiicial intelligence and machine learning tools for high-performance
+microalgal wastewater treatment and algal bioreinery: A critical review. Science of The Total Environment 876 (6 2023), 162797. DOI:
+http://dx.doi.org/10.1016/j.scitotenv.2023.162797
+[152] Shivam Pandey, Bhekisipho Twala, Rajesh Singh, Anita Gehlot, Aman Singh, Elisabeth Caro Montero, and Neeraj Priyadarshi. 2022.
+Wastewater Treatment with Technical Intervention Inclination towards Smart Cities. Sustainability 14 (9 2022), 11563. Issue 18. DOI:
+http://dx.doi.org/10.3390/su141811563
+[153] C.H. Pérez-Beltrán, A.D. Robles, N.A. Rodriguez, F. Ortega-Gavilán, and A.M. Jiménez-Carvelo. 2024. Artiicial intelligence and water
+quality: From drinking water to wastewater. TrAC Trends in Analytical Chemistry 172 (3 2024), 117597. DOI:http://dx.doi.org/10.1016/j.
+ACM Comput. Surv.
+
+Smart Water-IoT: Harnessing IoT and AI for Eficient Water Management
+•
+35
+trac.2024.117597
+[154] Abdul Gafar Sheik, Suresh Babu Naidu Krishna, Reeza Patnaik, Seshagiri Rao Ambati, Faizal Bux, and Sheena Kumari. 2024. Digitaliza-
+tion of phosphorous removal process in biological wastewater treatment systems: Challenges, and way forward. Environmental Research
+252 (7 2024), 119133. DOI:http://dx.doi.org/10.1016/j.envres.2024.119133
+[155] Nitin Kumar Singh, Manish Yadav, Vijai Singh, Hirendrasinh Padhiyar, Vinod Kumar, Shashi Kant Bhatia, and Pau-Loke Show. 2023.
+Artiicial intelligence and machine learning-based monitoring and design of biological wastewater treatment systems. Bioresource
+Technology 369 (2 2023), 128486. DOI:http://dx.doi.org/10.1016/j.biortech.2022.128486
+[156] Sakshi Vaishnav, Tapendra Saini, Anuj Chauhan, Gyanendra Kumar Gaur, Rupasi Tiwari, Triveni Dutt, and Ayon Tarafdar. 2023.
+Livestock and poultry farm wastewater treatment and its valorization for generating value-added products: Recent updates and way
+forward. Bioresource Technology 382 (8 2023), 129170. DOI:http://dx.doi.org/10.1016/j.biortech.2023.129170
+[157] Nguyen Duc Viet, Duksoo Jang, Yeomin Yoon, and Am Jang. 2022. Enhancement of membrane system performance using artiicial
+intelligence technologies for sustainable water and wastewater treatment: A critical review. Critical Reviews in Environmental Science
+and Technology 52 (10 2022), 3689ś3719. Issue 20. DOI:http://dx.doi.org/10.1080/10643389.2021.1940031
+[158] Symantec. 2019. ISTR Internet Security Threat Report. (Feb. 2019). Retrieved October 28, 2024 from https://docs.broadcom.com/doc/istr-
+24-executive-summary-en
+[159] T. F. Downs, D. Brewer, M. Gilbert, and K. Heslop. 2019. State of Cybersecurity. (March 2019). Retrieved October 28, 2024 from
+https://media.milanote.com/p/iles/1Ilftg1qhN4615/Rzf/Week%201-state-of-cybersecurity-ISACA%202019.pdf
+[160] C Posner. 2022. Audit Analytics reports on cybersecurity disclosure. (March 2022). Retrieved Octovber 28, 2024 from https:
+//www.jdsupra.com/legalnews/audit-analytics-reports-on-8154058/
+[161] Verizon. 2016. Data Breach Digest: Scenarios from the ield. (Oct. 2016). Retrieved September 18, 2024 from https://enterprise.verizon.
+com/resources/reports/2016/data-breach-digest.pdf
+[162] District of Kansas Department of Justice, U.S. Attorney’s Oice. 2021. Kansas Man Pleads Guilty to Water Facility Tampering. (Oct.
+2021). Retrieved September 18, 2024 from https://www.justice.gov/usao-ks/pr/kansas-man-pleads-guilty-water-facility-tampering
+[163] K. Collier. 2021. 50,000 security disasters waiting to happen: The problem of America’s water supplies. (2021). https://www.nbcnews.
+com/tech/security/hacker-tried-poison-calif-water-supply-was-easy-entering-password-rcna1206
+[164] S. Tufts. 2021. Attempted Florida Water Supply Tampering Underscores IoT/OT Security Challenges. (2021). https://www.optiv.com/
+insights/discover/blog/attempted-lorida-water-supply-tampering-underscores-iotot-security
+[165] R. Loconte. 2016. Statement from Governor Cuomo on Cyber Attack Charges Annonced by U.S. Attorney General Loretta Lynch and
+FBI Director James Comey Involving the Bowman Avenue Dam in Westchester County. (2016). https://www.dfs.ny.gov/reports_and_
+publications/press_releases/pr1603242
+[166] S. Gatlan. 2021. US government discloses more ransomware attacks on water plants. (2021). https://www.bleepingcomputer.com/news/
+security/us-government-discloses-more-ransomware-attacks-on-water-plants/
+[167] Amin Hassanzadeh, Amin Rasekh, Stefano Galelli, Mohsen Aghashahi, Riccardo Taormina, Avi Ostfeld, and Katherine Banks. 2020.
+A review of cybersecurity incidents in the water sector. Journal of Environmental Engineering 146, 5 (2020), 03120003. DOI:http:
+//dx.doi.org/10.1061/(ASCE)EE.1943-7870.0001686
+[168] Muhammad Muzamil Aslam, Ali Tufail, Ki-Hyung Kim, Rosyzie Anna Awg Haji Mohd Apong, and Muhammad Taqi Raza. 2023.
+A Comprehensive Study on Cyber Attacks in Communication Networks in Water Puriication and Distribution Plants: Challenges,
+Vulnerabilities, and Future Prospects. Sensors 23, 18 (2023). DOI:http://dx.doi.org/10.3390/s23187999
+[169] Abubakar Bello, Sayka Jahan, Farnaz Farid, and Farhad Ahamed. 2023. A Systemic Review of the Cybersecurity Challenges in Australian
+Water Infrastructure Management. Water 15, 1 (2023). DOI:http://dx.doi.org/10.3390/w15010168
+[170] Pintu Kumar Sadhu, Venkata P. Yanambaka, and Ahmed Abdelgawad. 2022. Internet of Things: Security and Solutions Survey. Sensors
+22, 19 (2022). DOI:http://dx.doi.org/10.3390/s22197433
+[171] Usman Inayat, Muhammad Fahad Zia, Sajid Mahmood, Haris M. Khalid, and Mohamed Benbouzid. 2022. Learning-Based Methods
+for Cyber Attacks Detection in IoT Systems: A Survey on Methods, Analysis, and Future Prospects. Electronics 11, 9 (2022). DOI:
+http://dx.doi.org/10.3390/electronics11091502
+[172] Eryk Schiller, Andy Aidoo, Jara Fuhrer, Jonathan Stahl, Michael Ziörjen, and Burkhard Stiller. 2022. Landscape of IoT security. Computer
+Science Review 44 (05 2022). DOI:http://dx.doi.org/10.1016/j.cosrev.2022.100467
+[173] Ganji Kashmira and Nikhat Afshan. 2024. A bibliometric review of Internet of Things (IoT) on cybersecurity issues. Journal of Science
+and Technology Policy Management (02 2024). DOI:http://dx.doi.org/10.1108/JSTPM-05-2023-0071
+[174] Abdullah Ayub Khan, Asif Ali Laghari, Zafar Ahmed Shaikh, Zdzislawa Dacko-Pikiewicz, and Sebastian Kot. 2022. Internet of
+Things (IoT) Security With Blockchain Technology: A State-of-the-Art Review. IEEE Access 10 (2022), 122679ś122695. DOI:http:
+//dx.doi.org/10.1109/ACCESS.2022.3223370
+[175] Tariq Ahanger, Abdullah Aljumah, and Mohammed Atiquzzaman. 2022. State-of-the-art survey of artiicial intelligent techniques for
+IoT security. Computer Networks 206 (01 2022), 108771. DOI:http://dx.doi.org/10.1016/j.comnet.2022.108771
+ACM Comput. Surv.
+
+36
+•
+V. Slany et al.
+[176] Abdul Ghafar Jaafar, Saiful Adli Ismail, Abdul Habir, Khairul Akram Zainol Ariin, and Othman Mohd Yusop. 2024. A Raise of Security
+Concern in IoT Devices: Measuring IoT Security Through Penetration Testing Framework. International Journal of Advanced Computer
+Science and Applications 15, 5 (2024). DOI:http://dx.doi.org/10.14569/IJACSA.2024.0150568
+[177] Sandeep Pirbhulal, Sabarathinam Chockalingam, Ankur Shukla, and Habtamu Abie. 2024. IoT cybersecurity in 5G and beyond: a
+systematic literature review. International Journal of Information Security 23 (05 2024), 1ś53. DOI:http://dx.doi.org/10.1007/s10207-024-
+00865-5
+[178] L. Vass. 2019. Japanese government will try to hack its citizens’ IOT devices. (2019). https://nakedsecurity.sophos.com/2019/01/29/
+japanese-government-will-try-to-hack-its-citizens-iot-devices/
+[179] Nickson M. Karie, Nor Masri Sahri, Wencheng Yang, Craig Valli, and Victor R. Kebande. 2021. A Review of Security Standards and
+Frameworks for IoT-Based Smart Environments. IEEE Access 9 (2021), 121975ś121995. DOI:http://dx.doi.org/10.1109/ACCESS.2021.
+3109886
+[180] Jongeun You. 2022. Strengthening Cybersecurity of Water Infrastructure through Legislative Actions. JAWRA Journal of the American
+Water Resources Association 58 (02 2022). DOI:http://dx.doi.org/10.1111/1752-1688.12995
+[181] International Organization for Standardization. 2024. ISO - 35.030 - IT Security. ISO. https://www.iso.org/ics/35.030/x/.
+[182] National Institute of Standards and Technology. 2024. NIST Cybersecurity for IoT Program. NIST. https://www.nist.gov/itl/applied-
+cybersecurity/nist-cybersecurity-iot-program.
+[183] European Telecommunications Standards Institute. 2024. Search & Browse Standards and download for free. ETSI. https://www.etsi.org/
+standards-search.
+[184] Council of the European Union European Parliament. 2022. Directive (EU) 2022/2555 of the European Parliament and of the Council of
+14 December 2022 on measures for a high common level of cybersecurity across the Union. EU. (Dec. 2022). Retrieved September 29,
+2024 from http://data.europa.eu/eli/dir/2022/2555/oj
+[185] Helena M. Ramos, Alban Kuriqi, Mohsen Besharat, Enrico Creaco, Elias Tasca, Oscar E. Coronado-Hernández, Rodolfo Pienika, and
+Pedro Iglesias-Rey. 2023. Smart Water Grids and Digital Twin for the Management of System Eiciency in Water Distribution Networks.
+Water 15, 6 (2023). DOI:http://dx.doi.org/10.3390/w15061129
+[186] Helena M. Ramos, Maria Cristina Morani, Armando Carravetta, Oreste Fecarrotta, Kemi Adeyeye, P. Amparo López-Jiménez, and
+Modesto Pérez-Sánchez. 2022. New Challenges towards Smart Systems’ Eiciency by Digital Twin in Water Distribution Networks.
+Water 14, 8 (2022). DOI:http://dx.doi.org/10.3390/w14081304
+[187] Felix Lorenz, Morgan Geldenhuys, Harald Sommer, Frauke Jakobs, Carsten Lüring, Volker Skwarek, Ilja Behnke, and Lauritz Thamsen.
+2020. A Scalable and Dependable Data Analytics Platform for Water Infrastructure Monitoring. In 2020 IEEE International Conference on
+Big Data (Big Data). IEEE, Cambridge, UK, 3488ś3493. DOI:http://dx.doi.org/10.1109/BigData50022.2020.9378138
+[188] Talat Kemal Satilmisoglu, Yusuf Sermet, Musa Kurt, and Ibrahim Demir. 2024. Blockchain Opportunities for Water Resources
+Management: A Comprehensive Review. Sustainability 16, 6 (2024). DOI:http://dx.doi.org/10.3390/su16062403
+[189] Hui Zeng, Gaurav Dhiman, Ashutosh Sharma, Amit Sharma, and Alexey Tselykh. 2023. An IoT and Blockchain-based approach for
+the smart water management system in agriculture. Expert Systems 40, 4 (2023), e12892. DOI:http://dx.doi.org/10.1111/exsy.12892
+arXiv:https://onlinelibrary.wiley.com/doi/pdf/10.1111/exsy.12892
+[190] Pietro Boccadoro, Vitanio Daniele, Pietro Di Gennaro, Domenico Lofù, and Pietro Tedeschi. 2022. Water quality prediction on a Sigfox-
+compliant IoT device: The road ahead of WaterS. Ad Hoc Networks 126 (2022), 102749. DOI:http://dx.doi.org/10.1016/j.adhoc.2021.102749
+[191] Juan Pablo García-Martín, Antonio Torralba, Eduardo Hidalgo-Fort, David Daza, and Ramón González-Carvajal. 2023. IoT solution
+for smart water distribution networks based on a low-power wireless network, combined at the device-level: A case study. Internet of
+Things 22 (2023), 100746. DOI:http://dx.doi.org/10.1016/j.iot.2023.100746
+[192] Pietro Di Gennaro, Domenico Lofú, Daniele Vitanio, Pietro Tedeschi, and Pietro Boccadoro. 2019.
+WaterS: A Sigfox-
+compliant prototype for water monitoring.
+Internet Technology Letters 2, 1 (2019), e74.
+DOI:http://dx.doi.org/10.1002/itl2.74
+arXiv:https://onlinelibrary.wiley.com/doi/pdf/10.1002/itl2.74
+[193] Husam Hamid Ibrahim, Mandeep S. J. Singh, Samir Salem Al-Bawri, and Mohammad Tariqul Islam. 2020. Synthesis, Characterization
+and Development of Energy Harvesting Techniques Incorporated with Antennas: A Review Study. Sensors 20, 10 (2020). DOI:
+http://dx.doi.org/10.3390/s20102772
+[194] Michal Prauzek, Jaromir Konecny, Monika Borova, Karolina Janosova, Jakub Hlavica, and Petr Musilek. 2018. Energy Harvesting
+Sources, Storage Devices and System Topologies for Environmental Wireless Sensor Networks: A Review. Sensors 18, 8 (2018). DOI:
+http://dx.doi.org/10.3390/s18082446
+[195] Mduduzi John Mudumbe and Adnan M Abu-Mahfouz. 2015. Smart water meter system for user-centric consumption measurement. In
+2015 IEEE 13th international conference on industrial informatics (INDIN). IEEE, Cambridge, UK, 112ś117. DOI:http://dx.doi.org/10.1109/
+INDIN.2015.7281870
+[196] Victor Ordoñez, Robert Arcos, Jordi Romeu, and Andreas Josefsson. 2020. Investigation on electromagnetic vibration energy harvesting
+in water distribution control valves. IEEE Sensors Journal 21, 3 (2020), 2734ś2741.
+ACM Comput. Surv.
+
+Smart Water-IoT: Harnessing IoT and AI for Eficient Water Management
+•
+37
+[197] Nur Haninie Abd Wahab, Khairunnisa Hasikin, Khin Wee Lai, Kaijian Xia, Lulu Bei, Kai Huang, and Xiang Wu. 2024. Systematic
+review of predictive maintenance and digital twin technologies challenges, opportunities, and best practices. PeerJ Computer Science 10
+(2024). DOI:http://dx.doi.org/10.7717/PEERJ-CS.1943
+[198] Ersin Elbasi, Nour Mostafa, Zakwan AlArnaout, Aymen I. Zreikat, Elda Cina, Greeshma Varghese, Ahmed Shdefat, Ahmet E. Topcu,
+Wiem Abdelbaki, Shinu Mathew, and Chamseddine Zaki. 2023. Artiicial Intelligence Technology in the Agricultural Sector: A Systematic
+Literature Review. IEEE Access 11 (2023), 171ś202. DOI:http://dx.doi.org/10.1109/ACCESS.2022.3232485
+[199] Abiodun Emmanuel Abioye, Mohamad Shukri Zainal Abidin, Mohd Saiful Azimi Mahmud, Salinda Buyamin, Olatunji Obalowu
+Mohammed, Abdulrahaman Okino Otuoze, Ibrahim Olakunle Oleolo, and Abioye Mayowa. 2023. Model based predictive control strategy
+for water saving drip irrigation. Smart Agricultural Technology 4 (2023), 100179. DOI:http://dx.doi.org/10.1016/j.atech.2023.100179
+[200] Jinha Jung, Murilo Maeda, Anjin Chang, Mahendra Bhandari, Akash Ashapure, and Juan Landivar-Bowles. 2021. The potential of
+remote sensing and artiicial intelligence as tools to improve the resilience of agriculture production systems. Current Opinion in
+Biotechnology 70 (2021), 15ś22. DOI:http://dx.doi.org/10.1016/j.copbio.2020.09.003
+[201] Atiya Khan, Amol D. Vibhute, Shankar Mali, and C.H. Patil. 2022. A systematic review on hyperspectral imaging technology
+with a machine and deep learning methodology for agricultural applications. Ecological Informatics 69 (2022), 101678. DOI:http:
+//dx.doi.org/10.1016/j.ecoinf.2022.101678
+[202] Gurunathan Baskar, Soghra Nashath Omer, Panchamoorthy Saravanan, R. Rajeshkannan, V. Saravanan, M. Rajasimman, and Venkatku-
+mar Shanmugam. 2024. Status and future trends in wastewater management strategies using artiicial intelligence and machine learning
+techniques. Chemosphere 362 (8 2024), 142477. DOI:http://dx.doi.org/10.1016/j.chemosphere.2024.142477
+[203] Mary Vermi Aizza Corpuz, Stefano Cairone, Mario Natale, Alessia Giannattasio, Veronica Iuliano, Alfonso Grassi, Alieri Pollice, Giorgio
+Mannina, Antonio Buonerba, Vincenzo Belgiorno, and Vincenzo Naddeo. 2024. Sustainable control of microplastics in wastewater
+using the electrochemically enhanced living membrane bioreactor. Journal of Environmental Management 370 (2024), 122649. DOI:
+http://dx.doi.org/10.1016/j.jenvman.2024.122649
+[204] Arjun K. Venkatesan, Cheng-Shiuan Lee, and Christopher J. Gobler. 2022. Hydroxyl-radical based advanced oxidation processes can
+increase perluoroalkyl substances beyond drinking water standards: Results from a pilot study. Science of The Total Environment 847
+(2022), 157577. DOI:http://dx.doi.org/10.1016/j.scitotenv.2022.157577
+[205] Fang Yang, Fangyuan Jin, Nannan Song, Weilong Jiang, Miaoxin Bai, Chenxing Fu, Jinxia Lu, Yuxin Li, and Zhonghong Li. 2024.
+Research Progress and Perspectives on Wastewater-Based Epidemiology: A Bibliometric Analysis. Water 16, 12 (2024). DOI:http:
+//dx.doi.org/10.3390/w16121743
+[206] Leah M. Clarke, Jake W. O’Brien, Aimee K. Murray, William H. Gaze, and Kevin V. Thomas. 2024. A review of wastewater-based
+epidemiology for antimicrobial resistance surveillance. Journal of Environmental Exposure Assessment 3, 1 (2024). DOI:http://dx.doi.org/
+10.20517/jeea.2023.29
+[207] White House Oice of Science and Technology Policy. 2022. Blueprint for an AI Bill of Rights: Making Automated Systems Work for
+the American People. (October 2022). https://www.whitehouse.gov/ostp/ai-bill-of-rights/
+[208] Government of Canada, Innovation, Science and Economic Development Canada (ISED). 2022. Digital Charter Implementation Act,
+2022 (Bill C-27). (2022). https://www.parl.ca/DocumentViewer/en/44-1/bill/C-27/irst-reading
+[209] Department for Science, Innovation and Technology (DSIT), United Kingdom. 2023. A Pro-Innovation Approach to AI Regulation.
+(March 2023). https://www.gov.uk/government/publications/ai-regulation-a-pro-innovation-approach
+[210] Usman Tariq, Irfan Ahmed, Muhammad Khan, and Ali Bashir. 2023. Fortifying IoT against crimpling cyber-attacks: a systematic review.
+Karbala International Journal of Modern Science 9 (10 2023), 22. DOI:http://dx.doi.org/10.33640/2405-609X.3329
+[211] Tehseen Mazhar, Dhani Bux Talpur, Tamara Al Shloul, Yazeed Yasin Ghadi, Inayatul Haq, Inam Ullah, Khmaies Ouahada, and Habib
+Hamam. 2023. Analysis of IoT Security Challenges and Its Solutions Using Artiicial Intelligence. Brain Sciences 13, 4 (2023). DOI:
+http://dx.doi.org/10.3390/brainsci13040683
+[212] Iqbal H. Sarker, Asif Irshad Khan, Yoosef B. Abushark, and Fawaz Alsolami. 2022. Internet of Things (IoT) Security Intelligence: A
+Comprehensive Overview, Machine Learning Solutions and Research Directions. Mob. Netw. Appl. 28, 1 (March 2022), 296ś312. DOI:
+http://dx.doi.org/10.1007/s11036-022-01937-3
+[213] Juan Ignacio Iturbe Araya and Helena Rifà-Pous. 2023. Anomaly-based cyberattacks detection for smart homes: A systematic literature
+review. Internet of Things 22 (2023), 100792. DOI:http://dx.doi.org/10.1016/j.iot.2023.100792
+[214] Hajar Hameed Addeen, Yang Xiao, and Tieshan Li. 2024. A CVAE-Based Anomaly Detection Algorithm for Cyber Physical Attacks for
+Water Distribution Systems. IEEE Access 12 (2024), 48321ś48334. DOI:http://dx.doi.org/10.1109/ACCESS.2024.3384295
+[215] Barjinder Kaur, Sajjad Dadkhah, Farzaneh Shoeleh, Euclides Carlos Pinto Neto, Pulei Xiong, Shahrear Iqbal, Philippe Lamontagne,
+Suprio Ray, and Ali A. Ghorbani. 2023. Internet of Things (IoT) security dataset evolution: Challenges and future directions. Internet of
+Things 22 (2023), 100780. DOI:http://dx.doi.org/10.1016/j.iot.2023.100780
+[216] Umer Farooq, Noshina Tariq, Muhammad Asim, Thar Baker, and Ahmed Al-Shamma’a. 2022. Machine learning and the Internet of
+Things security: Solutions and open challenges. J. Parallel Distrib. Comput. 162, C (April 2022), 89ś104. DOI:http://dx.doi.org/10.1016/j.
+jpdc.2022.01.015
+ACM Comput. Surv.
+
+38
+•
+V. Slany et al.
+[217] Sidra Abbas, Abdullah Al Hejaili, Gabriel Avelino Sampedro, Mideth Abisado, Ahmad S. Almadhor, Tariq Shahzad, and Khmaies
+Ouahada. 2023. A Novel Federated Edge Learning Approach for Detecting Cyberattacks in IoT Infrastructures. IEEE Access 11 (2023),
+112189ś112198. DOI:http://dx.doi.org/10.1109/ACCESS.2023.3318866
+[218] Love Allen Chijioke Ahakonye, Cosmas Ifeanyi Nwakanma, and Dong-Seong Kim. 2024. Tides of Blockchain in IoT Cybersecurity.
+Sensors 24, 10 (2024). DOI:http://dx.doi.org/10.3390/s24103111
+[219] A. Y. Al-Zoubi, Mamoun Aldmour, Aif Khoury, and Dana Al-Thaher. 2024. Blockchain of Things for Securing and Managing
+Water 4.0 Applications. International Journal of Online and Biomedical Engineering (iJOE) 20, 11 (Aug. 2024), pp. 4ś15. DOI:http:
+//dx.doi.org/10.3991/ijoe.v20i11.50277
+[220] Naing Win Tun and Masahiro Mambo. 2024. Secure PUF-Based Authentication Systems. Sensors 24, 16 (2024). DOI:http://dx.doi.org/
+10.3390/s24165295
+[221] Abiodun Esther Omolara, Abdullah Alabdulatif, Oludare Isaac Abiodun, Moatsum Alawida, Abdulatif Alabdulatif, Wafa’ Hamdan
+Alshoura, and Humaira Arshad. 2022. The internet of things security: A survey encompassing unexplored areas and new insights.
+Comput. Secur. 112, C (Jan. 2022), 31. DOI:http://dx.doi.org/10.1016/j.cose.2021.102494
+Received 14 June 2023; revised 10 May 2025; accepted 31 May 2025
+ACM Comput. Surv.

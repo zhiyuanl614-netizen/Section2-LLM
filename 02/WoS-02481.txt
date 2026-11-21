@@ -1,0 +1,2494 @@
+Sustainable Energy, Grids and Networks 34 (2023) 101008
+Contents lists available at ScienceDirect
+Sustainable Energy, Grids and Networks
+journal homepage: www.elsevier.com/locate/segan
+The impact of mutual interaction between electric and water
+distribution systems via demand response
+F.G. Bagriyanik ∗, M.A. Sonmez, M. Bagriyanik
+Department of Electrical Engineering, Istanbul Technical University, Ayazaga Campus 34469, Istanbul, Turkey
+a r t i c l e
+i n f o
+Article history:
+Received 23 May 2022
+Received in revised form 25 December 2022
+Accepted 14 January 2023
+Available online 18 January 2023
+Keywords:
+Collaborative loads
+Demand response
+Energy management
+Feature extraction
+Mutual interaction
+a b s t r a c t
+Peak demands for electricity and water can be managed in a sustainable size and shape via residential
+demand response. Moreover, the mutual interaction of electric and water distribution management
+systems can enable to present new services and benefits. The collaborative loads that have both
+manageable electrical demand and water capacity can have great roles in the interaction. Peak
+electricity demand can be shaped by deferring their working schedule, interrupting of their run
+cycles, and assigning new set values that can lead to less consumption when the electricity demand
+and its price are high. In this paper, novel methods were introduced to uncover the impact of
+the residential electric demand response on household water demand. The methods were proposed
+for manageable capacities of electricity and water, daily normalized profile, feature extraction, and
+problem formulation. A feature extraction method based on Empirical Mode Decomposition was
+used to find convenient case profiles for incentives. Realistic electricity and water demand profiles
+were generated with twelve activities in 100 houses via MATLAB. Time intervals of the electricity
+tariff and the intervals belong to the user’s daily habits were placed in the activity-based power
+profiles. A high correlation was obtained in the daily normalized demand for electricity and water.
+Collaborative appliances had a significant share (approximately 34%) in total electricity demand.
+Deferring collaborative loads from on-peak time caused the shaping of the water demand. The amount
+of the water managed in on-peak time was between 87.35 L and 120.96 L case by case in a home.
+© 2023 Elsevier Ltd. All rights reserved.
+1. Introduction
+Electricity and water are vital resources for sustainable eco-
+nomic development. Depletion of fossil resources drives us to find
+new reserves to meet increasing electricity power demand [1].
+Especially reliable, cheap, and environmentally friendly sources
+are gaining more importance. Global water use has also increased
+six times over the past 100 years due to the increasing popula-
+tions and economic growth [2]. Trend in increase is expected to
+grow gradually at a rate of 1% per year [3]. Statistics are showing
+that agriculture (dominated by irrigation), industry (dominated
+by energy and manufacturing), and domestic use account for 70%,
+20 %, and 10% of global water consumption respectively [4]. In
+addition, global demands for energy and agricultural productions,
+which are both heavily dependent of water, are expected to in-
+crease by 60% up to 2025 [5]. Domestic water use is also foreseen
+to increase significantly, particularly in African and Asian sub-
+regions due to the expected rapid increase of populations [6].
+Again, the increase in negative effects of global warming is a ma-
+jor threat to meet water demand [7]. The lack of water resources
+∗Corresponding author.
+E-mail address:
+bagriyanikf@itu.edu.tr (F.G. Bagriyanik).
+with the declining water quality is considered to be the biggest
+obstacles for a sustainable life. It is seen as a matter of national
+security worldwide [6]. The main works that need to be done to
+alleviate the current problem are good supply/demand planning
+and execution of effective management of the scarce resources
+with users that leads to new consumption patterns and regula-
+tions. There are also changes and developments in the electricity
+distribution nowadays. Conventional electricity grid transforms
+to smart grid, distributed generation is becoming widespread and
+these power plants are closing to consumers [8]. The future goal
+of the countries is creating energy-hub houses they are smart,
+energy-efficient, and environmentally friendly. Managing the use
+of energy (gas, water, and electricity) in smart grid via mentioned
+homes are gaining importance day by day.
+Energy consumption in houses is between 30% and 40% of total
+consumption in the world [9]. Daily and seasonal changes in do-
+mestic energy consumption are very effective in the formation of
+the peak demand and it can be met by adding new production ca-
+pacity, using new storage units, and applying Demand Response
+(DR) [10]. Demand Response is a program which aims to change
+the end users’ electrical consumption or production behavior to
+help grid events [11]. It is carried out automatically or manually
+in a response to price signal or the bid generated in the electricity
+https://doi.org/10.1016/j.segan.2023.101008
+2352-4677/© 2023 Elsevier Ltd. All rights reserved.
+
+F.G. Bagriyanik, M.A. Sonmez and M. Bagriyanik
+Sustainable Energy, Grids and Networks 34 (2023) 101008
+market directly or through an aggregator. Price is tailored for
+retail or wholesale participants. Residential consumers can partic-
+ipate DR program through the smart home energy management
+systems (HEMS) [12]. Electricity users in houses are motivated via
+retail tariffs or incentives. Home energy management systems are
+used to create a working schedule for the electrical appliances to
+obtain economic benefits for participants and aggregators [13].
+A price function is formulated to obtain the targeted shape of
+demand, which can be followed by users [14]. In residential
+DR studies, it is accepted that manageable electrical appliances
+have shiftability properties [15]. Shiftability means that it can
+be possible to defer their working time to another time interval
+when a request is sent by an energy management system. Air
+conditioner (AC), electric water heater (WH), dishwasher (DW),
+washing machine (WM), and electric vehicle are considered as a
+deferrable (manageable) load [16].
+Electric water heaters are the most decisive appliances in a
+DR study. There is a high correlation between their electricity
+consumption and daily total demand [17,18] because WHs have
+a high share in residential electricity consumption [19]. Control
+implementing for WHs is easy because of a resistor is used
+to heat water and they can be preferred as an energy storage
+device [19]. Electric water heaters were handled in Tammam
+et al. [20] and Gelažanskas and Gamage [21] as an energy storage
+device to shape electricity demand. Energy consumption of a
+WH alters with the parameters such as tank volume, the heat
+conductivity of the insulation, rated power of the heating compo-
+nent, set temperature and the control algorithm [22]. Mean hot
+water use profiles are not similar in all countries, but morning
+and evening are found as on-peak time intervals in a day [23].
+A high tank volume with a high set temperature is offered to
+increase users’ satisfaction in Lübkert et al. [22]. Combi boilers
+(CBs) are the most preferred technology for residential space
+and water heating. There is a 23% share in energy consumption
+in the UK for both heating purpose [24]. Energy consumption
+pattern of heating is related to the daily activities in a home [25].
+Heating related electricity demand is high in the morning and
+evening [26]. Washing machine and DW are the loads that pro-
+vide flexibility to aggregators due to their use can be deferred by
+several hours [27]. Consumer survey studies are needed to obtain
+their flexible electricity capacity [27]. Power profiles are available
+in Pipattanasomporn et al. [28] for WM and DW that are gathered
+in one-second intervals. In addition, WMs are also the appliances
+that contribute 24% to residential water demand [29].
+Residential water and electricity use related studies in the
+literature are commonly focused on reducing methods of peak
+electricity demand for water utilities [30–32]. A large part of the
+current DR program is generally interested in wholesale mar-
+kets [33] and electricity grid level issues are neglected with
+the other important local challenges such as water distribution
+problems faced in daily operation. But the integration of water
+management systems and electric distribution management sys-
+tems via an energy management interface can enable to present
+additional services and benefits. Not only change in electricity
+power profile, but also change in the water use profile can be
+important in places if a high electrical energy is required to pump
+water and transport it to consumers [34]. These benefits are the
+following. Water consumption behavior can be changed via the
+deferrable loads that have both manageable electric power and
+manageable water capacity. Runtime schedules of the deferrable
+residential appliances in a daily DR plan can help estimation
+and control of the amount of water consumption. Electricity and
+water demand shifting from the on-peak intervals to the off-peak
+intervals increase the reliability of the water and the electricity
+distribution system. There will be an increase in efficiency both
+distribution systems. Balance stabilization between the supply
+and demand will reduce interruption risk, costs, especially the
+energy requirements in water systems [34]. Residential users can
+make changes in their habits or behaviors because they want
+to reduce their costs. It can also contribute to the awareness of
+residential users about efficiency and savings.
+It is found that most of the DR approaches in the mentioned
+studies above are inadequate to consider both the mutual in-
+teraction of electric and water in the distribution management
+systems. This study aimed to contribute to this less addressed
+topic in the literature related to the management of end users’
+both electricity and water demand via DR. The main contributions
+of this work are given below:
+• Activity-based load models that can provide both electricity
+and water consumption are proposed. In this study, the
+method introduced with [35], which is activity-based and
+only for obtaining electrical power profiles, has been further
+developed. Proposed methodology can produce extremely
+realistic output by as little data input as possible. In order to
+produce very realistic results in the enhanced load models,
+various measurement data of the devices with water con-
+sumption have been taken as a basis. The new load models
+that developed for the devices with both electricity and
+water consumption have been transformed into activity-
+based appliance models that will include not only water
+consumption but also wastewater quantities.
+• Normalization and feature extraction via Empirical Mode
+Decomposition methods are developed to obtain the effect
+of the interaction of electricity and water consumption of
+the household appliances on a demand response request.
+• The residential demand response via the collaborative ap-
+pliances is performed. In the proposed demand response
+method, there is a new perspective that aims to find man-
+ageable capacity in a way that considers both the tariff and
+the time intervals of the consumers’ habits.
+As a result, novel methods were introduced that aimed to uncover
+the impact of the residential DR with manageable electricity
+capacity on the water demand of the residents. Behavioral load
+models allowed both aggregator and consumer to see the effect
+of the users’ behavior changes. Price-based tariff time intervals
+based on the user’s daily habits were considered in the power and
+water profiles. Realistic demand and water consumption profiles
+that were gathered in two typical houses via energy analyzers
+were also used in the study. Section 2 of the paper introduces the
+methodologies for the mutual interaction of electricity and water
+consumption. Section 3 presents results of the case studies. The
+findings are discussed in Section 4. The challenges of this study
+are highlighted in Section 5 as a conclusion.
+2. Methodology for the mutual interaction between electricity
+and water
+The steps in the methodology are summarized in Table 1.
+The proposed methods that were used to obtain the manageable
+electricity and water capacity, daily-normalized profile, feature
+extraction, and problem formulation steps were shared in the
+following subsections.
+2.1. Method for the manageable electricity capacity in residential
+demand response
+Sixteen electrical appliances were grouped in this study as
+manageable and non-manageable loads. Manageable loads that
+build manageable electricity capacity provide flexibility to the
+user thanks to the technical capabilities they have. The targeted
+2
+
+F.G. Bagriyanik, M.A. Sonmez and M. Bagriyanik
+Sustainable Energy, Grids and Networks 34 (2023) 101008
+Table 1
+Steps in methodology for the mutual interaction between electricity and water.
+Step
+Operation
+01:
+Perform random distribution of appliances in the interested houses to keep the penetration values.
+02:
+Assign twelve activities randomly to houses to obtain the total number of occurrences for the each activity in one-hour time intervals.
+03:
+Obtain the occupation related data, such as occupation status, occupation beginning and stopping times for the activities required people to
+exist in the house.
+04:
+Match the appliances that need an occupant to start them in the related activity category that required people in the house.
+05:
+Assign the running time for the behavior related appliances according to the intervals of the day belongs to the user’s habits. Keep the total
+annual usage probability of each appliance.
+06:
+Take weather forecast, calculate heat loses with the physical determinants for the related loads such as air conditioner, combi boiler. Take
+into consideration behavioral adaptations such as additional rinse, temperature set values. Estimate hot water amount for the cleaning,
+dishwashing, and showering purposes.
+07:
+Define the desired simulation duration with the total house number. Start the simulation.
+08:
+Obtain power values for each appliance in the interested house. Match power profiles with the models they were created by the
+measurement data collected in the field by an energy analyzer. Take the cold and the hot water amount for the related appliances via the
+created model capable of providing these data.
+09:
+Increase time and check whether simulation time completed. If desired simulation time does not reach the stopping value, then increase by
+one minute and go to step 8.
+10:
+Check whether all houses are completed in the simulation. If the desired total house count is not completed, then increase the house count
+by 1 with restarting simulation time to step 8 for the new house.
+11:
+Power and water consumption results are taken for the each interested intervals in a day for the activities.
+12:
+Calculate the manageable power and manageable water capacity for the collaborative appliances.
+13:
+Shift one hour right or one hour left side the daily activity pattern that is given in step 2 to create new cases. Go to step 3.
+14:
+Calculate the profit by shifting or reducing the electricity consumption in the peak time for each case.
+15:
+Normalize the demand and do feature extraction for power and water profiles using Empirical Mode Decomposition method. Find consumers
+that met the activity profile can be identified by the aggregator. Make a decision to give incentives to convenient users.
+demand shape can be achieved via manageable loads in a residen-
+tial DR by means of deferring their working schedule, interrupting
+of their run cycles, and assigning the new set values that can lead
+to less consumption for the moments when electricity demand
+and its price are high. Manageable loads are WM with addi-
+tional rinse (AR), DW, WH, CB, iron (IR), clothes dryer (CD), oven
+(OV), kitchen hood (KH), vacuum cleaner (VC), and AC. Washing
+machine with AR, DW, WH, and CB are named as collaborative
+appliances in here due to their mutual interaction between wa-
+ter and electricity. Lamp, freezer (FR), refrigerator (RF), satellite
+receiver (SR), television (TV), and personal computer (PC) are the
+appliances can be put into non-manageable load group. There
+were twelve activities assigned to houses in this study. They
+were sleep, food, work, television, internet, education, house-
+work, transportation, shopping, entertainment, worship, and oth-
+ers. Using activity-based load models [35], electricity demand
+was obtained by weekly in each month for 100 houses during
+one year. The electrical power of each appliance was obtained
+via the scripts written in MATLAB as a function shown in (1).
+Manageable power capacity calculated by summing of the power
+of each collaborative appliance.
+LPa (i, j, t) = f (Pa, ϕa, ea, µa, ka, sa, da, i, j, t)
+(1)
+where the total activity-based power of the appliance a is LPa.
+Total number of the same appliance a in the house i is ϕa (i.e. if
+two refrigerators in the house i, ϕRF = 2). Each of the appliance
+in ϕa is numbered via j respectively (if ϕa > 0 then j = 1 . . . ϕa).
+Appliance j is activated by binary variable ea. Usage habits are
+embedded in time t via binary variable µa for the related appli-
+ances. Users can choose daily time intervals for their habits in
+night1 (00.00-06.00), in the morning (06.00–10.00), in midday
+(10.00–14.00), in the afternoon (14.00–18.00), in the evening
+(18.00–22.00), and in night2 (22.00–00.00). The operation of each
+appliance is ensured by µa in a specified time t in this way. Each
+load can be allowed to run for a total usage count ka. Power
+on and power off positions are enabled by binary variable sa
+in accordance with the ka. The power Pa that is obtained from
+the appliance technical specifications. The physical determinants
+(temperature, isolation, the geometry of the house), the user’s
+actions (i.e. washing program selection, set temperature value)
+affect both the operation duration da and the shape of the Pa
+power curve for the appliance a. Each da is ensured by the
+realistic energy consumption patterns that was taken via the
+energy analyzer in two houses. For example, PDW value at time
+t, Pt
+DW was modeled for an eco-mode program in DW as given in
+(2). Power of heater, circulation pump, drain pump, water inlet
+valve, fan motor, standby was 1546 W, 70 W, 15 W, 11 W, 15 W,
+and 2 W respectively. The consumption at time t in each stage
+was the sum of the power of the running parts. Program steps
+were evaluated according to the time elapsed as second in each
+program cycle (see Box I).
+For example, where the first water
+drain duration to1 was 15 s. First water intake duration tin1 was
+112 s. Washing with cold water duration tcold1 was 911 s. 2nd
+water drain duration to2 was 57 s while 2nd water intake duration
+tin2 was 63 s. Total time for cold washing tcold was 1080 s. First
+water heating duration tht1 was 843 s. Duration of first washing
+with hot water thot1 was 3130 s. Total time for washing with hot
+water thot was 4078 s. 3rd water drain duration to3 was 42 s. Third
+water intake duration tin3 was 75 s. Total time for rinsing with hot
+water trs was 313 s. Duration of rinsing with cold water tcrs was
+428 s. 4th water drain duration to4 was 40 s. Fourth water intake
+duration tin4 was 11 s. Duration of second washing with hot water
+thot2 was 1088 s. 5th water drain duration to5 was 67 s. Operation
+duration of fan tf was 2813 s. 6th water drain duration to6 was
+29 s. Total drying time tdry was 2842 s.
+2.2. Manageable water capacity in demand response
+Each collaborative appliance can have a key role to manage
+both water and electricity in a DR event. Hot water can be pro-
+vided by WHs and CBs in a typical house. Electric water heaters
+are one of the most preferred loads in DR applications because
+its electric energy demand share is very high in residential total
+energy consumption. Its share is 18% in the USA [17]. In addition,
+the load management can easily be carried out by just controlling
+the heater power switch [36]. The power of a WH that is approx-
+imately 2000 W has the capacity of 5–30 liters. However, WH
+can have a storage tank capacity up to 400 liters if the power
+is between 2000 W and 6000 W [37]. Combi boilers are the
+appliances that preferred widely in houses for both space heating
+and hot water. Combi boiler penetration rate in 15 European
+countries is 70% [37]. Combi boiler is not needed for space heating
+in the summer, but it is allowed to run for hot water. In this
+study, hot water was required to meet cleaning, dishwashing and
+3
+
+F.G. Bagriyanik, M.A. Sonmez and M. Bagriyanik
+Sustainable Energy, Grids and Networks 34 (2023) 101008
+Pt
+DW =
+⎧
+⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎨
+⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎩
+2 W
+in standby mode
+15 W
+t ≤to1
+11 W
+to1 < t ≤to1 + tin1
+70 W
+to1 + tin1 < t ≤to1 + tin1 + tcold1
+15 W
+to1 + tin1 + tcold1 < t ≤to1 + tin1 + tcold1 + to2
+11 W
+tcold + to1 < t ≤tcold + to1 + tin2
+1546 + 70 W
+tcold + to1 + tin2 < t ≤tcold + to1 + tin2 + tht1
+70 W
+tcold + to1 + tin2 + tht1 < t ≤tcold + to1 + tin2 + tht1 + thot1
+15 W
+tcold + to1 + thot −to3 < t ≤tcold + to1 + thot
+11 W
+tcold + to1 + thot < t ≤tcold + to1 + thot + tin3
+70 W
+tcold + to1 + thot + tin3 < t ≤tcold + to1 + thot + tin3 + trs
+15 W
+tcold + to1 + thot + tin3 + trs < t ≤tcold + to1 + thot + tin3 + trs + to4
+11 W
+tcold + to1 + thot + tcrs < t ≤tcold + to1 + thot + tcrs + tin4
+1546 + 70 W
+tcold + to1 + thot + tcrs + tin4 < t ≤tcold + to1 + thot + tcrs + tin4 + thot2
+15 W
+tcold + to1 + thot + tcrs + tin4 + thot2 < t ≤tcold + to1 + thot + tcrs + tin4 + thot2 + to5
+11 W
+tcold + to1 + thot + tcrs + thrs < t ≤tcold + to1 + thot + tcrs + thrs + tf
+15 W
+tcold + to1 + thot + tcrs + thrs + tf < t ≤tcold + to1 + thot + tcrs + thrs + tf + tdry
+2 W
+t > tcold + to1 + thot + tcrs + thrs + tf + tdry + to6
+(2)
+Box I.
+bathing purposes. Hot water amount of each hose was calculated
+by following the methods given in Parker et al. [38] and Yao
+and Steemers [39]. Users’ hot water consumption profiles were
+created randomly in accordance with the lamp usage duration in
+kitchen, bathroom, and toilet. It was allowed to use hot water
+for cleaning and the showering in a bathroom. The person in a
+kitchen can use the hot water for cleaning, dish washing purpose
+or both of them is also possible. Hot water usage was enabled for
+cleaning purpose only in the toilet. Hot water amount is obtained
+in each minute by the scripts written in MATLAB as a function
+given in (3).
+hwa (ina, outa, i, j, r, t) = f (ina, outa, da, i, j, r, t)
+(3)
+where the total hot water amount of the appliance a is hwa(ina)
+while the drained wastewater amount is hwa(outa). The amount
+of hwa(ina) and hwa(outa) is the same for WH and CB. They were
+taken in each interested room r (kitchen, bathroom, and toilet)
+according to the appliance operation duration da.
+Fresh (cold) water consumption is carried out by DW and WM
+with AR via washing programs. Six washing programs for DW
+and three washing programs for WM were enabled in this study.
+Each washing program of DW and WM with AR starts evacuation
+of water that may have remained from previous washing in its
+washing chamber. Cold water enters to DW via spray arms and
+the program executes the pre-wash (cold washing) cycle. Dirty
+water is drained at the end of the pre-wash cycle. Clean water
+is taken to execute the main wash cycle. The heater is turned
+on and main wash cycle carried out by sprayed hot water. It
+will be turned off if the set temperature of the chosen program
+is reached. Washing with hot water goes on for a while. Dirty
+water is drained at the end of the main washing cycle. Fresh
+water is taken to DW for the rinsing purpose. Dishwasher drains
+dirty water when it is finished the cycle. The final rinsing carried
+out via hot water. Dishwasher takes fresh water and heats it.
+Rinsing with hot water is finished and dirty water is drained.
+Drying cycle starts following the draining stage. A fan helps
+the evaporation process in the machine. The preferred washing
+program completed after the draining the water gathered in the
+drying cycle. Washing machine follows the cycles that named
+pre-washing with fresh water, washing with hot water, rinsing
+with cold water and spinning respectively. Washing machine
+programs allow entering the fresh water after the evacuation of
+the remaining water from the previous washing. Water is taken
+intermittently so that all parts of the laundry are sufficiently
+soaked. Pre-wash (cold washing) cycle of WM is finished draining
+the dirty water. The cold washing step is followed by heating the
+existing water and the continuous washing regime (main wash)
+is followed after the heating step is completed. Heater of WM
+will be turned off if the set temperature of the chosen program
+is reached. But washing with hot water goes on for a while. Main
+washing cycle completed with a spinning at low speed and the
+dirty water is drained. Clean water enters to machine for rinsing
+purposes. Washing machine spins at low speed and the dirty
+water is drained after the interested cycle is completed. After
+finishing the second rinsing and spinning step, a new rinsing is
+started by taking a fabric softener in the third rinsing step. Then
+main spinning process is carried out. Dirty water is drained and
+execution of the program is finished. Entered cold water and
+drained wastewater in each DW and WM with AR can be ob-
+tained by the script written in MATLAB as a function given in (4)
+according to the run cycles mentioned above. User’s preferences
+were reflected by means of allowing to choose different washing
+programs.
+cwa (ina, outa, i, j, t) = f (ina, outa, da, i, j, t)
+(4)
+4
+
+F.G. Bagriyanik, M.A. Sonmez and M. Bagriyanik
+Sustainable Energy, Grids and Networks 34 (2023) 101008
+where the total amount of entered cold water in the appliance
+a is cwa(ina) while the drained wastewater amount is cwa(outa).
+The amount of cwa(ina) and cwa(outa) are determined according
+to the operation duration da. It is ensured by realistic water
+consumption values that was taken in different houses. Finally,
+manageable water capacity wa is calculated by the sum of the
+consumption amount of both hot water hwa and cold water cwa
+as given in (5).
+wa (ina, outa, i, j, r, t) = hwa (ina, outa, i, j, r, t)
++ cwa (ina, outa, i, j, t)
+(5)
+where the total manageable inlet water capacity wa(ina) is the
+sum of the hot water hwa(ina) and cold-water cwa(ina) quantities
+while the manageable wastewater capacity wa(outa) is the sum of
+the outlet hot water hwa(outa) and the drained water cwa(outa)
+for the collaborative appliance. For example, the amount of the
+entered cold water cwdw(in) and drained dirty water cwdw(out)
+at time t were modeled for an eco-mode program in DW as given
+in (6) and in (7) respectively. The water amount is available here
+in each program cycles defined in seconds.
+cwt
+DW (in) =
+⎧
+⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎨
+⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎩
+1.875 L
+1 < t ≤60
+2.5 L
+60 < t ≤120
+0.29 L
+120 < t ≤180
+1.875 L
+1080 < t ≤1140
+0.75 L
+1140 < t ≤1200
+1.96 L
+5160 < t ≤5220
+1.17 L
+5220 < t ≤5280
+1.625 L
+5580 < t ≤5640
+1.375 L
+5640 < t ≤5700
+(6)
+cwt
+DW (out) =
+⎧
+⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎨
+⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎪⎩
+0.625L
+1 < t ≤60
+1.75 L
+1020 < t ≤1080
+0.625 L
+1080 < t ≤1140
+1.21 L
+5100 < t ≤5160
+0.54 L
+5160 < t ≤5220
+0.79 L
+5520 < t ≤5580
+0.875 L
+5580 < t ≤5640
+0.79 L
+6720 < t ≤6780
+2 L
+6780 < t ≤6840
+0.79 L
+9600 < t ≤9660
+0.42 L
+9660 < t ≤9720
+(7)
+2.3. Normalization and feature extraction for power and water con-
+sumption
+Power and water demand data provided by the scripts written
+in MATLAB were used for a year in such a way that, one week in
+each month with a one-minute progress step. The power matrix
+P and water matrix W in each month consists of data one row
+by 10,080 columns. Matrices with the size of one row by 10,080
+columns were rearranged so that there were 7 rows by 1440
+columns for each month. In other words, they were rearranged
+to build a day profile consists of a seven-day consumption. The
+total power of a day profile in a month was obtained by adding
+the values of the same column to each other. It resulted with a
+matrix that has one row with 1440 columns was created for each
+month. The calculation process mentioned above was repeated
+in 12 months. The total power of the day profile in a month was
+added each other to reach for a day profile in a year. The results
+were kept in the array Y. The total length of array Y was 1440.
+Hourly data were obtained by grouping 60 consecutive minutes
+of data in Y. As a last step, normalized values were calculated by
+means of the obtained hourly grouped values that was divided
+by the maximum hourly value in Y. The same processes were
+repeated for each case.
+Empirical mode decomposition (EMD) method was used to
+identify the most distinctive characteristics in power and water
+demand profiles. Because in this method, aggregator can analyze
+collected power and water demand data in time domain just
+keeping them in time series. Moreover, it is a data-adaptive multi
+resolution technique to analyze non-linear and non-stationary
+signals by separating them into a number of oscillating com-
+ponents at different resolution [40] with a residual (r). These
+components are called Intrinsic Mode Functions (IMF) in EMD
+method. Time series of power demand p(t) and water consump-
+tion w(t) can be written as given in (8) and (9) respectively.
+p (t) =
+N
+∑
+j=1
+IMFj
+p (t) + rp(t)
+(8)
+w (t) =
+N
+∑
+j=1
+IMFj
+w (t) + rw(t)
+(9)
+where N is the total number of the IMFs (various oscillating
+mono components) corresponding to the EMD of p(t) and w(t).
+Intrinsic Mode Function IMFj
+p(t) is the jth IMF series of p(t). Intrin-
+sic Mode Function IMFjw(t) is the jth IMF series of w(t). Residual of
+p(t) is represented by rp(t) while rw(t) is the residual for the w(t).
+Decomposition is carried out by an iterative way called shifting.
+Each iteration k aims to extract high frequency mode (IMF) from
+the interested signal to reach low frequency modes (IMFs). First in
+shifting process, maximum and minimum values (local extrema
+values) are found from the interested signal [41]. Cubic spline
+interpolation is used to build local minimums el
+p(t), elw(t) (lower
+envelopes) and local maximums eu
+p(t), euw(t) (upper envelopes)
+for power and water time series respectively [40]. Mean envelope
+function of power demand mk
+p(t) and mean envelope function of
+water demand mkw(t) are obtained by taking the average of the
+lower and upper envelopes as given in (10) and (11).
+mk
+p (t) = (1
+2
+)(eu
+p (t) + el
+p (t))
+(10)
+mk
+w (t) = (1
+2
+)(eu
+w (t) + el
+w (t))
+(11)
+Mean envelope function is extracted from the signals and new
+functions hk
+p (t) and hkw (t) are found by (12) and (13) for the
+power and water demand signals respectively.
+hk
+p (t) = p (t) −mk
+p (t)
+(12)
+hk
+w (t) = w (t) −mk
+w (t)
+(13)
+New functions are checked whether that satisfy the condi-
+tion [40] to be an IMF. If required conditions are not met for
+the interested signal, then it will be a related signal p(t) or w(t)
+will be hk
+p (t) or hkw (t) and iteration index k is increased by
+1 to repeat shifting steps to find new function. There will be
+a jth IMF for a new function that provides required condition.
+Residual functions are obtained by (14) for power and by (15) for
+water. Iteration index is restarted and j that counts IMF number is
+increased by 1. If the residuals are monotonic then the operation
+is finished.
+rj+1
+p (t) = p (t) −IMFj
+p (t)
+(14)
+5
+
+F.G. Bagriyanik, M.A. Sonmez and M. Bagriyanik
+Sustainable Energy, Grids and Networks 34 (2023) 101008
+rj+1
+w (t) = w (t) −IMFj
+w (t)
+(15)
+In this study, EMD processes were provided by the scripts
+in MATLAB. Intrinsic Mode Functions were obtained in 10 lev-
+els (N = 10). Standard deviation, and skewness were calculated
+accordance with the related cases for each IMF and residual.
+2.4. Problem formulation for mutual interaction
+Electricity and water consumption are shaped depending on
+when and how the appliances are used. The modification in a
+runtime of loads causes the change in both the electricity and
+water consumption pattern. Making a day-ahead schedule gives
+opportunities both user and aggregators to manage peak demand
+via DR incentives and tailored tariffs. For example, electricity
+retail flat price for the residential user in 2022 is charged with
+1.37 TL/kWh up to the 210 kWh monthly capacity in Turkey. 2.06
+TL/kWh is applied with a 50% increase in retail price for each
+exceeding consumption. The cost benefit can only be possible
+by less consuming with the flat price in DR. But, time of use
+(TOU) tariff consists of the mid-peak in 6.00–17.00, on-peak in
+17.00–22.00, and off-peak in 22.00–06.00 intervals for a day in
+Turkey. Time of use tariff can be useful to reduce bill in DR.
+Because, off-peak time is charged with the least price 0.739241
+TL/kWh that is 54% cheaper than the flat price in mid-day. On-
+peak time is charged with the highest price 2.159889 TL/kWh
+(63% more expensive than the price in mid-day). There is not
+available such a TOU tariff for water use in Turkey. Water retail
+price for the residential users is 5.56 TL/m3 for up to 15 m3 that
+is the threshold for water usage capacity in Turkey. If the total
+water amount during a bill period (typically one month) is above
+the 15 m3, it is charged with 8.35 TL/m3 for each exceeded water
+volume. Overuse tariff is 67% more expensive than the regular
+price. The cost benefit can only be possible by less water demand
+than the threshold.
+An aggregator needs to know consumers’ activity data for
+a successful DR study. If aggregators ignore users’ activities,
+changes in consumption behavior can be resulted with a cus-
+tomer dissatisfaction. Participants can withdraw from the DR
+study. That is why activity-based power and water demand
+profiles are crucial for DR. Mutual interaction can be done in a
+DR study according to the profits can be taken by the TOU tariff.
+A user can make a profit by shifting or reducing the electricity
+consumption in the on-peak time. The profit M can be calculated
+as shown in (16).
+M = ∆P.(ωon−peak −ωout−peak)
+(16)
+where ∆P is reduced or deferred amount of electrical energy in
+on-peak time. On-peak time price is ωon−peak while the price in
+mid-day and off-peak time interval are represented by ωout−peak
+respectively. The amount of the deferred or reduced water de-
+mand due to mutual interaction can be written as in (17) for the
+time intervals between the ton−peak and tout−peak.
+∆wa (ina, outa) = wa
+(
+ina, outa, ton−peak
+)
+−wa
+(
+ina, outa, tout−peak
+)
+(17)
+where the total amount of the reduced or deferred water is
+carried out by appliance a is ∆wa(ina) while the amount of the
+drained wastewater is ∆wa(outa). As it is shown, not only the
+electric user, but also the both distribution systems operators can
+have profits via DR study. Distribution system operators avoid
+risks that can cause failures and interruptions. Moreover, the
+water distribution system operator can make profits due to less
+electricity consumption in on-peak time due to mutual interac-
+tion. Residential DR studies can trigger a cooperation between
+both operators to give more attractive incentives or tariffs for the
+mutual customers.
+3. Results of the case studies
+Twelve different activities in 100 houses were handled with
+the three case studies via the scripts written in MATLAB. The total
+amount of the same type activity carried out in 100 houses are
+shown in Fig. 1 with the interested cases.
+Case studies were created according to the time of use data
+given in KONDA [42]. Base case study is done with the users’
+activities that given in Case 1. Case 2 activity profile is created by
+shifting Case 1’s activities to left side one hour. Activity profile
+of the Case 3 is obtained by shifting Case 1’s activities to right
+side one hour. Base case has the activity profiles as shown in
+Fig. 1(a). They interact with the user’s behaviors at the time in-
+tervals separated as night1 (00.00–06.00), morning (06.00–10.00),
+midday (10.00–14.00), afternoon (14.00–18.00), evening (18.00–
+22.00), and night2 (22.00–00.00). The total activity times in the
+interested time intervals where the both behaviors and habits
+reflected are presented in Table 2 for the cases.
+Deferring one hour right or one hour left side the daily activ-
+ity pattern in Case 1 creates changing on the user’s behaviors.
+Because it causes the change in the mapping with daily time
+intervals that contain the user’s behavior. In the case studies, the
+ownership rate of devices for irons, lamps, computers, satellite
+receivers, televisions and vacuum cleaners is 100%, that is, they
+are available in every home. The ownership ratio of CB, DW, WH,
+and WM, which are the collaborative appliances, is 70%, 42%, 23%,
+and 95% respectively. Air conditioner, CD, OV, FR, KH, and RF
+have the rates as 8%, 34%, 77%, 52%, 70%, and 106% respectively.
+Mapping appliances to activities and determining their working
+periods was assigned in accordance with the study given [35]. The
+occupation of the people at home varies depending on the activity
+types. Each device works with the assigned behavioral time inter-
+vals associated with the related activity. Running schedules have
+been created for each device that can work in all activities (e.g. re-
+frigerator), that can only work in certain activities (e.g. oven with
+food activity) and the daily time intervals that includes the habits
+of the consumer (e.g. washing machine). As a result, outputs
+such as power, water consumption, and wastewater amount are
+obtained in each case with the enhanced behavior-based load
+models that contain actual measurement results. Electricity de-
+mand of the sixteen residential appliances was obtained case by
+case during one week in a year for 100 houses as shown in Fig. 2.
+Total electricity consumption of Case 1, Case 2, and Case 3
+were 82,216 kWh, 81,650 kWh, and 81,954 kWh in a year re-
+spectively. Electricity consumption of the collaborative appliances
+during one week in a year for 100 houses can be seen in Table 3
+while others are given in Table 4.
+The collaborative appliances that have interaction between
+water and electricity were WM with AR, DW, CB, and WH in the
+cases. The share of electricity energy demand for the WM was
+8.94% in Case 1, 9.15% in Case 2, and 9.02% in Case 3. Additional
+rinse had almost the same demand share in all cases; it was
+0.25%. The share of the electricity energy demand for the DW
+was 4.21% in Case 1, 4.27% in Case 2, and 4.15% in Case 3. Combi
+boilers were not allowed to run space heating in the months
+between May and October. But, CBs were able to run for hot
+water generation in all months. Combi boilers had the electricity
+demand share that was 8.47% in Case 1, 8.52% in Case 2, 8.51% in
+Case 3. However, the electric demand share of CBs for the hot
+water production was 2.39% in Case 1, 2.32% in Case 2, 2.51%
+in Case 3. The share of the electricity energy demand for WHs
+was the 18.31% in Case 1, 18.56% in Case 2, and 18.27% in Case
+3. The total share of the electricity demand for the collaborative
+appliances was 34.10% in Case 1, 34.56% in Case 2, and 34.21% in
+Case 3. Electricity energy demand was calculated in each activity
+by taking into consideration both the intervals of TOU tariffs and
+6
+
+F.G. Bagriyanik, M.A. Sonmez and M. Bagriyanik
+Sustainable Energy, Grids and Networks 34 (2023) 101008
+Fig. 1. Activities in cumulative form in the cases for the 100 houses: (a) Case 1 (b) Case 2 (c) Case 3.
+Table 2
+Total activity duration in the daily behavioral based time intervals for the cases with 100 houses.
+Activities
+Case
+Night1
+Morning
+Midday
+Afternoon
+Evening
+Night2
+Unit
+Food
+Case 1
+60
+4080
+3600
+1860
+3780
+240
+min
+Sleep
+Case 1
+33120
+9660
+840
+240
+600
+4260
+min
+Television
+Case 1
+780
+780
+2100
+2940
+6780
+3300
+min
+Housework
+Case 1
+60
+1440
+3420
+2340
+1620
+240
+min
+Internet
+Case 1
+720
+420
+1320
+1560
+2460
+1620
+min
+Work
+Case 1
+180
+3420
+6840
+7380
+2220
+300
+min
+Worship
+Case 1
+420
+1020
+1380
+1440
+1620
+360
+min
+Entertainment
+Case 1
+360
+120
+660
+1440
+1740
+780
+min
+Transportation
+Case 1
+0
+1680
+480
+780
+840
+60
+min
+Education
+Case 1
+60
+840
+1920
+1680
+480
+180
+min
+Shopping
+Case 1
+0
+120
+480
+780
+420
+60
+min
+Other
+Case 1
+240
+420
+960
+1560
+1440
+600
+min
+Food
+Case 2
+420
+4440
+3420
+2340
+2880
+120
+min
+Sleep
+Case 2
+32820
+5760
+480
+240
+1620
+7800
+min
+Television
+Case 2
+360
+1200
+2280
+3360
+7800
+1680
+min
+Housework
+Case 2
+60
+2400
+3000
+2280
+1260
+120
+min
+Internet
+Case 2
+360
+660
+1380
+1680
+2940
+1080
+min
+Work
+Case 2
+240
+5220
+6780
+6540
+1380
+180
+min
+Worship
+Case 2
+1140
+300
+1500
+1560
+1560
+180
+min
+Entertainment
+Case 2
+240
+240
+900
+1440
+1920
+360
+min
+Transportation
+Case 2
+120
+1680
+480
+1080
+480
+0
+min
+Education
+Case 2
+60
+1320
+2040
+1200
+480
+60
+min
+Shopping
+Case 2
+0
+180
+660
+660
+300
+60
+min
+Other
+Case 2
+180
+600
+1080
+1620
+1380
+360
+min
+Food
+Case 3
+120
+3000
+3540
+2460
+3960
+540
+min
+Sleep
+Case 3
+30480
+14700
+1560
+240
+300
+1440
+min
+Television
+Case 3
+1980
+420
+1920
+2640
+5280
+4440
+min
+Housework
+Case 3
+120
+720
+3540
+2340
+1920
+480
+min
+Internet
+Case 3
+1380
+240
+1200
+1440
+2100
+1740
+min
+Work
+Case 3
+300
+1740
+7080
+7140
+3660
+420
+min
+Worship
+Case 3
+420
+1080
+780
+1680
+1620
+660
+min
+Entertainment
+Case 3
+540
+120
+480
+1320
+1560
+1080
+min
+Transportation
+Case 3
+0
+1320
+720
+540
+1080
+180
+min
+Education
+Case 3
+120
+360
+1920
+1980
+540
+240
+min
+Shopping
+Case 3
+60
+60
+360
+840
+480
+60
+min
+Other
+Case 3
+480
+240
+900
+1380
+1500
+720
+min
+7
+
+F.G. Bagriyanik, M.A. Sonmez and M. Bagriyanik
+Sustainable Energy, Grids and Networks 34 (2023) 101008
+Fig. 2. Electricity demand of appliances in 100 houses for the cases.
+Table 3
+Electricity consumption of the collaborative appliances in 100 houses as kWh.
+Case
+Appliance
+Off-peak
+Mid-peak
+On-peak
+Total
+Average per house
+Case 1
+AR
+78.292
+81.734
+49.244
+209.270
+0.026
+Case 1
+CB
+322.430
+1059.182
+585.517
+1967.128
+0.335
+Case 1
+DW
+854.495
+1367.904
+1236.627
+3459.026
+0.980
+Case 1
+WH
+2775.933
+7172.467
+5104.467
+15,052.867
+7.791
+Case 1
+WM
+1495.264
+3794.296
+2059.017
+7348.577
+0.921
+Case 2
+AR
+78.861
+73.047
+57.497
+209.406
+0.026
+Case 2
+CB
+213.655
+1030.582
+651.232
+1895.468
+0.322
+Case 2
+DW
+838.968
+1303.680
+1344.021
+3486.669
+0.988
+Case 2
+WH
+1645.467
+7509.867
+5999.867
+15,155.200
+7.844
+Case 2
+WM
+1455.907
+3696.275
+2322.863
+7475.044
+0.937
+Case 3
+AR
+74.328
+84.811
+50.456
+209.595
+0.026
+Case 3
+CB
+460.365
+1078.555
+515.485
+2054.405
+0.349
+Case 3
+DW
+893.300
+1389.449
+1117.279
+3400.028
+0.964
+Case 3
+WH
+3913.733
+7005.733
+4053.333
+14,972.800
+7.750
+Case 3
+WM
+1506.987
+3968.148
+1922.608
+7397.744
+0.927
+Table 4
+Electricity consumption of the non-collaborative appliances in 100 houses as kWh.
+Load
+Case
+Off-peak
+Mid-peak
+On-peak
+Case
+Off-peak
+Mid-peak
+On-peak
+Case
+Off-peak
+Mid-peak
+On-peak
+AC
+1
+299
+621
+251
+2
+275
+588
+236
+3
+285
+602
+243
+CD
+1
+1681
+1765
+1166
+2
+1883
+1325
+1148
+3
+1906
+1514
+792
+FR
+1
+1081
+1486
+676
+2
+1080
+1486
+676
+3
+1081
+1486
+676
+IR
+1
+51
+802
+345
+2
+34
+984
+294
+3
+115
+755
+345
+KH
+1
+12
+242
+121
+2
+20
+229
+125
+3
+20
+237
+121
+Lamp
+1
+3035
+4956
+4586
+2
+1992
+5241
+4914
+3
+4473
+4432
+4111
+OV
+1
+263
+4374
+2203
+2
+390
+4168
+2090
+3
+393
+4174
+2042
+PC
+1
+57
+69
+77
+2
+34
+79
+91
+3
+77
+59
+66
+RF
+1
+5412
+7461
+3390
+2
+5412
+7463
+3389
+3
+5413
+7461
+3388
+SR
+1
+205
+278
+182
+2
+185
+286
+193
+3
+228
+271
+165
+TV
+1
+405
+514
+784
+2
+207
+596
+898
+3
+632
+444
+619
+VC
+1
+22
+200
+110
+2
+15
+219
+120
+3
+54
+206
+111
+the time intervals that represents the user’s habits for the cases.
+The results are shown in Fig. 3.
+The shares of the electrical energy demand of the activities are
+given in Table 5. Electricity demand in the food activity was the
+highest share in the all cases. The maximum value was obtained
+as 23.05% in Case 1. The share of the first five activities such as
+food, sleep, television, housework, internet, is more than 75% of
+the total demand.
+The power demand capacities calculated for time intervals in a
+day are given in Table 6. The maximum capacity that is an average
+share of 25% for all cases, were obtained during the evening time.
+The available capacities were minimum during night as expected.
+If a TOU tariff is considered, mid-peak time resulted in the power
+demand by 46.72% in Case 1, 47.13% in Case 2, and 45.52% in Case
+3. The shares of electricity demand during on-peak time were
+calculated as 29.01%, 31.16% and 25.99% in the cases 1, 2 and
+3, respectively. Power demand capacity for the appliances in the
+off-peak time period was 24.27% in Case 1, 21.72% in Case 2, and
+28.49% in Case 3.
+Manageable power capacities for the collaborative appliances
+are shown in Fig. 4 within the time intervals that represents the
+8
+
+F.G. Bagriyanik, M.A. Sonmez and M. Bagriyanik
+Sustainable Energy, Grids and Networks 34 (2023) 101008
+Fig. 3. Electricity energy: (a) demand in activities (b) demand in TOU tariff (c) demand in time intervals.
+Table 5
+The shares of the electrical energy demand of the activities.
+Activities
+Case1
+Case2
+Case3
+Food
+23.05%
+22.65%
+22.71%
+Sleep
+19.04%
+18.76%
+19.50%
+Television
+16.78%
+17.43%
+17.04%
+Housework
+9.77%
+9.97%
+9.71%
+Internet
+7.48%
+7.29%
+7.40%
+Work
+6.27%
+6.42%
+6.19%
+Worship
+4.92%
+4.73%
+5.00%
+Entertainment
+2.32%
+2.28%
+2.14%
+Transportation
+2.05%
+2.02%
+2.04%
+Education
+1.85%
+1.91%
+1.83%
+Shopping
+0.97%
+0.98%
+0.95%
+Other
+5.52%
+5.55%
+5.49%
+Table 6
+Power demand capacities in the time intervals.
+Time interval
+Case1
+Case2
+Case3
+Night1 (00.00–06.00)
+13.08%
+13.17%
+15.38%
+Morning (06.00–10.00)
+20.09%
+20.50%
+17.80%
+Midday (10.00–14.00)
+16.72%
+16.58%
+16.54%
+Afternoon (14.00–18.00)
+13.65%
+14.59%
+14.49%
+Evening (18.00–22.00)
+25.28%
+26.61%
+22.68%
+Night2 (22.00–00.00)
+11.20%
+8.55%
+13.11%
+user’s appliance usage habits. It was also given in Fig. 5 with the
+TOU tariff intervals.
+Water and wastewater capacity of the collaborative appliances
+were obtained during one week in a year for 100 houses as shown
+in Fig. 6. Water demands for the cases were 1,618,931.28 L in
+Case 1, 1,611,304.49 L in Case 2, and 1,607,837.01 L in Case 3.
+Wastewater capacity were 1,590,440.69 L in Case 1, 1,583,572.97
+L in Case 2, and 1,579,774.41 L in Case 3.
+Both water demand and wastewater capacity were calculated
+in each activity, in TOU tariffs, and in the time intervals that
+represents the user’s habits for the cases. The results are shown
+in Fig. 7 for the water demand capacity while Fig. 8 shows the
+wastewater capacity results in this study.
+Daily normalized power, water and wastewater profiles were
+obtained by means of the method in Section 2.3. The results are
+shown in Fig. 9 for the electric, water, and wastewater demand
+in 100 houses with the cases.
+The correlation between daily normalized power and daily
+normalized water were calculated for each case. The mutual cor-
+relation coefficient of Case 1 between the daily normalized power
+curve and water consumption, which were given in Figs. 9(d)
+and 9(e) was 0.9594. The mutual correlation coefficient of Case 2
+between the daily normalized power curve and water consump-
+tion was 0.9749 while it was 0.9594 for Case 3. The correlation
+between power and wastewater were calculated for each case.
+The mutual correlation coefficient of Case 1 between the daily
+normalized power curve and drained wastewater, which were
+given in Figs. 9(d) and 9(f) was 0.9662. The mutual correlation
+coefficient of Case 2 between the daily normalized power curve
+and drained wastewater was 0.9774 while it was 0.9353 for
+Case 3. The mutual correlation coefficient between water demand
+and drained wastewater, which were given in Figs. 9(e) and 9(f)
+was 0.99 for the same numbered cases. Electricity energy, water
+demand, and wastewater data for 100 houses in a year were
+normalized. Next, EMD was used to find depicting characteristic
+for each case. Data in each case decomposed into 10 numbers
+of IMFs. Standard deviation and skewness were calculated for
+each interested case. The statistical results are shared in Table 7
+for the big data of normalized water demand and normalized
+wastewater while they are given in Table 8 for the normalized
+big data of electric power demand. Standard deviations shown in
+Tables 7 and 8 can be used to distinguish the cases by following
+the IMFs (e.g., 7th, 8th, 9th, 10th IMFs). Skewness results of each
+IMF can also help to recognize the interested case, but, in this
+study, proper classifier design and performance analysis are out
+of the scope.
+9
+
+F.G. Bagriyanik, M.A. Sonmez and M. Bagriyanik
+Sustainable Energy, Grids and Networks 34 (2023) 101008
+Fig. 4. Manageable power capacity in the user’s habit time intervals for the collaborative appliances.
+Fig. 5. Manageable power capacity at the TOU tariff time intervals for the collaborative appliances.
+4. Discussion
+Electricity demand of the RF was the highest share in the
+total consumption in the all cases (19.78% in Case 1, 19.92% in
+Case 2, 19.84% in Case 3). Electric water heaters were the second
+appliance that consumed the highest electricity energy. Lamp
+usage caused the third highest electricity demand by the ratio of
+15.3% in Case 1, 14.88% in Case 2, and 15.88% in Case 3. The power
+demand of WM followed the demand capacity of the lamp usage.
+Combi boiler, OV, CD, and DW were also the high electricity
+consumption respectively after the WM. One-hour forward and
+backward deferring in the activity pattern of the base case (Case
+1) caused a little change in the total demand of power, water
+and wastewater in other cases. The activity pattern that was
+shifted one-hour backward (Case 2) caused a 0.68% decrease in
+total power demand. Similarly, deferring activity patterns for one-
+hour forward (Case 3) was caused 0.32% decrease in total power
+demand value. A slight decrease also observed in Case 2 and
+10
+
+F.G. Bagriyanik, M.A. Sonmez and M. Bagriyanik
+Sustainable Energy, Grids and Networks 34 (2023) 101008
+Fig. 6. Water demand and drained water profile: (a) demand in activities (b) wastewater in activities (c) demand in TOU tariff (d) wastewater in TOU tariff (e)
+demand in time intervals (f) wastewater in time intervals.
+Fig. 7. Manageable water capacity for the collaborative appliances in the user’s habit time intervals.
+Case 3 for the total water demand and total drained wastewater
+compared to the base case. It was a 0.47% decrease in Case 2,
+0.69% decrease in Case 3 for the water demand. Change in the
+total wastewater compared to Case 1 was a 0.43% decrease in
+Case 2, 0.67% decrease in Case 3. Maintaining the situation in
+the base case scenario, such as the ownership ratio of appliance,
+usage habits, solar radiation value, outdoor temperature were
+effective to reach this result. But, the results also showed that the
+demand for electricity and water varies depending on when and
+how these appliances are used. It was clear to see the mentioned
+changes both in the time intervals related to the user’s habit and
+in the time intervals for the TOU tariff with activities. The highest
+power demand was carried out in the evening time interval
+by users. Because there was the higher request to run for the
+appliance lamp, WH, OV, KH, WM, DW, and TV in the mentioned
+time interval. Total power demand capacity was the highest in the
+food activity. Because there was the higher consumption for the
+appliances OV, KH, lamp, and WH. Most of the appliances make
+higher consumption during the mid-peak time intervals. Because
+mid-peak interval that spans in 6.00–17.00 was long enough to
+run most appliances, especially for the non-manageable loads.
+Power demand capacity for the appliances in the off-time interval
+was the highest share 28.49% in Case 3. Because the time interval
+in 22.00–06.00 resulted with the least number of the houses in
+11
+
+F.G. Bagriyanik, M.A. Sonmez and M. Bagriyanik
+Sustainable Energy, Grids and Networks 34 (2023) 101008
+Fig. 8. Manageable water capacity for the collaborative appliances at the TOU tariff time intervals.
+Fig. 9. Electricity demand, water consumption, and wastewater amount in houses with the daily normalized curves: (a) Electricity demand (b) water consumption
+(c) drained wastewater (d) daily normalized power curve (e) daily normalized water demand curve (f) daily normalized wastewater curve.
+sleep activity. Electricity energy demand during on-peak time
+interval was the least share 25.99% in Case 3. Because there were
+activities they need less occupant in the houses at the interested
+time intervals.
+It has been observed that the total electricity consumption
+shares of collaborative devices have a significant share in total
+consumption (34.10% in Case 1, 34.56% in Case 2, and 34.21% in
+Case 3).
+The daily average electricity consumption in a house due to
+hot water supplied by CB was 0.33 kWh in Case 1, 0.32 kWh
+in Case 2, and 0.35 kWh in Case 3. The daily average electricity
+consumption where WH was used for hot water generation in a
+house was 7.79 kWh in Case 1, 7.84 kWh in Case 2, and 7.75 kWh
+in Case 3. The daily average consumption per wash in a house
+with DW was 0.98 kWh in Case 1, 0.99 kWh in Case 2, and 0.96
+kWh in Case 3. Daily average electricity demand in houses by WM
+12
+
+F.G. Bagriyanik, M.A. Sonmez and M. Bagriyanik
+Sustainable Energy, Grids and Networks 34 (2023) 101008
+Table 7
+Statistical results of empirical mode decomposition of water and wastewater.
+Water demand
+Wastewater demand
+Standard deviation
+Skewness
+Standard deviation
+Skewness
+Case1
+Case2
+Case3
+Case1
+Case2
+Case3
+Case1
+Case2
+Case3
+Case1
+Case2
+Case3
+IMF1
+0.0308
+0.0289
+0.0313
+0.0312
+−0.1440
+−0.120
+0.0336
+0.0278
+0.0314
+0.0475
+−0,2989
+−0,1574
+IMF2
+0.0269
+0.0244
+0.0278
+0.0839
+0.0264
+0.0852
+0.0275
+0.0232
+0.0264
+−0.0766
+−0.0788
+−0,1541
+IMF3
+0.0326
+0.0296
+0.0318
+0.0055
+0.0556
+0.1589
+0.0324
+0.0281
+0.0256
+0,3981
+−0.0381
+0.0386
+IMF4
+0.0325
+0.0259
+0.0373
+−0.0587
+−0.1049
+0.0343
+0.0335
+0.0243
+0.0371
+−0.0359
+0.0122
+0,2586
+IMF5
+0.0388
+0.0293
+0.0373
+0.0559
+0.4782
+0.2226
+0.0397
+0.0187
+0.0475
+0,1279
+0.0013
+0,5059
+IMF6
+0.0740
+0.0636
+0.0777
+−0.1310
+0.2752
+0.0487
+0.0779
+0.0734
+0.0835
+−0,1453
+0,1969
+−0.0198
+IMF7
+0.0894
+0.0782
+0.0785
+−0.0709
+−0.0944
+0.0281
+0.0982
+0.0790
+0.0582
+−0.0319
+−0,1397
+−0,1658
+IMF8
+0.0811
+0.0541
+0.0395
+−0.0513
+0.0503
+−0.022
+0.0609
+0.0555
+0.0302
+−0,1531
+0,1057
+−0,3007
+IMF9
+0.0169
+0.0082
+0.0278
+0.1466
+0.2353
+−0.021
+0.0284
+0.0086
+0.0364
+0,6810
+−0,1925
+0,3600
+IMF10
+0.0110
+0.0465
+0.0201
+0.2416
+0.1049
+−0.310
+0.0148
+0.0135
+0.0155
+0,5113
+0,3655
+0,4599
+Residual
+0.0264
+0.0470
+0.0284
+−0.7221
+−0.0344
+−1.150
+0.0228
+0.0146
+0.0409
+−1,0046
+−0,5196
+−1,6514
+Table 8
+The statistical results of empirical mode decomposition for power demand feature extraction.
+Power demand
+Standard deviation
+Skewness
+Case1
+Case2
+Case3
+Case1
+Case2
+Case3
+IMF1
+0.0091
+0.0062
+0.0085
+18.3984
+3.8286
+16.5849
+IMF2
+0.0049
+0.0061
+0.0062
+0.0719
+0.3078
+0.2206
+IMF3
+0.01036
+0.0091
+0.0109
+0.0785
+0.1189
+0.9355
+IMF4
+0.0195
+0.0188
+0.0187
+0.2676
+−0.0633
+2.2050
+IMF5
+0.0771
+0.0603
+0.0263
+2.7960
+0.4244
+0.0095
+IMF6
+0.1043
+0.1524
+0.1302
+−0.2754
+0.0356
+0.1704
+IMF7
+0.1284
+0.0696
+0.0724
+−0.2151
+0.0693
+−0.0601
+IMF8
+0.0733
+0.0429
+0.0542
+−0.0060
+0.1810
+−0.0289
+IMF9
+0.0150
+0.0353
+0.0185
+−0.1689
+0.1054
+0.8815
+IMF10
+0.0272
+0.0311
+0.0117
+−0.0917
+−0.1724
+0.7581
+Residual
+0.0186
+0.0148
+0.0361
+−1.7948
+0
+−1.1522
+was 0.92 kWh in Case 1, 0.94 kWh in Case 2, and 0.93 kWh in Case
+3. The daily average electricity consumption due to AR was 0.026
+kWh the same in the cases. The total average daily power demand
+for both hot water and cold-water consumption in a house with
+the all ownership of these devices might be 10.05 kWh in Case 1,
+10.12 kWh in Case 2, and 10.02 kWh in Case 3.
+In on-peak time interval, the daily mean electricity demand
+of the houses for hot water due to CB usage was 0.1 kWh in
+Case 1, 0.11 kWh in Case 2, and 0.09 kWh in Case 3. The daily
+mean power demand of the houses in on-peak time for hot water
+supply via WH was higher than the CBs. It was 2.64 kWh in Case
+1, 3.11 kWh in Case 2, and 2.1 kWh in Case 3. In on-peak time
+average electricity consumption of DW per wash in the houses
+was higher than WMs. It was 0.35 kWh in Case 1, 0.38 kWh
+in Case 2, and 0.32 kWh in Case 3 for DWs. But, daily average
+electricity consumption in houses in on-peak time by WM with
+AR was 0.264 kWh in Case 1, 0.298 kWh in Case 2, and 0.247
+kWh in Case 3. The incentive amount (discount) was calculated
+by multiplying manageable power capacities with the price dif-
+ference between on-peak time and mid-peak or between on-peak
+time and off-peak time. Total discount was obtained minimum
+2.66 TL and maximum 4.78 TL for the on-peak time with the
+manageable capacity of 3.364 kWh in Case 1 (the cost of Case 1
+in on-peak time was 7.27 TL). It was calculated minimum 3.08 TL
+and maximum 5.54 TL in Case 2 for the 3.898 kWh manageable
+on-peak time capacity (the cost of Case 2 in on-peak time was
+8.42 TL). Discount in Case 3 was calculated minimum 2.18 TL and
+maximum 3.92 TL for the 2.757 kWh manageable capacity (the
+cost of Case 3 in on-peak time was 5.95 TL). Summary of the water
+consumption can be seen in Table 9.
+The total average daily demand for both hot water and cold
+water in the house due to the all ownership of the devices such
+as CB, WH, DW, WM might be 302 L in Case 1, 302 L in Case 2,
+and 300 L in Case 3. The daily mean hot water demand of the
+houses in on-peak time period of TOU tariff due to CB usage for
+hot water supply was 62.21 L in Case 1, 71.56 L in Case 2, and
+51.26 L in Case 3. The daily mean water demand of the houses
+due to WH usage for hot water supply in on-peak time period in
+TOU tariff was 25.76 L in Case 1, 30.16 L in Case 2, and 20.19 L
+in Case 3. The daily average cold water consumption per wash in
+house with DW in same time period was 4.04 L in Case 1, 4.37 L in
+Case 2, and 3.72 L in Case 3. Cold water consumption increases by
+using WM with AR, and they are 12.89 L in Case 1, 14.87 L in Case
+2, and 12.18 L in Case 3. The amount of the water managed by
+incentives in on-peak time was 104.9 L in Case 1, 120.96 L in Case
+2, and 87.35 L in Case 3. The daily average water consumption of
+appliances is summarized in Table 10.
+In this study, the daily average hot water amount supplied by
+WHs was varied between 59.3 L and 61.5 L case by case. It was
+stated that the average consumption per capita was 48.5 liters
+in Stamminger [37]. The difference comes from the seasonal and
+intra-day changes of the average hot water consumption were
+not taken into consideration in Stamminger [37]. Typically, an
+automatic washing machine water consumption varies from 42
+liters to 87 liters in Stamminger [37]. Electricity consumption
+varies from 0.56 to 2.04 kWh per wash cycle in Stamminger [37].
+In this study, daily average cold water consumption in houses by
+WM was between 44.8 L and 45.5 L case by case. Daily average
+electricity consumption in houses by WM was between 0.92
+kWh and 0.94 kWh case by case. Difference occurs because three
+washing programs were allowed to use in this study. A typical
+automatic dishwasher consumes 7.5–14.4 liters of water in Parker
+et al. [38]. Electricity consumption varies from 0.5 kWh to 1.44
+kWh per wash cycle in Parker et al. [38]. In this study, the daily
+average consumption per wash in a house with DW was between
+0.96 kWh and 0.99 kWh case by case. The daily average cold
+water consumption per wash in a house with DW was between
+10.83 L and 11.1 L case by case. Difference occurs because six
+washing programs were allowed to use in this study.
+13
+
+F.G. Bagriyanik, M.A. Sonmez and M. Bagriyanik
+Sustainable Energy, Grids and Networks 34 (2023) 101008
+Table 9
+Water demand of the collaborative appliances as liters.
+Case
+Appliance
+Purpose
+Off-peak
+Mid-peak
+On-peak
+Total
+Average per house
+Case 1
+CB
+Cleaning
+51,877.5
+206,014.7
+101,741.6
+359,633.8
+61.2
+Case 1
+CB
+Dishwashing
+60,977.8
+220,627.7
+174,504.5
+456,110.1
+77.6
+Case 1
+CB
+Bathing
+48,245.1
+119,096.5
+89,543.1
+256,884.7
+43.7
+Case 1
+WH
+Cleaning
+4,041.4
+13,026.1
+11,010.0
+28,077.6
+14.5
+Case 1
+WH
+Dishwashing
+7,646.2
+20,970.4
+25,606.9
+54,223.5
+28.1
+Case 1
+WH
+Bathing
+6,076.2
+13,009.2
+13,153.3
+32,238.7
+16.7
+Case 1
+DW
+Dishwashing
+9,270.2
+15,349.4
+14,247.1
+38,866.7
+11.0
+Case 1
+WM
+Cloth washing
+80,934.6
+182,314.5
+94,462.0
+357,711.2
+44.8
+Case 1
+AR
+Cloth washing
+13,048.2
+13,706.9
+8,430.0
+35,185.1
+4.4
+Case 2
+CB
+Cleaning
+30,242.6
+201,209.4
+119,694.4
+351,146.4
+59.7
+Case 2
+CB
+Dishwashing
+34,969.3
+223,572.1
+196,788.0
+455,329.4
+77.4
+Case 2
+CB
+Bathing
+25,187.5
+119,019.5
+104,280.3
+248,487.3
+42.3
+Case 2
+WH
+Cleaning
+1,994.9
+14,200.5
+13,453.0
+29,648.4
+15.3
+Case 2
+WH
+Dishwashing
+3,500.7
+22,837.3
+29,573.4
+55,911.4
+28.9
+Case 2
+WH
+Bathing
+2,407.6
+15,540.0
+15,246.8
+33,194.4
+17.2
+Case 2
+DW
+Dishwashing
+9,040.2
+14,727.9
+15,413.8
+39,181.9
+11.1
+Case 2
+WM
+Cloth washing
+78,709.2
+175,650.4
+108,818.6
+363,178.1
+45.5
+Case 2
+AR
+Cloth washing
+13,038.2
+12,317.2
+9,871.6
+35,227.0
+4.4
+Case 3
+CB
+Cleaning
+75,535.9
+200,716.0
+79,140.7
+355,392.6
+60.4
+Case 3
+CB
+Dishwashing
+97,666.7
+203,420.1
+145,230.6
+446,317.5
+75.9
+Case 3
+CB
+Bathing
+69,235.8
+111,970.6
+77,023.8
+258,230.2
+43.9
+Case 3
+WH
+Cleaning
+6,871.1
+12,930.3
+7,724.2
+27,525.6
+14.2
+Case 3
+WH
+Dishwashing
+14,500.1
+20,674.5
+20,970.2
+56,144.8
+29.1
+Case 3
+WH
+Bathing
+7,697.4
+13,065.2
+10,322.1
+31,084.7
+16.1
+Case 3
+DW
+Dishwashing
+9,468.3
+15,625.2
+13,122.5
+38,215.9
+10.8
+Case 3
+WM
+Cloth washing
+83,306.5
+187,720.8
+88,647.3
+359,674.5
+45.1
+Case 3
+AR
+Cloth washing
+12,352.1
+14,372.9
+8,526.1
+35,251.0
+4.4
+Table 10
+The daily average water consumption of appliances in the houses.
+Appliance
+Case1
+Case2
+Case3
+Combi boiler
+182.4 L
+179.4 L
+180.3 L
+Electric water heater
+59.3 L
+61.5 L
+59.4 L
+Dishwasher
+11 L
+11.1 L
+10.83 L
+Washing machine
+44.8 L
+45.5 L
+45.1 L
+Additional rinse
+4.4 L
+4.41 L
+4.42 L
+Fig. 10. Load trends, comparison between previous results.
+The power results that were found in our study were com-
+pared to the study in Bottaccioli et al. [43], the study of Residen-
+tial Monitoring to Decrease Energy Use and Carbon Emissions in
+Europe (Remodece) in Almeida [44] and the study of Ricerca sul
+Sistema Energetico (RSE) in Maggiore [45]. But, there was no such
+a separation in the mentioned studies on the basis of daily time
+intervals and activity-based results as we presented. However,
+power results can be evaluated by means of the daily electricity
+demand (daily load curve) on the basis of the normalized con-
+sumption. There was a comparison to our power profile and the
+literature studies shared in Fig. 10. It is clear that the all trends
+have reasonably similar behaviors.
+5. Conclusion
+This study, conducted with activity-based load models, can
+make an important contribution to reducing withdrawals from
+the DR event. Customer dissatisfaction can be eliminated because
+demand profiles can be reachable during each activity and each
+time periods of the interested tariff. It is highly possible to new
+collaboration for the same customer between water and elec-
+tricity distribution operators. In this study, on-peak time power
+demand deferring caused the deferring the water demand in the
+same way. Deferring working schedules of collaborative loads
+resulted with the high correlated changes in electricity and water
+demand. The high value of the correlation coefficient was clear
+to show the mutual interaction between daily-normalized power
+and daily-normalized water. The mutual correlation coefficient in
+the daily normalized power curve and water consumption was
+found in the values from 0.9594 to 0.9749. Distribution operators
+can use to find the suitable activity-based power profiles with the
+help of statistics obtained by feature extraction. It was found that
+empirical mode decomposition method can be used successfully
+to determine the most distinctive characteristics in power and
+water demand profiles. Each consumer that met the activity pro-
+file can be identified by the aggregator to offer tailored incentives.
+The amount of the water managed by incentives in on-peak time
+was 104.9 L in Case 1, 120.96 L in Case 2, and 87.35 L in Case 3.
+Total incentive amount (discount) was obtained maximum 4.78
+TL when it was compared to the on-peak time cost in Case 1 that
+was 7.27 TL. Discount was calculated minimum 2.18 TL when it
+was compared to the on-peak time cost in Case 3 that was 5.95
+TL. As a result, it was seen that a DR application with residential
+electricity consumers can also make an important contribution to
+the management of the water distribution system. Electricity and
+water demand shifting from the on-peak intervals to the off-peak
+intervals increases the reliability of the water and the electric-
+ity distribution system. The ownership ratio of appliance, usage
+habits, solar radiation value, outdoor temperature are effective
+on change in the total demand of power, water and wastewater
+in the cases. Duration of forward and backward deferring in
+the activity pattern should be determined by considering both
+14
+
+F.G. Bagriyanik, M.A. Sonmez and M. Bagriyanik
+Sustainable Energy, Grids and Networks 34 (2023) 101008
+electricity and water demands of electrical appliances. Because
+the results showed that the demand for electricity and water
+varies depending on when and how these appliances are used,
+the research data and surveys can help to generate activity data.
+In this study, the cases were performed with twelve activities
+in 100 houses. The activity data were taken from the results of
+the research conducted by KONDA (a research and consultancy
+company, and it conducts surveys to make understandable the
+society in Turkey) and placed in Case 1, which is the base case.
+The results of activity data research reflect the daily practices
+and lifestyles of the Turkish adult population over the age of 15.
+The margin of the findings is ±1.7% and ±2.3% for the 95% and
+99% confidence intervals, respectively. The appliance penetration
+rates of the European region were used. This study assumes
+that aggregators may collect data from geographical information
+systems, building energy identity information, registry and cit-
+izenship databases and weather forecast servers. The enhanced
+behavioral appliance modeling is started by assigning activities to
+the number of houses. Activities that require persons in the home
+are described. The devices are distributed to houses based on
+their penetration rates. The devices that need people to operate
+are identified. Activities and condition of use of the device are
+matched. The beginning times of the devices are defined in the
+activities. The realistic energy consumption values gathered by
+the energy analyzer are used in the enhanced behavioral power
+profiles. Although our study was conducted for 100 houses, this
+number might be increased by the fact that the better technical
+resources. It can be focused on developing consumer classification
+methods in our future studies.
+CRediT authorship contribution statement
+F.G. Bagriyanik: Conceptualization, Methodology, Software,
+Writing – original draft, Writing – review & editing. M.A. Son-
+mez: Conceptualization, Methodology, Writing – original draft,
+Writing – review & editing. M. Bagriyanik: Conceptualization,
+Methodology, Writing – original draft, Writing – review & editing.
+Declaration of competing interest
+The authors declare that they have no known competing finan-
+cial interests or personal relationships that could have appeared
+to influence the work reported in this paper.
+Data availability
+Data will be made available on request.
+References
+[1] H. Gungor, A.U. Simon, Energy consumption, finance and growth: the role
+of urbanization and industrialization in South Africa, Int. J. Energy Econ.
+Policy 7 (3) (2017) 268–276.
+[2] Y. Wada, I.E.M. de Graaf, L.P.H. van Beek, High-resolution modeling of
+human and climate impacts on global water resources, J. Adv. Modelling
+Earth Syst. 8 (2016) 735–763, http://dx.doi.org/10.1002/2015MS000618.
+[3] UNESCO,
+UN-Water,
+United
+Nations
+World
+Water
+Development
+Report
+2020:
+Water
+and
+Climate
+Change,
+UNESCO,
+Paris,
+2020,
+[Online]
+https://unhabitat.org/sites/default/files/2020/08/world_water_
+development_report_2020_water_and_climate_change.pdf.
+[4] WWAP (United Nations World Water Assessment Programme), The United
+Nations World Water Development Report 2014: Water and Energy,
+UNESCO, Paris, 2014.
+[5] N. Alexandratos, J. Bruinsma, World Agriculture Towards 2030/2050: The
+2012 Revision, ESA Working Paper No. 12-03, FAO, Rome, 2012, [Online].
+https://www.fao.org/3/ap106e/ap106e.pdf.
+[6] P. Burek, et al., Water Futures and Solution-Fast Track Initiative (Final
+Report), IIASA Working Paper WP, 2016, 16-006.
+[7] IPCC, in: Core Writing Team, R.K. Pachauri, L.A. Meyers (Eds.), Climate
+Change 2014: Synthesis Report, Contribution of Working Groups I, II and III
+to the Fifth Assessment Report of the Intergovernmental Panel on Climate
+Change, IPCC, Geneva, Switzerland, 2014, p. 151.
+[8] G. Strbac, Demand side management: Benefits and challenges, Energy
+Policy 36 (12) (2008) 4419–4426.
+[9] A. Alberini, M. Filippini, Response of residential electricity demand to price:
+the effect of measurement error, Energy Econ. 33 (2011) 889–895.
+[10] P. Warren, A review of demand-side management policy in the UK, Renew.
+Sustain. Energy Rev. 29 (2014) 941–951.
+[11] F. Pallonetto, M. De Rosa, F. Milano, D.P. Finn, Demand response algorithms
+for smart-grid ready residential buildings using machine learning models,
+Appl. Energy 239 (2019) 1265–1282, http://dx.doi.org/10.1016/j.apenergy.
+2019.02.020.
+[12] Y. Ozturk, D. Senthilkumar, S. Kumar, G. Lee, An intelligent home energy
+management system to improve demand response, IEEE Trans. Smart Grid
+4 (2) (2013) 694–700.
+[13] M.T. Ahmed, P. Faria, O. Abrishambaf, Z. Vale, Electric water heater mod-
+elling for direct load control demand response, in: IEEE 16th International
+Conference on Industrial Informatics, INDIN, 2018, http://dx.doi.org/10.
+1109/indin.2018.8472102.
+[14] T. Lübkert, M. Venzke, V. Turau, Calculating retail prices from demand
+response target schedules to operate domestic electric water heaters,
+Energy Inform. 1 (2018) 31, http://dx.doi.org/10.1186/s42162-018-0020-8.
+[15] H.T. Haider, O.H. See, W. Elmenreich, A review of residential demand
+response of smart grid, Renew. Sustain. Energy Rev. 59 (2016) 166–178,
+http://dx.doi.org/10.1016/j.rser.2016.01.016.
+[16] M. Eastment, R. Hendron, Method for evaluating energy use of dishwashers
+clothes washers and clothes dryers, 2006, [Online] https://www.nrel.gov/
+docs/fy06osti/39769.pdf.
+[17] Al-jabery. Khalid, Z. Xu, W. Yu, D.C. Wunsch, J. Xiong, Y. Shi, Demand-
+side management of domestic electric water heaters using approximate
+dynamic programming, IEEE Trans. Comput.-Aided Des. Integr. Circuits
+Syst. 36 (5) (2017) 775–788, http://dx.doi.org/10.1109/tcad.2016.2598563.
+[18] M.H. Nehrir, R. Jia, D.A. Pierre, D.J. Hammerstrom, Power management of
+aggregate electric water heater loads by voltage control, in: 2007 IEEE
+Power Engineering Society General Meeting, 2007, http://dx.doi.org/10.
+1109/pes.2007.386024.
+[19] Z. Xu, R. Diao, S. Lu, J. Lian, Y. Zhang, Modeling of electric water heaters
+for demand response: A baseline PDE model, IEEE Trans. Smart Grid 5 (5)
+(2014) 2203–2210, http://dx.doi.org/10.1109/tsg.2014.2317149.
+[20] A.I. Tammam, M.F. Anjos, M. Gendreau, Balancing supply and demand in
+the presence of renewable generation via demand response for electric
+water heaters, Ann. Oper. Res. 292 (2020) 753–770, http://dx.doi.org/10.
+1007/s10479-020-03580-1.
+[21] L. Gelažanskas, K. Gamage, Distributed energy storage using residential
+hot water heaters, Energies 9 (3) (2016) 127, http://dx.doi.org/10.3390/
+en9030127.
+[22] T. Lübkert, M. Venzke, V. Turau, Impacts of domestic electric water heater
+parameters on demand response, Comput. Sci. Res. Dev. 32 (1–2) (2016)
+49–64, http://dx.doi.org/10.1007/s00450-016-0321-8.
+[23] K. Ahmed, P. Pylsy, J. Kurnitski, Hourly consumption profiles of domestic
+hot water for different occupant groups in dwellings, Sol. Energy 137
+(2016) 516–530, http://dx.doi.org/10.1016/j.solener.2016.08.033.
+[24] G. Bennett, C. Elwell, T. Oreszczyn, Space heating operation of com-
+bination boilers in the UK: The case for addressing real-world boiler
+performance, Build. Serv. Eng. Res. Technol. 40 (2018) http://dx.doi.org/
+10.1177/0143624418794552.
+[25] C. Hanmer, M. Shipworth, D. Shipworth, et al., How household thermal
+routines shape UK home heating demand patterns, Energy Effic. 12 (2019)
+5–17, http://dx.doi.org/10.1007/s12053-018-9632-x.
+[26] A.Z. Morch, H. Saele, N. Feilberg, K.L. Byskov, Method for development and
+segmentation of load profiles for different final customers and appliances
+ECEEE Summer Study, 2013.
+[27] R. Stamminger, A. Schmitz, Load profiles and flexibility in operation of
+washing machines and dishwashers in Europe: Load profiles and flexibility
+in operation, Int. J. Consum. Stud. 41 (2016) http://dx.doi.org/10.1111/ijcs.
+12325.
+[28] M. Pipattanasomporn, M. Kuzlu, S. Rahman, Y. Teklu, Load profiles of
+selected major household appliances and their demand response opportu-
+nities, IEEE Trans. Smart Grid 5 (2) (2014) 742–750, http://dx.doi.org/10.
+1109/TSG.2013.2268664.
+[29] B.E. Botha, H.E. Jacobs, U. Terblanche, Clothes washing as household end-
+use: comparison of different appliance models in view of expected water
+savings, in: 1st International WDSA/CCWI 2018 Joint Conference, Kingston,
+Ontario, Canada, July, 2018, pp. 23–25.
+[30] K.S. Fujita, G. Fitts, L. Dale, Peak Electricity Impacts of Residential Water
+Use, Report Number LBNL-5736E, Lawrence Berkeley National Laboratory,
+Berkeley, 2012.
+15
+
+F.G. Bagriyanik, M.A. Sonmez and M. Bagriyanik
+Sustainable Energy, Grids and Networks 34 (2023) 101008
+[31] C.D. Beal, T.R. Gurung, R.A. Stewart, Demand-side management for supply-
+side efficiency: Modeling tailored strategies for reducing peak residential
+water demand, Sustain. Prod. Consum. 6 (2016) 1–11, http://dx.doi.org/10.
+1016/j.spc.2015.11.005.
+[32] P. Mayer, M. Hunter, R. Smith, Peak day water demand management study
+heralds innovation, connection, cooperation, J. Am. Water Works Assoc.
+110 (5) (2018) 42–48, http://dx.doi.org/10.1002/awwa.1078.
+[33] V. Zacharaki, et al., Demand response with residential and commercial
+loads for phase balancing in secondary distribution networks, in: 6th
+IEEE International Istanbul Smart Grids and Cities Congress and Fair, IEEE
+ICSG2018, Istanbul, Turkey, 2018.
+[34] UN Climate Technology Centre and Network, [Online] https://www.ctc-
+n.org/technologies/shifting-timing-water-use-peak-peak-periods.
+[35] M.A. Sonmez, M. Bagriyanik, Generating manageable electricity demand
+capacity for residential demand response studies by activity-based load
+models, Adv. Electr. Comput. Eng. 21 (1) (2021) 99–108, http://dx.doi.org/
+10.4316/AECE.2021.01011.
+[36] B. Lin, S. Li, Y. Xiao, Optimal and learning-based demand response mech-
+anism for electric water heater system, Energies 10 (11) (2017) 1722,
+http://dx.doi.org/10.3390/en10111722.
+[37] R.
+Stamminger,
+Synergy
+potential
+of
+smart
+domestic
+appliances
+in
+renewable energy systems. Germany, 2009.
+[38] D.S. Parker, P. Fairey, J.D. Lutz, Estimating daily domestic hot-water use in
+North American homes, ASHRAE Trans. 121 (2) (2015) 258–271.
+[39] R. Yao, K. Steemers, A method of formulating energy load profile for
+domestic buildings in the UK, Energy Build. 37 (6) (2005) 663–671, http:
+//dx.doi.org/10.1016/j.enbuild.2004.09.007.
+[40] N.E. Huang, Review of empirical mode decomposition, in: Proc. SPIE 4391,
+Wavelet Applications VIII, 2001, http://dx.doi.org/10.1117/12.421232, (26
+March 2001).
+[41] A.M. Awajan, M.T. Ismail, S.A. Wadi, A review on empirical mode decom-
+position in forecasting time series, Italian J. Pure Appl. Math. 42 (2019)
+301–323.
+[42] KONDA, Report on social gender in Turkey: The Life-Styles Survey (in
+Turkish), 2018.
+[43] L. Bottaccioli, S. Di Cataldo, A. Acquaviva, E. Patti, Realistic multi-scale mod-
+eling of household electricity behaviors, IEEE Access 7 (2019) 2467–2489,
+http://dx.doi.org/10.1109/ACCESS.2018.2886201.
+[44] A.e.a. Almeida, Final Report Remodece-Residential Monitoring to Decrease
+Energy Use and Carbon Emissions in Europe (Ieea Program Funded Project).
+Vol. 3030, University of Coimbra, Dep. of Electrical Engineering, Pólo II,
+2008, p. 290, 2008.
+[45] S. Maggiore, Analisi di impatto dellintroduzione della tariffa bioraria
+obbligatoria, 2012, prot: 13000580 rse spa.
+16

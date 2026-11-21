@@ -1,0 +1,1633 @@
+5670
+IEEE TRANSACTIONS ON INDUSTRY APPLICATIONS, VOL. 61, NO. 4, JULY/AUGUST 2025
+Coordinated Energy Scheduling in Interconnected
+Power-Water-Gas Networks Under Network Failures
+Ahmad Alnakhli
+, Graduate Student Member, IEEE, Payman Dehghanian
+, Senior Member, IEEE,
+and Mohannad Alhazmi
+, Member, IEEE
+Abstract—The rapid growth of interconnections between differ-
+ent energy systems has seen emerging developments in recent years.
+Electric Power System (EPS), Water System (WS), and Natural
+Gas System (NGS) have been traditionally operated independently.
+However, a multi-sectoral approach is needed to enhance the re-
+silience of critical infrastructure systems and reap the economic
+beneﬁts. This becomes crucial as natural disasters with massive
+power outages have increased in both frequency and magnitude.
+To address these challenges, this paper proposes a cooperative
+joint framework for the operation of the Power, Water, and Gas
+Networks (PWGNs) during emergency operating conditions. The
+proposed formulation takes into account the nonlinear nature of
+both the hydraulic constraints in WS and the gas ﬂow in the
+NGS. To reduce the computational burden of the original problem,
+linearization techniques are employed to convert the nonlinear
+model into a Mixed-Integer Linear Programming (MILP) for-
+mulation. Case studies with different contingency scenarios are
+analyzed in the IEEE 24-bus and IEEE 118-bus test systems,
+which are jointly operated with a 12-node and 20-node NGS, and
+a 15-node commercial-scale WS. Numerical results demonstrate
+that the proposed model effectively enhances the resilience of the
+interconnected energy systems and reduces the overall operational
+costs during emergency conditions. Additionally, results show that
+the proposed joint operation model provides signiﬁcant energy
+ﬂexibility and is efﬁciently scalable to large networks.
+Index Terms—Contingency analysis, electric power system,
+water system, natural gas system, interdependency.
+NOMENCLATURE
+A. Sets
+i ∈I
+Set of all dispatchable power plants.
+c ∈C
+Non-natural gas dispatchable power plants.
+Received 31 March 2024; revised 30 November 2024; accepted 16 January
+2025. Date of publication 27 February 2025; date of current version 9 July 2025.
+Paper 2023-PSEC-0657.R1, presented at the 2023 IEEE/IAS 59th Industrial and
+Commercial Power Systems Technical Conference, Las Vegas, NV, USA, May
+21–25, and approved for publication in the IEEE TRANSACTIONS ON INDUSTRY
+APPLICATIONS by the Power Systems Engineering Committee of the IEEE In-
+dustry Applications Society [DOI: 10.1109/ICPS57144.2023.10142136]. This
+work was supported by the Ongoing Research Funding Program under project
+ORF-2025-635, King Saud University, Riyadh, Saudi Arabia. (Corresponding
+author: Payman Dehghanian.)
+Ahmad Alnakhli and Payman Dehghanian are with the Department of Elec-
+trical and Computer Engineering, George Washington University, Washington,
+DC 20052 USA (e-mail: alnakhli@gwu.edu; payman@gwu.edu).
+Mohannad Alhazmi is with the Department of Electrical Engineering, College
+of Applied Engineering, King Saud University, Riyadh 11421, Saudi Arabia
+(e-mail: mohalhazmi@ksu.edu.sa).
+Color versions of one or more ﬁgures in this article are available at
+https://doi.org/10.1109/TIA.2025.3546199.
+Digital Object Identiﬁer 10.1109/TIA.2025.3546199
+g ∈G
+Subset of natural gas-ﬁred power plants.
+j ∈J
+Set of wind power units.
+t ∈T
+Set of time intervals.
+l ∈L
+Set of power transmission lines (n, r).
+n ∈N
+Set of power network nodes (substations).
+k ∈K
+Set of natural gas supply units.
+z ∈Z
+Set of natural gas pipelines (m, u).
+m ∈M
+Set of natural gas network nodes.
+v ∈V
+Set of ﬁxed gas pressure points.
+p ∈P
+Set of water system pumps.
+s ∈S
+Set of water system pipes.
+B. Parameters and Constants
+DE
+n,t
+Electricity demand at node n at time t (MW).
+CE
+i
+Production cost of generating unit i ($/MWh).
+Csh
+t
+The cost of load shedding in period t (MW).
+P max
+i
+Capacity of dispatchable power plant i (MW).
+Wj,t
+Wind power forecast for unit j in period t (MW).
+Bn,r
+Susceptance of transmission line (n, r) (S).
+F max
+n,r
+Capacity of transmission line (n, r) (MW).
+DG
+m,t
+Natural gas demand at node m at time t (Kcf/h).
+CG
+k
+Supply cost of gas supply unit k ($/Kcf).
+φi
+Power conversion factor of natural gas unit i ∈G
+(kcf/MWh).
+Gmin,max
+k
+Capacity of natural gas unit k (Kcf).
+Km,u
+Natural gas ﬂow constant of pipeline (m, u).
+(kcf/psig).
+Sm,u
+Linepack constant of pipeline (m, u) [kcf/(psig
+h)].
+H0
+m,u
+Initial linepack in pipeline (m, u) (kcf).
+PRmax
+m
+Maximum pressure limit at node m (psig).
+PRmin
+m
+Minimum pressure limit at node m (psig).
+Γm,u
+Compressor factor at gas pipeline (m, u).
+C
+Reservoir-Node R × N incidence matrix.
+K
+Pump-Arc P × A incidence matrix.
+G
+Tank-Node T × N incidence matrix.
+Θ
+Bus-Pump B × P incidence matrix.
+dt
+Vector of water demand (m3/sec) at time t.
+ˆh
+Reservoirs’ geographical height (m).
+ˆ
+qϵ
+(.), ˆ
+qp
+(.)
+Linearized ﬂow rate for pipe ϵ and pump p.
+V max, V min
+Maximum/minimum volume of water tanks.
+ΔEmax/min
+Maximum/minimum of the difference in the water
+ﬂow rate to water tanks.
+hmax, hmin
+Maximum/minimum nodal pressure heads.
+0093-9994 © 2025 IEEE. All rights reserved, including rights for text and data mining, and training of artiﬁcial intelligence and similar technologies.
+Personal use is permitted, but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:59:01 UTC from IEEE Xplore.  Restrictions apply. 
+
+ALNAKHLI et al.: COORDINATED ENERGY SCHEDULING IN INTERCONNECTED POWER-WATER-GAS NETWORKS
+5671
+P p,max/min
+Maximum/minimum power consumption of water
+pump p at each bus b (MW).
+zmax/min
+Maximum/minimum water ﬂow rate in the net-
+work pipes (m3/h)
+M
+A sufﬁciently large constant.
+C. Decision Variables
+Pi,t, wj,t
+Dispatch of units i and j at time t (MW).
+θn,t
+Voltage angle at node n at time t (rad).
+fn,r,t
+Power ﬂow in line (n, r) in period t (MW).
+P sh
+n,t
+Power shedding in node (n) in period t (MW).
+gk,t
+Dispatch of units k and j at time t (Kcf/h).
+prm,t
+Pressure at node m at time t (psig).
+qin/out
+m,u,t
+Inﬂow/outﬂow natural gas rate of pipeline (m, u) at
+time t (kcf/h).
+qm,u,t
+Natural gas ﬂow in pipeline (m, u) at time t (kcf/h).
+Rs
+t
+Vector of water inﬂow rate from reservoir s at time
+t.
+qt
+Water ﬂow rate at time t.
+ht
+Pressure heads loss for node n at time t.
+Sign(.)
+Sign function applied during linearization.
+ΔEt
+The difference in water tanks’ inﬂow/outﬂow rate at
+time t.
+T in/out
+t
+Water inﬂow/outﬂow rates for tanks at time t.
+Vt
+Volume of stored water in tanks at time t.
+Wt
+Pumps’ speed at time t.
+P p
+t
+Power consumption for pump p at time t.
+P p,wd
+Vector of water electricity consumption wd for
+pump p at time t.
+Xϵ
+i,t
+Continuous decision variable for the sampling coor-
+dinate i associated with the linearization of pipe ϵ at
+time t.
+Xp
+u,m,t
+Continuous decision variable for the sampling coor-
+dinates u and m associated with the linearization of
+pump p at time t.
+Kqt
+Water ﬂow rate through pump at time t.
+a(.), z(.)
+Pump performance parameters.
+D. Binary Variables
+vl,t
+Binary variable on the connection status of power
+line l at time t (1 if online, 0 otherwise).
+ym,u,t
+Binary variable deﬁning the direction of the natural
+gas ﬂow in pipeline (m, u) at time t.
+Y ϵ
+i,t
+Binary variable for pressure head breakpoint i of
+water pipe ϵ at time t.
+hUpper,p
+u,m,t
+Binary variable for the upper left triangle in the
+linearization process of pump p at time t.
+hLower,p
+u,m,t
+Binary variable for the lower left triangle in the
+linearization process of pump p at time t.
+I. INTRODUCTION
+P
+OWER, water, andgas systems playavital roleinproviding
+essential utility services to communities [1]. Community
+residents rely on the continuous delivery of electricity, gas,
+and water at all times. Traditionally, electricity, water, and gas
+systems have been planned and operated independently of one
+another, while in reality, the operation of these systems is jointly
+interdependent [2], [3]. This interdependence is particularly
+evident in urban areas, where hydro systems, which contribute to
+a small percentage of the generated power, consume a substantial
+amount of energy for water pumping and distribution [4], [5].
+Similarly, the interdependence between electricity and natural
+gas systems has become increasingly vital in recent years, as
+demonstrated by the signiﬁcant increase in natural gas deliveries
+to electric power consumers in the US. This trend is exempli-
+ﬁed by the power sector’s growing share of total natural gas
+demand, which has risen from 22.3% to 35.5% over the last
+decade [6]. Therefore, treating each system independently might
+be inefﬁcient as the occurrence of a failure, particularly in the
+case of High-Impact Low-Probability (HILP) events, in one
+system could easily cascade into the other systems resulting in
+catastrophic consequences to the society [7], [8], [9]. Further,
+besides considering the electrical grid, other infrastructures that
+are reliant on or impacted by the power grid must also be consid-
+ered when assessing the resilience and the operational planning
+of the modern integrated energy infrastructure systems [10].
+Given the challenges presented by the interdependence of
+power, water, and gas networks (PWGNs), a signiﬁcant body
+of research has emerged in recent years that focuses on the
+optimization of these networks. The primary focus of these
+studies has been to minimize the total operational costs, enhance
+the system resilience, reduce greenhouse gas emissions and/or
+capture the dynamic behaviours of components in the WS. [11].
+For the operation of the water and power systems (WPSs), [12]
+presented an uncertainty-informed coordinated day-ahead opti-
+mization model for integrated power and water networks con-
+sidering the hydraulic constraints of the water system and the
+prevailing uncertainty in water demand and renewable energy
+sources. Reference [13] investigates the utilization of energy
+ﬂexibility enabled through the coordination of power and wa-
+ter networks. Reference [14] conducted an economic dispatch
+analysis of water and power systems by considering the energy
+management of various building applications. A comprehensive
+study for the operational resilience of the interlinked water and
+power networks, considering the scenarios of limited availability
+of water and/or energy, is provided in [15]. Several metrics
+for determining the operational resilience of interdependent
+WPSs under critical conditions are discussed in [16]. In [17],
+a risk-based two-stage stochastic co-optimization framework
+that coordinates the operation of a renewable-rich power system
+with the operation of grid-connected water desalination plants
+is proposed to minimize operational costs while increasing the
+utilization of renewables.
+As for the coupling between EPS and NGS, several works
+studied the optimal operation of power and natural gas systems
+under different conditions. In [18], the reliability assessment of
+the interconnected gas and power systems is explored consid-
+ering power-to-gas and gas storage. Reference [19] constructs
+a robust scheduling model for wind-integrated energy systems
+that takes into account both gas pipeline and N-1 contingencies
+in power transmission. An analytical approach incorporating
+multiple variables for determining energy ﬂow in natural gas
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:59:01 UTC from IEEE Xplore.  Restrictions apply. 
+
+5672
+IEEE TRANSACTIONS ON INDUSTRY APPLICATIONS, VOL. 61, NO. 4, JULY/AUGUST 2025
+TABLE I
+COMPARISON OF STUDIES ON INTEGRATED MULTI-ENERGY SYSTEMS
+networks is examined in [20]. A reliability assessment model
+for integrated electric power and natural gas systems is proposed
+in [21], which evaluates the performance of multiple compo-
+nents while considering cascading effects and renewable energy
+uncertainty. In [22], a two-stage dispatch model is formulated by
+ﬁrst presenting a natural gas pipeline ﬂow model that accounts
+for pipeline leakage and linepack, followed by a dispatch model
+that is considered to optimize the beneﬁts for both electricity
+and natural gas suppliers.
+However, for efﬁcient and effective operation of the intercon-
+nected multi-energy sectors, it is crucial to incorporate the opera-
+tion of water network in the comprehensive operational strategy.
+Given the interrelated nature of multi-energy systems, research
+has been undertaken to explore the development of optimal mod-
+els for these interlinked networks. In [23], an integrated power-
+water-heatschedulingframeworkisintroduced,emphasizingthe
+sensitivity of system performance to variations in energy and
+heat demand. Similarly, [24] proposes the energy-water-carbon
+nexus framework by modeling interdependencies in power, gas,
+and water systems. Lastly, [25] develops a restoration-focused
+framework for power-water-gas distribution systems, employing
+resilience-motivated strategies to enhance system robustness
+and recovery capabilities post-disruption. Encouraged by the
+aforementioned reviewed studies, this paper extends the work
+in [26] by addressing a critical gap in the literature, which has
+predominantly focused on the operation of either power-water
+or power-gas networks, without fully capturing the interdepen-
+dencies across all three interconnected networks. To bridge this
+knowledge gap, we propose an optimal operation strategy for in-
+tegrated multi-energy networks under contingencies. Our model
+incorporates nonlinear hydraulic and gas ﬂow constraints and
+evaluates system performance under line outage contingencies,
+enhancing system resilience and minimizing operational costs.
+Furthermore, the proposed approach demonstrates substantial
+energy ﬂexibility and scalability, making it suitable for larger,
+more complex networks. Table I compares the contribution of
+this article to the representative previous studies. The main
+contributions of this paper are as follows:
+r We propose a novel co-optimization strategy for power-
+water-gas networks (PWGNs), highlighting the beneﬁts of
+integrating multiple energy carriers into a uniﬁed opera-
+tional framework. This approach extends the existing stud-
+ies by simultaneously addressing the interdependencies
+of all three networks and incorporating detailed network
+topologies.
+r The proposed model incorporates advanced linearization
+techniques to address the nonlinear behaviors of hydraulic
+andgas ﬂowsystems. Thesemethods enablecomputational
+efﬁciency while preserving modeling accuracy, making the
+framework suitable for large-scale systems.
+r The resilience of the interconnected PWGNs is analyzed
+through
+detailed
+contingency
+scenarios,
+including
+transmission line and gas pipeline failures. The results
+demonstrate the framework’s ability to mitigate cascading
+failures, minimize load shedding, and maintain operational
+stability under severe disruptions.
+The rest of this paper is organized as follows: Section II
+introduces the proposed problem formulation for the PWGN’s
+operation co-optimization. Section III explains the lineariza-
+tion technique applied to the proposed formulation. Section IV
+describes the numerical results, and Section V presents the
+concluding remarks.
+II. PROBLEM FORMULATION
+A. Proposed Framework
+In this paper, we propose a day-ahead dispatch model for the
+coupled operation of multi-energy systems, i.e., PWGNs. While
+this is not yet approached in the current practice, the focus of this
+paper is to explore the potential beneﬁts of such a cooperative
+approach economically and during emergency operations. To
+simplify the problem, we considered the DC model for the
+power network. Further, the cost associated with wind power
+generation is neglected. In the natural gas network, the gas
+ﬂow dynamic equations can be approximated by accounting
+for the energy storage capacity in the form of linepack through
+variable inﬂows and outﬂows [27]. In the water network, the
+proposed model takes into account the hydraulic constraints in
+the WS [12], [28], [29]. The high-level inter-dependencies and
+coupling between power, water and gas networks are depicted
+in Fig. 1 and Fig. 2.
+B. Objective Function
+This objective function of the proposed co-optimization
+model is to minimize the total operation cost of PWGNs under
+emergency operations over a time period as follows:
+min
+
+t∈T
+
+i∈C
+CE
+i pi,t +
+
+i∈N
+Csh
+i psh
+i,t +
+
+k∈K
+CG
+k gk,t
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:59:01 UTC from IEEE Xplore.  Restrictions apply. 
+
+ALNAKHLI et al.: COORDINATED ENERGY SCHEDULING IN INTERCONNECTED POWER-WATER-GAS NETWORKS
+5673
+Fig. 1.
+The proposed power-water-gas nexus.
++
+
+s∈S
+Cs,tRs
+t +
+
+p∈P
+Cp,tP p
+t
+⎞
+⎠
+(1)
+The ﬁrst term in (1) represents the cost associated with the
+dispatchable power plants. The second term represents the cost
+of the load shedding at every node of the electricity network. The
+third term reﬂects the cost of supplying gas to natural gas-ﬁred
+power plants. Water purchased from reservoirs is represented in
+the fourth term. Lastly, the cost of electricity needed to operate
+the water pumps is reﬂected in the ﬁfth term. The objective
+function of the integrated PWGNs is subject to the following set
+of system and operation constraints.
+C. Power System Model
+Operation constraints for the power system’s DC opti-
+mal power ﬂow problem [3] and [27] are described in
+the following:
+0 ≤pi,t ≤P max
+i
+∀i, ∀t
+(2)
+0 ≤wj,t ≤Wj,t
+∀j, ∀t
+(3)
+fn,r,t = Bn,r(θn,t −θr,t)
+(n, r) ∈L, ∀t
+(4)
+−F max
+n,r vl,t ≤fn,r,t ≤F max
+n,r vl,t
+(n, r) ∈L, ∀t
+(5)
+−π ≤θn,t ≤π
+∀n, ∀t
+(6)
+
+i∈I
+pi,t +
+
+j∈J
+wi,t −
+
+(n,r)∈L
+fn,r,t
+= DE
+n,t −
+
+(n)∈N
+P sh
+n,t
+∀n, ∀t
+(7)
+Constraints (2) and (3) reﬂect the capacity limits of all power
+plants and wind farms, respectively. The power ﬂows in trans-
+mission lines are characterized in (4) and the capacity of each
+line is restricted by its limits as in (5). In (6), the voltage angle
+at each node of the power network is restricted by its limits.
+Constraint (7) reﬂects the power balance at each node in the
+system.
+D. Natural Gas System Model
+The NGS schematic diagram and its components are illus-
+trated in Fig. 3. The operational constraints of the NGS are
+presented in (8)-(14) [30].
+0 ≤gk,t ≤Gmax
+k
+∀g, ∀t (8)
+PRmin
+m ≤prm,t ≤PRmax
+m
+∀m, ∀t (9)
+pru,t ≤Γm,u.prm,t
+(m, u) ∈Z, ∀t
+(10)
+qm,u,t.|qm,u,t| = K2
+m,u.(pr2
+m,t −pr2
+u,t)
+(m, u) ∈Z, ∀t
+(11)
+q+
+m,u,t = qin
+m,u,t + qout
+m,u,t
+2
+(m, u) ∈Z, ∀t
+(12)
+q−
+m,u,t = qin
+m,u,t + qout
+m,u,t
+2
+(m, u) ∈Z, ∀t
+(13)
+
+k∈K
+gk,t −
+
+i∈I
+φipi,t −
+
+(m,u)∈Z
+(qin
+m,u,t −qout
+u,m,t)
+= DG
+m,t∀(m, u) ∈Z, ∀t
+(14)
+Constraints (8) and (9) limit the capacity of gas supply and
+nodal pressure at each gas node, respectively. Gas pipelines with
+compressors relate the inlet and outlet pressures between the
+two adjacent nodes by the compressor factor Γ in (10). The
+piece-wise quadratic and non-convex constraint (11) models
+the Weymouth equation, which models the steady-state gas
+ﬂow between two nodes. The ﬂow in each gas pipeline can be
+modeled as the average of inﬂow and outﬂow gas as in (12) and
+(13). Finally, constraint (14) describes the nodal gas balance,
+which couples the power and natural gas systems through fuel
+consumption of Natural Gas Power Plants.
+E. Water System Model
+Fig. 4 illustartes the schematic diagram of the components
+in the WS. The mathematical formulation for the dynamic
+operation of the water network [31], taking into account water
+tank operational constraints, is modeled as follows:
+Rs
+t −dt −M−1qt −GΔEt = 0
+∀t
+(15)
+ΔEt = T in
+t
+−T out
+t
+∀t
+(16)
+−qmax ≤qt ≤qmax
+∀t
+(17)
+0 ≤Kqt ≤qmax
+∀t
+(18)
+Rs
+t ≥0
+∀t.
+(19)
+−Mht = rp | qt |1.852 Sign(qt)
+∀t
+(20)
+Cht −ˆh = 0
+∀t
+(21)
+hmin ≤ht ≤hmax
+∀t.
+(22)
+Vt+1 = Vt + ΔEt
+∀t
+(23)
+Vt = SaGht
+∀t
+(24)
+V min ≤Vt ≤V max
+∀t
+(25)
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:59:01 UTC from IEEE Xplore.  Restrictions apply. 
+
+5674
+IEEE TRANSACTIONS ON INDUSTRY APPLICATIONS, VOL. 61, NO. 4, JULY/AUGUST 2025
+Fig. 2.
+The general proposed framework for joint optimization of Power-Water-Gas Operation.
+Fig. 3.
+Bidirectional Gas ﬂow in a pip-line.
+Fig. 4.
+Schematic diagram of components in water system.
+ΔEmin ≤ΔEt ≤ΔEmax
+∀t
+(26)
+P p,min ≤P p
+t ≤P p,max
+∀t
+(27)
+KMht = W 2
+t
+
+a1 −a2
+Kqt
+Wt
+a3
+∀t
+(28)
+P p
+t = W 3
+t
+
+z1 −z2
+Kqt
+Wt
+
+∀t.
+(29)
+The balance in water ﬂow is represented by constraint (15).
+Thedifferencesinwaterﬂowbetweenthetanks’inputandoutput
+are formulated by constraint (16). Constraint (17) limits the ﬂow
+of water through pipes, while constraint (18) limits the ﬂow
+of water through pumps. At reservoir nodes, constraint (19)
+restricts inﬂow rates to positive values. Constraints (20)-(22)
+represent the nodal pressure head loss for water pipes, which
+are modeled using the Hazen-Williams formula [32]. Modeling
+the dynamic operation of tanks and pumps, which are consid-
+ered the most challenging components of a water network, is
+done through constraints (23)-(27). Constraint (28) controls the
+increase in water pump pressure, while constraint (29) models
+the electricity consumption required for water pumps. Further
+details on the operational constraints of the water network can
+be found in [12]. All water network constraints (15)-(29) appear
+as non-linear programming (NLP) constraints, where nonlinear
+constraints are presented in (20), (28), and (29).
+III. LINEARIZATION TECHNIQUE
+The joint coupling between EPS and NGS is reﬂected in
+(14), which couples the natural gas network with the power
+network through the natural gas-ﬁred power plants. Similarly,
+the water network is coupled with the power network through the
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:59:01 UTC from IEEE Xplore.  Restrictions apply. 
+
+ALNAKHLI et al.: COORDINATED ENERGY SCHEDULING IN INTERCONNECTED POWER-WATER-GAS NETWORKS
+5675
+electricity consumption of water pumps in (29). Since the result-
+ing model is mixed-integer nonlinear programming (MINLP),
+which is computationally challenging to solve in large-scale sys-
+tems, several linearization techniques are employed to transform
+the proposed MINLP model into a mixed-integer linear pro-
+gramming (MILP) formulation, enabling efﬁcient computation
+with off-the-shelf solvers. For the water system, the nonlinear
+constraints, such as the Hazen-Williams equation for pipe ﬂow
+and the pump electricity consumption relationship, are approx-
+imated using a piecewise linearization approach. This method
+ensures computational efﬁciency while preserving the accuracy
+of hydraulic dynamics. For the natural gas system, the nonlinear
+Weymouth equation is linearized using an outer approximation
+technique. This method generates a set of linear constraints
+based on Taylor series expansion around predeﬁned pressure
+points, effectively capturing the nonlinear gas ﬂow behavior.
+These techniques not only improve computational efﬁciency but
+also maintain the key operational characteristics of the water and
+gas systems. The following sections describe the linearization
+methods used for these two systems in detail, highlighting
+how the nonlinear constraints are addressed while ensuring the
+feasibility and scalability of the optimization framework.
+A. Outer Approximation
+In NGS, constraint (11) represents the Weymouth equation for
+the gas ﬂow, which appears as a nonlinear constraint. In order
+to transform this constraint into a tractable mixed integer linear
+problem (MINP) constraint, we apply the outer approximation
+approach –based on the Taylor series expansion around ﬁxed
+pressure points – for linearization [33]. The equality constraint
+in (11) is replaced by a set of the following linear inequalities:
+qm,u,t ≤Km,u
+⎛
+⎝
+PRm,v
+
+PR2m,v −PR2u,v
+prm,t
+−
+PRu,v
+
+PR2m,v −PR2u,v
+pru,t
+⎞
+⎠∀v, ∀t
+(30)
+V here refers to the set of ﬁxed pressure points PRm,v, PRu,v.
+When we consider a signiﬁcant number of ﬁxed points (e.g., 20
+points as in [33]), we can ensure a sufﬁcient approximation of
+the Weymouth (11). Now, using the outer approximation method
+which is given by a number of planes in (30) that are tangent
+to the cone described by (11), the gas ﬂow in each pipeline will
+be approximated by the only constraint in (30) that is binding.
+Hence, due to differing pressure limits between adjacent nodes,
+the ﬂow for one direction in a pipeline may differ from the ﬂow
+for the opposite direction. That’s why in (30), the ﬂow from node
+m to node u might be different from the ﬂow from node u to
+node m. Accordingly, we introduce two non-negative variables
+q+
+m,u,t, q−
+m,u,t and the binary variable ym,u,t to account for the
+bidirectional gas ﬂow.
+qm,u,t = q+
+m,u,t −q−
+m,u,t
+(m, u) ∈Z, ∀t
+(31)
+0 ≤q+
+m,u,t ≤M.ym,u,t
+(m, u) ∈Z, ∀t
+(32)
+0 ≤q−
+m,u,t ≤M(1 −ym,u,t)
+(m, u) ∈Z, ∀t
+(33)
+The natural gas ﬂow in each pipeline is decomposed in (31) to
+q+
+m,u,t and q−
+m,u,t, which will determine the direction of ﬂow
+using the binary variable y in (32) and (33). Note that the
+sufﬁciently large number M is set to the maximum gas ﬂow
+along a pipeline to ensure that either (32) or (33) is valid at each
+time period.
+Now, the non-linear constraint (11) is substituted by (34) and
+(35),whichlinearlyapproximatetheWeymouthequationaround
+the ﬁxed pressure points.
+q+
+m,u,t ≤
+Km,uPRm,v
+
+PR2m,v −PR2u,v
+prm,t −
+Km,uPRu,v
+
+PR2m,v −PR2u,v
+pru,t
++ M(1 −ym,u,t), ∀(m, u) ∈Z|(m > u), ∀v, ∀t
+(34)
+q−
+m,u,t ≤
+Km,uPRu,v
+
+PR2u,v −PR2m,v
+pru,t −
+Km,uPRm,v
+
+PR2u,v −PR2u,v
+pru,t
++ Mym,u,t∀(m, u) ∈Z|(u > m), ∀v, ∀t
+(35)
+Based on this, the direction of ﬂow can be determined by the
+binary variable y. The value of y will determine whether (34) or
+(35) holds true.
+B. Piece-Wise Linearization
+In order to ensure a viable set of solutions for the optimiza-
+tion problem exists, a piece-wise linearization approach [34]
+is employed to handle the presented nonlinear constraints. The
+non-linear constraints (20), (28) and (29) are replaced by the
+following linear constraints:
+I−1
+
+i=1
+Y ϵ
+i,t = 1
+∀ϵ, ∀t
+(36)
+Xϵ
+i,t ≤Y ϵ
+i−1,t + Y ϵ
+i,t
+∀i = 2, . . ., I −1, ∀ϵ, ∀t
+(37)
+I
+
+i=1
+Xϵ
+i,t = 1
+∀ϵ, ∀t
+(38)
+Xϵ
+I,t ≤Y ϵ
+I−1,t
+∀ϵ, ∀t
+(39)
+Xϵ
+1,t ≤Y ϵ
+1,t
+∀ϵ, ∀t
+(40)
+qϵ
+t =
+I
+
+i=1
+Xϵ
+i,t ˆqϵ
+i
+∀ϵ, ∀t
+(41)
+Δhϵ
+t =
+I
+
+i=1
+Xϵ
+i,tΔhϵ
+t( ˆqϵ
+i)
+∀ϵ, ∀t
+(42)
+U
+
+u=1
+M
+
+m=1
+Xp
+u,m,t = 1
+∀p, ∀t
+(43)
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:59:01 UTC from IEEE Xplore.  Restrictions apply. 
+
+5676
+IEEE TRANSACTIONS ON INDUSTRY APPLICATIONS, VOL. 61, NO. 4, JULY/AUGUST 2025
+U
+
+u=1
+M
+
+m=1
+(hUpper,p
+u,m,t
++ hLower,p
+u,m,t
+) = 1
+∀p, ∀t
+(44)
+Xp
+u,m,t ≤hUpper,p
+u,m−1,t + hUpper,p
+u+1,m,t + hUpper,p
+u,m,t
++ hLower,p
+u−1,m,t
++ hLower,p
+u,m+1,t + hLower,p
+u,m,t
+∀u, ∀m, ∀p, ∀t
+(45)
+qp
+t =
+U
+
+u=1
+M
+
+m=1
+Xp
+u,m,t ˆqp
+u
+∀p, ∀t
+(46)
+Wt =
+U
+
+u=1
+M
+
+m=1
+Xp
+u,m,t ˆ
+wp
+m
+∀p, ∀t
+(47)
+Δhp
+t =
+U
+
+u=1
+M
+
+m=1
+Δhp
+t ( ˆqp
+u, ˆ
+wp
+m)Xp
+u,m,t
+∀p, ∀t
+(48)
+P p
+t =
+U
+
+u=1
+M
+
+m=1
+P p
+t ( ˆqp
+u, ˆ
+wp
+m)Xp
+u,m,t
+∀p, ∀t.
+(49)
+Constraint (36) ensures that only one binary variable Y ϵ
+i,t can
+take on a non-zero value. Constraints (37)-(40) dictate that only
+non-zero values are chosen for a pair of consecutive positive con-
+tinuous variables Xϵ
+i,t and Xϵ
+i+1,t. Constraint (41) can uniquely
+determine any given point for the water ﬂow rate through pipes
+qϵ
+t, as it is a linear combination of two successive breakpoints
+weighted by the associated variables Xϵ
+i,t. Constraint (42) en-
+sures that the pressure difference for each pipe Δhϵ
+t is prop-
+erly selected for the accurate computation of the approximated
+values.
+The weights of the convex combination for the selected trian-
+gle are presented in (43). Equation (44) ensures that only a single
+triangle is utilized for the convex combination, while constraint
+(45) enforces that non-zero values of Xp
+u,m,t can only be associ-
+atedwiththethreeverticesofthetriangle.Further,equations(46)
+and (47) represent linear combinations of any values for qp
+t and
+Wt, respectively, weighted by the continuous variables Xp
+u,m,t.
+Finally, the bi-variate nonlinear functions for the increase in
+pressure difference in each water pump, represented by Δhpt,
+and the power consumption of pumps, represented by P p
+t , are
+approximated in (48) and (49), respectively.
+IV. NUMERICAL CASE STUDIES
+A. Illustrative Test Systems
+In this study, we considered three systems: a modiﬁed IEEE
+24-bus Reliability Test System, a 12-node natural gas system and
+a 15-node commercial-scale water system. The power and gas
+system datasets are derived from [26], whereas the water system
+data is obtained from [12]. The projected proﬁles for power load,
+gas demand and wind power generation are depicted in Fig. 5.
+AlloptimizationmodelsareexecutedonacomputerwithanIntel
+2.5 GHz Dual-Core processor with 16 GB of RAM, utilizing the
+GUROBI commercial solver.
+Fig. 5.
+The total power load, gas demand and wind power forecast: IEEE
+24-bus test system.
+TABLE II
+OUTAGE SCENARIOS IN THE STUDIED CASES: IEEE 24-BUS TEST SYSTEM
+B. Normal and Emergency Operation
+To evaluate the effectiveness of the proposed joint PWGNs
+operation model, four case studies are examined, with the cor-
+responding outage scenarios summarized in Table II:
+r Case Study 1 (CSI) Normal Operating Conditions: This
+case represents the baseline scenario with no outages,
+where the PWGNs operate under nominal conditions for a
+24-hour period.
+r Case Study 2 (CSII) Line Tripping: This case analyzes the
+impact of a single line tripping event in the power network.
+r Case Study 3 (CSIII) Gas Pipeline Failure: Here, a critical
+gas pipeline failure is simulated, affecting fuel supply to
+gas-ﬁred power plants.
+r Case Study 4 (CSIV) Combined Power and Gas Contingen-
+cies: This scenario explores the simultaneous failure of a
+power transmission line and a gas pipeline.
+These case studies considers both normal and emergency op-
+erating conditions under the N-1 security criterion. Speciﬁcally,
+we simulate the tripping of Line 11, which connects bus 7 to
+bus 8 in IEEE 24-Bus Test System, in Contingency Scenario
+2 (CSII). Line 11 is critical as bus 7 is connected to the rest
+of the network through this line alone. An outage on Line 11
+isolates bus 7, leading to an islanded operation. However, bus
+7 is equipped with a wind farm, which can meet part of its
+local demand. The presence of the wind farm ensures that bus 7
+can be self-sufﬁcient under favorable wind conditions, thereby
+reducing the likelihood of cascading failures. It is worth noting
+that during normal operation (CSI), the power ﬂow in each line is
+described by (4) and the system-wide power balance is described
+by (7). However, when Line 11 is tripped (CSII), bus 7 becomes
+isolated, where the power balance for bus 7 in such scenario is
+described as:
+pG7,t + w7,t = DE
+7,t −P sh
+7,t,
+∀t
+(50)
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:59:01 UTC from IEEE Xplore.  Restrictions apply. 
+
+ALNAKHLI et al.: COORDINATED ENERGY SCHEDULING IN INTERCONNECTED POWER-WATER-GAS NETWORKS
+5677
+Where pG7,t is the power generated by conventional units at
+bus 7, and w7,t is the wind power generation at bus 7. For
+the remaining interconnected system (without bus 7), the power
+balance must account for the redistribution of power ﬂows due
+to the tripping of Line 11. This redistribution is governed by Line
+Interruption Distribution Factor (LIDF) approach [35], which
+quantiﬁes the impact of the outage on power ﬂows across the
+rest of the network as in the following:
+Δf new
+l,t = Δf old
+l,t +
+
+k∈L
+LIDFl,k · Δf outage
+k,t
+,
+∀t, l
+(51)
+where:
+r Δf new
+l,t is the adjusted power ﬂow on line l after the outage,
+r Δf old
+l,t is the original power ﬂow on line l before the outage,
+r LIDFl,k is the Line Interruption Distribution Factor be-
+tween lines l and k,
+r Δf outage
+k,t
+is the change in power ﬂow on line k caused by
+the outage.
+And for the rest of the interconnected system, the power
+balance is updated as follows:
+
+i∈I
+pi,t +
+
+j∈J
+wj,t −
+
+(n,r)∈L
+f new
+n,r,t
+= DE
+n,t −
+
+(n)∈N
+P sh
+n,t,
+∀n̸ = 7, ∀t.
+(52)
+This formulation ensures that the system remains balanced after
+theoutage,withpowerbeingredistributedthroughtheremaining
+transmission lines, and local generation at bus 7 managing the
+load at the islanded node.
+In Contingency Scenario 3 (CSIII), we analyze the failure of
+gas pipeline 5, a critical supply line for gas-ﬁred power plants.
+This outage substantially limits natural gas availability, impact-
+ing generation capacity. Further testing with failures in other
+pipelines highlighted the resilience limits of the gas network;
+speciﬁcally, an outage in pipeline 6 (linking node 4 to node
+7) proved crucial. Pipeline 6 supplies gas storage, serves two
+gas-ﬁred power plants, and meets direct demand at node 7.
+Its failure leads to infeasibility in the model, as the disruption
+creates a bottleneck that prevents the system from meeting both
+power and gas demands.
+In Contingency Scenario 4 (CSIV), an outage of power line
+11 and gas pipeline 5 creates a cascading effect, critically
+constraining both electricity generation and gas supply. With
+reduced gas-ﬁred capacity and limited wind generation, load
+shedding becomes unavoidable in some areas. Note that no
+emergency operation is considered for the water network in
+this study. However, a sensitivity analysis will explore system
+scalability and resilience under increased water demand in a
+larger conﬁguration.
+C. Numerical Results and Discussions
+In CSI, the electricity consumption by water pumps remains
+consistent, as shown in Fig. 6. The steady demand proﬁle re-
+ﬂects normal operation, where water pumps function without
+additional strain from network disruptions. Fig. 7 presents the
+scheduled power generation of the ﬁve non-gas-ﬁred power
+Fig. 6.
+The total electricity consumption of water pumps in CS1: IEEE 24-Bus
+Test System.
+Fig. 7.
+Total power generation from non-gas ﬁred power plants in IEEE 24-bus
+test system.
+plants across all case studies. Notably, in CSI and CSIII, the
+dispatch of non-gas units remains relatively stable, indicating
+a balanced operation without substantial external demands.
+However, in CSII and CSIV, unit P12 demonstrates increased
+activity, particularly during the early hours, to compensate for
+the loss of wind production. This adjustment highlights the
+system’s reliance on higher-priced power generation units to
+replace lost capacity due to network outages, particularly under
+conditions where wind generation is unavailable. Fig. 8 shows
+the total natural gas supply from Gas Well K3, which recorded
+the highest gas output across all scenarios in Table II. In response
+to contingencies in CSII, CSIII, and CSIV, the natural gas supply
+increases to compensate for the loss in generation capacity.
+This increase reﬂects the system’s adaptive response, where
+gas supply ramps up to stabilize the network under emergency
+conditions, demonstrating the critical role of gas reserves in
+maintaining operational continuity.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:59:01 UTC from IEEE Xplore.  Restrictions apply. 
+
+5678
+IEEE TRANSACTIONS ON INDUSTRY APPLICATIONS, VOL. 61, NO. 4, JULY/AUGUST 2025
+Fig. 8.
+The total natural gas supply of Unit K3: IEEE 24-bus test system.
+TABLE III
+OPERATION AND LOAD SHEDDING COSTS (K$) AND COMPUTATION TIME (S)
+FOR EACH CASE STUDY: IEEE-24-BUS TEST SYSTEM
+During emergency operations, the spatial and temporal distri-
+bution of load shedding across nodes and time is shown in Fig. 9.
+In CSII (Fig. 9(a)), load shedding is concentrated around nodes
+7, 8, 21, 22, and 23 during peak demand hours (18-22), when
+wind power generation is at its lowest. The failure of line 11
+connecting nodes 7 and 8 worsen this condition, signiﬁcantly
+impacting system stability. In CSIII (Fig. 9(b)), the failure of
+gas pipelines 5-6 limits gas supply to gas-ﬁred power plants
+connected to nodes 22 and 23. As a result, load shedding is
+primarily observed at nodes 21, 22, and 23, with reduced severity
+compared to CSII due to the localized nature of the gas outage.
+The critical impact is still centered during hours 18-22, reﬂecting
+the system’s sensitivity to both gas supply and wind generation
+shortfalls. In CSIV (Fig. 9(c)), the simultaneous failure of line
+11 and gas pipelines 5-6 leads to a more severe cascading effect,
+resulting in widespread load shedding across nodes 7, 8, 20, 21,
+22, and 23. The load shedding is most observed during hours
+18-22, highlighting the compounded vulnerabilities introduced
+by multi-network failures. Despite the broader distribution, the
+magnitude of curtailment at these critical nodes shows their
+importance in maintaining system reliability.
+Table III presents the operation and load shedding costs for
+each case study, along with the computation times required to
+reachoptimalsolutions.Undernormalconditions(CSI),thetotal
+operating cost is the lowest at $1570.6k, with no load shedding
+cost incurred. The power, water, and gas networks contribute
+$641.7k, $404.4k, and $525.9k, respectively, to this baseline
+cost. In CSII, the total cost rises to $1856.7k, reﬂecting a $286.1k
+increase from CSI due to a power line tripping event. This
+increase is primarily driven by a load shedding cost of $87.4k,
+highlighting the ﬁnancial burden of maintaining system balance
+under disrupted conditions. The power network costs increase
+to $789.9k, as higher-cost generation units are utilized. Con-
+versely, the water network cost slightly decreases to $385.7k,
+while the gas network cost rises to $672.6k to accommodate
+the contingency. For CSIII, where a critical gas pipeline fail-
+ure is simulated, the total cost is $1693.1k, which is $122.5k
+higher than CSI but $163.6k lower than CSII. This scenario
+incurs a load shedding cost of $42.1k, signiﬁcantly less than
+CSII. The gas network cost is $589.4k, reﬂecting the increased
+expense of securing alternative gas supplies. Despite the gas
+contingency, the power network cost remains high at $832.4k
+due to the interconnected impact of the failure. These results
+demonstrate that gas pipeline failures can have localized impacts
+with relatively lower system-wide costs compared to power line
+failures. CSIV represents the most severe scenario, with both
+power and gas contingencies leading to the highest observed
+total cost of $1962.4k—an increase of $391.8k compared to CSI.
+The combined outages result in a load shedding cost of $ 100.8k,
+the highest across all scenarios. The power network cost rises to
+844.5k, while the gas network cost reaches 781.7k, reﬂecting the
+compounded strain on the integrated network. The computation
+time also increases across the scenarios, from 866 seconds in
+CSI to 1083 seconds in CSIV, reﬂecting the added complexity of
+solving the optimization problem under emergency conditions.
+It can be observed that the lower total costs and load shedding
+in CSIII compared to CSII demonstrate that gas contingencies,
+though impactful, may lead to less severe system-wide effects
+compared to certain power contingencies.
+D. Sensitivity to Variations in Wind Capacity and Demand
+The performance of multi-energy networks is highly inﬂu-
+enced by uncertainties in renewable energy generation and
+electricity demand. To evaluate the robustness of the proposed
+framework under such variations, we employ Monte Carlo Sim-
+ulation (MCS) to generate a diverse set of scenarios for wind
+power and electricity demand. Sensitivity analysis is conducted
+on these MCS-generated scenarios to systematically evaluate
+their operational impacts on cost, load shedding, and resilience
+metrics. Fig. 10 illustrates the objective function value as a
+function of (a) wind power penetration levels and (b) demand
+power penetration levels across the case studies CSII, CSIII, and
+CSIV. In Fig. 10(a), the costs increase as wind power penetration
+decreases, reﬂecting the rising reliance on higher-cost thermal
+generation to compensate for the reduced availability of wind
+power. For instance, in CSIV, the total cost increases from $1.9M
+at 100% wind penetration to $3.7M at 10% wind penetration,
+highlighting the compounded challenges posed by simultaneous
+power and gas contingencies. A similar trend is observed in CSII
+and CSIII, where the total costs rise from $1.8M and $1.7M
+at full wind penetration to $3.6M and $2.95M, respectively, at
+low wind levels. Notably, CSIII consistently demonstrates lower
+total costs compared to CSII due to the localized nature of the
+gas pipeline failure and its comparatively limited impact on the
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:59:01 UTC from IEEE Xplore.  Restrictions apply. 
+
+ALNAKHLI et al.: COORDINATED ENERGY SCHEDULING IN INTERCONNECTED POWER-WATER-GAS NETWORKS
+5679
+Fig. 9.
+Total spatial load shedding: IEEE 24-bus test system.
+Fig. 10.
+Total cost of PWGNs as a function of (a) Wind Power Penetration
+Level (%) and (b) Power Demand Level (%) for CSII, CSIII, and CSIV: IEEE
+24-bus test system.
+Fig. 11.
+Load shedding behavior in CSIV as a function of (a) wind penetration
+% and (b) power demand levels: IEEE 24-bus test system.
+overall system. In contrast, Fig. 10(b) shows that as power de-
+mand penetration increases, total costs rise across all cases. For
+example, in CSIV, the total cost increases from $1.9M at 100%
+demand penetration to $3.2M at 150% demand penetration.
+Similarly, CSII and CSIII see increases from $1.8M and $1.7M
+to $3.0M and $2.8M, respectively. Fig. 11 illustrates the total
+load shedding in CSIV across different wind penetration (Figure
+(a)) and demand levels (Figure (b)). In Figure (a), reduced wind
+penetration correlates with increased load shedding, particularly
+during peak demand hours, showing the reliance on wind re-
+sources to balance supply and demand in contingency scenarios.
+As wind availability decreases, alternative generation sources
+must increase their output to meet demand, amplifying load
+curtailment needs when these resources are limited. Similarly,
+TABLE IV
+RESULTS WITH SEVERAL INTERCONNECTED WS: IEEE 118-BUS TEST SYSTEM
+AND MODIFIED BELGIAN 20-NODE GAS SYSTEM
+Figure (b) shows the load shedding required to maintain system
+stability under varying demand levels. Higher demand neces-
+sitates greater load curtailment during peak periods, indicating
+the system’s vulnerability to demand surges, especially under
+emergencyconditionswhereresourceavailabilityisconstrained.
+E. Scalability and System Resilience With Larger Integrated
+Networks
+In this section, we examine the scalability of the proposed
+model by applying it to a larger system. Speciﬁcally, we test
+a modiﬁed IEEE 118-Bus Test System interconnected with a
+20-Node Gas System and three 15-Node Water Networks. The
+interconnected test system includes 46 NGPP units, 8 GFPP
+units, 5 wind farms located at buses 2, 33, 51, 81, and 108.
+Additionally, there are 186 power lines, 91 electrical loads, 2
+gas suppliers, 17 gas pipelines, and 9 gas loads, along with the
+three water networks connected to the power system at buses 39,
+74, and 102. Detailed data can be referenced from [12] and [36].
+Other parameters are consistent with those used in the IEEE
+24-bus RTS.
+The same four contingency cases (CSI–CSIV) studied in the
+IEEE 24-bus RTS are analyzed in this expanded network to
+evaluate both the operational cost and resilience under varying
+wind penetration levels. As shown in Table IV, the total costs and
+load shedding vary signiﬁcantly across the cases, reﬂecting the
+increased complexity and interdependencies of the PWGNs. The
+cases were evaluated at varying wind penetration levels to assess
+the impact of wind integration on system performance. In CSII,
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:59:01 UTC from IEEE Xplore.  Restrictions apply. 
+
+5680
+IEEE TRANSACTIONS ON INDUSTRY APPLICATIONS, VOL. 61, NO. 4, JULY/AUGUST 2025
+Fig. 12.
+Total tank ﬂow rate and pump electricity consumption of water
+networks in CSIV: IEEE 118-bus test system.
+a line outage occurs at line 150, connecting nodes 94 and 96. In
+CSIII, failures are observed in gas pipelines 10, which connect
+pipelines 12 and 13. CSIV combines these two contingencies,
+leading to the highest levels of operational disruption. Under
+normal operation (CSI), the system incurs a baseline total cost of
+$3,681.3k with no load shedding. However, contingency cases
+lead to substantial cost increases, with CSIV resulting in the
+highest total cost of $4,498.7k due to combined power and
+gas disruptions and a signiﬁcant load shedding of 359.5 MW.
+CSII, which involves a single power line failure and reduced
+wind penetration, incurs a total cost of $4,284.8k and a load
+shedding of 49.7 MW. In CSIII, where a critical gas pipeline
+failure occurs, the total cost is slightly lower at $4,006.1k, with
+a corresponding load shedding of 17.2 MW. The operational
+costs across power, gas, and water networks reveal how these
+interconnected systems respond under different contingencies.
+The integration of additional water networks and an expanded
+gas network ampliﬁes the total costs compared to the smaller
+IEEE24-busTestSystem,highlightingtheincreasedinterdepen-
+dencies and vulnerabilities of larger networks. Furthermore, the
+computation time increases from 1,011 seconds in CSI to 1,466
+seconds in CSIV, demonstrating the scalability of the proposed
+model to solve larger, more complex systems efﬁciently.
+Fig. 12 illustrates the total water tank ﬂow rate and pump
+electricity consumption for each water network during CSIV,
+the most severe contingency scenario. In this scenario, the inte-
+grated PWGNs respond dynamically, adjusting pump electricity
+consumption and water ﬂow rates to manage the disruptions.
+Notably, during peak demand hours (e.g., 6 PM to 10 PM), pump
+electricity consumption reaches a maximum of approximately
+18 MW, highlighting the heavy reliance of water networks on
+electricity for pumping operations. Conversely, in low-demand
+periods, pump electricity consumption drops to around 4 MW,
+demonstrating the system’s ﬂexibility in conserving energy
+when possible. The water tank ﬂow rate also ﬂuctuates signif-
+icantly, ranging from −2000 m3/h (indicating water outﬂow
+to meet demand) to +3000 m3/h (indicating water inﬂow for
+storage replenishment). These adjustments help stabilize water
+availability during peak electricity demand hours by balancing
+Fig. 13.
+Total gas supply in CSII and CSIV: IEEE 118-bus test system.
+Fig. 14.
+Total load shedding distribution in (a) CSII and (b) CSIV under
+varying wind penetration levels: IEEE 118-bus test system.
+consumption with reserves. This interdependent response en-
+hances resilience by ensuring that water supply remains con-
+sistent even under extreme operational conditions in the power
+and gas networks. Fig. 13 compares the total gas supply un-
+der contingency scenarios CSII and CSIV within the 20-node
+Belgian system conﬁguration. In CSII, the gas supply remains
+relatively stable, averaging around 12,000 kcf/h with only minor
+ﬂuctuations. In contrast, in CSIV the gas supply shows more pro-
+nounced adjustments, particularly during high-demand periods.
+For instance, at peak hours (e.g., 6 PM to 10 PM), the gas supply
+increases to approximately 14,500 kcf/h in CSIV to compensate
+for the pipeline disruption, compared to an average of 12,500
+kcf/h in CSII. This adjustment represents an additional 15%
+supply increase to meet demand under compounded disruptions.
+Fig. 14 illustrates the load shedding proﬁles across contingency
+cases CSII and CSIV, highlighting the variations in shedding
+patterns under different wind penetration levels and contingency
+scenarios. In CSII, Fig. 14(a), where a single line failure disrupts
+power ﬂow, load shedding intensiﬁes at lower wind levels. For
+instance, the total load shedding reaches its highest at 70% wind
+penetration, particularly between 6 PM to 10 PM, aligning with
+peak demand hours. This demonstrates how the system becomes
+more reliant on conventional generation sources as wind output
+decreases, leading to signiﬁcant load shedding during critical
+hours. Conversely, in CSIV (Fig. 10(b)), which involves simul-
+taneous failures in both power lines and gas pipelines, the load
+shedding is markedly higher due to the compounded effect of
+these failures. The total load shedding peaks at 359 MW during
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:59:01 UTC from IEEE Xplore.  Restrictions apply. 
+
+ALNAKHLI et al.: COORDINATED ENERGY SCHEDULING IN INTERCONNECTED POWER-WATER-GAS NETWORKS
+5681
+TABLE V
+PERFORMANCE OF INTEGRATED MODEL UNDER CONTINGENCY SCENARIOS:
+IEEE-118-BUS TEST SYSTEM
+70% wind penetration, with a clear escalation in shedding levels
+during the evening peak hours. Even at higher wind levels, the
+combined failures impose signiﬁcant stress on the system, as
+evidenced by elevated shedding levels compared to CSII.
+F. Performance Comparison With the State-of-The-Art Models
+The proposed framework was evaluated against state-of-the-
+art methods using a modiﬁed IEEE 118-bus test system inter-
+connected with ﬁve water networks and a 20-node gas network.
+The water networks were connected at buses 1, 27, 39, 74, and
+102, while wind generation units were located at buses 8, 33,
+and 75. This setup was tested under varying water demand sce-
+narios, ranging from 100% to 130% of baseline levels, to assess
+the framework’s ability to handle interdependent operations in
+PWGNs.
+Table V presents the results of the four case studies (CSI
+to CSIV). In CSI, representing normal operation with 100%
+water demand, the system incurs a total cost of $3981.7k, with
+no load shedding observed. This serves as the baseline for
+comparison. As contingencies are introduced, such as a power
+line outage in CSII (110% water demand) or a gas pipeline
+failure in CSIII (120% water demand), the system experiences
+higher operational costs and load shedding. In CSII, the total cost
+rises to $4396.6k, with a load shedding of 51.3 MW. The slight
+increase in water demand coupled with the power line outage
+primarily drives this cost increase of approximately 10.4% from
+CSI. On the other hand, CSIII results in a lower load shedding
+of 29.7 MW, but the total cost remains signiﬁcant at $4177.9k
+due to the compounded impact of gas network constraints.
+This case demonstrates the framework’s ability to balance inter-
+network interdependencies by reallocating resources to mitigate
+the effects of individual contingencies. CSIV, representing the
+most severe scenario with simultaneous power and gas network
+failures and 130% water demand, leads to the highest total
+cost of $4580.5k and a substantial load shedding of 278.2
+MW. This corresponds to a 15.0% increase in cost compared
+to CSI, highlighting the compounded effects of multi-network
+disruptions under high water demand conditions. Such results
+highlights the critical need for joint optimization in enhancing
+system resilience and minimizing cascading failures. The com-
+putational performance of the framework remains robust across
+all scenarios, with solution times ranging from 1217 seconds in
+CSI to 1500 seconds in CSIV. For CSIV, the model was stopped
+at 1500 seconds, and the results were taken at that point to
+Fig. 15.
+Resilience indices for cost and load shedding across case studies:
+IEEE 118-bus test system.
+ensure practical computational limits. To further evaluate the
+framework’s performance, resilience indices for cost and load
+shedding were calculated and are presented in Fig. 15. Under
+CSI, resilience indices are at 100% for both metrics, as no
+contingencies occur. As the scenarios increase in severity (e.g.,
+CSIII and CSIV), the proposed framework sustains signiﬁcantly
+higher resilience indices compared to conventional bi-network
+models. For instance, under CSIV, the Load Shedding Resilience
+Index and Cost Resilience Index remain above 65% and 60%,
+respectively, compared to indices below 40% in similar stud-
+ies on bi-network optimization under extreme conditions [12]
+and [37]. These ﬁndings align with prior multi-network stud-
+ies, such as [23] and [25], validating the proposed model’s
+advantages in enhancing resilience and reducing operational
+costs under contingency scenarios, while effectively addressing
+interdependencies across multi-energy systems.
+V. CONCLUSION
+This study proposed a novel operational strategy for in-
+terconnected PWGNs under emergency conditions, effectively
+addressing system interdependencies through efﬁcient lineariza-
+tion techniques. By transforming a mixed-integer nonlinear
+programming (MINLP) model into an equivalent mixed-integer
+linear programming (MILP) formulation, the framework could
+reduce operational costs and minimize load shedding while
+maintaining system resilience with an affordable computational
+resources. The results across multiple case studies and on two
+different-size interconnected networks validate the scalability
+and robustness of the proposed approach, providing a practical
+and efﬁcient solution for joint PWGN operation under complex
+contingency scenarios. By leveraging interdependencies among
+infrastructures, the model enhances resilience and cost efﬁ-
+ciency, establishing a benchmark for coordinated multi-energy
+system optimization.
+Future research will focus on enhancing the framework’s
+applicability to real-time operations and larger-scale systems
+while addressing uncertainties in load proﬁles, renewable gen-
+eration, and extreme weather events. Expanding the model to in-
+corporate multiple system operators and advanced linearization
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:59:01 UTC from IEEE Xplore.  Restrictions apply. 
+
+5682
+IEEE TRANSACTIONS ON INDUSTRY APPLICATIONS, VOL. 61, NO. 4, JULY/AUGUST 2025
+techniques will further improve its accuracy and computational
+efﬁciency. These advancements aim to develop a comprehensive
+framework for real-time, integrated operation of multi-energy
+systems, with the goal to enhance the resilience and reliability
+in interconnected infrastructures.
+REFERENCES
+[1] E. Casey, S. Beaini, S. Pabi, K. Zammit, and A. Amarnath, “The triple
+bottom line for efﬁciency: Integrating systems within water and en-
+ergy networks,” IEEE Power Energy Mag., vol. 15, no. 1, pp. 34–42,
+Jan./Feb. 2017.
+[2] A. M. Hamiche, A. B. Stambouli, and S. Flazi, “A review of the water-
+energy nexus,” Renewable Sustain. Energy Rev., vol. 65, pp. 319–331,
+2016.
+[3] M. Alhazmi, P. Dehghanian, M. Nazemi, F. Wang, and A. Alfadda,
+“Coordination framework for integrated operation of water-power systems
+under contingencies,” in Proc. 2021 IEEE Ind. Appl. Soc. Annu. Meeting,
+2021, pp. 1–7.
+[4] V. M. Leiby and M. E. Burke, Energy Efﬁciency Best Practices for
+North American Drinking Water Utilities., Albany, NY, USA: WRF,
+2011.
+[5] M. Alhazmi, “On the integration and coordination of interconnected
+water and electricity networks: Use cases, algorithms, and solutions,”
+Ph.D. dissertation, The George Washington Univ., Washington, DC, USA,
+2022.
+[6] O. J. Guerra et al., “Electric power grid and natural gas network op-
+erations and coordination,” Nat. Renewable Energy Lab., Golden, CO,
+USA, Tech. Rep. NREL/TP-6A50-77096, Sep. 2020. [Online]. Available:
+https://www.nrel.gov/docs/fy20osti/77096.pdf
+[7] R. Z. Ríos-Mercado and C. Borraz-Sánchez, “Optimization problems
+in natural gas transportation systems: A state-of-the-art review,” Appl.
+Energy, vol. 147, pp. 536–555, 2015.
+[8] Washington State Department of Health, “Water system design manual,”
+2019. Accessed: Nov. 21, 2022. [Online]. Available: https://doh.wa.gov/
+sites/default/ﬁles/2022-02/331-123.pdf?ver=2019-10-03-153237-220
+[9] M. Hijazi and P. Dehghanian, “Spatio-temporal insights into recent elec-
+tricity outages in the U.S.: Drivers, trends, and impacts,” in Proc. 2022
+North Amer. Power Symp., 2022, pp. 1–6.
+[10] EPA,“Powerresilienceguideforwaterandwastewaterutilities,”2021.Ac-
+cessed: Nov. 29, 2022. [Online]. Available: https://www.epa.gov/system/
+ﬁles/documents/2021-09/062021_powerresilienceguide508c.pdf
+[11] L. Ji, B. Zhang, G. Huang, and P. Wang, “A novel multi-stage fuzzy
+stochastic programming for electricity system structure optimization and
+planning with energy-water nexus–A case study of Tianjin, China,” En-
+ergy, vol. 190, 2020, Art. no. 116418.
+[12] M.
+Alhazmi,
+P.
+Dehghanian,
+M.
+Nazemi,
+and
+K.
+Oikonomou,
+“Uncertainty-informed
+operation
+coordination
+in
+a
+water-energy
+nexus,” IEEE Trans. Ind. Inform., vol. 19, no. 5, pp. 6439–6449,
+May 2023.
+[13] K. Oikonomou and M. Parvania, “Optimal coordination of water distribu-
+tion energy ﬂexibility with power systems operation,” IEEE Trans. Smart
+Grid, vol. 10, no. 1, pp. 1101–1110, Jan. 2019.
+[14] F. Moazeni, J. Khazaei, and A. Asrari, “Step towards energy-water smart
+microgrids; buildings thermal energy and water demand management
+embedded in economic dispatch,” IEEE Trans. Smart Grid, vol. 12, no. 5,
+pp. 3680–3691, Sep. 2021.
+[15] S. Zuloaga, P. Khatavkar, L. Mays, and V. Vittal, “Resilience of cyber-
+enabled electrical energy and water distribution systems considering in-
+frastructural robustness under conditions of limited water and/or energy
+availability,” IEEE Trans. Eng. Manag., vol. 69, no. 3, pp. 639–655,
+Jun. 2022.
+[16] L. Rodriguez-Garcia, M. M. Hosseini, T. M. Mosier, and M. Parva-
+nia, “Resilience analytics for interdependent power and water distribu-
+tion systems,” IEEE Trans. Power Syst., vol. 37, no. 6, pp. 4244–4257,
+Nov. 2022.
+[17] M. Elsir, A. T. Al-Awami, M. A. Antar, K. Oikonomou, and M. Par-
+vania, “Risk-based operation coordination of water desalination and
+renewable-rich power systems,” IEEE Trans. Power Syst., vol. 38, no. 2,
+pp. 1162–1175, Mar. 2023.
+[18] Z. Zeng, T. Ding, Y. Xu, Y. Yang, and Z. Dong, “Reliability evaluation for
+integrated power-gas systems with power-to-gas and gas storages,” IEEE
+Trans. Power Syst., vol. 35, no. 1, pp. 571–583, Jan. 2020.
+[19] L. Bai, F. Li, T. Jiang, and H. Jia, “Robust scheduling for wind integrated
+energy systems considering gas pipeline and power transmission n–1
+contingencies,” IEEE Trans. Power Syst., vol. 32, no. 2, pp. 1582–1584,
+Mar. 2017.
+[20] Y.Sun,T.Ding,andM.Shahidehpour,“Amulti-variableanalyticalmethod
+for energy ﬂow calculation in natural gas systems,” IEEE Trans. Power
+Syst., vol. 38, no. 2, pp. 1767–1770, Mar. 2023.
+[21] Y. Wang, Y. Yang, and Q. Xu, “Reliability assessment for integrated
+power-gas systems considering renewable energy uncertainty and cascad-
+ing effects,” CSEE J. Power Energy Syst., vol. 9, no. 3, pp. 1214–1226,
+2023.
+[22] F. Shen et al., “Two-stage optimal dispatch of electricity-natural gas
+networks considering natural gas pipeline leakage and linepack,” IEEE
+Trans. Smart Grid, vol. 15, no. 4, pp. 3542–3553, Jul. 2024.
+[23] S. Fang, C. Wang, Y. Lin, and C. Zhao, “Optimal energy scheduling and
+sensitivity analysis for integrated power–water–heat systems,” IEEE Syst.
+J., vol. 16, no. 4, pp. 5176–5187, Dec. 2022.
+[24] P. Zhao et al., “Managing water-energy-carbon nexus for urban areas with
+ambiguous moment information,” IEEE Trans. Power Syst., vol. 38, no. 5,
+pp. 4432–4446, Sep. 2023.
+[25] J. Li et al., “Resilience-motivated distribution system restoration con-
+sidering electricity-water-gas interdependency,” IEEE Trans. Smart Grid,
+vol. 12, no. 6, pp. 4799–4812, Nov. 2021.
+[26] A. Alnakhli, P. Dehghanian, and M. Alhazmi, “Optimal operation of
+integrated multi-energy systems during emergency conditions,” in Proc.
+IEEE/IAS 59th Ind. Commercial Power Syst. Tech. Conf., 2023, pp. 1–8.
+[27] A. Schwele, C. Ordoudis, J. Kazempour, and P. Pinson, “Coordination of
+power and natural gas systems: Convexiﬁcation approaches for linepack
+modeling,” in Proc. 2019 IEEE Milan PowerTech, 2019, pp. 1–6.
+[28] R.Menke,E.Abraham,P.Parpas,andI.Stoianov,“Demonstratingdemand
+response from water distribution system through pump scheduling,” Appl.
+Energy, vol. 170, pp. 377–387, 2016.
+[29] M. Alhazmi and P. Dehghanian, “Optimal integration of interconnected
+water and electricity networks,” IET Gener., Transmiss. Distrib., vol. 15,
+no. 14, pp. 2033–2043, 2021.
+[30] J. Shin, Y. Werner, and J. Kazempour, “Modeling gas ﬂow directions
+as state variables: Does it provide more ﬂexibility to power systems?,”
+Electric Power Sys. Res., vol. 212, 2022, Art. no. 108502.
+[31] M. Alhazmi, P. Dehghanian, M. Nazemi, F. Wang, and A. Alfadda, “Op-
+timal operation of integrated water–power systems under contingencies,”
+IEEE Trans. Ind. Appl., vol. 58, no. 4, pp. 4350–4358, Jul./Aug. 2022.
+[32] L. W. Mays, Water Resources Engineering. Hoboken, NJ, USA: John
+Wiley & Sons, 2010.
+[33] C. Ordoudis, P. Pinson, and J. M. Morales, “An integrated market for
+electricity and natural gas systems with stochastic power producers,” Eur.
+J. Oper. Res., vol. 272, no. 2, pp. 642–654, 2019.
+[34] M. Alhazmi, P. Dehghanian, M. Nazemi, and M. Mitolo, “Joint operation
+optimizationoftheinterdependentwaterandelectricitynetworks,”inProc.
+2020 IEEE Ind. Appl. Soc. Annu. Meeting, 2020, pp. 1–7.
+[35] J. Deng, G. Wu, Y. Wang, Y. Su, and A. Liu, “Security-constrained
+hybrid optimal energy ﬂow model of multi-energy system considering
+n-1 component failure,” J. Energy Storage, vol. 64, 2023, Art. no. 107060.
+[36] R.-P. Liu, Y. Hou, Y. Li, S. Lei, W. Wei, and X. Wang, “Sample robust
+schedulingofelectricity-gassystemsunderwindpoweruncertainty,”IEEE
+Trans. Power Syst., vol. 36, no. 6, pp. 5889–5900, Nov. 2021.
+[37] S. Zuloaga and V. Vittal, “Integrated electric power/water distribution
+system modeling and control under extreme mega drought scenarios,”
+IEEE Trans. Power Syst., vol. 36, no. 1, pp. 474–484, Jan. 2021.
+Ahmad Alnakhli (Graduate Student Member, IEEE)
+received the B.Sc. degree in electrical engineering
+from King Abdulaziz University, Saudi Arabia, in
+2013, and the M.Sc. degree in electrical engineer-
+ing from The University of Southern California, Los
+Angeles, CA, USA, in 2016. He is currently working
+toward the Ph.D. degree in electrical engineering with
+the Department of Electrical and Computer Engineer-
+ing, The George Washington University, Washington,
+DC, USA. From 2016 to 2019, he was a Reliabil-
+ity Engineer with Maraﬁq Company, Saudi Arabia.
+His research interests include resilient multi-energy systems, infrastructure
+resilience to natural hazards, and data-driven analytics for future energy systems.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:59:01 UTC from IEEE Xplore.  Restrictions apply. 
+
+ALNAKHLI et al.: COORDINATED ENERGY SCHEDULING IN INTERCONNECTED POWER-WATER-GAS NETWORKS
+5683
+Payman Dehghanian (Senior Member, IEEE) re-
+ceived the B.Sc. degree in electrical engineering from
+the University of Tehran, Tehran, Iran, in 2009, the
+M.Sc. degree in electrical engineering from the Sharif
+University of Technology, Tehran, in 2011, and the
+Ph.D. degree in electrical engineering from Texas
+A&M University, College Station, TX, USA, in 2017.
+In 2018, he joined the Department of Electrical and
+Computer Engineering, The George Washington Uni-
+versity, Washington, DC, USA, where he is currently
+an Associate Professor. His research interests include
+power system reliability and resilience assessment, data-informed decision
+making for maintenance and asset management in electrical systems, and smart
+grid applications. He was the recipient of the 2014 and 2015 IEEE Region ﬁve
+Outstanding Professional Achievement Awards, 2015 IEEE-HKN Outstanding
+Young Professional Award, 2021 Early Career Award from the Washington
+Academy of Sciences, 2022 George Washington University’s Early Career
+Researcher Award, 2022 IEEE IAS Electric Safety Committee’s Young Profes-
+sional Achievement Award, and 2022 IEEE IAS Outstanding Young Member
+Service Award. In 2015 and 2016, he was selected among the World’s Top 20
+Young Scholars for Next Generation of Researchers in electric power systems.
+Mohannad Alhazmi (Member, IEEE) received the
+B.Sc. degree in electrical engineering from Umm
+Al-Qura University, Makkah, Saudi Arabia, in 2013,
+the M.Sc. and Ph.D. degrees in electrical engineering
+from The George Washington University, Washing-
+ton, DC, USA, in 2017 and 2022, respectively. He
+is currently an Assistant Professor with the Depart-
+ment of Electrical Engineering, King Saud Univer-
+sity, Riyadh, Saudi Arabia. His research interests
+include power system reliability and resiliency, as
+well as the operation of interdependent critical infras-
+tructures. Dr. Alhazmi was the recipient of the 2022 IEEE Industry Application
+Society (IAS) Electrical Safety Prevention through Design Student Education
+Initiative Award.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:59:01 UTC from IEEE Xplore.  Restrictions apply. 

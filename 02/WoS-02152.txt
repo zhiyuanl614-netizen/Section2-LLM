@@ -1,0 +1,973 @@
+Vol.:(0123456789)
+1 3
+https://doi.org/10.1007/s11356-022-19957-7
+RESEARCH ARTICLE
+Modeling and optimization of photovoltaic serpentine type thermal 
+solar collector with thermal energy storage system for hot water 
+and electricity generation for single residential building
+Srimanickam Baskaran1 · Christopher Sathiya Satchi2 · Saranya Amirtharajan1 · Metilda Manuel Swami Durai3
+Received: 29 September 2021 / Accepted: 24 March 2022 
+© The Author(s), under exclusive licence to Springer-Verlag GmbH Germany, part of Springer Nature 2022
+Abstract
+Increasing surface temperature has a significant effect on the electrical performance of photovoltaic (PV) panels. A 
+closed-loop forced circulation serpentine tube design of cooling water system was used in this study for effectively 
+management of the surface temperature of PV panels. A real-time experiment was first carried out with a PV panel 
+with a cooling system at heat transfer fluid (HTF) flow rates of 60 kg ­h−1, 120 kg ­h−1, and 180 kg ­h−1. Based on the 
+experimentation, a correlation for a nominal operating cell temperature (NOCT) and thermal efficiency for collector 
+was developed for experimental validation of useful energy gained, cell temperature, and electric power generation. 
+The developed correlations were validated with the use of electric power electrical power and useful energy gained in 
+photovoltaic serpentine thermal solar collector (PV/STSC) and fitting into the experimental results with a deviation of 
+1% and 2.5% respectively. Further, with the help of developed correlations, a system was developed in the TRNSYS tool 
+through which an optimization study was performed based on electric and hot water demand. The findings indicated an 
+optimal system with an 8-m2 PV/STSC area, a HTF flow rate of 60 kg ­h−1, and thermal energy storage (TES) system 
+having a volume and height of 280 l and 0.8 m could meet 91% and 33% of the hot water demand for Ac loads and 78% 
+or DC loads, respectively.
+Keywords  Nominal operating cell temperature · TRNSYS · Solar photovoltaic · Forced circulation · Solar fraction
+Abbreviations
+HTF 	
+Heat transfer fluid
+NOCT	
+Nominal operating cell temperature
+PV/STSC	
+Photovoltaic serpentine thermal solar 
+collector
+TES	
+Thermal energy storage
+Symbols
+FR	
+Heat removal factor
+τ	
+Transmissivity
+α	
+Absorptivity
+Ap	
+Aperture area ­(m2)
+Gt	
+Incident solar radiation (W ­m−2)
+Ut	
+Overall heat loss coefficient (W ­m−2 ­K−1)
+Ti	
+Inlet temperature (K)
+Ta	
+Ambient temperature (K)
+UL	
+Overall heat loss coefficient from the solar 
+collector (W ­m−2 ­K−1)
+Qs 	
+Energy supplied by the TES system (W)
+QAUX	
+Auxiliary heater’s additional energy (W)
+Qmax	
+Electric heater maximum heating rate (W)
+UA	
+Overall loss coefficient between the heater and 
+its surroundings during operation (W/m2K)
+ηhtr	
+Auxiliary heater efficiency
+Cf 	
+Specific heat of the fluid (kJ/kg K)
+ppeak 	
+Peak power in the solar panel (W)
+GTavg 	
+Average solar radiation in a day (W ­m−2
+Responsible Editor: Philippe Garrigues
+ *	 Christopher Sathiya Satchi 
+	
+christophersathya@gmail.com
+1	
+Department of Mechanical Engineering, Vel Tech 
+Rangarajan Dr Sagunthala R&D Institute of Science 
+and Technology, Chennai 600072, Tamil Nadu, India
+2	
+Department of Mechanical Engineering, CEG Campus, Anna 
+University, Chennai 600025, Tamil Nadu, India
+3	
+Department of Chemistry, Saveetha Engineering College, 
+Chennai 602105, Tamil Nadu, India
+/ Published online: 7 April 2022
+Environmental Science and Pollution Research (2022) 29:59575–59591
+
+1 3
+Introduction
+Energy consumption patterns, the greenhouse effect, the 
+depletion of fossil fuel supplies, and fossil fuel price fluc-
+tuation all contribute to an increase in the use of renew-
+able resources in energy generation units (Ahmadi et al. 
+2021; Pranesh et al. 2019; Said et al. 2021a). Solar power, 
+on the other hand, is one of the most widely available 
+clean energy sources (Christopher et al. 2021b, a; Thakur 
+et al. 2020). Solar energy is typically used to generate 
+heat energy and electric energy using thermal collectors 
+and PV systems. While the use of solar energy has grown, 
+some limitations, such as high installation costs (Fakouri-
+yan et al. 2019; Srimanickam et al. 2015), low energy con-
+version efficiency (Srimanickam et al. 2017; Srimanickam 
+and Saranya 2021), and the need for storage systems due 
+to supply and demand curves that differ have a negative 
+impact on its use in comparison to other renewable energy 
+sources (Wu et al. 2014; Xu et al. 2020; Xu and Zhao 
+2019, 2016, 2015). Many research articles on photovol-
+taic/thermal (PV/T) technologies have been published in 
+an attempt to resolve the above said barriers (Giwa et al. 
+2020; Lamnatou et al. 2021; Reji Kumar et al. 2020).
+A PV/T technology can meet both electricity and heat 
+energy demands simultaneously and reduce the amount 
+of space needed for installation compared to traditional 
+solar energy systems (Khoshgoftar Manesh et al. 2022; 
+Navakrishnan et al. 2021; Saitoh et al. 2003). Lowering 
+the PV panels surface temperature can help attachment 
+of improved conversion efficiency. Different heat trans-
+fer fluid (HTF) flow techniques achieved a reduction in 
+the surface temperature of the solar panel. For instance, 
+Kluth (2008) explored the advantages of water as a cool-
+ing agent. Two small solar panel models were made for the 
+purpose. One model was left uncooled, while the others 
+were cooled by a fan blowing water on it. A solar panel 
+with water cooling was seen producing more power pro-
+duction compared to another one. Cooling the solar panel 
+surface by spraying water with a fan was inefficient as 
+the water would not be spread over the entire panel sur-
+face, leaving certain areas of the PV panels uncooled. This 
+approach often results in a significant amount of water 
+loss. Odeh and Behnia (2009) used a surface cooling sys-
+tem for a reduction in the heat at the surface of the panel. 
+A water system was installed on the PV panel surface for 
+delivering of water through sprinkling. This helped a 15% 
+increase in electricity production during the peak of solar 
+radiation. For the months of June and December, Bahaida-
+rah (2016) explored the cooling of a PV panel using jet 
+impingement both experimentally and computationally. 
+Compared to uncooled PV panels, the authors found 
+increase in electric energy yield by 51.6% in June and 
+49.6% in December. Eisapour et al. (2020) employed wavy 
+tubes to investigate a PV/T collector’s in terms of energy 
+and exergy efficiency. The wavy tube improved energy 
+and exergy efficiency by 6.06% and 4.25%, respectively, 
+compared to the straight tube. Farahat (2004) worked on 
+the electrical efficiency of a PV/T system that used both 
+direct water and heat pipe cooling. In comparison with a 
+direct water cooling system, it demonstrated the ability 
+of the heat pipe cooling technology to achieve improved 
+electrical efficiency. Rahimi et al. (2015) examined single 
+and multi-header microconfigurations for PV cell cooling. 
+PV panels with multiple header configurations eliminated 
+larger heat and generated more electricity, than PV panels 
+with a single header design.
+The performance of a PV/T collector can be improved 
+through use of an appropriate circulating fluid (Huaxu et al. 
+2020; Sheikholeslami et al. 2021). For instance, Prakash 
+(1994) investigated the performance of PV/T technology 
+from two different circulating HTF viz. air and water. The 
+findings showed variation when water was used as a cool-
+ing fluid, the thermal efficiency varied between 50 and 67%. 
+With replacement of water by cooling air, the enhancement 
+ranged from 17 to 51%. Hissouf et al. (2020) investigated the 
+effects of dispersed copper in pure water on PV/T collector. 
+The electrical efficiency of copper nanomaterial dispersed 
+in water improved by 1.9% having a volume concentration 
+of 2 wt% compared to pure water results seen with. The 
+efficiency of a PV/T module using brine as the circulating 
+coolant HTF was evaluated by Saitoh et al. (2003). When 
+the brine temperature was kept constant, the PV/T conver-
+sion efficiency increased by 10 to 13%, while the brine tem-
+perature at the outflow increased from 20 to 40 °C and the 
+photo-thermal efficiency seems to be between 40 and 50%. 
+Apart from earlier research, various numerical and experi-
+mental investigations were performed to reduce the surface 
+temperature of PV using nanofluids as a coolant to improve 
+energy efficiency and output power (Al-Shamani et al. 2016; 
+Al-Waeli et al. 2017; Bianco et al. 2018; Hjerrild et al. 2016; 
+Sardarabadi and Passandideh-Fard 2016; Yazdanifard et al. 
+2017).
+In PV/T, water has shown to be more effective than air 
+as a coolant. In PV technology, addition of nano-/micro-
+additions to the coolant improves conversion efficiency 
+(Said et al. 2022, 2021b, 2018). However, dispersing the 
+particle in a large amount of coolant HTF (water) is not 
+practicable and cost-effective. According to literature, 
+the solar simulator was used as a source of energy in a 
+majority of the studies. The effect of a PV panel varies 
+depending on solar radiation, surface temperature, and 
+other variables like shadowing, dust, and panel height 
+from the ground (Dwivedi et al. 2020). The influence 
+of above said parameters could not be predicted in the 
+simulator-based experimental setup. Considering the 
+59576
+Environmental Science and Pollution Research (2022) 29:59575–59591
+
+1 3
+above-enhanced cooling techniques that have been made 
+for PV panel referred to the literature, a PV system was 
+fabricated with a serpentine flow pattern for cooling as a 
+part for this research work. The main advantages of the 
+serpentine flow pattern are the HTF ability to have a high 
+heat removal factor ­FR( for low mass flow rate compared 
+to other flow patterns for the same condition (Allan et al. 
+2015; S. S. Christopher et al. 2021b, a). For a real-time 
+experiment, a fabricated PVT system is combined with 
+sensible TES. Based on real-time experimental data, a 
+correlation for the PV/STSC system was developed, and 
+the proposed PVT system was designed and modeled in 
+TRNSYS, which is not accessible in the existing com-
+ponent type, and validated using experimental data. The 
+validated TRNSYS model is used in the optimization of 
+the complete system for meeting of hot water and electric-
+ity requirements for a single residential building in Chen-
+nai, based on daily, monthly, and yearly performance.
+System description
+The experiment facilities and TRNSYS model used in the 
+study are discussed in this section:
+Experimental setup description
+The photovoltaic serpentine thermal solar collector (PV/
+STSC), TES tank, multimeter, temperature indicator, and 
+pressure gauge used in the study are depicted in Fig. 1. A 
+serpentine design copper absorber tube with nine passes was 
+installed beneath the PV panel, is shown in Fig. 2. The PV/
+STSC system had external dimensions of 1640 mm in length, 
+992 mm in width, and 35 mm in height, with serpentine 
+copper tube diameter and height of 6.35 mm and 1600 mm, 
+respectively. Table 1 shows the technical specifications of 
+the PV panel tested in this study.
+Fig. 1   Experimental test facility 
+system flow diagram
+Fig. 2   Schematic of HTF flow direction in a PV/STSC
+Table 1   Technical specification of PV panel
+Specification
+Values
+Pp
+260 W
+Vmp
+30.18 V
+Imp
+7.96 A
+Voc
+36.72 V
+Isc
+8.99 A
+Tlc
+0.045% ­K−1
+Single cell dimension
+156 mm × 156 mm
+Single module dimension
+1640 mm × 992 mm × 35 mm
+59577
+Environmental Science and Pollution Research (2022) 29:59575–59591
+
+1 3
+Stainless steel was used in the construction of the TES 
+tank with an internal diameter of 300 mm and a height of 
+500 mm. Glass wool insulation material with a thickness 
+of 0.07 m was wrapped around the perimeter of the TES 
+tank and the connected pipes. PV/STSC inlet and outlet 
+were connected to a TES system’s top and bottom. The 
+flow rates of the HTF and inlet and outlet pressure dif-
+ference of the PV/ STSC system were measured using a 
+rotameter (acrylic panel type flowmeter) and a pressure 
+gauge (NPC LPG pressure gauge meter). A bypass flow 
+line caused a decrease in the extra load on the pump during 
+HTF circulation. Thirty-five liters of water was filled in a 
+TES tank. RTDs were placed at the inlet and exit of the 
+PV/STSC system for recording the transient temperature 
+fluctuations in HTF. On the other hand, voltage and cur-
+rent were recorded using a multi-meter terminal placed 
+in a solar PV panel. The temperature of the HTF, as well 
+as the current and voltage of the PV/STSC system, were 
+recorded in the interval of 30 min. The experimental test 
+facilities were located at the School of Mechanical Depart-
+ment, Vel Tech University, Chennai ((latitude 13° 00′ 29″ 
+N and longitude 80° 13′ 06″ E) as shown in Fig. 3.
+The experiment was conducted in May 2020 by orient-
+ing the PV/STSC system East–West. When the charging 
+experiment began, the cold water comes from the TES 
+tank was sent to the inlet of the PV/STSC collector. The 
+HTF goes via a serpentine copper absorber tube, where 
+the water temperature progressively rises. The hot outlet 
+HTF from the PV/STSC collector flows through the top of 
+the TES system. The hot HFT flows from the top, increas-
+ing the occupied water temperature by mixing in the TES 
+tank. The HTF from the TES tank was retro into the solar 
+collector’s inlet for the subsequent charging cycles. A 
+pyranometer (Kipp and Zonen — CMP 3) and Tru Track 
+anemometer were used for recording global solar radiation 
+and wind velocity. The specifications of measuring device 
+are provided in Table 2.
+Fig. 3   Photograph of the experimental test facility
+Table 2   Specification of 
+measuring devices
+Devices
+Specification
+Temperature measurements
+Copper resistance temperature detectors
+Accuracy: ± 0.01 Ω at 0 °C
+Stability: − 200–260 °C
+Flow measurements
+Water rotameter
+Accuracy: (± 2% to 3%)
+Working temperature: up to 95 °C
+Flow rate range: 0 to 200 LPM
+Solar radiation
+pyranometer (Kipp and Zonen — CMP 
+3)
+Spectral range (overall)400 to 1100 nm
+Sensitivity60 to 100 μV/W/m2
+Response time SP lite 2 (95%) < 500 ns
+Directional response (up to 80° with 
+1000 W/m2 beam) < 10 W/m2
+Temperature response SP 
+lite2 <  − 0.15%/°C
+Operational temperature range − 40 °C 
+to + 80 °C
+Maximum solar irradiance2000 W/m2
+Field of view180°
+Anemometer
+Range 0~55 m/s
+Accuracy ±2%
+Start speed 1.5 m/s
+Cable length 10 m
+59578
+Environmental Science and Pollution Research (2022) 29:59575–59591
+
+1 3
+TRNSYS system description
+Figure 4 depicts the TRNSYS flow circuit of the PV/STSC 
+paired with a stratified TES system. A modeled PV/STSC, 
+stratified TES system, pump, pipelines, auxiliary heater, 
+weather data, integrator, online plotter, printer, and reservoir 
+were included in the system. Cold HTF is converted to hot 
+HTF by solar radiation captured by the PV/STSC system. 
+The cumulative collection of hot HTF in the TES system 
+facilitates occurrence of stratification within the storage 
+tank. As a result, hot HTF which stayed at the top level and 
+cold water is settled at the bottom level of the TES system. 
+Meanwhile, cold HTF is directed to the bottom portion of 
+the TES system for taking the hot water on the top layer 
+to the auxiliary heater. While the cold HTF pumped at the 
+bottom side of the TES system is retro into the PV/STSC 
+for getting heat up and again heated HTF from the solar 
+collector is sent to the TES system. This process continues 
+throughout the year to calculate the optimum design parame-
+ters for PV/STSC systems. The simulation is run with 0.25 h 
+time steps. The mathematical method used in the study is a 
+successive method.
+Data analysis
+The Hottel-Whillier-Bliss equation states the efficiency of a 
+PV/STSC collector is given below.
+where ­Qu, ­Gt, ­Ap, ­FR, τ, α, and ­UL, are useful energy gained 
+(W), incident solar radiation (W ­m−2), aperture area ­(m2), 
+heat removal factor, overall heat loss coefficient from the 
+solar collector (W ­m−2 ­K−1), Ti and Ta are inlet and ambient 
+temperature (K).
+The solar fraction (SF) for the proposed system is given 
+as (Kalogirou 2014).
+where Qs and QAUX are the energy supplied by the TES sys-
+tem and the auxiliary heater’s additional energy, respectively.
+The auxiliary heaters energy balance is calculated as
+(1)
+휂=
+Qu
+Gt × Ap
+= FR(휏훼) −FR
+(UL
+)
+(Ti −Ta
+)
+Gt
+(2)
+SF =
+Qs
+Qs + QAUX
+Fig. 4   TRNSYS flow diagram of PV/STSC system integrated with TES system
+59579
+Environmental Science and Pollution Research (2022) 29:59575–59591
+
+1 3
+where Qmax is the electric heater maximum heating rate; 
+ηhtr is the auxiliary heater efficiency. Ti is the HTF inlet tem-
+perature, mL is mass flow rate of liquid (kg ­s−1), Cf is the 
+specific heat of the fluid (kJ/kg K), and UA is the overall loss 
+(3)
+To =
+Qmax휂htr + mLCpf Ti + UATa −UATi
+2
+mLCpf + UA
+2
+coefficient between the heater and its surroundings during 
+operation (W/m2K).
+The equation for calculating the power generated by a 
+PV panel is
+(4)
+p = ppeak
+( Gt
+1000
+)
+−0.045
+(([
+NOCT
+GTavg
+]
+× Gt + Tamb
+)
+−25
+)
+Fig. 5   HTF temperature, ambient temperature and solar radiation for various days a 60 kg ­h−1, b 120 kg ­h−1, c 180 kg ­h−1
+59580
+Environmental Science and Pollution Research (2022) 29:59575–59591
+
+1 3
+Fig. 6   Efficiency of PVT for 
+various mass flow rate
+59581
+Environmental Science and Pollution Research (2022) 29:59575–59591
+
+1 3
+where ppeak is the peak power in the solar panel and GTavg is 
+the average solar radiation in a day.
+Experimental validation
+Thermal performance validations
+An experiment was conducted for determination of the util-
+ity of FR(휏훼) and FR
+(UL
+) . PV/STSC energy efficiency vari-
+ations related heat loss parameter explored experimentally 
+with three HTF flow rates of 60 kg ­h−1, 120 kg ­h−1, and 
+180 kg ­h−1, and their results are given below. The experi-
+ment was conducted between 9.00 and 17.00 h, during May 
+considering the seasonal temperature is high in the entire 
+year. The geographical location of the experimental facil-
+ity (Chennai, Tamil Nadu, India) is where the sun is at its 
+highest point between 12:00 and 13:00 h. From 12:00 to 
+13.00 h, the PV/STSC absorbed the most instantaneous 
+solar light. The experiments were carried out on various 
+days, with a significant difference in ambient temperature 
+and solar radiation. The outlet HTF from the PV/STSC 
+achieved a high of 77 °C at 14 h for a mass flow rate of 
+60 kg ­h−1 (11 May 2020), and then began to drop with a 
+decrease in solar radiation as indicated in Fig. 4a. Fur-
+thermore, a rise in solar irradiation and intake HTF tem-
+perature caused an increase in the PV/STSC temperature. 
+The PV/STSC surface temperatures were more at the end 
+of the trial than they were at the beginning. This is due to 
+increase in ambient temperature in the afternoon and the 
+higher HTF temperature in the TES system. Temperature 
+profiles at different flow rates showed similar trends, as 
+seen in Fig. 5.
+Evaluation of solar collector performance, the parame-
+ters ‘FRUL’ and ‘FR(τα)’ required inclusion in the TRNSYS 
+model. Variations in the above-stated performance param-
+eters were identified through use of the slope and intercept 
+factor of the linear equation given Eq. (1). A minimum of 
+four sets of repeatability data with a minimum of four sym-
+metry data are required before and after solar noontime, as 
+per the ASHRAE 93–2003 guideline, to generate the col-
+lector efficiency graphs (Al-Kayiem and Lin 2014). In the 
+Table 3   FRUL and ­FR(ηo) for PVT system at a various mass flow rate
+Mass flow rates 
+(kg ­h−1)
+Experiment days
+FR(ηo)
+FRUL (W 
+­m−2 ­K−1)
+60
+11 May 2020
+0.49
+3.9
+12 May 2020
+0.51
+3.3
+120
+13 May 2020
+0.54
+4.72
+14 May 2020
+0.54
+4.33
+180
+15 May 2020
+0.59
+6.02
+16 May 2020
+0.51
+3.82
+Average
+0.53
+4.34
+Fig. 7   Comparisons of TRN-
+SYS simulation results with 
+experimental results
+59582
+Environmental Science and Pollution Research (2022) 29:59575–59591
+
+1 3
+present study, plots were drawn between the efficiency and 
+heat loss parameter for finding ‘FRUL’ and ‘FR(τα)’. Data is 
+collected between 8.00 and 17.00 h with time steps of 1 h 
+for two distinct days for three different flow rates as shown 
+in Fig. 6. Based on the linear regression model, an average 
+value of 4.34 W ­m−2 ­K−1 and 0.53 for ‘FRUL’ and ‘FR(τα)’ 
+is obtained for the thermal performance prediction of pro-
+posed PV/STSC in the TRNSYS model. Table 3 summarized 
+the results in terms of ‘FRUL’ and ‘FR(τα)’ at various test 
+conditions.
+Fig. 8   Variation of difference in panel temperature and ambient temperature vs solar radiation. a 60 kg ­h−1, b 120 kg ­h−1, and c 180 kg ­h−1
+59583
+Environmental Science and Pollution Research (2022) 29:59575–59591
+
+1 3
+A comparison of useful energy gain in the solar collector 
+was made with the existing experimental results in Fig. 7 to 
+check the consistency of the transient simulation approach 
+used in this work. With a total error of 1%, the simulation 
+results were seen in strong agreement with the given data. 
+The findings, on the other hand, revealed the mathemati-
+cal model as precise enough for employment in the assess-
+ment of the collector’s thermal performance under various 
+conditions.
+Electrical performance validation
+Figure 8 shows Tpv – Ta effects for mass flow rates of 
+60 kg ­h−1, 120 kg ­h−1, and 180 kg ­h−1. It is observed from 
+the graph that as the HTF flow rates increase from 60 to180 
+kg ­h−1, there is a significant decrease between the panel 
+and ambient temperature owing to a higher heat removal 
+factor. The nominal operating cell temperature (NOCT) 
+testing is conducted in an open-circuit, implying the PV/
+STSC was not attached to an external load. For finding 
+NOCT values of PV with a cooling system, data is plot-
+ted between Tpv and Ta vs solar radiation for various test 
+conditions. A linear regression line drawn between the two 
+above said parameters for obtaining a linear model. Use 
+of an average slope and intercept of ‘Y’ for various flow 
+rates and adding an average ambient temperature correlates 
+with the NOCT model for PV/STSC as shown in Eq. (5). 
+The slope and ‘Y’ intercept values at various flow rates are 
+given in Table 4
+The developed NOCT correlation was used in the cal-
+culation of PV/STSC power generation using Eq. (4) and 
+comparison made between the predicted panel temperature 
+power with experimental power generation data for vari-
+ous test conditions. Figure 9 shows the simulated results 
+of temperature and power generated of the PV panel 
+found good agreements with a deviation of 2.1% and 2.5% 
+respectively. Optimization study has been performed using 
+TRNSYS to meet the hot water and electricity demands in 
+household applications by consideration of the correlation 
+of thermal and electrical model.
+Hot water and electricity requirement 
+in house hold
+Several factors can influence the hourly distribution of 
+hot water and electricity consumption throughout the day. 
+The rate of consumption varies depending on the season, 
+family member, and day. Based on the survey of Ahmed 
+et al. (2016) and council on energy, weather, and water 
+(5)
+NOCT = (0.0309 × Gt
+) + 15.02 + Tamb
+studies (“Urban households consumed less electricity dur-
+ing lockdown in some parts of India |,” 2021), have shown 
+the distribution of an average hot water and electricity 
+consumption of 126 l ­day−1 and 18 units in a day (Fig. 10).
+System optimization
+Variations in PV/STSC area
+Details of the impacts of changing the collector’s aper-
+ture area from 1.6 to 9.6 ­m2 under identical weather con-
+ditions with an increase in step size of 1.6 ­m2 on solar 
+fraction were computed, and the results are presented in 
+Fig. 11. Which shows replacing collector area from 1.6 
+to 3.2 ­m2 causing an increase in the annual solar fraction 
+to 39%, replacement of the area from 3.2 to 4.8 ­m2 and in 
+the annual solar fraction to 12.4%, 4.8 to 6.4 ­m2 and its 
+annual solar fraction to 4.0%, 6.4 to 8 ­m2, annual solar 
+fraction to 1.2% and 8 to 9.6 ­m2 an annual solar fraction 
+to 0.013% respectively. A comparison between the solar 
+fraction readings for various collector areas was compared; 
+it was noted that as the collector area increased; the solar 
+fraction increased as well because it has a direct impact on 
+the rate of heat transfer. However, the value of solar frac-
+tion beyond the collector area of 8 ­m2 did not show any 
+significant effect in solar fraction. Considering the space 
+availability and affordability, the collector aperture area for 
+the current study considers being 8 ­m2.
+Variations in HTF flow rates
+The computed results of the solar fraction at different flow 
+rates of 30–210 kg ­h−1 with a collector area of 8 ­m2 are 
+Table 4   Value of Y-intercept and slope for Tp–Ta vs solar radiation
+Mass flow rate 
+(kg ­h−1)
+Experiment days
+Y intercept
+Slope
+60
+11 May 2020
+47.04
+0.00464
+−20.164
+0.0616
+12 May 2020
+41.757
+0.0012
+−13.749
+0.0543
+120
+13 May 2020
+−16.85
+0.0558
+47.105
+0.0053
+14 May 2020
+−15.63
+0.0558
+48.508
+0.0051
+180
+15 May 2020
+49.435
+0.0054
+−16.951
+0.0588
+16 May 2020
+45.63
+0.0064
+−15.871
+0.0571
+Average
+15.021
+0.0309
+59584
+Environmental Science and Pollution Research (2022) 29:59575–59591
+
+1 3
+presented in Fig. 12. Increase in the HTF flow from 30 to 
+60 kg ­h−1 is seen having the advantages of minimal heat loss 
+and a significant increase in the solar fraction. Increase in the 
+mass flow rate beyond 60 kg ­h−1 caused a reduction in the 
+solar fraction since the HTF from the solar collector’s out-
+let temperature was rather low at higher flow rates. The HTF 
+from the solar collector destratified the HTF in the TES system 
+maintaining a low HTF temperature from top to bottom of 
+Fig. 9   Comparison of PV power 
+and temperature with simulated 
+results for various test condi-
+tions
+59585
+Environmental Science and Pollution Research (2022) 29:59575–59591
+
+1 3
+TES tank due to high flow rates. The HTF mass flow rate of 
+60 kg ­h−1, which yielded the most favorable solar fraction, is 
+recommended for future exploration based on the preceding 
+description.
+Variations in TES geometry
+Figures 13 and 14 show the fluctuation in system performance 
+for 8-m2 collector area with a mass flow rate of 60 kg ­h−1 as a 
+Fig. 10   Daily average hot water 
+and alternative current electric-
+ity consumption for domestic 
+household buildings
+Fig. 11   Solar fraction for vari-
+ous PV/STSC areas
+59586
+Environmental Science and Pollution Research (2022) 29:59575–59591
+
+1 3
+function of varying height with constant volume and constant 
+volume with varying height. The TES system was encased in 
+glass fibers and having an overall loss coefficient of the TES 
+system is 1.73 W ­m−2 ­K−1. Figure 13 shows an increase in the 
+solar fraction values following an increase in the height of the 
+TES system from 0.2 to 0.8 m. Then this rate of increase in 
+solar fraction decreased as the height of the TES system was 
+greater than 0.8 m. On other hand, the variation in volume 
+from 129 to 450 l was seen with fixed height of TES system. 
+The plot shows that solar fraction increases from 129 to 280 l, 
+Fig. 12   Solar fraction for 
+various mass flow rates of PV/
+STSC area
+Fig. 13   Solar fraction for the 
+height of TES system
+59587
+Environmental Science and Pollution Research (2022) 29:59575–59591
+
+1 3
+and after 280 to 430 l, the solar fraction remains the same, 
+and with a further increase in volume from 430 l, the solar 
+fraction is causing state of a decrease. In both situations, the 
+decrease in the solar fraction was due to an increase in energy 
+loss from the TES system to the atmosphere from their lateral 
+surfaces compared to the energy collected in the TES system. 
+The above study shows a TES height and volume of 0.8 m 
+Fig. 14   Solar fraction for the 
+volume of TES system
+Fig. 15   power from PV/STSC 
+and electricity demand for the 
+various months
+59588
+Environmental Science and Pollution Research (2022) 29:59575–59591
+
+1 3
+and 280 l as the optimal value that can provide a greater solar 
+energy utilization capacity compared to other values.
+Annual electricity generation, losses, 
+and requirement from PV/STSC system
+A single household consumes the electric power usage 
+of 18.376 kWh ­day−1 on the average as shown in Fig. 10. 
+The optimal configuration of the PV panels is made from 
+a 260 W peak PV module. Detail of the monthly distribu-
+tion of power generation from the PV panel is shown in 
+Fig. 15, which shows the maximum power out from the PV 
+panels as higher during March, April, and May. This is a 
+beneficial feature in the PV panel owing to the demand for 
+electricity high in summer due to the high cooling load. 
+PV generator accounts for 51% of energy consumption 
+without any conversion losses. While, considering the 
+combined loss of battery and inverter, the PV electricity 
+contribution to the household is seen as around 33%. The 
+inverter conversion efficiency can be eliminated through 
+use of DC powered appliances. In general, the power con-
+sumed by the DC loads is approximately 56% lower than 
+AC loads for the same work output. Energy distribution for 
+the household is taken for DC loads, with a reduction in 
+the usage to 10.29 kWh ­day−1. In such a case, the proposed 
+PV panel size can be considered only for battery conver-
+sion loss with the ability to contribute to around 78% of 
+the electricity demand.
+Conclusion
+Evaluation of the electrical and thermal performance of PV/
+STSC coupled was done using TRNSYS under transient set-
+tings for an entire year. The system was optimized for a hot 
+water demand of 129 l and an electricity demand of 18.376 
+kWh ­day−1. The following conclusions have been drawn.
+•	 The optimized system exhibits an annual solar frac-
+tion of 0.91 with parameters of PV/STSC area of 8 ­m2, 
+mass flow rate of 60 kg ­h−1, volume, and height of TES 
+system of 280 l and 0.8 m.
+•	 The optimized system has the ability to meet the elec-
+tricity demand for DC appliances to around78% annu-
+ally, whereas it is 33% for AC appliances.
+Thus from present work, it is predicted that the proposed 
+system would be unable to provide 100% of a single house-
+hold’s hot water and power energy demands in a tropical 
+nation like India. The proposed system can be used as a sec-
+ondary energy source for a saving in the cost of electricity.
+Author contribution  Conceptualization: S. Christopher and B Sri-
+manickam; methodology: S. Christopher and B Srimanickam; formal 
+analysis: A Saranya and M Metilda. Writing original draft preparation: 
+S. Christopher, B Srimanickam A Saranya, and M Metilda; Writing 
+reviews: A Saranya and M Metilda; supervision: S. Christopher.
+Data availability  The datasets used and analyzed during the current 
+study are available from the corresponding author on reasonable 
+request.
+Declarations 
+Ethical approval  Authors are attested that this paper has not been pub-
+lished elsewhere, the work has not been submitted simultaneously for 
+publication elsewhere, and the results presented in this work are true 
+and not manipulated.
+Consent to participate  All the individual participants involved in the 
+study have received informed consent.
+Consent to publish  The participant has consented to the submission 
+of the study to the journal.
+Conflict of interest  The authors declare no competing interests.
+References
+Ahmadi A, Ehyaei MA, Doustgani A, El Haj Assad M, Hmida A, 
+Jamali DH, Kumar R, Li ZX, Razmjoo A (2021) Recent residen-
+tial applications of low-temperature solar collector. J Clean Prod 
+279:123549. https://​doi.​org/​10.​1016/J.​JCLEP​RO.​2020.​123549
+Ahmed K, Pylsy P, Kurnitski J (2016) Hourly consumption profiles 
+of domestic hot water for different occupant groups in dwell-
+ings. Sol Energy 137:516–530. https://​doi.​org/​10.​1016/j.​solen​
+er.​2016.​08.​033
+Al-Kayiem HH, Lin SC (2014) Performance evaluation of a solar water heater 
+integrated with a PCM nanocomposite TES at various inclinations. Sol 
+Energy 109:82–92. https://​doi.​org/​10.​1016/j.​solen​er.​2014.​08.​021
+Allan J, Dehouche Z, Stankovic S, Mauricette L (2015) Performance 
+testing of thermal and photovoltaic thermal solar collectors. 
+Energy Sci Eng 3:310–326. https://​doi.​org/​10.​1002/​ESE3.​75
+Al-Shamani AN, Sopian K, Mat S, Hasan HA, Abed AM, Ruslan MH 
+(2016) Experimental studies of rectangular tube absorber photo-
+voltaic thermal collector with various types of nanofluids under 
+the tropical climate conditions. Energy Convers Manag 124:528–
+542. https://​doi.​org/​10.​1016/j.​encon​man.​2016.​07.​052
+Al-Waeli AHA, Sopian K, Chaichan MT, Kazem HA, Hasan HA, 
+Al-Shamani AN (2017) An experimental investigation of SiC 
+nanofluid as a base-fluid for a photovoltaic thermal PV/T system. 
+Energy Convers Manag 142:547–558. https://​doi.​org/​10.​1016/j.​
+encon​man.​2017.​03.​076
+Bahaidarah HMS (2016) Experimental performance evaluation and 
+modeling of jet impingement cooling for thermal management of 
+photovoltaics. Sol Energy 135:605–617. https://​doi.​org/​10.​1016/j.​
+solen​er.​2016.​06.​015
+Bianco V, Scarpa F, Tagliafico LA (2018) Numerical analysis of the 
+Al2O3-water nanofluid forced laminar convection in an asym-
+metric heated channel for application in flat plate PV/T collector. 
+Renew Energy 116:9–21. https://​doi.​org/​10.​1016/j.​renene.​2017.​
+09.​067
+59589
+Environmental Science and Pollution Research (2022) 29:59575–59591
+
+1 3
+Christopher S, Parham K, Mosaffa AH, Farid MM, Ma Z, Thakur 
+AKXuH, Saidur R (2021a) A critical review on phase change 
+material energy storage systems with cascaded configurations. J 
+Clean Prod. https://​doi.​org/​10.​1016/j.​jclep​ro.​2020.​124653
+Christopher SS, Santosh R, PonrajanVikram M, Prabakaran R, Thakur 
+AK, Xu H (2021b) Optimization of a solar water heating system 
+for vapor absorption refrigeration system. Environ. Prog. Sustain. 
+Energy 40. https://​doi.​org/​10.​1002/​ep.​13489
+Dwivedi P, Sudhakar K, Soni A, Solomin E, Kirpichnikova I (2020) 
+Advanced cooling techniques of P.V. modules: a state of art Case 
+Stud. Therm Eng 21:100674. https://​doi.​org/​10.​1016/j.​csite.​2020.​
+100674
+Eisapour M, Eisapour AH, Hosseini MJ, Talebizadehsardari P (2020) 
+Exergy and energy analysis of wavy tubes photovoltaic-thermal 
+systems using microencapsulated PCM nano-slurry coolant fluid. 
+Appl Energy 266:114849. https://​doi.​org/​10.​1016/j.​apene​rgy.​
+2020.​114849
+Fakouriyan S, Saboohi Y, Fathi A (2019) Experimental analysis of a 
+cooling system effect on photovoltaic panels’ efficiency and its 
+preheating water production. Renew Energy 134:1362–1368. 
+https://​doi.​org/​10.​1016/j.​renene.​2018.​09.​054
+Farahat MA (2004) Improvement the thermal electric performance of 
+a photovoltaic cells by cooling and concentration techniques. In: 
+39th International Universities Power Engineering Conference. 
+UPEC 2004 - Conference Proceedings, pp 623–628
+Giwa A. Yusuf A. Dindi A. Balogun H.A. 2020. Polygeneration in 
+desalination by photovoltaic thermal systems: a comprehensive 
+review. Renew. Sustain. Energy Rev. https://​doi.​org/​10.​1016/j.​
+rser.​2020.​109946
+Hissouf M, Feddaoui M, Najim M, Charef A (2020) Numerical study 
+of a covered photovoltaic-thermal collector (PVT) enhancement 
+using nanofluids. Sol Energy 199:115–127. https://​doi.​org/​10.​
+1016/j.​solen​er.​2020.​01.​083
+Hjerrild NE, Mesgari S, Crisostomo F, Scott JA, Amal R, Taylor RA 
+(2016) Hybrid PV/T enhancement using selectively absorbing Ag-
+SiO2/carbon nanofluids. Sol Energy Mater Sol Cells 147:281–
+287. https://​doi.​org/​10.​1016/j.​solmat.​2015.​12.​010
+Huaxu L, Fuqiang W, Dong Z, Ziming C, Chuanxin Z, Bo L, Huijin 
+X (2020) Experimental investigation of cost-effective ZnO nano-
+fluid based spectral splitting CPV/T system. Energy 194:116913. 
+https://​doi.​org/​10.​1016/j.​energy.​2020.​116913
+Kalogirou SA (2014) Solar energy engineering: processes and systems, 
+2nd ed. Elsevier Inc. https://​doi.​org/​10.​1016/​C2011-0-​07038-2
+Khoshgoftar Manesh MH, Mousavi Rabeti SA, Nourpour M, Said 
+Z (2022) Energy, exergy, exergoeconomic, and exergoenviron-
+mental analysis of an innovative solar-geothermal-gas driven 
+polygeneration system for combined power, hydrogen, hot water, 
+and freshwater production. Sustain Energy Technol Assessments 
+51:101861. https://​doi.​org/​10.​1016/J.​SETA.​2021.​101861
+Kluth A (2008) Using water as a coolant to increase solar panel effi-
+ciency. In: California State Science Fair
+Lamnatou C, Vaillon R, Parola S, Chemisana D (2021) Photovoltaic/
+thermal systems based on concentrating and non-concentrating 
+technologies: working fluids at low, medium and high tempera-
+tures. Sustain Energy Rev Renew. https://​doi.​org/​10.​1016/j.​rser.​
+2020.​110625
+Navakrishnan S, Vengadesan E, Senthil R, Dhanalakshmi S (2021) An 
+experimental study on simultaneous electricity and heat produc-
+tion from solar PV with thermal energy storage. Energy Convers 
+Manag 245:114614. https://​doi.​org/​10.​1016/J.​ENCON​MAN.​
+2021.​114614
+Odeh S, Behnia M (2009) Improving photovoltaic module efficiency 
+using water cooling. Heat Transf Eng 30:499–505. https://​doi.​org/​
+10.​1080/​01457​63080​25292​14
+Prakash J (1994) Transient analysis of a photovoltaic-thermal solar 
+collector for co-generation of electricity and hot air/water. Energy 
+Convers Manag 35:967–972. https://​doi.​org/​10.​1016/​0196-​
+8904(94)​90027-2
+Pranesh V, Velraj R, Christopher S, Kumaresan V (2019) A 50 year 
+review of basic and applied research in compound parabolic 
+concentrating solar thermal collector for domestic and industrial 
+applications. Sol Energy. https://​doi.​org/​10.​1016/j.​solen​er.​2019.​
+04.​056
+Rahimi M, Asadi M, Karami N, Karimi E (2015) A comparative study 
+on using single and multi header microchannels in a hybrid PV 
+cell cooling. Energy Convers Manag 101:1–8. https://​doi.​org/​10.​
+1016/j.​encon​man.​2015.​05.​034
+Reji Kumar R, Samykano M, Pandey AK, Kadirgama K, Tyagi VV 
+(2020) Phase change materials and nano-enhanced phase change 
+materials for thermal energy storage in photovoltaic thermal sys-
+tems: a futuristic approach and its technical challenges. Renew 
+Sustain Energy Rev. https://​doi.​org/​10.​1016/j.​rser.​2020.​110341
+Said Z, Sundar LS, Tiwari AK, Ali HM, Sheikholeslami M, Bellos 
+E, Babar H (2022) Recent advances on the fundamental physi-
+cal phenomena behind stability, dynamic motion, thermophysical 
+properties, heat transport, applications, and challenges of nano-
+fluids. Phys Rep 946:1–94. https://​doi.​org/​10.​1016/J.​PHYSR​EP.​
+2021.​07.​002
+Said Z, Arora S, Bellos E (2018) A review on performance and envi-
+ronmental effects of conventional and nanofluid-based thermal 
+photovoltaics. Renew Sustain Energy Rev. https://​doi.​org/​10.​
+1016/j.​rser.​2018.​06.​010
+Said Z, Hachicha AA, Aberoumand S, Yousef BAA, Sayed ET, Bel-
+los E (2021a) Recent advances on nanofluids for low to medium 
+temperature solar collectors: energy, exergy, economic analysis 
+and environmental impact. Prog Energy Combust Sci 84:100898. 
+https://​doi.​org/​10.​1016/J.​PECS.​2020.​100898
+Said Z, Hachicha AA, Aberoumand S, Yousef BAA, Sayed ET, Bel-
+los E (2021b) Recent advances on nanofluids for low to medium 
+temperature solar collectors: energy, exergy, economic analysis 
+and environmental impact. Prog Energy Combust Sci. https://​doi.​
+org/​10.​1016/j.​pecs.​2020.​100898
+Saitoh H, Hamada Y, Kubota H, Nakamura M, Ochifuji K, Yokoyama 
+S, Nagano K (2003) Field experiments and analyses on a hybrid 
+solar collector. Appl Therm Eng 23:2089–2105. https://​doi.​org/​
+10.​1016/​S1359-​4311(03)​00166-2
+Sardarabadi M, Passandideh-Fard M (2016) Experimental and numeri-
+cal study of metal-oxides/water nanofluids as coolant in photovol-
+taic thermal systems (PVT). Sol Energy Mater Sol Cells 157:533–
+542. https://​doi.​org/​10.​1016/j.​solmat.​2016.​07.​008
+Sheikholeslami M, Farshad SA, Ebrahimpour Z, Said Z (2021) Recent 
+progress on flat plate solar collectors and photovoltaic systems in 
+the presence of nanofluid: a review. J Clean Prod. https://​doi.​org/​
+10.​1016/j.​jclep​ro.​2021.​126119
+Srimanickam B, Saranya A (2021) Thermal performance of single glaz-
+ing flat plate photovoltaic thermal hybrid system with various 
+air channels. J Test Eval 49:20170750. https://​doi.​org/​10.​1520/​
+JTE20​170750
+Srimanickam B, Vijayalakshmi MM, Natarajan E (2015) Experimental 
+study of exergy analysis on flat plate solar photovoltaic thermal 
+(PV/T) hybrid system. Appl Mech Mater 787:82–87. https://​doi.​
+org/​10.​4028/​www.​scien​tific.​net/​amm.​787.​82
+Srimanickam B, Vijayalakshmi MM, Natarajan E (2017) Energy and 
+exergy efficiency of flat plate PVT collector with forced convec-
+tion. J Test Eval 46:20160290. https://​doi.​org/​10.​1520/​JTE20​
+160290
+Thakur AK, Vikrama MP, Christopher S (2020) Augmented yield 
+productivity of solar still using energy storage materials: experi-
+mental investigation under the climatic conditions of Rajasthan. 
+59590
+Environmental Science and Pollution Research (2022) 29:59575–59591
+
+1 3
+In: Green Energy and Technology. Springer Science and Business 
+Media Deutschland GmbH, pp 817–831. https://​doi.​org/​10.​1007/​
+978-​981-​15-​4246-6_​51
+Urban households consumed less electricity during lockdown in some 
+parts of India | CEEW [WWW Document] (2021) URL https://​
+www.​ceew.​in/​blogs/​urban-​house​holds-​consu​med-​less-​elect​ricity-​
+during-​lockd​own-​some-​parts-​india (accessed 5.14.21)
+Wu W, Chow LC, Wang CM, Su M, Kizito JP (2014) Jet impingement 
+heat transfer using a field’s alloy nanoparticle – HFE7100 slurry. 
+Int J Heat Mass Transf 68:357–365. https://​doi.​org/​10.​1016/J.​
+IJHEA​TMASS​TRANS​FER.​2013.​09.​029
+Xu HJ, Zhao CY (2015) Thermodynamic analysis and optimization of 
+cascaded latent heat storage system for energy efficient utiliza-
+tion. Energy 90:1662–1673. https://​doi.​org/​10.​1016/J.​ENERGY.​
+2015.​06.​131
+Xu HJ, Zhao CY (2016) Thermal efficiency analysis of the cascaded 
+latent heat/cold storage with multi-stage heat engine model. 
+Renew Energy 86:228–237. https://​doi.​org/​10.​1016/J.​RENENE.​
+2015.​08.​007
+Xu HJ, Zhao CY (2019) Analytical considerations on optimization of 
+cascaded heat transfer process for thermal storage system with 
+principles of thermodynamics. Renew Energy 132:826–845. 
+https://​doi.​org/​10.​1016/J.​RENENE.​2018.​07.​135
+Xu H, Wang Y, Han X (2020) Analytical considerations of thermal 
+storage and interface evolution of a PCM with/without porous 
+media. Int J Numer Methods Heat Fluid Flow 30:373–400. https://​
+doi.​org/​10.​1108/​HFF-​02-​2019-​0094
+Yazdanifard F. Ameri M. Ebrahimnia-Bajestan E. 2017. Performance 
+of nanofluid-based photovoltaic/thermal systems: a review. 
+Renew. Sustain. Energy Rev. https://​doi.​org/​10.​1016/j.​rser.​2017.​
+03.​025
+Publisher's note  Springer Nature remains neutral with regard to 
+jurisdictional claims in published maps and institutional affiliations.
+59591
+Environmental Science and Pollution Research (2022) 29:59575–59591

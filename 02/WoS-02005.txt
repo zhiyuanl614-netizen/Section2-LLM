@@ -1,0 +1,1365 @@
+Journal of Process Control 116 (2022) 136–146
+Contents lists available at ScienceDirect
+Journal of Process Control
+journal homepage: www.elsevier.com/locate/jprocont
+A practical physical watermarking approach to detect replay attacks in
+a CPS
+Chuadhry Mujeeb Ahmed a, Venkata Reddy Palleti b,∗, Vishrut Kumar Mishra c,d
+a University of Strathclyde, Glasgow, United Kingdom
+b Indian Institute of Petroleum and Energy, Visakhapatnam, India
+c iTrust, Centre for Research in Cyber Security, Singapore University of Technology and Design, Singapore
+d Ira A. Fulton Schools of Engineering, Arizona state University, United States of America
+a r t i c l e
+i n f o
+Article history:
+Received 24 December 2021
+Received in revised form 9 May 2022
+Accepted 6 June 2022
+Available online 24 June 2022
+Keywords:
+Cyber Physical system
+Water distribution system
+Replay attacks
+Design of watermarking signal
+Attack detection
+a b s t r a c t
+Cyber Physical Systems (CPSs) are considered as an integration of computing, networking, and physical
+processes. In such systems physical processes are monitored and controlled by the combination of
+computation, communication, and control technologies. Examples of CPSs include process control
+systems, medical devices, robots, and critical infrastructures such as water treatment plants, water
+distribution systems, and power grid. Often, these systems are vulnerable to attacks as the cyber
+components such as Supervisory Control and Data Acquisition (SCADA) workstations, Human Machine
+Interface (HMI), and Programmable Logic Controllers (PLCs) are potential targets for attackers. Replay
+attacks are easy to perform on such systems and can potentially lead to significant damages to the
+system. Therefore, timely detection of replay attacks is important to mitigate the attack consequences.
+In this work, we propose a practical watermarking technique to detect the attacks. Experiments are
+performed on a real WAter DIstribution system (WADI) to explore how to tackle the replay attacks
+using watermarking signal.
+© 2022 Elsevier Ltd. All rights reserved.
+1. Introduction
+Public critical infrastructures such as a water treatment plant,
+water distribution and power generation etc., play an important
+role in a nation’s economy. Most modern critical infrastructures
+are considered as Cyber–Physical Systems (CPSs) that integrate
+the advanced communications, networking, sensing, and comput-
+ing technologies with the traditional physical systems to provide
+efficient and reliable operation. In a CPS, computers and networks
+are embedded with physical environment to monitor and control
+the physical processes. Usually, the physical processes and cyber
+components (computers and networks) interact with each other
+in a feedback loop. Also, these infrastructures are spatially dis-
+tributed and networked which makes them vulnerable to attacks.
+Consequently, such systems are vulnerable to either physical, cy-
+ber, or cyber–physical attacks. Physical attacks on infrastructures
+can cause disruptions to services and may influence the cyber
+components through the communication infrastructure due to
+feedback loops and vice-versa. Also, to increase the impact of an
+attack, attackers may launch cyber–physical attacks.
+Malicious attacks are performed on CPS for various reasons
+ranging from stealthy attacks to steal resources to widespread
+∗Corresponding author.
+E-mail address:
+venkat_palleti.che@iipe.ac.in (V.R. Palleti).
+attacks for disrupting the service provided by the system. Sev-
+eral such attacks on CPS have been reported in recent years.
+An investigation into the challenges in the security of CPS in
+which sensor and actuator data are compromised has been re-
+ported in [1,2]. The general approach in the literature is to study
+the effect of specific attacks against a particular system. The
+specific attacks include denial of service and deception attacks
+against a networked control systems. Denial of service attack
+refers to the compromise of the availability of resources by jam-
+ming communication channels [3,4]. Deception attacks refer to
+the compromise of the integrity of sensor and actuator data.
+Specific types of deception attacks include false data injection,
+replay and stealthy attacks.
+In [5], false data injection attacks are studied in power net-
+works assuming an attacker has perfect model knowledge. In [6,7]
+authors demonstrated the effect of replay attacks on the sensor
+measurements inspired by the Stuxnet example and proposed
+a methodology to detect such attacks. To evade detection, the
+attacker replays previous sensor measurements to the operator.
+These outputs are statistically identical to the true outputs in
+steady state. Furthermore the adversary requires no knowledge
+of the system model to generate stealthy outputs. The authors
+concluded that for some control systems, the classical estimation,
+control, failure detection strategy are not resilient to the replay
+attack. Recently a concept of physical watermarking has emerged,
+https://doi.org/10.1016/j.jprocont.2022.06.002
+0959-1524/© 2022 Elsevier Ltd. All rights reserved.
+
+C.M. Ahmed, V.R. Palleti and V.K. Mishra
+Journal of Process Control 116 (2022) 136–146
+Fig.
+1. A
+closed
+loop
+feedback
+control
+system
+showing
+the
+addition
+of
+watermark signal ∆uk.
+getting inspiration from the idea of digital watermarking. In [8]
+proposes a control theoretic method, called physical watermark-
+ing, to authenticate the correct operation of a control system. A
+known noisy signal is embedded as a watermark in the control
+signal to detect the replay attacks. However, the physical wa-
+termark suffer from the limitations of being practical in digital
+control and done theoretically in the control theory literature.
+This paper explores the physical watermarking technique to de-
+tect replay attacks. The attacker launch the replay attack with an
+intention to steal water from a pipeline without detection [9].
+Therefore, attacker would be launching physical attack (leak)
+and cyber attack (replay) simultaneously. In practise the replay
+attacks are difficult to detect. Therefore, in order to detect replay
+attacks we embedded physical watermark into the actuator signal
+without compromising the demand of the consumers. Further, we
+design a practical watermarking technique to detect replay attack.
+We answered the following research questions in this work:
+RQ1: Can we tackle the replay attack using the physical watermark
+signal? The challenges we faced was around the design of a practical
+watermark technique that can be used in the real world system
+without disturbing the physical process.
+RQ2:
+Testing of the proposed technique. There were several chal-
+lenges identified during the experimentation on the WADI testbed
+and solutions were found along the way.
+Organization: The remainder of this paper is organized as fol-
+lows. Section 2 describes the motivation and background of the
+watermark and operation of WADI testbed. System model based
+attack detection framework was explained in Section 3. Water-
+mark Design, implementation on WADI and K-S test Detection
+scheme is described in Section 4. Related work and conclusions
+are explained in Sections 7 and 8 respectively.
+2. Background
+2.1. The idea of physical watermark
+The idea of physical watermarking in the context of CPS au-
+thentication has been presented in [8]. The concept of water-
+marking is to authenticate a physical process by adding a known
+noisy signal and observing its impact on the system outputs. For
+an attacker who is unaware of this watermark signal, it is hard to
+truthfully imitate the real state of the system. One can consider
+the watermark as physical nonce. The idea of physical watermark
+is inspired by the traditional digital watermark embedded in
+digital files to verify the authenticity. Fig. 1 shows a control
+system with a watermark signal ∆uk added into the control input.
+The modified control u′
+k will act on the physical plant and its
+impact shall be contained in the sensor measurements yk. If a
+Fig. 2. Normal operation for a consumer node. Top plot shows the control action
+to open the MCV to a particular percentage depending on the measurements of
+flow sensor as shown in the bottom plot. The control is executed to achieve a
+particular flow rate at the consumer node.
+detector module could not retrieve the added watermark then
+it means that the there is an intrusion or manipulation of the
+control system.
+Physical watermarking can be considered as a form of
+challenge–response protocol commonly found in the information
+security literature. The watermark signal being a challenge and
+sensor measurements being a response. This concept can best be
+explained by an example. Consider the example in Fig. 2, with the
+control signal on top and sensor output on the bottom plot. The
+top plot shows motorized control valve (MCV) opening in per-
+centage being driven by a PID control generated by the controller.
+When plant starts we see that the valve is open to 100% resulting
+in a high flow rate as shown in the bottom plot. This flow rate
+is much higher as compared to the required consumer demand
+of 0.15 m3/h. To adjust that, controller commands the MCV to
+open a fraction of fully open to control the flow rate, resulting in
+drop in flow rate as can be seen in the bottom plot. After a few
+adjustments we obtain the steady state with slight variations. The
+steady state is the area between the two dotted vertical bars. A
+zoomed-in version of the same region is shown in Fig. 3. From
+Fig. 3 we can observe that the control signal is quite sensitive to
+small perturbations in the sensor measurement. Likewise, it can
+be said that the variations in the sensor output can be observed
+based on the variation in the control. The physical watermark
+exploits this relationship between the input and the output.
+The idea itself is relevant but it has some practical implemen-
+tation issues. It leads to a sub-optimal control and can reduce the
+system efficiency. In some cases it is not possible to implement it
+as it is, for example, in case of on–off control in water treatment
+system. In this paper we make first attempt towards a practical
+implementation of the concept of physical water marking on
+part of a water distribution testbed while preserving the system
+performance.
+137
+
+C.M. Ahmed, V.R. Palleti and V.K. Mishra
+Journal of Process Control 116 (2022) 136–146
+Fig. 3. It might be hard to appreciate the control dynamics with respect to
+the flow sensor measurements from Figure Fig. 2. Therefore, the steady state
+dynamics are shown zoomed-in in this figure.
+2.2. WADI system dynamics under normal operation
+Water Distribution (WADI) plant represents a scaled-down
+version of a large water distribution network in a city. It is
+designed to supply 10 US gallons/min of filtered water [10]. WADI
+consists of three sub processes, namely, primary grid (P1), sec-
+ondary grid (P2), and return water grid (P3). The primary grid
+consists of two raw water (RW) tanks of 2500 Liters each. These
+tanks are fed by three incoming sources including Public Utility
+Board (PUB), return water grid, and from a Secured Water Treat-
+ment (SWAT) plant located physically adjacent to WADI. A level
+sensor (1_LT_001) is installed in the primary grid to monitor the
+levels in the RW tanks. Water quality analyzers are installed to
+measure pH, turbidity, conductivity and residual chlorine.
+The process P2 consists of two Elevated Reservoirs (ER) tanks,
+consumer tanks, and contamination sampling stations. A pump
+(1_P_003) is installed in the primary grid to lift water from raw
+water tanks to the ER tanks. Two level sensors, 2_LT_001 and
+2_LT_002 are installed in ER tanks to measure water levels. Water
+flows from ER tanks into consumer tanks either via gravity or
+booster pump based on the preset water demand. Main inlet of
+the each tank is fitted with a modulating control valve (MCV) to
+control the inlet flow to the tank. Further, a flow meter is installed
+to measure the inlet flow rate. Two water quality monitoring
+stations are installed in the secondary grid. One station is at the
+immediate downstream of the reservoir and another is before the
+consumer tanks. These stations ensure water quality before it is
+sent to the consumer tanks. Once a consumer tank is filled, a level
+switch installed raises an alarm and water from the tank drains
+into the return water grid. For simplicity, we divide P2 into three
+parts, namely P2a, P2b, and P2c. For recycling, the return water
+grid pumps water to the primary grid.
+2.3. Dynamics for the consumer tank
+Water to the consumer tanks is supplied from the elevated
+reservoir tanks either by gravity or booster pump based on high
+or low demand conditions. At the inlet of each tank a flow meter
+and a Modulating Control Valve (MCV) is installed to measure
+and control the flow. Similarly, at the outlet of each tank a
+Motorized Valve (MV) is installed to drain the tanks whenever
+it is necessary. A level switch is installed in each tank to measure
+the water level. MCVs will have the opening from 0 to 100% and
+MVs operate in either fully open or close position. Fig. 5 shows the
+controller scheme representation of a consumer tank. During the
+plant startup MCVs will open to 100% and therefore, maximum
+inflow into the tanks can be observed. A demand set point is set
+by the user for each consumer tank. The measured inflow and
+demand set point are compared, and the feed-back error is cal-
+culated. The resulting error is used in the PID controller function
+and the controller acts upon MCVs accordingly to minimize the
+error between the set point and the measured inflow. When any
+consumer tank becomes full, High Switch alarm will be activated
+and a command will be sent to the inlet MCV to fully close and
+outlet valve MV to open.
+3. Replay attack and model based attack detection framework
+Replay attacks tend to hide the real state of the process from
+the SCADA system by recording and replaying normal measure-
+ments. An experimental study is carried out in [11] to show how
+an attacker can hide an intentional leak in water distribution sys-
+tem by launching replay attacks on sensor and actuator measure-
+ments simultaneously. The experiments were performed on a real
+operated water distribution testbed, named as WADI. The threat
+model, detection frame work and experimental investigation is
+explained in brief here.
+3.1. System model
+A system model represents the dynamics of a physical process
+as a mathematical model. A system model in form of LTI equa-
+tions where actuator signals are considered as input and sensor
+measurements as output is obtained. This equation is of the form
+given by Eq. (1).
+Normal Operation:
+{
+xk+1 = Axk + Buk + vk,
+yk = Cxk + ηk,
+SystemModel.
+(1)
+{
+ˆxk+1 = Aˆxk + Buk + Lk(yk −Cˆxk),
+ˆyk = Cˆxk,
+State Estimation.
+(2)
+Where x ∈Rn is system state vector, A ∈Rnxn is state space
+matrix, B ∈Rnxp is the control matrix, y ∈Rm are the measured
+outputs, C ∈Rmxn is measurement matrix, and u ∈Rp denote
+the system control. ηk and vk are the sensor and process noise,
+respectively. The state space matrices A, B, C capture the system
+dynamics and can be used to find a specific system state given
+an initial state. Normal data from the WADI testbed is used to
+obtain the system model through subspace system identification
+technique [12]. Eq. (1) can be used to estimate the normal behav-
+ior of a physical process using the Kalman filter as given in Eq. (2).
+In case of anomalies, this can be used to determine the deviation.
+3.2. Model based anomaly detection
+The earlier studies have assessed the performance of the
+CUSUM model-based fault detection procedure for a variety of
+attacks [11]. The residual random sequence rk, k ∈N is defined
+as the difference between sensor measurements (¯yk) with attack
+value(δk), and the estimate of the sensor measurement.
+rk := ¯yk −Cˆxk = Cek + ηk + δk.
+(3)
+If there are no attacks, the mean of the residual is
+E[rk+1] = CE[ek+1] + E[ηk+1] = ¯rm×1.
+(4)
+138
+
+C.M. Ahmed, V.R. Palleti and V.K. Mishra
+Journal of Process Control 116 (2022) 136–146
+Fig. 4. Three stages of the water distribution network. Sensors and Actuators are labeled in each stage of the system.
+Fig. 5. Controller setup in consumer tanks.
+Where ¯rm×1 denotes an m × 1 matrix composed of mean of
+residuals under normal operation, and the co-variance is given
+by
+Σ := E[rk+1rT
+k+1] = CPCT + R2.
+(5)
+Two hypothesis are formulated, H0 the normal operation, i.e., no
+attacks, and H1 the anomalous operation, i.e., with attacks. The
+two hypotheses can be stated as follows.
+H0 :
+{
+E[rk] = ¯rm×1,
+E[rkrT
+k ] = Σ,
+or H1 :
+{
+E[rk]̸ = ¯rm×1,
+E[rkrT
+k ]̸ = Σ.
+Initially, experiments were conducted under normal operating
+conditions, i.e., without launching any attacks, to obtain a system
+baseline behavior. To obtain a steady state of the system, the plant
+is left running for some time (5–15 min). For a normal run of the
+plant, consumer tanks were emptied and the consumer demand
+set to a constant of 0.15 m3/h for all six consumers. Sensor
+and actuator data was collected from WADI once the sensors
+and actuators reached their initial target state. Data collected
+from these experiments were input to the system model obtained
+using subspace system identification as discussed in Section 3.
+Based on the system model the residual (rk) for each sensor (i)
+was generated using the Kalman filter based state estimation.
+CUmmulative SUM (CUSUM) detector was used to raise an alarm
+for a outlier data [13]. Further, During the normal operation of the
+plant the attacker chooses a set of sensors and actuators, observe
+and record their readings for a certain time duration in order to
+carry the replay attack.
+3.2.1. Attack execution
+For simulating a leak, the valve 2_MCV_007 can be used to
+cut-off water supply. The idea is to capture the behavior of a
+physical attacker. An attacker can choose to cut off water supply
+by opening or closing the valve 2_MCV_007 in a gradual or abrupt
+manner from 0% to 100%. In order to hide the physical attack, the
+attacker launches replay attacks simultaneously on a certain set
+of sensor measurements which are recorded during the normal
+operation of the plant. These attacks were performed strategically
+to avoid leak detection by choosing the upstream pressure sensor,
+namely 2_PIT_001, the downstream pressure sensor (2_PIT_002),
+and the flow sensor (2_FIT_002). The control valves for consumer
+tanks (MCVs) are also chosen to perform the replay attack on. As
+shown in [11], when the attacker uses the complete knowledge
+of the system and perform replay attack on all the actuators and
+sensors used by the detector, attack detection is not possible. For
+example, in [11], the authors showed that the powerful attack
+in which the attacker compromises all sensor and actuators was
+not detected and the attacker was successful in hiding the attack.
+As shown in Fig. 6 the residual signal for two pressure sensor
+measurements namely, 2_PIT_001 and 2_PIT_002, stays within
+the upper and lower threshold of a CUSUM detector. It is evi-
+dent that the attacker successfully stolen water from the system
+without being detected by launching replay attacks on certain
+set of sensor and actuator measurements. Therefore, we design a
+physical watermarking in which a random noise is injected into
+the control input to detect such kind of replay attacks.
+Definition 3.1. Let us define the sensor measurements under a
+replay attack as ya
+k, control signal under replay attack as ua
+k and
+state estimate as xa
+k at the time step k. Where 0 < k ≤T for an
+attack time period T.
+Proposition 3.1. Given the system of equations for normal system
+model as (1)–(2) and replay attack defined in above, it can be shown
+that replay attack would not be detected.
+Proof. The residual vector under an attack is given as,
+ra
+k+1 = ya
+k+1 −ˆyk+1.
+(6)
+During the replay attack for times 0 < k ≤T where T is the
+time for the readings being replayed, ya
+k+1 = yk+1, resulting in
+ra
+k+1 = rk+1 therefore, resulting in no detection and the alarm rate
+reduces to the false alarm rate of the detector being used.
+■
+139
+
+C.M. Ahmed, V.R. Palleti and V.K. Mishra
+Journal of Process Control 116 (2022) 136–146
+Fig. 6. Residual estimation for replay attack on pressure, flow sensors and
+modulating control valves.
+4. Design of watermark
+The core idea of the physical watermark design is illustrated
+in Fig. 1. A closed loop feedback control system describes the
+essential components, a controller issuing the control commands
+uk, sensor output yk, a watermarked control u′
+k = uk + ∆uk. The
+idea is that the amount of change we inject as a watermark ∆uk,
+it shall affect the plant and can be captured by the sensor mea-
+surements. Moreover, the watermark being generated randomly
+shall not be available to a replay attacker beforehand to launch a
+successful attack.
+Theorem 4.1. Given the system model in Eq. (1), Kalman filter (2)
+and watermarked inputs u′
+k = uk + ∆uk, it can be shown that the
+residual vector is driven by the watermark signal and can be given
+as, rk+1 = [CA−CLkC](xa
+k−ˆxwm
+k
+)+CB(ua
+k−uk)−CB∆uk+Cvk+ηk+1.
+Proof. In the system model of Eq. (1), attacker has access to
+the normal sensor measurements and control signals and can
+replay those. Assuming that an adversary has access to the system
+model, Kalman filter gain and other parameters of the detec-
+tors. During the replay attack using its knowledge an attacker
+estimates the system state as follows,
+xa
+k+1 = Axa
+k + Bua
+k + vk
+(7)
+and attacker’s spoofed sensor measurements as,
+ya
+k = Cxa
+k + ηk
+(8)
+ya
+k+1 = C[Axa
+k + Bua
+k + vk] + ηk+1
+(9)
+ya
+k+1 = CAxa
+k + CBua
+k + Cvk + ηk+1
+(10)
+However, using a watermaking signal in the control input uk
+defender’s state estimate becomes,
+ˆxwm
+k+1 = Aˆxwm
+k
++ Buk + B∆uk + Lk(ya
+k −Cˆxwm
+k
+),
+(11)
+where ∆uk is the watermark signal.
+ˆywm
+k+1 = Cˆxwm
+k+1
+(12)
+ˆywm
+k+1 = C[Aˆxwm
+k
++ Buk + B∆uk + Lk(ya
+k −Cˆxwm
+k
+)]
+(13)
+ˆywm
+k+1 = C[Aˆxwm
+k
++ CBuk + CB∆uk + CLk(Cxa
+k −Cˆxwm
+k
+)]
+(14)
+ˆywm
+k+1 = CAˆxwm
+k
++ CBuk + CB∆uk + CLkCxa
+k −CLC ˆxwm
+k
+(15)
+The residual vector is given as,
+rk+1 = ya
+k+1 −ˆywm
+k+1
+(16)
+rk+1 = CAxa
+k + CBua
+k + Cvk + ηk+1 −CAˆxwm
+k
+−CBuk −CB∆uk −CLkCxa
+k + CLkCˆxwm
+k
+(17)
+rk+1 = (CA −CLkC)xa
+k −(CA −CLkC)ˆxwm
+k
++ CB(ua
+k −uk)
+−CB(∆uk) + Cvk + ηk+1
+(18)
+rk+1 = (CA −CLkC)(xa
+k −ˆxwm
+k
+) + CB(ua
+k −uk)
++ Cvk + ηk+1 −CB(∆uk)
+(19)
+The last term is the watermark signal. The first term is the
+error. For a stable system the spectral radius of (CA −CLkC <
+1) and the error converges to zero [14]. Moreover, in replay
+attacker an attacker chooses control command exactly same as
+normal process, therefore, ua
+k = uk, making the second term to
+go to zero. Without watermark the residual vector would behave
+normally driven by the noise. However, with the last term added
+the attacker cannot successfully execute the replay attack unless
+it can counter the effect of watermark. This concludes that with
+an added watermark, residual vector is driven by the watermark
+and can expose replay attacks.
+■
+4.1. Choosing watermark signal
+Definition 4.1.
+Performance Loss: The performance loss is de-
+fined as the down-gradation in the output of the system under
+a sub-optimal control. For example, for a water distribution net-
+work, it is important that the user demand is met. Based on the
+user demand a motorized valve is actuated to open to a specific
+value that would meet the user demand, any change in that
+opening might lead to a unsatisfied user demand.
+Definition 4.2.
+A watermark signal which is chosen randomly
+in each iteration of experiment is defined as the dynamic water-
+mark.
+In the following it is shown that how system performance
+is preserved on average while maintaining a control signal wa-
+termark. Fig. 4 shows the block diagram of the complete WADI
+testbed, the portion of the testbed used in this study is the
+consumer tank unit that is part of secondary grid–P2. There are
+in total six consumer tanks representing the typical consumers
+in the real-world. Fig. 5 shows the control implemented at each
+controller in that stage of the testbed, meeting the user demands.
+As seen in Fig. 5 the key parameters for each consumer tank unit
+are, the demand setpoint–indicating the user demand, then the
+Controller would open motorized valve (MCV) as much required
+to meet the consumer demand, the flow meter is used to feedback
+the water being supplied so that the controller can adjust the
+control if the demand is not being met.
+140
+
+C.M. Ahmed, V.R. Palleti and V.K. Mishra
+Journal of Process Control 116 (2022) 136–146
+Fig. 7. It is demonstrated that if the control signal is watermarked using
+particular control sequence then the effects of the watermark could be observed
+in the output signal, i.e., flow sensor. Flow sensor is scaled to display on the
+same plot and compare the overall pattern with the control signal.
+The objective here is to chose a watermark in the control input
+that can preserve the system performance. We use the uniform
+distribution to choose the values for the controller to add the
+watermark.
+f (x) =
+{
+1
+b−a,
+for a ≤x ≤b
+0,
+for x < a or x > b
+(20)
+E(X) = 1
+2
+(a + b)
+(21)
+Eq. (20) is the probability density function of the uniform distri-
+bution. The distribution explains an arbitrary outcome that lies
+between bounds defined by the parameters a and b. We obtain
+these parameters from the empirical analysis. Fig. 7 shows an
+example experiment that lead us to define the bounds.
+For a
+fixed demand rate we measured the normal MCV control opening
+to fulfill the consumer demand. Then, MCV control is modified by
+adding incremental values in the optimal control to see the effects
+of added watermark on the output and the demand of the system.
+Ideally we should have a separate distribution model for each
+consumer tank but to keep the results tractable and explainable,
+we had taken a fixed demand pattern for all the consumers for
+the duration of these experiments, hence uniform distribution
+with same lower and upper limits. It is concluded that if a small
+change is made it does not reflect in the sensor output. Through
+experimentation, as shown in Fig. 7, it is observed that if MCV
+opening is varied between 25% and 45%, it produces significant
+effects on the output sensor measurement as can be seen in the
+figure. Above or below these two bounds change is not significant
+due to process capacity limitations, therefore, a and b are taken
+to be 25 and 45% respectively. Fig. 8 shows the watermarking
+techniques in action using these bounds and randomly adding a
+watermark within these bounds. It can be seen that watermark
+introduce enough variance in the output that the effects of wa-
+termark could be observed on the output sensor measurements.
+To add the watermarking, we override the PID controllers for the
+MCVs to follow a set pattern created in Section 4.1.
+Fig. 9 shows an example implementation of the watermarked
+control. Top plot in the figure shows time series data for three
+variables. The watermarked control input that varies between
+25% and 45% values for MCV opening. As a result of this wa-
+termarked control input the flow sensor measurement show a
+variation pattern in the output, as the MCV opens to 45% the flow
+Fig. 8. Randomly adding a watermark signal to the control would result in a
+random change in the flow measurement.
+increases and it decreases when MCV is open 25%. Moreover, a
+system model is obtained mapping control input to the output
+and this obtained system model is used to estimate the sensor
+output given a particular watermarked control input. The choice
+of control input between 25–45 is made empirically as this allows
+the demand to be fulfilled, therefore, a random value between 25
+and 45 shall be chosen to inject a watermark signal. The system
+model helps to quantify the value of the injected watermark.
+4.2. Detector: Kolmogorov–Smirnov (K-S) test
+The Kolmogorov–Smirnov (K–S) test is a non-parametric test
+for the equality of continuous probability distributions. It can be
+used in one-sample settings where a sample is compared with
+a reference probability distribution or in two-sample settings to
+compare the empirical distribution functions of two samples. In
+this study a two-sample K–S test is used as a detector. The K–S
+statistics quantifies a distance between the empirical distribution
+functions of two samples.
+Definition 4.3. Empirical Distribution Function: For n indepen-
+dent and identically distributed ordered observations of a random
+variable X, an empirical distribution function Fn is defined as,
+Fn(x) = 1
+n
+n
+∑
+i−1
+I[−∞,x](Xi),
+(22)
+where I[−∞,x](Xi) is the indicator function which is 1 if Xi ≤x,
+else it is equal to 0.
+For a given Cumulative Distribution Function (CDF) F(x), the
+K-S statistic is given as,
+Dn = sup
+x∈R
+|Fn(x) −F(x)|,
+(23)
+where sup is the supremum of the set of distances. For the
+two-sample K-S test the statistic can be defined as,
+Dn,m = sup
+x∈R
+|Fn(x) −Gm(x)|,
+(24)
+where Fn(x) and Gm(x) are the empirical distribution functions of
+the first and second sample, respectively. Dn,m is the maximum
+of the set of distances between the two distributions. For a large
+141
+
+C.M. Ahmed, V.R. Palleti and V.K. Mishra
+Journal of Process Control 116 (2022) 136–146
+Fig. 9. System model for the watermarked system.
+sample size the null hypothesis is rejected for the confidence level
+α if,
+Dn,m > c(α)
+√
+n + m
+n ∗m ,
+(25)
+where n, m are, respectively, the sizes of the first and second
+samples. The value of c(α) can be obtained from the look up tables
+for different values of α, or can be calculated as follows,
+c(α) =
+√
+−1
+2
+ln(α).
+(26)
+Remark. K-S test checks whether the two samples are drawn
+from the same distribution or not. The test statistic is based on
+the maximum distance between empirical distributions of the
+samples. If the supremum of the distance between two samples
+is greater than a certain threshold, the null hypothesis that both
+samples are from the same distribution would be rejected. Under
+a replay attack samples would look like the original trained model
+without watermark. In the absence of any attack watermark
+would be preserved and null hypothesis would be rejected.
+5. Evaluation
+5.1. Performance metrics
+Following metrics are used while assessing the effectiveness
+of the attack detection procedure.
+• True Positive Rate (TPR): This rate is defined as labeling the
+data as an attack when the anomaly actually existed. This is
+a correct prediction of an attack.
+• False Positive Rate (FPR): This is defined as raising an alarm
+when the data received is attack free. This is a false alarm.
+• False Negative Rate (FNR): This is defined as not raising an
+alarm when the anomaly actually existed. This is a incorrect
+prediction of an attack.
+• True Negative Rate (TNR): This is defined as labeling the data
+as normal when the operation is actually normal. This is a
+correct prediction of a normal operation.
+Ideally, FPR should be as small as possible and TPR as high as
+possible. Both TPR and FPR being ratios range between 0 and 1.
+5.2. Chunk size vs accuracy on normal operation
+In the following, the empirical distributions for the residual
+vector will be derived and a reference model without watermark-
+ing operation is trained. A trade-off between the speed of detec-
+tion and detection performance is desired. Empirical distributions
+for different chunk size of a example flow sensor residuals of a
+consumer tank are shown in Fig. 10. This experiment is performed
+to establish a trade-off between the number of samples required
+and the accuracy of detection. Sensor measurements and the
+system model is used to calculate the residual vector on which
+the proposed technique is applied. Normal plant operation data is
+used in this experiment. A chunk size of 10, 30, 60, 120, 250, 500
+is taken. Fig. 10 shows the visual inspection of the data for
+different chunk sizes. Empirical CDF is plotted for data samples
+from each chunk. The essence of choosing a right chunk size
+means that the number of samples in a chunk are enough to
+capture the variation in the data. A chunk size of 10 means that
+there are 10 samples of data in each chunk and as shown in
+Fig. 10, several chunk’s CDF does not correlate to each other,
+142
+
+C.M. Ahmed, V.R. Palleti and V.K. Mishra
+Journal of Process Control 116 (2022) 136–146
+Fig. 10. CDF for different chunks of data for the residual signal obtained from the system model under the normal operation of the plant.
+Fig. 11. CDF for the replay attack and the watermarked signal.
+making it non-substantial to be used with a K–S test. Since this is
+the normal data, it is desired to obtain a chunk size that indicate
+that the samples are drawn from the same distribution, which in
+fact are drawn from the same distribution. From Fig. 10, it can
+be seen that for a small chunk size the distributions could not
+be approximated very well and from one chunk to the other, the
+distance between the distributions of two samples is higher re-
+sulting in increased false alarms. At the larger number of samples
+being used, the empirical CDF is smooth and true negative rate
+is higher but then it needs to wait for additional time to make a
+decision. A good trade off is made somewhere in the middle. From
+Fig. 10 it is evident that the chunk size of 120 onward gives the
+best result, however, it is determined that the chunk size of 250
+gives the best result in terms of accuracy and amount of samples
+required to detect an attack.
+5.3. Replay attack detection
+Replay attack detection results are shown in the Table 1 for
+different chunk size of the data. It is observed that for a chunk
+size of 250 we are able to achieve 100% TPR and from Fig. 10, it
+is the same chunk size for which we had minimum false alarm
+Fig. 12. Watermarked control signal vs replay attack distributions.
+rate. Table 1 shows the results for six consumer units, C1 to C6,
+where the replay attacks were launched.
+For visual inspection, consider the plot in Fig. 11, it shows
+the CDF for the scenario of added watermark signal and replay
+attack, both being from different distributions, Dm,n can be seen
+as significant to result in detection. One sample is taken from the
+replayed data and the second sample from the watermarked con-
+trol signal. It is observed that the distance metric Dm,n is greater
+as compared to the plot of normal data, pointing out that these
+two distributions are drawn from two different distributions. This
+is the key intuition to detect replay attacks in the presence of
+a watermark signal. The replay attack would record the normal
+data and then replay it hence not showing the evidence of the
+existence of the watermark signal and would expose itself. Fig. 12
+shows the same result in the form of PDF for the watermarked
+control case and the replayed data case, for the residuals and their
+distributions.
+143
+
+C.M. Ahmed, V.R. Palleti and V.K. Mishra
+Journal of Process Control 116 (2022) 136–146
+5.4. Challenges
+Limited Choice of Parameters for the Uniform Distribution.
+An important design parameter is the bounds a and b of the uni-
+form distribution to chose the watermark to be added from. It is
+stated previously that we had chosen these bounds based on the
+empirical observations. This part elaborates on those experiments
+and the limitations we faced for our choice of the bounds. When
+the position of MCV value is less than 20% the variation in the
+flow is observed to be low and not distinguishable from adding
+a watermark to normal operation. Similarly for position of MCV
+greater than 45% the flow was close to maximum with very little
+variation and the flow reaches maximum value (0.15 m3/h) at
+MCV position of 65%. This means that the design of watermark
+in this case is limited by the physical capacity of the process,
+this is an important insight towards a practical watermark design.
+Therefore, we had to randomly choose the position of MCVs for
+watermarking between 25% and 45%.
+As shown by Fig. 8, the change in MCV position need to be
+sufficiently high to ensure that it can be observed on the flow
+meter. Since for small changes the change in flow rate cannot be
+observed. Further the time between two successive changes in
+MCV position need to be adequate. If enough time is not given,
+the flow does not reach a steady state before MCV changes again
+making the flow unpredictable.
+Keeping the System Performance Intact Over a Desired Period
+of Time. From the design of watermark, recall that the watermark
+is chosen between bounds to achieve the system performance as
+the normal process on an average. A key consideration in this
+regard is the time frame we have to implement the watermark
+and fulfill the user demand. In the case of testbed used in this
+study, demand from users is assumed at full capacity meaning
+we get the maximum time to implement and achieve desired sys-
+tem performance in average sense. The consumer tanks becomes
+full in 150 min from the start of the system and the systems
+take 30 min to reach a steady initial state. This leaves us with
+only 120 min of time for total experiment cycle, meaning from
+an empty consumer tank to the complete filling of consumer
+tank using a constant demand throughout this period of time.
+Therefore watermarking experimentation is quite challenging to
+perform different scenarios within 120 min of duration. While
+deciding the watermark, it needs to be ensured that the consumer
+demand is met and the MCV position pattern is kept random.
+Chunk Size Vs Accuracy. As described earlier, deciding chunk
+size to perform detection is important as it is desired to perform
+detection as fast as possible. we found that 250 samples gave us
+the best result but this parameter can be system dependent and
+need to be part of design for a specific process domain.
+6. Discussion
+6.1. Multi input and output system
+Let us consider an example of a LTI system model with two
+system states (x1
+k, x2
+k) and two control inputs(u1
+k, u2
+k),
+[
+x1
+k+1
+x2
+k+1
+]
+=
+[
+a11
+a12
+a21
+a22
+] [
+x1
+k
+x2
+k
+]
++
+[
+b11
+b12
+b21
+b22
+] [
+u1
+k
+u2
+k
+]
+(27)
+x1
+k+1
+x2
+k+1
+= a11x1
+k + a12
+a21x1
+k + a22
+x2
+k + b11u1
+k + b12u2
+k
+x2
+k + b21u1
+k + b22u2
+k
+(28)
+The two system states are labeled as x1
+k and x2
+k. It can be ob-
+served that for a joint model the control has effects on both sys-
+tem states. This means there is an obvious relationship through
+control signal and then inject respective watermark. Consider the
+following cases:
+Table 1
+K-S test for Replay Attack. Chunk size vs attack detection accuracy for all
+Consumers in the WADI testbed.
+Consumer /
+Chunk size
+10
+30
+60
+120
+250
+500
+C1: TPR
+87.97%
+88.59%
+89.86%
+100%
+100%
+100%
+FNR
+12.03%
+11.41%
+10.14%
+0%
+0%
+0%
+C2: TPR
+78.86%
+83.43%
+90.91%
+97.56%
+100%
+100%
+FNR
+21.14%
+16.57%
+9.09%
+2.44%
+0%
+0%
+C3: TPR
+66.70%
+67.78%
+71.62%
+91.78%
+100%
+100%
+FNR
+33.30%
+32.22%
+28.38%
+8.22%
+0%
+0%
+C4: TPR
+83.43%
+88.59%
+90.95%
+98.56%
+100%
+100%
+FNR
+16.57%
+11.41%
+9.05%
+1.44%
+0%
+0%
+C5:TPR
+68.60%
+80.54%
+91.22%
+89.04%
+100%
+100%
+FNR
+31.40%
+19.46%
+8.78%
+10.96%
+0%
+0%
+C6:TPR
+53.23%
+50%
+57.43%
+60.27%
+70.59%
+81.25%
+FNR
+46.77%
+50%
+42.56%
+39.72%
+29.41%
+18.75%
+Case 1: Watermark injected in U1
+[
+x1
+k+1
+x2
+k+1
+]
+=
+[
+a11
+a12
+a21
+a22
+] [
+x1
+k
+x2
+k
+]
++
+[
+b11
+b12
+b21
+b22
+] [
+u1
+k + ∆u1
+k
+u2
+k
+]
+(29)
+x1
+k+1
+x2
+k+1
+= a11x1
+k + a12
+a21x1
+k + a22
+x2
+k + b11(u1
+k + ∆u1
+k) + b12u2
+k
+x2
+k + b21(u1
+k + ∆u1
+k) + b22u2
+k
+(30)
+Case 2: Watermark injected in U2
+[
+x1
+k+1
+x2
+k+1
+]
+=
+[
+a11
+a12
+a21
+a22
+] [
+x1
+k
+x2
+k
+]
++
+[
+b11
+b12
+b21
+b22
+] [
+u1
+k
+u2
+k + ∆u2
+k
+]
+(31)
+x1
+k+1
+x2
+k+1
+= a11x1
+k + a12
+a21x1
+k + a22
+x2
+k + b11u1
+k + b12(u2
+k + ∆u2
+k)
+x2
+k + b21u1
+k + b22(u2
+k + ∆u2
+k)
+(32)
+From the case 1 and case 2 above we can observe that the
+injected watermark in either of the control signal will have an
+effect on both system states.
+Case 3: Watermark injected in both control signals simultane-
+ously
+x1
+k+1
+x2
+k+1
+= a11x1
+k + a12
+a21x1
+k + a22
+x2
+k + b11(u1
+k + ∆u1
+k) + b12(u2
+k + ∆u2
+k)
+x2
+k + b21(u1
+k + ∆u1
+k) + b22(u2
+k + ∆u2
+k)
+(33)
+From above equations we can see that the modeling might be
+complex with multiple inputs and outputs but it results in better
+security due to the fact that there are more vectors to randomize
+and profile their effect on the output making it harder for an
+attacker to predict the random watermark.
+6.2. Limitations
+Control Limits:
+It is known that the watermarking tech-
+niques cannot be applied to all types of control, especially in
+case of a bang–bang control where the control action rapidly
+ON/OFF [8,15]. The results from [15] show that in theory any
+arbitrary noise signal can be generated to be added to control but
+in real-world implementation of such a control is not explored.
+As we acknowledge this limitation of watermarking techniques
+and also that some systems might not support a range of 25% to
+45%, it is important to highlight that our work is the first work
+to demonstrate a practical design and implementation of such a
+watermark on a real-world system.
+Overhead: An overhead of the proposed watermarking technique
+is that it would increase the power consumption and component
+degradation due to frequent change in the control. For example,
+consider Fig. 8, where d represents the duration for which a
+watermark signal is active. It can be seen that if d is large, MCV
+changes position less frequently and resulting in lower energy
+144
+
+C.M. Ahmed, V.R. Palleti and V.K. Mishra
+Journal of Process Control 116 (2022) 136–146
+consumption (E) and vice versa if d is small. Therefore, it can
+expressed as,
+E ∝1
+d
+(34)
+If d is larger the energy consumption is low but security intro-
+duced by watermarking also reduce as an attacker can observe
+the watermark for longer duration and have a better chance to
+learn the watermark. We need to find an appropriate tradeoff,
+however, this will not be problem in modern equipment due to
+lower energy consumption and higher number of cycles, as an
+example, the pneumatic industrial valves consume energy as low
+as 0.1 Watt with a life of over 200 million cycles [16].
+Practical Aspects: We have tested the proposed method on a
+water distribution testbed over a few weeks time. Moreover,
+being used in a testbed for few weeks is different from being
+used in a real-world production system of physical plants with
+possibly more harsh environment. It has been discussed in earlier
+work [17] that measurement noise profile of the devices might
+change over time due to wear and tear. However, as seen in Fig. 8
+if we can drive the output response far from the normal process
+noise then a higher accuracy can be achieved. Watermark can
+be exploited to achieve such a behavior but again this would be
+limited by the limits of the control and bounds on watermark as
+discussed in this section.
+6.3. Future work
+Considering a threat model in which an attacker can collect
+data with injected watermark and then replay that distribution
+is not considered in this work but this shall be mentioned in
+potential limitations and possible defenses shall be mentioned.
+There are two lines of arguments that can be taken here: (1)
+Considering the multiple input and multiple output modeling in
+newly added discussion section, it can be seen that a combination
+of multiple processes can generate more possible combinations of
+watermark to be added and making it harder for the attacker. We
+plan to tackle this problem in the future work. (2) From literature
+we have found [18] which propose another argument to tackle
+this problem. The argument is that although an attacker can learn
+the pattern but cannot figure out beforehand what exactly will
+be the watermark from that distribution to be added at each
+time instant. Therefore, an adversary needs live monitoring and
+response to detect a new watermark, which is possible but it
+would need n samples to detect and respond to the injected
+watermark, where n is the smallest number of samples to learn
+a pattern. Therefore, time spent on collecting those samples shall
+expose the attackers.
+7. Related work
+CPSs play an important role in critical infrastructures, such as
+water transportation, power, oil and gas. Modern infrastructure
+are prone to cyber–physical attacks and successful attacks may
+bring huge damages to critical infrastructure, human lives and
+properties, and even threaten the national security. Maroochy
+water breach in 2000 [19], Stuxnet malware in 2010 [20], Ukraine
+power outage in 2015 [21] and other security incidents, motivates
+the researchers to focus more on CPS security. In the recent
+years, researchers have focused on the design of watermarking
+technique to detect replay attacks.
+Authors in [6,7] studied the problem of replay attack detec-
+tion and proposed a physical watermarking scheme in which
+an authenticating signal is introduced into the control system.
+This technique enables the detection of replay attacks, however,
+the watermark signal may degrade the controller performance
+and may lead to sub-optimal solution. Therefore, [7] also stud-
+ied the control performance loss and find the optimal trade-off
+between detection rate and performance loss. Authors in [22,
+23] proposed and additive based watermark signal generated by
+dynamical systems. An optimization problem is formulated to
+give a loss effective watermark signal with a specified detection
+rates by tuning the design parameters. Further, [15,24] provides a
+comprehensive procedure for dynamic watermarking signal. [25]
+proposed an algorithm which can generate simultaneous wa-
+termarking signal and design parameters for attack detection
+and it is shown that the algorithm converges to the optimal
+one. In [26,27] authors identify the limitations of the detection
+schemes proposed by [6] and a multi watermark based detection
+technique is proposed to overcome those limitations. A periodic
+watermarking strategy was proposed in [28] by including the
+control loss performance when a random signal is injected into
+a control system. In contrast to the other works, authors in [29]
+proposed a multiplicative sensor watermarking. In this scheme
+each sensor is watermarked and a watermark remover is embed-
+ded to reconstruct the original sensor measurements. It is shown
+that this scheme is effective and does not degrade the controller
+performance in the absence of attacks. Our work is first kind of
+study taking the idea of watermark from theory to practise and
+solving several challenges along the way. It is demonstrated that
+the design of practical watermark is possible but needs domain
+knowledge and system expertise.
+8. Conclusions
+Stealthy and replay attacks on critical water cyber physical
+systems have gone undetected for long [9,11]. Physical water-
+marking [8] has been proposed to detect the replay attacks,
+however, it is challenging to come up with a practical design. It is
+demonstrated in this work, that a practical watermarking design
+can be achieved but presents with the new challenges. Design
+of practical physical watermarking requires domain knowledge,
+accurate system models and process parameters, so that we can
+chose a random watermark without affecting the system perfor-
+mance. Experimental results provided an understanding of these
+parameters, resulting in a successful design, that is evaluated on
+the live water distribution network. We can extend this work
+assuming the more intelligent attacker who has the knowledge
+of injected water mark signal into the system. In such a case
+more efficient algorithms are needed to counter the attacker
+knowledge and it will be considered as part of the future research
+work.
+Declaration of competing interest
+The authors declare that they have no known competing finan-
+cial interests or personal relationships that could have appeared
+to influence the work reported in this paper.
+References
+[1] A.A. Cárdenas, S. Amin, S. Sastry, Research challenges for the security of
+control systems, in: Proceedings of the 3rd Conference on Hot Topics in
+Security, in: HOTSEC’08, USENIX Association, Berkeley, CA, USA, 2008, pp.
+6:1–6:6.
+[2] V.R. Palleti, Y.C. Tan, L. Samavedham, A mechanistic fault detection and
+isolation approach using kalman filter to improve the security of cyber
+physical systems, J. Process Contr. 68 (2018) 160–170.
+[3] S. Amin, A. Càrdenas, S. Sastry, Safe and secure networked control systems
+under denial-of-service attacks, in: Hybrid Systems: Computation and
+Control. Proc. 12th Intl. Conf. (HSCC), in: LNCS, Vol. 5469, Springer-Verlag,
+2009, pp. 31–45.
+[4] A. Gupta, C. Langbort, T. Basar, Optimal control in the presence of an
+intelligent jammer with limited actions, in: 49th IEEE Conference on
+Decision and Control, CDC, 2010, pp. 1096–1101, http://dx.doi.org/10.1109/
+CDC.2010.5717544.
+145
+
+C.M. Ahmed, V.R. Palleti and V.K. Mishra
+Journal of Process Control 116 (2022) 136–146
+[5] G. Liang, J. Zhao, F. Luo, S.R. Weller, Z.Y. Dong, A review of false data
+injection attacks against modern power systems, IEEE Trans. Smart Grid 8
+(4) (2017) 1630–1638.
+[6] Y. Mo, B. Sinopoli, Secure control against replay attacks, in: 2009 47th
+Annual Allerton Conference on Communication, Control, and Computing
+(Allerton), 2009, pp. 911–918.
+[7] Y. Mo, R. Chabukswar, B. Sinopoli, Detecting integrity attacks on SCADA
+systems, IEEE Trans. Control Syst. Technol. 22 (4) (2014) 1396–1407,
+http://dx.doi.org/10.1109/TCST.2013.2280899.
+[8] Y. Mo, S. Weerakkody, B. Sinopoli, Physical authentication of control sys-
+tems: Designing watermarked control inputs to detect counterfeit sensor
+outputs, IEEE Control Syst. Mag. 35 (1) (2015) 93–109, http://dx.doi.org/
+10.1109/MCS.2014.2364724.
+[9] S. Amin, X. Litrico, S. Sastry, A.M. Bayen, Cyber security of water
+SCADA systems–part 1: Analysis and experimentation of stealthy deception
+attacks, IEEE Trans. Control Syst. Technol. 21 (5) (2012) 1963–1970.
+[10] C.M. Ahmed, V.R. Palleti, A.P. Mathur, WADI: A water distribution testbed
+for research in the design of secure cyber physical systems, in: Proceedings
+of the 3rd International Workshop on Cyber-Physical Systems for Smart
+Water Networks, in: CySWATER ’17, 2017, pp. 25–28.
+[11] V.R. Palleti, V.K. Mishra, C.M. Ahmed, A. Mathur, Can replay attacks
+designed to steal water from water distribution systems remain unde-
+tected? ACM Trans. Cyber-Phys. Syst. 5 (1) (2021) http://dx.doi.org/10.
+1145/3406764.
+[12] P.V. Overschee, B.D. Moor, Subspace identification for linear systems: the-
+ory, implementation, applications, Kluwer Academic Publications, Boston,
+1996.
+[13] C. Murguia, J. Ruths, Characterization of a CUSUM model-based sen-
+sor attack detector, in: 55th IEEE Conference on Decision and Control
+Conference, CDC, 2016.
+[14] K.J.
+Aström,
+B.
+Wittenmark,
+Computer-Controlled
+Systems
+(3rd
+Ed.),
+Prentice-Hall, Inc., Upper Saddle River, NJ, USA, 1997.
+[15] B. Satchidanandan, P.R. Kumar, On the design of security-guaranteeing
+dynamic watermarks, IEEE Control Syst. Lett. 4 (2) (2020) 307–312, http:
+//dx.doi.org/10.1109/LCSYS.2019.2925278.
+[16] R.F. Bullers, How much coal does that valve burn? 2011, https://content2.
+smcetech.com/pdf/BP5_How_Much_Coal_Does_That_Valve_Burn.pdf.
+[17] C.M. Ahmed, M. Ochoa, J. Zhou, A.P. Mathur, R. Qadeer, C. Murguia, J. Ruths,
+NoisePrint: Attack detection using sensor and process noise fingerprint in
+cyber physical systems, in: Proceedings of the 2018 on Asia Conference
+on Computer and Communications Security, in: ASIACCS ’18, Association
+for Computing Machinery, New York, NY, USA, 2018, pp. 483–497, http:
+//dx.doi.org/10.1145/3196494.3196532.
+[18] S.V. Radhakrishnan, A.S. Uluagac, R. Beyah, GTID: A technique for physical
+device and device type fingerprinting, IEEE Trans. Dependable Secure
+Comput.
+12
+(5)
+(2015)
+519–532,
+http://dx.doi.org/10.1109/TDSC.2014.
+2369033.
+[19] J. Slay, M. Miller, Lessons learned from the maroochy water breach, in:
+E. Goetz, S. Shenoi (Eds.), Critical Infrastructure Protection, Springer US,
+Boston, MA, 2008, pp. 73–82.
+[20] S. Weinberger, Computer security: Is this the start of cyberwarfare? Nature
+174 (2011).
+[21] D.E. Whitehead, K. Owens, D. Gammel, J. Smith, Ukraine cyber-induced
+power outage: Analysis and practical mitigation strategies, in: 2017 70th
+Annual Conference for Protective Relay Engineers, CPRE, 2017, pp. 1–8,
+http://dx.doi.org/10.1109/CPRE.2017.8090056.
+[22] A. Khazraei, H. Kebriaei, F.R. Salmasi, A new watermarking approach
+for replay attack detection in lqg systems, in: 2017 IEEE 56th Annual
+Conference on Decision and Control, CDC, 2017, pp. 5143–5148.
+[23] A. Khazraei, H. Kebriaei, F.R. Salmasi, Replay attack detection in a multi
+agent system using stability analysis and loss effective watermarking, in:
+2017 American Control Conference, ACC, 2017, pp. 4778–4783.
+[24] B.
+Satchidanandan,
+P.R.
+Kumar,
+Dynamic
+watermarking:
+Active
+defense of networked cyber-physical systems, Proc. IEEE 105 (2) (2017)
+219–240.
+[25] H. Liu, Y. Mo, J. Yan, L. Xie, K.H. Johansson, An online approach to physical
+watermark design, IEEE Trans. Automat. Control 65 (9) (2020) 3895–3902,
+http://dx.doi.org/10.1109/TAC.2020.2971994.
+[26] J. Rubio-Hernan, L. De Cicco, J. Garcia-Alfaro, Revisiting a watermark-
+based detection scheme to handle cyber-physical attacks, in: 2016 11th
+International Conference on Availability, Reliability and Security, ARES,
+2016, pp. 21–28.
+[27] J. Rubio-Hernan, L. De Cicco, J. Garcia-Alfaro, On the use of watermark-
+based schemes to detect cyber-physical attacks, EURASIP J. Inf. Secur. 2017
+(1) (2017) 1–25.
+[28] C. Fang, Y. Qi, P. Cheng, W.X. Zheng, Cost-effective watermark based
+detector for replay attacks on cyber-physical systems, in: 2017 11th Asian
+Control Conference, ASCC, 2017, pp. 940–945, http://dx.doi.org/10.1109/
+ASCC.2017.8287297.
+[29] R.M.
+Ferrari,
+A.M.
+Teixeira,
+Detection
+and
+isolation
+of
+replay
+at-
+tacks through sensor watermarking, IFAC-PapersOnLine 50 (1) (2017)
+7363–7368, 20th IFAC World Congress.
+146

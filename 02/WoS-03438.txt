@@ -1,0 +1,1298 @@
+Tripartite coordination in the water-energy nexus: A bi-level Stackelberg 
+game for wastewater treatment plants, power and water 
+distribution networks
+Hailong Cui a
+, Shiyi Shi b, Shibo Liu a, Xia Zhao a,*
+a National Key Laboratory of Power Transmission Equipment Technology, Chongqing University, Chongqing 400044, China
+b State Grid Yibin Electric Power Supply Company, Yibin 644000, Sichuan Province, China
+A R T I C L E I N F O
+Keywords:
+Wastewater treatment
+Stackelberg game
+Coordinated scheduling
+Water-energy nexus
+Genetic algorithm
+A B S T R A C T
+The substantial energy consumption and operational costs in wastewater treatment plants (WWTPs) necessitate 
+effective energy management. While WWTPs are physically connected to the power distribution network (PDN) 
+and the water distribution network (WDN) through the water-energy nexus, existing studies often overlook the 
+interactions and coordination potential among these three independent stakeholders. In this regard, this paper 
+proposes a coordinated scheduling strategy based on a tripartite game among the WWTP, PDN, and WDN. 
+Specifically, a bi-level Stackelberg game framework is developed to capture their hierarchical decision-making 
+process and competing interests. In this framework, the WDN plays a unique dual role, acting as a follower to 
+the PDN in the upper-level game, and as a leader to the WWTP in the lower-level game. To solve the formulated 
+model, a nested genetic algorithm (GA) is introduced. This approach is validated on an integrated system 
+comprising an IEEE 33-bus PDN, a 12-node WDN, and a WWTP. Simulation results show that the nested GA 
+reduces the solution time by 38% compared to conventional best-response iteration (BRI) methods. Furthermore, 
+the tripartite game framework effectively balances the benefits of all entities, reducing the total operational cost 
+by 28.5%, while decreasing the process energy consumption and relative carbon emissions of the WWTP by 2.6% 
+and 1.3%, respectively.
+1. Introduction
+1.1. Motivation
+Wastewater treatment plants (WWTPs) are crucial municipal in­
+frastructures in modern society, playing a significant role in improving 
+urban environmental quality, supporting sustainable development, and 
+facilitating water resource recycling [1,2]. With the rapid advancement 
+of urbanization and increasing water demand in China, reclaimed water 
+from wastewater treatment has become an indispensable supplementary 
+water resource.
+Wastewater treatment is inherently an energy-intensive process that 
+involves substantial electricity consumption [3]. Specifically, electricity 
+consumption for wastewater treatment typically ranges from 0.3 to 
+0.6 kWh/m3 in most countries [4], accounting for approximately 3% to 
+5% of the global electricity consumption [5]. Meanwhile, the waste­
+water sector contributes approximately 1% to 2% of global carbon 
+emissions [5], with total carbon emissions increasing by over 140% from 
+2009 to 2023 [6]. In the context of China’s carbon neutrality and 
+decarbonization targets, reducing energy consumption and mitigating 
+carbon emissions in WWTPs have become urgent and critical challenges.
+Addressing these multifaceted challenges necessitates a shift from 
+plant-level optimization to a systemic perspective within the broader 
+water-energy nexus. Equipped with on-site distributed energy resources 
+(DERs) such as photovoltaics (PV), wind turbines, and battery energy 
+storage systems (BESS), modern WWTPs act as prosumers within the 
+power distribution network (PDN) and as the primary suppliers of 
+reclaimed water to the water distribution network (WDN). This inter­
+action creates a tripartite WWTP-PDN-WDN nexus. Therefore, a tripar­
+tite coordinated scheduling strategy that integrates the operations of 
+WWTP, PDN, and WDN is essential to fully exploit systemic synergies 
+and achieve enhanced economic and environmental performance.
+* Corresponding author.
+E-mail address: zx@cqu.edu.cn (X. Zhao). 
+Contents lists available at ScienceDirect
+Electric Power Systems Research
+journal homepage: www.elsevier.com/locate/epsr
+https://doi.org/10.1016/j.epsr.2026.113451
+Received 13 November 2025; Received in revised form 25 May 2026; Accepted 5 June 2026  
+Electric Power Systems Research 261 (2026) 113451 
+Available online 12 June 2026 
+0378-7796/© 2026 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies. 
+
+1.2. Literature review
+1.2.1. Energy management and self-scheduling of WWTPs
+Modern WWTPs are increasingly conceptualized as small-scale in­
+tegrated energy systems (IES) or microgrids (MGs), given the integration 
+of DERs. Drawing from the foundational scheduling and coordination 
+frameworks established for general MGs [7,8], effective energy man­
+agement has become a pivotal driver for promoting energy conservation 
+and carbon emission reduction in modern WWTPs. Consequently, the 
+optimal scheduling of WWTPs has attracted significant research interest 
+in recent years.
+Most of these studies prioritize the self-scheduling and internal 
+process optimization of WWTPs. For instance, Reference [9] imple­
+mented 
+flexible control of 
+treatment equipment to 
+achieve 
+energy-efficient operation of WWTPs. In WWTPs with integrated PVs, 
+optimal operational parameters were determined in [10] to minimize 
+both operating costs and carbon emissions. Multi-energy integration 
+involving wind, solar, and hydrogen was investigated in [11], where a 
+stepwise carbon trading mechanism was adopted to optimize hydrogen 
+blending. 
+Furthermore, 
+biomass 
+energy 
+recovery 
+through 
+biogas-powered units [12] and PV self-sufficiency improvement via 
+demand response [13] in WWTPs have also been explored. While these 
+Nomenclature
+WWTP
+CA
+Total operating cost
+CAG,t
+Natural gas purchasing cost
+CACO2,t
+Carbon emission cost
+CACS,t
+Carbon sequestration cost
+CAPV,t
+PV curtailment penalty cost
+CAen,t
+Environmental benefits
+PAE,t
+Power selling
+qrech,t
+Required amount of methanol
+qAW,t
+Interactive water volume
+qCCCO2,t
+Carbon capture volume of carbon capture equipment
+qCSCO2,t
+Carbon sequestration amount
+PPV,t
+Actual power output of PV
+qth,dis,t
+Effluent from tertiary treatment
+CTin,t
+TKN concentration in the WWTP influent
+CTout,t
+TKN concentration in the aeration tank effluent
+Pbt,cha,t
+Charging power of electrochemical energy storage
+Hhr,dis,t
+Heat release of thermal storage tank
+Pg,t
+Output of biogas generators
+Pr,t
+Power consumption of reflux pumps
+PEL,t
+Power consumption of the electrolytic cell
+Pth,t
+Power consumption in tertiary treatment
+ζAE,t
+Electricity selling price
+ζgs
+Biogas selling price
+ζAW,t
+Transaction water price
+ζCS
+Carbon sequestration price
+ζenb
+Environmental benefit coefficients for BOD removal
+ζbt
+Maintenance coefficient of energy storage
+ζeb
+Maintenance coefficient of electric boiler
+ζc
+Maintenance coefficient of lift pumps
+ζEL
+Maintenance coefficient of the electrolytic cell
+ζa
+Maintenance coefficient of blowers
+ζpv
+Maintenance coefficient of PV
+qin,t
+Influent flow rate of WWTP
+CACO2,t
+Carbon emission cost
+qaCO2,t
+Carbon emissions in secondary treatment
+ζCO2
+Carbon emission penalty factor
+CAE,t
+Electricity purchasing cost
+CAOM,t
+Operation and maintenance cost of WWTP facilities
+CACT,t
+Carbon emission trading cost
+CAch,t
+Methanol purchasing cost
+CAW,t
+Revenue for supplying reclaimed water
+PEA,t
+Power purchase
+qg,t
+External biogas purchase
+qch,t
+Methanol amount from methanol synthesis unit
+qgCO2,t
+Carbon emissions from biogas power generation
+qcetCO2,t
+Carbon quota of biogas generators
+PPV,ava,t
+Available PV power
+qse,dis,t
+Effluent from secondary treatment
+CBin,t
+BOD concentration in the WWTP influent
+CBout,t
+BOD concentration in the aeration tank effluent
+Pbt,dis,t
+Discharging power of BESS
+Hhr,cha,t
+Heat storage of thermal storage tank
+Heb,t
+Thermal power of the electric boiler
+Pc,t
+Power consumption of lift pumps
+PCC,t
+Power consumption of carbon capture equipment
+P' 
+a,t
+Modified power consumption of the blower
+ζEA,t
+Electricity purchase price
+ζgb
+Biogas purchase price
+ζch
+Methanol purchase price
+ζcet
+Carbon trading price
+ζcp
+Solar curtailment penalty coefficient
+ζent
+Environmental benefit coefficients for TKN removal
+ζhr
+Maintenance coefficient of thermal storage tank
+ζg
+Maintenance coefficient of biogas generators
+ζCC
+Maintenance coefficient of carbon capture equipment
+ζr
+Maintenance coefficient of reflux pumps
+ζth
+Maintenance coefficient of tertiary treatment
+qrefCO2,t
+Reference carbon emission
+qchCO2,t
+Carbon emission from the added methanol
+CaCO2
+Carbon emission conversion coefficient
+Cmax
+Bout
+Maximum BOD concentration for treatment
+ζ3
+Environmental benefit coefficient of tertiary treatment
+PDN
+CE
+Total operating cost
+CEl,t
+Power loss cost
+CEc,t
+Wind curtailment penalty cost
+PEe,t
+Power purchased from the upper-level grid
+Pw,ava,t
+Available wind power at bus
+PEW,j,t
+Power of the water pump connected to node j
+ζ1
+Network loss cost coefficient
+ζwi
+Maintenance coefficient of wind turbines
+ζEW,t
+Transaction electricity price between PDN and WDN
+CEe,t
+Electricity procurement from the grid
+CEOM,t
+Operation and maintenance cost of PDN
+CEW,t
+Transaction costs with the WDN
+lij,t
+Squared current flowing through branch i-j
+Pw,j,t
+Actual output of wind turbines
+ζEe,t
+Electricity purchase price from the upper-level grid
+rij
+Resistance through branch i-j
+ζcw
+Wind curtailment penalty coefficient
+WDN
+CW
+Total operating cost
+qW,m,t
+Purchased water from the water source at node m
+CWq,t
+Water procurement cost from other sources
+ζWq,t
+Water purchase price from water source
+H. Cui et al.                                                                                                                                                                                                                                      
+Electric Power Systems Research 261 (2026) 113451 
+2 
+
+studies significantly enhance the internal efficiency of wastewater 
+treatment, they are generally confined to standalone operations, 
+neglecting the potential synergies achievable through coordination with 
+external energy systems.
+1.2.2. Interactions between WWTPs and external systems
+Given the energy regulation potential of WWTPs, numerous studies 
+have shifted focus toward their interaction with external infrastructures. 
+Early research [14–17] primarily explored the economic feasibility of 
+integrating PV systems and microbial fuel cell technology into WWTPs 
+to enhance energy self-sufficiency and grid sustainability. With the 
+utilization of biogas-to-energy pathways [18,19] and reclaimed water 
+[20], the role of the WWTP has expanded beyond electricity to include 
+interactions with natural gas networks and the WDN. However, in these 
+studies, the WWTP is often treated as a passive resource or load inte­
+grated into the external power, gas, or water networks, rather than as an 
+independent decision-maker.
+To date, only a limited number of studies have investigated the co­
+ordinated operation between WWTPs and external systems. References 
+[21] and [22] studied the coordinated economic dispatch of the WWTP 
+and power systems while incorporating the internal process constraints 
+of the plant. References [23] and [24] addressed the coordinated 
+operation of power-gas and power-water systems involving WWTP en­
+ergy consumption; however, the wastewater treatment processes were 
+not explicitly formulated in their scheduling models. To the best of our 
+knowledge, no existing literature has yet achieved simultaneous 
+tripartite coordinated operation involving the WWTP, PDN, and WDN. 
+Therefore, the development of a multi-stakeholder coordinated sched­
+uling framework for the WWTP-PDN-WDN nexus remains a significant 
+research gap.
+1.2.3. Game theory applications in the water-energy nexus
+To address the conflicts of interest and coordination challenges 
+among multiple independent stakeholders, game theory provides a 
+rigorous analytical framework for modeling strategic interactions. 
+Among various models, the Stackelberg game is particularly well-suited 
+for systems with hierarchical structures and sequential decision-making 
+[25,26].
+In the operation of energy systems, Stackelberg games are widely 
+employed to coordinate interactions between system operators and 
+participants. For instance, models have been developed to optimize 
+service pricing and power management between IES operators (leaders) 
+and end-users, as well as community-level IESs (followers) [27–30]. 
+Similar paradigms have been proposed to coordinate an advanced vir­
+tual power plant (leader) with distributed generation aggregators (fol­
+lowers) [31], and a distribution company (leader) with citizen energy 
+communities (followers) [32]. These studies demonstrate that 
+game-theoretic scheduling can effectively maximize both the economic 
+benefits of all stakeholders and the overall system efficiency.
+Within the water-energy nexus, game theory has been increasingly 
+applied to optimize the joint operation of interconnected infrastructure 
+systems. Recent studies have employed bi-level and tri-level Stackelberg 
+games to manage resource allocation among basin authorities, munic­
+ipal water users, and energy providers [33–35]. In addition, Reference 
+[36] proposed a non-cooperative hybrid game model, in which a 
+Stackelberg game is adopted at the upper level to balance reservoir 
+hydropower generation and urban water resource allocation. Specif­
+ically, Reference [37] modeled the allocation of treated wastewater 
+between sewage departments and regional districts to balance the 
+transfer costs and water demand.
+However, existing game-theoretic models often overlook the internal 
+physical processes of the WWTP and the hierarchical interactions among 
+the PDN, WDN, and WWTP. These unresolved challenges necessitate a 
+more sophisticated game-theoretic framework to achieve systemic 
+optimization in the water-energy nexus.
+1.3. Research gaps and contributions
+Based on the comprehensive literature review in Section 1.2, several 
+critical research gaps are identified: 
+• Most existing multi-energy coordination studies treat WWTPs as 
+passive resources or loads integrated into external infrastructures, 
+such as the PDN, WDN, or natural gas network. Consequently, the 
+internal physical processes of wastewater treatment and the strategic 
+decision-making behaviors of WWTPs are rarely modeled explicitly.
+• While bilateral interactions (e.g., PDN-WWTP or PDN-WDN) have 
+been investigated, a comprehensive framework that simultaneously 
+captures the strategic interactions and conflicting interests among 
+the PDN, WDN, and WWTP has yet to be established.
+To bridge these gaps, this study proposes a bi-level Stackelberg game 
+framework to enable coordinated operation among the WWTP, PDN, 
+and WDN. A detailed comparison between the proposed approach and 
+existing literature is summarized in Table 1.
+The primary contributions of this work are as follows: 
+• The WWTP is modeled as an active power prosumer and a reclaimed 
+water supplier by explicitly incorporating detailed internal process 
+constraints, such as aeration intensity, pumping energy, and sludge- 
+to-biogas conversion, into the coordinated scheduling framework.
+• A tripartite coordination architecture for the PDN-WDN-WWTP 
+nexus is proposed to capture the cross-sector interactions between 
+electricity supply, water distribution, and wastewater treatment.
+• A hierarchical bi-level Stackelberg game-based strategy is developed 
+to resolve stakeholder conflicts. It features a nested structure where 
+the PDN acts as the primary leader and the WDN as a secondary 
+leader in the lower-level game. This sequential framework effectively 
+coordinates the strategic interactions among the PDN, WDN, and 
+WWTP.
+The remainder of this paper is organized as follows. Section 2 illus­
+trates the water-energy nexus and the coupling relationships among the 
+Table 1 
+Comparison between the proposed approach and the existing literature.
+Ref.
+Involvement of 
+WWTP
+Internal 
+Process 
+Modeling
+Coordination 
+Scope
+Decision-making 
+Mechanism
+[7,8]
+No (General 
+MG)
+−
+System 
+scheduling
+Centralized/ 
+decentralized 
+optimization
+[9–13]
+Yes
+Yes
+Internal 
+optimization
+Centralized 
+optimization
+[14–20]
+Yes
+No
+Passive 
+interaction
+Centralized 
+optimization
+[21,22]
+Yes
+Yes
+PDN-WWTP 
+(Bilateral)
+Coordinated 
+optimization
+[23]
+Yes
+No
+PDN-Natural 
+gas network
+Coordinated 
+optimization
+[24]
+Yes
+No
+PDN-WDN 
+(Bilateral)
+Coordinated 
+optimization
+[27–32]
+No (General 
+power system 
+or IES)
+−
+Bilateral
+Stackelberg 
+game
+[33,34]
+No (Water 
+system)
+−
+Bilateral
+Stackelberg 
+game
+[35,36]
+No (Energy- 
+water system)
+−
+Bilateral
+Stackelberg 
+game
+[37]
+Yes
+No
+Sewage Dept.- 
+Water users 
+(Bilateral)
+Stackelberg 
+game
+This 
+work
+Yes
+Yes
+WWTP-PDN- 
+WDN 
+(Tripartite)
+Bi-level 
+Stackelberg 
+game
+H. Cui et al.                                                                                                                                                                                                                                      
+Electric Power Systems Research 261 (2026) 113451 
+3 
+
+PDN, WDN, and WWTP. Section 3 presents the scheduling models of the 
+involved entities. Subsequently, Section 4 formulates the hierarchical bi- 
+level Stackelberg game and its solution algorithm. Section 5 validates 
+the proposed strategy through case studies, while Section 6 concludes 
+the paper and outlines future research.
+2. Water-energy nexus among WWTP, PDN, and WDN
+Fig. 1 illustrates the tripartite coupling architecture, where the PDN, 
+WDN, and WWTP are physically interconnected through multi- 
+dimensional energy-water flows. The WWTP serves as the central hub 
+of this integrated system. Internally, it is equipped with on-site PV sys­
+tems and BESS to enhance operational self-sufficiency. A key feature of 
+the facility is the sludge-to-biogas conversion process, where the pro­
+duced biogas is utilized for on-site power generation. To maintain the 
+optimal temperature for anaerobic digestion, an electric boiler and a 
+thermal energy storage (TES) system are integrated into the thermal 
+management module. The WWTP also interacts with the external nat­
+ural gas network to balance its biogas supply through bidirectional 
+exchange.
+Beyond its internal operations, the WWTP is physically coupled with 
+the PDN and WDN. The PDN provides supplemental electricity to power 
+energy-intensive processes, such as aeration and pumping, while 
+potentially receiving feedback power from the WWTP. Regarding the 
+water-side coupling, the WWTP functions as a reliable supplier of 
+reclaimed water for the WDN, thereby reducing freshwater extraction 
+and linking the operational strategies of the two infrastructures. 
+Furthermore, the WDN is intrinsically connected to the PDN through its 
+electrically-driven water pumps. These intricate interdependencies form 
+the physical foundation for the subsequent hierarchical game-theoretic 
+scheduling framework.
+3. Mathematical modeling of the tripartite stakeholders
+This section formulates the mathematical scheduling models for the 
+PDN, WDN, and WWTP. To maintain conciseness, the detailed technical 
+constraints of the three stakeholders are provided in the online supple­
+mentary materials [38], while the following subsections focus on their 
+respective optimization objectives and key operational requirements.
+3.1. WWTP
+The WWTP operates as an active prosumer and a reclaimed water 
+supplier, with the objective of minimizing its total net operational cost. 
+Its operation is subject to multiple technical constraints, including 
+operational limits of core treatment units (e.g., intake pumps and 
+aeration blowers), energy facility constraints (e.g., BESSs and biogas 
+generators), wastewater treatment quality standards, and the mass- 
+energy balance requirements of the treatment process. To mitigate its 
+environmental impact, carbon capture equipment is integrated into the 
+biogas generator to capture and sequester CO2 emissions.
+In this study, the scheduling horizon T is set to 24 h with a time step 
+Δt of 1 hour. The scheduling objective of the WWTP is to minimize the 
+total net cost over the optimization horizon. As the focus is on short-term 
+operational scheduling with fixed infrastructure, investment costs are 
+not considered. The objective function is formulated as: 
+minCA =
+∑
+t∈T
+(
+CAE,t + CAG,t −CAW,t + CAOM,t + CACO2,t
++ CACT,t + CACS,t + CAch,t + CAPV,t −CAen,t
+)
+(1) 
+where CAE,t and CAG,t denote the net expenditures for electricity ex­
+change with the PDN, the bidirectional trading with the natural gas 
+network, respectively. CAW,t reflects the revenue generated from sup­
+plying reclaimed water to the WDN. These interaction terms are defined 
+as: 
+⎧
+⎨
+⎩
+CAE,t = ζEA,tPEA,tΔt −ζAE,tPAE,tΔt
+CAG,t = ζgbmax
+{
+qg,t, 0
+}
+Δt −ζgsmax
+{
+−qg,t, 0
+}
+CAW,t = ζAW,tqAW,tΔt
+(2) 
+The methanol procurement costs CAch,t reflect the expenditure for the 
+denitrification process, while CAPV,t accounts for penalty cost with PV 
+curtailment. Furthermore, CAOM,t encompasses the operation and 
+maintenance (O&M) costs of all WWTP facilities, calculated as: 
+⎧
+⎪
+⎪
+⎨
+⎪
+⎪
+⎩
+CAch,t = ζch
+(
+qrech,t −qch,t
+)
+Δt
+CAPV,t = ζcp
+(
+PPV,ava,t −PPV,t
+)
+Δt
+CAOM,t =
+[
+ζbt
+(
+Pbt,dis,t + Pbt,cha,t
+)
++ ζhr
+(
+Hhr,cha,t + Hhr,dis,t
+)
++ ζebHeb,t + ζgPg,t
++ζcPc,t + ζCCPCC,t + ζELPEL,t + ζrPr,t + ζaPʹ
+a,t + ζthPth,t + ζpvPPV,t
+]
+Δt
+(3) 
+Environmental subsidies CAen,t are provided based on improvements 
+in water quality achieved through the treatment process and are quan­
+tified using relevant water quality indicators before and after treatment: 
+CAen,t =
+(
+qse,dis,t + ζ3qth,dis,t
+)[
+ζenb
+(
+CBin,t −CBout,t
+)
++ ζent
+(
+CTin,t −CTout,t
+)]
+Δt
+(4) 
+Fig. 1. Schematic diagram of the water-energy interaction among WWTP, PDN, and WDN.
+H. Cui et al.                                                                                                                                                                                                                                      
+Electric Power Systems Research 261 (2026) 113451 
+4 
+
+Carbon-related costs are comprehensively considered in this study. 
+Carbon emissions arise from the biochemical treatment process, meth­
+anol dosing, and biogas-based generation. An emission baseline is 
+established according to water quality requirements, and emissions 
+exceeding this baseline are subject to penalties [9]. In addition, the 
+WWTP participates in the carbon market by purchasing or selling carbon 
+emission allowances. Accordingly, carbon emission penalty CACO2,t, 
+carbon trading cost CACT,t, and carbon sequestration cost CACS,t are 
+formulated as follows: 
+⎧
+⎨
+⎩
+CACO2,t = ζCO2
+(
+qaCO2,t + qgCO2,t + qchCO2,t −qrefCO2,t
+)
+Δt
+CACT,t = ζcet
+(
+qgCO2,t −qCCCO2,t −qcetCO2,t
+)
+Δt
+CACS,t = ζCSqCSCO2,tΔt
+(5) 
+3.2. PDN
+The branch flow model (DistFlow) [39] is employed to represent the 
+power flow equations of the PDN. The operational feasibility of the 
+network is ensured by various technical constraints, including nodal 
+voltage limits, branch power limits, and operational boundaries of DERs.
+The scheduling objective of the PDN is to minimize its total net 
+operational cost over the scheduling horizon. The objective incorporates 
+energy procurement expenses, power loss costs, O&M costs, and trans­
+action revenues from other stakeholders. The objective is formulated as: 
+minCE =
+∑
+t∈T
+(
+CEe,t + CEl,t + CEOM,t + CEc,t −CAE,t −CEW,t
+)
+(6) 
+where the cost components are defined as: 
+⎧
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎨
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎩
+CEe,t = ζEe,tPEe,tΔt
+CEl,t =
+∑
+(i,j)∈E P
+ζlrijlij,tΔt
+CEOM,t =
+∑
+j∈N P
+ζwiPw,j,tΔt
+CEc,t =
+∑
+j∈N P
+ζcw
+(
+Pw,j,t −Pw,ava,t
+)
+Δt
+CEW,t =
+∑
+j∈N P
+ζEW,tPEW,j,tΔt
+(7) 
+Specifically, CEe,t represents the cost of purchasing electricity from 
+the upstream grid, and CEl,t denotes the network loss cost. CEOM,t and 
+CEc,t account for the O&M costs and wind curtailment penalties, 
+respectively. Finally, CAE,t and CEW,t reflect the revenues generated from 
+electricity transactions with the WWTP and the WDN, respectively, 
+thereby serving as the economic interfaces between the PDN and the 
+other two infrastructures.
+3.3. WDN
+The hydraulic operation of the WDN is governed by pipe and pump 
+characteristic equations and operational constraints on nodal pressure, 
+pipe flow velocity, and reservoir storage [40].
+The scheduling objective of the WDN is to minimize its total opera­
+tional cost over the scheduling horizon, formulated as: 
+minCW =
+∑
+t∈T
+(
+CAW,t + CEW,t + CWq,t
+)
+(8) 
+CWq,t =
+∑
+m∈N W
+ζWq,tqW,m,tΔt
+(9) 
+where CAW,t and CEW,t denote the expenditures associated with the 
+WWTP and the PDN, as defined in (2) and (7), respectively, while CWq,t 
+denotes the cost of purchasing freshwater from traditional water sources 
+or treatment plants.
+4. Hierarchical bi-level Stackelberg game framework and its 
+solution
+4.1. Game structure and interaction mechanism
+Based on the individual optimization models developed in Section 3, 
+this section defines the hierarchical interaction mechanism. As illus­
+trated in Fig. 2, the coordination among the WWTP, PDN, and WDN is 
+structured as a hierarchical bi-level Stackelberg game.
+The PDN acts as the primary upper-level leader with a first-mover 
+advantage, determining the internal electricity transaction prices 
+(ζAE,t, ζEA,t, ζEW,t) to guide the energy consumption and generation 
+patterns of the lower stakeholders. Within the lower level, a nested 
+leader-follower relationship is established to manage the coupling be­
+tween the WWTP and WDN. While both the WDN and WWTP simulta­
+neously respond to the PDN’s electricity price signals, the WDN further 
+serves as a secondary leader for the reclaimed water market. Specif­
+ically, the WDN determines the water purchase price (ζAW,t) and the 
+required electricity (PEW,j,t) from the PDN. The WWTP, acting as the 
+ultimate follower, optimizes its internal scheduling to satisfy both the 
+PDN’s energy requirements and the WDN’s water demand.
+This “Price-Response” sequence forms a feedback loop where energy 
+and water flows are transmitted back to the upper tiers to ensure 
+strategy consistency. The game reaches a Stackelberg equilibrium when 
+no participant can further reduce its operational cost by unilaterally 
+changing its strategy.
+4.2. Solution methodology
+The hierarchical Stackelberg game formulated in Section 4.1 pre­
+sents significant computational challenges. Conventionally, such bi- 
+level problems are solved by transforming them into single-level pro­
+grams via Karush-Kuhn-Tucker (KKT) conditions. However, since the 
+proposed game model involves nonlinear hydraulic constraints in the 
+WDN and discrete on/off decisions for pumps in the WWTP, KKT-based 
+approaches are difficult to apply directly.
+Alternatively, the best-response iteration (BRI, also known as fixed- 
+point iteration) algorithm is commonly adopted to solve bi-level prob­
+lems by iteratively updating the upper- and lower-level decisions. Spe­
+cifically, at each iteration, the lower-level optimization is solved given 
+the fixed upper-level decisions, after which the leader’s strategy is 
+updated based on the followers’ responses. This process is repeated until 
+convergence is achieved. Although the BRI method is straightforward to 
+implement, it relies heavily on the initial solution and may suffer from 
+poor convergence or numerical oscillations when the coupling among 
+stakeholders is strong and the problem is non-convex, as is the case in 
+this study.
+To address these limitations, a nested genetic algorithm (GA) 
+framework is developed, as summarized in Algorithm 1. The outer GA 
+corresponds to the upper-level PDN decision-making problem shown in 
+Fig. 2, while the inner GA solves the lower-level Stackelberg game be­
+tween the WDN and the WWTP. In the outer GA loop, the PDN optimizes 
+its 24-hour pricing strategies (ζAE,t, ζEA,t, ζEW,t) to minimize its opera­
+tional cost. The resulting electricity price profiles are then passed to the 
+inner GA, where the WDN optimizes the reclaimed water price (ζAW,t). 
+Given the electricity and reclaimed water prices, the WWTP and WDN 
+determine their optimal operational responses, including reclaimed 
+water supply (qAW,t) and power exchanges with the PDN (PEW,j,t, PAE,t, 
+PEA,t). The reciprocal of the WDN operational cost is adopted as the 
+fitness of the inner-layer individual. Once the inner GA converges, the 
+equilibrium power exchange responses (PEW,j,t, PAE,t, PEA,t) are returned 
+to the outer GA to evaluate the outer-layer individuals’ fitness, defined 
+as the reciprocal of the PDN operational cost. Through this nested 
+structure, the PDN pricing strategy fully accounts for the coordinated 
+responses of the WDN and WWTP.
+Note that although multiple degenerate optimal responses (ties) and 
+H. Cui et al.                                                                                                                                                                                                                                      
+Electric Power Systems Research 261 (2026) 113451 
+5 
+
+multiple equilibria may mathematically exist in the proposed bi-level 
+game, they are resolved computationally in this study. By employing 
+deterministic commercial MILP solvers to obtain unique and reproduc­
+ible operational responses under any given pricing profile, and utilizing 
+the global search capability of the nested GA, the numerical stability and 
+consistency of the simulated game equilibrium are practically ensured.
+5. Case studies
+5.1. Simulation setup
+The effectiveness of the proposed bi-level Stackelberg game-based 
+scheduling method is validated through a case study on an integrated 
+test system comprising the benchmark IEEE 33-bus PDN and a 12-node 
+Fig. 2. Hierarchical game framework for the coupled PDN-WDN-WWTP system.
+Algorithm 1 
+Nested GA for the bi-level Stackelberg game.
+Input: Network parameters and constraints; GA parameters.
+Output: Optimal electricity price profiles of the PDN; optimal reclaimed water price profiles of the WDN; optimal operational responses of the WDN and WWTP; objective values.
+1. Initialize the outer GA Population Xout, where each individual xout∈Xout represents the PDN electricity prices (ζAE,t, ζEA,t, ζEW,t).
+2. While the outer GA is not converged do
+3. For each individual xout∈Xout do
+4. Pass xout to the inner GA as the electricity price information.
+5. Initialize the inner GA population Xin, where each individual xin∈Xin represents the WDN reclaimed water prices ζAW,t.
+6.While the inner GA is not converged do
+7. For each individual xin∈Xin do
+8. Solve the WWTP scheduling problem under {xin, xout}, obtaining: (PAE,t, PEA,t, qAW,t).
+9. Solve the WDN scheduling problem based on qAW,t, obtaining: PEW,j,t.
+10. Evaluate the WDN operational cost and use its reciprocal as the fitness of xin.
+11. End for
+12. Update Xin using selection, crossover, and mutation.
+13. End while
+14. Return the optimal electricity-related responses 
+(
+P∗
+AE,t,P∗
+EA,t,P∗
+EW,j,t
+)
+from the converged inner-layer solution to the outer GA.
+15. Solve the PDN scheduling problem based on the returned electricity-related responses.
+16. Evaluate the PDN operational cost and use its reciprocal as the fitness of xout.
+17. End for
+18. Update Xout using selection, crossover, and mutation.
+19. End while
+20. Return optimal electricity prices, reclaimed water prices, and operational responses.
+Fig. 3. Topology of the test system.
+H. Cui et al.                                                                                                                                                                                                                                      
+Electric Power Systems Research 261 (2026) 113451 
+6 
+
+WDN, with an integrated WWTP. This configuration is practical because 
+the power capacity and voltage rating of the WWTP are compatible with 
+the operating scale of the IEEE 33-bus PDN. The interconnected topol­
+ogy is illustrated in Fig. 3, where the WWTP is connected to electrical 
+bus E15 and water source node W10.
+To ensure transparency and reproducibility, the detailed case study 
+data and their corresponding source references are provided in an online 
+document (see [38]). The WWTP is designed for domestic wastewater 
+treatment with an average daily treatment capacity of 30,000 m3/d. The 
+influent biochemical oxygen demand (BOD) and total Kjeldahl nitrogen 
+(TKN) concentrations are 220 mg/L and 40 mg/L, respectively, while 
+the detailed equipment parameters of the WWTP are provided in [41]. 
+The carbon emission penalty factor is set to 30 CNY/tCO2 [9]. The 
+profiles of PV generation, influent wastewater flow, and load demands 
+for both the PDN and WDN are adopted from [38], where the PDN load 
+profile excludes the electricity consumption of the WWTP and the water 
+pumps in the WDN. The electricity tariff and reclaimed water purchasing 
+price data are also obtained from [38].
+All numerical simulations are conducted on a laptop equipped with 
+an Intel Core i5–10,210 U CPU (1.60 GHz) and 8 GB of RAM. The in­
+tegrated models for the PDN, WDN, and WWTP are implemented in 
+MATLAB R2021b, using the YALMIP toolbox and the Gurobi solver for 
+optimization.
+The effectiveness of the proposed method is evaluated from three 
+aspects: (1) algorithm performance comparison between the BRI method 
+and the proposed nested GA; (2) system-level analysis under different 
+operational modes, including economic performance, electricity and 
+water pricing, and the effectiveness of the Stackelberg game mechanism; 
+and (3) structural analysis of different game frameworks.
+5.2. Algorithm performance analysis
+To verify the efficacy of the proposed nested GA, the Stackelberg 
+game model is solved using both the GA and the benchmark BRI method. 
+For the latter, two distinct initialization strategies are evaluated: Strat­
+egy A1, which utilizes the boundaries of the electricity price interval as 
+starting points, and Strategy A2, which employs the interval midpoint 
+values. In addition, the nested GA is tested through multiple indepen­
+dent runs with different random seeds to examine the consistency of the 
+obtained equilibrium. The comparative performance metrics are sum­
+marized in Table 2, and the operating cost convergence curves of the 
+stakeholders are presented in Fig. 4.
+Table 2 highlights the BRI’s oscillatory behavior and acute sensitivity 
+to initial values, which lead to inconsistent iteration counts. Despite 
+these fluctuations, all three methods yield highly consistent results, with 
+a maximum relative error of only 0.09%. While the BRI suffers from 
+initialization sensitivity, the nested GA utilizes fitness-driven optimiza­
+tion to accelerate convergence and reduce computational burden. 
+Consequently, the nested GA effectively meets the stringent accuracy 
+and efficiency demands of practical day-ahead scheduling.
+Fig. 4 illustrates the distinct convergence patterns of the game’s 
+stakeholders. As iterations progress, PDN operating costs decrease while 
+WWTP costs gradually increase. This trend reflects the leader-follower 
+dynamics inherent in Stackelberg games, underscoring the dominant 
+role of the PDN as the leader.
+Consequently, the consistent convergence of the nested GA and the 
+BRI-based algorithms starting from distinct initializations also 
+demonstrates that the proposed bi-level game successfully converges to 
+a unique and stable equilibrium.
+5.3. System-level performance analysis of operational modes
+The system performance is evaluated under four operational modes, 
+which are described as follows:
+Mode 1: The WWTP, PDN, and WDN operate independently. The 
+WWTP follows fixed electricity and water prices as specified in [38].
+Mode 2: The electricity pricing scheme in Mode 1 is modified ac­
+cording to Table 3 in [38], while other conditions remain unchanged.
+Mode 3: The water price in Mode 1 is adjusted by reducing the price 
+at node W10 to 4.7 CNY/m3.
+Mode 4: The proposed hierarchical bi-level Stackelberg game 
+framework is implemented.
+5.3.1. Economic performance analysis
+Table 3 summarizes the scheduling results across the four opera­
+tional modes. In Modes 1–3, subjective pricing schemes cause uneven 
+cost fluctuations among entities, failing to ensure economic fairness. 
+Conversely, the proposed Mode 4 significantly outperforms the baseline 
+(Mode 1), reducing the total operational cost by 28.5%. Specifically, for 
+the WWTP, Mode 4 decreases process energy consumption, carbon 
+emissions, and PV curtailment by 2.6%, 1.3%, and 22.2%, respectively. 
+These metrics validate the effectiveness of the proposed Stackelberg 
+game framework in minimizing operational costs while securing 
+tangible benefits in energy conservation and emission reduction.
+5.3.2. Electricity and water pricing analysis
+This section evaluates the impact of water and electricity pricing on 
+individual stakeholders by comparing the outcomes of Modes 1–3. Fig. 5
+illustrates the transaction volumes among the participants. For clarity, 
+sold and purchased volumes are represented as positive and negative, 
+respectively.
+Fig. 5(a) illustrates the operational dynamics under Mode 1. The 
+WWTP strategically adjusts its treatment processes and BESS to capi­
+talize on price fluctuations. Specifically, it maximizes electricity sales to 
+the PDN during peak pricing periods and increases power purchases 
+during valley periods. Notably, during the peak pricing window (e.g., 
+hours 19 to 22), the WWTP achieves temporary energy self-sufficiency 
+by reducing secondary and tertiary treatment flows while simulta­
+neously dispatching the BESS and biogas generators.
+Under the earlier and extended peak pricing of Mode 2, the plant 
+increases its electricity procurement during valley hours 3 to 6 and 
+advances its electricity sales between hours 7 and 9. This operational 
+adjustment enables the plant to maintain sustained energy self- 
+sufficiency from hours 19 to 22, whereas Mode 1 requires a swift re­
+turn to power purchases to meet internal energy demands. Ultimately, 
+these behavioral shifts highlight the critical interdependence between 
+the operational decisions of the WWTP and the electricity pricing signals 
+from the PDN.
+Compared to Mode 1, Mode 3 solely reduces the nodal water price 
+while maintaining baseline electricity interactions. Driven by this cost 
+reduction, the WDN significantly increases its reclaimed water pur­
+chases to meet demand, a growth explicitly shown in Fig. 5(b). Conse­
+quently, the increased wastewater treatment workload requires 
+additional power, marginally raising the overall electricity procurement 
+of the WWTP relative to Mode 1.
+5.3.3. Analysis of Stackelberg game effectiveness
+To demonstrate the effectiveness of the Stackelberg game framework 
+in achieving systemic coordination, this section contrasts the scheduling 
+outcomes of Mode 1 and Mode 4. Fig. 6 details the optimized electricity 
+and water prices, alongside the resulting resource exchanges among the 
+stakeholders under Mode 4.
+As shown in Fig. 6(a), under Mode 1, the WWTP curtails operating 
+Table 2 
+Comparative results between the nested GA and BRI method.
+Algorithm
+Nested GA
+A1
+A2
+PDN cost/CNY
+11,815.2
+11,804.1
+11,804.1
+WDN cost/CNY
+32,011.7
+32,006.5
+32,006.5
+WWTP cost/CNY
+−10,200.7
+−10,194.9
+−10,194.9
+Computing time/s
+1225
+1974
+2691
+H. Cui et al.                                                                                                                                                                                                                                      
+Electric Power Systems Research 261 (2026) 113451 
+7 
+
+costs through valley-period electricity procurement and peak-period 
+power sales to the PDN. To minimize PV curtailment, the WWTP con­
+tinues exporting power to the PDN. Although the overall power ex­
+change volume remains relatively stable, Mode 4 successfully reduces 
+the total power purchases of the WWTP. This reduction is driven by 
+lower electricity prices between hours 19 and 21, which advances the 
+valley period and unlocks greater operational flexibility for the WWTP. 
+Leveraging this flexibility, the plant optimizes its procurement and sales 
+across valley and flat periods, while the PDN lowers the WWTP selling 
+prices during peak intervals. This coordinated strategy mitigates the 
+PDN’s economic losses from the previous “high-sale, low-purchase” 
+pattern while enhancing the WWTP’s flat-hour revenue, thereby 
+balancing the financial interests of both stakeholders.
+Fig. 6(b) illustrates the water exchange dynamics. Under Mode 1, the 
+WDN lowers pump flow rates during peak electricity periods to mini­
+mize power costs. Furthermore, because the WWTP’s reclaimed water is 
+more expensive than alternative sources in this mode, the WDN curtails 
+its purchases for economic efficiency. Conversely, Mode 4 offers cheaper 
+reclaimed water, significantly boosting transaction volumes. To balance 
+stakeholder interests, Mode 4 employs a dynamic pricing strategy that 
+raises water prices during low-demand periods and reduces them under 
+high exchange volumes.
+5.4. Impact of game structure
+In practice, large- and medium-sized WWTPs often serve as stable 
+water sources for the WDN, enabling them to influence the scheduling 
+behavior of the WDN. Consequently, WWTPs may act as secondary 
+leaders within the Stackelberg framework. To investigate this hierar­
+chical structure, this section introduces Mode 5 and compares it with 
+Mode 4. Under Mode 5, the PDN, WWTP, and WDN act as the primary 
+leader, secondary leader, and follower, respectively.
+The main scheduling results under Mode 5 are shown in Table 4. By 
+assuming the secondary leader role, the WWTP reduces its operating 
+cost compared to Mode 4, whereas the WDN cost increases. These out­
+comes demonstrate that the game hierarchy directly dictates individual 
+financial returns. Given the strategic advantage of leaders, the game 
+framework must be carefully selected based on the actual roles and 
+operational status of each stakeholder in the market.
+6. Conclusion
+This paper investigates the coordinated scheduling of a tripartite 
+Fig. 4. Cost convergence curve of the stakeholders.
+Table 3 
+Scheduling results of various entities under four operational modes.
+Operational modes
+Mode 1
+Mode 2
+Mode 3
+Mode 4
+PDN cost/CNY
+12,285.1
+11,243.9
+12,107.3
+11,815.2
+WDN cost/CNY
+40,623.0
+40,351.7
+39,486.9
+32,011.7
+WWTP cost/CNY
+−5860.5
+−5076.2
+−6856.2
+−10,200.7
+Total cost/CNY
+47,047.6
+46,519.4
+44,538.0
+33,626.2
+process energy/(kWh)
+10,863.5
+10,742.1
+10,921.5
+10,578.4
+curtailed PV power/(kWh)
+251.4
+248.6
+255.1
+200.4
+relative carbon emissions/kg
+7853.1
+7850.2
+7869.4
+7748.7
+H. Cui et al.                                                                                                                                                                                                                                      
+Electric Power Systems Research 261 (2026) 113451 
+8 
+
+water-energy nexus involving the WWTP, PDN, and WDN. By explicitly 
+modelling the internal physical processes of the WWTP and the cross- 
+sector couplings, a hierarchical bi-level Stackelberg game framework 
+is developed to address the conflicting interests of independent stake­
+holders. The main conclusions are summarized as follows: 
+• The proposed bi-level Stackelberg game framework effectively co­
+ordinates the operation of the WWTP, PDN, and WDN through 
+electricity and water price interactions. Compared with independent 
+operation, the proposed coordination strategy significantly reduces 
+total operating costs, energy consumption, and carbon emissions. It 
+also balances the economic benefits of individual participants while 
+enhancing the overall sustainability of the integrated water-energy 
+system.
+• The hierarchical game structure has a significant impact on the 
+benefits of each participant. As leaders in the game, the PDN and 
+WDN (as a sub-leader) can guide the behavior of followers through 
+pricing mechanisms. This framework mitigates the adverse effects of 
+arbitrary pricing decisions and enables more flexible operation of the 
+followers, thereby improving overall system performance.
+• The nested GA proves to be an effective solution method for the 
+proposed bi-level game. Compared with the BRI method, the nested 
+GA achieves comparable solution accuracy while significantly 
+reducing computation time. Moreover, it avoids dependence on 
+initial values, demonstrating better robustness and suitability for 
+day-ahead scheduling applications.
+From a practical perspective, the proposed framework provides a 
+feasible approach for coordinating independently operated water and 
+energy infrastructures through pricing-based interactions, thereby sup­
+porting the low-carbon and economically efficient operation of future 
+smart urban systems with increasing water-energy interactions.
+However, this study does not consider uncertainties in renewable 
+energy generation and wastewater inflow. Future work will incorporate 
+uncertainty modeling and investigate cooperative strategies among the 
+three stakeholders to further enhance system performance.
+CRediT authorship contribution statement
+Hailong Cui: Writing – original draft, Visualization, Software, 
+Methodology. Shiyi Shi: Writing – review & editing, Methodology, 
+Conceptualization. Shibo Liu: Writing – review & editing, Visualization, 
+Data curation. Xia Zhao: Writing – review & editing, Supervision, 
+Formal analysis, Conceptualization.
+Fig. 5. Interaction between electricity and water under Modes 1, 2, and 3.
+Fig. 6. Optimized prices and interaction between each entity under Modes 1 and 4.
+Table 4 
+Costs of each entity under Modes 4 and 5.
+Operational modes
+Mode 4
+Mode 5
+PDN cost/CNY
+11,815.2
+12,047.0
+WWTP cost/CNY
+−10,200.7
+−12,143.8
+WDN cost/CNY
+32,011.7
+33,053.8
+Total cost/CNY
+33,626.2
+32,957.0
+H. Cui et al.                                                                                                                                                                                                                                      
+Electric Power Systems Research 261 (2026) 113451 
+9 
+
+Declaration of competing interest
+The authors declare that they have no known competing financial 
+interests or personal relationships that could have appeared to influence 
+the work reported in this paper.
+Data availability
+Data will be made available on request.
+References
+[1] S. Radini, E. Marinelli, Ç. Akyol, et al., Urban water-energy-food-climate nexus in 
+integrated wastewater and reuse systems: cyber-physical framework and 
+innovations, Appl. Energy 298 (2021) 117268, https://doi.org/10.1016/j. 
+apenergy.2021.117268.
+[2] G. Mannina, H. Gulhan, B.J Ni, Water reuse from wastewater treatment: the 
+transition towards circular economy in the water sector, Bioresour. Technol. 363 
+(2022) 127951, https://doi.org/10.1016/j.biortech.2022.127951.
+[3] S. Nakkasunchi, C. Brandoni, Energy decarbonisation of wastewater treatment 
+plants in Murcia-case study, J. Environ. Manage 387 (2025) 125874, https://doi. 
+org/10.1016/j.jenvman.2025.125874.
+[4] A. Gong, G. Wang, X. Qi, et al., Energy recovery and saving in municipal 
+wastewater treatment engineering practices, Nat. Sustain. 8 (1) (2025) 112–119, 
+https://doi.org/10.1038/s41893-024-01478-5.
+[5] Z. Liu, Z. Xu, X. Zhu, et al., Calculation of carbon emissions in wastewater 
+treatment and its neutralization measures: a review, Sci. Total Environ. 912 (2024) 
+169356, https://doi.org/10.1016/j.scitotenv.2023.169356.
+[6] W.J. Du, J.Y. Lu, Y.R. Hu, et al., Spatiotemporal pattern of greenhouse gas 
+emissions in China’s wastewater sector and pathways towards carbon neutrality, 
+Nature Water 1 (2) (2023) 166–175, https://doi.org/10.1038/s44221-022-00021- 
+0.
+[7] A. Karimi, M. Nayeripour, A.R Abbasi, Coordination in islanded microgrids: 
+integration of distributed generation, energy storage system, and load shedding 
+using a new decentralized control architecture, J. Energy Storage 98 (2024) 
+113199, https://doi.org/10.1016/j.est.2024.113199.
+[8] A. Karimi, M. Nayeripour, A.R Abbasi, Smart scheduling of microgrids: an 
+integrated approach for power management, voltage control, and distributed 
+solutions, Results. Eng. 28 (2025) 107428, https://doi.org/10.1016/j. 
+rineng.2025.107428.
+[9] X. Zhao, S. Shi, Y. Mao, et al., Coordinated “water-energy-carbon” dispatching in 
+urban wastewater treatment plants, Power Syst. Technol. 48 (05) (2024) 
+1918–1928, https://doi.org/10.13335/j.1000-3673.pst.2023.1160.
+[10] Q. Shao, C. Li, Y. Yi, et al., Low-carbon scheduling of electricity consumption in 
+wastewater treatment plant by using photovoltaic system, Sci. Total Environ. 933 
+(2024) 173062, https://doi.org/10.1016/j.scitotenv.2024.173062.
+[11] R. Zou, W. Zhang, X. Zeng, et al., Hydrogen energy-integrated energy system 
+planning for wastewater treatment plants, Int. J. Hydrogen. Energy 149 (2025) 
+150096, https://doi.org/10.1016/j.ijhydene.2025.150096.
+[12] Y. Wang, J. Li, S. Wang, et al., Operational optimization of wastewater reuse 
+integrated energy system, Energy 200 (2020) 117309, https://doi.org/10.1016/j. 
+energy.2020.117309.
+[13] T. Nakakubo, F. Okuno, S. Maki, et al., Demand response measures at a small-scale 
+wastewater treatment plant installed with a photovoltaic system, J. Clean. Prod. 
+516 (2025) 145730, https://doi.org/10.1016/j.jclepro.2025.145730.
+[14] M. Bey, A. Hamidat, T. Nacer, Eco-energetic feasibility study of using grid- 
+connected photovoltaic system in wastewater treatment plant, Energy 216 (2021) 
+119217, https://doi.org/10.1016/j.energy.2020.119217.
+[15] G. Tsekouras, P. Deligianni, F. Kanellos, et al., Microbial fuel cell for wastewater 
+treatment as power plant in smart grids: utopia or reality? Front. Energy Res. 10 
+(2022) 843768 https://doi.org/10.3389/fenrg.2022.843768.
+[16] S.S. Chamazkoti, A. Hajinezhad, S.F Moosavian, Feasibility study of a flexible 
+hybrid energy model with power-hydrogen production in wastewater treatment 
+plant, Energy Report. 11 (2024) 3189–3201, https://doi.org/10.1016/j. 
+egyr.2024.02.062.
+[17] M. Alrbai, S. Al-Dahidi, L. Al-Ghussain, et al., Minimizing grid energy consumption 
+in wastewater treatment plants: towards green energy solutions, water 
+sustainability, and cleaner environment, Sci. Total Environ. 926 (2024) 172139, 
+https://doi.org/10.1016/j.scitotenv.2024.172139.
+[18] M. Cottes, M. Mainardis, D. Goi, et al., Demand-response application in wastewater 
+treatment plants using compressed air storage system: a modelling approach, 
+Energies. (Basel) 13 (18) (2020) 4780, https://doi.org/10.3390/en13184780.
+[19] A. Stuhlmacher, A. Kody, M. Wu, Optimizing biogas use in wastewater treatment 
+plants for demand flexibility, Sustain. Energy, Grid. Netw. 43 (2025) 101825, 
+https://doi.org/10.1016/j.segan.2025.101825.
+[20] K. Oikonomou, M. Parvania, Optimal coordinated operation of interdependent 
+power and water distribution systems, IEEe Trans. Smart. Grid. 11 (6) (2020) 
+4784–4794, https://doi.org/10.1109/TSG.2020.3000173.
+[21] F. Moazeni, J. Khazaei, Co-optimization of wastewater treatment plants 
+interconnected with smart grids, Appl. Energy 298 (2021) 117150, https://doi. 
+org/10.1016/j.apenergy.2021.117150.
+[22] S. Shi, Z. Wu, Y. Mao, et al., Co-optimization of wastewater treatment plants 
+interconnected with power distribution system, in: 2023 IEEE Sustainable Power 
+and Energy Conference (iSPEC), IEEE, 2023, pp. 1–7, https://doi.org/10.1109/ 
+iSPEC58282.2023.10403058.
+[23] M. Shabanian-Poodeh, F. Ahmadi-darab, M. Shafie-khah, et al., Hybrid risk-based 
+transactive energy strategy for 100% renewable-powered energy systems 
+considering pump stations of wastewater treatment plants: a decentralized MILP 
+model, Energy 334 (2025) 137776, https://doi.org/10.1016/j. 
+energy.2025.137776.
+[24] S. Sharma, Q. Li, Decentralized optimization of energy-water nexus based on a 
+mixed-integer boundary compatible algorithm, Appl. Energy 359 (2024) 122588, 
+https://doi.org/10.1016/j.apenergy.2023.122588.
+[25] K. Li, N. Ye, S. Li, et al., Distributed collaborative operation strategies in multi- 
+agent integrated energy system considering integrated demand response based on 
+game theory, Energy 273 (2023) 127137, https://doi.org/10.1016/j. 
+energy.2023.127137.
+[26] H. Xie, J. Guo, Y. Li, et al., A price mechanism design for regional integrated energy 
+market considering carbon emissions, Electr. Power Syst. Res. 218 (2023) 109177, 
+https://doi.org/10.1016/j.epsr.2023.109177.
+[27] X. Liu, Low-carbon scheduling research of integrated energy system based on 
+Stackelberg game under sharing mode, Energy 303 (2024) 131928, https://doi. 
+org/10.1016/j.energy.2024.131928.
+[28] J. Wang, Z. Xu, Y. Sun, et al., Optimal configuration and pricing strategies for 
+electric-heat cloud energy storage: a Stackelberg game approach, Sustain. Energy 
+Technol. Assessment. 53 (2022) 102596, https://doi.org/10.1016/j. 
+seta.2022.102596.
+[29] Y. Li, B. Wang, Z. Yang, et al., Hierarchical stochastic scheduling of multi- 
+community integrated energy systems in uncertain environments via Stackelberg 
+game, Appl. Energy 308 (2022) 118392, https://doi.org/10.1016/j. 
+apenergy.2021.118392.
+[30] N. Liang, X. He, J. Tan, et al., Stackelberg game-based optimal scheduling for 
+multi-community integrated energy systems considering energy interaction and 
+carbon trading, Int. J. Electric. Power Energy Syst. 153 (2023) 109360, https://doi. 
+org/10.1016/j.ijepes.2023.109360.
+[31] A. Abdollahi, S.C Khavar, Enhancing the flexibility of decentralized energy 
+resources through bi-level optimization in intra-day regional markets, Renew. 
+Energy Focus 56 (2026) 100778, https://doi.org/10.1016/j.ref.2025.100778.
+[32] S. Mobahseri, M. Rashidinejad, A. Abdollahi, et al., A bi-level optimization model 
+for citizen energy communities towards sustainable development: a Stackelberg 
+game theory approach, in: 2024 9th International Conference on Technology and 
+Energy Management, IEEE, 2024, pp. 1–5, https://doi.org/10.1109/ 
+ICTEM60690.2024.10631984.
+[33] Q. Huang, C. Lv, Q. Feng, Stackelberg game based optimal water allocation from 
+the perspective of energy-water nexus: a case study of Minjiang River, China. J. 
+Cleaner Prod. 464 (2024) 142764, https://doi.org/10.1016/j. 
+jclepro.2024.142764.
+[34] K. Lu, S. Yang, Z. Wu, et al., Analysis of water rights allocation in Heilongjiang 
+province based on Stackelberg game model and entropy right method, 
+Sustainability 17 (16) (2025) 7407, https://doi.org/10.3390/su17167407.
+[35] E.J. Abraham, M. Di Martino, D. Kenefake, et al., A multi-parametric approach for 
+bi-level optimization within the energy-water nexus, Comput. Chem. Eng. 202 
+(2025) 109256, https://doi.org/10.1016/j.compchemeng.2025.109256.
+[36] Y. Yu, T. Zhou, R. Zhao, et al., Bi-level hybrid game model for optimal operation of 
+multi-function reservoir considering integrated water resource management, 
+Environ. Sci. Pollut. Res. 31 (41) (2024) 54026–54043, https://doi.org/10.1007/ 
+s11356-022-22932-x.
+[37] M.G. Mooselu, M.R. Nikoo, M. Latifi, et al., A multi-objective optimal allocation of 
+treated wastewater in urban areas using leader-follower game, J. Clean. Prod. 267 
+(2020) 122189, https://doi.org/10.1016/j.jclepro.2020.122189.
+[38] Cui H. Supplementary models and data, 10.13140/RG.2.2.21511.56483 (accessed 
+April 1, 2026).
+[39] M. Farivar, S. Low, Branch flow model: relaxations and convexification—part I, 
+IEEE Trans. Power Syst. 28 (3) (2013) 2554–2564, https://doi.org/10.1109/ 
+TPWRS.2013.2255317.
+[40] B. Ulanicki, J. Kahler, B. Coulbeck, Modeling the efficiency and power 
+characteristics of a pump group, J. Water. Resour. Plan. Manage 134 (1) (2008) 
+88–93, https://doi.org/10.1061/(ASCE)0733-9496(2008)134:1(88).
+[41] Cui H. Testing parameters of the wastewater treatment, https://doi.org/10.13140 
+/RG.2.2.30252.17286 (accessed July 15, 2025).
+H. Cui et al.                                                                                                                                                                                                                                      
+Electric Power Systems Research 261 (2026) 113451 
+10 

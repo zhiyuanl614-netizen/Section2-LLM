@@ -1,0 +1,2133 @@
+ 
+Contents lists available at ScienceDirect
+Renewable Energy
+journal homepage: www.elsevier.com/locate/renene
+ 
+Participation assessment of diverse multi-energy microgrids in integrated 
+power–water distribution systems considering outages$
+Muhammad Ahsan Khan a
+, Talha Rehman a
+, Woon-Gyu Lee a
+, Hak-Man Kim a,b
+,∗
+a Department of Electrical Engineering, Incheon National University, 119 Academy-ro, Yeonsu-gu, Incheon, 22012, South Korea
+b Research Institute for Northeast Asian Super Grid, Incheon National University, 119 Academy-ro, Yeonsu-gu, Incheon, 22012, South Korea
+A R T I C L E  I N F O
+Keywords:
+Power-water interdependence
+Hydrogen energy
+Multi-energy microgrids
+Distributed coordination
+C-ADMM
+Outage analysis
+ 
+A B S T R A C T
+The increasing deployment of multi-energy microgrids (MEMGs) as aggregators is transforming the operation 
+of modern distribution systems, particularly during outage events. However, the growing diversity of MEMG 
+architectures and their interdependency on power and water distribution systems introduce significant 
+coordination and privacy challenges, particularly with the increasing adoption of green hydrogen. To address 
+these challenges, this paper proposes a privacy-preserving distributed coordination framework for multiple 
+independent operators and aggregators. MEMGs are categorized based on geographical resource availability 
+into coast-based and hydrogen-based configurations. Unlike existing studies that confine MEMG interactions 
+to the power distribution system, this work extends their role to coupled power–water operations, where 
+coast-based MEMGs support the water distribution system through desalination, while hydrogen-based MEMGs 
+can utilize water for hydrogen production to support the power distribution system during outage events. A 
+consensus-based alternating direction method of multipliers (C-ADMM) optimization model is developed to 
+coordinate multiple aggregators and operators while preserving their autonomy and privacy. The proposed 
+framework is validated on an IEEE 33-bus power distribution system interconnected with a 15-node water 
+distribution system. Extensive outage case studies shows its effectiveness in enhancing resilience and mitigating 
+cascading failures, with diverse MEMGs providing average support of 39% and 22.4% to the power and water 
+distribution systems.
+1. Introduction
+The ongoing transition toward green energy has strengthened the 
+interdependence between various energy distribution systems. In par-
+ticular, the rapid expansion of green hydrogen production through 
+water electrolysis and renewable sources has reinforced the coupling 
+between power and water distribution systems (PDS and WDS) [1], 
+where green hydrogen supports PDS via electricity generation through 
+fuel cells (FC) [2]. However, this interdependence introduces vulnera-
+bilities; an outage in one distribution system can cascade into another. 
+For example, a disruption in PDS during a natural disaster can hinder 
+water pumping in WDS, while pipeline failures in WDS can affect 
+hydrogen production and electric power regeneration. The situation 
+is further complicated by the growing penetration of distributed en-
+ergy resources combined with multi-energy generation units, leading 
+to new structures called multi-energy microgrids (MEMGs) [3]. With 
+localized control capabilities, MEMGs can enhance the resilience of 
+energy systems [4]. Their configurations vary by region; for instance, 
+$ This article is part of a Special issue entitled: ‘Multi-Energy Coupling’ published in Renewable Energy.
+∗Corresponding author at: Department of Electrical Engineering, Incheon National University, 119 Academy-ro, Yeonsu-gu, Incheon, 22012, South Korea.
+E-mail address: hmkim@inu.ac.kr (H.-M. Kim).
+MEMGs located in coastal regions may include desalination units and 
+can support WDS and hydrogen production [5]. Although the MEMGs 
+participation plays an important role in integrated distribution systems, 
+but also presents operational and coordination challenges.
+Despite the strong interdependence between power and water in-
+frastructures, most of the existing studies consider these systems in-
+dependently, particularly from the resilience enhancement perspec-
+tive [6]. For PDS, the resilience enhancement strategies include dis-
+tribution system splitting into microgrids for self-healing, reserving 
+storage capacity in the form of hydrogen for long-term storage, and 
+network reconfiguration to minimize cascaded failures [7]. Similarly, 
+for WDS, strategies include upgrading the capacities of pumping sta-
+tions and water storage, and optimizing the pipeline network topol-
+ogy. However, given the high impact and low probability of ex-
+treme events, these measures entail risks of over-investment and in-
+efficient allocation of flexible resources [8]. To address this limi-
+tation, recent studies [9,10] have aimed to enhance resilience by 
+explicitly considering the interdependence between PDS and WDS.
+https://doi.org/10.1016/j.renene.2026.126411
+Received 4 February 2026; Received in revised form 14 August 2026; Accepted 4 September 2026
+Renewable Energy 277 (2026) 126411 
+Available online 11 September 2026 
+0960-1481/© 2026 Elsevier Ltd. All rights are reserved, including those for text and data mining, AI training, and similar technologies. 
+
+M.A. Khan et al.
+Nomenclature
+Abbreviations
+C𝜇G
+Coast based microgrid
+C-ADMM
+Consensus-based 
+alternating 
+direction 
+method of multipliers
+DES
+Desalination unit
+DG
+Distributed generator
+DSO
+Distribution system operator
+EL
+Electrolyzer
+ESS
+Electric storage system
+FC
+Fuel cell
+H𝜇G
+Hydrogen based microgrid
+HSS
+Hydrogen storage system
+MEMG
+Multi-energy microgrids
+PDS
+Power distribution system
+PDSO
+Power distribution system operator
+RES
+Renewable energy source
+SOC
+State of charge
+WDS
+Water distribution system
+WDSO
+Water distribution system operator
+WP
+Water pump
+WSS
+Water storage system
+Indices
+𝜎
+Iteration
+𝑎, 𝑏
+Index for PDS bus
+𝑒
+Index for an entity
+𝑖/𝑟/𝑙
+Index for DG/RES/ESS of PDSO
+𝑚, 𝑛
+Index for C𝜇G, H𝜇G
+𝑠/𝑗
+Index for WDS node/arc
+𝑡
+Index for hour
+𝑢
+Index for WP of WDSO
+Constants
+𝛼, 𝛽, 𝜏, 𝛿, 𝜖
+Pump parameters
+𝑷
+𝑼
+WDSO water pumps maximum power limit
+𝑽
+Water flow limit in WDSO arc
+𝜣
+Pump-arc incidence matrix
+𝑺/𝑺
+Minimum and maximum pressure head
+𝑮
+Diagonal matrix of pipe resistance
+𝒁
+Vector of reservoir node elevation
+𝜒𝑎
+Devices connection indicator for PDSO 
+buses
+𝜂𝑑𝑒𝑠/𝜂𝑤𝑝
+Efficiency of DES/WP of C𝜇G
+𝜂𝑒𝑙/𝜂𝑓𝑐
+Efficiency of EL and FC
+𝜂𝑠𝑡+/𝜂𝑠𝑡−
+Efficiency of storage units HSS and ESS
+𝜂𝑤𝑠𝑠+/𝜂𝑤𝑠𝑠−
+Efficiency of WSS
+𝜆𝑑𝑔
+Power generation cost of DG
+𝜆𝑝𝑏𝑢𝑦/𝜆𝑝𝑠𝑒𝑙𝑙
+Power buy/sell price
+𝜆𝑤𝑏𝑢𝑦/𝜆𝑤𝑠𝑒𝑙𝑙
+Water buy/sell price
+𝛬𝑤𝑠𝑠
+Area of WSS
+𝛷
+Devices connection indicator for WDSO 
+nodes
+𝜓𝑒
+𝑎
+Load priority factor of each entity at bus a
+𝜌𝑊
+Density of water
+𝛶/𝑨
+Reservoir-node/node-arc incidence matrix
+𝜑
+Load shedding and curtailment penalty cost
+𝜍𝑤𝑠𝑠
+Height of WSS in C𝜇G
+𝜁kW→kg
+Hydrogen kW to kg conversion factor
+𝐹
+Power flow limit of line
+𝑔
+Acceleration due to gravity (9.8 m∕s2)
+𝐿𝑝
+Length of pipe (m)
+𝑀𝐹𝑊
+Mass factor
+𝑃𝑙𝑜𝑎𝑑
+𝑒,𝑡
+Power demand of each entity
+𝑃𝑟𝑒𝑠
+𝑡
+RES power generation
+𝑃𝑥
+𝑚𝑖𝑛/𝑃𝑥
+𝑚𝑎𝑥
+Minimum and maximum power limit of 
+each component
+𝑆𝑂𝐶𝑠𝑡
+𝑚𝑖𝑛/𝑆𝑂𝐶𝑠𝑡
+𝑚𝑎𝑥
+Minimum/maximum SOC
+𝑆𝑇𝑐𝑎𝑝
+Storage units maximum capacity
+𝑊𝑙𝑜𝑎𝑑
+𝑒,𝑡
+Water demand of each entity
+Variables
+𝜞𝒕
+WDSO water pump speed vector
+𝑷𝑼
+𝒕
+WDSO water pump power consumption
+𝑺𝒕
+Vector of pressure head at a node
+𝑽𝒕
+Vector of water flow in the WDSO arc
+𝜈ℎ𝜇𝑔
+𝑛,𝑡
+Ratio of served hydrogen load in H𝜇G
+⊙/⊘
+Element wise multiplication and division
+𝛹𝑤𝑠𝑠+
+𝑚,𝑡
+, 𝛹𝑤𝑠𝑠−
+𝑚,𝑡
+Binary variables for WSS charging/dis-
+charging
+𝛹𝑒𝑙
+𝑛,𝑡, 𝛹𝑓𝑐
+𝑛,𝑡
+Binary variables for EL/FC
+𝜃𝑎,𝑡/𝜃𝑏,𝑡
+Voltage angle of a bus̃
+𝜈𝑐𝜇𝑔
+𝑚,𝑡/̃𝜈ℎ𝜇𝑔
+𝑛,𝑡/̃𝜈𝑤𝑑𝑠𝑜
+𝑠,𝑡
+Factors determining served water
+𝜛𝑒
+𝑡
+Factors determining served electrical load
+𝐶𝑒
+𝑡
+Operation cost of each entity 𝑒
+𝐻𝑒𝑙
+𝑛,𝑡/𝐻𝑓𝑐
+𝑛,𝑡
+Hydrogen produced/consumed by EL/FC
+𝑃𝑏𝑢𝑦/𝑃𝑠𝑒𝑙𝑙
+Buying/selling power from external utility
+𝑃𝑑𝑔
+𝑖,𝑡
+Power generation of DG in PDS
+𝑃𝑝𝑑𝑠𝑜→𝑐𝜇𝑔
+𝑚,𝑡
+∕𝑃𝑐𝜇𝑔→𝑝𝑑𝑠𝑜
+𝑚,𝑡
+/𝑃𝑝𝑑𝑠𝑜→ℎ𝜇𝑔
+𝑛,𝑡
+∕𝑃ℎ𝜇𝑔→𝑝𝑑𝑠𝑜
+𝑛,𝑡
+/𝑃𝑝𝑑𝑠𝑜→𝑤𝑑𝑠𝑜
+𝑢,𝑡
+Power exchange between PDSO and 
+C𝜇G/H𝜇G/WDSO
+𝑃𝑑𝑒𝑠
+𝑚,𝑡/𝑊𝑑𝑒𝑠
+𝑚,𝑡
+Power required and water produced by DES
+𝑃𝑤𝑝
+𝑚,𝑡
+Power required by water pump in C𝜇G
+𝑃𝑓𝑐
+𝑛,𝑡
+Power produced by FC
+𝑆𝑂𝐶𝑠𝑡
+𝑡
+SOC of storage units
+𝑆𝑇𝑠𝑡−
+𝑡
+/𝑆𝑇𝑠𝑡+
+𝑡
+Energy discharge/charge from the storage 
+units
+𝑊𝑏𝑢𝑦
+𝑡
+Water buy from the external reservoir
+𝑊𝑐𝜇𝑔→𝑤𝑑𝑠𝑜
+𝑚,𝑡
+/
+𝑊𝑤𝑑𝑠𝑜→𝑐𝜇𝑔
+𝑚,𝑡
+/𝑊𝑤𝑑𝑠𝑜→ℎ𝜇𝑔
+𝑛,𝑡
+Water exchange between WDSO and 
+C𝜇G/H𝜇G
+𝑊𝑤𝑙
+𝑚,𝑡
+Water level of the WSS
+𝑊𝑤𝑠𝑠−
+𝑚,𝑡
+/𝑊𝑤𝑠𝑠+
+𝑚,𝑡
+Water discharge/charge from WSS
+𝑊𝑒𝑙
+𝑛,𝑡
+Water required by EL
+𝑦𝑐𝜇𝑔
+𝑚,𝑡/𝑦ℎ𝜇𝑔
+𝑛,𝑡/𝑦𝑝𝑑𝑠𝑜
+𝑟,𝑡
+Factors determining the renewable utilized
+Sets
+𝛺𝑎𝑟𝑐𝑠
+Set of WDS arcs
+𝛺𝑝𝑑𝑠𝑜
+𝑏𝑢𝑠/𝛺𝑤𝑑𝑠𝑜
+𝑛𝑜𝑑𝑒
+Set of buses/nodes of PDS/WDS
+𝛺𝐼/𝛺𝑅/𝛺𝐿
+Set of DG/RES/ESS of the PDSO
+𝛺𝑀/𝛺𝑁
+Set of C𝜇G/H𝜇G
+𝛺𝑇
+Set of time i.e. {1 … 24}
+𝛺𝑈
+Set of WDSO pumps
+Renewable Energy 277 (2026) 126411 
+2 
+
+M.A. Khan et al.
+Table 1
+Summary of existing literature and proposed study.
+ Ref
+Energy nexus
+Optimization model
+Coordination focus
+Cascading failures
+Energy flow
+ 
+Power
+Water
+Hydrogen
+External
+Internal
+Power
+Water 
+ [1]
+Yes
+Yes
+Yes
+Centralized
+No
+Yes
+No
+No
+No
+ 
+ [2]
+Yes
+No
+Yes
+Centralized
+No
+Yes
+No
+Yes
+No
+ 
+ [5,11]
+Yes
+Yes
+Yes
+Centralized
+No
+Yes
+No
+No
+No
+ 
+ [6,10]
+Yes
+Yes
+No
+Centralized
+Yes
+No
+Yes
+Yes
+Yes 
+ [12]
+Yes
+No
+No
+Centralized
+Yes
+No
+Yes
+Yes
+No
+ 
+ [13]
+Yes
+No
+No
+Distributed
+Yes
+No
+No
+Yes
+No
+ 
+ [14]
+Yes
+Yes
+Yes
+Hierarchical
+No
+Yes
+No
+No
+No
+ 
+ [15]
+Yes
+No
+Yes
+Centralized
+Yes
+No
+Yes
+Yes
+No
+ 
+ [16]
+Yes
+Yes
+Yes
+Distributed
+No
+Yes
+No
+Yes
+No
+ 
+ [17]
+Yes
+No
+Yes
+Centralized
+Yes
+Yes
+Yes
+Yes
+No
+ 
+ [18]
+Yes
+No
+No
+Distributed
+Yes
+Yes
+No
+Yes
+No
+ 
+ [19]
+Yes
+No
+No
+Distributed
+Yes
+Yes
+Yes
+Yes
+No
+ 
+ Our study
+Yes
+Yes
+Yes
+Distributed
+Yes
+Yes
+Yes
+Yes
+Yes 
+To enable effective resource management and address the chal-
+lenges associated with over-investment, the concept of MEMGs as 
+distributed resource aggregators has gained attention. MEMGs provide 
+flexible services to integrated distribution networks, thereby avoiding 
+financial and operational risks associated [20]. In this context, several 
+studies have focused on the resilience-oriented operation of MEMGs 
+due to their enhanced control capabilities in managing small-scale dis-
+tributed devices [21]. For instance, planning and operation strategies 
+have been developed in [12] to enhance the resilience of MEMGs, 
+while energy hubs have been incorporated into integrated energy sys-
+tems to achieve overall resilience enhancement [22]. MEMGs, with 
+their diverse multi-generation units, can serve multiple demand dimen-
+sions, including natural gas [13], heat [23], and water [14] distribu-
+tion systems. This property makes them an effective solution during 
+fault events, as they can provide critical services to the integrated 
+distribution systems.
+Various types of MEMGs have been explored in the literature, 
+differing in their internal component configurations. Recently, there 
+has been a growing focus on hydrogen-based MEMGs (H𝜇G), which 
+incorporate hydrogen generation units to enhance resilience of PDS by 
+converting stored hydrogen into electric power through FC units [15]. 
+However, the deployment of multi-generation units within MEMGs is 
+highly influenced by geographical conditions. For instance, the concept 
+of coast-based MEMGs(C𝜇G) are introduced in [14,16], where the 
+system is equipped with a desalination unit (DES) and water storage 
+facilities, using its proximity to the sea to procure pure water. This 
+design consideration has become increasingly important for hydrogen 
+generation in H𝜇G [11]. Different types of MEMGs can coordinate to 
+provide cost-effective solutions while easing the burden on integrated 
+distribution system. H𝜇G enhances the resilience of PDS by converting 
+stored hydrogen into electric power through FC units. Meanwhile, 
+C𝜇G can strengthen WDS in affected areas during pipeline disruptions, 
+thereby improving the resilience of multiple interconnected infrastruc-
+tures. This setup gives rise to a multiple-entity structure consisting of 
+different operators and diverse aggregators, each aiming at its own 
+objectives; thus, the coordination between them is crucial for efficient 
+operation.
+Several studies [17] have presented interactive frameworks between 
+MEMGs and distirbution system operators (DSO); however, these ap-
+proaches focus primarily on the DSO perspective and do not adequately 
+consider the private ownership of MEMGs, which operate their own 
+energy management systems. To address this limitation, distributed 
+algorithms have emerged as a major solution [18]. In the literature, two 
+main types of distributed approaches are identified: (i) treating each 
+distributed energy resources as an independent system [24], and (ii) 
+considering a multi-area energy management system [25]. In the first 
+approach, the commonly used method is consensus-based algorithms, 
+where each DER acts as an agent that interacts with others to achieve 
+coordination. In the multi-area approach, each MEMGs is treated as 
+an independent entity that interacts with other MEMGs or the DSO. 
+Here, the ADMM is the widely adopted algorithm. For instance, [26] 
+proposed a distributed ADMM algorithm for solving the economic 
+dispatch problem with general convex cost functions. In [19] proposed 
+a collaborative aggregator-agent model for interactions between DSOs 
+and MEMGs to enhance system resilience using ADMM. However, these 
+require transmitting data from one subsystem to all others, which en-
+hances the communication complexity. To accelerate the convergence 
+rate, the consensus algorithms in conjunction with ADMM were studied 
+in [27], and the distributed consensus problem within the ADMM 
+framework was established in [28].
+Despite significant progress in integrating multiple energy dimen-
+sions into modern energy systems, the autonomy of MEMGs remains 
+largely underexplored. Existing studies predominantly treat MEMGs 
+as passive service providers, overlooking the implications of private 
+ownership and the independent operational objectives of local aggrega-
+tors. Moreover, resource availability is inherently location-dependent; 
+for instance, C𝜇Gs equipped with desalination facilities can serve as 
+an alternative water source for the WDS, while H𝜇Gs may procure 
+water from C𝜇Gs for hydrogen production. This diversity in MEMG 
+configurations and interdependencies has received limited attention, 
+as most studies assume a single homogeneous MEMG architecture 
+and investigate MEMGs solely from the PDS perspective, neglecting 
+their interactions with other critical infrastructures, particularly the 
+WDS. This limitation becomes especially critical during outage events, 
+where failures may propagate across interconnected systems. Finally, 
+although few studies consider coupled power–water distribution sys-
+tems, they adopt centralized optimization frameworks, which suffer 
+from scalability limitations and vulnerability to single points of failure.
+To address the aforementioned gaps, this study proposes a de-
+centralized coordination framework for interdependent PDS-WDS with 
+diverse MEMGs. Unlike conventional resilience-oriented approaches 
+that primarily focus on the PDS, the proposed framework explicitly 
+incorporates the WDS and its interactions with heterogeneous MEMGs. 
+The framework enables coordinated operation among multiple local 
+aggregators and system operators while investigating the contribution 
+of internally diversified MEMGs in both PDS and WDS during out-
+age events. Furthermore, extensive case studies under various outage 
+scenarios are conducted to evaluate the role of diverse MEMGs in 
+enhancing the resilience of the interdependent PDS–WDS. The pro-
+posed framework also captures the effects of cascading failures across 
+interconnected distribution systems by incorporating both power and 
+water flow constraints. A detailed comparison between the proposed 
+framework and existing studies is presented in Table 1. The main 
+contributions of this work are summarized as follows:
+• Extended the heterogeneous MEMG framework from [14] to 
+an interdependent PDS-WDS, explicitly capturing power–water–
+hydrogen interactions among autonomous aggregators and sys-
+tem operators.
+Renewable Energy 277 (2026) 126411 
+3 
+
+M.A. Khan et al.
+• Modeled the WDS as an active coupling element, enabling bidirec-
+tional water-energy interactions between the WDS and MEMGs, 
+while capturing the indirect contribution of the WDS to the PDS 
+through hydrogen utilization.
+• Designed a privacy-preserving C-ADMM-based distributed algo-
+rithm that enables scalable coordination among system opera-
+tors and aggregators while preserving the autonomy and local 
+operational objectives of each entity.
+• Conducted comprehensive outage case studies to evaluate the 
+resilience benefits of heterogeneous MEMGs, analyzing the impact 
+of cascading failures by incorporating energy flow constraints.
+The remainder of this paper is organized as follows. Section 2 
+presents the proposed system and interaction framework in detail. 
+Section 3 formulates the general mathematical model of the proposed 
+system, including the objective function, constraints, and linear approx-
+imation techniques. Section 4 develops the distributed optimization 
+framework based on the C-ADMM algorithm. Section 5 provides the 
+input data and simulation results, along with case studies for partic-
+ipation assessment. Finally, Section 6 concludes the paper with key 
+findings and future research directions.
+2. System description and motivation
+Fig. 1 presents the conceptual design of the proposed integrated 
+system, which comprises interdependent PDS-WDS. Within this frame-
+work, several MEMGs are deployed as local aggregators. Motivated 
+by high renewable energy penetration and geographical character-
+istics, two types of MEMG are considered: C𝜇Gs and H𝜇Gs, whose 
+configurations are based on our previous study [14] and described as 
+follows.
+1. Coastal-based MEMG (C𝜇G): The C𝜇Gs are located near the 
+sea and comprise a DES unit, pumped storage, and water load 
+as water-side components, alongside RES that include wind tur-
+bines (WT) in addition to PVs due to high coastal wind speeds, 
+ESS, and electric load on the electrical side. Owing to their 
+water procurement capability, C𝜇Gs can engage in both water 
+transactions with the WDS and power transactions with the PDS. 
+This capability is particularly valuable during fault events in 
+the water network, where C𝜇Gs can support the faulted area by 
+operating DES or WSS units powered by RES or PDS, thereby 
+acting as service providers to the WDS, as illustrated in Fig. 1.
+2. Hydrogen-based MEMG (H𝜇G): In addition to electrical com-
+ponents similar to those in C𝜇Gs, the PVs are only considered 
+as RES. H𝜇Gs are equipped with hydrogen-based components, 
+including EL, FC, and HSS. During periods of excess renew-
+able energy generation, either generated internally or supplied 
+from the PDS, H𝜇Gs absorb the surplus electrical energy by 
+converting it into hydrogen via the EL unit, thereby alleviating 
+grid congestion. Since the EL unit requires water, H𝜇Gs procure 
+the necessary water from the WDS. The stored hydrogen can 
+subsequently be reconverted into electrical power via the FC unit 
+to support the faulted area of the PDS, as illustrated in Fig. 1.
+The PDS and WDS are coupled through two major interdependen-
+cies. First, the WDS relies on the PDS electric power to operate its water 
+pumps (WP), which overcome elevation differences and pressure losses 
+across the water network. Second, the WDS indirectly supports the PDS 
+through H𝜇G operations, where water is supplied for hydrogen produc-
+tion during periods of excess RES generation to overcome curtailment 
+and increase RES utilization via the EL unit, with the stored hydrogen 
+later reconverted into electrical power through the FC unit during fault 
+events.
+Effective coordination is essential for managing such multi-energy 
+coupling. Fig. 2 compares the conventional and proposed approaches. 
+As shown in Fig. 2(a), existing studies consider MEMGs within the PDS 
+Fig. 1. Conceptual design of the proposed integrated power–water distribution 
+system with diverse MEMGs.
+but primarily focus on a single homogeneous MEMG type, overlooking 
+the influence of geographical resources on MEMG configuration. Fur-
+thermore, the WDS is treated as a passive coupling element, leaving 
+it without alternative resources to maintain resilience during natural 
+disasters. Moreover, most coupled PDS–WDS frameworks adopt a cen-
+tralized coordinator, which, despite providing optimal solutions, is vul-
+nerable to a single point of failure and conflicts with the independent 
+operational objectives of each distribution system operator.
+To address these limitations, this study models the WDS as an active 
+coupling element, as illustrated in Fig. 2(b). Hydrogen-water coupling 
+within H𝜇Gs enables the WDS to support the PDS during outage sce-
+narios, while C𝜇Gs provide an alternative water source for the WDS 
+during pipeline disruptions. Since multiple entities coexist within the 
+integrated system, each pursuing independent operational objectives, 
+a C-ADMM-based distributed coordination framework is proposed, the 
+details of which are presented in Section 4.
+Within the proposed framework, the power distribution system op-
+erator (PDSO) and water distribution system operator (WDSO) manage 
+their respective networks, while each MEMG is independently operated 
+by its own local aggregator. Each entity solves its local optimization 
+problem and coordinates with others only for energy and water trans-
+actions, as shown in Fig. 2(b). Specifically, the PDSO coordinates power 
+transactions with MEMG operators, the WDSO supplies water to H𝜇Gs 
+and C𝜇Gs to fulfill their operational demands, and can also receive 
+water from C𝜇Gs as an alternative source during pipeline disruptions. 
+In addition, the WDSO procures power from the PDSO to power its 
+pumping operations.
+3. General problem formulation
+In this section, we present the general mathematical model consist-
+ing of objective functions of each operator and aggregator involved and 
+operational constraints. Additionally, the brief explanation of the linear 
+approximation methods of non-linear constraints is presented.
+3.1. Objective functions
+The overall objective of the integrated system is to minimize the 
+total operation cost over the time horizon 𝑇, as represented in Eq. (1). 
+Renewable Energy 277 (2026) 126411 
+4 
+
+M.A. Khan et al.
+Fig. 2. Comparison of (a) conventional centralized approach with homogeneous MEMGs and passive WDS, and (b) proposed C-ADMM-based distributed 
+coordination framework with heterogeneous MEMGs (H𝜇G and C𝜇G) and active WDS integration.
+The total cost accounts for all entities involved in energy transactions, 
+including the PDSO, WDSO, 𝑀 number of C𝜇Gs, and 𝑁 number of 
+H𝜇Gs. 
+𝐌𝐢𝐧𝐶total =
+∑
+𝑡∈𝛺𝑇
+(
+𝐶𝑝𝑑𝑠𝑜
+𝑡
++ 𝐶𝑤𝑑𝑠𝑜
+𝑡
++
+∑
+𝑚∈𝛺𝑀
+𝐶𝑐𝜇𝑔
+𝑚,𝑡+
+∑
+𝑛∈𝛺𝑁
+𝐶ℎ𝜇𝑔
+𝑛,𝑡
+)
+(1)
+Each entity independently minimizes its own operational cost
+through coordinated energy trading, while the overall formulation 
+incorporates penalty terms on load shedding and renewable energy 
+curtailment to enhance the resilience of the interconnected network.
+The objective function of the PDSO, given in (2), comprises the cost 
+of energy transactions with the utility grid, the 𝑀+ 𝑁 MEMGs, and 
+the WDSO, together with the operating cost of its DG units and penalty 
+terms for load shedding and renewable curtailment. Since MEMGs 
+act as aggregators, the PDSO trades energy with them using its own 
+buy/sell price pair, rather than a separate trading price. Specifically, 
+when the PDSO imports power from a MEMG, the transaction is settled 
+at the PDSO’s sell price 𝜆𝑝𝑠𝑒𝑙𝑙; conversely, when the PDSO exports 
+power to a MEMG, the transaction is settled at the PDSO’s buy price 
+𝜆𝑝𝑏𝑢𝑦. This is the reverse of how the PDSO transacts with the external 
+utility grid, where it purchases at 𝜆𝑝𝑏𝑢𝑦 and sells at 𝜆𝑝𝑠𝑒𝑙𝑙. Because 
+distributed generation, storage, and renewable resources can co-exist 
+within the PDS, this pricing scheme is designed to make local exchange 
+with MEMGs comparatively more attractive than transacting with the 
+utility grid, thereby alleviating congestion at the utility interface while 
+promoting localized resource utilization and renewable integration. 
+Accordingly, the PDSO cost function is expressed as: 
+𝐶𝑝𝑑𝑠𝑜
+𝑡
+= 𝜆𝑝𝑏𝑢𝑦
+(
+𝑃𝑏𝑢𝑦
+𝑡
+−
+∑
+𝑚∈𝛺𝑀
+𝑃𝑝𝑑𝑠𝑜→𝑐𝜇𝑔
+𝑚,𝑡
+−
+∑
+𝑛∈𝛺𝑁
+𝑃𝑝𝑑𝑠𝑜→ℎ𝜇𝑔
+𝑛,𝑡
+−
+∑
+𝑢∈𝛺𝑈
+𝑃𝑝𝑑𝑠𝑜→𝑤𝑑𝑠𝑜
+𝑢,𝑡
+)
++ 𝜆𝑝𝑠𝑒𝑙𝑙
+(
+∑
+𝑚∈𝛺𝑀
+𝑃𝑐𝜇𝑔→𝑝𝑑𝑠𝑜
+𝑚,𝑡
++
+∑
+𝑛∈𝛺𝑁
+𝑃ℎ𝜇𝑔→𝑝𝑑𝑠𝑜
+𝑛,𝑡
+−𝑃𝑠𝑒𝑙𝑙
+𝑡
+)
++ 𝜆𝑑𝑔∑
+𝑖∈𝛺𝐼
+𝑃𝑑𝑔
+𝑖,𝑡+ 𝜑
+(
+∑
+𝑎∈𝛺𝑝𝑑𝑠𝑜
+𝑏𝑢𝑠
+(1 −𝜛𝑎,𝑡)𝜓𝑝𝑑𝑠𝑜
+𝑎
+𝑃𝑙𝑜𝑎𝑑
+𝑎,𝑡
++
+∑
+𝑟∈𝛺𝑅
+(1 −𝑦𝑝𝑑𝑠𝑜
+𝑟,𝑡
+)𝑃𝑟𝑒𝑠
+𝑟,𝑡
+)
+(2)
+As assumed in this study, the WDSO has two water sources: directly 
+from the external water utility and from C𝜇Gs to maintain water bal-
+ance. The WDSO cannot sell water to the external water utility and can 
+generate revenue only through water sales to the MEMGs. Consistent 
+with the pricing scheme adopted for the PDSO, water purchased from 
+the external utility is settled at the buy price 𝜆𝑤𝑏𝑢𝑦, whereas water 
+purchased from the C𝜇Gs is settled at the WDSO’s own sell price 𝜆𝑤𝑠𝑒𝑙𝑙. 
+Since the WDSO depends on the PDSO to supply electric power for its 
+water pumping operations, its objective function, given in (3), includes 
+the cost of purchasing electric power from the PDSO to power the WPs, 
+the cost of water procurement from the external utility and the C𝜇Gs, 
+revenue from water sales to the MEMGs, and a penalty cost associated 
+with water load shedding at each node, weighted by the corresponding 
+water load priority factor 𝜓𝑤𝑑𝑠𝑜
+𝑠
+. 
+𝐶𝑤𝑑𝑠𝑜
+𝑡
+= 𝜆𝑤𝑏𝑢𝑦
+𝑡
+𝑊𝑏𝑢𝑦
+𝑡
++ 𝜆𝑝𝑏𝑢𝑦
+𝑡
+𝑃𝑝𝑑𝑠𝑜→𝑤𝑑𝑠𝑜
+𝑡
++ 𝜆𝑤𝑠𝑒𝑙𝑙
+𝑡
+𝑊𝑐𝜇𝑔→𝑤𝑑𝑠𝑜
+𝑡
++
+𝜑⋅
+∑
+𝑠∈𝛺𝑤𝑑𝑠𝑜
+𝑛𝑜𝑑𝑒
+(
+(1 −̃ 𝜈𝑤𝑑𝑠𝑜
+𝑠,𝑡
+)𝜓𝑤𝑑𝑠𝑜
+𝑠
+𝑊𝑙𝑜𝑎𝑑
+𝑠,𝑡
+)
+−𝜆𝑤𝑏𝑢𝑦
+𝑡
+(
+∑
+𝑛∈𝛺𝑁
+𝑊𝑤𝑑𝑠𝑜→ℎ𝜇𝑔
+𝑛,𝑡
++
+∑
+𝑚∈𝛺𝑀
+𝑊𝑤𝑑𝑠𝑜→𝑐𝜇𝑔
+𝑚,𝑡
+)
+(3)
+The objective function of the C𝜇G is presented in (4), which ac-
+counts for both power and water trading with external operators, where 
+𝜓𝑐𝜇𝑔
+𝑚 is the priority factor of load shedding at C𝜇G 𝑚. By utilizing 
+excess renewable generation, the C𝜇G can sell surplus power to the 
+PDSO at 𝜆𝑝𝑠𝑒𝑙𝑙, while purchasing power from the PDSO at 𝜆𝑝𝑏𝑢𝑦 to meet 
+any deficit in local demand. Similarly, on the water side, the C𝜇G can 
+sell surplus desalinated water to the WDSO at 𝜆𝑤𝑠𝑒𝑙𝑙, while procuring 
+additional water from the WDSO at the 𝜆𝑤𝑏𝑢𝑦 when its own desalination 
+output is insufficient. The final two terms in (4) impose penalties, 
+weighted by the penalty coefficient 𝜑, on electrical and water load 
+shedding at the C𝜇G (scaled by the load priority factor 𝜓𝑐𝜇𝑔
+𝑚
+) and on 
+renewable energy curtailment. 
+𝐶𝑐𝜇𝑔
+𝑚,𝑡= 𝜆𝑝𝑏𝑢𝑦𝑃𝑝𝑑𝑠𝑜→𝑐𝜇𝑔
+𝑚,𝑡
++ 𝜆𝑤𝑏𝑢𝑦𝑊𝑤𝑑𝑠𝑜→𝑐𝜇𝑔
+𝑚,𝑡
+−𝜆𝑝𝑠𝑒𝑙𝑙𝑃𝑐𝜇𝑔→𝑝𝑑𝑠𝑜
+𝑚,𝑡
+−𝜆𝑤𝑠𝑒𝑙𝑙𝑊𝑐𝜇𝑔→𝑤𝑑𝑠𝑜
+𝑚,𝑡
++𝜑
+(
+𝜓𝑐𝜇𝑔
+𝑚
+(
+(1 −𝜛𝑐𝜇𝑔
+𝑚,𝑡)𝑃𝑙𝑜𝑎𝑑
+𝑚,𝑡
++ (1 −̃ 𝜈𝑐𝜇𝑔
+𝑚,𝑡)𝑊𝑙𝑜𝑎𝑑
+𝑚,𝑡
+))
++𝜑(1 −𝑦𝑐𝜇𝑔
+𝑚,𝑡)𝑃𝑟𝑒𝑠
+𝑚,𝑡
+(4)
+Finally, (5) represents the objective function of the H𝜇G, where, 
+based on its internal configuration, the H𝜇G relies on external operators 
+to meet its energy and water demands for electrolysis operations, and 
+can generate revenue only through trading its excess power with the 
+PDSO. During fault events, the penalty costs associated with electrical, 
+hydrogen, and water load shedding, as well as renewable curtailment, 
+are incorporated, where 𝜓ℎ𝜇𝑔
+𝑛
+ is the load priority factor at H𝜇G 𝑛. 
+𝐶ℎ𝜇𝑔
+𝑛,𝑡
+= 𝜆𝑝𝑏𝑢𝑦⋅𝑃𝑝𝑑𝑠𝑜→ℎ𝜇𝑔
+𝑛,𝑡
++ 𝜆𝑤𝑏𝑢𝑦⋅𝑊𝑤𝑑𝑠𝑜→ℎ𝜇𝑔
+𝑛,𝑡
+−𝜆𝑝𝑠𝑒𝑙𝑙⋅𝑃ℎ𝜇𝑔→𝑝𝑑𝑠𝑜
+𝑛,𝑡
++𝜑
+(
+𝜓ℎ𝜇𝑔
+𝑛
+(
+(1 −𝜛ℎ𝜇𝑔
+𝑛,𝑡)𝑃𝑙𝑜𝑎𝑑
+𝑛,𝑡
++ (1 −̃ 𝜈ℎ𝜇𝑔
+𝑛,𝑡)𝑊𝑙𝑜𝑎𝑑
+𝑛,𝑡
+))
++𝜑(1 −𝑦ℎ𝜇𝑔
+𝑛,𝑡)𝑃𝑟𝑒𝑠
+𝑛,𝑡
+(5)
+Renewable Energy 277 (2026) 126411 
+5 
+
+M.A. Khan et al.
+3.2. Constraints
+The operational constraints of the proposed integrated system are 
+presented in (6)–(34). These include the constraints related to power 
+and water flows in the PDS and WDS, energy balance, and internal 
+components in the MEMGs.
+The EL unit consumes electric power and water to produce hydro-
+gen. The production of 1 kg of hydrogen requires 9 liters of water [14]. 
+The hydrogen production and corresponding power consumption are 
+modeled in (6), where 𝐻𝑒𝑙
+𝑛,𝑡 and 𝑃𝑒𝑙
+𝑛,𝑡 denote the hydrogen production and 
+power consumed by the EL unit of H𝜇G 𝑛 at time 𝑡, respectively, and 𝜂𝑒𝑙
+denotes the EL unit efficiency. The associated water consumption, 𝑊𝑒𝑙
+𝑛,𝑡, 
+is calculated in (7) based on the hydrogen production, where 𝑀𝐹𝑊, 
+𝜁kW→kg, and 𝜌𝑊 denote the mass factor of water, unit conversion 
+factor, and water density, respectively. The produced hydrogen can 
+subsequently be converted into power through the FC unit, as modeled 
+in (8), where 𝜂𝑓𝑐 denotes the FC efficiency. The operating limits of the 
+EL and FC units are defined in (9) and (10), respectively. Finally, (11) 
+ensures that the EL and FC units do not operate simultaneously. 
+𝐻𝑒𝑙
+𝑛,𝑡= 𝜂𝑒𝑙⋅𝑃𝑒𝑙
+𝑛,𝑡; ∀𝑡
+(6)
+𝑊𝑒𝑙
+𝑛,𝑡=
+𝑀𝐹𝑊⋅𝜁kW→kg ⋅𝐻𝑒𝑙
+𝑛,𝑡
+𝜌𝑊
+; ∀𝑛, 𝑡
+(7)
+𝑃𝑓𝑐
+𝑛,𝑡= 𝜂𝑓𝑐⋅𝐻𝑓𝑐
+𝑛,𝑡; ∀𝑛, 𝑡
+(8)
+𝑃𝑒𝑙
+𝑚𝑖𝑛≤𝑃𝑒𝑙
+𝑛,𝑡≤𝛹𝑒𝑙
+𝑛,𝑡⋅𝑃𝑒𝑙
+𝑚𝑎𝑥; 𝛹𝑒𝑙
+𝑛,𝑡∈{0, 1}, ∀𝑛, 𝑡
+(9)
+𝑃𝑓𝑐
+𝑚𝑖𝑛≤𝑃𝑓𝑐
+𝑛,𝑡≤𝛹𝑓𝑐
+𝑛,𝑡⋅𝑃𝑓𝑐
+𝑚𝑎𝑥; 𝛹𝑓𝑐
+𝑛,𝑡∈{0, 1}, ∀𝑛, 𝑡
+(10)
+𝛹𝑓𝑐
+𝑛,𝑡+ 𝛹𝑒𝑙
+𝑛,𝑡≤1 ∀𝑛, 𝑡
+(11)
+Given the geographical location of the C𝜇Gs near the sea, each C𝜇G 
+includes a DES unit that uses electric power to desalinate seawater for 
+both internal consumption and WDS supply. The water output of the 
+DES unit is modeled in (12), where 𝑊𝑑𝑒𝑠
+𝑚,𝑡 and 𝑃𝑑𝑒𝑠
+𝑚,𝑡 denote the water 
+production and electric power consumed by the DES unit of C𝜇G 𝑚 at 
+time 𝑡, respectively, and 𝜂𝑑𝑒𝑠 is the DES unit efficiency. Constraint (13) 
+ensures that the DES unit operates within its prescribed power limits, 
+where 𝑃𝑑𝑒𝑠
+𝑚𝑖𝑛 and 𝑃𝑑𝑒𝑠
+𝑚𝑎𝑥 denote the minimum and maximum operating 
+power of the DES unit, respectively. 
+𝑊𝑑𝑒𝑠
+𝑚,𝑡= 𝜂𝑑𝑒𝑠⋅𝑃𝑑𝑒𝑠
+𝑚,𝑡; ∀𝑚, 𝑡
+(12)
+𝑃𝑑𝑒𝑠
+𝑚𝑖𝑛≤𝑃𝑑𝑒𝑠
+𝑚,𝑡≤𝑃𝑑𝑒𝑠
+𝑚𝑎𝑥; ∀𝑚, 𝑡
+(13)
+Based on the demand profiles, three storage types are considered: 
+ESS, HSS, and pumped WSS. The ESS, included in both H𝜇Gs and C𝜇Gs, 
+balances supply–demand mismatches and enhances resilience during 
+outages. As H𝜇Gs contain hydrogen generation units, HSS is considered 
+only in H𝜇Gs to support hydrogen loads and the PDS during outages. 
+The SOC model for both ESS and HSS is given in (14), while (15) 
+ensures a minimum SOC for outage readiness. 
+𝑆𝑂𝐶𝑠𝑡
+𝑡= 𝑆𝑂𝐶𝑠𝑡
+𝑡−1 +
+(
+𝜂𝑠𝑡+ ⋅𝑆𝑇𝑠𝑡+
+𝑡
+−
+𝑆𝑇𝑠𝑡−
+𝑡
+𝜂𝑠𝑡−
+)
+𝑆𝑇𝑐𝑎𝑝
+;
+𝑆𝑇∈{ℎ𝑠𝑠, 𝑒𝑠𝑠}, ∀𝑡
+(14)
+𝑆𝑂𝐶𝑠𝑡
+𝑚𝑖𝑛+ 𝑆𝑂𝐶𝑠𝑡
+𝑟𝑒𝑠𝑒𝑟𝑣𝑒≤𝑆𝑂𝐶𝑠𝑡
+𝑡≤𝑆𝑂𝐶𝑠𝑡
+𝑚𝑎𝑥;
+𝑆𝑇∈{ℎ𝑠𝑠, 𝑒𝑠𝑠}, ∀𝑡
+(15)
+The operational constraints of pumped storage in the C𝜇Gs are mod-
+eled using Eqs. (16)–(20). The operation of the water pump depends 
+on the discharge volume and the elevation of the water level in the 
+WSS. Accordingly, the power consumed by the water pump in the 𝑀th 
+MEMG at a given time interval 𝑡 is modeled in (16). The elevation of the 
+water pump relative to the water level is calculated as the difference 
+between the total height (𝜍𝑤𝑠𝑠+𝐿𝑝) and the water level 𝑊𝑤𝑙
+𝑚,𝑡 in the WSS. 
+For further details on the water pump model, readers are encouraged 
+to refer to studies [5,14]. 
+𝑃𝑤𝑝
+𝑚,𝑡=
+𝑊𝑤𝑠𝑠−
+𝑚,𝑡
+⋅(𝜍𝑤𝑠𝑠+ 𝐿𝑝−𝑊𝑤𝑙
+𝑚,𝑡)𝑔𝜌𝑤
+𝜂𝑤𝑝⋅3.6 × 106
+; ∀𝑚, 𝑡
+(16)
+The water level in the WSS of the 𝑀th C𝜇G is determined by 
+the cross-sectional area 𝛬𝑤𝑠𝑠 of the water tank and is modeled in 
+(17). Furthermore, to ensure that the charging/discharging operations 
+of the WSS remain within operational limits and to prevent simulta-
+neous charging/discharging at a given time interval t, (18)–(20) are 
+formulated. 
+𝑊𝑤𝑙
+𝑚,𝑡= 𝑊𝑤𝑙
+𝑚,𝑡−1 + 𝜂𝑤𝑠𝑠+(
+𝑊𝑤𝑠𝑠+
+𝑚,𝑡
+𝛬𝑤𝑠𝑠)−
+𝑊𝑤𝑠𝑠−
+𝑚,𝑡
+𝜂𝑤𝑠𝑠−⋅𝛬𝑤𝑠𝑠≤𝐻𝑤𝑠𝑠; ∀𝑚, 𝑡> 1
+(17)
+𝛹𝑤𝑠𝑠+
+𝑚,𝑡
+⋅𝑊𝑤𝑠𝑠+
+𝑚𝑖𝑛
+≤𝑊𝑤𝑠𝑠+
+𝑚,𝑡
+≤𝛹𝑤𝑠𝑠+
+𝑚,𝑡
+⋅𝑊𝑤𝑠𝑠+
+𝑚𝑎𝑥; ∀𝑚, 𝑡
+(18)
+𝛹𝑤𝑠𝑠−
+𝑚,𝑡
+⋅𝑊𝑤𝑠𝑠−
+𝑚𝑖𝑛
+≤𝑊𝑤𝑠𝑠−
+𝑚,𝑡
+≤𝛹𝑤𝑠𝑠−
+𝑚,𝑡
+⋅𝑊𝑤𝑠𝑠−
+𝑚𝑎𝑥; ∀𝑚, 𝑡
+(19)
+𝛹𝑤𝑠𝑠+
+𝑚,𝑡
++ 𝛹𝑤𝑠𝑠−
+𝑚,𝑡
+≤1; ∀𝑚, 𝑡
+(20)
+The water pipeline model is formulated from (21)–(24). The (21) 
+describe the pump induced pressure increase and pump power con-
+sumption, where 𝜣 is the pump-arc incidence matrix, 𝜞𝑡 is the vector 
+of pump speed at a time, 𝛼, 𝛽, 𝜏, 𝛿, 𝜖 are pump parameters, 𝐕𝑡 is the 
+volume of water flow in the arcs, and 𝐏𝑈
+𝑡 is the vector of pump power. 
+The (22) defines the pump limits and ensures that the water flow 
+through each pump remains non-negative, with 𝐀 being the node-arc 
+incidence matrix. The (23) models the pressure head loss, where 𝐆
+is the diagonal matrix of pipe resistance parameters and sgn(⋅) is the 
+unit signum function. Finally, constraints (24) ensure that the pressure 
+head and flow at every node and arc of the WDSO remain within their 
+respective minimum and maximum limits, while the pressure head at 
+the reservoir node is fixed according to its elevation (i.e. 𝒁). 𝑈 is the 
+total number of pumps in the WDSO. 
+{
+𝜣𝐀𝑇𝐒𝑡= 𝜞2
+𝑡⊙(𝛼𝟏𝑈−𝛽((𝟏𝑈⊘𝜞𝑡) ⊙𝜣𝐕𝑡
+)𝜏),
+𝐏𝑈
+𝑡= 𝜞3
+𝑡⊙(𝛿𝟏𝑈−𝜖((𝟏𝑈⊘𝜞𝑡) ⊙𝜣𝐕𝑡
+))
+∀𝑡
+(21)
+{
+𝟎≤𝐏𝑈
+𝑡≤𝐏
+𝑈,
+𝜣𝐕𝑡≥𝟎
+∀𝑡
+(22)
+−𝐀𝑇𝐒𝑡= 𝐆sgn(𝐕𝑡)|𝐕𝑡|1.852
+(23)
+⎧
+⎪
+⎨
+⎪⎩
+𝐒≤𝐒𝑡≤𝐒,
+𝜰𝐒𝑡= 𝐙,
+−𝐕≤𝐕𝑡≤𝐕
+, ∀𝑡
+(24)
+Due to the technical benefits such as voltage regulation and reliabil-
+ity improvement, the PDS is equipped with 𝐼 DG units. The operating 
+constraints of each DG unit are given in (25), where the output power of 
+DG at time interval 𝑡 is bounded by its minimum and maximum limits. 
+𝑃𝑑𝑔
+𝑚𝑖𝑛≤𝑃𝑑𝑔
+𝑖,𝑡≤𝑃𝑑𝑔
+𝑚𝑎𝑥; ∀𝑖, 𝑡
+(25)
+Constraint (26) represents the energy balance at each bus 𝑎 of the 
+PDS, incorporating the linearized power flow, where 𝜒 is the connec-
+tion indicator of equipment at bus 𝑎, 𝜛𝑝𝑑𝑠𝑜
+𝑎,𝑡 is the factor determining 
+the served electrical load, 𝜃𝑎,𝑡 and 𝜃𝑏,𝑡 are the voltage angles at buses 
+Renewable Energy 277 (2026) 126411 
+6 
+
+M.A. Khan et al.
+𝑎 and 𝑏, and 𝐵𝑎𝑏 is the line susceptance between them. Constraint (27) 
+ensures that the power flow remains within the line capacity 𝐹. 
+(𝑃𝑏𝑢𝑦
+𝑡
+−𝑃𝑠𝑒𝑙𝑙
+𝑡
+)𝜒𝑔𝑟𝑖𝑑
+𝑎
++
+∑
+𝑚∈𝛺𝑀
+𝜒𝑐𝜇𝑔
+𝑎,𝑚
+(
+𝑃𝑐𝜇𝑔→𝑝𝑑𝑠𝑜
+𝑚,𝑡
+−𝑃𝑝𝑑𝑠𝑜→𝑐𝜇𝑔
+𝑚,𝑡
+)
++
+∑
+𝑛∈𝛺𝑁
+𝜒ℎ𝜇𝑔
+𝑎,𝑛
+(
+𝑃ℎ𝜇𝑔→𝑝𝑑𝑠𝑜
+𝑛,𝑡
+−𝑃𝑝𝑑𝑠𝑜→ℎ𝜇𝑔
+𝑛,𝑡
+)
++
+∑
+𝑙∈𝛺𝐿
+𝜒𝑒𝑠𝑠
+𝑎,𝑙(𝑃𝑒𝑠𝑠−
+𝑙,𝑡
+−𝑃𝑒𝑠𝑠+
+𝑙,𝑡
+)
++
+∑
+𝑖∈𝛺𝐼
+𝜒𝑑𝑔
+𝑎,𝑖𝑃𝑑𝑔
+𝑖,𝑡+
+∑
+𝑗∈𝛺𝐽
+𝜒𝑟𝑒𝑠
+𝑎,𝑟𝑦𝑝𝑑𝑠𝑜
+𝑟,𝑡
+𝑃𝑟𝑒𝑠
+𝑟,𝑡−𝜒𝑤𝑑𝑠𝑜
+𝑎,𝑢
+𝑃𝑝𝑑𝑠𝑜→𝑤𝑑𝑠𝑜
+𝑢,𝑡
+= 𝜛𝑝𝑑𝑠𝑜
+𝑎,𝑡
+𝑃𝑙𝑜𝑎𝑑
+𝑎,𝑡
++
+∑
+𝑏∈𝛺𝑝𝑑𝑠𝑜
+𝑏𝑢𝑠
+𝐵𝑎𝑏(𝜃𝑎,𝑡−𝜃𝑏,𝑡); ∀𝑡, 𝑎
+(26)
+−𝐹≤𝐵𝑎𝑏(𝜃𝑎,𝑡−𝜃𝑏,𝑡) ≤𝐹; ∀𝑡, 𝑎, 𝑏
+(27)
+Constraint (28) represents the water balance at each node 𝑠 of the 
+WDS, where 𝛷 is the connection indicator of equipment at node 𝑠, ̃
+𝜈𝑤𝑑𝑠𝑜
+𝑠,𝑡
+ is the factor determining the served water load, 𝐴𝑗,𝑟 is the arc-
+node incidence matrix, and 𝑉𝑗,𝑡 is the flow rate in arc 𝑗. Constraint (29) 
+ensures that the power consumed by the WP equals the power imported 
+from the PDSO. 
+𝑊𝑤𝑏𝑢𝑦
+𝑠,𝑡
+𝛷𝑟𝑒𝑠𝑒𝑟𝑣𝑜𝑖𝑟
+𝑠
++
+∑
+𝑚∈𝛺𝑀
+𝛷𝑐𝜇𝑔
+𝑠,𝑚
+(
+𝑊𝑐𝜇𝑔→𝑤𝑑𝑠𝑜
+𝑚,𝑡
+−𝑊𝑤𝑑𝑠𝑜→𝑐𝜇𝑔
+𝑚,𝑡
+)
+−
+∑
+𝑛∈𝛺𝑁
+𝛷ℎ𝜇𝑔
+𝑠,𝑛𝑊𝑤𝑑𝑠𝑜→ℎ𝜇𝑔
+𝑛,𝑡
+=̃ 𝜈𝑤𝑑𝑠𝑜
+𝑠,𝑡
+𝑊𝑙𝑜𝑎𝑑
+𝑠,𝑡
++
+∑
+𝑗∈𝛺𝑎𝑟𝑐𝑠
+𝐴𝑗,𝑟𝑉𝑗,𝑡; ∀𝑡, 𝑠
+(28)
+𝑝𝑤𝑝
+𝑢,𝑡= 𝑝𝑝𝑑𝑠𝑜→𝑤𝑑𝑠𝑜
+𝑢,𝑡
+; ∀𝑢, 𝑡
+(29)
+Constraints (30) and (31) represent the power and water balance 
+of C𝜇G 𝑚, where 𝜛𝑐𝜇𝑔
+𝑚,𝑡 and ̃𝜈𝑐𝜇𝑔
+𝑚,𝑡 are the power and water load served 
+factors. 
+𝑃𝑝𝑑𝑠𝑜→𝑐𝜇𝑔
+𝑚,𝑡
++ 𝑦𝑐𝜇𝑔
+𝑚,𝑡𝑃𝑟𝑒𝑠
+𝑚,𝑡+ 𝑃𝑒𝑠𝑠−
+𝑚,𝑡
+−𝑃𝑒𝑠𝑠+
+𝑚,𝑡
+−𝑃𝑐𝜇𝑔→𝑝𝑑𝑠𝑜
+𝑚,𝑡
+= 𝜛𝑐𝜇𝑔
+𝑚,𝑡𝑃𝑙𝑜𝑎𝑑
+𝑚,𝑡; ∀𝑚, 𝑡
+(30)
+𝑊𝑤𝑑𝑠𝑜→𝑐𝜇𝑔
+𝑚,𝑡
++ 𝑊𝑑𝑒𝑠
+𝑚,𝑡+ 𝑊𝑤𝑠𝑠−
+𝑚,𝑡
+−𝑊𝑤𝑠𝑠+
+𝑚,𝑡
+−𝑊𝑐𝜇𝑔→𝑤𝑑𝑠𝑜
+𝑚,𝑡
+=̃ 𝜈𝑐𝜇𝑔
+𝑚,𝑡𝑊𝑙𝑜𝑎𝑑
+𝑚,𝑡; ∀𝑚, 𝑡
+(31)
+Constraints (32)–(34) represent the power, hydrogen, and water 
+balance of H𝜇G 𝑛, where 𝜛ℎ𝜇𝑔
+𝑛,𝑡 and ̃𝜈ℎ𝜇𝑔
+𝑛,𝑡 are the power and water load 
+served factors. 
+𝑃𝑝𝑑𝑠𝑜→ℎ𝜇𝑔
+𝑛,𝑡
++ 𝑦ℎ𝜇𝑔
+𝑛,𝑡𝑃𝑟𝑒𝑠
+𝑛,𝑡+ 𝑃𝑒𝑠𝑠−
+𝑛,𝑡
++ 𝑃𝑓𝑐
+𝑛,𝑡−𝑃𝑒𝑙
+𝑛,𝑡−𝑃𝑒𝑠𝑠+
+𝑛,𝑡
+−𝑃ℎ𝜇𝑔→𝑝𝑑𝑠𝑜
+𝑛,𝑡
+= 𝜛ℎ𝜇𝑔
+𝑛,𝑡𝑃𝑙𝑜𝑎𝑑
+𝑛,𝑡
+; ∀𝑛, 𝑡
+(32)
+𝐻𝑒𝑙
+𝑛,𝑡+ 𝐻ℎ𝑠𝑠−
+𝑛,𝑡
+−𝐻ℎ𝑠𝑠+
+𝑛,𝑡
+−𝐻𝑓𝑐
+𝑛,𝑡= 𝐻𝑙𝑜𝑎𝑑
+𝑛,𝑡; ∀𝑛, 𝑡
+(33)
+𝑊𝑤𝑑𝑠𝑜→ℎ𝜇𝑔
+𝑛,𝑡
++ 𝑊𝑒𝑙
+𝑛,𝑡=̃ 𝜈ℎ𝜇𝑔
+𝑛,𝑡𝑊𝑙𝑜𝑎𝑑
+𝑛,𝑡
+; ∀𝑛, 𝑡
+(34)
+3.3. Linear approximation of non-linear constraints
+Constraints given in (16), (21), and (23) are inherently nonlinear 
+in nature. These constraints may introduce non-convexity in the prob-
+lem and computationally intensive for large-scale distribution system, 
+therefore, variants of piecewise linear approximation techniques are 
+applied as follows: (i) the C𝜇G pump power consumption in (16) is 
+linearized using the bi-variate piecewise McCormick relaxation tech-
+nique [5]; (ii) the WDSO pump pressure head function in (21) is 
+linearized using the bi-variate piecewise linear approximation [9]; 
+(iii) the pressure head loss function in (23) is approximated using a 
+uni-variate piecewise linear method [9]. The detailed constraints for-
+mulation and performance comparison of adopted linear approximation 
+technique is presented in our previous study [5] and in [9].
+4. Consensus-based ADMM formulation
+The proposed system architecture involves multiple entities, each 
+aiming to minimize its own objective function while sharing a common 
+decision variable, i.e. the energy transactions among them. This struc-
+ture leads to a set of interdependent constrained optimization problems, 
+one for each entity. To solve these problems in a distributed manner, 
+the C-ADMM method is utilized in this study. The general optimization 
+problem presented in Section 3 can be expressed as (35)–(37). The (35) 
+represents the global objective function, while (36) and (37) denote 
+the local constraints and the consensus (shared variable) constraint, 
+respectively. In this formulation, 𝑥𝑒 and 𝜆𝑒 represent the decision 
+variable and dual variable of each entity 𝑒, and 𝜗 denotes the global 
+consensus variable associated with the shared energy transaction. 
+min
+∑
+𝑒∈𝛺𝐸
+𝑓𝑒(𝑥𝑒)
+(35)
+subjected to: 
+𝑔𝑒(𝑥𝑒) ≤𝜈𝑒, ∀𝑒
+(36)
+𝑥𝑒= 𝜗
+(𝜆𝑒), ∀𝑒
+(37)
+Since the objective function is linear, the augmented Lagrangian for-
+mulation of the above problem is formulated in (38) using a quadratic 
+regularization term 𝛾
+2 ‖𝑥𝜎
+𝑒−𝜗𝜎−1‖2 with fixed ̂𝜆𝑒. 
+min
+∑
+𝑒∈𝛺𝐸
+(
+𝑓𝑒(𝑥𝜎
+𝑒) +̂ 𝜆𝜎−1
+𝑒
+⋅𝑥𝜎
+𝑒+ 𝛾
+2 ‖𝑥𝜎
+𝑒−𝜗𝜎−1‖2)
+(38)
+𝑔𝑒(𝑥𝜎
+𝑒) ≤𝜈𝑒,
+∀𝑒
+(39)
+In the second step, since the update of the variable 𝜗 is unconstrained, 
+It can be directly computed as the average of the local variables and 
+dual terms from all entities, as shown in (40): 
+𝜗𝜎= 1
+𝐸
+∑
+𝑒∈𝛺𝐸
+(
+𝑥𝜎
+𝑒+ 1
+𝛾̂ 𝜆𝜎−1
+𝑒
+)
+(40)
+In the third step, each entity updates its dual variable iteratively 𝜆 using 
+(41), ̂
+𝜆𝜎
+𝑒=̂ 𝜆𝜎−1
+𝑒
++ 𝛾(𝑥𝜎
+𝑒−𝜗𝜎) ,
+∀𝑒
+(41)
+Considering the average value of the dual variable ̄𝜆𝑒 across all entities 
+and substituting the expression of 𝜗𝜎 from (40) into (41), it can be 
+shown that 𝜆
+𝜎= 0 and 𝜗
+𝜎= 𝑥𝜎. Hence, the final form of the subproblem 
+objective and dual variable update that each entity independently 
+solves in iteration 𝜎 can be expressed as: 
+min
+∑
+𝑒∈𝛺𝐸
+(
+𝑓𝑒(𝑥𝜎
+𝑒) +̂ 𝜆𝜎−1
+𝑒
+⋅𝑥𝜎
+𝑒+ 𝛾
+2 ‖𝑥𝜎
+𝑒−𝑥𝜎−1‖2)
+(42)̂
+𝜆𝜎
+𝑒=̂ 𝜆𝜎−1
+𝑒
++ 𝛾(𝑥𝜎
+𝑒−𝑥𝜎) ,
+∀𝑒
+(43)
+To coordinate the energy transaction decisions among the partici-
+pating entities, Fig. 3 illustrates the workflow of the proposed C-ADMM 
+algorithm, which proceeds as follows:
+1. The algorithm begins with initialization of the penalty param-
+eter 𝛾, tolerance 𝜀, maximum iteration limit 𝑍, local decision 
+variable 𝑥0
+𝑒= 0, and dual variable ̂𝜆0
+𝑒= 0 for all entities 𝑒∈𝛺𝐸.
+2. At each iteration 𝜎, every entity independently solves its local 
+subproblem (42) subject to constraints (39). Each entity is pe-
+nalized based on its deviation from the global average ̄𝑥𝜎−1, 
+discouraging large disagreements and yielding the updated local 
+variable 𝑥𝜎
+𝑒.
+3. The updated local variable 𝑥𝜎
+𝑒, representing the energy transac-
+tion decision, is shared only among the entities that are directly 
+engaged in energy transactions with one another.
+4. The consensus reference ̄𝑥𝜎 of all local variables is computed via 
+(40), serving as the coordination reference for the next iteration.
+Renewable Energy 277 (2026) 126411 
+7 
+
+M.A. Khan et al.
+Fig. 3. Workflow of the proposed C-ADMM algorithm for distributed coordi-
+nation among PDSO, MEMGs, and WDSO.
+5. Each entity updates ̂𝜆𝜎
+𝑒 via (43), where the deviation (𝑥𝜎
+𝑒−̄ 𝑥𝜎)
+accumulates the disagreement from the global average, acting as 
+a coordination signal that drives all entities toward consensus.
+6. The algorithm terminates when either the primal residual satis-
+fies ‖𝑥𝜎
+𝑒−̄𝑥𝜎‖ ≤𝜀, indicating consensus has been reached, or the 
+maximum iterations 𝜎= 𝑍 is achieved as a safety limit.
+7. Upon termination, the optimal energy transaction decisions 𝑥∗
+𝑒
+are dispatched among all entities, ensuring coordinated and 
+optimal operation of the integrated system.
+5. Numerical simulation
+5.1. Input data and system settings
+The proposed interconnected power and water distribution sys-
+tems are evaluated using the modified IEEE 33-bus and 15-node sys-
+tems [29]. In this integrated framework, two C𝜇Gs and four H𝜇Gs are 
+connected at different locations within the networks. Additionally, the 
+PDS includes ESS, DGs, and RES consisting of PVs installed at various 
+buses, as illustrated in Fig. 5. The input data profiles for each H𝜇G and 
+C𝜇G and the internal parameter values are shown in Fig. 4 and Table 
+2. As wind speeds are moderate in coastal regions, the RES profiles of 
+C𝜇Gs include WT generation in addition to PV generation, while H𝜇Gs 
+only consist of PV generation units, as shown in Fig. 4(d). As shown 
+in Fig. 5, the H𝜇Gs are located at buses 6, 12, 14, and 19. Assuming 
+that buses 23 and 26 are near the sea, the C𝜇Gs are installed at these 
+locations, while RES are integrated at buses 25 and 33. Since RES 
+Table 2
+System parameters.
+ Parameters
+Values
+ 
+ 𝜂𝑒𝑠𝑠+∕−, 𝜂ℎ𝑠𝑠+∕−, 𝜂𝑤𝑠𝑠+∕−
+0.95, 0.99, 0.97
+ 
+ 𝜂𝑑𝑒𝑠, 𝜂𝑤𝑝, 𝜂𝑓𝑐, 𝜂𝑒𝑙
+0.3295, 0.60, 0.70, 0.85 
+ 
+ 𝜌𝑤, 𝜁𝑤𝑠𝑠, 𝐿𝑤𝑠𝑠, 𝑀𝐹𝑊, 𝛬𝑤𝑠𝑠
+997 kg/m3, 55 m, 3 m, 9 L, 16 m2 
+ 𝑃𝑒𝑙
+𝑚𝑎𝑥, 𝑃𝑓𝑐
+𝑚𝑎𝑥, 𝑃𝑑𝑒𝑠1
+𝑚𝑎𝑥, 𝑃𝑑𝑒𝑠2
+𝑚𝑎𝑥
+1000, 1000, 800, 500 (kW) 
+ 
+ 𝐸𝑆𝑆𝐶𝑎𝑝
+𝐶𝜇𝐺1−𝐻𝜇𝐺4
+250, 200, 200, 500, 500, 200 (kW)  
+ 𝐻𝑆𝑆𝐶𝑎𝑝
+𝐻𝜇𝐺1−𝐻𝜇𝐺4
+100, 500, 300, 300 (kW) 
+ 
+ 𝜓𝐻𝜇𝐺, 𝜓𝐶𝜇𝐺, 𝑍
+0.5, 0.5, 200
+ 
+ 𝜁𝑘𝑤−𝑘𝑔
+0.0254 kg/kW
+ 
+ 𝜆𝑑𝑔, 𝜑
+0.08, 10 ($/kW) 
+ 
+ 𝑃𝐷𝐺1
+𝑚𝑎𝑥, 𝑃𝐷𝐺2
+𝑚𝑎𝑥
+350, 250 (kW) 
+ 
+ 𝑃𝑟𝑒𝑠(𝑃𝑉)
+𝑚𝑎𝑥
+, 𝑃𝑟𝑒𝑠(𝑃𝑉)
+𝑚𝑎𝑥
+ (bus 24, 33)
+675, 450 (kW)
+ 
+Table 3
+Comparative analysis of C-ADMM and centralized method.
+ Model
+Penalty factor(𝛾)
+Total operation cost ($)
+Error (%) 
+ Centralized
+–
+283 175
+–
+ 
+ 
+C-ADMM
+0.1
+283 964
+0.28
+ 
+ 
+0.01
+284 052
+0.31
+ 
+ 
+0.001
+283 256
+0.03
+ 
+ 
+1
+514 524
+81.69
+ 
+are intermittent, each RES is coupled with an ESS to mitigate power 
+fluctuations. Additionally, an ESS is also installed at bus 19 along with 
+the H𝜇G. Two DGs are available at buses 18 and 22. The WP associated 
+with the WDS, located at arcs 𝐽1, 𝐽4, and 𝐽7, are powered by buses 
+33, 10, and 22 of the test PDS, respectively. Within the WDS, C𝜇Gs 
+are located at nodes 𝑁7 and 𝑁12, functioning as prosumers. The H𝜇G 
+water loads are connected at nodes 𝑁4, 𝑁8, 𝑁10, and 𝑁13. In addition, 
+internal electric loads are considered at all buses in the PDS, while 
+internal water loads are considered at nodes 𝑁3, 𝑁6, 𝑁11, and 𝑁13 in 
+the WDS.
+The 𝜆𝑝𝑏𝑢𝑦 and 𝜆𝑝𝑠𝑒𝑙𝑙 are represented in Fig. 6. The 𝜆𝑤𝑏𝑢𝑦 is approxi-
+mated based on statistical price data from the United States [30] and 
+is set at $6/m3. It is assumed that the WDSO cannot sell water back 
+to the external water utility, whereas water selling is only associated 
+with the C𝜇Gs. Accordingly, the 𝜆𝑤𝑠𝑒𝑙𝑙 for the C𝜇Gs is assumed to be 
+$4/m3. In this setup, C𝜇Gs utilize excess energy to operate their DES 
+units, generating revenue by supplying water to the WDSO, which in 
+turn procures water at a lower cost. The proposed system optimization 
+problem is implemented in Visual Studio 2022 with the integration of 
+IBM CPLEX 22.1.0.
+5.2. Proposed method performance comparison
+To analyze the performance of the proposed distributed method, 
+simulations are conducted and compared with a centralized optimiza-
+tion approach. Both algorithms are tested over a 24-hour operational 
+horizon.
+The comparative results of the total operation cost obtained from 
+both methods are summarized in Table 3. Since the C-ADMM is highly 
+dependent on proper tuning of penalty parameter 𝛾, the simulations are 
+performed by varying the 𝛾 with iterations set to 200, and results are 
+populated in Table 3. As shown in Table 3, the error in total operation 
+cost compared to centralized varies with respect to the 𝛾 variations 
+irrespective of high or low penalty, thus proper tuning of penalty 
+parameter is required depending on the scenario. However, under the 
+proposed system settings from 𝛾= 0.1 −0.0001, total operational cost 
+obtained using the C-ADMM algorithm is nearly identical to that of the 
+centralized method, with only a marginal difference. This negligible 
+deviation highlights the accuracy of the proposed distributed approach 
+Renewable Energy 277 (2026) 126411 
+8 
+
+M.A. Khan et al.
+Fig. 4. Hourly forecasted demand and generation profiles of MEMGs for 24-hour period: (a) Electric demand in MEMGs; (b) Hydrogen demand in H𝜇Gs; (c) 
+Water demand in MEMGs; (d) Renewable generation in MEMGs.
+Fig. 5. Integrated IEEE 33-bus power and 15-node water distribution test system incorporating multiple MEMGs.
+with properly tuned 𝛾 while ensuring privacy preservation for each 
+entity.
+In the C-ADMM framework, each entity maintains a local copy of 
+the consensus variable and iteratively updates it to reach an agreement 
+on the energy transaction decision. In the proposed system, there 
+are approximately 46 × 24 consensus variables corresponding to the 
+inter-entity energy exchanges during 24 h time period. To assess the 
+convergence performance of C-ADMM, the maximum absolute differ-
+ence at time interval t between inter-entity consensus variables at each 
+iteration is computed and normalized, represented by 𝛥𝜎,𝑡 as expressed 
+in (44), where 𝐱𝐚𝜎,𝐭, 𝐱𝐛𝜎,𝐭 are the vector of consensus variables. The 
+results shown in Fig. 7 demonstrate the convergence behavior of the 
+Renewable Energy 277 (2026) 126411 
+9 
+
+M.A. Khan et al.
+Fig. 6. Power market price signals.
+Fig. 7. Convergence of the cumulative consensus variable at 𝑡= 2: (a) at 𝛾= 0.1 and 𝛾= 0.01, (b) at 𝛾= 0.001 and 𝛾= 1.
+consensus variable for different values of 𝛾. In all cases, the consensus 
+variables converge within 100 iterations. The proposed distributed 
+architecture achieves a feasible solution with minimal error while 
+preserving privacy and scalability across participating entities. 
+𝛥𝜎,𝑡= max (||𝐱𝐚𝜎,𝑡−𝐱𝐛𝜎,𝑡||
+)̄
+𝛥𝜎,𝑡=
+𝛥𝜎,𝑡
+𝛥max
+(44)
+5.3. Participation assessment of MEMGs under outages
+5.3.1. Case studies
+To assess the MEMGs’ cooperation in integrated PDS-WDS, six out-
+age cases are analyzed by introducing a fault at various buses and arcs. 
+Faults are assumed to occur from interval 15 to 18. Each case represents 
+a distinct fault scenario, as summarized in Table 4. In Case 1, a single 
+fault on the PDS grid side is considered at line 𝐿1, while in Case 2, 
+a fault occurs at the water utility arc 𝐽1. Since both C𝜇G and H𝜇G 
+can supply electrical power in the PDS, two C𝜇Gs and four H𝜇Gs are 
+available to support the network. However, in the WDS, only C𝜇Gs 
+are capable of supplying water, while H𝜇Gs act as loads. Cases 3 and
+4 consider internal faults within the PDS and WDS, respectively. In
+Case 3, multiple faults at line 𝐿8 and line 𝐿22 are assumed, where 
+two H𝜇Gs and one C𝜇G are located. In Case 4, multiple faults at arcs 
+𝐽6 and 𝐽11 are assumed. Extreme events, such as earthquakes, can 
+disrupt not only the power network but also the underground pipeline 
+infrastructure. Therefore, Cases 5 and 6 consider simultaneous faults 
+within the internal networks (𝐿11 in the PDS and 𝐽6 in the WDS) as 
+well as at the external utilities to evaluate system performance under 
+worst-case conditions.
+Table 4
+Case studies summary.
+ Cases
+Fault type
+C𝜇Gs available
+H𝜇Gs available 
+ 1
+Utility grid
+2
+4
+ 
+ 2
+Water utility
+2
+–
+ 
+ 3
+Internal PDS
+1
+2
+ 
+ 4
+Internal WDS
+2
+–
+ 
+ 5
+Internal PDS/WDS
+1
+2
+ 
+ 6
+Grid/Water utility
+2
+4
+ 
+As discussed previously, the performance of C-ADMM is sensitive to 
+the tuning of the penalty parameter 𝛾 and varies across different sce-
+narios. In general, determining the optimal value of 𝛾 is nontrivial and 
+is beyond the scope of this study (see [31] for a detailed discussion). 
+For practical implementation, 𝛾 is tuned adaptively for each scenario, 
+and the corresponding convergence behavior is illustrated in Fig. 8. As 
+shown in Fig. 8, the algorithm converges for all tested values of 𝛾 across 
+the considered cases, representing the robustness and applicability of 
+the proposed framework.
+The power and water–energy transaction results between the
+MEMGs and the external DSOs are summarized in Table 5. The partic-
+ipation of each MEMG is defined as the ratio of its energy contribution 
+to the total load demand in the faulted area, expressed as a percentage. 
+In Case 1, during a grid outage, the MEMGs collectively supply 17.8% 
+of the total PDS demand. The PDSO buys electric power from healthy 
+MEMGs while simultaneously serving its internal loads and supporting 
+unhealthy H𝜇Gs according to their generation profiles at different time 
+intervals, reflecting aggregator-to-aggregator coordination. In addition, 
+the PDSO supports the pumping operation of the WDSO with 835 kW, 
+highlighting the role of multi-energy coupling in enhancing overall 
+Renewable Energy 277 (2026) 126411 
+10 
+
+M.A. Khan et al.
+Fig. 8. Convergence behavior of the consensus variable under tuned 𝛾 for different cases at 𝑡= 16: (a) Cases 1–3, (b) Cases 3–6.
+Table 5
+Participation of MEMGs in interdependent PDS-WDS considering outage scenarios.
+ Cases
+Power transactions (kW)
+Water transactions (m3)
+MEMGs participation (%)
+ 
+𝑃𝑐𝜇𝑔→𝑝𝑑𝑠𝑜
+𝑃ℎ𝜇𝑔→𝑝𝑑𝑠𝑜
+𝑃𝑝𝑑𝑠𝑜→ℎ𝜇𝑔
+𝑃𝑝𝑑𝑠𝑜→𝑐𝜇𝑔
+𝑃𝑝𝑑𝑠𝑜→𝑤𝑑𝑠𝑜
+𝑊𝑐𝜇𝑔→𝑤𝑑𝑠𝑜
+𝑊𝑤𝑑𝑠𝑜→ℎ𝜇𝑔
+𝑊𝑤𝑑𝑠𝑜→𝑐𝜇𝑔
+PDS
+WDS 
+ 1
+1154
+2653
+1105
+4903
+836
+0
+1795
+217
+17.8
+–
+ 
+ 2
+0
+1845
+8037
+4381
+16
+1121
+1121
+0
+–
+10.2 
+ 3
+611
+1315
+587
+544
+544
+128
+812
+70
+30.7
+–
+ 
+ 4
+0
+2613
+2742
+5743
+38
+1585
+1433
+0
+–
+31
+ 
+ 5
+0
+848
+587
+0
+0
+1085
+1085
+0
+32.8
+59
+ 
+ 6
+3626
+7429
+502
+0
+0
+2012
+1720
+0
+73.1
+19.2 
+system resilience. In Case 2, during a WDS fault, the C𝜇Gs equipped 
+with DES units contribute 10.2% of the total water input to the WDS. 
+In addition to satisfying their own water demand, these C𝜇Gs facilitate 
+the supply of 1121 m3 of water to the H𝜇Gs through the WDSO, 
+supporting both load requirements and hydrogen production. In Case 3, 
+when an internal PDS fault occurs, the two H𝜇Gs within the faulted 
+zone collectively supply 30.7% of the required power load. Similarly, 
+in Case 4, under an internal WDS fault, the two C𝜇Gs located in the 
+affected area support the WDS load and supply the connected H𝜇Gs, 
+thereby ensuring service continuity. Overall, these cases indicate that 
+a larger share of energy is allocated to MEMGs, primarily due to their 
+higher load priority values (𝜓𝐻𝜇𝐺 and 𝜓𝐶𝜇𝐺). In the worst-case scenario 
+(Case 5), during a PDS fault, the two available H𝜇Gs contribute to a 
+32.8% load reduction in the faulted area. Similarly, the presence of 
+two C𝜇Gs within the faulted zone supports approximately 59% of the 
+WDS load, including both internal and H𝜇G water demands. Finally, in 
+Case 6, when both the PDS and WDS are disconnected from external 
+utilities, the MEMGs contribute about 73.1% to the PDS and 19.2% to 
+the WDS. The reduced participation in the WDS results from pipe flow 
+limits.
+5.3.2. Internal components operation
+In this study, MEMG diversification is considered to analyze the 
+distinct participation of hydrogen- and water-related equipment in 
+H𝜇Gs and C𝜇Gs, as illustrated in Fig. 9. The operating conditions 
+under Case 5, representing the worst-case scenario, are examined to 
+comprehensively assess the participation of all MEMGs.
+• Hydrogen cycle in H𝜇Gs: Fig. 9(a) depicts the operation of the 
+EL and FC units in the H𝜇Gs. The hydrogen cycle operates as 
+follows: during intervals 15 and 16, excess renewable generation 
+triggers intensive EL unit operation, which converts surplus elec-
+trical energy into hydrogen, thereby alleviating grid congestion 
+on the PDS side. The produced hydrogen is stored in the HSS, 
+as shown in Fig. 9(b). Since no hydrogen demand is considered 
+in H𝜇G2, the excess PV generation of 558 kW is converted into 
+hydrogen through the EL unit. The stored hydrogen is later re-
+converted into electricity through the FC unit during periods of 
+low renewable generation. Particularly, in interval 17, the FC unit 
+provides an additional 219 kW, in addition to the 530 kW PV 
+generation in H𝜇G2, to support the electric demand and provide 
+services to the PDS. This closed hydrogen cycle, from excess 
+power to hydrogen storage and back to power, represents the role 
+of H𝜇Gs as active energy buffers within the integrated system.
+• Water-hydrogen coupling: Since EL operation requires water, 
+H𝜇Gs receive an increased water supply from the DES units of 
+C𝜇Gs (Fig. 9(c)) during intervals 15–18 to support hydrogen 
+production. In particular, H𝜇G2 consumes 0.09 m3 of water at 
+interval 16 to minimize the excess energy curtailment of 558 kW, 
+while H𝜇G4 consumes about 0.19 m3 of water for hydrogen 
+production to minimize the curtailment of 1401.2 kW of excess 
+energy from the PDSO and local PV generation and support its 
+hydrogen demand. This demonstrates the water-energy coupling 
+between C𝜇Gs and H𝜇Gs, where water produced by the DES 
+units directly enables hydrogen production and subsequent power 
+generation via the FC units.
+• Water equipment operation in C𝜇Gs: Fig. 9(b) shows that the 
+WSS of C𝜇G1 remains inactive due to its higher-capacity DES unit 
+(Fig. 9(c)), which operates continuously at 800 kW, providing 
+sufficient water supply without the need for storage discharge. In 
+contrast, the WSS of C𝜇G2 is discharged to meet the overall water 
+demand, owing to its lower DES unit capacity of 500 kW. The 
+overall water demands served by C𝜇G1 and C𝜇G2 are 1000.1 m3
+and 552.7 m3, respectively, with their PV and WT generation 
+supplying the electric power required by the DES units to provide 
+water to the WDSO, which serves the water demands of MEMGs 
+and WDSO.
+5.3.3. Energy flow analysis
+Fig. 10 illustrates the power and water flows within the integrated 
+PDS–WDS under the worst-case scenarios, considering both the PDS–
+WDS internal fault (Case 5) and the external utility fault (Case 6) at 
+interval 15. At this interval, the utility grid supplies 3142.7 kW to the 
+interconnected system in Case 5 (Fig. 10(a)). In contrast, following the 
+external utility fault in Case 6, the external power supply becomes zero, 
+and the approximately 3.09 MW system demand is supplied through 
+Renewable Energy 277 (2026) 126411 
+11 
+
+M.A. Khan et al.
+Fig. 9. Operation results of internal components of MEMGs under Case 5: (a) EL and FC unit operations in H𝜇Gs, (b) HSS and WSS operations in H𝜇Gs and 
+C𝜇Gs, (c) DES unit operations in C𝜇Gs.
+Fig. 10. Power and water flow analysis at interval 15 under (a) Case 5 and (b) Case 6.
+coordinated local generation and energy conversion within the MEMGs 
+(Fig. 10(b)). In particular, H𝜇G2 and H𝜇G3, located at buses 12 and 
+14 become net exporters and supply 764.8 kW and 381.0 kW, while 
+C𝜇G1 and C𝜇G2 supply 132.7 kW and 264.1 kW to the PDS. Since 
+the primary generation resources of the MEMGs are PV and WT units, 
+their coordinated utilization enables the system to maintain local power 
+supply under the worst-case fault condition, thereby enhancing the 
+overall sustainability and resilience of the integrated system.
+The corresponding water-flow variation in Figs. 10(a) and 10(b) 
+demonstrates the interdependency between the PDS and WDS. In 
+Case 5, the faulted arc 𝐽6 reduces the centralized water supply, and 
+the pump connected to bus 22 supplies 268.7 m3/h of water procured 
+from C𝜇G1 through the 𝑁7–𝑁8 path to support the water demands of 
+the connected H𝜇Gs at 𝑁8 and 𝑁10. In Case 6, the external utility fault 
+further reduces the pumping capacity, decreasing the flow through the 
+𝑁7–𝑁8 path to 96.8 m3/h, a reduction of 171.9 m3/h (64.0%). Mean-
+while, approximately 91.9 m3/h is supplied through the alternative 
+path 𝐽11–𝐽12, increasing the utilization of local desalination resources 
+and supporting the water demand of H𝜇G3. This coordinated water 
+redistribution enables the C𝜇Gs to compensate for the reduced water 
+utility supply and sustain the water-dependent operation of the H𝜇Gs, 
+demonstrating the effectiveness of the proposed power-water-hydrogen 
+coupling under fault conditions.
+5.3.4. Impact of fault time and location variations
+The participation of MEMGs is influenced by their local generation 
+capacity and the number of MEMGs available at each location. To 
+analyze this behavior, simulations are performed by introducing faults 
+Renewable Energy 277 (2026) 126411 
+12 
+
+M.A. Khan et al.
+Fig. 11. MEMGs participation under varying fault timing and locations: (a) Participation in PDS, (b) Participation in WDS.
+at different lines and nodes, considering various fault initiation times 
+with a 4-h fault window. Fig. 11(a) illustrates the participation of 
+MEMGs in the PDS. The average participation of MEMGs in the PDS 
+is about 39%. However, MEMG participation is higher when the fault 
+initiation time falls within intervals 7 to 14, primarily due to increased 
+renewable generation during this period, which enables MEMGs to 
+support the PDS more effectively.
+In the WDS (Fig. 11(b)), C𝜇Gs participate in all scenarios, with 
+an average participation of 22.4%, as the presence of WTs in C𝜇Gs 
+allows them to operate continuously. Participation is higher when faults 
+occur along arcs 𝐽5 and 𝐽6, averaging 31%. In contrast, participation is 
+comparatively lower for faults at 𝐽1–𝐽4, averaging 18%, because the 
+fault-affected area is larger and additional water loads are impacted. 
+For faults at 𝐽11, the average participation is slightly higher at 23.1%, 
+due to a smaller affected load, although only one C𝜇G is present in the 
+affected region.. Furthermore, only minor sensitivity of participation 
+to fault initiation times is observed, since operating DES units and 
+supplying water to the WDSO remains economically favorable for both 
+the WDSO and C𝜇Gs.
+6. Conclusion and future works
+This paper presents an operation model for integrated power–water 
+distribution systems comprising multiple independent operators and 
+aggregators. Two types of MEMGs are considered as aggregators based 
+on their geographical resource availability: coast-based MEMGs (C𝜇Gs) 
+near the coast equipped with desalination units and pumped stor-
+age, and hydrogen-based MEMGs (H𝜇Gs) equipped with electrolyzers, 
+fuel cells, and hydrogen storage systems. A decentralized coordination 
+framework is developed using the consensus-based alternating direction 
+method of multipliers (C-ADMM) to model the independent operations 
+of each operator and aggregator while preserving their autonomy and 
+privacy. Simulations are performed on the IEEE 33-bus power distribu-
+tion system interconnected with a 15-node water distribution system, 
+with MEMGs connected on different buses and nodes. The proposed 
+C-ADMM framework achieves near-optimal solutions with minimal 
+deviation from the centralized approach, confirming the viability of 
+privacy-preserving distributed coordination as a scalable alternative to 
+centralized management. The results demonstrate that C𝜇Gs and H𝜇Gs 
+exhibit complementary resilience contributions: C𝜇Gs support water 
+distribution system operations and supply desalinated water for H𝜇G 
+electrolysis, while H𝜇Gs absorb excess renewable energy through hy-
+drogen production and subsequently reconvert the stored hydrogen into 
+power via fuel cells to mitigate power distribution congestion during 
+low renewable generation periods. Furthermore, the cascading failure 
+analysis reveals a directional asymmetry in cross-system fault propaga-
+tion, where faults in the power distribution system disproportionately 
+reduce C𝜇G contributions to water distribution operations, highlighting 
+the importance of power system fault mitigation in integrated infras-
+tructure planning. Under worst-case scenarios, MEMG participation 
+reaches 32.8% and 73.1% in the power distribution system and 59.0% 
+and 19.2% in the water distribution system, respectively, quantitatively 
+confirming the significant resilience value of heterogeneous MEMG 
+integration.
+Future work will focus on dynamic penalty parameter tuning and 
+the development of resilience metrics for cascading failure assessment 
+in coupled power–water distribution systems.
+CRediT authorship contribution statement
+Muhammad Ahsan Khan: Writing – original draft, Software, 
+Methodology, Data curation, Conceptualization. Talha Rehman: 
+Writing – original draft, Methodology, Formal analysis, Data 
+curation. Woon-Gyu Lee: Writing – review & editing, Visualization, 
+Validation, Investigation, Formal analysis. Hak-Man Kim: Writing – 
+review & editing, Validation, Supervision, Methodology.
+Declaration of competing interest
+The authors declare that they have no known competing finan-
+cial interests or personal relationships that could have appeared to 
+influence the work reported in this paper.
+References
+[1] L. Han, J. Chen, A. Chen, X. Gao, S. Wang, J. Zhai, Energy scheduling for 
+integrated electricity–hydrogen systems considering multiphysics dynamics of 
+hybrid water and biomass electrolysis, Renew. Energy 244 (2025) 122635, 
+http://dx.doi.org/10.1016/j.renene.2025.122635.
+[2] C. Wang, Z. Lu, Jiangfeng Zhang, X. Guo, Y. Li, Jiangyong Zhang, Planning 
+and economic analysis of low-carbon transition of East China power system 
+considering electricity-hydrogen coupling, Renew. Energy 249 (2025) 123244, 
+http://dx.doi.org/10.1016/j.renene.2025.123244.
+[3] Y.-G. Son, B.-C. Oh, M.A. Acquah, R. Fan, D.-M. Kim, S.-Y. Kim, Multi en-
+ergy system with an associated energy hub: A review, IEEE Access 9 (2021) 
+127753–127766, http://dx.doi.org/10.1109/ACCESS.2021.3108142.
+[4] L. Zhang, Z. Dong, X. Zhang, N. Zhang, G. Strbac, Value assessment of smart 
+control for resilience-oriented planning of urban energy systems, IEEE Trans. Ind. 
+Appl. 61 (2025) 8661–8673, http://dx.doi.org/10.1109/TIA.2025.3573998.
+[5] M.A. Khan, T. Rehman, H.-M. Kim, Optimal operation of hydrogen-based multi-
+energy microgrid integrating water network and transportation sector, Int. J. 
+Hydrog. Energy 97 (2025) 501–515, http://dx.doi.org/10.1016/j.ijhydene.2024.
+11.367.
+[6] S. Shin, S. Lee, D. Judi, M. Parvania, E. Goharian, T. McPherson, S. Burian, 
+A systematic review of quantitative resilience measures for water infrastructure 
+systems, Water 10 (2018) 164, http://dx.doi.org/10.3390/w10020164.
+[7] Y. Zhao, J. Lin, Y. Song, Y. Xu, A robust microgrid formation strategy for 
+resilience enhancement of hydrogen penetrated active distribution networks, 
+IEEE Trans. Power Syst. 39 (2024) 2735–2748, http://dx.doi.org/10.1109/
+TPWRS.2023.3305470.
+Renewable Energy 277 (2026) 126411 
+13 
+
+M.A. Khan et al.
+[8] H. Hou, J. Tang, Z. Zhang, X. Wu, R. Wei, L. Wang, H. He, Stochastic pre-
+disaster planning and post-disaster restoration to enhance distribution system 
+resilience during typhoons, Energy Convers. Econ. 4 (2023) 346–363, http:
+//dx.doi.org/10.1049/enc2.12098.
+[9] L. Rodriguez-Garcia, M.M. Hosseini, T.M. Mosier, M. Parvania, Resilience analyt-
+ics for interdependent power and water distribution systems, IEEE Trans. Power 
+Syst. 37 (2022) 4244–4257, http://dx.doi.org/10.1109/TPWRS.2022.3149463.
+[10] H. Wan, W. Liu, Q. Shi, R. Zhu, X. Zhang, J. Zhao, Real-time service restoration of 
+coupled power-water systems considering the spatio-temporal cascading failure, 
+IEEE Trans. Smart Grid 17 (2026) 178–192, http://dx.doi.org/10.1109/TSG.
+2025.3602929.
+[11] M. Talaie, F. Jabari, A. Akbari Foroud, Modeling and economic dispatch of a 
+novel fresh water, methane and electricity generation system considering green 
+hydrogenation and carbon capture, Energy Convers. Manage. 302 (2024) 118087, 
+http://dx.doi.org/10.1016/j.enconman.2024.118087.
+[12] H. Masrur, M.M. Gamil, M.R. Islam, K.M. Muttaqi, M.S.H. Lipu, T. Senjyu, An 
+optimized and outage-resilient energy management framework for multicarrier 
+energy microgrids integrating demand response, IEEE Trans. Ind. Appl. 58 (2022) 
+4171–4180, http://dx.doi.org/10.1109/TIA.2022.3160683.
+[13] H. Fan, Q. Yuan, S. Xia, J. Lu, Z. Li, Optimally coordinated expansion planning of 
+coupled electricity, heat and natural gas infrastructure for multi-energy system, 
+IEEE Access 8 (2020) 91139–91149, http://dx.doi.org/10.1109/ACCESS.2020.
+2993035.
+[14] M.A. Khan, T. Rehman, H.-M. Kim, Hierarchical energy management for het-
+erogeneous multi-energy microgrid community: Integrating hydrogen into the 
+water-energy nexus, Appl. Energy 397 (2025) 126254, http://dx.doi.org/10.
+1016/j.apenergy.2025.126254.
+[15] Y. Dong, W. Zheng, X. Cao, X. Sun, Z. He, Co-planning of hydrogen-based 
+microgrids and fuel-cell bus operation centers under low-carbon and resilience 
+considerations, Appl. Energy 336 (2023) 120849, http://dx.doi.org/10.1016/j.
+apenergy.2023.120849.
+[16] H. Han, Z. Ya, S. Zhang, Y. Huang, C. Wu, S. Chen, Z. Wei, Coordinated schedul-
+ing strategy for coastal industrial park microgrids and distribution network with 
+water-cycling-based green hydrogen system, Renew. Energy 259 (2026) 125051, 
+http://dx.doi.org/10.1016/j.renene.2025.125051.
+[17] J. Najafi, A. Peiravi, A. Anvari-Moghaddam, Josep. M. Guerrero, An efficient 
+interactive framework for improving resilience of power-water distribution 
+systems with multiple privately-owned microgrids, Int. J. Electr. Power Energy 
+Syst. 116 (2020) 105550, http://dx.doi.org/10.1016/j.ijepes.2019.105550.
+[18] S.R. Seyednouri, A. Safari, S.N. Ravadanegh, A. Quteishat, N. Taghizadegan, 
+Distributed and adaptive robust energy management of an active distribution 
+network with multi-microgrid considering transactive energy, Electr. Power Syst. 
+Res. 248 (2025) 111969, http://dx.doi.org/10.1016/j.epsr.2025.111969.
+[19] V. Sabzpoosh Saravi, M. Kalantar, A. Anvari-Moghaddam, A cooperative 
+resilience-oriented planning framework for integrated distribution energy systems 
+and multi-carrier energy microgrids considering energy trading, Sustain. Cities 
+Soc. 100 (2024) 105039, http://dx.doi.org/10.1016/j.scs.2023.105039.
+[20] Z. Wang, H. Hou, R. Wei, Z. Li, A distributed market-aided restoration approach 
+of multi-energy distribution systems considering comprehensive uncertainties 
+from typhoon disaster, IEEE Trans. Smart Grid 16 (2025) 3743–3757, http:
+//dx.doi.org/10.1109/TSG.2025.3578484.
+[21] T. Ding, W. Jia, M. Shahidehpour, O. Han, Y. Sun, Z. Zhang, Review of 
+optimization methods for energy hub planning, operation, trading, and control, 
+IEEE Trans. Sustain. Energy 13 (2022) 1802–1818, http://dx.doi.org/10.1109/
+TSTE.2022.3172004.
+[22] X. Li, X. Du, T. Jiang, R. Zhang, H. Chen, Coordinating multi-energy to improve 
+urban integrated energy system resilience against extreme weather events, Appl. 
+Energy 309 (2022) 118455, http://dx.doi.org/10.1016/j.apenergy.2021.118455.
+[23] Y. Wang, D. Qiu, X. Sun, Z. Bie, G. Strbac, Coordinating multi-energy microgrids 
+for integrated energy system resilience: A multi-task learning approach, IEEE 
+Trans. Sustain. Energy 15 (2024) 920–937, http://dx.doi.org/10.1109/TSTE.
+2023.3317133.
+[24] H. Ali, A. Hussain, V.-H. Bui, H.-M. Kim, Consensus algorithm-based distributed 
+operation of microgrids during grid-connected and islanded modes, IEEE Access 
+8 (2020) 78151–78165, http://dx.doi.org/10.1109/ACCESS.2020.2989457.
+[25] J. Qin, Y. Wan, X. Yu, Y. Kang, A Newton method-based distributed algorithm 
+for multi-area economic dispatch, IEEE Trans. Power Syst. 35 (2020) 986–996, 
+http://dx.doi.org/10.1109/TPWRS.2019.2943344.
+[26] D. Zhao, C. Zhang, X. Cao, C. Peng, B. Sun, K. Li, Y. Li, Differential privacy 
+energy management for islanded microgrids with distributed consensus-based 
+ADMM algorithm, IEEE Trans. Contr. Syst. Technol. 31 (2023) 1018–1031, 
+http://dx.doi.org/10.1109/TCST.2022.3208456.
+[27] J. Qin, Y. Wan, X. Yu, F. Li, C. Li, Consensus-based distributed coordination 
+between economic dispatch and demand response, IEEE Trans. Smart Grid 10 
+(2019) 3709–3719, http://dx.doi.org/10.1109/TSG.2018.2834368.
+[28] Z. Guo, P. Pinson, S. Chen, Q. Yang, Z. Yang, Online optimization for real-time 
+peer-to-peer electricity market mechanisms, IEEE Trans. Smart Grid 12 (2021) 
+4151–4163, http://dx.doi.org/10.1109/TSG.2021.3075707.
+[29] Data Sets – Dr. Masood Parvania, USMART (University of Utah), [Online]. 
+Available: https://usmart.ece.utah.edu/datasets/. (Accessed 10 November 2025).
+[30] Tap water prices in selected U. S. cities, Statista, [Online]. Available: https://
+www.statista.com/statistics/1232861/tap-water-prices-in-selected-us-cities/. (Ac-
+cessed 10 November 2025).
+[31] Distributed optimal power flow of DC microgrids: A penalty based ADMM 
+approach, CSEE JPES (2019) http://dx.doi.org/10.17775/CSEEJPES.2019.01650.
+Renewable Energy 277 (2026) 126411 
+14 

@@ -1,0 +1,2206 @@
+Applied Energy 388 (2025) 125670
+Available online 14 March 2025
+0306-2619/© 2025 Elsevier Ltd. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+Data-assisted coordinated robust optimization method for urban 
+water-power systems
+Manguo Zhou a,*, Kaiming Zhang a, Xiangwan Liu a, Fan Ma b
+a College of Electrical Engineering Zhejiang University, Hangzhou, 310027, China
+b National Key Laboratory of Electromagnetic Energy, Wuhan, 430033, China
+H I G H L I G H T S
+G R A P H I C A L A B S T R A C T
+• Proposes a two-stage robust optimiza­
+tion for water-energy systems, coordi­
+nating 
+water 
+storage 
+and 
+energy 
+dispatch.
+• Introduces a dynamic risk-tolerance 
+adjustment mechanism, enabling flex­
+ible control of model conservatism.
+• Develops a probabilistic operation re­
+gion to manage system uncertainties 
+and support adaptive decisions.
+• Establishes an evaluation system for the 
+probabilistic 
+operation 
+region, 
+providing 
+key 
+metrics 
+for 
+system 
+robustness.
+A R T I C L E I N F O
+Keywords:
+Robust optimization
+Renewable energy
+Data-driven
+Uncertainty
+Deep learning
+Convex hull
+Power-water nexus
+A B S T R A C T
+With the increasing power demand of water distribution systems, utilizing pumps and water tanks as flexibility 
+resources for the power system can effectively enhance the operational flexibility and efficiency of integrated 
+energy systems. This paper proposes a data-assisted two-stage robust optimization method, incorporating a 
+dynamic risk tolerance adjustment mechanism, to coordinate the operation of power and water supply systems, 
+improve renewable energy penetration, and reduce overall operational costs. The proposed method first employs 
+data-assisted techniques to generate uncertainty predictions and applies two-stage robust optimization to 
+determine safe operational boundaries. Then, a convex hull method is used to construct probabilistic operation 
+regions under different scheduling risk tolerances. Simultaneously, a dynamic risk tolerance adjustment mech­
+anism is introduced, where the risk tolerance parameter is iteratively updated based on real-time evaluation 
+indices to enhance the system’s adaptability to uncertainties. Experimental results demonstrate that the proposed 
+method effectively coordinates power-water system operations, enhances the flexibility of the water distribution 
+system, improves renewable energy utilization, and reduces peak loads and reserve capacity requirements in the 
+power system. Furthermore, the dynamic risk tolerance adjustment mechanism and probabilistic operation re­
+gions enrich scheduling strategies, enabling the system to dynamically optimize scheduling schemes based on 
+load fluctuations and renewable energy forecasting accuracy, achieving an optimal balance between security and 
+economy.
+* Corresponding author.
+E-mail address: 12210043@zju.edu.cn (M. Zhou). 
+Contents lists available at ScienceDirect
+Applied Energy
+journal homepage: www.elsevier.com/locate/apenergy
+https://doi.org/10.1016/j.apenergy.2025.125670
+Received 26 October 2024; Received in revised form 22 February 2025; Accepted 1 March 2025  
+
+Applied Energy 388 (2025) 125670
+2
+1. Introduction
+With the global energy system transitioning towards low-carbon 
+development, the share of renewable energy in the electricity mix is 
+increasing rapidly. The World Energy Outlook 2023 predicts that by 
+2030, renewable energy will account for nearly 50 % of total electricity 
+production [1]. However, due to the intermittency and uncertainty of 
+wind and solar power, power systems face greater scheduling chal­
+lenges, making the role of flexibility resources increasingly critical [2]. 
+Insufficient flexibility may lead to wind and solar curtailment, resulting 
+in economic losses and limiting the integration of renewable energy [3]. 
+Against this backdrop, water systems have emerged as important re­
+sources for enhancing grid flexibility due to their dispatchability and 
+energy storage potential [4]–[5]. Water tanks and pumps in urban water 
+distribution systems not only consume electricity but can also be opti­
+mally scheduled to balance grid load, reduce peak power demand, and 
+improve adaptability to renewable energy [6]. Therefore, developing an 
+optimization scheduling model that coordinates the operation of water 
+distribution and power systems is crucial for improving grid stability, 
+reducing operational costs, and increasing the utilization of renewable 
+energy.
+In recent years, as the role of water systems in power system flexi­
+bility management has gained widespread attention, an increasing 
+number of studies have focused on exploring water-power coordinated 
+optimization methods to enhance renewable energy integration and 
+optimize operational costs. Reference [7] proposed an optimization 
+approach based on chance constraints and stochastic programming, 
+integrating machine learning-based forecasting models to optimize 
+water-power-renewable energy hybrid scheduling and improve system 
+flexibility. Reference [8] developed an optimization model that co­
+ordinates second-level frequency response (FRF) and 15-min power 
+regulation flexibility (PRF) to enhance stability in a wind-hydro hybrid 
+power system. Reference [9] further incorporated probabilistic distri­
+bution methods to assess the impact of renewable energy output and 
+load forecasting errors, thereby improving grid security. Reference [10] 
+introduced a two-stage nonlinear mixed-integer optimization model, 
+coordinating wind power uncertainty using nonlinear programming and 
+second-order cone programming (SOCP). Reference [11] adopted a joint 
+probabilistic constraint optimization method, leveraging piecewise 
+linearization techniques to transform the non-convex optimization 
+problem in water-power systems into a solvable mixed-integer linear 
+programming (MILP) problem for optimizing power and water supply 
+costs. Reference [12] employed a distributionally robust optimization 
+strategy combined with the Benders decomposition method to address 
+false data injection attacks (FDIA) and renewable energy uncertainties. 
+Reference [13] proposed a two-stage stochastic co-optimization 
+approach that couples the power system with a reverse osmosis 
+seawater desalination plant (RO-WDP) to reduce costs and operational 
+risks. Reference [14] utilized second-order cone programming (SOCP) to 
+analyze the cascading effects of power outages on water distribution 
+systems, identifying critical vulnerable nodes and proposing optimiza­
+tion strategies. Reference [15] introduced a water-energy co-optimiza­
+tion method based on big data analytics to mitigate operational risks in a 
+100 % renewable energy scenario. Reference [16] employed a quasi- 
+convex hull approach to transform a mixed-integer nonlinear pro­
+gramming (MINLP) problem into a mixed-integer convex programming 
+(MICP) problem, thereby improving optimization computational 
+efficiency.
+However, existing studies primarily focus on source-side optimiza­
+tion in integrated water-power systems, while research on optimizing 
+the scheduling of urban water distribution systems as demand-side re­
+sources within the demand-side management (DSM) framework remains 
+relatively limited [17]. Additionally, current optimization approaches 
+often concentrate on individual subsystems without fully considering 
+the interactions between water and power networks, making it difficult 
+to achieve globally optimal scheduling [18]. Although previous studies 
+have explored the co-optimization of water and power systems [19], 
+several limitations remain, including single-objective optimization, a 
+lack of uncertainty modeling, and limited applications of data-driven 
+techniques. Additionally, due to the complex structure of urban water 
+networks and the uncertainty of water demand, directly utilizing water 
+tanks as energy storage may lead to water supply challenges or addi­
+tional costs.
+To address these issues, this paper proposes a data-assisted two-stage 
+robust optimization method with dynamic risk tolerance adjustment to 
+effectively coordinate the optimized operation of urban water networks 
+and power systems. By integrating data-driven uncertainty forecasting, 
+robust optimization, and dynamic risk tolerance adjustment, the pro­
+posed method optimizes water pump scheduling while enhancing 
+renewable energy penetration, ensuring water supply reliability, and 
+adaptively balancing system security and economy under different risk 
+tolerance levels. The main contributions of this paper are as follows: 
+1. Propose a data-assisted water-power system coordination optimiza­
+tion method, which integrates data-driven uncertainty forecasting 
+techniques to incorporate the stochastic characteristics of water and 
+power loads into the scheduling optimization process, enabling more 
+precise joint optimization modeling.
+2. Develop a probabilistic operation region construction method and 
+evaluation framework, which utilizes the convex hull method to 
+establish operational boundaries under different scheduling schemes 
+and introduces quantitative indicators to assess system flexibility and 
+the adaptability of scheduling strategies under various uncertainty 
+levels.
+3. Introduce a dynamic risk tolerance adjustment mechanism within 
+the robust optimization framework, which dynamically adjusts the 
+risk tolerance parameter based on real-time system conditions, 
+allowing the optimization scheme to flexibly control conservative­
+ness and adaptively balance security and economy during the 
+scheduling process.
+The remainder is structured as follows: Section 2 introduces the 
+operational constraints of the integrated water-power system and the 
+construction and evaluation of probabilistic operation regions. Section 3
+presents the solution methodology and simplification techniques. Sec­
+tion 4 validates the feasibility and superior performance of the proposed 
+method through case studies. Section 5 provides conclusions and future 
+research directions.
+2. Operational and optimization methods for the integrated 
+electricity-water energy system
+Introducing water tanks and variable-speed pumps as flexibility re­
+sources in urban water networks can help the power system integrate 
+more renewable energy and balance power loads. The power sector can 
+utilize these facilities to adjust loads and meet the electricity demand of 
+the water network, while the water sector can optimize scheduling to 
+reduce operational costs or lease controllable assets to provide stable 
+services. Independently optimizing the power and water systems may 
+fail to achieve a globally optimal solution. Therefore, it is necessary to 
+develop a coordinated scheduling strategy to ensure both power and 
+water supply security, enhance renewable energy utilization, improve 
+grid flexibility, and reduce overall operational costs.
+2.1. Operational constraints and scheduling model
+2.1.1. Power system
+Eqs. (1) and (2) represent the active and reactive power balance 
+conditions at the nodes. Eqs. (3) to (6) define the branch transmission 
+capacity constraints. Eqs. (7) to (10) describe the generator unit states, 
+as well as the start-up and shut-down operations. Eq. (11) specifies the 
+operating conditions of the units. Eqs. (12) and (13) concern the 
+M. Zhou et al.                                                                                                                                                                                                                                   
+
+Applied Energy 388 (2025) 125670
+3
+utilization of renewable energy and the range of load shedding. Eqs. (14) 
+to (18) represent the value range and uncertainty range constraints of 
+the power system. 
+PG
+i + PR
+i −PD
+i =
+∑
+j∈N
+PL
+ij
+(1) 
+QG
+i −QD
+i =
+∑
+j∈N
+QL
+ij
+(2) 
+PL
+ij = ViVj
+(
+Gijcosθij + Bijsinθij
+)
+−GijV2
+i
+(3) 
+QL
+ij = ViVj
+(
+Gijsinθij −Bijcosθij
+)
++ BijV2
+i
+(4) 
+(
+PL
+ij
+)2
++
+(
+QL
+ij
+)2
+=
+(
+SL
+ij
+)2
+(5) ⃒⃒
+Sij⃒⃒≤Smax
+ij
+(6) 
+Oi,t −Oi,t−1 = Si,t −Ei,t
+(7) 
+Si,t + Ei,t ≤1
+(8) 
+Si,t +
+∑
+TSi−1
+l=1
+Ei,t+l ≤1
+(9) 
+Ei,t +
+∑
+TEi−1
+l=1
+Si,t+l ≤1
+(10) ⃒⃒⃒⃒⃒
+∑
+L
+l=1
+PG
+i,t,l −
+∑
+L
+l=1
+PG
+i,t−1,l⃒⃒⃒⃒⃒≤Ki
+(11) 
+PR
+r,t −PC
+r,t ≥0
+(12) 
+PD
+n,t −PC
+n,t ≥0
+(13) 
+(
+PG
+k
+)min ≤PG
+k ≤
+(
+PG
+k
+)max
+(14) 
+(
+QG
+k
+)min ≤QG
+k ≤
+(
+QG
+k
+)max
+(15) 
+(
+PR
+r,t
+)min
+≤PR
+r,t ≤
+(
+PR
+r,t
+)max
+(16) 
+(
+PD
+r,t
+)min
+≤PD
+r,t ≤
+(
+PD
+r,t
+)max
+(17) 
+(Vi)min ≤Vi ≤(Vi)max
+(18) 
+where N represents the set of nodes in the power system; PG
+i and QG
+i 
+denote the active and reactive power of the generator; PR
+i represents the 
+active power from renewable energy sources; PD
+i and QD
+i represent the 
+active and reactive power loads; PL
+ij and QL
+ij denote the active and reac­
+tive branch power flow from node i to node j; PC
+i represents the power 
+curtailment (either from renewable energy or load); Vi represents the 
+voltage magnitude at node i; Gij and Bij represent the conductance and 
+susceptance of the branch; θij is the voltage phase angle difference be­
+tween the two nodes; SL
+ij represents the apparent power limit of branch 
+(i, j). The terms Oi,t, Si,t, Ei,t represent the operational status of generator 
+unit i at time t (1 indicates operational, 0 indicates stopped); TSi and TEi 
+represent the minimum up-time and down-time of generator unit i; Ki 
+denotes the power ramping threshold.
+2.1.2. Water distribution system
+Eqs. (19) to (22) describe the water flow and supply-demand balance 
+conditions. Eqs. (23) to (25) define the relationship between the water 
+head and flow rate. Eqs. (26) to (29) represent the relationship between 
+pump power and head: when the pump is operational, the flow rate 
+satisfies the constraint qmin ≤qP,t ≤qmax; when the pump is not oper­
+ating, the flow rate is qP,t = 0. Eqs. (30) and (31) describe the trans­
+mission and concentration variation equations for water pipes. Eqs. (32) 
+to (39) represent the physical constraints of the water distribution 
+system. 
+WR
+t −γW
+t ⋅WD
+t = Qt + ΛT[
+EI
+t −EO
+t
+]
+(19) 
+qIN
+m,t + qOUT
+m,t =
+(
+hm,t+1 −hm,t
+)
+⋅STank
+(20) 
+Wm,t = (1 −μW)Wm,t−1 + qIN
+m,t−1 + qOUT
+m,t−1
+(21) 
+Wm,tCm −Wm,t−ΔtCm,t−Δt =
+( ∑
+qnmCnm −
+∑
+qmkCm −kbCm
+)
+⋅Δt
+(22) 
+Ht = G⋅Π(Qt)|Qt|1.852
+(23) 
+hm,t −hn,t = ζ⋅sign
+(
+qmn,t
+)
+⋅q2
+mn,t
+(24) 
+−M
+(
+1 −zmn,t
+)
+≤hn,t −hm,t + Jmn,t ≤M
+(
+1 −zmn,t
+)
+(25) 
+ΔHP,t = Ω2
+t
+[
+a −b
+(Qt
+Ωt
+)c ]
+(26) 
+PPump
+t
+=
+ρg
+ηpump
+ΔHP,t⋅QP,t
+(27) ̂
+hP,t = Ω2
+i,t
+(
+aq2
+P,t + bqP,t + c
+)
+(28) 
+PPump
+i,t
+= Ω3
+i,t
+(
+k1q3
+P,i,t + k2q2
+P,i,t + k3qP,i,t
+)
+(29) 
+∂Cmn
+∂t
++ qmn
+Smn
+⋅∂Cmn
+∂x + τCmn = 0
+(30) 
+Cm⋅
+( ∑
+qnm + Qex
+)
+=
+∑
+qnmCnm + QexCex
+(31) 
+0 ≤Qt ≤(Qt)max
+(32) 
+(
+Wm,t
+)min ≤Wm,t ≤
+(
+Wm,t
+)max
+(33) 
+0 ≤PPump
+t
+≤
+(
+PPump
+t
+)max
+(34) 
+(Ht)min ≤Ht ≤(Ht)max
+(35) 
+Jmn,t ≥0
+(36) 
+0 ≤EI
+t ≤
+(
+EI
+t
+)max
+(37) 
+0 ≤EO
+t ≤
+(
+EO
+t
+)max
+(38) 
+0 ≤γW
+t ≤1
+(39) 
+where Qt represents the water flow rate in the pipeline; Qex denotes 
+external flow; Cmn is the concentration of substances in the pipeline; Cex 
+is the concentration of external fluid; WR
+t represents the amount of water 
+injected into the water node from the tank; WD
+t represents the water 
+demand at the water node; Wm,t is the amount of water in the tank; Ωt 
+represents the pump speed; qP,t is the pump flow rate; ΔHP
+t denotes the 
+head increment of the pump; PPump
+t 
+represents the pump power; ηPump is 
+the pump efficiency; ζ is the proportional constant, and sign
+(
+qmn,t
+)
+de­
+notes the sign function of the flow rate; Ht represents the pressure head 
+at the water node; hm,t and hn,t are the head heights at the two ends of the 
+M. Zhou et al.                                                                                                                                                                                                                                   
+
+Applied Energy 388 (2025) 125670
+4
+pipeline, nodes m and n; Jmn,t represents the pressure drop across the 
+pressure regulating valve; zmn,t is the state variable of the valve (0 for 
+closed, 1 for open); G is the pipe friction coefficient; Λ is the pipe-to- 
+node incidence matrix; EI
+t and EO
+t represent the inflow and outflow 
+rates of the water tank; γW
+t is the water supply ratio; ρ is the water 
+density; τ is the reaction rate constant; g is the gravitational acceleration; 
+a, b, and c are the pump parameters; STank represents the cross-sectional 
+area of the water tank; μW is the water loss coefficient; kb is the reaction 
+rate constant in the tank; and k1, k2, k3 are the coefficients for pump 
+power consumption.
+2.2. Two-stage robust optimization method
+Robust optimization aims to ensure system stability under the worst- 
+case conditions. Two-stage robust optimization refines output con­
+straints while achieving optimization objectives, reducing the impact of 
+uncertainties and enhancing scheduling accuracy and reliability.
+2.2.1. Objective function
+The operating cost of the power system comprises generation costs 
+and penalty terms associated with renewable energy curtailment. The 
+primary objective of the function is to minimize both costs. For the water 
+distribution system (WDS), the objective function incorporates the cost 
+of power provision along with penalties for unmet demand. Conse­
+quently, the optimization of the WDS seeks to minimize these costs as 
+well.
+The objective function for the integrated system is as follows: 
+C = min
+X ,Z
+{
+C1(X ) + max
+U
+[
+min
+Y C2(Y , U ) + C3(Z , U )
+] }
+(40) 
+where X , Z represent the first-stage decision variables; Y represents 
+the second-stage decision variables, and U denotes the uncertainty 
+variables.
+C1 represents the total operating cost of traditional generators, 
+including startup and shutdown costs: 
+C1(X ) =
+∑
+N
+i=1
+∑
+T
+t=1
+(
+cO
+i Oi,t + cS
+i Si,t + cE
+i Ei,t
+)
+(41) 
+where cO
+i , cS
+i , cE
+i represent the operation, startup, and shutdown costs of 
+generator i.
+C2 represents the power system operating cost, which includes gen­
+eration costs and penalties for renewable energy curtailment: 
+C2 (Y , U ) = η1⋅
+∑
+N
+i=1
+∑
+T
+t=1
+PC
+i,t +
+∑
+Ng
+i=1
+∑
+T
+t=1
+∑
+L
+l=1
+Ki,lPG
+i,t
+(42) 
+where Ki,l is the cost coefficient for generator i under cost category l; η1 is 
+the penalty coefficient.
+C3 represents the operating cost of the water distribution system: 
+C3(Z , U ) = cW
+∑
+NW
+m=1
+∑
+T
+t=1
+PD
+m,t + η2⋅
+∑
+T
+t=1
+( ∑
+NW
+m=1
+PW
+m,t −
+∑
+NW
+m=1
+PD
+m,t + PΔ
+t
+)2
+(43) 
+where PW
+m,t represents the power supply, provided by power generation 
+PG
+i and renewable energy PR
+i ; PD
+m,t represents the power demand, pri­
+marily consumed by water pumps; PΔ
+t represents the flexibility demand 
+or residual power of the water distribution system; η2 is the penalty 
+coefficient.
+In the WDS, pumps are employed to sustain water flow when pres­
+sure is insufficient, while valves regulate pressure or control water flow 
+within the pipelines. Tanks function as reservoirs to store or supply 
+water to the system. Pumps elevate pressure and transport water 
+through the consumption of electricity, with greater electricity usage 
+enabling higher water flow rates. Tanks store water to maintain the 
+balance between supply and demand.
+From the perspective of the power system, the WDS can be regarded 
+as a controllable load. By optimizing the operation of pumps and tanks, 
+the WDS can fulfill the flexibility requirements of the power system and 
+integrate more renewable energy.
+2.2.2. Framework tructure
+The objective of the optimization is to minimize operating costs. To 
+achieve this, the integrated power-water system optimization is carried 
+out in three phases, as illustrated in Fig. 1. The first phase entails 
+probabilistic forecasting of renewable energy and load uncertainties, 
+where the accuracy of these forecasts directly impacts the subsequent 
+optimization outcomes. The second phase optimizes power system de­
+mand, determining any surplus or deficit, which reflects the system’s 
+flexibility. The third phase focuses on optimizing the water distribution 
+system’s response to the power system’s flexibility requirements while 
+ensuring the WDS operates normally.
+This paper adopts the Two-Stage Robust Optimization (TSRO) 
+method, which considers uncertainty factors to optimize the coordi­
+nated operation of a high-renewable-energy power system and the WDS. 
+System flexibility is quantified by the proportion of renewable energy 
+and curtailment rates, with the goal of identifying the optimal opera­
+tional strategy for the integrated system. Furthermore, the uncertainty 
+set constructed more closely reflects real-world conditions, avoiding the 
+need to divide into multiple typical scenarios. In contrast, fluctuations in 
+water demand are relatively minor and, as such, are excluded from the 
+calculations.
+Fig. 1. Two-stage robust optimization scheduling framework.
+M. Zhou et al.                                                                                                                                                                                                                                   
+
+Applied Energy 388 (2025) 125670
+5
+2.3. Modeling and scheduling evaluation of the probabilistic operation 
+region
+2.3.1. Probabilistic operation region
+This study proposes a coordinated scheduling model for the urban 
+power grid and water distribution system and defines the secure oper­
+ating region Ω for the integrated system. The decision space includes the 
+power system’s generation output PGand the WDS’s energy storage 
+regulation EW, which can be expressed as: 
+Ω = {y|f(x) = y , g(x, y) ≤0 }
+(44) 
+where y =
+(
+PG, EW)
+represents the output variables, and x = (V, θ, π)
+includes voltage V, phase angle θ, and water distribution parameter π. 
+The function f(x) describes the nonlinear relationship of energy flow 
+between the power and water systems, while the constraint g(x, y) ≤0 
+ensures the secure operation constraints of both systems.
+Boundary points correspond to conditions where specific constraints 
+reach equality, while others still satisfy inequality constraints. To 
+determine the feasible range of each variable in y, this study formulates 
+and solves a nonlinear optimization problem: 
+(
+yn, yn
+)
+= {minyn, maxyn},
+n ∈N
+(45) 
+By solving N optimization problems for each variable separately, the 
+feasible range of y, denoted as [y , y], can be determined. Subsequently, a 
+convex hull approximation is employed to construct the operating re­
+gion, as shown in Fig. 2. The convex hull is represented as: 
+Conv(Y ) =
+{
+z =
+∑
+kz
+i=1
+δizi|zi ∈Y , δi ≥0,
+∑
+kz
+i=1
+δi = 1
+}
+(46) 
+where kz selects the boundary points of Y as convex hull vertices.
+Due to the stochastic nature of renewable energy, a deterministic 
+operating region Ω may fail to fully address uncertainty disturbances. To 
+address this, this study introduces the concept of the Probabilistic 
+Operation Region (POR), as illustrated in Fig. 3. The POR is defined as 
+the region formed by all possible output combinations of the integrated 
+system under uncertain renewable energy generation U R: 
+ΩR =
+{
+PR
+1, PR
+2, …, PR
+n
+}
+(47) 
+where each PR
+i represents a possible output combination.
+The boundary points of POR satisfy the following constraints: 
+f
+(
+x, PR)
+= y
+g
+(
+x, y, PR)
+≤0
+(48) 
+By incorporating renewable energy uncertainty, the POR provides 
+the feasible operational range and safety margins of the system. This 
+approach allows for evaluating scheduling strategies under different risk 
+tolerances, eliminating the need for repeated power flow calculations at 
+each time step, thereby improving scheduling efficiency.
+Under the uncertainty set U R, if the feasible scheduling region Y R is 
+a convex set, then all solutions within ΩR are feasible. The proof of this is 
+provided in Appendix A.
+2.3.2. Scheduling evaluation under uncertainty
+Under the uncertainty optimization framework, the scheduling re­
+sults are no longer a single unit dispatch solution but a distribution of 
+possible outputs. To systematically evaluate the flexible range of gen­
+eration units, their adjustment probabilities, and their impact on system 
+security, this study proposes a POR evaluation index that considers 
+uncertainty. This method can guide system scheduling, dynamically 
+adjusting risk tolerance based on different operational states and risk 
+preferences, thereby optimizing the scheduling strategy.
+The Security Index Beq quantifies how far an operational point is 
+from the POR boundary. A higher value indicates that generation 
+dispatch is closer to the secure central region: 
+Beq = 1
+X
+∑
+X
+x=1
+dx
+dmax
+(49) 
+dx = min
+1≤j≤m
+⎧
+⎪
+⎪
+⎨
+⎪
+⎪
+⎩⃒⃒⃒
+(
+yj+1 −yj
+)
+xq −
+(
+xj+1 −xj
+)
+yq + xj+1yj −yj+1xj⃒⃒⃒̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅
+(
+yj+1 −yj
+)2
++
+(
+xj+1 −xj
+)2
+√
+⎫
+⎪
+⎪
+⎬
+⎪
+⎪
+⎭
+(50) 
+where dx represents the minimum distance between the operational 
+point Q =
+(
+xq, yq
+)
+and the POR boundary, while Pm =
+(
+xm, ym
+)
+denotes 
+the boundary vertices of the POR.
+The Compactness Index Ccen evaluates the distribution concentration 
+of generation outputs. A lower value suggests less uncertainty in 
+dispatch, meaning generation points are concentrated within a smaller 
+range: 
+Ccen = 1
+N
+∑
+N
+i=1
+(
+1
+M
+∑
+M
+j=1̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅
+(
+xij −xcen
+)2 +
+(
+yij −ycen
+)2
+√
+)
+(51) 
+where 
+(
+xcen, ycen
+)
+is the geometric center, calculated as: 
+Fig. 2. Operational boundary constructed by convex hull.
+Fig. 3. Probabilistic operational region based on convex hull.
+M. Zhou et al.                                                                                                                                                                                                                                   
+
+Applied Energy 388 (2025) 125670
+6
+⎧
+⎪
+⎪
+⎪
+⎪
+⎪
+⎨
+⎪
+⎪
+⎪
+⎪
+⎪
+⎩
+xcen = 1
+m
+∑
+m
+k=1
+xk
+ycen = 1
+m
+∑
+m
+k=1
+yk
+(52) 
+The Violation Index Vvio quantifies the extent to which operational 
+points deviate from the POR boundary, reflecting the feasibility of sys­
+tem operation under uncertainty: 
+Vvio =
+∑k
+i=1wi⋅
+(
+Ni,out⋅di
+)
+∑k
+i=1wi⋅Ni
+(53) 
+di = di,avg
+dmax
+(54) 
+where di,avg represents the average deviation in the i-th state.
+2.3.3. Dynamic adjustment and adaptive optimization
+In uncertainty optimization scheduling, the setting of risk tolerance α 
+directly affects both the security and economy of the system. A lower 
+value of α corresponds to a larger uncertainty set, providing a higher 
+safety margin for the system but increasing the operational cost. A 
+higher value of α allows a more compact operating region, improving 
+economy, but it may reduce the system’s robustness. To address this, this 
+paper proposes a dynamic adjustment method for risk tolerance based 
+on evaluation indices. The value of α is adjusted in real-time by assessing 
+Beq, Ccen, and Vvio, thereby achieving an adaptive balance between se­
+curity and economy in the scheduling strategy.
+The risk tolerance α is dynamically updated at each scheduling time 
+step t by the following recursive formula: 
+αt = αt−1 + Δαt
+(55) 
+where the adjustment Δαt is determined by the evaluation indices: 
+Δαt = k1⋅
+(
+Beq −BA
+)
+−k2⋅(Ccen −CA) −k3⋅Vvio
+(56) 
+where BA is the safety index threshold; CA is the concentration index 
+threshold; and k1, k2, k3 are weight coefficients.
+When Beq falls below the threshold or Vvio is too high, the system’s 
+operating point is close to or exceeds the boundary of the POR, indi­
+cating insufficient safety margin. In this case, α should be reduced to 
+expand the operating region and enhance conservatism. When Ccen is too 
+high, the unit outputs are dispersed, leading to greater uncertainty, and 
+α should be reduced to tighten the operating region, improving sched­
+uling determinism. Conversely, if Beq is too high, Ccen is too low, and Vvio 
+is close to zero, the system is stable, and α can be moderately increased 
+to shrink the operating region, optimizing economy. This dynamic 
+adjustment mechanism ensures that risk tolerance α changes with the 
+system’s operational state, achieving a balance between security and 
+economy in the scheduling strategy.
+Based on the dynamic adjustment of risk tolerance α, an adaptive 
+POR can be constructed to ensure the system’s optimal operating state 
+under different risk levels. This method includes the following steps: 
+1. Uncertainty adjustment: Based on the risk tolerance α, calculate and 
+generate the corresponding probabilistic confidence intervals. A 
+lower α corresponds to a larger uncertainty set, covering a wider 
+range and ensuring a larger safety margin for the system, but with 
+higher operational costs. A higher α forms a more compact operating 
+region, improving economy, but may reduce the system’s scheduling 
+flexibility.
+2. Boundary construction: At each αi level, calculate the system’s POR 
+ΩR. By using the convex hull method, the boundaries of the operating 
+region are computed and approximated as the safe operating region 
+Ω, ensuring system stability at different risk tolerance levels.
+3. Evaluation and optimization: Calculate the current operating do­
+main’s Beq, Ccen, and Vvio, and combine them with the dynamic 
+adjustment strategy to optimize α, ensuring that the final selected 
+operating region achieves a dynamic balance between security and 
+economy.
+3. Solution methodology
+3.1. Data-assisted method
+In time series forecasting tasks, in addition to considering correla­
+tions between periods, it is essential to account for the inherent peri­
+odicity of the data itself. In this study, the Hilbert-Huang Transform 
+(HHT) is employed to extract the periodicity of one-dimensional time 
+series data [20]. Consider a one-dimensional time series X1D ∈ℝT×C, 
+where T represents the time length and C the channel dimension.
+First, Empirical Mode Decomposition (EMD) is applied to decompose 
+X1D into several Intrinsic Mode Functions (IMFs). Then, the Hilbert 
+Transform is performed on each IMF to obtain the instantaneous 
+amplitude A and instantaneous frequency information for each IMF. The 
+average amplitude A is defined as the mean of the instantaneous am­
+plitudes of all IMFs: 
+A = Avg(Amp(HHT(X1D) ) )
+(57) 
+Next, the top k instantaneous frequencies with the highest ampli­
+tudes are selected, denoted as {f1, f2, ⋯, fk}. These frequencies corre­
+spond to the most prominent periodic components in the signal, 
+represented as: 
+{f1, ⋯, fk} =
+argTopk
+f*∈
+{
+1,⋯,
+[
+T
+2
+]}(A)
+(58) 
+The period length corresponding to each selected frequency is then 
+calculated, denoted as {p1, p2, ⋯, pk}, where pi represents the period 
+length corresponding to the selected frequency fi. The period length is 
+obtained by dividing the total length T by the frequency: 
+pi = ⌈T
+fi
+⌉i ∈{1, 2, ⋯, k}
+(59) 
+where ⌈x⌉ denotes the smallest integer greater than or equal to x.
+This process effectively reveals the periodic characteristics of the 
+signal and facilitates the understanding and analysis of the time- 
+frequency characteristics of the time series data. Based on the selected 
+periods, the original one-dimensional time series X1D is folded. This 
+process can be formalized as: 
+Xi
+2D = Reshapepi,fi(Padding(X1D) ), i ∈{1, ⋯, k}
+(60) 
+where Padding(⋅) represents padding with zeros at the end of the 
+sequence so that the sequence length becomes divisible by pi.
+Finally, a set of two-dimensional tensors 
+{
+X1
+2D, X2
+2D, ⋯, Xk
+2D
+}
+is ob­
+tained, where each Xi
+2D represents the two-dimensional temporal vari­
+ations dominated by period pi. The transformation process is illustrated 
+in Fig. 4. In each tensor, the rows and columns correspond to adjacent 
+time points and periods, respectively, exhibiting two-dimensional lo­
+cality. This locality implies that adjacent elements have similar values or 
+trends in variation, allowing feature extraction from the sequence data 
+through convolution operations.
+The forecasting model is composed of stacked Forecast Blocks, as 
+shown in Fig. 5. The input sequence X1D ∈ℝT×C with a length of T is first 
+passed through an embedding layer to obtain deep features 
+X0
+1D ∈ℝT×dmodel. For the l-th layer Forecast Block, the input is 
+Xl−1
+1D ∈ℝT×dmodel, which is then used to extract two-dimensional temporal 
+variations through 2D convolution: 
+M. Zhou et al.                                                                                                                                                                                                                                   
+
+Applied Energy 388 (2025) 125670
+7
+Xl
+1D = Forecast-Block
+(
+Xl−1
+1D
+)
++ Xl−1
+1D
+(61) 
+Specifically, the Forecast Block consists of the following sub- 
+processes:
+1. Transformation from 1D to 2D: First, the periodic characteristics of 
+the input one-dimensional time series features Xl−1
+1D are extracted and 
+converted into two-dimensional tensors to represent 2D temporal vari­
+ations 
+Al−1, {f1, ⋯, fk}, {p1, ⋯, pk} = Period
+(
+Xl−1
+1D
+)
+(62) 
+Xl,i
+2D = Reshapepi,fi
+(
+Padding
+(
+Xl−1
+1D
+) )
+, i ∈{1, ⋯, k}
+(63) 
+2. Extraction of 2D Temporal Variation Features: For the two- 
+dimensional tensors 
+{
+Xl,1
+2D, Xl,2
+2D, ⋯, Xl,k
+2D
+}
+, given their 2D locality, 2D 
+convolution is applied to extract features. In this work, the Swin 
+Transformer model [21] is used: ̂
+X
+l,i
+2D = Swin-transformer
+(
+Xl,i
+2D
+)
+, i ∈{1, ⋯, k}
+(64) 
+3. Transformation from 2D to 1D: The extracted temporal features 
+are transformed back into the one-dimensional space for information 
+aggregation ̂
+X
+l,i
+1D = Trunc
+(
+Reshape1,(pi×fi)
+(̂
+X
+l,i
+2D
+) )
+, i ∈{1, ⋯, k}
+(65) 
+where Xl,i
+2D ∈ℝpi×fi×dmodel is the i-th transformed 2D tensor, and Trunc(⋅)
+denotes the removal of the zero-padding applied during the Padding(⋅)
+operation, truncating it back to the original length T.
+4. Adaptive fusion: Following the design of autoformer [22], the 
+obtained one-dimensional representations 
+{̂
+X
+l,1
+2D, ⋯,̂ X
+l,k
+2D
+}
+are weighted 
+and summed based on the intensity of their corresponding frequencies to 
+produce the final output ̂
+A
+l−1
+f1 , ⋯,̂ A
+l−1
+fk
+= Softmax
+(
+Al−1
+f1 , ⋯, Al−1
+fk
+)
+(66) 
+Xl
+1D =
+∑
+k
+i=1̂
+A
+l−1
+fi
+×̂ X
+l,i
+1D
+(67) 
+3.2. Simplified treatment of constraints
+The integrated power-water system constructed is a non-convex 
+nonlinear programming (NLP) problem. Since obtaining a global 
+optimal solution is challenging, it is necessary to linearize the con­
+straints to achieve a more accurate solution within a shorter computa­
+tion time. To effectively handle the non-convex nonlinear constraints, 
+various linearization techniques have been employed in this study.
+3.2.1. Power transmission calculation
+The power transmission calculations in eqs. (3)–(4) are linearized by 
+Fig. 4. The overall execution structure of the probability forecasting model.
+Fig. 5. The architecture of the forecast block.
+M. Zhou et al.                                                                                                                                                                                                                                   
+
+Applied Energy 388 (2025) 125670
+8
+small-angle approximation and the introduction of a new variable Wij =
+ViVj. Given that the phase angle difference θij is small, it uses cosθij ≈1 
+and sinθij ≈θij to simplify the calculations, which results in the linear­
+ized eqs. (68)–(69). Additionally, the transmission power limit con­
+straints (5)–(6) are modified by retaining the second-order cone 
+constraints and introducing a binary variable x ∈{0, 1} to represent the 
+open/closed status of the transmission line, yielding eq. (70). 
+PL
+ij ≈Wij
+(
+Gij + Bijθij
+)
+−GijV2
+i
+(68) 
+QL
+ij ≈Wij
+(
+Gijθij −Bij
+)
++ BijV2
+i
+(69) ̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅
+(
+PL
+ij
+)2
++
+(
+QL
+ij
+)2
+√
+≤x⋅Smax
+ij
+(70) 
+3.2.2. Power ramp rate constraints
+To handle the power ramp rate constraints (11), an auxiliary variable 
+ξi,t is introduced to represent the absolute value of the difference be­
+tween two power quantities, leading to new eqs. (71)–(73). 
+∑
+L
+l=1
+PG
+i,t,l −
+∑
+L
+l=1
+PG
+i,t−1,l ≤ξi,t
+(71) 
+−
+∑
+L
+l=1
+PG
+i,t,l +
+∑
+L
+l=1
+PG
+i,t−1,l ≤ξi,t
+(72) 
+ξi,t ≤Ki
+(73) 
+3.2.3. Water flow and supply-demand balance equations
+In the water flow and supply-demand balance equations, lineariza­
+tion is applied to eqs. (19) and (22) by introducing auxiliary variables. 
+For example, in eq. (19), the term γW
+t ⋅WD
+t is replaced by Zt, and in eq. 
+(22), the terms Wm,t⋅Cm and Wm,t−Δt⋅Cm,t−Δt are replaced by Zm,t and 
+Zm,t−Δt, resulting in the linearized eqs. (74)–(75). 
+WR
+t −Zt = Qt + ΛT[
+EI
+t −EO
+t
+]
+(74) 
+Zm,t −Zm,t−Δt =
+( ∑
+qnmCnm −
+∑
+qmkCm −kbCm
+)
+⋅Δt
+(75) 
+3.2.4. Head-flow relationship
+The head-flow relationship equation is linearized by introducing 
+auxiliary variables. For instance, eq. (23) is simplified using auxiliary 
+variables, leading to eq. (76), and in eq. (24), the term q2
+mn,t is replaced 
+by Ymn,t, resulting in eq. (77). 
+Ht ≥G⋅Π(Qt)⋅̅̅̅̅̅
+Qt
+√
+(76) 
+hm,t −hn,t = ζ⋅Ymn,t
+(77) 
+3.2.5. Pump power and head constraints
+The pump power and head constraints are linearized using first-order 
+Taylor expansion and piecewise linearization. For example, the 
+nonlinear term (Qt/Ωt)c in eq. (26) is replaced by the auxiliary variable 
+yt = Qt/Ωt, and ytc is linearized, resulting in eq. (78). Eq. (27) is 
+approximated using a Maclaurin series, and the term ΔHP,t⋅QP,t is 
+replaced by an auxiliary variable Zt, leading to the second-order cone 
+constraint (79). Additionally, eq. (28) uses the auxiliary variable uP,t =
+q2
+P,t to obtain eq. (80). The power terms in eq. (29) are linearized by 
+introducing multiple variables, x1 = q3
+P,i,t and x2 = q2
+P,i,t, ultimately 
+leading to the multivariable linear combination in eq. (81). 
+ΔHP,t ≥Ω2
+t ⋅
+(
+a −b⋅yc
+t
+)
+(78) 
+PPump
+t
+≥
+ρg
+ηpump
+Zt
+(79) ̂
+hP,t ≥Ω2
+i,t⋅
+(
+auP,t + bqP,t + c
+)
+(80) 
+PPump
+i,t
+≥Ω3
+i,t⋅(k1x1 + k2x2 + k3x3)
+(81) 
+3.2.6. Pipe transmission and concentration equations
+The linearization of pipe transmission and concentration equations 
+focuses on eqs. (30) and (31). In eq. (30), an auxiliary variable Zmn is 
+introduced to represent 
+(
+qmn/Smn
+)
+⋅
+(
+∂Cmn/∂x
+)
+, resulting in eq. (82). In 
+eq. (31), the term Cm⋅qnm is replaced by the auxiliary variable Znm, 
+yielding eq. (83). 
+Cmn,t −Cmn,t−Δt
+Δt
++ zmn + τCmn,t = 0
+(82) 
+∑
+Znm + zex =
+∑
+qnmCnm + QexCex
+(83) 
+The nonlinear functions are linearized and relaxed into a Mixed- 
+Integer Quadratically Constrained Programming (MIQCP) model, 
+which is then directly solved using solvers such as GUROBI.
+3.3. C&CG algorithm solving process
+The optimization objective and framework of the system have been 
+detailed in Section 2.2. Based on the objective function (40) and the 
+constraints, the C&CG algorithm is used to describe the master-slave 
+problem relationship in the two-stage robust optimization. The execu­
+tion process is shown in Fig. 6.
+1. Initialization: Initialize the uncertainty set U and solve the initial 
+master problem.
+2. Iteration Process:
+a. Master Problem: Based on the current uncertainty set U *, solve 
+the master problem to obtain the current solutions X *, Z and λ*. 
+min
+X ,Z ,λ
+C1(X ) + λ
+s.t.
+F(X , Z ) ≤D
+λ ≥C2(Y *, U *) + C3(Z *, U *)
+G(X , Y *) + H(Z , U *) ≤R,
+∀U * ∈Sl
+(84) 
+In the master problem, the objective is to minimize the total cost of 
+the power and water distribution systems by solving for the optimal first- 
+stage decision variables X and Z , along with the penalty parameter λ. 
+Here, Y * and U * denote the optimal solutions obtained from the Slave 
+Problem, representing the worst-case second-stage decisions and asso­
+ciated uncertainties.
+b. Slave Problem: Using the solutions X *, Z from the master prob­
+lem, solve the slave problem to find the new worst-case scenario U *. 
+max
+U min
+Y
+s.t.
+C2(Y , U ) + C3(Z , U )
+G(X *, Y ) + H(Z , U ) ≤R
+(85) 
+In the slave problem, the uncertainty U is configured in the most 
+adverse way. For this configuration, the second-stage decision variables 
+are solved to minimize the operational costs of the power and WDS. 
+Based on the first-stage decisions X * and Z given by the master prob­
+lem, the slave problem generates the worst-case costs and constraints, 
+which are then used to guide the solution of the master problem.
+c. Update: Add the new U * to the uncertainty set, update the master 
+problem, and continue solving.
+3. Termination Condition: The algorithm terminates when the slave 
+problem cannot find a new, worse scenario or when the objective value 
+λ* of the master problem no longer changes.
+Through this master-slave framework, the C&CG algorithm can 
+effectively approximate the global optimal solution step by step, mini­
+mizing the operational costs of the combined power and water distri­
+bution systems while ensuring system robustness.
+M. Zhou et al.                                                                                                                                                                                                                                   
+
+Applied Energy 388 (2025) 125670
+9
+4. Case studies
+4.1. Data description
+The dataset comes from a city in eastern China, covering the period 
+from May 14, 2021, to November 27, 2023, with a 15-min time reso­
+lution, resulting in 96-time steps per day. All models were developed 
+using Python and PyTorch, and run on a personal computer equipped 
+with an Intel i7–13,700 5.20 GHz CPU, 16 GB of RAM, and an NVIDIA 
+RTX 4070 GPU. The optimization solver used was GUROBI 11.0, while 
+the power system model was built using PANDAPOWER [23]. The 
+dataset was split into 80 % for training and 20 % for testing to handle 
+uncertainty factors.
+This study uses the modified IEEE 37-node system to validate the 
+effectiveness of the proposed method. The equipment parameters of the 
+test system are shown in Table 1. The topology of the coupled power and 
+WDS is illustrated in Fig. 7. The system consists of 18 load nodes, 4 PV 
+power nodes (with capacities of 35 MW, 25 MW, 30 MW, and 30 MW), 4 
+wind power nodes (with capacities of 50 MW, 40 MW, 55 MW, and 35 
+MW), 2 battery energy storage nodes, 4 generation unit nodes, and 16 
+water distribution system nodes. Additionally, nodes 10, 21, and 35 are 
+connected to water tanks, each with a capacity of 2000 m3. The outputs 
+of renewable energy, power demand, and water demand are detailed in 
+Appendix B.
+The industrial electricity prices for the power system are presented in 
+Table 2. In the experiment, the confidence levels for wind power gen­
+eration, photovoltaic generation, and load are set to 85 %, 90 %, and 95 
+%. Wind power exhibits high fluctuations, so a lower confidence level is 
+adopted to enhance system flexibility. PV generation is relatively stable, 
+thus set at 90 %. Load forecasting is critical for power supply security 
+and cost control, requiring a higher confidence level to ensure system 
+stability.
+4.2. The impact of water tanks on system flexibility regulation
+4.2.1. Size
+This study employs a data-assisted method to generate seasonal 
+scenarios and analyze the impact of different water tank sizes on the 
+upward/downward flexibility requirements of the power system, as 
+Fig. 6. C&CG algorithm solution process.
+Table 1 
+Summary of equipment parameters in the test system.
+Equipment
+Parameters
+Values
+MT
+O&M Cost (￥/MWh)
+67.525
+Fuel Cost (￥/MWh)
+483.149
+Rated Power (MW)
+4 × 30
+Minimum Output (MW)
+4 × 3
+WT
+O&M Cost (￥/MWh)
+27.463
+Rated Power (MW)
+180
+PV
+O&M Cost (￥/MWh)
+8.747
+Rated Power (MW)
+120
+HS
+O&M Cost (￥/MWh)
+28.364
+Rated Capacity (MWh)
+2 × 10 (0.5C)
+SOC
+0.1–0.9
+Charging/Discharging Efficiency
+0.92/0.94
+M. Zhou et al.                                                                                                                                                                                                                                   
+
+Applied Energy 388 (2025) 125670
+10
+shown in Fig. 8. The short and long dashed lines represent the upward 
+and downward flexibility requirements of the system without water 
+tanks.
+After integrating the water distribution system, the system’s down­
+ward regulation capability is significantly enhanced, while upward 
+regulation capability is also improved. The results indicate that as the 
+water tank size increases, the upward/downward flexibility re­
+quirements gradually decrease and eventually stabilize beyond a certain 
+size. Additionally, seasonal variations in renewable energy generation 
+affect water tank requirements. In autumn, when renewable energy 
+generation is relatively low, a smaller water tank capacity is sufficient to 
+meet flexibility needs. However, in winter and spring, when renewable 
+energy generation is higher, the system requires a larger water tank 
+capacity to provide adequate regulation capability.
+Overall, the system’s demand for downward flexibility is greater 
+than that for upward flexibility. During renewable energy generation 
+peaks, variable-speed pumps operate at high power to store water, 
+significantly enhancing downward flexibility. Conversely, when gener­
+ation is low, the system relies on stored water pressure and low-speed 
+pumps, reducing the impact of water supply loads on the power grid 
+and alleviating the upward adjustment pressure on generators.
+4.2.2. Location
+To maintain analytical consistency, this study selects a 2000 m3 
+water tank and connects it to different water distribution system nodes 
+to examine the impact of tank location on the system’s upward/down­
+ward flexibility. The specific results are shown in Table 3. The test 
+system consists of 16 water distribution nodes. Given the large number 
+of nodes, the water tanks are classified into three categories based on 
+their geographical distribution (Fig. 7): Nodes near renewable energy 
+sources; Nodes near conventional generators; Nodes far from any energy 
+generation sources.
+As shown in Table 3, placing the water tank at renewable energy 
+nodes significantly improves both upward and downward flexibility, 
+with an improvement range of 68.237 % to 83.187 %. The coordinated 
+operation of pumps and water tanks effectively mitigates renewable 
+energy output fluctuations. When the water tank is located near con­
+ventional generators, the flexibility improvement is limited (up to 
+29.243 %). If the water tank is far from any energy generation source, its 
+regulation capability is negligible due to power flow constraints in the 
+transmission network.
+4.3. Algorithm performance analysis
+This paper is based on a two-stage robust optimization framework 
+and employs the following methods to generate uncertainty sets for 
+comparative analysis: Bayesian Linear Regression (Method 1) [24], 
+Dirichlet Process (Method 2) [25], Gaussian Process Regression (Method 
+3) [26], Long Short-Term Memory Network (Method 4) [27], Temporal 
+Convolutional Network (Method 5) [28], Informer (Method 6) [29], and 
+the method proposed in this paper (Method 7). Neural network methods 
+utilize an ensemble approach to generate probability distributions to 
+capture uncertainty.
+To compare the performance of each method, interval coverage, 
+average interval width, and a comprehensive index are used to evaluate 
+the prediction performance of the models [30]. In addition, by setting 
+different confidence levels, the risk tolerance in the robust optimization 
+scheduling is adjusted to achieve a balance between robustness and 
+economic efficiency in scheduling.
+4.3.1. Uncertainty
+Table 4 presents the evaluation results of different methods on the 
+Fig. 7. Modified IEEE 37-node power system structure.
+Table 2 
+Time-of-use tariffs.
+States
+Time Period (h)
+Price (￥/kWh)
+Valley Price
+0–6
+0.34
+Mid-Peak Price
+6–8 & 22–24
+0.78
+High Peak Price
+8–10 & 12–18 & 20–22
+1.20
+Peak Price
+10–12 & 18–20
+1.83
+Fig. 8. Impact of water tank size on the flexibility of the power system.
+Table 3 
+Impact of water tank location on the flexibility regulation of the power system.
+WDS
+Flexibility Requirement Improvement
+Upward
+Downward
+2,3,4,6,7,9,11,12
+68.237 % ~ 79.468 %
+75.986 % ~ 83.187 %
+5,14,16
+11.514 % ~ 23.416 %
+19.692 % ~ 29.243 %
+1,8,10,13,15
+3.648 % ~ 9.134 %
+6.267 % ~ 13.294 %
+M. Zhou et al.                                                                                                                                                                                                                                   
+
+Applied Energy 388 (2025) 125670
+11
+uncertainty set. Overall, the load forecasting scenario performs best, 
+while the wind power forecasting scenario performs the worst. As the 
+confidence level increases, all methods show an increase in interval 
+width (AW) and comprehensive metric (Sβ) across different scenarios.
+From Table 4, it is evident that neural network methods outperform 
+statistical methods in all three forecasting scenarios (photovoltaic (PV), 
+wind power (WT), and load (Load)). Load forecasting achieves the 
+highest empirical coverage probability (ECP), with a maximum value of 
+96.5 % (Method 1, 95 % confidence level), while maintaining a mod­
+erate AW and Sβ. Wind power forecasting has a lower ECP, while both 
+AW and Sβ are significantly higher than in other scenarios, indicating 
+wider prediction intervals and overall lower forecasting performance. 
+Photovoltaic forecasting shows intermediate performance, with rela­
+tively stable indicators across all methods. In contrast, statistical 
+methods perform worse. This may be because they rely on fixed pa­
+rameters (e.g., mean, variance) or clustering techniques, which struggle 
+to capture the periodic variations in high-dimensional time-series data, 
+leading to lower prediction accuracy.
+Further comparing neural network methods, although the proposed 
+method does not show a clear advantage in interval width (AW) 
+compared to Informer and TCN, and even performs slightly worse in 
+some cases, it achieves better balance across ECP, AW, and Sβ. This 
+prevents the issue of overly narrow prediction intervals, which could 
+lead to inaccurate estimations and reduced overall performance. Over­
+all, the proposed method demonstrates the best performance across 
+different confidence levels, effectively capturing uncertainty informa­
+tion while ensuring high confidence and an optimized comprehensive 
+metric (Sβ), thereby improving prediction reliability.
+4.3.2. Optimization results
+Based on the uncertainty results generated by each model in the 
+previous section, this paper compares the operating costs of different 
+optimization methods under different risk tolerance levels, as shown in 
+Table 5. Scenario A involves only the power system, while Scenario B 
+integrates the water distribution system, introducing variable-speed 
+pumps and water tanks as flexibility resources. To verify the effective­
+ness of the two-stage robust optimization (TRO) method proposed in this 
+paper, MILP (Mixed-Integer Linear Programming) is used as the 
+benchmark method (assuming the predicted values are the expected 
+values and ignoring uncertainty), and the stochastic optimization (SO) 
+method (assuming the prediction errors follow a normal distribution and 
+generating the uncertainty set using Method 3).
+Table 5 shows that, regardless of the optimization method used, the 
+operating cost in Scenario B is lower than in Scenario A, with the overall 
+cost reduced by approximately 8.68 % to 13.16 %. This indicates that 
+the water distribution system, by providing flexibility resources such as 
+variable-speed pumps and water tanks, effectively reduced the power 
+system’s output demand and lowered the operating costs. Among the 
+different methods, MILP has the lowest cost but does not consider the 
+uncertainty of renewable energy output and load demand, which may 
+lead to scheduling failure or increased system safety risks during large 
+fluctuations. The SO method is theoretically superior to TRO, but due to 
+the assumption that prediction errors follow a normal distribution, it 
+struggles to handle the skewness, heavy tails, or asymmetry of renew­
+able energy output and load demand, leading to suboptimal results. In 
+contrast, the data-assisted two-stage robust optimization method pro­
+posed in this paper is more accurate in capturing the characteristics of 
+renewable energy and load, improving the precision of the uncertainty 
+set description, reducing conservativeness, and performing better in 
+balancing system economy and safety.
+When the risk tolerance is reduced from 20 % to 5 %, the operating 
+costs of each optimization method increase by 9.57 % to 12.81 %. This is 
+primarily because a lower risk tolerance requires the optimization 
+scheduling to account for a larger uncertainty set to handle the extreme 
+fluctuations in renewable energy output and load demand, thus 
+increasing system reserve capacity and scheduling flexibility, which 
+Table 4 
+Performance analysis of uncertainty.
+Confidence 
+level
+Method
+PV
+WT
+Load
+ECP
+AW
+Sβ
+ECP
+AW
+Sβ
+ECP
+AW
+Sβ
+95 %
+1
+0.936
+3.806
+4.812
+0.916
+7.003
+8.95
+0.965
+7.275
+8.748
+2
+0.974
+3.979
+5.197
+0.923
+7.125
+8.848
+0.93
+7.319
+8.68
+3
+0.969
+3.633
+4.772
+0.989
+6.851
+8.731
+0.938
+7.153
+8.59
+4
+0.943
+3.36
+4.137
+0.974
+6.394
+7.728
+0.96
+6.488
+7.511
+5
+0.957
+3.287
+4.118
+0.927
+6.363
+7.551
+0.955
+6.482
+7.418
+6
+0.948
+3.114
+3.905
+0.971
+6.277
+7.402
+0.947
+6.416
+7.492
+7
+0.951
+3.141
+3.732
+0.965
+6.189
+7.194
+0.95
+6.43
+7.132
+90 %
+1
+0.873
+2.781
+3.725
+0.859
+5.771
+7.298
+0.88
+6.225
+7.174
+2
+0.871
+2.867
+3.874
+0.853
+5.957
+7.668
+0.925
+6.299
+7.397
+3
+0.879
+2.753
+3.523
+0.871
+5.585
+6.755
+0.889
+5.991
+6.667
+4
+0.878
+2.638
+3.43
+0.869
+5.398
+6.615
+0.885
+5.677
+6.449
+5
+0.882
+2.524
+3.194
+0.874
+5.305
+6.372
+0.889
+5.503
+6.15
+6
+0.895
+2.47
+2.762
+0.913
+5.312
+6.005
+0.905
+5.429
+5.898
+7
+0.903
+2.396
+2.626
+0.908
+5.326
+5.876
+0.897
+5.456
+5.869
+80 %
+1
+0.827
+2.472
+3.023
+0.853
+5.253
+6.547
+0.836
+5.562
+6.327
+2
+0.834
+2.554
+3.398
+0.845
+5.407
+6.509
+0.832
+5.768
+6.69
+3
+0.832
+2.389
+3.079
+0.851
+5.098
+5.583
+0.835
+5.356
+6.023
+4
+0.82
+2.105
+2.432
+0.767
+4.512
+5.474
+0.778
+4.701
+5.271
+5
+0.822
+2.099
+2.426
+0.772
+4.488
+5.419
+0.781
+4.655
+5.078
+6
+0.821
+2.087
+2.269
+0.774
+4.575
+5.454
+0.824
+4.717
+5.086
+7
+0.814
+2.163
+2.321
+0.822
+4.651
+5.362
+0.789
+4.802
+5.09
+Table 5 
+Comparison of operating costs of different optimization methods under different risk tolerances.
+Risk 
+Tolerance
+MILP
+SO
+TRO
+A
+B
+A
+B
+A
+B
+20 %
+75,156.12
+65,840.78
+79,856.49
+69,342.76
+76,218.95
+66,873.43
+10 %
+80,946.46
+71,684.53
+84,757.83
+75,468.87
+82,078.65
+73,390.18
+5 %
+83,884.56
+75,164.14
+88,548.14
+79,537.27
+85,690.61
+76,310.85
+M. Zhou et al.                                                                                                                                                                                                                                   
+
+Applied Energy 388 (2025) 125670
+12
+raises the operating costs. In contrast, when the risk tolerance is 
+increased to 20 %, the prediction intervals become more concentrated, 
+reducing the uncertainty disturbance in unit scheduling, and the oper­
+ating costs decrease. However, at higher risk tolerance levels, if 
+renewable energy or load experiences significant fluctuations, it may 
+pose greater risks to system stability. Therefore, in practical power- 
+water system scheduling, a low risk tolerance (5 %) is more suitable 
+for systems with high renewable penetration and large load fluctuations 
+to ensure safe and reliable operation, while a high-risk tolerance (20 %) 
+is suitable for systems with stable renewable output and sufficient 
+reserve capacity to reduce operating costs.
+4.4. Day-ahead dispatching plan
+In practical operation, schedulers need to dynamically adjust the risk 
+tolerance α based on the fluctuations in renewable energy output and 
+load changes to balance the system’s security and economy. This case 
+study designs four scheduling scenarios to analyze the impact of power- 
+water coupling optimization and dynamic risk tolerance: Scenario A 
+considers only the power system scheduling, with no optimization of the 
+water distribution system and a fixed α = 5%; Scenarios B and C 
+introduce optimization of the water distribution system, with α = 5% 
+and α = 20%; Scenario D, based on the previous scenarios, dynamically 
+adjusts the risk tolerance αt according to the safety index Beq, concen­
+tration index Ccen, and violation index Vvio.
+The day-ahead scheduling plans for the four scenarios are shown in 
+Fig. 9. In Scenario A, due to the lack of coordinated scheduling with the 
+water distribution system, the system relies on traditional units to cope 
+with renewable energy fluctuations and load changes, leading to 
+frequent power output fluctuations, high reserve capacity demand, and 
+increased operational costs. Scenario B, through the coordinated 
+scheduling of the water distribution and power systems, effectively 
+smooths the load by reducing pump power consumption and alleviating 
+pressure on the power system during high load periods (6:00–12:00, 
+18:00–22:00), while utilizing surplus renewable energy to store water 
+during low load periods (1:00–5:00, 12:00–18:00). The operating cost is 
+reduced by 10.54 % compared to Scenario A, but due to the lower risk 
+tolerance, reserve capacity demand remains relatively high. Scenario C 
+adopts a high-risk tolerance strategy with more aggressive scheduling, 
+prioritizing the use of renewable energy and storage to reduce unit 
+output, further lowering operating costs by 16.87 % compared to Sce­
+nario B. However, this strategy leads to more frequent adjustments to 
+the schedule during large fluctuations in renewable energy, increasing 
+the risk of scheduling failure and insufficient reserve capacity, especially 
+during high load periods. Scenario D, through dynamic adjustment of 
+the risk tolerance αt, adapts to optimize scheduling based on the sys­
+tem’s state: reducing αt during high uncertainty periods (6:00–12:00, 
+18:00–22:00) to enhance system robustness, and increasing αt during 
+stable periods (1:00–5:00, 12:00–18:00) to reduce reserve costs. 
+Compared to Scenario C, Scenario D results in a 3.56 % higher operating 
+cost, but by flexibly adjusting the risk tolerance, it balances economy 
+and security while further improving the adaptability of reserve capacity 
+allocation and the flexibility of unit scheduling.
+Additionally, the coordinated operation of the power-water system 
+effectively smooths the water demand of the water distribution system, 
+Fig. 9. Day-ahead scheduling results under different scenarios.
+Fig. 10. Water demand of the water distribution system.
+M. Zhou et al.                                                                                                                                                                                                                                   
+
+Applied Energy 388 (2025) 125670
+13
+altering the water consumption pattern during peak demand periods. As 
+shown in Fig. 10, during peak water consumption periods (6:00–12:00, 
+16:00–20:00), variable-speed pumps and water tanks, as flexibility re­
+sources, consume only the electricity necessary to meet water distribu­
+tion demand, reducing the pressure on the grid. During low load periods 
+(1:00–5:00, 21:00–24:00), the pumps operate at high speed, utilizing 
+surplus renewable energy to store water, ensuring sufficient water 
+supply during high load periods. Through coordinated operation of the 
+pumps and water tanks, the pumps absorb excess renewable energy and 
+store water in the tanks during low load periods, while reducing power 
+consumption during high load periods by relying on the water tanks to 
+provide water pressure, thus maintaining the normal operation of the 
+water distribution system.
+4.5. Analysis of scheduling results
+4.5.1. Unit commitment analysis
+In power grid scheduling that considers renewable energy uncer­
+tainty, the POR of unit commitment describes the boundary of unit 
+output and its coordination relationship. This paper selects three time 
+periods—3:00, 14:00, and 20:00—to visualize unit output under 
+different risk tolerance levels using a two-dimensional representation, as 
+shown in Fig. 11. The red boundary in the figure represents the Safe 
+Operation Region, which indicates the feasible output range of the units 
+under extreme conditions to ensure that safety constraints are not 
+violated.
+Compared to Scenario A, the overall unit output in Scenarios B/C 
+decreases, and the POR shrinks, demonstrating that coordinated 
+scheduling with the water distribution system effectively reduces the 
+burden on the power system and improves unit operational stability. In 
+Scenarios B and C, increasing risk tolerance makes the scheduling more 
+concentrated in the economic operation range: Low risk tolerance (light 
+blue region) provides greater scheduling flexibility but increases reserve 
+capacity demand and operating costs; High risk tolerance (dark blue 
+region) reduces reserve requirements and lowers costs, but renewable 
+energy fluctuations may increase operational risks. This change reflects 
+the trade-off between economy and security.
+Scenario D, by adaptively adjusting the risk tolerance, enhances the 
+adaptability of unit commitment. Compared to Scenarios B/C, its POR 
+dynamically changes over time: During high-uncertainty periods (e.g., 
+20:00), risk tolerance is lowered, expanding the operating range and 
+enhancing system robustness; During stable periods (e.g., 3:00), risk 
+tolerance is increased, making scheduling more concentrated on eco­
+nomic operation, reducing reserve capacity demand, and improving 
+output stability. Compared to fixed risk tolerance strategies, Scenario D 
+balances economy and security across different time periods, lowering 
+reserve costs while mitigating operational risks.
+4.5.2. Evaluation index analysis
+To quantitatively assess the operational performance of different 
+scheduling scenarios, this paper calculates the safety index Beq, the 
+concentration index Ccen, and the violation index Vvio at 3:00, 14:00, and 
+20:00, with the specific values for each scenario shown in Fig. 12.
+During the nighttime stable period (3:00), Beq in Scenario A does not 
+significantly differ from the other scenarios, indicating that when load 
+fluctuations are small, different scheduling strategies have a relatively 
+minor impact on system security. However, during high-uncertainty 
+periods (14:00 and 20:00), Beq in Scenarios B/C is significantly higher 
+than in Scenario A, demonstrating that coordinated scheduling of the 
+water distribution system effectively mitigates renewable energy fluc­
+tuations. At the same time, Scenario A exhibits a relatively high Ccen, as 
+the lack of coordination with the water distribution system forces units 
+to handle larger output fluctuations, leading to a more dispersed overall 
+scheduling distribution. Additionally, as risk tolerance increases, Beq 
+Fig. 11. Probabilistic operation region of unit commitment.
+M. Zhou et al.                                                                                                                                                                                                                                   
+
+Applied Energy 388 (2025) 125670
+14
+gradually increases, Ccen decreases, indicating that scheduling flexibility 
+is reduced, and the system tends to prioritize economic optimization 
+while reducing reserve requirements. However, Vvio gradually increases, 
+suggesting that under high risk tolerance, the unit operation region 
+becomes more constrained, and renewable energy uncertainty may lead 
+to operational violations in certain periods.
+Scenario D, which dynamically adjusts risk tolerance, optimizes its 
+indices adaptively across different time periods, performing between 
+Scenarios B and C at different risk tolerance levels. During high- 
+uncertainty periods (20:00), Scenario D moderately reduces Beq and 
+increases Ccen, improving system robustness while addressing the issue 
+of excessive Vvio in Scenario C at high risk tolerance, ensuring that safety 
+constraints are not violated. During stable periods (3:00), Beq increases 
+moderately while Ccen decreases, reducing reserve requirements and 
+making scheduling more economical. This proves that the dynamic 
+adjustment strategy effectively balances security and economic perfor­
+mance, enabling real-time adaptation between robustness and cost 
+optimization.
+It is important to note that under the same risk tolerance, multiple 
+unit operating points may satisfy safety constraints but exhibit different 
+output distributions. When making scheduling decisions, priority should 
+be given to schemes with higher Beq (improved security), lower Ccen 
+(better concentration in scheduling), lower Vvio (reduced violations of 
+constraints), to ensure the stability and cost-effectiveness of the system.
+5. Conclusion
+This paper proposes a data-assisted two-stage robust optimization 
+scheduling method for the coordinated operation of urban water dis­
+tribution and power grid integrated energy systems and constructs a 
+probabilistic operation region to improve system security and economy. 
+The main conclusions are as follows: 
+1. Quantification of the impact of flexibility resources on the power 
+system: The demand for downward flexibility from the water dis­
+tribution system is higher than the upward demand. Moreover, when 
+the water tank is located near the renewable energy generation node, 
+the system’s flexibility improvement is more significant. This in­
+dicates that proper water resource scheduling helps reduce the 
+impact of renewable energy on the power system.
+2. The proposed data-assisted method effectively improves optimiza­
+tion results: This method can effectively narrow the forecasting 
+interval while ensuring the coverage of operational points, yielding 
+higher comprehensive performance metrics. By incorporating the 
+probability distribution information from historical data, the opti­
+mization approach can better cope with uncertainty factors and 
+enhance scheduling robustness.
+3. Probabilistic operation region and evaluation indices enrich sched­
+uling diversity: Operators can adjust scheduling strategies in 
+different scenarios to dynamically balance security and economy. 
+The introduction of the dynamic risk tolerance mechanism allows the 
+system to adjust risk tolerance in real-time based on factors such as 
+renewable energy forecast accuracy and load fluctuations, prevent­
+ing the security or economic losses caused by a fixed tolerance level.
+Future research will focus on developing systematic mathematical 
+models to quantify the risk-economy trade-off boundaries and optimize 
+the optimal decision points under different scheduling strategies. 
+Additionally, robust game theory can be used to analyze the risk- 
+economy evolution under different market environments and policy 
+incentives. Furthermore, research can explore emergency response 
+mechanisms for situations where renewable energy exceeds the proba­
+bilistic operating region, optimizing reserve power deployment and 
+demand-side management strategies to enhance the practical feasibility 
+of scheduling solutions.
+Declaration of competintg interest
+The authors declare that they have no known competing financial 
+interests or personal relationships that could have appeared to influence 
+the work reported in this paper.
+CRediT authorship contribution statement
+Manguo Zhou: Writing – review & editing, Writing – original draft, 
+Visualization, Validation, Methodology, Investigation, Conceptualiza­
+tion. Kaiming Zhang: Writing – review & editing, Investigation, Formal 
+analysis. Xiangwan Liu: Investigation, Data curation. Fan Ma: Funding 
+acquisition, Data curation.
+Acknowledgment
+This work is supported by the Nathonal Natural Science Foundation 
+of China under Grant No. 52377129.
+Appendix A
+Under the uncertainty set U R, if the feasible region Y R of the grid dispatch plan is a convex set, then all solutions within Y R are also feasible 
+Fig. 12. Evaluation indices of the unit probabilistic operation region.
+M. Zhou et al.                                                                                                                                                                                                                                   
+
+Applied Energy 388 (2025) 125670
+15
+solutions. The proof is as follows
+1. Proof by contradiction: Assume there exists y ∈ΩR such that y ∕∈Y R. In other words, there is at least one solution within ΩR but outside Y R, 
+which implies ΩR
+\
+Y R ∕= ∅.
+2. Relation between POR and the feasible region: Since S R ⊆Y R (all dispatch plans that satisfy probabilistic constraints are feasible), and ΩR is 
+the convex hull of S R, meaning S R ⊆ΩR, it follows that S R ⊆ΩR ∩Y R.
+3. Convexity: Since Y R is a convex set, and ΩR is also a convex set (as the convex hull of S R), their intersection ΩR ∩Y R must also be a convex set.
+4. Contradiction: By the initial assumption, ΩR
+\
+Y R ∕= ∅, meaning that ΩR is not fully contained within Y R. However, since ΩR ∩Y R is a convex 
+set that contains S R, if ΩR contains infeasible solutions, the intersection ΩR ∩Y R would form a convex set smaller than ΩR, yet this smaller convex set 
+would still cover S R. This contradicts the fact that ΩR is the smallest convex hull of S R.
+Thus, the assumption is false, and it is proven that all solutions within ΩR are feasible solutions.
+Appendix B
+Fig. B1. PV power forecast result.
+Fig. B2. Wind power forecast result.
+Fig. B3. Electricity load and water demand.
+Data availability
+The authors do not have permission to share data.
+References
+[1] International Energy Agency. World energy outlook 2023 – analysis. IEA. http 
+s://www.iea.org/reports/world-energy-outlook-2023; 2023.
+[2] Wu Y-K, Tan W, Huang S-R, Chiang Y-S, Chiu C-P, Su C-L. Impact of generation 
+flexibility on the operating costs of the Taiwan power system under a high 
+penetration of renewable power. IEEE Trans Ind Appl 2020;56:2348–59. https:// 
+doi.org/10.1109/tia.2020.2974435.
+[3] Huang Y, Zhou M, Yang X. Ultra-short-term photovoltaic power forecasting of 
+multifeature based on hybrid deep learning. Int J Energy Res 2021;46:1370–86. 
+https://doi.org/10.1002/er.7254.
+[4] Menke R, Abraham E, Parpas P, Stoianov I. Demonstrating demand response from 
+water distribution system through pump scheduling. Appl Energy 2016;170: 
+377–87. https://doi.org/10.1016/j.apenergy.2016.02.136.
+[5] Kernan R, Liu X, McLoone S, Fox B. Demand side management of an urban water 
+supply using wholesale electricity price. Appl Energy 2017;189:395–402. https:// 
+doi.org/10.1016/j.apenergy.2016.12.082.
+[6] Yao Y, Li C, Xie K, Tai H-M, Hu B, Niu T. Optimal Design of Water Tank Size for 
+power system flexibility and water quality. IEEE Trans Power Syst 2021;36: 
+5874–88. https://doi.org/10.1109/tpwrs.2021.3081724.
+[7] Han S, Yuan Y, He M, Zhao Z, Xu B, Chen D, et al. A novel day-ahead scheduling 
+model to unlock hydropower flexibility limited by vibration zones in hydropower- 
+variable renewable energy hybrid system. Appl Energy 2024;356:122379. https:// 
+doi.org/10.1016/j.apenergy.2023.122379.
+[8] Han S, He M, Zhao Z, Chen D, Xu B, Jurasz J, et al. Overcoming the uncertainty and 
+volatility of wind power: day-ahead scheduling of hydro-wind hybrid power 
+generation system by coordinating power regulation and frequency response 
+flexibility. Appl Energy 2023;333:120555. https://doi.org/10.1016/j. 
+apenergy.2022.120555.
+[9] Huang Mengdi, Chang Jianxia, Guo Aijun, Zhao Mingzhe, Ye Xiangmin, 
+Kaixuan Lei, et al. Cascade hydropower stations optimal dispatch considering 
+flexible margin in renewable energy power system. Energy 2023;285:129375. 
+https://doi.org/10.1016/j.energy.2023.129375.
+[10] Wang C, Gao N, Wang J, Jia N, Bi T, Martin K. Robust operation of a water-energy 
+Nexus: a multi-energy perspective. IEEE Trans Sustainable Energy 2020;11: 
+2698–712. https://doi.org/10.1109/tste.2020.2971259.
+[11] Alhazmi Mohannad, Dehghanian Payman, Nazemi M, Oikonomou Konstantinos. 
+Uncertainty-informed operation coordination in a water-energy Nexus. IEEE Trans 
+Industr Inform 2022;19:6439–49. https://doi.org/10.1109/tii.2022.3195695.
+[12] Zhao P, Gu C, Cao Z, Xie D, Teng F, Li J, et al. A cyber-secured operation for water- 
+energy Nexus. IEEE Trans Power Syst 2021;36:3105–17. https://doi.org/10.1109/ 
+tpwrs.2020.3043757.
+[13] Elsir M, Al-Awami AT, Antar Mohamed Abdelkarim, Oikonomou Konstantinos, 
+Parvania Masood. Risk-based operation coordination of water desalination and 
+renewable-rich power systems. IEEE Trans Power Syst 2023;38:1162–75. https:// 
+doi.org/10.1109/tpwrs.2022.3174565.
+M. Zhou et al.                                                                                                                                                                                                                                   
+
+Applied Energy 388 (2025) 125670
+16
+[14] Rodriguez-Garcia L, Parvania M, Hosseini MM, Mosier T. Resilience analytics for 
+interdependent power and water distribution systems. IEEE Trans Power Syst 
+2022;37:4244–57. https://doi.org/10.1109/tpwrs.2022.3149463.
+[15] Daneshvar M, Mohammadi-ivatloo Behnam, Anvari-Moghaddam Amjad. Risk- 
+oriented operational model for fully renewable cooperative prosumers in a modern 
+water-energy Nexus structure. IEEE Trans Sustainable Energy 2023;14:2006–19. 
+https://doi.org/10.1109/tste.2023.3287768.
+[16] Li Q, Yu S, Ameena Saad Al-Sumaiti, Konstantin Turitsyn. Micro water–energy 
+nexus: optimal demand-side management and quasi-convex hull relaxation. IEEE 
+Trans Control Netw Syst 2019;6:1313-1322. doi:10.1109/tcns.2018.2889001.
+[17] Stoppato A, Cavazzini G, Ardizzon G, Rossetti A. A PSO (particle swarm 
+optimization)-based model for the optimal management of a small PV 
+(photovoltaic)-pump hydro energy storage in a rural dry area. Energy 2014;76: 
+168–74. https://doi.org/10.1016/j.energy.2014.06.004.
+[18] Takahashi S, Koibuchi Hiroshi, Adachi S. Water supply operation and scheduling 
+system with electric power demand response function. Procedia Eng 2017;186: 
+327–32. https://doi.org/10.1016/j.proeng.2017.03.257.
+[19] Bjork J, Johansson KH, Dorfler F. Dynamic virtual power plant design for fast 
+frequency reserves: coordinating hydro and wind. IEEE Trans Control Netw Syst 
+2022:10:1266–1278. https://doi.org/10.1109/tcns.2022.3181553.
+[20] Niu H. Correlations between crude oil and stocks prices of renewable energy and 
+technology companies: a multiscale time-dependent analysis. Energy 2021;221: 
+119800. https://doi.org/10.1016/j.energy.2021.119800.
+[21] Liu Z, Lin Y, Cao Y, Hu H, Wei Y, Zhang Z, et al. Swin transformer: hierarchical 
+vision transformer using shifted windows. arXiv preprint arXiv:2103.14030, 2021. 
+doi:10.48550/arXiv.2103.14030.
+[22] Wu H., Xu J., Wang J., Long M. Autoformer: decomposition transformers with 
+auto-correlation for long-term series forecasting. arXiv preprint arXiv: 2106.13008, 
+2021. doi:10.48550/arXiv.2106.13008.
+[23] Thurner L, Scheidler A, Schafer F, Menke J-H, Dollichon J, Meier F, et al. 
+Pandapower—an open-source python tool for convenient modeling, analysis, and 
+optimization of electric power systems. IEEE Trans Power Syst 2018;33:6510–21. 
+https://doi.org/10.1109/tpwrs.2018.2829021.
+[24] Singh R, Rathore SS. Linear and non-linear bayesian regression methods for 
+software fault prediction. Int J Syst Assur Eng Manag 2022;13:1864-1884. https:// 
+doi.org/10.1007/s13198-021-01582-1.
+[25] Gan HL, Ross N. Stein’s method for the Poisson-Dirichlet distribution and the 
+Ewens sampling formula, with applications to Wright-fisher models. arXiv preprint 
+2019. https://doi.org/10.48550/arXiv.1910.04976. arXiv:1910.04976.
+[26] Zhao Jingying, Song Yifan, Wang Likun, Guo Hai, Marigentti Fabrizio, Liu Xin. 
+Forecasting the eddy current loss of a large turbo generator using hybrid ensemble 
+Gaussian process regression. Eng Appl Artif Intell 2023;121:106022. https://doi. 
+org/10.1016/j.engappai.2023.106022.
+[27] Akhter MN, Mekhilef S, Mokhlis H, Ali R, Usama M, Muhammad MA, et al. 
+A hybrid deep learning method for an hour ahead power output forecasting of 
+three different photovoltaic systems. Appl Energy 2022;307:118185. https://doi. 
+org/10.1016/j.apenergy.2021.118185.
+[28] Zhou Manguo, Ma Fan, Jin Wenxing. Long-term cost planning of data-driven wind- 
+storage hybrid systems. Renew Energy 2024;223:120073. https://doi.org/ 
+10.1016/j.renene.2024.120073.
+[29] Gong M, Yan C, Xu W, Zhao Z, Li W, Liu Y, et al. Short-term wind power forecasting 
+model based on temporal convolutional network and informer. Energy 2023;283: 
+129171. https://doi.org/10.1016/j.energy.2023.129171.
+[30] Zhao C, Wan C, Song Y. Cost-oriented prediction intervals: on bridging the gap 
+between forecasting and decision. IEEE Trans Power Syst 2021;37:3048–62. 
+https://doi.org/10.1109/tpwrs.2021.3128567.
+M. Zhou et al.                                                                                                                                                                                                                                   

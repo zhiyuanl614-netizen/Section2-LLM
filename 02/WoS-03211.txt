@@ -1,0 +1,2241 @@
+ 
+Contents lists available at ScienceDirect
+Sustainable Energy, Grids and Networks
+journal homepage: www.elsevier.com/locate/segan
+ 
+Enabling grid services by water distribution systems: Measurement-based 
+modeling and optimized scheduling
+Stelios Dimoulias∗iD, Georgios Kryonidis iD, Kyriaki-Nefeli Malamaki iD, Pandelis Biskas iD
+School of Electrical and Computer Engineering, Aristotle University of Thessaloniki, Thessaloniki, Greece
+H I G H L I G H T S
+• Simplified, measurement-based modeling approach for water distribution systems (WDSs).
+• WDS optimization for interruptible/curtailable load and balancing service provision.
+• Two-stage (day-ahead and intra-day) convex optimization, including service activation.
+• Application to a real-world WDS in Greece.
+• WDSs are suitable for grid service provision, offering significant economic benefits.
+A R T I C L E  I N F O
+Keywords:
+Balancing services
+Demand response
+Interruptible/curtailable load
+Measurement-based modeling
+Water distribution systems
+Water-energy nexus
+A B S T R A C T
+Water distribution systems (WDSs) can be optimally controlled and scheduled to provide grid services, such as 
+interruptible/curtailable load and balancing services, to the electric power system, by exploiting the flexibility 
+of water pumps and the storage capacity of water tanks. Nonetheless, existing frameworks for modeling and 
+optimally scheduling WDSs rely on detailed parameter knowledge, involve complex mathematical formulations, 
+and do not account for all time horizons associated with the provision of grid services. To address these issues, this 
+paper presents a practical two-fold methodology for enabling WDSs to provide multiple grid services. First, a new 
+measurement-based modeling approach for WDSs is proposed to eliminate the need for parameter knowledge. 
+The approach correlates the electric power consumption and flow rate of pumps via a convex quadratic function, 
+enabling simpler yet more accurate modeling. Second, by leveraging this modeling approach, a comprehensive 
+two-stage optimization framework is developed to derive the WDS operating schedule, accommodating multiple 
+grid services across both the day-ahead and the intra-day time horizons. The proposed methodology is applied 
+and validated on a real-world WDS in Greece. The results demonstrate the accuracy of the proposed modeling 
+approach, the effectiveness of the proposed optimization framework, and the suitability of WDSs as flexible loads 
+for grid services.
+1 . Introduction
+1.1 . Motivation
+The controllability of water pumps and the storage capacity of water 
+tanks render municipal water distribution systems (WDSs) highly flexi­
+ble loads [1,2] within the electric power system (EPS). In the context of 
+the water-energy nexus and integrated energy systems, this flexibility 
+enables WDSs to participate in both implicit and explicit demand-
+side flexibility schemes [3], allowing them to provide operational 
+benefits to the EPS while receiving economic benefits in return. Implicit 
+demand-side flexibility schemes include dynamic electricity pricing pro­
+grams, whereas explicit demand-side flexibility schemes involve the 
+provision of grid services to the EPS [1], such as interruptible/curtailable 
+load (I/C-L) [4,5] and balancing services [6].
+In this context, the participation of WDSs in demand-side flexibil­
+ity schemes constitutes an optimal scheduling problem. Specifically, the 
+WDS operating schedule is optimized to minimize the net operating 
+cost, based on the structure of the flexibility schemes involved. When 
+providing grid services, the associated remuneration is also considered. 
+∗Corresponding author.
+ 
+Email addresses: steliosd@ece.auth.gr (S. Dimoulias), kryonidi@ece.auth.gr (G. Kryonidis), kyriaki_nefeli@hotmail.com (K.-N. Malamaki), pbiskas@auth.gr 
+(P. Biskas).
+https://doi.org/10.1016/j.segan.2026.102260
+Received 15 December 2025; Received in revised form 9 April 2026; Accepted 15 April 2026
+Sustainable Energy, Grids and Networks 46 (2026) 102260 
+Available online 17 April 2026 
+2352-4677/© 2026 The Author(s). Published by Elsevier Ltd. This is an open access article under the CC BY-NC-ND license ( http://creativecommons.org/licenses/by- 
+nc-nd/4.0/ ). 
+
+S. Dimoulias, G. Kryonidis, K.-N. Malamaki et al.
+Nomenclature of the Optimization Framework
+Sets
+N𝑝
+Set of pumps.
+N𝜏
+Set of tanks.
+Nin,𝜏
+Set of pumps upstream of tank 𝜏.
+Nout,𝜏
+Set of pumps downstream of tank 𝜏.
+T
+Daily (day-ahead) time horizon.
+TI∕C−L
+Time period for the provision of the interruptible/curtail­
+able load (I/C-L) service.
+TR
+Time period for the provision of the balancing service.
+Tid
+Time horizon of the intra-day problem.
+Parameters
+Δ𝑡Analysis time step.
+𝑡0, 𝑡𝑓
+Initial and final time intervals of T , respectively.
+𝐶[𝑡] Electricity price.
+𝐶I∕C−L[𝑡] Compensation rate for I/C-L service.
+𝐶u[𝑡] Compensation rate for upward reserve capacity.
+𝐶d[𝑡] Compensation rate for downward reserve capacity.
+𝑃b[𝑡] Baseline power consumption of the WDS.
+𝑄c
+𝜏[𝑡] Forecast aggregate water demand to be supplied by tank 𝜏.
+𝑃max
+𝑝
+, 𝑃min
+𝑝
+Operating maximum and minimum electric power con­
+sumption of pump 𝑝.
+𝑄max
+𝑝
+, 𝑄min
+𝑝
+Operating maximum and minimum flow rate of pump 𝑝.
+𝑆𝑜𝐶max
+𝜏
+, 𝑆𝑜𝐶min
+𝜏
+Operating maximum and minimum state-of-charge 
+(SoC) limits of tank 𝜏.
+𝑉𝜏
+Volume of tank 𝜏.
+𝑆𝑜𝐶0
+𝜏
+Initial SoC value of tank 𝜏 at 𝑡0.
+𝑡a
+Time interval for activation of the balancing service in the intra-
+day stage.
+𝑅a
+Balancing power requested by the electric power system operator 
+for the balancing service activation at 𝑡a.
+𝑃DA
+s,a
+Total WDS power consumption at 𝑡a according to the day-ahead 
+schedule.
+𝑆𝑜𝐶a
+𝜏
+SoC value of tank 𝜏 at 𝑡a.
+𝑐𝜏
+Numerical weight to ensure SoC recovery for tank 𝜏 at the 
+intra-day stage.
+Decision variables
+𝑃𝑝[𝑡] Continuous variable modeling the electric power consumption 
+of pump 𝑝.
+𝑄𝑝[𝑡] Continuous variable modeling the flow rate of pump 𝑝.
+𝑘𝑝[𝑡] Binary variable modeling the shutdown of pump 𝑝 (on/off 
+status).
+𝑃𝑘
+𝑝[𝑡] Mixed discrete-continuous variable modeling the electric 
+power consumption of pump 𝑝 including shutdown.
+𝑄𝑘
+𝑝[𝑡] Mixed discrete-continuous variable modeling the flow rate of 
+pump 𝑝 including shutdown.
+𝑆𝑜𝐶𝜏[𝑡] SoC of tank 𝜏.
+𝑆𝑜𝐶𝑢
+𝜏[𝑡] Auxiliary variable for the SoC of tank 𝜏 in case of upward 
+reserve activation.
+𝑆𝑜𝐶𝑑
+𝜏[𝑡] Auxiliary variable for the SoC of tank 𝜏 in case of downward 
+reserve activation.
+𝑃I∕C−L[𝑡] Power reduction capacity of the WDS for the I/C-L service.
+𝑅u[𝑡], 𝑅d[𝑡] Upward and downward reserve capacities of the WDS 
+for the balancing service.
+Furthermore, the optimization problem employs a WDS hydraulic model 
+to ensure that technical requirements related to WDS operation are 
+satisfied.
+In this regard, the relevant literature exhibits gaps and shortcomings 
+related to both the accommodation of demand-side flexibility schemes 
+and the hydraulic modeling of WDSs within the optimization problem.
+1.2 . Literature review: demand-side flexibility schemes
+The participation of WDSs in dynamic electricity pricing programs 
+has been thoroughly addressed in the scientific literature [7], with stud­
+ies focusing on both fixed-speed pumps (FSPs) [8–10] and variable-speed 
+pumps (VSPs) [11–14], [15]. Nevertheless, the challenge of providing 
+multiple grid services to the EPS has not been adequately addressed, 
+as most studies focus exclusively on either I/C-L [16–19] or balancing 
+services [20,21].
+Specifically, initial studies on the I/C-L capability of WDSs focused 
+solely on FSPs [16–18], thereby substantially limiting controllability and 
+flexibility. In [19], the participation of WDSs in I/C-L schemes of the 
+French market is examined. Although the market structure is thoroughly 
+modeled, the physical modeling of the WDS, and especially of the pumps, 
+is not detailed.
+Regarding balancing services, they involve two stages: the availabil­
+ity stage and the activation stage. The availability stage pertains to 
+the reservation of upward and downward balancing capacities through 
+day-ahead scheduling, while the activation stage concerns the actual 
+delivery of these capacities in the intra-day horizon upon request by 
+the EPS operator. Nevertheless, the existing studies do not comprehen­
+sively cover both stages. To elaborate, in [20], the authors explore the 
+ability of WDSs to provide downward-only balancing services by flex­
+ibly increasing their power consumption to absorb surplus renewable 
+energy. However, this study focuses solely on the activation stage of 
+the service, as the capacity to increase the WDS power consumption is 
+assumed to be known in advance. In [21], the provision of short-term 
+balancing services is examined. Nonetheless, by considering a single, 
+symmetric balancing capacity for both upward and downward service 
+provision, and quantifying it on a per-pump basis rather than system-
+wide, the study underestimates the capability of the WDS to provide 
+balancing services. In addition, [21] does not optimize the intra-day 
+schedule of the WDS; instead it relies on the third pump affinity law to 
+adjust pump power upon activation of the balancing service. However, 
+this relationship is approximate and prone to significant errors [22,23].
+Finally, in [24], the authors combine both I/C-L and balancing ser­
+vices, with the study extended to desalination plants in [25]. However, 
+these works are limited to the availability stage of the balancing service, 
+neglecting its actual activation. In turn, this could result in violations of 
+the tank operating limits during the activation stage.
+1.3 . Literature review: WDS hydraulic modeling
+Beyond the above points regarding the accommodation of multiple 
+grid services, the primary limitation in the existing literature concerns 
+the hydraulic modeling of WDSs, specifically the assumption of full 
+parameter availability. As later discussed in detail in Section 2.2, state-
+of-the-art works [8–14,16–21,24,25] presuppose accurate knowledge 
+of the WDS parameters, particularly regarding pumps and pipelines. 
+Nevertheless, in practice, this assumption is difficult to justify due to 
+the inherent uncertainties of WDSs, which are further exacerbated by 
+phenomena such as pipeline leakage and aging. Furthermore, this as­
+sumption leads to less accurate WDS modeling, while also increasing the 
+complexity of the associated optimization problems for WDS scheduling 
+and grid services provision.
+A different approach is adopted in [15]. Specifically, the authors at­
+tempt to implicitly handle WDS uncertainties related to pump modeling 
+by proposing a robust optimization formulation. Nonetheless, robust 
+formulations result in more conservative solutions compared to their 
+deterministic counterparts [26].
+Sustainable Energy, Grids and Networks 46 (2026) 102260 
+2 
+
+S. Dimoulias, G. Kryonidis, K.-N. Malamaki et al.
+Table 1 
+Comparison between the existing literature and the proposed methodology.
+Studies
+Demand-side flexibility schemes
+WDS modeling
+Balancing service
+Dynamic pricing
+I/C-L service
+Day-ahead 
+scheduling
+Intra-day 
+scheduling
+Distinct upward 
+& downward 
+capacities
+VSPs
+Pump 
+shutdown
+Measurement-
+based approach
+[8–10]
+✓
+✘
+✘
+✘
+✘
+✘
+✓
+✘
+[11–14], [15]
+✓
+✘
+✘
+✘
+✘
+✓
+✓
+✘
+[16–18]
+✓
+✓
+✘
+✘
+✘
+✘
+✓
+✘
+[19]
+✓
+✓
+✘
+✘
+✘
+✓
+✓
+✘
+[20]
+✓
+✘
+✘
+✓
+✘
+✓
+✘
+✘
+[21]
+✓
+✘
+✓
+✘
+✘
+✓
+✓
+✘
+[24,25]
+✘
+✓
+✓
+✘
+✓
+✓
+✘
+✘
+Proposed
+✓
+✓
+✓
+✓
+✓
+✓
+✓
+✓
+1.4 . Scope and contribution
+The scope of this study is to enable WDSs to participate in both 
+implicit and explicit demand-side flexibility schemes and to provide mul­
+tiple grid services. To this end, the study addresses the identified gaps in 
+both hydraulic modeling and scheduling of WDSs, presenting a two-fold 
+contribution:
+• Measurement-based decoupling of VSP quantities and prob­
+lem simplification: To address the limitation of requiring full 
+parameter knowledge for WDSs, this paper proposes a new 
+measurement-based modeling approach. Specifically, the paper 
+demonstrates that the electric power consumption and the flow rate 
+of VSPs can be directly and accurately correlated through a con­
+vex quadratic function. This function decouples the flow rate and 
+electric power consumption of VSPs from other quantities, such 
+as rotational speed and hydraulic head. In turn, this decoupling 
+significantly reduces the number of decision variables, thereby sim­
+plifying the formulation of the optimization problems for WDS 
+scheduling. Consequently, the linearizations and relaxations intro­
+duced in the literature [8–14,16–21,24,25], which result from the 
+inherent complexity of WDSs, can be avoided, allowing for exact 
+solutions. Furthermore, it is highlighted that the proposed model­
+ing approach aligns with the research guidelines of the IEEE PES 
+Taskforce on Water-Power Systems [27,28], which emphasize the 
+development of simple yet accurate models for the integration and 
+optimization of WDSs and EPSs.
+• Two-stage scheduling for multiple services: Contrary to the ex­
+isting literature, the paper proposes a comprehensive framework 
+that optimizes the operating schedule of WDSs by jointly consid­
+ering all three common demand-side flexibility schemes, i.e., (a) 
+dynamic electricity pricing, (b) I/C-L provision, and (c) balancing 
+service provision. Furthermore, unlike previous studies focusing 
+on balancing services [20,21,24,25], the proposed framework opti­
+mizes the WDS schedule for both the availability and the activation 
+stages of the balancing service. To this end, it is structured as a 
+two-stage problem. The first stage concerns the derivation of the 
+day-ahead schedule, aiming to (a) minimize the net operating cost 
+of the WDS, (b) provide I/C-L service, and reserve balancing capac­
+ity, and (c) ensure that tank operating limits are respected during 
+the activation of the balancing service. The second stage is related 
+to the intra-day activation of the balancing service upon its re­
+quest from the EPS operator. The intra-day schedule ensures (a) 
+the optimal allocation of pump setpoints for the balancing ser­
+vice activation and (b) the cost-effective adjustment of the WDS 
+schedule for the remainder of the day. Moreover, contrary to 
+[20,24,25], the proposed formulation accounts for the possibil­
+ity of pump shutdown, thus enabling increased flexibility. Finally, 
+leveraging the proposed measurement-based modeling approach, 
+the scheduling problems are formulated as mixed-integer quadrat­
+ically constrained programming (MIQCP) optimization problems 
+with convex continuous relaxations, facilitating computational 
+tractability.
+As an additional strength of the study, it is emphasized that both 
+the proposed measurement-based approach for WDS modeling and the 
+proposed optimization framework for WDS scheduling are applied and 
+validated on a real-world WDS in Greece, as presented in Section 4.
+Finally, to provide a clear comparison with the existing literature, 
+Table 1 summarizes the contributions of the proposed methodology and 
+the research gaps it addresses.
+The remainder of the manuscript is organized as follows: Section 2 
+briefly reviews current practices in the modeling of WDSs and presents 
+the proposed measurement-based modeling approach. Section 3 in­
+troduces the proposed two-stage optimization framework for WDS 
+scheduling. In Section 4, the proposed methodology, including both the 
+modeling approach and the optimization framework, is applied to and 
+validated on a real-world WDS. Finally, Section 5 concludes the pa­
+per, summarizing the main findings. In addition, the application of the 
+proposed methodology to a benchmark WDS is presented in Appendix A.
+2 . WDS hydraulic modeling
+2.1 . Preliminaries
+In typical municipal WDSs [2,19,29], pumps in pumping stations ex­
+tract water from supply sources (e.g., underground wells or reservoirs) 
+and transfer it to storage tanks located at higher elevations. In turn, 
+storage tanks define pressure zones [30] and supply consumers by grav­
+ity. When additional hydraulic head is required to transfer water to the 
+tanks, booster pumps are employed.
+In this configuration, the operation of a pump is defined by the hy­
+draulic head (𝐻) it generates and the water flow rate (𝑄), hereafter 
+referred to as flow, that it delivers. In the case of VSPs, the motors are 
+equipped with variable-frequency drives on their electric supply side. 
+Thus, the rotational speed (𝑛) of VSPs can be controlled in proportion to 
+the input frequency of the drive, thereby allowing greater flexibility in 
+terms of the generated head and the delivered flow.
+More specifically, for VSPs, 𝐻, 𝑄, and 𝑛 are related via the pump 
+affinity laws and the pump characteristic curve. The pump characteristic 
+curve is commonly approximated by a bivariate quadratic polynomial, 
+as shown in (1) [11], where 𝑛r denotes the rated rotational speed. In (1), 
+𝑐1, 𝑐2, and 𝑐3 are the coefficients of the bivariate quadratic polynomial 
+and are specific to each pump. 
+𝐻= 𝑐1 ⋅𝑄2 + 𝑐2 ⋅𝑛
+𝑛r
+⋅𝑄+ 𝑐3 ⋅( 𝑛
+𝑛r
+)
+2 .
+(1)
+The pump efficiency (𝜂) depends on both flow and rotational speed and 
+can be approximated by (2), where 𝑒1, 𝑒2, and 𝑒3 are coefficients specific 
+Sustainable Energy, Grids and Networks 46 (2026) 102260 
+3 
+
+S. Dimoulias, G. Kryonidis, K.-N. Malamaki et al.
+to each pump [31]: 
+𝜂= 𝑒1 ⋅
+( 𝑛r
+𝑛
+)3
+⋅𝑄3 + 𝑒2 ⋅
+( 𝑛r
+𝑛
+)2
+⋅𝑄2 + 𝑒3 ⋅
+( 𝑛r
+𝑛
+)
+⋅𝑄.
+(2)
+In practice, the hydraulic head that a VSP needs to generate in order to 
+transfer water at flow 𝑄 through a pipeline to a tank at higher elevation 
+can be approximated by the Darcy–Weisbach formula as 
+𝐻= 𝐻𝑜+ 𝐾⋅𝑄2 .
+(3)
+Eq. (3) is commonly referred to as the system curve. The term 𝐾⋅𝑄2
+represents head losses along the pipeline due to friction. The coefficient 
+𝐾 is intrinsic to the pipeline and depends on its length, cross-sectional 
+area, and material. Moreover, 𝐻𝑜 represents the static head, that is, the 
+total elevation difference between the suction side and the tank inlet. It 
+is noted that, in WDSs, the tank inlet is typically positioned at the top 
+of the tank, above the water level [9,20].
+Consequently, if a VSP with characteristic curve (1) operates at speed 
+𝑛 and transfers water through a pipeline with system curve (3), the op­
+erating point (𝐻, 𝑄) is defined by the intersection of curves (1) and
+(3). Finally, for a motor with efficiency 𝜂m, the motor-pump system 
+consumes electric power (𝑃): 
+𝑃= 𝛾⋅𝐻⋅𝑄
+𝜂⋅𝜂m
+,
+(4)
+with 𝛾 denoting the specific weight of water.
+2.2 . Current practices
+To model WDSs, existing studies [8–14,16–21,24,25] simultaneously 
+employ (1), (3), and (4), for all pumps and pipelines. Nonetheless, (2) 
+is omitted and a constant efficiency 𝜂 is instead assumed to simplify the 
+model. Likewise, a constant 𝜂m value is assumed for the motor. This 
+conventional modeling approach exhibits the following drawbacks:
+• Dependence on parameter availability: It heavily relies on the 
+availability and accurate knowledge of parameters 𝑐1, 𝑐2, 𝑐3, 𝐾, 
+and 𝐻𝑜, for all pumps and pipelines. Nonetheless, this assumption 
+is difficult to justify for several reasons. First, WDSs are known to 
+suffer significant leakage, with average water losses of around 30% 
+[32]. The presence of leaks distorts pipeline characteristics, lead­
+ing to significant deviations from the theoretical values. In addition 
+to leakages, WDS models, if available, require frequent calibration 
+and parameter updates [33], to account for discrepancies due to 
+pipeline aging and damage. Moreover, the static head parameter is 
+subject to uncertainty [34], with errors of a few meters potentially 
+causing significant inaccuracies in the calculations of WDS quan­
+tities [35]. Finally, although pump curves are usually provided by 
+manufacturers, they have been identified as sources of uncertainty 
+[15,36].
+• Complex problem formulation: In addition to the assumption of 
+accurate knowledge of such an extensive set of uncertain WDS 
+parameters, the conventional modeling approaches introduce a 
+substantial number of variables into the optimization problem of 
+WDS scheduling. More specifically, for each pump, 𝑄, 𝐻, 𝑃, and 
+𝑛 are decision variables to be calculated, while 𝜂 is incorrectly as­
+sumed to be constant. The increased number of variables, along 
+with the significant nonlinearity of (1), (3), and (4), renders such 
+problems difficult to solve. For this reason, existing studies resort 
+to extensive approximations and relaxations to the original prob­
+lem, in order to achieve computationally tractable solutions. As a 
+trade-off, such approximations result in errors and discrepancies 
+with respect to the actual physical model of the WDS.
+• Neglect of efficiency reduction: Pump efficiency decreases at re­
+duced speeds [23], with the reduction being more significant in 
+systems with substantial static head [37]. Thus, assuming a con­
+stant 𝜂 leads to important errors in power calculations. Motor 
+efficiency 𝜂m also decreases at reduced speeds due to the reduction 
+in power, albeit less significantly.
+2.3 . Proposed modeling approach
+To avoid reliance on uncertain parameters, this paper proposes a 
+new measurement-based modeling approach for WDS, deriving a sim­
+plified yet equivalent model. The proposed modeling approach is based 
+on the principles stipulated in [38], which are also leveraged in [39,40]. 
+Specifically, the aim is to decouple the interactions of interconnected 
+pumps, pipelines, and storage tanks by implicitly representing the hy­
+draulic behavior of the WDS within an equivalent pump operating 
+model. The proposed modeling approach can be applied to WDSs with 
+the typical configuration described in Section 2.1, which has been 
+highlighted for its potential in demand-side flexibility [1].
+To elaborate, an on-site, measurement-based, system-learning pro­
+cedure is developed, as shown in Fig. 1(a). For each pump-pipeline 
+pair in the WDS, this procedure derives a dedicated 𝑃= 𝑔(𝑄) function 
+that correlates the flow delivered by the pump with the corresponding 
+electric power consumed by its motor. Specifically, commencing from 
+the nominal value (𝑓n), the frequency applied to the VSP is iteratively 
+reduced in steps of Δ𝑓. For each input frequency, the corresponding 
+flow and electric power operating points are recorded and stored in a 
+lookup table. The process is repeated until either the pump operating 
+flow or frequency is reduced below the rated minimum value (𝑄min,r
+and 𝑓min,r, respectively), as specified by the manufacturer. The step 
+size Δ𝑓 can be set to 1 Hz or lower to ensure high resolution and ac­
+curate modeling. The derived 𝑃= 𝑔(𝑄) curve is fixed for a specific 
+pump-pipeline pair. Therefore, the curves need to be extracted only 
+once and updated according to the recommended practices for WDS 
+model calibration, typically once every one to five years [41], to ac­
+count for pipeline aging and damage. Additionally, since modern WDSs 
+are equipped with Supervisory Control and Data Acquisition systems, 
+non-scheduled calibrations can be performed whenever the flow values 
+stored in the lookup tables do not match the measured values, indicating 
+model discrepancies. The proposed learning process:
+• achieves simpler yet more accurate WDS modeling, as it relies on 
+up-to-date measurements and implicitly accounts for the decrease 
+in pump and motor efficiencies at reduced speeds.
+• decouples decision variables 𝑃 and 𝑄 from 𝐻, 𝑛, and 𝜂, implicitly 
+accounting for their interdependence. As a result, the number of 
+variables involved in the optimization problems is reduced by 60% 
+per pump.
+Fig. 1. a) Proposed measurement-based approach and b) analytical alternative.
+Sustainable Energy, Grids and Networks 46 (2026) 102260 
+4 
+
+S. Dimoulias, G. Kryonidis, K.-N. Malamaki et al.
+Fig. 2. Extraction of 𝑃= 𝑔(𝑄) curve for a typical pump-pipeline pair using using 
+the analytical approach of Fig. 1(b).
+Alternatively, even if the assumption of full parameter availability 
+holds, such a procedure for the extraction of 𝑃= 𝑔(𝑄) curves should 
+be performed, in order to simplify the formulation of the optimization 
+problem for WDS scheduling. More specifically, under complete param­
+eter availability, the measurement-based approach of Fig. 1(a) can be 
+replaced by the analytical computational approach of Fig. 1(b). In this 
+case, the 𝑃= 𝑔(𝑄) curve is mathematically derived, leveraging the 
+knowledge of (1), (2), and (3). 
+An illustrative example of the analytical approach of Fig. 1(b) is pre­
+sented in Fig. 2 for a typical pump-pipeline pair. Therefore, the example 
+of Fig. 2 is not based on measurements but rather on analytical pump 
+characteristic curves, pump efficiency curves, and system curves, to 
+demonstrate the theoretical interrelation among the physical quantities 
+𝐻, 𝑄, 𝜂, 𝑛, and 𝑃. Specifically, Fig. 2(a) illustrates the characteristic 
+curves (1) of a typical water pump (Grundfos SP 270-G-3A), at five 
+distinct input frequency values. In addition, a typical system curve (3) 
+is superimposed. For each input frequency, the pump operating point 
+(𝐻, 𝑄), marked by a black dot, is determined by the intersection of the 
+corresponding pump curve with the system curve.
+Regarding pump efficiency, Fig. 2(b) presents the efficiency curves
+(2) for the same five input frequency values. For each pump operating 
+point of Fig. 2(a), the pump efficiency is identified by the point on the 
+respective curve of Fig. 2(b) at the 𝑄 value of the operating point. It 
+is observed that pump efficiency decreases significantly with reduced 
+frequency. In this case, efficiency dropped from 0.74 at 50 Hz to 0.46 
+at 30 Hz, i.e., by 38%. As discussed, such reductions in efficiency are 
+not taken into account by existing studies, since they assume a constant 
+pump efficiency.
+Finally, the intersection points between the pump curves and the 
+system curve, along with the calculation of the corresponding efficiency 
+values, enable the derivation of the 𝑃= 𝑔(𝑄) curve, as demonstrated 
+in Fig. 2(c). Furthermore, the flow and electric power profiles with re­
+spect to frequency, as stored in the lookup table, are presented in Fig. 3. 
+In general, the 𝑃= 𝑔(𝑄) curve can be accurately approximated by a 
+Fig. 3. Flow and power versus frequency, as stored in the lookup table.
+second-order polynomial, as follows: 
+𝑃= 𝑔(𝑄) = 𝑎⋅𝑄2 + 𝑏⋅𝑄+ 𝑐.
+(5)
+For the representative case of Fig. 2, the second-order polynomial fit 
+is also plotted in Fig. 2(c). As demonstrated, the model achieves a very 
+accurate fit, as verified by the coefficient of determination (𝑅2 ≃1), and 
+the root-mean-square error (RMSE = 0.38%). The RMSE is normalized 
+with respect to the maximum operating power value at 50 Hz. Similar 
+fitting accuracies are observed for different pump-pipeline pairs, as well 
+as for the real-world cases in Section 4. Moreover, it is noted that higher-
+order polynomials can achieve better fitting accuracy for the 𝑃= 𝑔(𝑄)
+curve due to their greater degrees of freedom, although the improvement 
+is marginal. Thus, a second-order polynomial fit is selected, as it ensures 
+both high accuracy, as shown in Fig. 2(c), and modeling simplicity, as 
+discussed in Section 3.
+Furthermore, as illustrated in Fig. 1, the 𝑃= 𝑔(𝑄) extraction pro­
+cess terminates either when the minimum pump flow or frequency is 
+reached. The termination point defines the actual operating minimum 
+[𝑄min, 𝑓min, 𝑃min], with 𝑄min ≥𝑄min,r and 𝑓min ≥𝑓min,r. Moreover, 
+pumps can be switched off; thus the complete operating range is 
+discontinuous, defined as 
+𝑄𝑘∈{0} ∪[𝑄min, 𝑄max] ;
+𝑃𝑘∈{0} ∪[𝑃min, 𝑃max] .
+(6)
+In (6), 𝑄𝑘 and 𝑃𝑘 denote the flow and power, respectively, including the 
+case of pump shutdown. 𝑄max and 𝑃max are the corresponding operating 
+points at 𝑓= 𝑓n.
+Finally, it is noted that the proposed measurement-based modeling 
+approach can be applied to pumps operating in parallel and delivering 
+flow through a common pipeline. In this case, an equivalent 𝑃= 𝑔(𝑄)
+curve can be derived to represent the aggregate operation of the pump 
+group and the common pipeline.
+3 . Proposed optimization framework for WDS scheduling
+The proposed optimization framework schedules WDSs to enable 
+their participation in both implicit and explicit demand-side flexibil­
+ity schemes across distinct time horizons, incorporating the proposed 
+modeling approach presented in Section 2.3. The framework formulates 
+day-ahead and intra-day scheduling problems, which are solved from 
+the perspective of the WDS operator to minimize the net operating cost 
+of the WDS.
+3.1 . Examined demand-side flexibility schemes
+As discussed in Section 1.4, the proposed optimization framework 
+accommodates three demand-side flexibility schemes: (a) dynamic elec­
+tricity pricing, (b) I/C-L service provision, and (c) balancing service 
+provision.
+As explained in Section 1.1, dynamic electricity pricing is an implicit 
+demand-side flexibility scheme. In this scheme, the WDS is encouraged 
+Sustainable Energy, Grids and Networks 46 (2026) 102260 
+5 
+
+S. Dimoulias, G. Kryonidis, K.-N. Malamaki et al.
+to adjust its energy consumption based on the time variation of elec­
+tricity tariffs, thereby implicitly contributing to the EPS operation, e.g., 
+through load profile flattening.
+In contrast, the I/C-L and balancing services are explicit demand-side 
+flexibility schemes. To enhance the generality of the proposed frame­
+work, different structures are considered for these two grid services. 
+Specifically, the I/C-L service involves an agreement for the WDS to 
+reduce its energy consumption during specified, predetermined time in­
+tervals, in line with schemes such as [42]. These specified time intervals 
+are known in advance, i.e., in the day-ahead stage, as they typically cor­
+respond to periods with high load demand for the EPS. The available 
+power reduction is calculated in the day-ahead stage and delivered in 
+the intra-day stage.
+On the other hand, the balancing service is structured as a ramping 
+or frequency restoration reserve product [43], representing the abil­
+ity of the WDS to provide upward and downward reserve capacity by 
+decreasing or increasing its power consumption, respectively, in accor­
+dance with the generator convention. Specifically, the balancing service 
+involves the day-ahead reservation of balancing capacity, and the po­
+tential intra-day activation of this capacity at unknown time intervals, 
+if requested by the EPS operator. As a result, the activation is stochastic, 
+addressing unforeseen conditions in the EPS that cannot be known in 
+advance.
+Thus, the optimization framework accommodates the joint provision 
+of grid services with both deterministic (I/C-L service) and stochastic 
+(balancing service) deliveries in the intra-day stage. The differences 
+in the purpose and structure of each service are further analyzed in 
+Section 3.2.
+3.2 . Day-ahead stage
+The day-ahead optimization determines the WDS operating sched­
+ule for the following day, aiming to minimize the net daily operating 
+cost. The actual operating cost refers to the energy consumption of the 
+pumps, which is billed under a dynamic pricing scheme. In addition, two 
+revenue sources are considered, corresponding to the provision of I/C-L 
+and balancing services.
+Let N𝑝 and N𝜏 denote the sets of pumps and tanks of the WDS, re­
+spectively. Moreover, for each tank 𝜏 in N𝜏, the sets Nin,𝜏⊆N𝑝 and 
+Nout,𝜏⊆N𝑝 represent the pumps at the inlet (upstream) and outlet 
+(downstream) of the tank, respectively. The set T denotes the daily time 
+horizon. The set TI∕C−L ⊆T denotes the specified time period for the pro­
+vision of the I/C-L service, and the set TR ⊆T denotes the time period 
+for the provision of the balancing service. Typically, TI∕C−L corresponds 
+to periods of high load for the EPS, although its exact definition varies 
+across different I/C-L schemes. Furthermore, it is assumed that the two 
+services do not overlap; thus TI∕C−L ∩TR = ∅ and TR = T −TI∕C−L.
+For a pump 𝑝∈N𝑝, the flow and the electric power consumption are 
+represented by two sets of variables. In line with (6), continuous vari­
+ables 𝑄𝑝[𝑡], 𝑃𝑝[𝑡] model the operation of the pump under different input 
+frequencies, while mixed discrete-continuous variables 𝑄𝑘
+𝑝[𝑡], 𝑃𝑘
+𝑝[𝑡] are 
+used to include the possibility of shutdown. More specifically, pump 
+shutdown is modeled via binary variables 𝑘𝑝[𝑡].
+For a tank 𝜏∈N𝜏, the decision variable is the normalized volume of 
+stored water relative to the total tank volume 𝑉𝜏, expressed in per unit 
+(p.u.). This normalized volume is referred to as the state-of-charge (SoC) 
+and is denoted as 𝑆𝑜𝐶𝜏[𝑡], by analogy with energy storage systems, since 
+tanks can also be considered storage modules for gravitational potential 
+energy.
+Finally, at the WDS level, the provision of the I/C-L service is quan­
+tified via the decision variable 𝑃I∕C−L[𝑡], which physically represents 
+the capacity of the WDS to reduce its power consumption during the 
+designated TI∕C−L time period. Regarding the balancing service, it is 
+quantified via the total upward and downward reserve capacities of the 
+WDS, denoted by the decision variables 𝑅u[𝑡] and 𝑅d[𝑡], respectively. 
+These capacities physically represent the ability of the WDS to decrease 
+or increase its power consumption at 𝑡∈TR, in response to a request 
+from the EPS operator.
+The objective function of the day-ahead problem is:
+min
+∑
+𝑡∈T
+(
+∑
+𝑝∈N𝑝
+𝑃𝑘
+𝑝[𝑡]
+)
+⋅𝐶[𝑡] ⋅Δ𝑡−
+∑
+𝑡∈TI∕C−L
+𝑃I∕C−L[𝑡] ⋅𝐶I∕C−L[𝑡] ⋅Δ𝑡
+−
+∑
+𝑡∈TR
+(𝑅u[𝑡] ⋅𝐶u[𝑡] + 𝑅d[𝑡] ⋅𝐶d[𝑡]) ⋅Δ𝑡.
+(7)
+In (7), the first term represents the energy cost of pumping, while the 
+second and third terms are the economic benefits from the I/C-L and 
+balancing services, respectively. Moreover, the parameter 𝐶[𝑡] is the 
+time-varying electricity price. For the I/C-L and balancing services, the 
+power reduction and the upward and downward reserve capacities are 
+compensated at rates 𝐶I∕C−L[𝑡], 𝐶u[𝑡], and 𝐶d[𝑡], respectively. Finally, Δ𝑡
+denotes the analysis time step. In line with common practices for bal­
+ancing services, Δ𝑡 should be sub-hourly, typically between 5 and 15 
+minutes. After the day-ahead problem is solved, the derived quantities 
+𝑃I∕C−L[𝑡], 𝑅u[𝑡], and 𝑅d[𝑡] are nominated to the EPS operator.
+As discussed in Section 3.1, in the I/C-L service, the WDS is remu­
+nerated for reducing its consumption during specified time intervals. 
+I/C-L services [42] define this incentivized power reduction with re­
+spect to a reference, baseline power consumption, as it is also practiced 
+in relevant literature [18,19]. This baseline power is generally calculated 
+based on historical data, with its definition varying across different I/C-
+L schemes. For the WDS, this baseline power consumption is denoted 
+as 𝑃b[𝑡], while the power reduction capacity of the I/C-L service is de­
+fined in (8). Regarding 𝑃I∕C−L[𝑡], it is considered constant ∀𝑡∈TI∕C−L to 
+achieve a reduction in the WDS consumption with a stable rate. 
+𝑃I∕C−L[𝑡] = 𝑃b[𝑡] −
+∑
+𝑝∈N𝑝
+𝑃𝑘
+𝑝[𝑡],
+𝑡∈TI∕C−L,
+with 𝑃I∕C−L[𝑡]constant ∀𝑡∈TI∕C−L.
+(8)
+The upward and downward reserve capacities 𝑅u[𝑡] and 𝑅d[𝑡] are de­
+fined in (9). As observed, in contrast to 𝑃I∕C−L[𝑡], they are not defined 
+with respect to a baseline. Instead, they represent the operating foot­
+room and headroom of the WDS to decrease or increase its power 
+consumption at 𝑡∈TR, as the service addresses the need for available 
+balancing power during unforeseen conditions in the EPS.
+𝑅u[𝑡] =
+∑
+𝑝∈N𝑝
+𝑃𝑘
+𝑝[𝑡];
+𝑅d[𝑡] =
+∑
+𝑝∈N𝑝
+(𝑃max
+𝑝
+−𝑃𝑘
+𝑝[𝑡]) .
+(9)
+Main constraints: Eqs. (10)–(13) formulate the technical constraints 
+of the WDS. More specifically, (10) represents the time evolution of the 
+tank SoC. Parameter 𝑄c
+𝜏[𝑡] denotes the day-ahead aggregate forecast wa­
+ter demand to be supplied by tank 𝜏, while parameter 𝑆𝑜𝐶0
+𝜏 denotes the 
+initial SoC value of the tank, corresponding to the final value from the 
+previous day. The second line of (10) enforces the recovery of the SoC. 
+More specifically, 𝑡f and 𝑡0 are the final and initial intervals of T , respec­
+tively. Enforcing SoC recovery to the initial value of the day prevents its 
+reduction to the minimum operating limit. This constraint ensures suf­
+ficient headroom at the onset of each daily horizon for both increasing 
+and decreasing the WDS power consumption.
+𝑆𝑜𝐶𝜏[𝑡+ Δ𝑡] = 𝑆𝑜𝐶𝜏[𝑡] + Δ𝑡
+𝑉𝜏
+( ∑
+𝑝∈Nin,𝜏
+𝑄𝑘
+𝑝[𝑡] −𝑄c
+𝜏[𝑡] −
+∑
+𝑝∈Nout,𝜏
+𝑄𝑘
+𝑝[𝑡]
+)
+,
+𝑆𝑜𝐶𝜏[𝑡f] = 𝑆𝑜𝐶𝜏[𝑡0] = 𝑆𝑜𝐶0
+𝜏,
+𝜏∈N𝜏, 𝑡∈T .
+(10)
+As analyzed in Section 2.3, the flow delivered by a pump and the electric 
+power consumed by its motor are correlated through a unique quadratic 
+polynomial function, as in (11). 
+𝑃𝑝[𝑡] = 𝑎𝑝⋅𝑄2
+𝑝[𝑡] + 𝑏𝑝⋅𝑄𝑝[𝑡] + 𝑐𝑝,
+𝑝∈N𝑝, 𝑡∈T .
+(11)
+To model pump shutdown and avoid bilinear multiplications among 
+decision variables 𝑘𝑝[𝑡], 𝑃𝑝[𝑡], and 𝑄𝑝[𝑡], the equivalent, linearized con­
+straints of (12) are used for 𝑝∈N𝑝, 𝑡∈T , as in [19]. Constraints (12) 
+Sustainable Energy, Grids and Networks 46 (2026) 102260 
+6 
+
+S. Dimoulias, G. Kryonidis, K.-N. Malamaki et al.
+equivalently set 𝑃𝑘
+𝑝[𝑡] equal to 𝑃𝑝[𝑡] or zero, when 𝑘𝑝[𝑡] = 1 or 𝑘𝑝[𝑡] = 0, 
+respectively. 
+𝑃𝑘
+𝑝[𝑡] ≤𝑃𝑝[𝑡] −𝑃min
+𝑝
+⋅(1 −𝑘𝑝[𝑡]),
+(12a)
+𝑃𝑘
+𝑝[𝑡] ≥𝑃𝑝[𝑡] −𝑃max
+𝑝
+⋅(1 −𝑘𝑝[𝑡]),
+(12b)
+𝑃𝑘
+𝑝[𝑡] ≤𝑃max
+𝑝
+⋅𝑘𝑝[𝑡],
+(12c)
+𝑃𝑘
+𝑝[𝑡] ≥𝑃min
+𝑝
+⋅𝑘𝑝[𝑡],
+(12d)
+𝑄𝑘
+𝑝[𝑡] ≤𝑄𝑝[𝑡] −𝑄min
+𝑝
+⋅(1 −𝑘𝑝[𝑡]),
+(12e)
+𝑄𝑘
+𝑝[𝑡] ≥𝑄𝑝[𝑡] −𝑄max
+𝑝
+⋅(1 −𝑘𝑝[𝑡]),
+(12f)
+𝑄𝑘
+𝑝[𝑡] ≤𝑄max
+𝑝
+⋅𝑘𝑝[𝑡],
+(12g)
+𝑄𝑘
+𝑝[𝑡] ≥𝑄min
+𝑝
+⋅𝑘𝑝[𝑡].
+(12h)
+Finally, constraints (13) impose the operating ranges for the SoC of 
+tanks, as well as for the electric power consumption and flow of pumps. 
+For pumps, the actual operating limits of (6), as derived from the pro­
+posed process of Fig. 1, are considered, rather than the rated values 
+indicated by the manufacturer. For tanks, the operating range is decided 
+by the WDS operator. 
+𝑆𝑜𝐶min
+𝜏
+≤𝑆𝑜𝐶𝜏[𝑡] ≤𝑆𝑜𝐶max
+𝜏
+,
+𝜏∈N𝜏, 𝑡∈T
+(13a)
+𝑃min
+𝑝
+≤𝑃𝑝[𝑡] ≤𝑃max
+𝑝
+,
+𝑝∈N𝑝, 𝑡∈T
+(13b)
+𝑄min
+𝑝
+≤𝑄𝑝[𝑡] ≤𝑄max
+𝑝
+,
+𝑝∈N𝑝, 𝑡∈T
+(13c)
+In summary, constraints (10) and (13a) ensure that the water de­
+mand is met while the operating limits of the tank SoC are respected. 
+Furthermore, constraints (11)–(12) and (13b)–(13c) enforce the pump 
+physical laws via the proposed modeling approach of Section 2.3.
+Reserve activation constraints: Eq. (9) refers only to the reser­
+vation of capacities 𝑅u[𝑡] and 𝑅d[𝑡], as planned the day before. 
+Subsequently, during the intra-day stage, the EPS operator may request 
+the activation of the balancing service at a 𝑡∈TR, which is unknown 
+during the intra-day stage. Therefore, additional constraints must be 
+introduced into the day-ahead problem, to ensure that the nominated ca­
+pacities 𝑅u[𝑡] and 𝑅d[𝑡] will not result in violations of the tank SoC limits 
+upon reserve activation at any 𝑡∈TR. According to (9), if the nominated 
+capacity 𝑅u[𝑡] is requested, pumps must be shut down. In contrast, if the 
+nominated capacity 𝑅d[𝑡] is requested, pumps must be set at their maxi­
+mum operating point, i.e., at 𝑃max
+𝑝
+, 𝑄max
+𝑝
+. To this end, (14) recalculates 
+the tank SoC for upward activation with 𝑅𝑢[𝑡] and downward activation 
+with 𝑅𝑑[𝑡], for all 𝜏∈N𝜏 and at any 𝑡∈TR. The recalculated SoC values 
+are denoted as 𝑆𝑜𝐶𝑢
+𝜏[𝑡] and 𝑆𝑜𝐶𝑑
+𝜏[𝑡], for upward and downward activa­
+tion, respectively. Finally, by forcing these recalculated SoC values to 
+satisfy (15), the WDS schedule enables the provision of reserve capacity 
+while respecting the tank operating limits.
+𝑆𝑜𝐶u
+𝜏[𝑡+ Δ𝑡] = 𝑆𝑜𝐶𝜏[𝑡] −Δ𝑡
+𝑉𝜏
+𝑄c
+𝜏[𝑡],
+𝑆𝑜𝐶d
+𝜏[𝑡+ Δ𝑡] = 𝑆𝑜𝐶𝜏[𝑡] + Δ𝑡
+𝑉𝜏
+(
+∑
+𝑝∈Nin,𝜏
+𝑄max
+𝑝
+−𝑄c
+𝜏[𝑡] −
+∑
+𝑝∈Nout,𝜏
+𝑄max
+𝑝
+)
+,
+𝑆𝑜𝐶u
+𝜏[𝑡0] = 𝑆𝑜𝐶d
+𝜏[𝑡0] = 𝑆𝑜𝐶0
+𝜏,
+𝜏∈N𝜏, 𝑡∈TR .
+(14)
+𝑆𝑜𝐶min
+𝜏
+≤𝑆𝑜𝐶u
+𝜏[𝑡] ≤𝑆𝑜𝐶max
+𝜏
+,
+𝑆𝑜𝐶min
+𝜏
+≤𝑆𝑜𝐶d
+𝜏[𝑡] ≤𝑆𝑜𝐶max
+𝜏
+,
+𝜏∈N𝜏, 𝑡∈TR .
+(15)
+Convexification: As illustrated in Fig. 2(c), the quadratic functions 
+𝑃= 𝑔(𝑄) are convex, with 𝑎𝑝≥0 for any 𝑝∈N𝑝. Nevertheless, for the 
+feasible set of (11) to be convexified, the equality constraint must be 
+relaxed as follows: 
+𝑃𝑝[𝑡] ≥𝑎𝑝⋅𝑄2
+𝑝[𝑡] + 𝑏𝑝⋅𝑄𝑝[𝑡] + 𝑐𝑝,
+𝑝∈N𝑝, 𝑡∈T .
+(16)
+To replace (11) with (16) in the problem formulation and preserve equiv­
+alence between the original problem and its convex reformulation, the 
+solution to the convex problem must satisfy (16) exactly with equality. 
+For almost all relevant cases, this condition is inherently satisfied due 
+to the structure of the objective function. Specifically, by substituting 
+the expressions from (8)–(9) and because T = TI∕C−L ∪TR, the objective 
+function (7) can be expanded as: 
+min
+∑
+𝑡∈TI∕C−L
+⎛
+⎜
+⎜⎝
+∑
+𝑝∈N𝑝
+𝑃𝑘
+𝑝[𝑡]
+⎞
+⎟
+⎟⎠
+⋅(𝐶[𝑡] + 𝐶I∕C−L[𝑡]) ⋅Δ𝑡
++
+∑
+𝑡∈TR
+⎛
+⎜
+⎜⎝
+∑
+𝑝∈N𝑝
+𝑃𝑘
+𝑝[𝑡]
+⎞
+⎟
+⎟⎠
+⋅(𝐶[𝑡] + 𝐶d[𝑡] −𝐶u[𝑡]) ⋅Δ𝑡
+−
+∑
+𝑡∈TI∕C−L
+𝑃b[𝑡] ⋅𝐶I∕C−L[𝑡] ⋅Δ𝑡−
+∑
+𝑡∈TR
+⎛
+⎜
+⎜⎝
+∑
+𝑝∈N𝑝
+𝑃max
+𝑝
+⎞
+⎟
+⎟⎠
+⋅𝐶d[𝑡] ⋅Δ𝑡.
+(17)
+Therefore, as shown in (17), the factor 𝐶[𝑡] + 𝐶I∕C−L[𝑡] penalizes 𝑃𝑘
+𝑝[𝑡], 
+∀𝑡∈TI∕C−L, thus driving 𝑃𝑝[𝑡] to its lower quadratic bound. For ∀𝑡∈TR, 
+the factor 𝐶[𝑡]+𝐶d[𝑡]−𝐶u[𝑡] is typically positive for most market scenar­
+ios, as demonstrated by several EPS datasets [44,45]. Consequently, the 
+objective function drives 𝑃𝑝[𝑡] to its lower quadratic bound ∀𝑡∈TR as 
+well, allowing (11) to be equivalently relaxed as (16) for most relevant 
+market scenarios.
+In conclusion, the proposed day-ahead problem:
+Proposed
+day-ahead problem
+min
+(7)
+s.t.
+(8)–(10),
+(12)–(16).
+is an MIQCP problem with convex continuous relaxations, facilitat­
+ing computational tractability. Equivalently, it can be formulated as a 
+mixed-integer second-order cone program.
+3.3 . Intra-day stage
+The intra-day stage of the proposed optimization framework refers 
+to a time horizon Tid ⊆T , which commences at the time interval 𝑡a ∈TR
+when the EPS operator requests the activation of the balancing ser­
+vice. The intra-day problem aims to optimize the pump setpoints for 
+the requested reserve activation and to adjust the pump schedule for 
+the remainder of the day after reserve activation, to: (a) minimize the 
+operating cost; (b) ensure SoC recovery to its initial value at the end of 
+the day; (c) ensure the delivery of the I/C-L service, if 𝑡a occurs before 
+TI∕C−L. The activation of the balancing service is represented by (18a) 
+and (18b) for the upward and downward cases, respectively. The pa­
+rameter 𝑅a denotes the balancing power requested by the EPS operator. 
+The parameter 𝑃DA
+s,a is the total WDS power consumption at 𝑡a accord­
+ing to the day-ahead schedule, while 𝑃min
+s
+ is equal to ∑
+𝑝∈N𝑝𝑃min
+𝑝
+. The 
+feasible range of 𝑅a for upward activation is discontinuous because the 
+pump operating range is also discontinuous. 
+∑
+𝑝∈N𝑝
+𝑃𝑘
+𝑝[𝑡a] = 𝑃DA
+s,a −𝑅a, 𝑅a ∈[0, 𝑅u[𝑡a] −𝑃min
+s
+] ∪{𝑅u[𝑡a]}
+(18a)
+∑
+𝑝∈N𝑝
+𝑃𝑘
+𝑝[𝑡a] = 𝑃DA
+s,a + 𝑅a,
+0 ≤𝑅a ≤𝑅d[𝑡a]
+(18b)
+Moreover, for the intra-day problem, the SoC time evolution for tank 𝜏
+is represented by (19), with 𝑆𝑜𝐶a
+𝜏 being the SoC value just prior to the 
+onset of the activation interval.
+𝑆𝑜𝐶𝜏[𝑡+ Δ𝑡] = 𝑆𝑜𝐶𝜏[𝑡] + Δ𝑡
+𝑉𝜏
+( ∑
+𝑝∈Nin,𝜏
+𝑄𝑘
+𝑝[𝑡] −𝑄c
+𝜏[𝑡] −
+∑
+𝑝∈Nout,𝜏
+𝑄𝑘
+𝑝[𝑡]
+)
+,
+𝑆𝑜𝐶𝜏[𝑡a] = 𝑆𝑜𝐶a
+𝜏,
+𝜏∈N𝜏, 𝑡∈Tid .
+(19)
+Furthermore, the problem includes (12)–(13), and (16), for 𝑡∈Tid. 
+Additionally, if the reserve activation request occurs before the onset 
+Sustainable Energy, Grids and Networks 46 (2026) 102260 
+7 
+
+S. Dimoulias, G. Kryonidis, K.-N. Malamaki et al.
+of the TI∕C−L period, constraint (8) must also be included in the intra-
+day problem, but with 𝑃I∕C−L[𝑡] as a known parameter determined from 
+the day-ahead stage. The inclusion of constraint (8) ensures the delivery 
+of the I/C-L service. Finally, as observed, SoC recovery is not explicitly 
+enforced in (19), as infeasibilities may arise in case of late reserve acti­
+vation. Thus, similarly to [21], a penalty term with weight 𝑐𝜏 is included 
+in the objective function to indirectly enforce SoC recovery:
+min
+∑
+𝑡∈T
+( ∑
+𝑝∈N𝑝
+𝑃𝑘
+𝑝[𝑡]
+)
+⋅𝐶[𝑡] ⋅Δ𝑡+
+∑
+𝜏∈N𝜏
+𝑐𝜏⋅(𝑆𝑜𝐶𝜏[𝑡f] −𝑆𝑜𝐶0
+𝜏)
+2 .
+(20)
+It is noted that (20) penalizes 𝑃𝑘
+𝑝[𝑡], thus driving 𝑃𝑝[𝑡] to its lower 
+quadratic bound and enabling the use of the relaxed (16). Thus, the 
+proposed intra-day problem:
+Proposed
+intra-day problem
+min
+(20)
+s.t.
+(12)–(13), (16)–(19),
+and (8)if 𝑡abefore TI∕C−L.
+is an MIQCP problem with convex continuous relaxations.
+3.4 . Discussion on modeling
+As discussed in Section 2.3 and demonstrated in Section 3.2 and 
+Section 3.3, the proposed modeling approach decouples the physical 
+quantities of pump hydraulic head and frequency from the day-ahead 
+and intra-day optimization problems. To elaborate, the pump input fre­
+quency is implicitly represented by the quadratic 𝑃=𝑔(𝑄) curve and is 
+calculated a posteriori for each operating point, using the lookup tables 
+derived in Step 2 of Fig. 1(a).
+Similarly, the hydraulic head generated by the pump is also implic­
+itly represented by the 𝑃=𝑔(𝑄) curve. Specifically, each point on the 
+curve represents a different valid operating point of the corresponding 
+pump-pipeline pair, and thus a different valid and physically consistent 
+operating head, as visualized in Fig. 2(a) and (c).
+Regarding the entire WDS, as per the principles established in [30,38,
+39,46,47], for well-designed WDSs, any pump operating schedule that 
+is feasible with respect to the tank water level constraints also satisfies 
+the hydraulic head constraints at all junctions. This principle also ap­
+plies to consumer junctions downstream of storage tanks. To elaborate, 
+consumer water demands can be delivered at an appropriate pressure 
+from the storage tanks even when pumps are not operating, since tanks 
+are located at higher elevations [47]. Therefore, junctions downstream 
+of tanks can be modeled as an aggregate water demand 𝑄c
+𝜏[𝑡] to be sup­
+plied by the tanks, since the downstream flow is gravity-fed and does 
+not involve pump operation or electricity consumption.
+As a result, the physically feasible 𝑃= 𝑔(𝑄) curve ensures that 
+pumps generate sufficient head to supply the tanks. In turn, SoC con­
+straints (10), (14), and (19) ensure that tank water level limits are 
+satisfied. Therefore, the proposed optimization framework implicitly 
+ensures that hydraulic head requirements are satisfied throughout the 
+WDS, in accordance with the principles of [30,38,39,46,47].
+4 . Results and validation
+In this section, the proposed methodology, including both the 
+measurement-based modeling approach and the two-stage optimization 
+framework, is validated. All examined optimization problems are for­
+mulated in the General Algebraic Modeling System (GAMS) and solved 
+using the SCIP solver on a personal computer with an AMD Ryzen 9 
+7940HS (8C/16T, 4.0–5.2 GHz) processor and 32 GB RAM.
+4.1 . Real-world system under study and input parameters
+The proposed methodology is applied and validated on a real-world 
+WDS, serving the town of Igoumenitsa, in northwestern Greece. The 
+WDS comprises 12 pumps (11 groundwater extraction stations and 1 
+booster pump), 5 tanks, and 5 aggregate water consumption points, as 
+illustrated in Fig. 4. As observed, the WDS consists of four independent 
+subsystems, each pumping from a distinct underground source to sup­
+ply a different part of the town. Despite the hydraulic independence of 
+these subsystems, the proposed optimization framework couples them 
+as flexible loads of the EPS via (8) and (9), enabling the system-wide 
+calculation of capacities for I/C-L and balancing services.
+The maximum operating flow and electric power of the pumps, as 
+well as the volumes of the tanks, are presented in Fig. 4. For the wa­
+ter demands 𝑄c
+𝜏[𝑡], actual time series recorded by the Igoumenitsa WDS 
+operator on 2 August 2024 are used, as presented in Fig. 5(a) and pro­
+vided in [48]. For the electricity cost 𝐶[𝑡] and the reserve compensation 
+rates 𝐶u[𝑡] and 𝐶d[𝑡], clearing prices from the day-ahead market of the 
+California Independent System Operator for the same date are used, as 
+shown in Fig. 5(b) [44]. As observed, the reserve compensation rates 
+for this day are considerably lower than the corresponding electricity 
+prices. The upward compensation rate increases significantly between 
+18:00 and 21:00, while downward rates are higher for the remaining 
+hours. Moreover, the electricity price is also higher between 18:00 and 
+21:00. Therefore, in this study, the time period TI∕C−L of the I/C-L ser­
+vice is defined as 18:00–21:00, as higher electricity prices indicate a 
+greater need for the I/C-L service. Furthermore, 𝐶I∕C−L[𝑡] is set to 200 
+$/MWh, ∀𝑡∈TI∕C−L. Regarding the baseline power consumption 𝑃b[𝑡], 
+without loss of generality, it is assumed to be 0.5 ⋅∑
+𝑝∈N𝑝𝑃max
+𝑝
+,∀𝑡∈
+TI∕C−L, representing the midpoint of the maximum WDS power con­
+sumption. As described in Section 4.3, this assumption is consistent 
+with the current operating practice of the Igoumenitsa WDS, which 
+involves switching pumps on and off based on the SoC level of the 
+downstream tanks, thereby resulting in an average power consumption 
+around this midpoint. Finally, the analysis time step Δ𝑡 is set to 15
+minutes.
+For all tanks, the SoC limits are set to 𝑆𝑜𝐶max
+𝜏
+= 0.9 p.u. and 𝑆𝑜𝐶min
+𝜏
+=
+0.2 p.u., to enable flexibility while preventing the risks of depletion and 
+overflow [29]. The initial SoC level of tanks is assumed to be 𝑆𝑜𝐶0
+𝜏= 0.5
+p.u. 
+4.2 . Validation of the modeling approach
+For all 12 pump-pipeline pairs, the proposed modeling approach 
+is applied through on-site measurements with Δ𝑓=1 Hz. Power con­
+sumption is measured using the Metrel MI 2892 Power Master power 
+analyzer, which provides Class 1 metering accuracy. Flow is measured 
+using the already installed electromagnetic meters of the Igoumenitsa 
+Fig. 4. Schematic of the real-world WDS under study.
+Sustainable Energy, Grids and Networks 46 (2026) 102260 
+8 
+
+S. Dimoulias, G. Kryonidis, K.-N. Malamaki et al.
+Fig. 5. (a) Aggregate water demand 𝑄c
+𝜏[𝑡] to be supplied by tank 𝜏; (b) prices 
+𝐶[𝑡], 𝐶u[𝑡], and 𝐶d[𝑡].
+WDS, specifically the Siemens MAG5100 and MAG3100. The meters are 
+coupled with the Siemens MAG6000 transmitter. The percentage error 
+introduced by these meters is typically below 0.25%. For each applied 
+input frequency, flow and power are recorded for 5 minutes at a sam­
+pling interval of 5 s, thus yielding 60 measurement points. An indicative 
+example of the measuring process is illustrated in Fig. 6, which depicts 
+the flow and power of Pump 8 for 𝑓= 50 Hz, measured over 5 min­
+utes. As observed, the deviation of the measurements from their mean 
+value is minimal, namely lower than 0.5%, due to the high precision of 
+the meters involved. Thus, to derive the final (𝑄, 𝑃) operating point for 
+each frequency and forward them to the lookup table of the pump, the 
+mean value of the 60 measurement points is used.
+As described in Section 2.3, the measurement-acquisition process ter­
+minates when either the minimum flow or input frequency value of the 
+pump has been reached. Subsequently, the 𝑃= 𝑔(𝑄) quadratic curves 
+are derived. The quadratic coefficients and the minimum operating flow 
+for each pump are listed in Table 2. For all pumps, the accuracy of the 
+proposed modeling approach is validated by the quality of the quadratic 
+fits, which is in turn confirmed by the high 𝑅2 values and low RMSE val­
+ues. Indicatively, the quadratic fit to the measurements of pumps 𝑝2 and 
+𝑝5 is presented in Fig. 7(a). Moreover, Fig. 7(b) illustrates the lookup 
+tables that relate power and flow to the input frequency of the pumps. 
+The accuracy metrics of the quadratic fit for all 12 pumps are presented 
+in Table 3. The flow and electric power measurements of the 12 pumps 
+can be found in [48].
+4.3 . Validation of the day-ahead stage
+Here, the day-ahead scheduling stage is examined. To validate the 
+effectiveness of the proposed optimization framework in enabling WDSs 
+to provide multiple grid services, the schedules derived from the day-
+ahead problem of Section 3.2 are compared with two base cases.
+Base Case 1 corresponds to the current operational practice for WDSs. 
+Specifically, pumps are controlled via float switches based on the SoC of 
+the downstream tanks. The SoC fluctuates within a permissible range, 
+and the upstream pumps are automatically switched on or off when the 
+SoC falls below or exceeds the lower and upper bounds, respectively. 
+Base Case 1 is evaluated using two different sets of SoC bounds. In Base 
+Case 1a, the actual bounds currently adopted by the Igoumenitsa WDS 
+operator are used, namely, 0.4 p.u. and 0.6 p.u. As observed, due to the 
+absence of scheduling, the operator employs stricter bounds than those 
+Fig. 6. (a) flow and (b) power measurements recorded every 5 s over 5 minutes 
+for pump 8 at 50 Hz.
+Table 2 
+Coefficients of 𝑃= 𝑔(𝑄) and minimum operating 
+flow limits.
+Pump
+𝑎𝑝
+𝑏𝑝
+𝑐𝑝
+𝑄min
+𝑝
+ (m3/h)
+𝑝1
+0.02
+−0.33
+10.34
+14.1
+𝑝2
+0.026
+−0.35
+8.76
+11.5
+𝑝3
+0.013
+−0.29
+9.29
+17.7
+𝑝4
+0.005
+−0.26
+21.39
+43.5
+𝑝5
+0.003
+−0.13
+10.15
+34.2
+𝑝6
+0.011
+−0.27
+15.31
+23.4
+𝑝7
+0.008
+−0.13
+6.24
+15.1
+𝑝8
+0.018
+−0.23
+6.71
+11.7
+𝑝9
+0.009
+−0.26
+13.31
+24.9
+𝑝10
+0.012
+−0.29
+10.95
+19.9
+𝑝11
+0.014
+−0.36
+12.48
+20.9
+𝑝12
+0.012
+−0.17
+5.81
+13.2
+Fig. 7. Pumps 𝑝2 and 𝑝5: (a) measurement-based process and extraction of 
+quadratic 𝑃= 𝑔(𝑄) function; (b) lookup tables with respect to frequency.
+Sustainable Energy, Grids and Networks 46 (2026) 102260 
+9 
+
+S. Dimoulias, G. Kryonidis, K.-N. Malamaki et al.
+Table 3 
+Accuracy metrics of quadratic 
+fit.
+Pump
+RMSE (%)
+𝑅2
+𝑝1
+1.70
+0.9952
+𝑝2
+1.65
+0.9955
+𝑝3
+1.56
+0.9960
+𝑝4
+2.14
+0.9928
+𝑝5
+1.85
+0.9948
+𝑝6
+2.01
+0.9938
+𝑝7
+2.65
+0.9885
+𝑝8
+1.87
+0.9943
+𝑝9
+1.76
+0.9952
+𝑝10
+1.55
+0.9964
+𝑝11
+1.70
+0.9955
+𝑝12
+1.84
+0.9946
+considered in the proposed framework (𝑆𝑜𝐶min
+𝜏
+= 0.2 p.u. and 𝑆𝑜𝐶max
+𝜏
+=
+0.9 p.u.), in order to reduce the risk of tank overflow or depletion. In 
+addition, Base Case 1 is examined using minimum and maximum SoC 
+bounds of 0.2 p.u. and 0.9 p.u. (Base Case 1b), respectively, to enable a 
+fairer comparison with the proposed approach.
+Regarding Base Case 2, it corresponds to the problem of scheduling 
+the pumps to minimize the operating cost of the WDSs under dynamic 
+electricity pricing only, without considering the provision of grid ser­
+vices. Therefore, Base Case 2 is defined by the following day-ahead 
+problem:
+Base Case 2:
+min
+∑
+𝑡∈T
+⎛
+⎜
+⎜⎝
+∑
+𝑝∈N𝑝
+𝑃𝑘
+𝑝[𝑡]
+⎞
+⎟
+⎟⎠
+⋅𝐶[𝑡] ⋅Δ𝑡
+s.t.
+(10),
+(12)–(13),
+(16),
+for
+𝑆𝑜𝐶max
+𝜏
+= 0.9 p.u., 𝑆𝑜𝐶min
+𝜏
+= 0.2 p.u.,
+and
+𝑆𝑜𝐶0
+𝜏= 0.5 p.u., ∀𝜏∈N𝜏.
+The differences in the operational paradigm between the two base 
+cases and the proposed method are indicated in Fig. 8, where the power 
+consumption and the flow of pump 𝑝9, as well as the SoC of tank 𝜏5, 
+are illustrated. As observed, in both Base Case 1a and Base Case 1b, the 
+pump setpoints are unresponsive to electricity price variations, being 
+determined exclusively by the SoC of the downstream tank. Moreover, 
+Base Case 1b results in longer pump operating cycles, as the tank SoC 
+operating range is wider.
+In contrast, in Base Case 2, the pump setpoints are higher during 
+the periods of lower electricity prices. Under the proposed framework, 
+between 00:00 and 18:00, the pump power setpoints are scheduled to 
+vary less than in Base Case 2, to reserve both upward and downward 
+capacity. Moreover, the pump is switched off during the TI∕C−L period 
+to achieve power reduction. Finally, once the TI∕C−L period elapses, the 
+pump setpoints under the proposed framework are higher than those in 
+Base Case 2, to compensate for the prolonged shutdown and to recover 
+the SoC.
+In terms of the entire WDS, the total power consumption is presented 
+in Fig. 9, with the value of 624.4 kW corresponding to ∑
+𝑝∈N𝑝𝑃max
+𝑝
+. 
+Regarding costs, in Base Case 1a, the daily operating cost is $567, 
+whereas in Base Case 1b, the longer pump operating cycles increase 
+this cost to $607. The increased cost of Base Case 1b compared to Base 
+Case 1a showcases that relaxing SoC operating limits without optimized 
+scheduling neither increases operational flexibility nor guarantees lower 
+operating costs. In contrast, applying the schedule of Base Case 2 re­
+duces the daily operating cost to $300, i.e., by 47.1% compared to Base 
+Case 1a. For Base Case 1a, Base Case 1b, and Base Case 2, the calcu­
+lated costs refer to the daily energy cost for the operation of pumps. 
+Finally, by applying the proposed framework and enabling the provi­
+sion of grid services, the net daily operating cost is further reduced to 
+Fig. 8. (a) power and (b) flow of pump 𝑝9; (c) SoC of tank 𝜏5.
+Fig. 9. Total power consumption of the WDS.
+$70, corresponding to an 87.6% reduction compared to Base Case 1a. 
+More specifically, under the proposed framework, the actual pump en­
+ergy cost is $314, i.e., slightly higher than in Base Case 2. Nevertheless, 
+the revenues from the I/C-L, upward reserve capacity, and downward 
+reserve capacity services are $177, $17, $50, respectively, thereby re­
+ducing the net operating cost to $70. Therefore, the proposed framework 
+leverages the operational flexibility of WDSs, enabling them to generate 
+significant revenue by providing substantial services to the EPS while 
+also satisfying their operational requirements, such as the continuity of 
+water supply.
+To elaborate on the services provided, as shown in Fig. 9, the power 
+reduction achieved for the I/C-L service is 295 kW, sustained over three 
+hours, resulting in a total of 885 kWh curtailed. Moreover, as shown in 
+Fig. 10, for the balancing service, both the upward and the downward 
+reserve capacities exceed 200 kW, ∀𝑡∈TR. In general, the reservation 
+of downward capacity is prioritized, both due to the higher compensa­
+tion rate during most time intervals and because it corresponds to lower 
+power consumption, and thus lower operating costs. This explains the 
+Sustainable Energy, Grids and Networks 46 (2026) 102260 
+10 
+
+S. Dimoulias, G. Kryonidis, K.-N. Malamaki et al.
+Fig. 10. Upward and downward reserve capacities under the proposed frame­
+work.
+higher revenue from the provision of downward reserve capacity com­
+pared to upward reserve capacity: $50 and $17, respectively. Finally, it 
+is noted that during the TI∕C−L period, reserve capacities are zero, as the 
+two services do not overlap.
+Overall, the consumption and service provision metrics of the WDS 
+across the examined cases are summarized in Table 4. As observed, the 
+optimal scheduling of Base Case 2 and the proposed framework signif­
+icantly reduces the daily energy consumption of the WDS compared to 
+both Base Case 1a and Base Case 1b, thereby achieving energy sav­
+ings while ensuring water supply. Furthermore, it is noted that, from 
+the EPS perspective, the 𝑃I∕C−L[𝑡], 𝑅d[𝑡], and 𝑅u[𝑡] provided by the pro­
+posed framework reflect the reduction in peak generation and balancing 
+services required from conventional generation units, and thereby the 
+corresponding reduction in operating costs and CO2 emissions.
+Moreover, to demonstrate the importance of incorporating the re­
+serve activation constraints (14) and (15) into the proposed day-ahead 
+problem, a third base case is examined. To elaborate, Base Case 3 in­
+volves the problem of Section 3.2 but without the inclusion of (14) and
+(15). Specifically:
+Base Case 3:
+min
+(7)
+s.t.
+(8)–(10),
+(12)–(13),
+(16),
+for
+𝑆𝑜𝐶max
+𝜏
+= 0.9 p.u., 𝑆𝑜𝐶min
+𝜏
+= 0.2 p.u.,
+and
+𝑆𝑜𝐶0
+𝜏= 0.5 p.u., ∀𝜏∈N𝜏.
+Base Case 3 and the proposed optimization framework are compared 
+in Fig. 11, which illustrates the effect of including constraints (14) and
+(15) on the tank SoC. To elaborate, as shown in Fig. 11, for tank 𝜏3 under 
+the proposed framework, the tank SoC, 𝑆𝑜𝐶𝜏[𝑡], is bounded by the aux­
+iliary variables 𝑆𝑜𝐶u
+𝜏[𝑡] and 𝑆𝑜𝐶d
+𝜏[𝑡], which ensure that the SoC limits 
+will not be violated in the event of reserve activation in the intra-day 
+stage. In contrast, Base Case 3 does not include (14) and (15); thus, it 
+fails to prevent the SoC from repeatedly assuming values at both the 
+upper and lower operating limits, potentially leading to violations in 
+the event of reserve activation in the intra-day stage. In essence, the re­
+serve activation constraints ensure that the reserve capacities nominated 
+Table 4 
+Operational metrics of the WDS. For the base cases, only consumption metrics 
+are included, as grid services are not provided.
+Base Case
+Proposed
+1a
+1b
+2
+Peak power consumption (kW)
+624.4
+624.4
+358.4
+431.8
+Average power consumption (kW)
+332.3
+343.2
+231.9
+239.5
+Daily energy consumption (kWh)
+7975.2
+8236.8
+5565.6
+5748
+Power reduction 𝑃I∕C−L[𝑡] (kW)
+-
+-
+-
+295
+Peak 𝑅u[𝑡] (kW)
+-
+-
+-
+431.8
+Peak 𝑅d[𝑡] (kW)
+-
+-
+-
+415
+Average 𝑅u[𝑡] (kW)
+-
+-
+-
+271.4
+Average 𝑅d[𝑡] (kW)
+-
+-
+-
+353
+Fig. 11. Tank 𝜏3: Profiles of 𝑆𝑜𝐶𝜏[𝑡], 𝑆𝑜𝐶d
+𝜏[𝑡], and 𝑆𝑜𝐶u
+𝜏[𝑡] in the proposed 
+framework, along with 𝑆𝑜𝐶𝜏[𝑡] in Base Case 3.
+Fig. 12. Upward and downward reserve capacities under the proposed frame­
+work and Base Case 3.
+to the EPS operator are calculated more conservatively, accounting for 
+the activation stage. The upward and downward reserve capacities for 
+the proposed framework and Base Case 3 are visualized in Fig. 12. The 
+deviations in total reserve capacities between the two examined cases 
+appear negligible at each time interval; however, their cumulative ef­
+fect over time results in significant differences in the tank SoC profiles, 
+as observed in Fig. 11.
+4.4 . Validation of the intra-day stage
+In this section, the intra-day stage of the proposed framework is 
+validated. As discussed in Section 3.3, the activation request can in­
+volve both upward and downward balancing powers and occur at any 
+𝑡∈TR. Without loss of generality, two distinct scenarios are considered: 
+1) an upward activation request at 21:15; 2) a downward activation re­
+quest at 15:00. For the penalty weight 𝑐𝜏 in (19), the value of 20,000 is 
+used ∀𝜏∈N𝜏. The total WDS power consumption profiles for the two 
+scenarios are presented in Fig. 13(a) and (b). In the same figures, the 
+original profiles, as derived by the day-ahead problem, are also plotted. 
+As observed, apart from the reserve activation, the intra-day problem 
+reschedules the pump operating setpoints to minimize the actual op­
+erating cost for the remainder of the day and ensure SoC recovery by 
+the end of the day. Indicatively, for the downward activation scenario 
+of Fig. 13(b), rescheduling the pump setpoints achieves an additional 
+10% reduction in operating cost compared to the original day-ahead 
+schedule, specifically from $100 to $90. Regarding SoC recovery, the 
+effectiveness of the intra-day problem is demonstrated in Fig. 14. As 
+shown, if the pump schedule is not adjusted and the original day-ahead 
+schedule is followed instead, the SoC is not recovered to its initial value.
+Finally, in addition to the analysis of Section 4.3, the importance of 
+the reserve activation constraints (14) and (15) is further verified during 
+the intra-day stage. As discussed in Section 4.3 and demonstrated in 
+Fig. 11, the absence of constraints (14) and (15) in Base Case 3 can result 
+in SoC violations in the event of reserve activation during the intra-day 
+stage. This is illustrated in Fig. 15. As observed, for Base Case 3, both the 
+upward and downward activation scenarios cause violations of the SoC 
+Sustainable Energy, Grids and Networks 46 (2026) 102260 
+11 
+
+S. Dimoulias, G. Kryonidis, K.-N. Malamaki et al.
+Fig. 13. WDS total power consumption according to the day-ahead schedule and 
+its intra-day adjustment, for (a) upward and (b) downward activation.
+Fig. 14. Tank 𝜏3: SoC profile at upward request. The blue and yellow lines depict 
+the day-ahead schedule, before and after the activation interval, respectively. 
+The red line depicts the intra-day adjustment. (For interpretation of the refer­
+ences to colour in this figure legend, the reader is referred to the web version of 
+this article.)
+limits for tank 𝜏3. In contrast, day-ahead and the intra-day schedules of 
+the proposed framework ensure that limits are respected. 
+4.5 . Impact of balancing capacity quantification
+In this section, different approaches for defining and quantifying the 
+balancing capacity of WDSs are compared and discussed with respect to 
+their impact on the provision of the service and the economic benefits 
+of WDSs. The following approaches are considered:
+Approach 1: Single, symmetric balancing capacity for both upward 
+and downward service provision, quantified on a per-pump basis as per
+(21)–(22). 
+𝑅𝑝[𝑡] = min
+(
+𝑃𝑘
+𝑝[𝑡], 𝑃max
+𝑝
+−𝑃𝑘
+𝑝[𝑡]
+)
+,
+𝑝∈N𝑝
+(21)
+𝑅1[𝑡] =
+∑
+𝑝∈N𝑝
+𝑅𝑝[𝑡].
+(22)
+In (21), 𝑅𝑝[𝑡] is the single, symmetric capacity of each pump for both 
+upward and downward services. In (22), 𝑅1[𝑡] denotes the single, sym­
+metric capacity of the entire WDS for Approach 1. This approach is 
+adopted by the study of [21].
+Approach 2: Single, symmetric balancing capacity for both upward 
+and downward service provision, quantified on a system-wide basis as 
+per (23). The balancing capacity of the WDS for this approach is denoted 
+Fig. 15. Tank 𝜏3: SoC profile according to the day-ahead schedule and its intra-
+day adjustment, for (a) upward and (b) downward activation, in the proposed 
+framework and Base Case 3.
+as 𝑅2[𝑡]. 
+𝑅2[𝑡] = min
+⎛
+⎜
+⎜⎝
+∑
+𝑝∈N𝑝
+𝑃𝑘
+𝑝[𝑡],
+∑
+𝑝∈N𝑝
+(𝑃max
+𝑝
+−𝑃𝑘
+𝑝[𝑡])⎞
+⎟
+⎟⎠
+.
+(23)
+Proposed approach: Distinct balancing capacities for upward and 
+downward services, quantified on a system-wide basis as per (9).
+The three approaches are compared in Fig. 16, which depicts the 
+profiles of 𝑅1[𝑡], 𝑅2[𝑡], 𝑅u[𝑡], and 𝑅d[𝑡] for the WDS under study and the 
+parameters of Section 4.1. For the proposed approach, the compensation 
+rates of Fig. 5(b) are used. For Approach 1 and Approach 2, the symmet­
+ric balancing capacity is compensated with the sum of the upward and 
+downward compensation rates.
+The results of Fig. 16 illustrate the differences in the mathematical 
+quantification of balancing capacities. Specifically, the proposed ap­
+proach allows for distinct upward and downward capacities, the optimal 
+values of which are calculated according to the different compensation 
+rates. In contrast, as observed in Fig. 16, the profile of 𝑅2[𝑡] is similar 
+to that of 𝑅u[𝑡] and lower than that of 𝑅d[𝑡]. This is because Approach 
+2 limits the capability of the WDS for balancing service provision to the 
+minimum of the margins for increasing or decreasing power consump­
+tion, as shown in (23). Moreover, as shown in (22), this capability is 
+further restricted in Approach 1, which quantifies the total WDS capac­
+ity as the sum of the locally limited capacities of individual pumps. For 
+Fig. 16. Balancing capacities for approach 1 (𝑅1[𝑡]), approach 2 (𝑅2[𝑡]), and the 
+proposed approach (𝑅u[𝑡], 𝑅d[𝑡]).
+Sustainable Energy, Grids and Networks 46 (2026) 102260 
+12 
+
+S. Dimoulias, G. Kryonidis, K.-N. Malamaki et al.
+Fig. 17. Tank 𝜏5: Forecast aggregate water demand and 1000 MC realizations 
+for distinct 𝑠𝑡𝑑e values.
+this reason, 𝑅1[𝑡] is generally lower than 𝑅2[𝑡] in Fig. 16, visualizing the 
+importance of system-wide quantification of the balancing capacity.
+In summary, the proposed approach, which introduces distinct, 
+system-wide upward and downward capacities, is the most beneficial 
+for both the EPS and WDS operators. For the EPS operator, it ensures 
+that balancing services are tailored to system conditions, as reflected in 
+the different upward and downward compensation rates. For the WDS, 
+it ensures that flexibility is not unnecessarily restricted. The economic 
+superiority of the proposed approach is reflected in the net daily op­
+erating costs of the WDS, which are $89, $76, and $70 for Approach 
+1, Approach 2, and the proposed approach, respectively. Thus, the net 
+daily operating cost is reduced by 21.3% under the proposed approach 
+compared to the approach of [21] (Approach 1).
+4.6 . Impact of water demand uncertainty
+Here, the impact of water demand uncertainty is examined. To elab­
+orate, in the results of Sections 4.3 and 4.4, water demand forecasts 
+are assumed to be perfectly accurate; however, in practice, forecasts are 
+subject to errors.
+More specifically, this section examines the impact of water demand 
+uncertainty and forecast errors on tank water levels. The analysis focuses 
+on the indicative scenarios of Section 4.4, i.e., intra-day pump schedules 
+with upward reserve activation at 21:15 (Scenario 1) or downward re­
+serve activation at 15:00 (Scenario 2). Forecast errors are considered 
+Gaussian [15], with zero mean value and standard deviation 𝑠𝑡𝑑e. Three 
+𝑠𝑡𝑑e levels are considered, namely, 5%, 10%, and 15% of the forecast 
+value. For each error level, 1000 Monte Carlo (MC) realizations are 
+generated.
+The analysis investigates the percentages of tank overflow or deple­
+tion events for Scenario 1 and Scenario 2 across the 1000 MC realizations 
+for the three error levels. An MC realization is considered to cause over­
+flow or depletion when the SoC of at least one tank reaches 1 p.u. or 
+0 p.u., respectively, at any time during the day. For each scenario, the 
+pump schedule remains fixed across all MC realizations and corresponds 
+to the schedule obtained via the day-ahead problem and adjusted via the 
+intra-day problem, as presented in Fig. 13. Indicatively, Fig. 17 depicts 
+the forecast aggregate water demand to be supplied by tank 𝜏5, along 
+with the 1000 MC realizations for the three error levels.
+Table 5 reports the percentages of overflow and depletion incidents 
+across the 1000 MC realizations for the two scenarios and the three error 
+levels. As shown, for both scenarios, the proposed optimization frame­
+work remains robust against errors with 𝑠𝑡𝑑e = 5%, as zero incidents of 
+either depletion or overflow are reported across all 1000 MC cases. This 
+robustness is attributed to two factors. First, the optimization framework 
+imposes conservative SoC operational limits, namely 𝑆𝑜𝐶max
+𝜏
+= 0.9 p.u. 
+and 𝑆𝑜𝐶min
+𝜏
+= 0.2 p.u., instead of the physical bounds of 1 p.u. and 0 p.u., 
+thereby partially hedging against forecast uncertainty. Second, forecast 
+errors tend to partially cancel out over the daily time horizon.
+For 𝑠𝑡𝑑e = 10%, depletions are still prevented, while overflows oc­
+cur in only 2.9% and 4.7% of the examined cases for Scenario 1 and 
+Table 5 
+Percentages of overflow or depletion incidents for Scenario 1 and Scenario 2 in 
+1000 MC realizations under different error levels.
+Incident
+𝑠𝑡𝑑e = 5%
+𝑠𝑡𝑑e = 10%
+𝑠𝑡𝑑e = 15%
+Scenario 1
+Scenario 2
+Scenario 1
+Scenario 2
+Scenario 1
+Scenario 2
+Depletion
+0
+0
+0
+0
+1.2
+1.7
+Overflow
+0
+0
+2.9
+4.7
+16.8
+28.1
+Scenario 2, respectively. For 𝑠𝑡𝑑e = 15%, the percentage of overflows 
+increases for both scenarios. Nevertheless, depletion incidents, which 
+pose the most critical risk for WDS operation as they correspond to wa­
+ter supply interruptions, remain limited to 1.2% and 1.7% for Scenario 
+1 and Scenario 2, respectively. Overall, overflows are more frequent in 
+Scenario 2 because the downward reserve activation pushes SoC pro­
+files closer to 0.9 p.u. for extended time periods, as observed in Fig. 15. 
+Moreover, for both scenarios, overflows occur more frequently than de­
+pletions because the enforced operating limits 𝑆𝑜𝐶max
+𝜏
+ and 𝑆𝑜𝐶min
+𝜏
+ are 
+asymmetric, with 𝑆𝑜𝐶min
+𝜏
+ being stricter. This asymmetry is intentionally 
+introduced into the proposed optimization framework to prioritize the 
+prevention of depletions, which are more critical for the WDS operation.
+In summary, although water demand uncertainty is not explicitly in­
+corporated into the optimization framework, the WDS schedule remains 
+robust against forecast errors of 𝑠𝑡𝑑e = 5% and exhibits satisfactory 
+performance for forecast errors of 𝑠𝑡𝑑e = 10% and 𝑠𝑡𝑑e = 15%. 
+4.7 . Discussion
+The results of this section demonstrate both the accuracy of the 
+proposed modeling approach and the effectiveness of the proposed opti­
+mization framework in enabling WDSs to provide multiple grid services. 
+The accuracy of the proposed modeling approach ensures that the sched­
+ules derived by the proposed optimization framework are consistent 
+with the physical laws governing the WDS. Furthermore, from an eco­
+nomic perspective, the results highlight the substantial benefits for WDSs 
+and underscore the importance of adjusting the pump schedule during 
+the intra-day stage. From a technical perspective, the results emphasize 
+the significance of incorporating the reserve activation constraints.
+Moreover, it is emphasized that the development of the proposed 
+measurement-based modeling approach not only addresses the research 
+drawbacks identified in Section 2.2; it also tackles the practical prob­
+lem of modeling the examined real-world WDS. Specifically, the system 
+curves of the Igoumenitsa WDS are unknown to its operator. As a result, 
+conventional methods [8–14,16–21,24,25], which rely on the modeling 
+assumptions outlined in Section 2.2, cannot be applied, necessitating the 
+development of a measurement-based approach.
+Regarding the convex relaxation of constraint (11), as explained in 
+Section 3.2, in the vast majority of cases, the structure of the opti­
+mization problem ensures that the relaxed constraint (16) is satisfied 
+with equality, thereby preserving the equivalence between the origi­
+nal and the relaxed problems. Specifically, for the examined cases, the 
+numerical discrepancy between the calculated power setpoints and the 
+corresponding quadratic flow terms in (16) is of the order on 10-7 kW, 
+demonstrating exactness. In turn, this convexification achieves a signif­
+icant reduction in the computation time. Indicatively, the day-ahead 
+problem of Section 4.3 includes 15,604 constraints and 11,993 vari­
+ables, 1152 of which are binary. For this problem, the convex relaxation 
+decreases the computation time from 41 s to 5 s, i.e., by 88%. This im­
+provement in computation time is particularly important for large-scale 
+WDSs comprising numerous pumps and tanks, or for applications where 
+a small time step is required.
+On the other hand, the main limitation of the study is that water de­
+mand uncertainties are not systematically accounted for. As analyzed 
+in Section 4.6, for Gaussian forecast errors with 𝑠𝑡𝑑e up to 5%, the 
+proposed framework ensures satisfaction of the WDS technical limits. 
+Therefore, systematically hedging against higher levels of uncertainty 
+Sustainable Energy, Grids and Networks 46 (2026) 102260 
+13 
+
+S. Dimoulias, G. Kryonidis, K.-N. Malamaki et al.
+remains a task for future research. Possible directions include extend­
+ing the proposed optimization framework to a stochastic formulation 
+[13,19], or employing reinforcement learning [49–51] or data-enabled 
+predictive control techniques [52,53] for corrective, real-time schedul­
+ing. Finally, as an additional direction for future research, the proposed 
+measurement-based modeling approach should be extended to WDSs 
+with configurations that allow direct pumping to water consumers.
+5 . Conclusions
+This paper proposes a practical, two-fold methodology to enable the 
+provision of multiple grid services by WDSs. The methodology comprises 
+two parts: a new measurement-based approach for modeling WDSs, 
+and a new two-stage optimization framework for scheduling WDSs, 
+encompassing the day-ahead and the intra-day time horizons.
+The proposed measurement-based modeling approach addresses the 
+main drawbacks of the current modeling practices for WDSs, partic­
+ularly the dependence on parameter knowledge and the complexity 
+of the associated optimization problem formulations for scheduling 
+WDSs. To elaborate, the proposed modeling approach involves an on-site 
+measurement-based process that correlates the electric power con­
+sumption and the flow of VSPs. This approach ensures more accurate 
+modeling, as it relies on up-to-date measurements, while it decouples 
+power and flow from the remaining physical quantities, such as hy­
+draulic head, and pump efficiency speed. It is shown that the electric 
+power and the flow of a VSP can be accurately correlated through a con­
+vex quadratic function, enabling simpler formulations for the associated 
+optimization problems.
+Subsequently, by leveraging the above-mentioned modeling ap­
+proach, the proposed two-stage optimization framework addresses the 
+main limitations of the existing frameworks, enabling the provision of 
+multiple grid services by WDSs. More specifically, I/C-L and balanc­
+ing services are examined, along with dynamic electricity pricing. The 
+day-ahead optimization problem derives the initial pump schedule to 
+minimize the net daily operating cost of the WDS, ensuring stable power 
+reduction for the I/C-L service, as well as upward and downward reserve 
+capacities for the balancing service. Moreover, contrary to the major­
+ity of the existing literature, the day-ahead problem ensures that the 
+reserve activation during the intra-day stage does not violate the tank 
+SoC limits. Regarding the intra-day optimization problem, it determines 
+the optimal pump setpoints for reserve activation and adjusts the pump 
+schedule for the remainder of the day to minimize the operating cost, 
+while also ensuring the recovery of the tank SoC. Both the day-ahead and 
+the intra-day problems are formulated as MIQCP problems with convex 
+continuous relaxations, supporting tractable solutions.
+The proposed methodology was applied and validated on a 
+real-world WDS located in northwestern Greece. First, the pro­
+posed measurement-based modeling approach was performed and the 
+quadratic curves for the WDS pumps were derived. Subsequently, the 
+proposed optimization framework for scheduling WDSs was validated, 
+using real data for water demands. The results demonstrate that the 
+proposed methodology unlocks the flexibility of WDSs and enables a 
+reduction of nearly 90% in their net daily operating cost, compared to 
+the current operational practices.
+CRediT authorship contribution statement
+Stelios Dimoulias: Writing – original draft, Visualization, 
+Validation, Methodology, Investigation, Formal analysis, Data cu­
+ration. Georgios Kryonidis: Writing – review & editing, Supervision.
+Kyriaki-Nefeli Malamaki: Writing – review & editing, Supervision.
+Pandelis Biskas: Writing – review & editing, Supervision.
+Declaration of competing interest
+The authors declare that they have no known competing financial 
+interests or personal relationships that could have appeared to influence 
+the work reported in this paper.
+Appendix A 
+In this appendix, the proposed optimization framework is: a) first 
+generalized to accommodate FSPs, and b) subsequently applied to a 
+benchmark WDS.
+A.1 . Generalization for FSPs
+For WDSs that include both VSPs and FSPs, the set of pumps N𝑝
+is defined as N𝑝= N VSP
+𝑝
+∪N FSP
+𝑝
+, where N VSP
+𝑝
+ and N FSP
+𝑝
+ are disjoint 
+subsets that represent the VSPs and FSPs of the WDS, respectively.
+Therefore, constraints (11)–(12) and (13b)–(13c) are reformulated 
+as: 
+𝑃𝑝[𝑡] = 𝑎𝑝⋅𝑄2
+𝑝[𝑡] + 𝑏𝑝⋅𝑄𝑝[𝑡] + 𝑐𝑝,
+𝑝∈N VSP
+𝑝
+, 𝑡∈T .
+(24)
+𝑃𝑘
+𝑝[𝑡] ≤𝑃𝑝[𝑡] −𝑃min
+𝑝
+⋅(1 −𝑘𝑝[𝑡])
+(25a)
+𝑃𝑘
+𝑝[𝑡] ≥𝑃𝑝[𝑡] −𝑃max
+𝑝
+⋅(1 −𝑘𝑝[𝑡])
+(25b)
+𝑃𝑘
+𝑝[𝑡] ≤𝑃max
+𝑝
+⋅𝑘𝑝[𝑡]
+(25c)
+𝑃𝑘
+𝑝[𝑡] ≥𝑃min
+𝑝
+⋅𝑘𝑝[𝑡]
+(25d)
+𝑄𝑘
+𝑝[𝑡] ≤𝑄𝑝[𝑡] −𝑄min
+𝑝
+⋅(1 −𝑘𝑝[𝑡])
+(25e)
+𝑄𝑘
+𝑝[𝑡] ≥𝑄𝑝[𝑡] −𝑄max
+𝑝
+⋅(1 −𝑘𝑝[𝑡])
+(25f)
+𝑄𝑘
+𝑝[𝑡] ≤𝑄max
+𝑝
+⋅𝑘𝑝[𝑡]
+(25g)
+𝑄𝑘
+𝑝[𝑡] ≥𝑄min
+𝑝
+⋅𝑘𝑝[𝑡] 𝑝∈N VSP
+𝑝
+, 𝑡∈T .
+(25h)
+𝑃min
+𝑝
+≤𝑃𝑝[𝑡] ≤𝑃max
+𝑝
+,
+𝑝∈N VSP
+𝑝
+, 𝑡∈T
+(26a)
+𝑄min
+𝑝
+≤𝑄𝑝[𝑡] ≤𝑄max
+𝑝
+,
+𝑝∈N VSP
+𝑝
+, 𝑡∈T .
+(26b)
+To model FSPs, equation (27) needs to be incorporated into the opti­
+mization framework, for 𝑝∈N FSP
+𝑝
+, 𝑡∈T . 
+𝑃𝑘
+𝑝[𝑡] = 𝑃max
+𝑝
+⋅𝑘𝑝[𝑡] ;
+𝑄𝑘
+𝑝[𝑡] = 𝑄max
+𝑝
+⋅𝑘𝑝[𝑡] .
+(27)
+Specifically, since FSPs do not operate under different input frequencies, 
+continuous decision variables 𝑃𝑝[𝑡] and 𝑄𝑝[𝑡] cannot be defined. Instead, 
+pump electric power consumption and flow are either zero when the 
+pump is shut down (binary variable 𝑘𝑝[𝑡] = 0), or equal to the operating 
+points 𝑃max
+𝑝
+ and 𝑄max
+𝑝
+, measured at the nominal frequency 𝑓n, when the 
+pump is running (binary variable 𝑘𝑝[𝑡] = 1).
+A.2 . Application on benchmark WDS
+In order to test the scalability and generality of the proposed opti­
+mization framework, this section examines its application to a bench­
+mark WDS. Specifically, the proposed framework is applied to the 
+topology of the Richmond benchmark WDS, as illustrated in Fig. 18 and 
+described in [54]. As observed, the WDS is supplied by a single water 
+source and comprises six storage tanks and seven pumps. Specifically, 
+the main tank of the WDS is tank 𝜏1𝑟, which is directly supplied by the 
+water source via the combined operation of a pumping station with two 
+pumps and a separate booster pump. In turn, tank 𝜏1𝑟 supplies tanks 
+𝜏2𝑟–𝜏6𝑟 via additional booster pumps.
+In line with Appendix A.1, both VSPs and FSPs are considered. 
+Specifically, the pumps that supply 𝜏1𝑟 are treated as FSPs (pumps 
+𝑝1,FSP, 𝑝2,FSP, 𝑝3,FSP) and are assumed to be switched on and off simul­
+taneously, since the WDS topology implies that they should operate 
+together at nominal speed to effectively extract and transfer water. The 
+remaining booster pumps are considered VSPs. Given that the proposed 
+optimization framework is applied theoretically, i.e., without the prior 
+application of the proposed measurement-based modeling approach, 
+theoretical parameters are considered for the tanks and pumps. For the 
+Sustainable Energy, Grids and Networks 46 (2026) 102260 
+14 
+
+S. Dimoulias, G. Kryonidis, K.-N. Malamaki et al.
+Fig. 18. Schematic of the Richmond benchmark WDS.
+Fig. 19. a) SoC profiles; b) total WDS power consumption.
+tanks, the assumed volumes are listed in Fig. 18. The three FSPs are as­
+sumed to operate together as an equivalent pump with 𝑃max
+𝑝
+=150 kW 
+and 𝑄max
+𝑝
+=300 m3/h. For VSPs 𝑝1𝑟,VSP, 𝑝2𝑟,VSP, 𝑝3𝑟,VSP, and 𝑝4𝑟,VSP, the 
+parameters of pumps 𝑝8, 𝑝12, 𝑝1, and 𝑝2 of the Igoumenitsa WDS are 
+used, respectively. Finally, without loss of generality, all aggregate wa­
+ter consumption points are assumed to follow the water demand profile 
+of tank 𝜏4 of the Igoumenitsa WDS, as depicted in Fig. 5(a). For the elec­
+tricity cost and the service compensation rates, the prices of Fig. 5(b) 
+are considered.
+The tank SoC profiles and the total WDS power consumption are 
+illustrated in Fig. 19(a) and (b), respectively. The net daily operating 
+cost of the WDS is $ 97. The total execution time is 6 s, demonstrating 
+the scalability and applicability of the proposed optimization framework 
+to WDSs with interconnected storage tanks. 
+Data availability
+Data will be made available on request.
+References
+[1] B. Sparnand, R. Hunsberger, Opportunities and Challenges for Water and 
+Wastewater Industries to Provide Exchangeable Services, Nat. Renewable Energy 
+Lab., Golden, CO, USA, Tech. Rep. NREL/TP-5500-63931, 2015, https://doi.org/
+10.2172/1227107
+[2] R. Amaral Lopes, R. Grønborg Junker, J. Martins, J. Murta-Pina, G. Reynders, 
+H. Madsen, Characterisation and use of energy flexibility in water pumping and 
+storage systems, Appl. Energy 277 (2020) 115587, https://doi.org/10.1016/j.
+apenergy.2020.115587
+[3] International Energy Agency, Tracking clean energy progress 2023, 2023. 
+Available [Online]: https://www.iea.org/energy-system/energy-efficiency-and-
+demand/demand-response#tracking. 
+[4] Y. Liu, M.S. Mauter, Assessing the demand response capacity of U.S. Drinking wa­
+ter treatment plants, Appl. Energy 267 (2020) 114899, https://doi.org/10.1016/
+j.apenergy.2020.114899
+[5] A. Zohrabian, K.T. Sanders, Emitting less without curbing usage? Exploring green­
+house gas mitigation strategies in the water industry through load shifting, Appl. 
+Energy 298 (2021) 117194, https://doi.org/10.1016/j.apenergy.2021.117194
+[6] M. Goodarzi, Q. Li, Evaluate the capacity of electricity-driven water facilities in 
+small communities as virtual energy storage, Appl. Energy 309 (2022) 118349, 
+https://doi.org/10.1016/j.apenergy.2021.118349
+[7] H. Mala-Jetmarova, N. Sultanova, D. Savic, Lost in optimisation of water distribu­
+tion systems? A literature review of system operation, Environ. Model. Softw. 93 
+(2017) 209–254, https://doi.org/10.1016/j.envsoft.2017.02.009
+[8] G. Bonvin, S. Demassey, C. Le Pape, N. Maïzi, V. Mazauric, A. Samperio, A convex 
+mathematical program for pump scheduling in a class of branched water networks, 
+Appl. Energy 185 (2017) 1702–1711, https://doi.org/10.1016/j.apenergy.2015.
+12.090
+[9] M.K. Singh, V. Kekatos, Optimal scheduling of water distribution systems, IEEE 
+Trans. Control Netw. Syst. 7 (2) (2020) 711–723, https://doi.org/10.1109/TCNS.
+2019.2939651
+[10] I. Boukas, E. Burtin, A. Sutera, Q. Gemine, B. Pevee, D. Ernst, Exploiting the flexibil­
+ity potential of water distribution networks: a pilot project in Belgium, IEEE Trans. 
+Smart Grid 15 (1) (2024) 394–404, https://doi.org/10.1109/TSG.2023.3272469
+[11] D. Fooladivanda, J.A. Taylor, Energy-optimal pump scheduling and water flow, 
+IEEE Trans. Control Netw. Syst. 5 (3) (2018) 1016–1026, https://doi.org/10.1109/
+TCNS.2017.2670501
+[12] X. Zhang, D. Wang, F. Jiang, T. Lin, H. Xiang, An optimal regulation method for 
+parallel water-intake pump group of drinking water treatment process, IEEE Access 
+8 (2020) 82797–82803, https://doi.org/10.1109/ACCESS.2020.2991895
+[13] Y. Guo, S. Wang, A.F. Taha, T.H. Summers, Optimal pump control for water distri­
+bution networks via data-based distributional robustness, IEEE Trans. Control Syst. 
+Technol. 31 (1) (2023) 114–129, https://doi.org/10.1109/TCST.2022.3167844
+[14] Y. Shao, X. Zhou, T. Yu, T. Zhang, S. Chu, Pump scheduling optimization in water 
+distribution system based on mixed integer linear programming, Eur. J. Oper. Res. 
+313 (3) (2024) 1140–1151, https://doi.org/10.1016/j.ejor.2023.08.055
+[15] G. Perelman, A. Ostfeld, B. Fishbain, Robust optimal operation of water distribution 
+systems, Water 15 (2023), https://doi.org/10.3390/w15050963
+[16] R. Menke, E. Abraham, P. Parpas, I. Stoianov, Demonstrating demand response 
+from water distribution system through pump scheduling, Appl. Energy 170 (2016) 
+377–387, https://doi.org/10.1016/j.apenergy.2016.02.136
+[17] R. Kernan, L. X, S. McLoone, B. Fox, Demand side management of an urban water 
+supply using wholesale electricity price, Appl. Energy 189 (2017) 395–402, https:
+//doi.org/10.1016/j.apenergy.2016.12.082
+[18] Y. Liu, C. Barrows, J. Macknick, M. Mauter, Optimization framework to assess 
+the demand response capacity of a water distribution system, J. Water Resour. 
+Plan. Manag. - ASCE 146 (2020), https://doi.org/10.1061/(ASCE)WR.1943-5452.
+0001258
+[19] C. Mkireb, A. Dembélé, A. Jouglet, T. Denoeux, Robust optimization of de­
+mand response power bids for drinking water systems, Appl. Energy 238 (2019) 
+1036–1047, https://doi.org/10.1016/j.apenergy.2019.01.124
+[20] D. Fooladivanda, A.D. Domínguez-García, P.W. Sauer, Utilization of water supply 
+networks for harvesting renewable energy, IEEE Trans. Control Netw. Syst. 6 (2) 
+(2019) 763–774, https://doi.org/10.1109/TCNS.2018.2873946
+[21] A. Stuhlmacher, S. Guikema, J.L. Mathieu, Assessing power and water network re­
+silience when water pumps provide frequency regulation, IEEE Trans. Power Syst. 
+(2025) 1–12, https://doi.org/10.1109/TPWRS.2025.3539288
+[22] L.W. Mays, Water Distribution Systems Handbook, McGraw-Hill, New York, 2000.
+[23] A.L. Reis, A. Andrade-Campos, P. Matos, C. Henggeler Antunes, M.A.R. Lopes, An 
+energy and cost efficiency model predictive control framework to optimize water 
+supply systems operation, Appl. Energy 384 (2025) 125478, https://doi.org/10.
+1016/j.apenergy.2025.125478
+[24] K. Oikonomou, M. Parvania, R. Khatami, Optimal demand response scheduling for 
+water distribution systems, IEEE Trans. Ind. Inform. 14 (11) (2018) 5112–5122, 
+https://doi.org/10.1109/TII.2018.2801334
+[25] K. Oikonomou, M. Parvania, Optimal participation of water desalination plants in 
+electricity demand response and regulation markets, IEEE Syst. J. 14 (3) (2020) 
+3729–3739, https://doi.org/10.1109/JSYST.2019.2943451
+[26] D. Bertsimas, M. Sim, The price of robustness, Oper. Res. 52 (1) (2004) 35–53, 
+https://doi.org/10.1287/opre.1030.0065
+[27] IEEE Task Force on Water-Power Systems, Integrated Water and Power Systems: 
+Current State and Research Roadmap, Technical Report, 2023, https://doi.org/10.
+17023/7p93-x258
+[28] R. O’Neil, K. Oikonomou, V. Tidwell, N. Voisin, J. Kerby, Z. Jason Hou, M. Parvania, 
+A.T. Al-Awami, M. Panteli, S.A. Conrad, T.K.A. Brekken, Global research priorities 
+Sustainable Energy, Grids and Networks 46 (2026) 102260 
+15 
+
+S. Dimoulias, G. Kryonidis, K.-N. Malamaki et al.
+for holistic integration of water and power systems, IEEE Open Access J. Power 
+Energy 11 (2024) 457–468, https://doi.org/10.1109/OAJPE.2024.3457448
+[29] A. Majid, J.E. van Zyl, J.W. Hall, The influence of temporal variability and reservoir 
+management on demand-response in the water sector, Appl. Energy 305 (2022) 
+117808, https://doi.org/10.1016/j.apenergy.2021.117808
+[30] E. Salomons, M. Housh, Optimal dynamic pump triggers for cost saving and robust 
+water distribution system operations, J. Water Resour. Plan. Manag. - ASCE 145 
+(2) (2018), https://doi.org/10.1061/(ASCE)WR.1943-5452.0001028
+[31] B. Ulanicki, J. Kahler, B. Coulbeck, Modeling the efficiency and power charac­
+teristics of a pump group, J. Water Resour. Plan. Manag. - ASCE 134 (2020), 
+https://doi.org/10.1061/(ASCE)0733-9496(2008)134:1(88)
+[32] D. Barros, I. Almeida, A. Zanfei, G. Meirelles, E. Luvizotto Jr., B. Bruno, An inves­
+tigation on the effect of leakages on the water quality parameters in distribution 
+networks, Water 15 (2022), https://doi.org/10.3390/w15020324
+[33] A. Zanfei, A. Menapace, S. Santopietro, M. Righetti, Calibration procedure for water 
+distribution systems: comparison among hydraulic models, Water 12 (2020), https:
+//doi.org/10.3390/w12051421
+[34] S. Chu, T. Zhang, Y. Shao, T. Yu, H. Yao, Numerical approach for water distribu­
+tion system model calibration through incorporation of multiple stochastic prior 
+distributions, Sci. Total Environ. 708 (2020) 134565, https://doi.org/10.1016/j.
+scitotenv.2019.134565
+[35] R. Wannapop, T. Jearsiripongkul, K. Jiamjiroch, Adaptive urban drinking
+water supply model using the effect of node elevation and head loss formula: 
+a case study, Heliyon 10 (5) (2024) e26181, https://doi.org/10.1016/j.heliyon.
+2024.e26181
+[36] G. Dandy, W. Wu, A. Simpson, M. Leonard, A review of sources of uncertainty 
+in optimization objectives of water distribution systems, Water 12 (2022), https:
+//doi.org/10.3390/w15010136
+[37] A. Marchi, A.R. Simpson, N. Ertugrul, Assessing variable speed pump efficiency in 
+water distribution systems, Drink. Water Eng. Sci. 5 (2012), https://doi.org/10.
+5194/dwes-5-15-2012
+[38] P. Jowitt, G. Germanopoulos, Optimal pump scheduling in water-supply networks, 
+J. Water Resour. Plan. Manag. - ASCE 118 (4) (1992), https://doi.org/10.1061/
+(ASCE)0733-9496(1992)118:4(406)
+[39] E. Salomons, M. Housh, A practical optimization scheme for real-time operation of 
+water distribution systems, J. Water Resour. Plan. Manag. - ASCE 146 (4) (2020), 
+https://doi.org/10.1061/(ASCE)WR.1943-5452.0001188
+[40] G. Perelman, B. Fishbain, Critical elements analysis of water supply systems to 
+improve energy efficiency in failure scenarios, Water Resour. Manag. 36 (4) (2022), 
+https://doi.org/10.1007/s11269-022-03232-y
+[41] AWWA Committee, Trends in water distribution system modeling, Journal AWWA 
+106 (10) (2014) 51–58, https://doi.org/10.5942/jawwa.2014.106.0145
+[42] National Grid, National Grid Commercial System relief program overview and 
+guidelines, 2023. Available [Online]: https://www.nationalgridus.com/media/
+pdfs/bus-ways-to-save/csrp_program_overview.pdf. 
+[43] CAISO, California ISO tariff appendix a: master definition supplement, 
+2025. Available [Online]: https://www.caiso.com/documents/appendix-a-master-
+definition-supplement-as-of-feb-5-2025.pdf. 
+[44] California ISO, Open access same-time information system, 2024. Available 
+[Online]: http://oasis.caiso.com. 
+[45] Indepedent Power Transmission Operator, Market statistics, 2025. Available 
+[Online]: https://www.admie.gr/en/market/market-statistics/detail-data. 
+[46] L.E. Ormsbee, K.E. Lansey, Optimal control of water supply pumping systems, 
+J. Water Resour. Plan. Manag. - ASCE 120 (2) (1994), https://doi.org/10.1061/
+(ASCE)0733-9496(1994)120:2(237)
+[47] E. Salomons, M. Housh, Practical real-time optimization for energy efficient wa­
+ter distribution systems operation, J. Clean. Prod. 275 (2020), https://doi.org/10.
+1016/j.jclepro.2020.124148
+[48] S. Dimoulias, G. Kryonidis, K.-N. Malamaki, Field Pump and Water Demand 
+Measurements from the Water Distribution System of Igoumenitsa, Greece, 2026, 
+https://doi.org/10.5281/zenodo.19456017
+[49] G. Hajgató, G. Paál, B. Gyires-Tóth, Deep reinforcement learning for real-time op­
+timization of pumps in water distribution systems, J. Water Resour. Plan. Manag. 
+- ASCE 146 (2020), https://doi.org/10.1061/(ASCE)WR.1943-5452.0001287
+[50] S. Hu, J. Gao, D. Zhong, R. Wu, L. Liu, Real-time scheduling of pumps in water 
+distribution systems based on exploration-enhanced deep reinforcement learning, 
+Systems 11 (2023), https://doi.org/10.3390/systems11020056
+[51] S. Hu, J. Gao, D. Zhong, Multi-agent reinforcement learning framework for real-
+time scheduling of pump and valve in water distribution networks, Water Sci. 
+Technol.: Water Supply 23 (2023), https://doi.org/10.2166/ws.2023.163
+[52] G. Perelman, A. Ostfeld, Data enabled predictive control for water distribution 
+systems optimization, Water Resour. Res. 61 (2025), https://doi.org/10.1029/
+2024WR039059
+[53] X. Chen, X. Zhang, M. Han, A.W.-K. Minghao, X. Yin, Economic zone data-enabled 
+predictive control for connected open water systems, Water Res. 291 (2026), https:
+//doi.org/10.1016/j.watres.2025.125181
+[54] J.E. van Zyl, D.A. Savic, G.A. Walters, Operational optimization of water distri­
+bution systems using a hybrid genetic algorithm, J. Water Resour. Plan. Manag. 
+- ASCE 130 (2) (2004), https://doi.org/10.1061/(ASCE)0733-9496(2004)130:
+2(160)
+Sustainable Energy, Grids and Networks 46 (2026) 102260 
+16 

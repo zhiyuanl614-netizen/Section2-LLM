@@ -1,0 +1,3109 @@
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 1, JANUARY 2023
+331
+Modeling of Water Transfer Delay for Optimal
+Operation of Integrated Electrical-Water System
+Yiming Yao
+, Chunyan Li
+, Member, IEEE, Heng-Ming Tai
+, Senior Member, IEEE,
+and Changzheng Shao
+, Member, IEEE
+Abstract—This paper investigates the transfer delays of a water
+distribution system (WDS). The delay implies that water balance
+between the supply and demand does not meet instantly, which may
+affect the regulation capability of WDS on the electricity consump-
+tion proﬁle. Current research did not consider the role the transfer
+delay plays in the cooperative operation of power system and WDS.
+Not considering the delay hinders the water ﬂow dynamics from
+being used to provide energy ﬂexibility for the power system oper-
+ation. An electrical-water analogy method is proposed to model the
+water transfer delay of WDS. The cooperative operation model of
+the WDS and power system is created to facilitate the incorporation
+of wind power to the power system and lower the operation cost.
+Moreover, a graph-based searching scheme is developed to enable
+efﬁcient and accurate calculation of the pressures and water ﬂows
+in the WDS network. Case studies are presented to demonstrate the
+merits of the proposed electrical-water analogy method in power
+system operation.
+Index Terms—Power system, water distribution system, transfer
+delay, electrical-water analogy, wind power.
+NOMENCLATURE
+A. Sets
+ΩT /ΩW /ΩW DS
+Set
+of
+conventional
+generating
+units/wind farms/WDSs.
+ΩL
+Set of blocks in the piecewise function of
+the conventional generating unit.
+ΛE/ΨE
+Set of electrical buses/lines.
+ΩT
+n/ ΩW
+n /ΩW DS
+n
+Set of units/wind farms/WDSs that con-
+nected to bus n.
+ΛE
+n
+Set of electrical buses connected to bus
+n.
+ΔP /ϖ/Δ
+Set
+of
+ﬁxed-speed
+pumps/water
+nodes/pipes.
+Manuscript received 2 July 2021; revised 2 November 2021 and 7 February
+2022; accepted 13 March 2022. Date of publication 16 March 2022; date of
+current version 22 December 2022. This work was supported by the National
+Natural Science Foundation of China under Grant 52177073. Paper no. TPWRS-
+01059-2021. (Corresponding author: Chunyan Li.)
+Yiming Yao, Chunyan Li, and Changzheng Shao are with the State Key
+Laboratory of Power Transmission Equipment and System Security, Chongqing
+University, Chongqing 400030, P.R. China (e-mail: yao_cqu@163.com; lcy-
+cqu@cqu.edu.cn; cshao@cqu.edu.cn).
+Heng-Ming Tai is with the Department of Electrical and Computer Engineer-
+ing, University of Tulsa, Tulsa, OK 74104 USA (e-mail: tai@utulsa.edu).
+Color versions of one or more ﬁgures in this article are available at
+https://doi.org/10.1109/TPWRS.2022.3159786.
+Digital Object Identiﬁer 10.1109/TPWRS.2022.3159786
+F/L
+Set of reservoirs/demand nodes in the
+WDS.
+O/R
+Setofdirectedpathsthatgothroughcross
+nodes/do not go through cross nodes.
+H
+Set of cross nodes.
+B. Parameters
+g
+Acceleration of gravity.
+D/A
+Diameter/cross-sectional area of the wa-
+ter pipe.
+α
+Velocity of the water hammer wave.
+f
+Friction factor.
+sign(Q)
+Sign function which denotes the direc-
+tion of ﬂow in the pipe. It equals to 1 if
+Q > 0, zero when Q = 0, and -1 when
+Q < 0.
+Qb
+Baseline ﬂow of the pipe.
+Ai
+1(s), Ai
+2(s)
+Algebraic expressions in the Laplace do-
+main.
+Bi
+1(s), Bi
+2(s)
+Algebraic expressions in the Laplace do-
+main.
+Hmin
+Required minimum head pressure along
+the pipe.
+Qmin/Qmax
+Minimum/maximum volume of the pipe.
+Li
+Length of pipe i.
+ts/te
+Starting time/ending time.
+qmin
+Pm /qmax
+Pm
+Minimum/maximum value of the ﬂow
+when ﬁxed-speed pump m on.
+aPm, bPm, cPm
+Coefﬁcients in the head-ﬂow equation of
+ﬁxed-speed pump m.
+aSm, bSm, cSm
+Coefﬁcients in the head-ﬂow equation of
+variable-speed pump m.
+Vb
+Baseline value of the variable in the hy-
+draulic model of WDS components.
+ˆωSm
+Maximum allowable relative speed of the
+variable-speed pump m.
+ωt
+Sm,b
+Baseline speed of the variable-speed
+pump m at time t.
+qt
+Pm,b/qt
+Sm,b/qt
+Vm,b
+Baseline
+ﬂow
+of
+ﬁxed-speed
+pump/variable-speed
+pump/valve
+m
+at time t.
+κ1, κ2, κ3
+Weighting coefﬁcients.
+N W P
+h
+Number of pumps in WDS h.
+kV
+Coefﬁcient in the head-ﬂow equation of
+the valve.
+0885-8950 © 2022 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:30:34 UTC from IEEE Xplore.  Restrictions apply. 
+
+332
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 1, JANUARY 2023
+qmin
+Vm /qmax
+Vm
+Minimum/maximum value of the ﬂow
+when valve m on.
+Δt
+Time step.
+Atank
+Jm /μW
+Surface area of tank m/water loss rate of
+the tank.
+W min
+Jm /W max
+Jm
+Minimum/maximum water storage of
+tank m.
+wK/wh
+Water demand at node K/h.
+wC
+Water demand at the cross node.
+N/M
+Number of nodes/branches in the WDS.
+ah,k
+Connection relationship between the
+node nh and the branch lk.
+ci/cu
+i /cd
+i
+Commitment/startup/shutdown cost of
+unit i.
+Ng/T
+Number of conventional units/time steps.
+NW /NW DS
+Number of wind farms/WDSs.
+λ
+Penalty factor for wind power curtail-
+ment.
+L
+Number of piecewise linear cost function
+segments.
+Ki,l
+Slope of block l of the piecewise function
+of unit i.
+TUi/TDi
+Minimum up/down times of unit i.
+Rampi/λpricet
+Ramp rate of unit i/electricity price at
+time t.
+P gmin
+i
+/P gmax
+i
+Minimum/maximum
+output
+of
+unit
+i.
+P pre
+w,t
+Output of wind farm w at time t.
+dn,t
+Demand of electrical load n at time
+t.
+Bn,m
+Susceptance of electrical line n-m.
+PFn,m
+Capacity limit of electrical transmission
+line n-m.
+C. Variables
+H
+Head pressure.
+v/Q
+Velocity/volume of ﬂow in the pipe.
+ΔQ
+Difference between the optimized and
+the baseline values of the ﬂow in the
+pipe.
+ˆht
+Pm/ˆht
+Sm/ˆht
+Vm
+Pressure
+head
+gain
+of
+ﬁxed-speed
+pump/variable-speed pump/valve m at
+time t.
+qt
+Pm/qt
+Sm/qt
+Vm
+Flow
+in
+ﬁxed-speed
+pump/variable-
+speed pump /valve m at time t.
+ωt
+Sm
+Ratio of actual speed to the nominal
+speed of the variable-speed pump m at
+time t.
+P W P
+i,t
+Electricityconsumptionofpumpiattime
+t.
+P W DS
+h,t
+Electricity consumption of WDS h at
+time t.
+qin
+Jm,t/qout
+Jm,t
+Water that ﬂows into/out of tank m at time
+t.
+WJm,t
+Volume of the stored water in tank m at
+time t.
+ht
+Jm
+Head pressure of tank m at time t.
+V
+Generic variable used to represent the
+variables of WDS components. For the
+water pipe, V refers to Q. For the ﬁxed-
+speed pump, V refers to qt
+Pm. For the
+variable-speedpump,V referstoqt
+Sm and
+ωt
+Sm. For the valve, V refers to qt
+Vm.
+ΔV
+Difference between the optimized and
+the baseline values of the variable in the
+hydraulic model of WDS components.
+Δqt
+Sm/Δωt
+Sm
+Difference
+between
+the
+optimized
+and the baseline values of the water
+ﬂow/relative speed in the variable-speed
+pump m at time t.
+Q′
+K
+Calculated outlet ﬂow of the pipe whose
+end node is node K.
+Qin,C/Qout,C
+Total inlet/outlet ﬂow of the cross node.
+HC,n
+Inlet/outlet pressure of pipe n whose in-
+let/outlet node is the cross node.
+P g
+i,t,l
+Power produced in block l of the piece-
+wise linear function of the unit i at time
+t.
+θn,t/θref,t
+Phase
+angle
+of
+electrical
+node
+n/reference node at time t.
+Ii,t/Ui,t/Di,t
+Binary
+variable
+for
+commit-
+ment/startup/shutdown status of unit
+i at time t (equals to 1 when the unit
+is
+on/started
+up/shut
+down,
+and
+0
+otherwise).
+P wc
+w,t
+Amount of wind power curtailment in the
+wind farm w at time t.
+Qnh/Qhm
+Flow in pipe n-h/h-m.
+I. INTRODUCTION
+W
+ater distribution system (WDS) accounts for 5% of the
+annual total electricity consumption in China, and up to
+7.1% in California, USA [1], [2]. Electrical demand associated
+with WDS is projected to increase. WDS can be regarded as an
+adjustable electrical load from the perspective of power system
+[3]. The electricity consumption proﬁle of WDS can be regulated
+ﬂexibly by coordinating the operation of water pumps and tanks.
+The cooperative operation of the power system and WDS attracts
+great attention recently due to its merits of high-efﬁciency, cost-
+effectiveness and sustainability [4], [5].
+The optimal water-power ﬂow problem has been studied to
+optimize the operation strategies of the power system and WDS
+considering the network constraints [6]–[8]. Many efforts have
+been made to deal with the non-convex hydraulic equations
+of WDS, such as the piecewise linear approximation [9], the
+second-order cone relaxation [10], and the quasi-convex hull
+relaxation method [11]. The energy ﬂexibility of WDS has been
+analyzed and integrated into the operational model of power
+system [12], [13]. The controllable energy assets such as the
+water pump equip the WDS to provide the demand response
+service and the frequency regulation service in the electricity
+market. The models for the WDS to bid in the electricity market
+were also developed to maximize the proﬁt [14]–[16]. Most
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:30:34 UTC from IEEE Xplore.  Restrictions apply. 
+
+YAO et al.: MODELING OF WATER TRANSFER DELAY FOR OPTIMAL OPERATION
+333
+works on the cooperative operation of power system and WDS
+assume that the water is transported from the source to the user
+instantaneously without considering the transfer delays of the
+water [3]–[16].
+To the best of our knowledge, not many researches on the
+modeling of the transfer delays in the WDS have been reported.
+Besides, the transfer delays have not been incorporated into the
+cooperative operation model of the power system and WDS.
+The transmission time of the water from the source to the
+user depends on the velocity of ﬂow and the distance. It can take
+several hours to transport the water in a large WDS network.
+Neglectingthetransferdelaysmayhavesigniﬁcantimpactonthe
+optimal cooperative operation strategies of the power system and
+the WDS. On the other hand, the transfer delays in WDS offer
+substantial potential for power system to leverage the ﬂexibility
+provided by WDS. Electricity travels at a speed close to the
+light, and it can be assumed that electricity is transported from
+thegenerator totheloadinstantaneously. Thus, thepower system
+must ensure the real-time balance of supply and demand. WDS
+does not need to instantly balance the supply and demand. The
+balance can be maintained by the excess water transported from
+the source to the user. This enables the power shift capability
+of WDS to be fully leveraged and allows the power system to
+be operated more ﬂexibly. The shift here refers to the situation
+that more electricity is consumed during the period of high
+wind power output and less electricity is consumed when the
+wind power output is low. More renewable energy can thus be
+incorporated into the power system and the operation cost of the
+integrated electrical-water system can be reduced.
+This paper proposes a cooperative operation model of the
+power system and WDS considering the delays of water trans-
+mission. The movement of water ﬂow in the pipe can be de-
+scribed by a series of partial differential equations (PDEs) [17].
+The ﬁnite difference (FD) method, which discretizes the time
+and space into many points, is used to deal with these PDEs
+[18]. As the number of discretized points increases, accuracy of
+the FD method improves, whereas the computational expense
+increases dramatically. The increasing penetration of renewable
+energy, such as wind power, has brought great challenges to
+the power system operation due to its uncertainty. Since the
+output of wind power varies rapidly, the time resolution of the
+cooperative operation model should be in minutes. This makes
+the time-consuming FD method not applicable.
+The idea of electrical-water ﬂow analogy has been applied to
+the modeling of the WDS [19]–[21]. The analogy approach uses
+an equivalent electric circuit to provide an exact representation
+of the model. These WDS network models were described
+by a distributed parameter circuit, which was in the form of
+PDEs and has to be solved by the FD method. Recently, the
+method of electric circuit analogy was also exploited in the
+modeling of integrated energy systems [22]–[26]. The methods
+in [22], [23] did not consider the transfer delays. The equivalent
+electric circuit analogy model proposed for a single pipe did not
+model the transmission process of the ﬂow in the network [24].
+Although the methods proposed in [25], [26] were discrete in
+the time domain, severe calculation errors may occur when the
+transfer delay is not an integer multiple of the time resolution.
+Since the water ﬂow and pressure in WDS vary continuously
+over the time and space domains, the discrete method may not
+be applicable.
+In this paper, a graph-based electrical-water analogy method
+is proposed to solve the PDEs of WDS. The method aims to sig-
+niﬁcantly reduce the computation time in comparison to the FD
+method. The equivalent electric circuit for the WDS is developed
+and transformed into algebraic equations in the Laplace domain.
+The water transmission process in WDS is modeled by the
+graph-based searching method. The inverse Laplace transform
+can be applied to obtain the ﬂows and pressures along the
+network in the time domain. The constraints of the water ﬂow
+and pressure in the pipe expressed in the continuous time and
+space domains are replaced by a series of simpliﬁed constraints.
+The main contributions of this paper are
+a) Propose an energy-water model considering water transfer
+delay in WDS. The proposed model provides a realistic
+representation of the water ﬂow dynamics which fully
+exploits the energy ﬂexibility of WDS.
+b) Establish an equivalent electric circuit model to describe
+the water transfer delay of WDS and provide a series of
+simpliﬁed constraints for the pipe in the continuous time
+and the space domains.
+c) Develop a graph-based electrical-water analogy method to
+model the water transmission process in the whole WDS
+network and an efﬁcient solution methodology to ﬁnd the
+solutions efﬁciently.
+In the remainder of this paper, the proposed electrical-water
+analogy model of the power-WDS system is described in Sec-
+tion II. Rigorous mathematical derivation is presented for veri-
+ﬁcation. Section III presents the detailed modeling of the water
+transmission process in WDS and the solution procedure for
+the graph-based method. Section IV describes the cooperative
+operation model of the power system and WDS. Case studies are
+given in Section V to demonstrate the beneﬁts of the proposed
+model on wind power accommodation and computation time
+reduction. The paper is concluded in Section VI.
+II. ELECTRICAL-WATER ANALOGY MODEL OF WATER
+TRANSFER DELAYS
+This section presents the proposed electric circuit analogy
+model for the water transfer delay in the WDS. The PDEs of the
+water ﬂow in the pipe are transformed into algebraic equations in
+the Laplace domain. The non-convex models of the water pump
+and valve are also turned into linear models using the electrical-
+water analogy method. Prior to the detailed description of the
+proposed model, the structures of the WDS and the integrated
+electrical-water system are outlined.
+A. Overview of Electrical-Water System
+Fig. 1 depicts the structure of an integrated electrical-water
+system. The reservoir serves as the source of water for WDS.
+The water ﬂow is transported from one node to another in the
+pipe due to the head pressure difference between two nodes.
+The water pump in the WDS consumes electricity to increase the
+pressure difference and transport the water ﬂow. More electricity
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:30:34 UTC from IEEE Xplore.  Restrictions apply. 
+
+334
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 1, JANUARY 2023
+Fig. 1.
+Example of the integrated electrical-water system.
+consumption means that more water can be conveyed. Valves
+control the pressure in a pipe or the amount of water ﬂowing
+through a pipe. The water tank can store water or supply water
+into the system. Control of the water pump and tank equips the
+WDS to deal with the unbalance of supply and demand in the
+power system.
+This study considers the WDS connected to the power trans-
+mission systems for the following reasons.
+1) The energy consumption of WDS is usually supplied by
+the power distribution system connected with the load
+bus of power transmission systems through power trans-
+formers. Many researches on the cooperative operation of
+power system and WDS assume that WDS can be regarded
+as an equivalent electrical load connected with the load
+bus of power transmission systems [12], [18], [27]–[29].
+As can be seen from Fig. 1, a 6-bus power transmission
+system supplies electricity to three WDSs linked to bus 5.
+Then the impact of WDS optimization on the entire power
+transmission system can be evaluated.
+2) The large-scale renewable energy output is generally
+transported and processed via the power transmission sys-
+tem [30]. Since this study considers the WDS optimization
+on promoting the integration of renewable energy into
+the power system, the power transmission system would
+provide better assessment information.
+3) By replacing the power ﬂow model with a power distribu-
+tion network, the proposed transfer delay model for WDS
+also can be applied to the cooperative operation of the
+power distribution system and WDS. Future research will
+conduct on a hierarchical control strategy of WDS and the
+power transmission and distribution systems.
+B. Modeling of Water Pipe
+The dynamics of water ﬂow are modeled by the motion
+equation (1) and the continuity equation (2)
+g ∂H
+∂x + ∂v
+∂t + v ∂v
+∂x + fv |v|
+2D
+= 0
+(1)
+v ∂H
+∂x + ∂H
+∂t −vsinα + α2
+g
+∂v
+∂x = 0
+(2)
+where v denotes the ﬂow velocity and H the head pressure. They
+are functions of time t and position x. The above PDEs can be
+TABLE I
+ANALOGY BETWEEN THE ELECTRIC CIRCUIT AND THE WATER PIPE
+further simpliﬁed as [17]
+gA∂H
+∂x + ∂Q
+∂t + fQ |Q|
+2DA = 0
+(3)
+A∂H
+∂t + α2
+g
+∂Q
+∂x = 0
+(4)
+Q is the volume of water ﬂow in the pipe. Equation (3) also
+holds for the steady ﬂow. Setting ∂Q
+∂t = 0 yields
+ΔH = −fQ |Q| Δx
+2gDA2
+(5)
+which is the widely used Darcy-Weisbach equation in the opti-
+mization model of WDS [3]–[16].
+The water transfer delay occurs because the ﬂow varies con-
+tinuously over the time and space as seen in (3) and (4). Given
+the amount of input ﬂow at the beginning of a pipe, it may take a
+long time for the output ﬂow at the end of the pipe to be the same
+as that of the input ﬂow. Equation (5) assumes that the water ﬂow
+is the same over the pipe in a given time period. Thus, the water
+transfer delays are not considered.
+To solve the PDEs of (3) and (4) in an efﬁcient way, the follow-
+ing electrical-water analogy method is used. For an inﬁnitesimal
+deviation dx, the corresponding changes in H and Q can be
+derived from (3) and (4) as given below
+−dH = 1
+gA
+dQ
+dt dx + sign (Q) fQ2
+2gDA2
+dx
+(6)
+−dQ = gA
+α2
+dH
+dt dx
+(7)
+The sign function sign(Q) is equal to 1 if Q > 0, zero when
+Q = 0, and -1 when Q < 0. Let Q = Qb + ΔQ, where Qb
+is the baseline ﬂow of the pipe. Then, Q2 = (Qb + ΔQ)2 ≈
+Q2
+b + 2QbΔQ or
+Q2 ≈2QbQ −Q2
+b
+(8)
+Substituting (8) into (6) yields
+−dH = 1
+gA
+dQ
+dt dx + sign (Q) fQbQ
+gDA2
+dx −sign (Q) fQ2
+b
+2gDA2
+dx
+(9)
+Table I presents an analogy between the electric circuit and
+the water pipe. The equivalent electric circuit for the pipe is
+depicted in Fig. 2.
+Applying Laplace transform to (7) and (9) with respect to time
+yields
+−dQ
+dx = sCbH
+(10)
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:30:34 UTC from IEEE Xplore.  Restrictions apply. 
+
+YAO et al.: MODELING OF WATER TRANSFER DELAY FOR OPTIMAL OPERATION
+335
+Fig. 2.
+Equivalent electric circuit for water ﬂow movement in the pipe.
+−dH
+dx = (Rb + sLb) Q −Usb
+s
+(11)
+Taking the derivative of (10) and (11) with respect to x, we
+have
+d2Q
+dx2 = sCb
+
+(Rb + sLb) Q −Usb
+s
+
+= γ2 Q −ζ
+(12)
+d2H
+dx2 = (Rb + sLb) sCbH = γ2 H
+(13)
+where γ2 = (Rb + sLb) sCb and ζ = Cb Usb.
+Solving (12) and (13) yields
+Qi = Ai
+1 (s) e−γx −Ai
+2 (s) eγx + ζ
+γ2
+(14)
+Hi = Bi
+1 (s) e−γx + Bi
+2 (s) eγx
+(15)
+The index i denotes the ith pipe.
+Substituting (14) into (10) yields
+Hi = Ai
+1 (s) γe−γx + Ai
+2 (s) γeγx
+sCb
+(16)
+Comparing (15) with (16), we have
+Bi
+1 (s) = Ai
+1 (s) γ
+sCb
+(17)
+Bi
+2 (s) = Ai
+2 (s) γ
+sCb
+(18)
+Then the water ﬂows and pressures along the pipe can be
+expressed as
+
+Qi = Ai
+1 (s) e−γx −Ai
+2 (s) eγx +
+ζ
+γ2
+Hi = Ai
+1(s)γ
+sCb
+e−γx + Ai
+2(s)γ
+sCb eγx.
+(19)
+Note that both the water ﬂows and pressures are expressed as
+the algebraic equations in the Laplace domain.
+Given two of the four variables Qb, Hb, Q′
+b and H′
+b, it can be
+seen from Fig. 2 that Ai
+1(s) and Ai
+2(s) can be determined. Then
+the ﬂows and pressures along the pipe can be obtained by taking
+the inverse Laplace transform of (19).
+Thepressuresandthewaterﬂowsalongthepipeshouldsatisfy
+the following constraints:
+Hi (x, t) ≥Hmin
+(20)
+Qmin ≤Qi (x, t) ≤Qmax
+(21)
+Hmin is the required minimum head pressure along the pipe.
+Qmin and Qmax denote the minimum and maximum volumes
+of the pipe.
+Fig. 3.
+Equivalent electric circuit for a ﬁxed-speed pump.
+Hi(x, t) and Qi(x, t) denote the pressure and water ﬂow at
+position x of the pipe i at time t, respectively. Since Qi(x, t) and
+Hi(x, t) change continuously over the time and the position, the
+constraints from (20) to (21) can be replaced with the constraints
+from (22) to (25) for more close to the real-world applications.
+Li denotes the length of pipe i, ts the starting time and te the
+ending time. Mathematical proof of the constraint replacement
+is given in the Appendix.
+Hi (0, t) ≥Hmin
+(22)
+Hi (Li, t) ≥Hmin
+(23)
+Qmin ≤Qi (0, t) ≤Qmax
+(24)
+Qmin ≤Qi (Li, t) ≤Qmax
+(25)
+The constraints (22) to (25) hold at t = ts or t = te .
+C. Modeling of Water Pump, Valve and Tank
+Here we describe the models of water pump, valve, and the
+tank used in the analogy model.
+1) Water Pump: The pump is assumed to have ﬁxed speed.
+The hydraulic model is given as
+Pump on : ˆht
+Pm = aPm
+
+qt
+Pm
+2 + bPmqt
+Pm + cPm
+(26)
+qmin
+Pm ≤qt
+Pm ≤qmax
+Pm
+(27)
+Pump off : qt
+Pm = 0
+(28)
+The relationship of pressure head gain and water ﬂow in (26)
+can be rearranged as
+ˆht
+Pm =
+
+2aPmqt
+Pm,b + bPm
+
+qt
+Pm + cPm −aPm
+
+qt
+Pm,b
+2
+(29)
+The equivalent electric circuit for the pump is depicted in
+Fig. 3. The components in Fig. 3 are related to (29) as HPm −
+H′
+Pm = ˆht
+Pm , RPm = 2aPmqt
+Pm,b + bPm and UPm = cPm −
+aPm(qt
+Pm,b)2.
+The electricity consumption of the water pump and that of the
+WDS can be calculated, respectively, as
+P W P
+i,t
+= κ1 (qt
+Pi)3 + κ2(qt
+Pi)2 + κ3qt
+Pi
+(30)
+P W DS
+h,t
+=
+N W P
+h
+i=1
+P W P
+i,t
+(31)
+Pi ∈ΔP and h ∈ΩW DS.
+2) Water Valve: The pressure reducing valve is considered
+and the corresponding hydraulic model can be expressed as [31]
+V alve on : ˆht
+Vm = kV
+
+qt
+Vm
+2
+(32)
+V alve off : qt
+Vm = 0
+(33)
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:30:34 UTC from IEEE Xplore.  Restrictions apply. 
+
+336
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 1, JANUARY 2023
+Fig. 4.
+Equivalent electric circuit for a pressure reducing valve.
+where ˆht
+Vm is the pressure head gain and qt
+Vm the ﬂow of the
+valve m at time t. Equation (32) can be rewritten as
+ˆht
+Vm = 2kV qt
+Vm,bqt
+Vm −kV
+
+qt
+Vm,b
+2
+(34)
+The equivalent electric circuit for a pressure reducing valve
+is shown in Fig. 4, where HVm −H′
+Vm = ˆht
+Vm , RVm =
+2kV qt
+Vm,b and UVm = kV (qt
+Vm,b)2.
+The water ﬂow in the valve should satisfy the constraint
+qmin
+Vm ≤qt
+Vm ≤qmax
+Vm
+(35)
+3) Water Tank: The water tank can be modeled by the linear
+hydraulic constraints shown below
+qin
+Jm,t + qout
+Jm,t =
+
+ht+Δt
+Jm
+−ht
+Jm
+
+Atank
+Jm
+(36)
+WJm,t = (1 −μW ) WJm,t−Δt + qin
+Jm,t−Δt + qout
+Jm,t−Δt
+(37)
+W min
+Jm
+≤WJm,t ≤W max
+Jm
+(38)
+D. Discussions
+1) More Explanation of Electrical-Water Analogy Method:
+The proposed electrical-water analogy method consists of the
+following three main steps:
+a) Model the components of WDS as f (V ) = 0, where V =
+Vb + ΔV is a generic variable used to represent the variables
+of WDS components and f(·) the hydraulic equation of WDS
+components. For the water pipe, V represents Q, the water
+ﬂow in the pipe. For the ﬁxed-speed pump, V is the variable
+qt
+Pm. For the valve, V refers to qt
+Vm. For the variable-speed
+pump, V refers to qt
+Sm. V also can be the variable ωt
+Sm, the
+ratio of the actual pump speed to the nominal speed in the
+variable-speed pump. Vb is the baseline value of V , which
+can be calculated after solving the WDS optimization model
+without transfer delay consideration. ΔV is the difference
+between the optimized and baseline values of the variable.
+b) Rearrange and simplify the hydraulic model of WDS compo-
+nents using V = Vb + ΔV .
+c) Make an analogy between the electric circuit and the compo-
+nents of WDS. Develop an equivalent electric circuit model
+for the WDS components.
+Although the ﬁxed-speed pump and the pressure reducing
+valve are considered, the proposed electrical-water analogy
+method can be applied to other kinds of components in the WDS.
+For example, the hydraulic model of the variable-speed pump
+can be formulated as
+ˆht
+Sm = aSm
+
+qt
+Sm
+2 + bSmqt
+Smωt
+Sm + cSm
+
+ωt
+Sm
+2
+(39)
+The ratio of the actual pump speed to the nominal speed, ωt
+Sm,
+should obey
+0 ≤ωt
+Sm ≤ˆωSm
+(40)
+Fig. 5.
+Equivalent electric circuit for a variable-speed pump.
+Substituting qt
+Sm = qt
+Sm,b + Δqt
+Sm and ωt
+Sm = ωt
+Sm,b +
+Δωt
+Sm into (39) yields
+ˆht
+Sm =
+
+2aSmqt
+Sm,b + bSmωt
+Sm,b
+
+qt
+Sm
++
+
+bSmqt
+Sm,bωt
+Sm −bSmωt
+Sm,bqt
+Sm,b
++ 2cSmωt
+Sm,bωt
+Sm −aSm
+
+qt
+Sm,b
+2 −cSm
+
+ωt
+Sm,b
+2
+(41)
+The equivalent electric circuit for the variable-speed pump
+is shown in Fig. 5, where components of the circuit are re-
+lated to (41) via HSm −H′
+Sm = ˆht
+Sm , RSm = 2aSmqt
+Sm,b +
+bSmωt
+Sm,b, and USm = bSm qt
+Sm,bωt
+Sm −bSmωt
+Sm,bqt
+Sm,b +
+2cSmωt
+Sm,bωt
+Sm −aSm(qt
+Sm,b)2 −cSm(ωt
+Sm,b)2.
+2) Water Transfer Delay on Wind Power Accommodation:
+The electrical-water analogy model of the pipe in Fig. 2 contains
+inductors and capacitors, which are energy-storage elements
+from the perspective of circuit analysis. The amount of water
+storage in any segment of the pipe can be calculated by
+WSi,t1−t2
+x1−x2 =
+	 t2
+t1
+(Qi (x1, t) −Qi (x2, t)) dt
+(42)
+where WSi,t1−t2
+x1−x2 is the water stored between the positions x1
+and x2 of pipe i during the time periods from t1 to t2. With the
+transfer delays, the water pipe can be regarded as an auxiliary
+storage device for the WDS. It helps to deal with the variability
+of wind power. If power system faces a sudden increase of
+wind power, the pump in WDS will increase the electricity
+consumption and allow excess water be stored in the pipe to
+ensure the balance between supply and demand. If the wind
+power decreases suddenly, the electricity consumption of the
+pump in WDS will be lowered and the pipe will release the stored
+water to satisfy the water demand. Thus, power system can make
+full use of the energy ﬂexibility of WDS to accommodate the
+abundant wind power.
+Note that there may be concerns about the turbulent ﬂow and
+the water quality. These concerns could be addressed by many
+measures.Forexample,theturbulentﬂowconcerncanbetackled
+by providing limitations on the speed of ﬂow and hardening
+the water pipe [17], [32]. The water quality can be maintained
+by optimizing the chlorine dosage and the location of chlorine
+injection [33], [34].
+Future research will be conducted to investigate the impact of
+water transfer delay on the turbulent ﬂow and water quality for
+safe and economical operation of the WDS.
+III. MODELING OF TRANSFER DELAY IN WDS
+This section describes a graph-based searching method to
+model the water transmission process in the WDS network. The
+water in WDS is transported from the reservoir to the demand
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:30:34 UTC from IEEE Xplore.  Restrictions apply. 
+
+YAO et al.: MODELING OF WATER TRANSFER DELAY FOR OPTIMAL OPERATION
+337
+Fig. 6.
+Example of a one-way water transmission path. The water demand is
+at Node K.
+Fig. 7.
+Example of the water transmission network in WDS with cross nodes.
+nodes through various paths. Two situations are considered. One
+is that the water transmission does not go through the cross
+nodes, another does. Details are given below.
+A. Water Transmission in WDS Without Cross Nodes
+The simplest path from the reservoir to the demand node is
+shown in Fig. 6, where the water is transported through a one-
+way path.
+Suppose that the control variables such as the water ﬂow in
+the pump and that of the valve, the outlet pressures of the pump
+and valve, the outlet ﬂow of the tank and the reservoir, and the
+head pressure of the tank, are known. The head pressure of the
+reservoirisaﬁxedvaluedeterminedbythegeographicallocation
+ofthereservoir.Thewaterﬂowsandpressuresalongtheone-way
+path can be calculated by (19). The following constraint should
+be obeyed in the water transmission process
+Q′
+K = wK
+(43)
+wK denotes the water demand at node K and Q′
+K refers to the
+calculated outlet ﬂow of the pipe whose end node is node K.
+Constraint (43) states that the outlet ﬂow of the pipe should be
+the same as the water demand at node K.
+B. Water Transmission in WDS With Cross Nodes
+In the real-world applications, the path from the reservoir to
+the demand node is not necessarily in the one-way form as shown
+in Fig. 6. There are many cross nodes at which multiple pipes
+join. Fig. 7 shows a water transmission network in WDS with
+cross nodes. There are two paths transporting water from the
+reservoir to the demand Node 4.
+The following four steps are taken to deal with the water
+transmission with cross nodes.
+1) Search the Directed Paths: There are various directed
+paths transporting water from the elements in F, the set of
+reservoirs in the WDS, to the elements in L, the set of demand
+nodes. The paths can be found using the graph theory-based
+algorithms [35].
+2) Find the Cross Node: To ﬁnd all the cross nodes in a WDS
+network, the node-branch incidence matrix is used
+l1
+l2
+· · ·
+lk · · ·
+lM
+n1
+n2
+...
+nh
+...
+nN
+⎡
+⎢⎢⎢⎢⎢⎢⎢⎢⎣
+a11
+a12 · · · a1,k · · · a1,M
+a21
+a22 · · · a2,k · · · a2,M
+...
+...
+...
+...
+...
+...
+ah,1 ah,2 · · · ah,k · · · ah,M
+...
+...
+...
+...
+...
+...
+aN,1 aN,2 · · · aN,k · · · aN,M
+⎤
+⎥⎥⎥⎥⎥⎥⎥⎥⎦
+(44)
+The matrix has a size of N × M, where N is the number of
+nodes and M the number of branches in the WDS. The element
+ah,k denotes the connection relationship between the node nh
+and the branch lk. The branch of a WDS denotes the pipe, pump
+or valve connecting two adjacent nodes. The direction of ﬂow
+in the pipe and the on/off status of the pump and valve are
+determined before the cooperative optimization of the power
+system and WDS with transfer delay. The reason is presented
+in Section IV. The water ﬂow in the branch with a pump or
+valve is in a ﬁxed direction when the pump and valve are turned
+on. When they are off, there is no ﬂow in the branch. Thus,
+the values of elements in the node-branch incidence matrix are
+ﬁxed. If the ﬂow in lk starts from nh, ah,k = 1; if the ﬂow ends
+at nh, ah,k = −1; if nh is not an end of lk or there is no ﬂow in
+lk, ah,k = 0. The node h is a cross node if M
+k = 1 |ah,k| > 2.
+All the cross nodes in the WDS network can be found in this
+way. They are grouped together in the set H.
+3) Group the Cross Node: The cross nodes are sorted into
+several groups to determine the calculation sequence of the ﬂows
+and pressures along the WDS network. Detailed process is given
+below.
+The directed paths from the elements in F to the elements in
+L can be classiﬁed into two sets. The set O contains the directed
+paths that go through the cross nodes. The set R contains the
+directed paths that do not go through the cross nodes. Suppose
+that the cross node ni is on the paths p1, p2, · · · , pJ of set O. The
+cross nodes that path pj goes through are arranged in sequence.
+Let ni be the rth
+j node and assigned to the max{r1, r2, · · · , rJ}
+group of the cross nodes. For example, in Fig. 7, there are two
+directed paths:
+p1:
+Reservoir →Node 1 →Tank →Valve →Node 3 →
+Pump →Node 2 →Node 4;
+p2:
+Reservoir →Node 1 →Node 2 →Node 4.
+Nodes 1 and 2 are the cross nodes that p1 goes through. Path
+p2 also goes through Node 1 and Node 2. The reservoir is an
+element in F and the demand Node 4 is an element in L. Node
+1 ranks the ﬁrst in both paths, i.e., r1 = 1 and r2 = 1. Thus,
+it is assigned to the group max {11} = 1. Similarly, Node 2 is
+assigned to group max {22} = 2.
+The sequence of calculation is to calculate the ﬂows and
+pressures from the reservoir to Node 1 in the ﬁrst group, then
+those from the demand Node 4 to Node 2 in the second group.
+This is critical in the modeling of water transmission in WDS
+with cross nodes. Otherwise, the amount of ﬂow in pipes l2 and
+l3 may not be able to obtain.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:30:34 UTC from IEEE Xplore.  Restrictions apply. 
+
+338
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 1, JANUARY 2023
+This situation can be explained as follows. The outlet ﬂow
+of pipe l1 and the head pressure of Node 1 can be obtained
+by (19), provided that the outlet ﬂow and head pressure of the
+reservoir are known. It can be seen from Fig. 7 that there are
+two pipes, l2 and l3, drawing water from Node 1. The one-way
+method presented in Section A cannot be applied to determine
+the amount of ﬂows in pipes l2 and l3. Note that the ﬂows and
+pressures along the pipe can only be calculated when two of the
+four boundary conditions (the head pressures at both ends of the
+pipe, the inlet ﬂow and the outlet ﬂow) are given. For the cross
+Node 1, since only the calculated head pressure is known, the
+amount of ﬂows in l2 and l3 cannot be calculated by (19).
+With the cross node grouping described above, the head
+pressure of Node 2 can be calculated given the water demand
+and head pressure of Node 4. Then the water ﬂow along l2 can
+be obtained with the calculated head pressures of Nodes 1 and
+2 by (19). Subtracting the inlet ﬂow of l2 from the outlet ﬂow
+of l1 yields the inlet ﬂow of l3. Thus, by calculating the head
+pressures of the cross nodes ﬁrst, the water ﬂows and pressures
+in the whole WDS can be obtained.
+4) Calculation of Flow and Pressure in WDS: Calculation of
+the ﬂows and pressures in the WDS follows the steps below:
+a) Search all the directed paths from the elements in F/L
+to each of the cross nodes in the ﬁrst group/last group,
+and calculate the corresponding ﬂows and head pressures
+along the paths using (19).
+b) Add the elements in the ﬁrst group/last group of the cross
+nodes to the set F/L. These nodes are then deleted from
+the cross node set H.
+c) Calculate the ﬂows and head pressures along the paths
+using (19) for directed paths in the set R. Based on the
+updated sets F and L in step b), update R by searching
+the directed paths from F to L that do not go through the
+cross nodes.
+d) Go to step a) and continues until there are no more groups.
+The following constraints need to be met:
+wC = Qin,C −Qout,C
+(45)
+HC,1 = HC,2 = · · · = HC,n
+(46)
+wC denotes the water demand at the cross node (equals 0 if no
+water demand). Qin,C and Qout,C denote the total inlet ﬂow
+and outlet ﬂow of the cross node, respectively. Constraint (45)
+guarantees the mass balance at the cross node, while constraint
+(46) ensures that the calculated head pressures are the same at
+the cross node.
+C. Constraints of WDS
+Control variables of the WDS model include the water ﬂows
+in the pump and in the valve, the outlet pressures of the pump
+and valve, the outlet ﬂows of the tank and the reservoir, the
+head pressure of the tank, and the head pressures of the demand
+nodes. With the proposed graph-based searching method, the
+ﬂows and pressures along the WDS are expressed by these
+variables considering water transfer delays. Delay constraints
+provide limitations on the values of the calculated water ﬂows
+and pressures along the transfer delayed WDS. Delay constraints
+of WDS include the constraints of WDS components and the
+constraints of water transmission process. The constraints of
+WDS components are expressed in (22) - (25), (27) - (31), and
+(33) - (38). Constraints of water transmission process include
+constraints (43), (45), and (46).
+IV. COOPERATIVE OPERATION MODEL
+Mathematical formulations of the cooperative operation
+model of the integrated electrical-water system are described
+below. The ultimate goal of the model is to minimize the total
+operation costs of the integrated system.
+A. Cooperative Operation Model
+The objective function of the cooperative operation model
+with transfer delay consideration is
+CS = min
+⎛
+⎝
+Ng
+
+i = 1
+T
+
+t = 1
+⎛
+⎝ciIi,t +
+L
+
+l = 1
+Ki,lP g
+i,t,l
++cu
+i Ui,t + cd
+i Di,t
+⎞
+⎠
++
+NW
+
+w = 1
+T
+
+t = 1
+λP wc
+w,t +
+NW DS
+
+h = 1
+T
+
+t = 1
+λpricetP W DS
+h,t
+
+(47)
+The production cost of the conventional unit can be expressed,
+using the piecewise linearization approximation [36], as a linear
+function
+Ng
+
+i = 1
+T
+
+t = 1
+L
+
+l = 1
+Ki,lP g
+i,t,l.
+Constraints of the cooperative operation model consists of
+the constraints of WDS and the power system. Constraints of
+WDS have been described in Section III-C. The constraints of
+the power system at any time instant t are listed below.
+Ii,t −Ii,t−1 = Ui,t −Di,t ∀i ∈ΩT
+(48)
+Ui,t + Di,t ≤1 ∀i ∈ΩT
+(49)
+Ui,t +
+T Ui−1
+
+l = 1
+Di,t+l ≤1 ∀i ∈ΩT
+(50)
+Di,t +
+T Di−1
+
+l = 1
+Ui,t+l ≤1 ∀i ∈ΩT
+(51)
+
+L
+
+l = 1
+P g
+i,t,l −
+L
+
+l = 1
+P g
+i,t−1,l
+ ≤RampiIi,t−1+
+P gmin
+i
+(Ii,t −Ii,t−1) + P gmax
+i
+(1 −Ii,t) ∀i ∈ΩT
+(52)
+P gmin
+i
+Ii,t ≤
+L
+
+l = 1
+P g
+i,t,l ≤P gmax
+i
+Ii,t ∀i ∈ΩT
+(53)
+P g
+i,t,l ≥0 ∀i ∈ΩT , l ∈ΩL
+(54)
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:30:34 UTC from IEEE Xplore.  Restrictions apply. 
+
+YAO et al.: MODELING OF WATER TRANSFER DELAY FOR OPTIMAL OPERATION
+339
+
+i∈ΩT
+n
+L
+
+l = 1
+P g
+i,t,l +
+
+w∈ΩW
+n
+
+P pre
+w,t −P wc
+w,t
+
+= dn,t
++
+
+h∈ΩW DS
+n
+P W DS
+h,t
++
+
+m∈ΛE
+n
+Bn,m (θn,t −θm,t) ∀n ∈ΛE
+(55)
+0 ≤P wc
+w,t ≤P pre
+w,t ∀w ∈ΩW
+(56)
+−PFn,m ≤Bn,m (θn,t −θm,t) ≤PFn,m ∀(n, m) ∈ΨE
+(57)
+θref,t = 0
+(58)
+Constraints (48) and (49) restrict the status of the generating
+unit. Operation limitations of the unit are described by the
+constraints from (50) to (54). Constraint (55) is the nodal ﬂow
+equation and constraint (56) gives the range of the wind power
+curtailment. Constraint (57) shows the direct current (DC) power
+ﬂow limit of the line. Constraint (58) enforces the phase angle
+of the reference bus to zero.
+The cooperative operation model considering water transfer
+delays is formulated as (59). It is a mixed-integer programming
+(MIP) problem and can be solved efﬁciently by commercially
+available solvers such as Gurobi.
+⎧
+⎨
+⎩
+min (46)
+s.t. (22) −(25) , (27) −(31) , (33) −(38) , (43)
+(45) −(46) , (48) −(58) .
+(59)
+B. Two-Step Optimization Process
+The cooperative optimization problem described above can
+be solved by a two-step process. The ﬁrst step solves the opti-
+mization model with no transfer delays,
+⎧
+⎪
+⎪
+⎨
+⎪
+⎪
+⎩
+min (46)
+s.t. (5) , (20) −(21) , (26) −(28) , (30) −(33)
+(35) −(38) , (48) −(58)
+wh = 
+n:(n,h)∈Δ Qnh −
+m:(h,m)∈Δ Qhm ∀h ∈ϖ,
+(60)
+where Qnh and Qhm denote the ﬂows of pipes n-h and h-m,
+respectively. The value of sign(Q) and the on/off status of the
+pump and valve are obtained. Besides, Qb, qt
+Pm,b, and qt
+Vm,b are
+determined as the values of variables Q, qt
+Pm and qt
+Vm.
+In the second step, these ﬁxed values are used as input pa-
+rameters to calculate the water ﬂows and pressures along the
+transfer delayed WDS with the proposed graph-based searching
+method. The calculated water ﬂows and pressures are then used
+to solve the cooperative operation model (59) of power system
+and WDS to obtain the operational strategy that incorporates
+water transfer delays.
+C. Fixed Values of Binary Variables
+The values of sign(Q) and the on/off status of the pump
+and valve serve as input parameters in the cooperative operation
+model (59) of power system and WDS. sign(Q) denotes the
+direction of water ﬂow in the pipe. Both sign(Q) and the on/off
+status of the pump and valve are generally represented by binary
+TABLE II
+EQUIVALENT ELECTRICAL PARAMETERS OF THE PIPES IN WDS
+variables, which brings about hefty computational expense in the
+WDS optimization problem [18]. It may take hours to solve the
+optimization problem for a large-size WDS [27].
+Since the output of wind power varies rapidly, the optimiza-
+tion model of WDS should be solved in minutes to cope with
+the wind power uncertainties. The long calculation time caused
+by the binary variables hinders the WDS from being fully used
+to optimize the power system operations with high penetration
+of wind power.
+Thus, in this study, values of sign(Q) and the on/off status of
+the pump and valve are calculated in advance. Then they are used
+as input parameters in the optimization problem. This relieves
+the concern of the computation time. Note that the ﬁxed values
+of binary variables may affect the optimality of the obtained
+solution. In the future, research will be conducted to improve
+the approach for determining the values of these binary variables
+and make the obtained solution as close to the optimal solution
+as possible.
+V. CASE STUDY
+The proposed electrical-water analogy model is evaluated
+to demonstrate that more wind power can be accommodated
+into the power system and the operation cost of the integrated
+electrical-water system can be reduced considering the water
+transfer delays in WDS. Experiments were performed on a
+small-scale illustrative test system and a large-scale test system.
+The time horizon is 24 hours and the study resolution is 15
+minutes. This corresponds to 96 time steps. The tests were
+carried out by a PC with Intel Core i7-9700 and Gurobi 9.0.1 on
+Python 3.7.
+A. Illustrative Test System
+First, a relatively small test system is used to illustrate the
+performance of the proposed electrical-water analogy model in
+detail. It contains a 6-bus power system, shown in Fig. 1, and
+the WDS with 4 pipes, shown in Fig. 7. There are 3 load buses
+in the 6-bus power system and each load bus is connected with
+an identical WDS. Data of the 6-bus power system can be found
+in [27].
+The electrical-water analogy parameters of the pipes in the
+WDS are given in Table II. The required minimum head pressure
+along the pipe is set as 20 m. The diameter, length and volume
+of each pipe are listed in Table III. The volume of the pipe
+is calculated by π × ( Diameter
+2
+)2 × length. Parameters of the
+pump and the valve are given in Table IV. The wind power output
+and water demand curves are shown in Fig. 8. Four scenarios
+are considered. Scenario a reﬂects the daily wind power and
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:30:34 UTC from IEEE Xplore.  Restrictions apply. 
+
+340
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 1, JANUARY 2023
+TABLE III
+DIMENSION PARAMETERS OF THE PIPES IN WDS
+TABLE IV
+PARAMETER VALUES IN HYDRAULIC EQUATIONS OF PUMP AND VALVE
+Fig. 8.
+Daily wind power output and water demand for various scenarios. Data
+are collected every 15 minutes for a 24-hour period.
+Fig. 9.
+Electricity price.
+water demand for the months from March to May, Scenario b
+from June to August, Scenario c from September to November,
+and Scenario d from December to February. The penalty for
+wind power curtailment is set as 1000 $/MWh. Fig. 9 shows
+the electricity price used in [27]. To encourage the use of wind
+power, the electricity price for WDS is set to be 0.5 times of
+the original price, if WDS agrees to cooperate with the power
+system.
+The water transfer delay is deﬁned as the amount of time to
+transport water from the source to the user. The delay is generally
+affected by two factors. One is the value of inductance and
+capacitanceinTableII. Another factor is thesizeof WDS. Larger
+inductance and capacitance imply that more time is needed to
+transport water from the beginning to the end of a pipe. On the
+other hand, a large-size WDS means the distance between the
+water source and the user expands, which increases the transfer
+delay.
+TABLE V
+WIND POWER CURTAILMENT IN DIFFERENT SITUATIONS FOR THE
+ILLUSTRATIVE TEST SYSTEM
+1) Wind Power Accommodation: Three situations are con-
+sidered to verify the beneﬁts of considering the transfer delay
+for wind power accommodation.
+Situation 1: Consider the power system alone.
+Situation 2: Consider power system and WDS without the trans-
+fer delays of water.
+Situation 3: Consider power system and WDS with the transfer
+delays of water.
+Note that the cooperative operation model of Situation 2 has
+been considered in [12], [18] and [27]. In each situation, four
+daily scenarios of the wind power output and water demand are
+considered for seasonal impact.
+The amount of wind power curtailment for each scenario
+under three situations is shown in Table V. It is observed from
+Table V that the amount of wind power curtailment is reduced
+signiﬁcantly after the cooperative operation between power
+system and WDS. The wind power curtailments of Scenario
+c in Situations 2 and 3 are zero, because the wind power output
+remains at a low level, as evidenced in Fig. 8(a). Thus, wind
+power variations can be compensated by regulating the electric-
+ity consumption of WDS. It also can be seen from Table V that
+the amounts of wind power curtailment in Scenarios a, b and
+d under Situation 3 are reduced by about 50% compared with
+that in Situation 2. This shows the merits of considering water
+transfer delays for wind power accommodation. Since Situation
+2 does not consider the water transfer delay, its water pipe does
+not offer the storage capability, which leads to more curtailment.
+Details are described below.
+The transfer delay enables the water pipe to act as an auxiliary
+storage device for the WDS. Thus, in Situation 3, WDS is able
+to use both the tank and pipe for water storage and release. In
+Situation 2, WDS only can use the tank for water storage and
+release. The storage capability of pipe is elaborated by Fig. 10,
+which shows the inlet and outlet ﬂows of pipe l6. It can be seen
+from Fig. 10 that, when the inlet ﬂow increases, it takes about
+30 minutes for the outlet ﬂow to increase. Similar delay occurs
+when the inlet ﬂow decreases. Thus, the water transfer delay
+is 30 minutes in the pipe. It also is observed from Fig. 10 that
+the pipe stores the excess water when the inlet ﬂow outweighs
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:30:34 UTC from IEEE Xplore.  Restrictions apply. 
+
+YAO et al.: MODELING OF WATER TRANSFER DELAY FOR OPTIMAL OPERATION
+341
+Fig. 10.
+Inlet and outlet ﬂows of pipe l6.
+TABLE VI
+STORAGE CAPACITY OF WATER PIPE AND TANK IN THE ILLUSTRATIVE TEST
+SYSTEM
+the outlet ﬂow. The stored water is released when the inlet ﬂow
+is less. This operation helps the balance of water supply and
+demand.
+Next, we investigate the storage capacity of the pipe and the
+tank. Table VI shows the capacity of the pipe and the water tank
+at various scenarios. The capacity here refers to the total amount
+of daily water storage, which varies at different scenarios to
+accommodate the wind power with different output proﬁles. The
+maximum threshold of the water storage in the tank is 5000 m3
+satisfying the technical limitations. The dimensions of pipes are
+presented in Table III. When the transfer delay is not considered,
+the pipe is not for storage. It is observed from Table VI that,
+considering the transfer delay, the pipe storage capacity can be
+up to 95% to 115% of the tank capacity. This brings about the
+total amount of stored water to be about 1.51 to 1.73 times that
+of using only the tank. As a result, the consideration of transfer
+delay improves the water storage capability of the WDS. This
+allows more water to be pumped into the WDS during the period
+of high wind power output.
+The storage capability of pipe allows the WDS to shift the
+electricity consumption proﬁle more ﬂexibly in Situation 3, as
+shown in Fig. 11. With the transfer delay, WDS can increase
+the electricity consumption to store the excess water in the pipes
+and tanks when the wind power resource is abundant, and release
+the stored water for water balance when the wind power output
+is low. This adds more ﬂexibility in the cooperative operation
+of the power system and WDS and leads to less wind power
+curtailment than that of Situation 2.
+Fig. 11.
+Electricity consumption of WDS not considering the transfer delay
+(Situation 2) and considering the delay (Situation 3).
+TABLE VII
+IMPACT OF THE CROSS-SECTIONAL AREA OF THE PIPE ON WIND POWER
+ACCOMMODATION
+Water transfer delay is also affected by the cross-sectional
+area of the pipe. Larger cross-sectional area usually allows more
+water to ﬂow through, and in turn, less transfer delay. Table VII
+shows the impact of the size of pipe cross-sectional area on the
+transfer delay and wind power curtailment. Five cross-sectional
+areas are considered. It can be seen from Table VII that larger
+cross section area does lower the transfer delay. Smaller transfer
+delay implies higher wind power curtailment, which may bring
+about extra penalty cost for power system.
+Smaller cross section areas lead to higher water losses due
+to the increased water ﬂow. Higher water losses mean that the
+water pumps need to consume more electricity to increase the
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:30:34 UTC from IEEE Xplore.  Restrictions apply. 
+
+342
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 1, JANUARY 2023
+TABLE VIII
+IMPACT OF THE CROSS-SECTIONAL AREA OF THE PIPE ON ELECTRICITY BILL
+OF WDS AND PENALTY FOR WIND POWER CURTAILMENT
+TABLE IX
+OPERATION COSTS OF THE ILLUSTRATIVE TEST SYSTEM
+pressure difference. Thus, the electricity bill of WDS increases.
+Table VIII presents the impact of cross-sectional area on the
+electricity bill of WDS and the penalty for wind power curtail-
+ment. The second and the third columns indicate the average
+value of four scenarios. It is observed from Table VIII that the
+electricity bill of WDS is lowered as A increases, whereas the
+penalty for wind power curtailment increases as the size of A
+increases. It can be seen from Table VIII that the smallest total
+cost occurs at the cross-sectional area of 314 cm2. Thus, this
+study suggests that a pipe with cross sectional size of 314 cm2
+provides a good tradeoff between water loss and wind power
+curtailment.
+2) Operation Cost: Two operation modes of the power sys-
+tem and WDS are considered. One is the independent operation,
+another is the coordinated operation.
+Table IX compares the operation costs of these two operations
+in the illustrative test system. The second column indicates
+whether the water transfer delay is considered in the WDS
+model. It can be seen from Table IX that the operation cost of
+each energy system in each scenario has decreased signiﬁcantly
+after the coordination, by about 11% to 82%. The substantial
+cost reduction would encourage the energy systems to cooperate
+with each other instead of working independently. Table IX also
+reveals that, after the coordination, the operation cost of WDS
+considering transfer delay is larger than that not considering the
+transfer delay. This is because the transfer delay enables WDS
+to consume more electricity for wind power accommodation
+TABLE X
+TOTAL OPERATION COST OF INTEGRATED ELECTRICAL-WATER SYSTEM AFTER
+COORDINATION IN THE ILLUSTRATIVE TEST SYSTEM
+TABLE XI
+OPTIMIZATION RESULTS OF THE PROPOSED ELECTRICAL-WATER ANALOGY
+METHOD AND THE FD METHOD IN THE ILLUSTRATIVE TEST SYSTEM
+and the electricity bill of WDS increases. Nevertheless, total
+operation cost of the integrated electrical-water system has been
+reduced signiﬁcantly due to less wind power curtailment, as
+evidenced by Table X. This validates the economic merit of
+incorporating the water transfer delay into the optimization
+model. In the future, the optimal pricing scheme for WDS will
+be investigated to reduce the electricity bill under the transfer
+delay situation.
+3) Performance of the Electrical-Water Analogy Method:
+Next, we show that the proposed graph-based electrical-water
+analogy method signiﬁcantly lowers the computational cost,
+whilemaintainsalmostthesameoperationcost,incomparisonto
+the FD method. The proposed method transforms the PDEs into
+the algebraic equations in the Laplace domain, which facilitates
+the computations in obtaining the results. Table XI displays the
+computational time and the operation cost at various scenarios
+for the illustrative test system. Two cases are considered for the
+FD method in Table XI. The 1st case sets the time at 1 minute and
+the space steps at 100 meters. The 2nd case is set at 30 seconds
+and 50 meters. It is observed from Table XI that the proposed
+method returns a total cost lower than the FD method in the 1st
+case. The accuracy of the FD method depends on the number
+of segments of the time and space. More segments lead to more
+accurate results. The total cost calculated by FD is the same
+as that of the proposed method when the time and space steps
+follow the settings of the 2nd case. However, the computation
+time of the FD method increases dramatically as the number of
+segments increases. In comparison, computational cost of the
+proposed method is signiﬁcantly lower.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:30:34 UTC from IEEE Xplore.  Restrictions apply. 
+
+YAO et al.: MODELING OF WATER TRANSFER DELAY FOR OPTIMAL OPERATION
+343
+Fig. 12.
+Head pressure at Node 4, the end of WDS.
+Fig. 13.
+Impact of the number of WDS on the computation time of the
+illustrative system.
+The head pressure of Node 4, which is at the end of the WDS,
+is the lowest. Fig. 12 shows the variations of the calculated
+head pressure at Node 4, the end node of WDS. The ﬁndings
+demonstrate that the proposed method can satisfy the minimum
+pressure requirement of 20 m.
+The scalability of the proposed electrical-water analogy
+method is evaluated by increasing the number of WDS con-
+nected to the power system. The number of the test WDS is set to
+vary from 1 to 6. Fig. 13 shows the impact of the number of WDS
+on the consumed time. The computation time is averaged out of
+four scenarios. It can be seen from Fig. 13 that as the number
+of WDS increases, the average consumed time to solve the
+cooperative optimization problem grows linearly. This indicates
+the linear scalability of the proposed method.
+B. Large-scale Test System
+This section evaluates the performance of the proposed
+electrical-water analogy method and demonstrates the beneﬁts
+of water transfer delay consideration on a large-scale system.
+The test system consists of the IEEE-RTS 24 power system and
+the WDS with 40 pipes [18]. Each load bus in the power system
+is connected with a WDS. The transfer delay is around 200
+minutes.
+1) Wind Power Accommodation: Evaluation of wind power
+accommodation was carried out using the three situations con-
+sidered in the illustrative test system. Table XII shows the wind
+power curtailments at different scenarios. Situation 3 considers
+TABLE XII
+AMOUNT OF WIND POWER CURTAILMENT IN DIFFERENT SITUATIONS IN THE
+LARGE-SCALE TEST SYSTEM
+TABLE XIII
+STORAGE CAPACITY OF WATER PIPE AND TANK IN THE LARGE-SCALE TEST
+SYSTEM
+the water transfer delay and cooperative operation, while Situ-
+ation 2 considers only the cooperative operation. It can be seen
+from Table XII that, with the cooperative operation of the power
+system and WDS, the wind power curtailment can be reduced
+by more than 60%. The consideration of water transfer delay
+enables the reduction of another 20% to 30% of wind power
+curtailment.
+The storage capacity of the pipe and the tank in the large-scale
+systemisinvestigatedinthefollowing.TableXIIIshowsthetotal
+amounts of daily stored water in the pipes and in the water tank.
+The maximum water storage in the tank is 15000 m3. The water
+volume in each pipe should be less than 500 m3, according to
+the physical limitations. Since the transfer delay prevents the
+water from being transported into the tank for storage instantly,
+considerable amounts of the water are stored in the pipes during
+the transportation process. This makes the storage capacity of
+the pipe be up to 82% to 112% of the tank capacity with the
+transfer delay consideration. And the total amounts of stored
+water in the pipes and tank are about 1.59 to 1.82 times of that
+not considering the delay.
+2) Operation Cost: Table XIV and Table XV compare the
+operation cost of energy systems between the independent oper-
+ation mode and the coordinated operation mode. It can be seen
+that the operation costs of both energy systems have decreased
+by about 10% to 82% after the coordination, which validates
+the beneﬁt of system coordination in reducing operation cost.
+In addition, the total cost of the integrated system is reduced
+greatly considering the water transfer delay.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:30:34 UTC from IEEE Xplore.  Restrictions apply. 
+
+344
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 1, JANUARY 2023
+TABLE XIV
+OPERATION COSTS OF THE LARGE-SCALE TEST SYSTEM
+TABLE XV
+TOTAL OPERATION COST OF INTEGRATED ELECTRICAL-WATER SYSTEM AFTER
+COORDINATION IN THE LARGE-SCALE TEST SYSTEM
+TABLE XVI
+OPTIMIZATION RESULTS OF THE PROPOSED ELECTRICAL-WATER ANALOGY
+METHOD AND THE FD METHOD IN THE LARGE-SCALE TEST SYSTEM
+3) Performance of the Electrical-Water Analogy Method:
+Performance comparison between the proposed method and the
+FD method was conducted. The time and space steps were set at
+1 minute and 100 meters, respectively. Results on the operation
+cost and the computation time at various scenarios are shown in
+Table XVI. Moreover, the scalability of the proposed algorithm
+is validated by varying the number of WDS from 15 to 22, as
+shown in Fig. 14. From Table XVI and Fig. 14, it is concluded
+that the proposed method not only produces almost the same
+operation costs as the FD method, but also signiﬁcantly reduces
+the computation time. It takes roughly 44 seconds on average for
+the proposed method to obtain the result, whereas the FD method
+takes 1272 seconds. Besides, the scalability of the proposed
+algorithm grows linearly. The longest optimization time occurs
+when the number of WDS is 22, whereas it only takes 88 seconds
+Fig. 14.
+Impact of the number of WDS on the computation time of the large-
+scale system.
+to obtain the optimal solution which is short enough for practical
+use.
+VI. CONCLUSION
+This paper has presented a WDS optimization model to im-
+prove the operation of integrated electrical-water system consid-
+ering the water transfer delay. The water transmission process in
+the WDS is modeled by a graph-based searching scheme. The
+proposed method improves the performance of WDS in power
+system by further reducing the wind power curtailment and the
+operation cost. Moreover, it efﬁciently solves the PDEs of WDS
+to lower the computation cost dramatically.
+Results from case studies have demonstrated that the coopera-
+tive operation of power system and WDS considering the water
+transfer delays further improves the reduction of wind power
+curtailment. Operation costs of the two energy systems have
+been reduced considerably after coordinating with each other.
+Moreover, the proposed method signiﬁcantly lowers the compu-
+tational cost compared with the FD method and the scalability
+of the proposed method is linear.
+In addition to promoting the wind power accommodation and
+reducing the operation cost, the proposed model can be extended
+to other electrical-water systems, such as the energy ﬂexibility
+analysis [12], the bidding strategy in the electricity market [14],
+and the tank size optimization [18]. Future work will investigate
+the impact of transfer delay on the above applications.
+VI. APPENDIX
+Theorem 1 conﬁrms that the constraints from (20) to (21)
+can be simpliﬁed as the constraints from (22) to (25) without
+affecting the tightness. Prior to the detailed proof of Theorem 1,
+Lemma 1 and Lemma 2 are needed.
+Lemma 1: The inverse Laplace transform of e−γx and eγx
+are
+⎧
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎨
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎩
+L−1 (e−γx) = e−
+Rb
+2Lb t δ
+
+t −√LbCbx
+
++e−
+Rb
+2Lb t
+Rb
+2Lb
+√LbCbx
+√
+t2−LbCbx2 I1
+
+Rb
+2Lb
+√t2 −LbCbx2
+
+u
+
+t−√LbCbx
+
+L−1 (eγx)= −Rbe−Rbt/2Lb
+Lb
+√
+x2LbCb−t2 x√LbCbT1
+
+Rb
+2Lb
+√
+x2LbCb −t2
+
+
+u (t) −u
+
+t −√LbCbx
+
+,
+where δ(t) denotes the unit impulse function, I1 is the modiﬁed
+Bessel function of the ﬁrst kind, u(t) the unit step function, and
+J1 the Bessel function of the ﬁrst kind.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:30:34 UTC from IEEE Xplore.  Restrictions apply. 
+
+YAO et al.: MODELING OF WATER TRANSFER DELAY FOR OPTIMAL OPERATION
+345
+Proof of Lemma 1: Deﬁne G1(s) and G2(s) as
+
+G1 (s) = e−x√LbCb
+√
+s2−(Rb)2/4(Lb)2
+G2 (s) = ex√LbCb
+√
+s2−(Rb)2/4(Lb)2 .
+(A1)
+With the shifting property of Laplace transform, L−1(e−γx)
+and L−1(eγx) can be transformed into
+
+L−1 (e−γx) = e−Rbt/2Lb L−1 (G1 (s))
+L−1 (eγx) = e−Rbt/2Lb L−1 (G2 (s)) .
+(A2)
+According to [37], the inverse Laplace transform of G1(s) is
+given as
+L−1 (G1 (s)) = δ
+
+t −√LbCbx
+
++
+Rb
+√
+LbCbx
+2Lb
+√
+t2−LbCbx2
+I1
+
+Rb
+√t2 −LbCbx2/2Lb
+
+u
+
+t −√LbCbx
+
+.
+(A3)
+For the inverse Laplace transform of G2(s), the following
+contour integral is required:
+
+C
+eζ
+√
+z2−κ2etzdz
+(A4)
+where ζ = x√LbCb and κ = Rb /(2Lb).
+By Cauchy’s theorem, the contour integral of (A4) equals
+zero. The contour integral (A4) can be expressed as.
+	 c+i
+√
+R2−c2
+c−i
+√
+R2−c2 eζ
+√
+s2−κ2etsds + iR
+	 π
+π/2−arcsin( c
+R)
+eiθeζ√
+(Reiθ)2−κ2eRteiθdθ −
+	 κ
+R
+eζ
+√
+x2−κ2e−txdx
+−
+	 −κ
+κ
+e−iζ
+√
+κ2−x2e−txdx
+−
+	 κ
+−κ
+eiζ
+√
+κ2−x2e−txdx −
+	 R
+κ
+eζ
+√
+x2−a2e−txdx + iR
+	 3π/2+arcsin( c
+R)
+π
+eiθeζ√
+(Reiθ)2−κ2eRteiθdθ
+(A5)
+where R is the radius of the contour and the third and sixth
+integrals cancel. Further, the second and seventh integrals can
+be combined as:
+iR
+	 3π/2+arcsin( c
+R)
+π/2−arcsin( c
+R)
+eiθe
+ζReiθ
+
+1−
+κ2
+(Reiθ)2 eRteiθ
+dθ = lim
+R→∞iR
+	 3π/2
+π/2
+eiθeR(cos θ+i sin θ)(ζ+t)dθ
+= lim
+R→∞iR
+	 3π/2
+π/2
+eiθeR(ζ+t) cos θ (cos (R (ζ + t) sin θ)
++i sin (R (ζ + t) sin θ)) dθ = 0
+(A6)
+As R →∞, the inverse Laplace transform of G2(s) is trans-
+formed into (A7) by the Cauchy’s theorem:
+1
+i2π
+	 c+i
+√
+R2−c2
+c−i
+√
+R2−c2 eζ
+√
+s2−κ2etsds =
+1
+i2π
+	 κ
+−κ
+
+eiζ
+√
+κ2−x2
+−e−iζ
+√
+κ2−x2
+e−txdx
+
+= 1
+π
+	 κ
+−κ
+sin ζ
+
+κ2 −x2e−txdx.
+(A7)
+Substituting x = κ cos θ
+2 into (A7), we have
+1
+π
+	 κ
+−κ
+sin ζ
+
+κ2 −x2e−txdx
+= −κ
+2π
+	 π
+−π
+sin θ
+2 sin
+
+ζκ sin θ
+2
+
+e−tκ cos θ
+2 dθ
+= −κ
+2π Im
+	 π
+−π
+sin θ
+2eiζκ sin θ
+2 e−tκ cos θ
+2 dθ
+(A8)
+The integral on the right-hand side of (A8) can be arranged
+as
+	 π
+−π
+sin θ
+2eiζκ sin θ
+2 e−tκ cos θ
+2 dθ
+= −i2
+
+|z|= 1
+z −z−1
+i2
+e
+ζκ(z−z−1)
+2
+e−
+tκ(z+z−1)
+2
+dz
+z
+= −
+
+|z|= 1
+
+z −z−1
+e
+ζκ−tκ
+2
+z−ζκ+tκ
+2
+z dz
+z
+(A9)
+The contour integral is equal to i2π times the sum of the
+residues of the poles inside of the unit circle. In this case, the
+integrand has an essential singularity at z = 0. To compute
+the residue at z = 0, the exponential is expanded in a Laurent
+series and only the coefﬁcient of z−1 in the expansion needs to
+be determined. In short, we wish to compute the coefﬁcient of
+z0 in the Laurent expansion of
+
+z −z−1
+eaz−bz−1
+(A10)
+where a = ζκ−tκ
+2
+and b = ζκ+tκ
+2
+. This expansion is
+
+z −z−1
+eaz−bz−1 =
+
+z −z−1
+∞
+
+k = 0
+1
+k!
+
+az −bz−1k
+=
+
+z −z−1
+∞
+
+k = 0
+1
+k!
+k
+
+m = 0
+ k
+m
+
+(az)m
+−bz−1k−m
+=
+
+z−z−1
+∞
+
+k = 0
+bk
+k
+
+m = 0
+(−1)k−m
+1
+m! (k−m)!
+a
+b
+m
+z2m−k
+(A11)
+Note that only the odd values of k will lead to a nonzero
+coefﬁcient of z0. The last sum is then rewritten as
+
+z −z−1
+eaz−bz =
+
+z −z−1
+∞
+
+k = 0
+b2k+1
+k
+
+m = 0
+(−1)2k+1−m
+1
+m! (2k + 1 −m)!
+a
+b
+m
+z2m−2k−1
+(A12)
+Nonzero coefﬁcients of z0 appear when m = k or m =
+k + 1. By the residue theorem, the integral above is equal to
+	 π
+−π
+sin θ
+2eiζκ sin θ
+2 e−tκ cos θ
+2 dθ = −i2π
+
+∞
+
+k = 0
+(−1)k+1
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:30:34 UTC from IEEE Xplore.  Restrictions apply. 
+
+346
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 1, JANUARY 2023
+akbk+1
+k! (k + 1)! −
+∞
+
+k = 0
+(−1)k
+ak+1bk
+k! (k + 1)!
+
+= i2π (b + a)
+√
+ab
+⎛
+⎜
+⎝
+∞
+
+k = 0
+(−1)k
+
+2
+√
+ab
+2
+2k+1
+k! (k + 1)!
+⎞
+⎟
+⎠
+= i2π (b + a)
+√
+ab
+T1
+
+2
+√
+ab
+
+(A13)
+Plug in a = ζκ−tκ
+2
+and b = ζκ+tκ
+2
+, we have
+1
+π
+	 κ
+−κ
+sin ζ
+
+κ2−x2e−txdx =−
+2κ2ζ
+κ
+
+ζ2 −t2 T1
+
+κ
+
+ζ2−t2
+
+(A14)
+The inverse Laplace transform of G2(s) is obtained as
+L−1 (eγx) = e−Rbt/2Lb L−1 (G2 (s)) =
+−Rbe−Rbt/2Lb
+Lb
+√
+x2LbCb −t2 x
+
+LbCbT1
+ Rb
+2Lb
+
+x2LbCb −t2
+ 
+u (t) −u
+
+t−
+
+LbCbx
+
+(A15)
+This completes the proof of Lemma 1.
+Lemma 2:
+L−1(Ai
+1(s)) and L−1(Ai
+2(s)) are monotonic.
+Besides, the sum of L−1(Ai
+1(s)) and L−1(Ai
+2(s)) is monotonic.
+Proof of Lemma 2: By use of (19), the relationships between
+Ai−1
+1
+(s), Ai−1
+2
+(s), Ai
+1(s) and Ai
+2(s) can be formulated as
+⎧
+⎪
+⎪
+⎪
+⎪
+⎪
+⎨
+⎪
+⎪
+⎪
+⎪
+⎪
+⎩
+Ai
+1 (s) = Ai−1
+1
+(s)e−γLi−1
+2
+−Ai−1
+2
+(s)eγLi−1
+2
++
+ζ
+2γ2 −
+ζ′
+2(γ′)2
++ Ai−1
+1
+(s)γC′
+b
+2Cbγ′
+e−γLi−1 + Ai−1
+2
+(s)γC′
+b
+2Cbγ′
+eγLi−1
+Ai
+2 (s)= Ai−1
+1
+(s)γC′
+b
+2Cbγ′
+e−γLi−1+Ai−1
+2
+(s)γC′
+b
+2Cbγ′
+eγLi−1+Ai−1
+2
+(s)eγLi−1
+2
+−Ai−1
+1
+(s)e−γLi−1
+2
+−
+ζ
+2γ2 +
+ζ′
+2(γ′)2
+(A16)
+Suppose that pipes li−1 and li are connected end to end. Li−1
+is the length and ζ, γ and Cb are parameters of pipe li−1. ζ′,
+γ′ and C′
+b are parameters of pipe li. Taking the derivative of
+L−1(Ai
+1(s)) and L−1(Ai
+2(s)) with respect to t yields
+"
+L−1 
+Ai
+2 (s)
+#′
+t =
+"
+L−1 
+Ai−1
+2
+(s)
+#′
+t ⊗L−1 
+eγLi−1/2
+
+−
+"
+L−1 
+Ai−1
+1
+(s)
+#′
+t ⊗L−1 
+e−γLi−1/2
+
+−
+"
+L−1 
+ζ/
+
+2γ2#′
+t
++
+$
+L−1 
+ζ′/
+
+2γ′2%′
+t + L−1
+ γC′
+b
+2Cbγ′
+
+⊗
+&"
+L−1 
+Ai−1
+1
+(s)
+#′
+t
+⊗L−1 
+e−γLi−1
++
+"
+L−1 
+Ai−1
+2
+(s)
+#′
+t ⊗L−1 
+eγLi−1'
+(A17)
+L−1
+ γC′
+b
+Cbγ′
+
+⊗
+&"
+L−1 
+Ai−1
+1
+(s)
+#′
+t ⊗L−1 
+e−γLi−1/2
+
++
+"
+L−1 
+Ai−1
+2
+(s)
+#′
+t ⊗L−1 
+eγLi−1/2
+'
+(A18)
+The operator ⊗denotes the convolution operation. As t
+changes from 0 to √LbCbLi−1, the range of
+
+L2i−1LbCb −t2
+varies between 0 and Li−1/α, and
+Rb
+2Lb
+
+L2i−1LbCb −t2 <
+1.
+The
+Bessel
+function
+of
+the
+ﬁrst
+kind
+is
+positive,
+T1( Rb
+2Lb
+
+L2i−1LbCb −t2) > 0, and L−1(eγLi−1) < 0.
+We also have L−1(e−γLi−1) > 0 and
+( ∞
+−∞L−1(e−γLi−1/2) >
+−
+( ∞
+−∞L−1(eγLi−1/2).
+The derivatives of L−1(ζ/(2γ2)) and L−1(ζ′/(2γ′2)) are
+"
+L−1 
+ζ/
+
+2γ2#′ =
+)Usb
+Rb
+−Usb
+Rb
+e−
+Rb
+Lb t
+*′
+= Usb
+Lb
+e−
+Rb
+Lb t
+(A19)
+$
+L−1 
+ζ′/
+
+2γ′2%′
+=
++
+U ′
+sb
+R′
+b
+−U ′
+sb
+R′
+b
+e
+−
+R′
+b
+L′
+b
+t
+,′
+= U ′
+sb
+L′
+b
+e
+−
+R′
+b
+L′
+b
+t.
+(A20)
+By [37], the inverse Laplace transform of γC′
+b/(Cbγ′) is given
+as
+L−1
+ γC′
+b
+Cbγ′
+
+= C′
+b
+Cb
+-
+LbCb
+L′
+bC′
+b
+L−1
+⎛
+⎜
+⎝
+.
+/
+/
+/
+01 +
+Rb
+Lb −R′
+b
+L′
+b
+s + R′
+bC′
+b
+L′
+bC′
+b
+⎞
+⎟
+⎠
+= be−at (I0 (at) + I1 (at)) + δ (t) .
+(A21)
+where a = 1
+2
+
+Rb
+Lb −R
+′
+b
+L′
+b
+
+and b = a C
+′
+b
+Cb
+1
+LbCb
+L′
+bC′
+b .
+The following hypotheses are made:
+Hypothesis 1: [L−1(Ai−1
+1
+(s))]′
+t > 0, [L−1(Ai−1
+2
+(s))]′
+t > 0, and
+[L−1(Ai−1
+1
+(s))]′
+t −[L−1(Ai−1
+2
+(s))]′
+t > 0.
+Hypothesis 2: [L−1(Ai−1
+1
+(s))]′
+t < 0, [L−1(Ai−1
+2
+(s))]′
+t < 0, and
+[L−1(Ai−1
+1
+(s))]′
+t −[L−1(Ai−1
+2
+(s))]′
+t < 0.
+Based on the hypothesis 1, we have [L−1(Ai
+1(s))]
+′
+t > 0 by
+(A17) and [L−1(Ai
+2(s))]
+′
+t > 0 by (A18). Add [L−1(Ai
+1(s))]
+′
+t and
+(−[L−1(Ai
+2(s))]
+′
+t), we have
+"
+L−1 
+Ai
+1 (s)
+#′
+t −
+"
+L−1 
+Ai
+2 (s)
+#′
+t = 2
+"
+L−1 
+Ai−1
+1
+(s)
+#′
+t
+⊗L−1
+e−γLi−1
+2
+
+−2
+"
+L−1 
+Ai−1
+2
+(s)
+#′
+t ⊗L−1
+eγLi−1
+2
+
++ 2
+"
+L−1 
+ζ/
+
+2γ2#′
+t −2
+$
+L−1 
+ζ′/
+
+2γ′2%′
+t > 0
+(A22)
+Similarly,
+based
+on
+the
+hypothesis
+2,
+we
+have
+[L−1(Ai
+1(s))]
+′
+t < 0, [L−1(Ai
+2(s))]
+′
+t < 0, and [L−1(Ai
+1(s))]
+′
+t −
+[L−1(Ai
+2(s))]
+′
+t < 0.
+A1
+1(s) and A1
+2(s) are
+⎧
+⎪
+⎪
+⎨
+⎪
+⎪
+⎩
+A1
+1 (s) = Q0
+2
++
+H0Cbs
+2√LbCb
+2
+1
+s2+
+Rb
+Lb s −
+CbUsb
+2(Rb+sLb)sCb
+A1
+2 (s) =
+H0Cbs
+2√LbCb
+2
+1
+s2+
+Rb
+Lb s −Q0
+2 +
+CbUsb
+2(Rb+sLb)sCb
+(A23)
+where Q0 and H0 are expressed as Laplace transform of the
+combinations of the step functions. Since the inverse Laplace
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:30:34 UTC from IEEE Xplore.  Restrictions apply. 
+
+YAO et al.: MODELING OF WATER TRANSFER DELAY FOR OPTIMAL OPERATION
+347
+transform of
+1
+1/(s2 + Rb
+Lb s) is
+L−1
+-
+1/
+
+s2 + Rb
+Lb
+s
+
+= 1
+2 e−
+Rb
+2Lb tI0
+Rb
+Lb
+t
+
+(A24)
+It follows from (A22) to (A24) that the derivatives of
+L−1(A1
+1(s)) and L−1(A1
+2(s)) can be written
+⎧
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎨
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎪
+⎩
+"
+L−1 
+A1
+1 (s)
+#′=Q1′
+2 + H1′Cb
+2√LbCb ⊗L−1
+2
+1
+s2+
+Rb
+Lb s
+
+−Usb
+2Lb e−
+Rb
+Lb t
+
+> 0 if H1
+′ > 0, Q1
+′ > 0
+< 0 if H1
+′ < 0, Q1
+′ < 0
+"
+L−1 
+A1
+2 (s)
+#′= H1′Cb
+2√LbCb ⊗L−1
+2
+1
+s2+
+Rb
+Lb s
+
+−Q1′
+2 + Usb
+2Lb e−
+Rb
+Lb t
+> 0 if H1
+′ > 0, Q1
+′ > 0
+< 0 if H1
+′ < 0, Q1
+′ < 0
+(A25)
+where Q1 and H1 are the inverse Laplace transform of Q0 and
+H0. The difference of L−1(A1
+1(s)) and L−1(A1
+2(s)) is
+"
+L−1 
+A1
+1 (s)
+#′
+t −
+"
+L−1 
+A1
+2 (s)
+#′
+t = Q1
+′
+−Usb
+Lb
+e−
+Rb
+Lb t
+
+> 0 if Q1
+′ > 0
+< 0 if Q1
+′ < 0
+(A26)
+The hypotheses hold when H1
+′ > 0, Q1
+′ > 0 and H1
+′ <
+0, Q1
+′ < 0, respectively. Lemma 2 is proved.
+Theorem 1: The inverse Laplace transform of Q and H are
+monotonic.
+Proof of Theorem 1: The derivatives of L−1(Q) and L−1(H)
+with respect to t are
+"
+L−1 (Q)
+#′
+t =
+"
+L−1 
+Ai
+1 (s) e−γx#′
+t −
+"
+L−1 
+Ai
+2 (s) eγx#′
+t
++
+"
+L−1 
+ζ/γ2#′
+t =
+"
+L−1 
+Ai
+1 (s)
+#′
+t ⊗L−1 
+e−γx
+−
+"
+L−1 
+Ai
+2 (s)
+#′
+t ⊗L−1 (eγx) +
+"
+L−1 
+ζ/γ2#′
+t (A27)
+"
+L−1 (H)
+#′
+t =
+)
+L−1
+Ai
+1 (s) γ
+sCb
+e−γx
+*′
+t
++
+)
+L−1
+Ai
+2 (s) γ
+sCb
+eγx
+*′
+t
+=
+"
+L−1 
+Ai
+1 (s)
+#′
+t ⊗L−1
+ γ
+sCb
+
+⊗L−1 
+e−γx
++
+"
+L−1 
+Ai
+2 (s)
+#′
+t⊗L−1
+ γ
+sCb
+
+⊗L−1 (eγx) = L−1
+ γ
+sCb
+
+⊗
+&"
+L−1 
+Ai
+1 (s)
+#′
+t⊗L−1 
+e−γx
++
+"
+L−1 
+Ai
+2 (s)
+#′
+t⊗L−1 (eγx)
+'
+(A28)
+Based on Lemma 1 and Lemma 2, the derivatives of L−1(Q)
+and L−1(H) with respect to t are always negative when H1
+′ <
+0, Q1
+′ < 0, and positive when H1
+′ > 0, Q1
+′ > 0. The same can
+be obtained for the derivatives of L−1(Q) and L−1(H) with
+respect to x. This completes the proof of Theorem 1.
+ACKNOWLEDGMENT
+The authors would like to thank Prof. Kaigui Xie and Prof.
+Bo Hu for their valuable suggestions on improving the quality
+of the paper.
+REFERENCES
+[1] K. Smith, “Understanding energy consumption for urban water supply in
+China,” M.S. thesis, Dept. Environ. Sci. Eng., Tsinghua Univ., Beijing,
+China, 2015.
+[2] World Bank, World Development Indicators. Washington DC, USA: World
+Bank, 2016.
+[3] W. N. Lubega and A. M. Farid, “Quantitative engineering systems mod-
+eling and analysis of the energy–water nexus,” Appl. Energy, vol. 135,
+pp. 142–157, Dec. 2014.
+[4] R. Menke, E. Abraham, P. Parpas, and I. Stoianov, “Extending the envelope
+of demand response provision through variable speed pumps,” Procedia
+Eng., vol. 186, pp. 584–591, 2017.
+[5] A. Stuhlmacher and J. L. Mathieu, “Chance-constrained water pumping
+to manage water and power demand uncertainty in distribution networks,”
+in Proc. IEEE, vol. 99, 2020, pp. 1–16.
+[6] A. S. Zamzam, E. Dall’Anese, C. Zhao, J. A. Taylor, and N. D. Sidiropou-
+los, “Optimal water-power ﬂow problem: Formulation and distributed
+optimal solution,” IEEE Control Netw. Syst., vol. 6, no. 1, pp. 37–47,
+Mar. 2019.
+[7] D. Fooladivanda and J. A. Taylor, “Energy-optimal pump scheduling and
+water ﬂow,” IEEE Control Netw. Syst., vol. 5, no. 3, pp. 1016–1026,
+Sep. 2018.
+[8] M. K. Singh and V. Kekatos, “Optimal scheduling of water distribu-
+tion systems,” IEEE Control Netw. Syst., vol. 7, no. 2, pp. 711–723,
+2020.
+[9] R.Menke,E.Abraham,P.Parpas,andI.Stoianov,“Demonstratingdemand
+response from water distribution system through pump scheduling,” Appl.
+Energy, vol. 170, pp. 377–387, 2016.
+[10] G. Bonvin and S. Demassey, “Convex relaxation for water distribution
+systems,” in Proc. 28th Eur. Conf. Oper. Res., Poland, 2016, pp. 1–15.
+[11] Q. Li, S. Yu, A. S. Al-Sumaiti, and K. Turitsyn, “Micro water-energy
+nexus: Optimal demand-side management and quasi-convex hull re-
+laxation,” IEEE Control Netw. Syst., vol. 6, no. 4, pp. 1313–1322,
+Dec. 2019.
+[12] K. Oikonomou and M. Parvania, “Optimal coordination of water distribu-
+tion energy ﬂexibility with power systems operation,” IEEE Trans. Smart
+Grid, vol. 10, no. 1, pp. 1101–1110, Jan. 2019.
+[13] K. Oikonomou and M. Parvania, “Optimal coordinated operation of in-
+terdependent power and water distribution systems,” IEEE Trans. Smart
+Grid, vol. 11, no. 6, pp. 4784–4794, Nov. 2020.
+[14] K. Oikonomou, M. Parvania, and R. Khatami, “Optimal demand response
+scheduling for water distribution systems,” IEEE Trans. Ind. Inform.,
+vol. 14, no. 11, pp. 5112–5122, Nov. 2018.
+[15] K. Oikonomou and M. Parvania, “Optimal participation of water desalina-
+tion plants in electricity demand response and regulation markets,” IEEE
+Syst. J., vol. 14, no. 3, pp. 1–11, Sep. 2020.
+[16] C. Mkireba, A. Dembéléa, A. Jougletb, and T. Denoeuxb, “Robust op-
+timization of demand response power bids for drinking water systems,”
+Appl. Energy, vol. 238, pp. 1036–1047, 2019.
+[17] E. Benjaminwylie and V. Streeter, Fluidtransients. New York, NY, USA:
+McGraw-Hill International Book, 1978.
+[18] Y. Yao, C. Li, K. Xie, H.-M. Tai, B. Hu, and T. Niu, “Optimal design
+of water tank size for power system ﬂexibility and water quality,” IEEE
+Trans. Power Syst., vol. 36, no. 6, pp. 5874–5888, Nov. 2021.
+[19] L. Kang and K. E. Holbert, “Applying the equivalent pi circuit to the
+modeling of hydraulic pressurized lines,” Math. Comput. Simul., vol. 79,
+no. 7, pp. 2064–2075, 2009.
+[20] S. Liang, “Mathematical modeling of the ﬂow in a pipeline with a leak,”
+Math. Comput. Simul., vol. 82, no. 11, pp. 2253–2267, 2012.
+[21] R. K. Sharma, S. Mishra, and P. Barsaiyan, “Dynamic response of nonlin-
+ear electrical analogue hydroelectric turbine model,” in Proc. Annu. IEEE
+India Conf., 2015, pp. 1–6.
+[22] Q. Chen, R. Fu, and Y. Xu, “Electrical circuit analogy for heat transfer
+analysis and optimization in heat exchanger networks,” Appl. Energy,
+vol. 139, pp. 81–92, 2015.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:30:34 UTC from IEEE Xplore.  Restrictions apply. 
+
+348
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 1, JANUARY 2023
+[23] Q. Chen, J. Hao, and T. Zhao, “An alternative energy ﬂow model for
+analysis and optimization of heat transfer systems,” Int. J. Heat Mass
+Transfer, vol. 108, pp. 712–720, 2017.
+[24] S. Badakhshan, M. Ehsan, M. Shahidehpour, N. Hajibandeh, M. Shaﬁe-
+Khah, and J. P. S. Catalão, “Security-constrained unit commitment with
+natural gas pipeline transient constraints,”IEEE Trans. Smart Grid, vol. 11,
+no. 1, pp. 118–128, Jan. 2020.
+[25] J. Yang, N. Zhang, A. Botterud, and C. Kang, “On an equivalent representa-
+tion of the dynamics in district heating networks for combined electricity-
+heat operation,” IEEE Trans. Power Syst., vol. 35, no. 1, pp. 560–570,
+Jan. 2020.
+[26] J. Yang, A. Botterud, N. Zhang, Y. Lu, and C. Kang, “A cost-
+sharing approach for decentralized electricity-heat operation with re-
+newables,” IEEE Trans. Sustain. Energy, vol. 11, no. 3, pp. 1838–1847,
+Jul. 2020.
+[27] C. Li, Y. Yao, K. Xie, B. Hu, and T. Niu, “Integrated electrical, heating,
+and water distribution system to accommodate wind power,” IEEE Trans.
+Sustain. Energy, vol. 12, no. 2, pp. 1100–1114, Apr. 2020.
+[28] M. Alhazmi and P. Dehghanian, “Optimal integration of interconnected
+water and electricity networks,” IET Gener., Transmiss. Distrib., vol. 15,
+no. 14, pp. 2033–2043, 2021.
+[29] C. Wang, N. Gao, J. Wang, N. Jia, T. Bi, and K. Martin, “Robust opera-
+tion of a water-energy nexus: A multi-energy perspective,” IEEE Trans.
+Sustain. Energy, vol. 11, no. 4, pp. 2698–2712, Oct. 2020.
+[30] J. Sun et al., “ Renewable energy transmission by HVDC across the
+continent: System challenges and opportunities,” CSEE J. Power Energy,
+vol. 3, no. 4, pp. 353–364, 2017.
+[31] M. Zhang et al., “An integral identiﬁcation method of characteristic param-
+eters and optimization of parallel connection heat transfer systems based
+on the power ﬂow method,” Appl. Thermal Eng., vol. 143, pp. 1057–1067,
+2018.
+[32] S. B. Pope, Turbulent Flows. Cambridge, UK: Cambridge Univ. Press,
+2000.
+[33] M. Shokoohi, M. Tabesh, S. Nazif, and M. Dini, “Water quality based
+multi-objective optimal design of water distribution systems,” Water Re-
+sour. Manage., vol. 31, pp. 93–108, 2017.
+[34] N. Islam, R. Sadiq, and M. Rodriguez, “Optimizing booster chlorination
+in water distribution networks: A water quality index approach,” Environ.
+Monit. Assess., vol. 185, no. 10, pp. 8035–8050, 2013.
+[35] J.L.Gross,J.Yellen,andM.Anderson,GraphTheoryandItsApplications.
+Florida, USA: Chapman and Hall/CRC, 2018.
+[36] M. Carrión and J. Arroyo, “A computationally efﬁcient mixed-integer
+linear formulation for the thermal unit commitment problem,” IEEE Trans.
+Power Syst., vol. 21, no. 3, pp. 1371–1378, Aug. 2006.
+[37] F. OberhettingerG and L. Badii, Tables of Laplace Transforms. Berlin
+Heidelberg, German: Springer-Verlag, 1973.
+Yiming Yao received the B.S. degree in 2019 from
+Chongqing University, Chongqing, China, where he
+is currently working toward the Ph.D. degree with
+the School of Electrical Engineering. His research
+interests include energy-water nexus and renewable
+energy accommodation.
+Chunyan Li (Member, IEEE) received the Ph.D.
+degree in electrical engineering from Chongqing Uni-
+versity, Chongqing, China, in 2008. She is currently
+an Associated Professor with the School of Electri-
+cal Engineering, Chongqing University. Her research
+interests include power system analysis, renewable
+energy consumption, and smart grid dispatching.
+Heng-Ming Tai (Senior Member, IEEE) is currently
+a Professor with the Department of Electrical and
+Computer Engineering, University of Tulsa, Tulsa,
+OK, USA. His research interests include power sys-
+tem reliability and industrial electronics.
+Changzheng Shao (Member, IEEE) received the
+B.S. degree in electrical engineering from Shan-
+dong University, Jinan, China, and the Ph.D. degree
+in electrical engineering from Zhejiang University,
+Hangzhou, China, in 2015 and 2020, respectively. He
+is currently an Assistant Professor with Chongqing
+University, Chongqing, China. His research inter-
+ests include the operation optimization and reliability
+evaluation of the integrated energy system.
+Authorized licensed use limited to: University of Chinese Academy of SciencesCAS. Downloaded on November 18,2026 at 01:30:34 UTC from IEEE Xplore.  Restrictions apply. 

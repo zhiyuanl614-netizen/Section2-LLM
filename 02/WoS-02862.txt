@@ -1,0 +1,1260 @@
+Sustainable Energy, Grids and Networks 42 (2025) 101643
+Available online 7 February 2025
+2352-4677/© 2025 Elsevier Ltd. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+Coordinated operational optimization of water and power systems under
+emergency conditions
+Gal Perelman a,*
+, Tomer Shmaya b, Aviad Navon c,d
+, Stelios Vrachimis e
+,
+Mathaios Panteli e,f, Demetrios G. Eliades e, Avi Ostfeld a
+a Faculty of Civil and Environmental Engineering, Technion – Israel Institute of Technology, Israel
+b Department of Civil and Mineral Engineering, University of Toronto, Toronto, Ontario
+c School of Environment and Sustainability, University of Michigan, Ann Arbor, MI, USA
+d Department of Industrial and Operations Engineering, University of Michigan, Ann Arbor, MI, USA
+e KIOS Research and Innovation Center of Excellence, University of Cyprus, Cyprus
+f Department of Electrical and Computer Engineering, University of Cyprus, Cyprus
+A R T I C L E I N F O
+Keywords:
+Water-energy nexus
+Off-Grid
+Microgrid
+Coordinated optimization
+Resilience
+Emergency operation
+A B S T R A C T
+This research addresses the integrated management of Water Distribution Systems (WDS) and Power Distribution
+Systems (PDS) to enhance operational efficiency and resilience during extreme scenarios. Traditionally, these
+systems are operated independently, leading to sub-optimal performance. Alternatively, some studies have
+proposed a joint operation of WDS and PDS, assuming that decisions are made simultaneously by a single
+decision-maker, which is impractical. We propose a novel emergency control method that relies on sparse
+communication between WDS and PDS operators, aiming to minimize load shedding (LS) in the PDS by stra-
+tegically managing power demand in the interconnected WDS. The results show that the proposed coordinated
+approach has similar performance to a full cooperation approach between the two systems while requiring only
+minimal information exchange. Our approach demonstrates the potential of limited yet targeted information
+exchange, fostering cross-sectoral collaboration to maintain service continuity under extreme conditions, and
+underscores the critical role of integrated management in ensuring the resilience of interconnected infrastructure
+systems.
+1. Introduction
+With the increasing demands on Power Distribution Systems (PDS)
+and the challenges posed by integrating renewable energy sources,
+ensuring system resilience and efficiency through smart grid manage-
+ment has become a critical objective. The intermittent and uncertain
+nature of renewable sources increases the vulnerability of PDSs to
+extreme events, hazards, and instabilities, particularly due to rapid
+changes in weather conditions. Therefore, developing robust strategies
+to maintain PDS functionality across a broad spectrum of situations is
+crucial. Nevertheless, the current trends in power supply management
+pose substantial challenges in achieving this goal. Integration of
+renewable energy sources and energy storage facilities impacts network
+topology. Networks become more decentralized, thereby facilitating
+better management of energy resources at the local level to improve
+overall grid efficiency. As a result, portions of the power network
+function as off-grids microgrids that can operate independently of the
+main transmission grid [1]. While off-grid microgrids are robust to
+failures in the transmission grid, their isolation can exacerbate the
+challenges of maintaining system stability and meeting demand, espe-
+cially under extreme conditions [2].
+Extensive research has been conducted on enhancing PDS resilience
+against such scenarios, including studies from a preventive perspective
+such as system design [3–5] as well as corrective aspects focusing on
+mitigating the extent and severity of extreme events [6–8]. A common
+strategy for reducing the impact of these events is load shedding (LS)
+which becomes necessary when the system’s capacity to meet demands
+is compromised, leading to enforced power outages. LS is defined as
+power demand not supplied [9]. Under such circumstances, PDS oper-
+ators are tasked with making operational decisions to minimize the
+impact on consumers in terms of LS [10–12]. A promising strategy for LS
+* Corresponding author.
+E-mail addresses: gal-p@campus.technion.ac.il (G. Perelman), tomer.shmaya@mail.utoronto.ca (T. Shmaya), aviad.nav@gmail.com (A. Navon), vrachimis.
+stelios@ucy.ac.cy (S. Vrachimis), panteli.mathaios@ucy.ac.cy (M. Panteli), eldemet@ucy.ac.cy (D.G. Eliades), ostfeld@technion.ac.il (A. Ostfeld).
+Contents lists available at ScienceDirect
+Sustainable Energy, Grids and Networks
+journal homepage: www.elsevier.com/locate/segan
+https://doi.org/10.1016/j.segan.2025.101643
+Received 1 August 2024; Received in revised form 11 December 2024; Accepted 2 February 2025
+
+Sustainable Energy, Grids and Networks 42 (2025) 101643
+2
+minimization is Demand Response (DR), where flexible loads are shifted
+to periods of lower demand to support the balance between supply and
+demand. In this context, infrastructure systems that are interconnected
+to PDS have the potential to serve DR, such as heating systems [13,14],
+gas distribution systems [15], and Water Distribution Systems (WDS)
+[16]. Recently there has been a growing interest in decision-making
+processes that integrate PDS and WDS. WDS are infrastructure in
+charge of the water supply for domestic, agricultural, and industrial uses
+and typically include power intensive facilities (pumping stations,
+desalination plants, etc.). As a result, WDS are among the largest power
+consumers accounting for an estimated 7–8 % of the total globally
+generated energy [17,18]. Moreover, WDS consists of inherent opera-
+tional flexibility due to storage facilities that allow for operational ad-
+justments and are typically used for cost minimization [19,20]. A set of
+power-consuming water facilities controlled by the same operator can
+offer significant potential to provide the required flexibility to both LS
+reduction and support many other PDS applications [21]. At the same
+time, several studies suggested joint optimization for WDS and PDS to
+minimize operational costs [22–25] and investment costs [26,27].
+Furthermore, the same WDS flexibility can serve other DR objectives.
+For instance, [16] demonstrated how DR involving WDS can reduce
+GHG emissions while not compromising on operational costs. Additional
+applications of integrating WDS with PDS are frequency regulation [28]
+and voltage regulation [29]. The flexibility inherent in WDS can also be
+utilized to increase renewable energy source integration [30], acting as
+flexible loads for PDS that can absorb excess power or adjust to inter-
+mittent supply. The renewable surplus can also be effectively used by
+storing energy indirectly through pumping to fill water tanks during
+off-peak periods [31].
+Due to the growing stress on both systems, interdependent resilience
+is identified as a crucial aspect of PDS and WDS management where the
+potential benefit is yet to be fully realized [32,33]. According to [34],
+the resilience dependency between the systems is bi-directional where
+each system can contribute to the other system’s resilience. [34] also
+pointed out the challenges associated with integrated systems resilience
+enhancement and suggested a method to quantify the combined resil-
+ience. The quantification of multi-system resilience was the focus of
+several studies that suggested different metrics for this purpose. A
+common approach for quantifying resilience is according to the amount
+of lost power and water [35]. A different approach, suggested by [36], is
+to include metrics based on the quality of the power flow on top of the
+loss of service. Power quality is estimated as voltage magnitude metric,
+duration of power lines at their upper bounds, and thermoelectric metric
+specific for the case where the WDS is used as a cooling cycle system. A
+few studies suggested methods for resilience enhancement through
+design and operational interventions. [37] presented a multi-objective
+optimization model to minimize investment costs and expected loss of
+power and water. A similar approach from an operational perspective
+was presented in [38]. An emergency response is suggested to a PDS that
+connects several microgrids. Once an emergency occurs, each microgrid
+adjusts its operation to support the entire distribution system by mini-
+mizing the total loss of power and water. Yang & Lo [39] introduced a
+multi-objective approach aimed at simultaneously minimizing unsup-
+plied loads and water, the tradeoff between the two objectives is dis-
+cussed presenting that loss of power can be prioritized over loss of water
+and vice versa.
+The above studies presented fully collaborative decision-making
+frameworks, meaning that decisions for both systems are made simul-
+taneously by a single decision maker. A contrasting perspective involves
+each utility making its own decision in response to the other utility’s
+decision, without any cooperation. For instance, [35] presented an in-
+dependent decision-making approach where the PDS operator de-
+termines an emergency response policy to minimize LS, and then the
+WDS operator adjusts pump scheduling according to the available power
+to minimize water supply shortage. [40] presented a non-cooperative
+game theory approach in which the two utilities act as independent
+players in a Cournot competition to determine the optimal operation
+dispatch. While the above studies present remarkable advancements in
+utilizing the links between the two systems, there still exists a significant
+knowledge gap: Cooperation-based approaches embody an ideal situa-
+tion of complete knowledge sharing and cooperation, yet this is rarely
+the case in real life and is thus impractical. Conversely, independent
+approaches lack the benefits of collaboration and are therefore likely to
+be sub-optimal. Consequently, a strategy that enables collaboration
+through reasonable communication between PDS and WDS is essential
+for achieving more resilient and efficient infrastructure systems.
+1.1. Contribution
+This study focuses on improving PDS resilience, i.e., minimizing the
+impact of extreme scenarios on power consumers, by utilizing the
+operational flexibility of WDS. Specifically, we propose a collaborative
+approach to minimize LS under emergency scenarios with minimal in-
+formation exchange between PDS and WDS. A key contribution of this
+Nomenclature
+Notation meaning
+LSi,t
+Load Shedding at bus i at time t
+CIb
+Criticality Index for bus b
+B
+Set of all buses
+L
+Set of all power lines
+G
+Set of all generators
+E
+Set of all batteries
+Pg,t
+Active power generated by generator g at time t
+Qg,t
+Reactive power generated by generator g at time t
+PL
+i,t
+Active power load at bus i at time t
+QL
+i,t
+Reactive power load at bus i at time t
+PP
+i,t
+Active power load for pumping at bus i at time t
+SOCe,t
+State of charge of battery e at time t
+Pg,t,P g,t
+Min and max generation bounds for generator g at time t
+Pch,e,t
+Battery e charging\discharging at time t
+SOCe,t,SOC e,t
+Min and max energy storage capacity for battery e at
+time t
+Pch,e,t,P ch,e,t
+Min and max battery charging rates
+rj,i
+Resistance of line from bus j to bus i
+xj,i
+Reactance of line from bus j to bus i
+Isq
+(j,i),t
+Squared current from bus j to bus i
+Vsq
+i,t
+Squared voltage at bus i at time t
+V sq
+i,t,V
+sq
+i,t
+Min and max squared voltage bounds
+p ∈Ψ
+Pump station (p) and the set of all pump stations (Ψ)
+s ∈Φ
+Storage tank (s) and the set of all storage tanks (Φ)
+vols,t
+Tank s volume at time t
+vol s,t,vols,t
+Tanks min and max volume
+xt,p,c
+1 if pump station p is active with pumps combination c,
+0 otherwise
+qp,c
+Nominal flow of pump station p with units combination c
+Pp,c
+Nominal Power of pump station p with units combination c
+ds,t
+Water demand from tank s at time t
+γt
+Electricity tariffs
+ω
+Pumping penalties
+G. Perelman et al.
+
+Sustainable Energy, Grids and Networks 42 (2025) 101643
+3
+paper is the design of a modular optimization framework that optimizes
+PDS and WDS either individually or combined, utilizing WDS flexibility
+to minimize overall operational costs during routine operations or
+reduce LS under extreme conditions. Additionally, this study develops
+the paradigm of coordinated optimization, introducing an optimization
+strategy based on a practical communication protocol between PDS and
+WDS operators. This protocol enables system collaboration with only
+sparse communication yet achieves performance nearly equivalent to
+scenarios with full transparency and cooperation. The performance
+evaluation is demonstrated by comparisons with the two other common
+optimization approaches, namely independent and cooperation-based,
+and showcased through a case study of a local off-grid microgrid PDS
+connected to a local WDS across a range of extreme scenarios. The study
+also conducts an extensive analysis of the dependencies between prop-
+erties of extreme scenarios and their impact on the LS reduction po-
+tential of various optimization strategies.
+2. Methodology
+2.1. Frameworks for integrated systems decision-making
+To provide clarity and consistency throughout this paper, let us
+introduce several terms that will be used throughout this paper to
+distinguish
+between
+the
+different
+optimization
+decision-making
+strategies:
+• Decoupled Optimization: In this approach, there is no communica-
+tion between the two systems’ operators. One operator takes action
+independently, and the second operator responds to these actions
+subsequently, without prior coordination.
+• Centralized Coupled Optimization: This approach involves a fully
+cooperative strategy where decisions for both PDS and WDS are
+made simultaneously by a single stakeholder, ensuring that all ob-
+jectives and constraints regarding both systems are known and
+considered in tandem.
+• Coordinated Optimization: This new approach, introduced in the
+current study, is based on sparse communication and information
+exchange between the operators of PDS and WDS. It seeks to balance
+the benefits of Centralized Coupled optimization, which represents
+the optimal solution with the practicality of Decoupled optimization,
+which is simple and does not depend on any collaboration, aiming to
+optimize the resilience of both systems through selective information
+sharing.
+Fig. 1 depicts the overview of the proposed methodology. Emergency
+events are generated randomly based on several properties that describe
+the two systems’ states (see a detailed description of the random sce-
+narios generation in the last part of the methodology section). Each
+scenario is optimized with all the above decision-making strategies to
+find optimal operation policies, minimizing the loads not served.
+The method is designed to minimize LS in PDS under extreme sce-
+narios with limited power resources. The method is designed for a local
+microgrid is a medium voltage of 13.3 kV, but similar principles can be
+applied to other types of networks. The first step is to develop an opti-
+mization model with an objective function subject to physical and
+operational constraints. The optimization modeling allows for either a
+combined optimization of the WDS and PDS or separate optimization
+problems for each system. While the PDS is optimized to reduce LS, the
+WDS has two distinct objective functions. The first is for routine periods
+where the objective is to minimize operational costs. The second
+objective is for emergency scenarios where the WDS prioritizes sup-
+porting the PDS. In the second case, the WDS minimizes weighted
+pumping power consumption, where the weights are received from the
+PDS operators to represent the time steps and locations (buses) where LS
+reduction is most essential. The LS is calculated using a soft constraint
+approach involving adding slack terms to the bus power balance con-
+straints which permits some degree of constraints violation. The sum of
+all violations is the PDS objective function. In the WDS problem, all
+constraints are hard to ensure that water supply is not compromised to
+mitigate power LS. Following are the mathematical formulations for the
+three frameworks of integrated decision-making. The notation used in
+the equations below is summarized in the Nomenclature table above.
+2.2. PDS model
+As mentioned above, the PDS objective is to minimize LS. To account
+for the differential criticality between buses, a criticality index (CI) is
+assigned to each bus to represent the importance of LS at that bus. The
+decision variables associated with the PDS are the active power gener-
+ated in each generator (Pg,t) and the charging and discharging (Pch,e,t) of
+each batter at every time step. The objective is to minimize the weighted
+LS calculated as the product of unsupplied demands (LS) and the CI
+Fig. 1. Methodology Overview, LS minimization through different levels of PDS – WDS collaboration.
+G. Perelman et al.
+
+Sustainable Energy, Grids and Networks 42 (2025) 101643
+4
+across all buses, see Eq. (1):
+ZPDS resilience = min
+Pg,t,Pch,e,t
+∑
+i∈B
+∑
+t∈T
+LSi,t • CIi,t
+(1)
+The PDS optimization is subject to several constraints. First, each
+generator has minimum and maximum capacity limits.
+P g,t ≤Pg,t ≤Pg,t
+∀t ∈T,
+∀g ∈G
+(2)
+While for conventional fuel-based generators, we assume these limits
+are constant over time, we model the variability of renewable generators
+(e.g., solar and wind) according to capacity depending on natural
+dynamics.
+Batteries State of Charge (SOC) must satisfy energy conservation (3)
+and is bounded between the minimum and maximum capacities (4).
+Moreover, charging rates are also bounded between minimum and
+maximum power flow bounds (5).
+SOCe,t = SOCe,t−1 + Pch,e,t
+∀t ∈T,
+∀e ∈E
+(3)
+SOC e,t ≤SOCe,t ≤SOCe,t
+∀t ∈T,
+∀e ∈E
+(4)
+Pch,e,t ≤Pch,e,t ≤P ch,e,t
+∀t ∈T,
+∀e ∈E
+(5)
+The active and reactive power balances are maintained at each bus
+for every time step. The active power balance is described in Eq. (6) and
+includes a penalty term for not supplying all the demand i.e., LS. It is
+noted that the pumps power term PP
+i,t is used to couple between the PDS
+and WDS as later explained and presented in Eq. (18). The reactive
+power constraint is presented in Eq. (7). The unsupplied reactive power
+is neglected. Pumps are assumed to have a real-to-reactive ratio of 0.75,
+meaning a power factor of 0.8.
+∑
+g∈i
+Pg,t −
+∑
+b∈i
+Pch,e,t +
+(∑
+g∈i
+P(j,i),t −rj,iIsq
+(j,i),t
+)
+−PL
+i,t −
+∑
+P∈i
+PP
+i,t + LSi,t = 0
+∀t ∈T,
+∀i ∈B
+(6)
+∑
+g∈i
+Qg,t +
+(∑
+g∈i
+Q(j,i),t −xj,iIsq
+(j,i),t
+)
+−QL
+i,t −0.75
+∑
+P∈i
+PP
+i,t = 0
+∀t ∈T,
+∀i
+∈B
+(7)
+Bus voltages must remain within specified minimum and maximum
+bounds.
+V sq
+i,t ≤Vsq
+i,t ≤V
+sq
+i,t
+∀t ∈T,
+∀i ∈B
+(8)
+The voltage drops along lines is formulated in Eq. (9):
+Vsq
+i,t −Vsq
+j,t = −2
+(
+rj,iP(j,i),t +xj,iQ(j,i),t
+)
++
+(
+r2
+j,i +x2
+j,i
+)
+Isq
+(j,i),t ∀t ∈T, ∀j,i ∈L
+(9)
+And the power flow along lines is approximated to a rotated cone
+constraint based on Jabr inequality [41] which enables to maintain the
+problem’s convexity.
+Vsq
+i,tIsq
+(j,i),t ≥P2
+(j,i),t + Q2
+(j,i),t
+∀t ∈T,
+∀j, i ∈L
+(10)
+2.3. WDS model
+The WDS optimization is framed as a pump scheduling problem
+subject to satisfying consumer demands. The hydraulic behavior of the
+WDS, including flow-head relationships, is bypassed using an implicit
+hydraulic formulation. This approach avoids the need to solve nonlinear
+hydraulic equations during optimization by relying on pre-computed
+system parameters and operational constraints that indirectly capture
+the connectivity and performance of the network. Such simplification is
+commonly employed in WDS optimization studies [42,43] to enhance
+computational efficiency and scalability. The system operation is dis-
+cretized to a finite number of hydraulic states, each representing a
+different set of active pumps. Table 1 presents this setup, where every
+row represents a set of active pumps such that a value of 1 indicates the
+pump is active (and 0 otherwise). The decision variables in this formu-
+lation are binary variables that determine whether a pump combination
+is used or not. Each active pump is associated with nominal flow and
+power values which are the results of the hydraulic conditions generated
+by activating the corresponding set of pumps.
+To integrate the operation of the WDS operation with the PDS, an
+auxiliary matrix is introduced. This matrix (noted A below) represents
+the links between the WDS pumps and the PDS buses, with rows rep-
+resenting buses and columns representing pumps. The matrix elements i,
+j are set to 1 if pump j is connected to bus i and 0 otherwise. As
+mentioned above, two objective functions can be considered. The first is
+minimizing operational costs, calculated as the product of the pumping
+power and electricity tariffs (11).
+ZWDS cost = min
+xt,p,c
+∑
+t∈T
+∑
+p∈Ψ
+∑
+c∈C
+γtxt,p,cPp,c
+(11)
+where γt is the electricity tariff at time t, xt,p,c is the binary decision
+variable equals 1 if combination c of pump station p is active at time step
+t. Lastly, Pp,c is the nominal power consumed by pump combination c of
+pump station p.
+A second objective function can be activated when PDS operators
+signal for an emergency. Given the signal, the water utility shifts the
+focus from operational costs to minimizing weighted energy consump-
+tion. Weights are provided by the power utility as a 2D matrix with rows
+corresponding to buses and columns to time steps. Each element ωi,j in
+the matrix represents the prioritization of reducing pumping based on
+power supplied from bus i, at time step j. A higher value of ωi,j indicates a
+stronger preference for pumping reduction.
+ZWDS resilience = min
+xt,p,c
+∑
+t∈T
+ω • A • B • xt,p,c
+(12)
+Where ω is the weights matrix delivered by the power utility, A is the
+bus–pump connectivity matrix and B is the matrix that holds the
+pumping power for each combination of pumps (illustrated in Table 1),
+in other words, B holds all the Pp,c values that are used in Eq. (11). This
+framework applies penalties based on the criticality of reducing pump-
+ing at certain times and locations.
+The WDS optimization is constrained to satisfy mass balance (13),
+tank volume bounds (14), and tank final volume (15). Another
+constraint forces the solution to include only one combination of pumps
+for each pump station for each time step (16). Finally, the activation of a
+combination is a binary variable.
+∑
+p∈sin
+∑
+c∈C
+xt,p,cqp,c−
+∑
+p∈sout
+∑
+c∈C
+xt,p,cqp,c+vols,t−1−vols,t =dt,sΔt ∀t∈T,∀s∈Φ
+(13)
+vol s,t ≤vols,t ≤vols,t
+∀t ∈T,
+∀s ∈Φ
+(14)
+vols,0 ≤vols,T
+(15)
+∑
+c∈C
+xt,p,c ≤1
+∀t ∈T,
+∀p ∈Ψ
+(16)
+xt,p,c ∈{0, 1}
+(17)
+Table 1
+Example of pump combination.
+Combination
+Pump 1
+Pump 2
+…
+Pump Ψ
+1
+1
+0
+0
+0
+2
+1
+1
+0
+0
+⋮
+⋮
+⋮
+⋮
+⋮
+G. Perelman et al.
+
+Sustainable Energy, Grids and Networks 42 (2025) 101643
+5
+The coupling of the two systems is through the pumping power
+terms, which are required to have the same values in the power balance
+constraints and in the WDS objective functions. Further details on the
+systems coupling based on Eq. (18) can be found in Appendix B.
+A • B • xt,p,c = PP
+i,t
+∀t ∈T
+(18)
+2.4. Decoupled optimization
+The decoupled optimization reflects individual decision-making with
+no communication between the two systems’ operators. The WDS makes
+decisions based on the first objective function of minimal operational
+costs, where the PDS is bound to satisfy the power required by the WDS
+pumps.
+x*
+PDS = argmin(1)
+s.t. :
+(2) −(10)
+x*
+WDS = argmin(11)
+s.t. :
+(13) −(18)
+(19)
+2.5. Centralized coupled optimization
+Here, all the decisions are made simultaneously by an omniscient
+decision maker. In this case, the decisions in both systems are made
+based on the emergency conditions. The WDS will adjust its operation to
+support LS minimization.
+x*
+PDS = argmin(1)
+s.t. :
+(2) −(10)
+(13) −(18)
+(20)
+2.6. Coordinated optimization
+The essence of the proposed method lies in the design of a commu-
+nication protocol between the water and power utilities, aimed at
+optimizing a shared objective. The common objective is minimizing LS
+under emergency scenarios while the operational costs of the WDS are in
+lower priority and the power utility will be willing to pay the extra costs
+of the WDS. Ideally, a perfect knowledge program would be imple-
+mented, where all data and constraints from both systems are integrated
+into a single optimization problem. However, due to the independent
+management of water and power utilities in real-life systems, such
+comprehensive integration is impractical. Instead, we propose a meth-
+odology that accommodates limited information sharing to effectively
+enhance the common objective. Based on the bilevel optimization (BO)
+paradigm [44], the formulation includes a leader and a follower. Unlike
+the classic BO setup, the follower gets the opportunity to respond to the
+leader’s policy and ask for adoptions that serve the common objective.
+The leader is the WDS which, unless received a notification from the
+PDS, optimizes pump scheduling to minimize costs. The follower is the
+PDS which adjusts the generation schedule to the WDS operation. Dur-
+ing extreme scenarios such as when the PDS is disconnected from the
+main grid and LS becomes inevitable, the following steps are taken: First,
+the power operator solves an LS minimization problem while consid-
+ering pumping loads as flexible loads. This step obtains an auxiliary
+solution that identifies the optimal pumping schedule from the PDS
+perspective. It is used solely as an auxiliary to support the next stages
+and will not be implemented. This is because it is assumed that in
+emergency scenarios water demand is a critical load, so the WDS can
+adjust its operation to support the PDS objective of reducing LS, but
+without compromising the satisfaction of water demand. Therefore,
+when the PDS solves the first stage inner problem it ensures to allocate at
+least the nominal power that the WDS typically uses. This prevents the
+WDS from being limited in subsequent stages of the method due to the
+auxiliary solution. In other words, pumping loads are effectively
+assigned an infinite criticality index, which imposes a very high cost for
+LS affecting these loads. This prioritization ensures that pumping loads
+are treated as essential in the LS minimization process. It is noted that
+the
+first
+stage
+is
+only
+an
+auxiliary
+stage
+that
+supports
+the
+decision-making of the subsequent stages. In case the WDS will be able
+to satisfy its constraints with less power this will be reflected in the next
+stage results, in the adjusted WDS pumping schedule.
+Next, the power operator generates a penalty matrix ω based on the
+optimal pump schedule, where ω =
+(
+1 −x*
+WDS,1
+)
+, where x*
+WDS,1 is the
+optimized pump schedule from the power operator’s perspective. The
+penalty matrix is delivered to the water operator which uses it to solve
+an inner “emergency” optimization problem with the objective function
+given in Eq. (12). The penalties act as the new objective coefficients in
+the WDS optimization, which directs the WDS to prioritize pumping
+from pumps that are connected to the most desired buses and at times
+that will serve best the PDS LS objective. This matrix of penalties is the
+only information exchange between the utilities.
+Another adoption taken by the WDS is the relaxation of the final tank
+volume constraint in Eq. (15). Since this is an emergency scenario, tanks
+are allowed to not return to their initial volume. In this study, the
+required final volume was set to the min between the initial volume and
+two hours of average demand according to common emergency volume
+criteria [45]. The solution of the WDS inner resilience optimization is
+delivered as improved pump scheduling to the PDS to finalize the
+emergency response strategy. The process is depicted in Fig. 2.
+2.7. Costs analysis
+The response to PDS line outages, supported by operational adjust-
+ments within the WDS, entails certain costs for the water utility. While
+LS is minimized, the water utility incurs additional expenses due to al-
+terations in the pumping schedule. To address this issue, it would be
+beneficial to monetarily quantify the additional costs carried out by the
+WDS due to the interventions for LS reductions. Furthermore, these costs
+are compared with the Cost of Energy Not Served (CENS). This analysis
+of the surplus cost of the water utility as a result of emergencies could
+also facilitate the calculation of potential subsidies between the two
+utilities, promoting a more collaborative financial relationship. The
+additional costs for the WDS are calculated as a function of the differ-
+ence in pumping costs by the decoupled and coordinated approaches
+during the emergency and the costs associated with the missing volume
+of tanks at the end of the emergency, as outlined in Eq. (21). This
+equation consists of two components: the first calculates the cost dif-
+ference during the emergency hours, reflecting the increased opera-
+tional costs of the WDS; the second estimates the cost to replenish the
+missing water volume at the end of the emergency, factoring in the
+average specific power of the WDS pumps and applying the on-peak
+tariff, under the assumption that the replenishment occurs during on-
+peak hours.
+ΔWDS =
+(
+Costcoordinated −Costdecoupled
+)
++
+(
+Voldecoupled,T −Volcoordinated,
+T
+)
+• SP • τon−peak
+(21)
+Where Costcoordinated and Costdecoupled are calculated operational costs for
+the coordinated and decoupled strategies respectively. Similarly,
+Volcoordinated and Voldecoupled are the final volume of water tanks at the end
+of the emergency for each strategy. SP is the average specific power of
+G. Perelman et al.
+
+Sustainable Energy, Grids and Networks 42 (2025) 101643
+6
+the WDS pumps and τon−peak is the on-peak electricity tariff.
+The change in CENS is calculated based on the difference between
+the objective values of the decoupled and the coordinated approaches
+such that the difference in LS is the benefit of the coordinated approach.
+According to [46], the value of not-served energy (kWh) is a function of
+the outage duration. In the range of the duration considered in this study
+(6–24 hours) the price of not served kWh can be approximated by linear
+regression as shown in Eq. (22):
+ΔCENS = (0.025 + 1.2 • T) •
+(
+LSdecoupled −LScoordinated
+)
+(22)
+Where T is the emergency duration, and LSi is the LS results from
+strategy i.
+2.8. Random emergency scenarios
+A random scenarios generator was developed to support the evalu-
+ation of the proposed methodology. The scenarios were generated by
+drawing sets of random parameters that characterize each scenario.
+These parameters include the start time of the scenario, its duration,
+scaling factors (multipliers) of the water demand, power loads, and PV
+availability profile. Additionally, the number of damaged power lines
+and the index of damaged (failed) lines. Lastly, the state of tanks and
+batteries at the start of the emergency, meaning the water volume and
+energy stored in tanks and batteries respectively. These parameters
+generate a range of scenarios different from each other in the level of
+severity. For example, in a scenario that occurs during a peak con-
+sumption day where water and power consumption are at their high
+range, it will be more difficult to reduce LS since the systems have fewer
+reserves. Similarly, some power lines are more critical than others,
+charged batteries are desired at the beginning of an emergency, etc. In
+this context, the amount of LS results from a scenario indicates its
+severity. All the parameters were drawn from a uniform distribution
+according to the configuration presented in Table 2.
+3. Results
+The proposed method was evaluated through a case study inte-
+grating a small WDS pumping water from three wells with a modified
+version of the 33-bus system benchmark. The case study is designed to
+simulate a local energy microgrid capable of off-grid operation, the
+microgrid voltage is 13.3 kV. By combining local renewable generators
+with storage devices and emergency diesel generators, microgrids can
+sustain off-grid operation for extended periods. This shift to microgrids
+helps mitigate the instabilities in the main grid caused by the intermit-
+tent nature of renewable energy. Additionally, it ensures a reliable and
+high-quality power supply for consumers within these microgrids, who
+are shielded from the fluctuations and disruptions affecting the main
+grid [47].
+Accordingly, the discussed microgrid is equipped with distributed
+energy resources, including PV and energy storage systems as suggested
+by [48]. To the modified 33-bus PDS we added a WDS that draws water
+from three local wells. The WDS contains two pressure zones such that
+the wells pump water into the lower pressure zone governed by tank t1
+(3435 m3) and a booster pump lifts a portion of the water to the higher
+elevation consumers governed by tank t2 (1235 m3). The well pumps
+and the booster pumps both represent centrifugal pumps and are
+modeled the same in the optimization models. The wells are equipped
+with emergency diesel generators ensuring their functionality during
+emergencies. These generators can also provide power to the PDS.
+(Fig. 3)
+To rigorously evaluate the ability of the proposed coordinated opti-
+mization ability to reduce LS it was tested against a range of 1000
+emergency scenarios based on the distributions presented in Table 2.
+For each random scenario, LS was minimized by all three operational
+strategies: decoupled, centralized coupled, and coordinated optimiza-
+tion (the reader is referred to the definitions in the methodology sec-
+tion). The effectiveness of the three strategies was statistically compared
+as presented in Table 3. The values in the table represent the amount of
+LS in kWh and the values within the parentheses show the deviation
+from the centralized coupled approach which constitutes a benchmark.
+The centralized coupled approach outperforms the other strategies
+epitomizing the ideal of perfect knowledge and coordination between
+WDS and PDS. The decoupled approach resulted in a 7.86 % increase in
+LS compared to the centralized coupled approach. Remarkably, the
+Fig. 2. Coordinated optimization communication order.
+Table 2
+Random emergency scenarios configuration.
+Parameter
+Distribution
+Min
+Max
+Start time
+Uniform
+0
+23
+Duration
+Uniform
+6
+24
+Water demand factor
+Uniform
+0.8
+1.2
+Power load factor
+Uniform
+0.8
+1.2
+PV factor
+Uniform
+0.8
+1.2
+Number of outage lines
+Uniform
+1
+2
+Water tanks initial state
+Uniform
+0.2
+1
+Batteries initial state
+Uniform
+0.2
+1
+G. Perelman et al.
+
+Sustainable Energy, Grids and Networks 42 (2025) 101643
+7
+proposed coordinated optimization approach showcased its effective-
+ness by limiting the LS increase to a mere 0.96 % above the centralized
+coupled strategy. Furthermore, the standard deviation (STD) of the co-
+ordinated optimization solutions is smaller than the decoupled solutions
+indicating the consistency of the coordinated optimization supreme. The
+results demonstrate how the coordinated optimization strategy is a
+practical solution for utilizing WDS flexibility during an emergency.
+Theoretically, the centralized coupled strategy reduces LS the most.
+However, it is impractical since it requires a single control center to
+operate both systems, which is rarely the case. The presented coordi-
+nated optimization approach performs nearly as effectively as the
+centralized one. Still, implementing it is much more feasible and re-
+quires only simple data transmission between the utilities.
+Fig. 4 illustrates the potential of LS reduction across varying degrees
+of scenario severity. Where severity is estimated according to the LS
+results from the decoupled strategy (x-axis). The y-axis indicates the
+percentage reduction in LS achieved through the centralized coupled
+and coordinated strategies. As the scenario severity increases, the po-
+tential for LS reduction diminishes for both strategies. This observation
+aligns with expectations, as the WDS’s contribution to the total PDS
+loads is finite, thus limiting its capacity to shift power post-emergency
+Fig. 3. Case study layout.
+Table 3
+Statistical comparison of total LS (kWh) between operational strategies.
+Centralized Coupled
+Coordinated
+Decoupled
+Mean
+5922.6
+5979.4 (0.96 %)
+6377.3 (7.86 %)
+STD
+3606.4
+3644.0 (1.04 %)
+3715.5 (3.03 %)
+Fig. 4. LS reduction vs LS in a decoupled decision-making.
+G. Perelman et al.
+
+Sustainable Energy, Grids and Networks 42 (2025) 101643
+8
+during severe emergencies. Notably, WDS can facilitate a reduction in LS
+ranging from almost 70 % in the milder scenarios to about 5 % in the
+most severe ones. Although the centralized coupled boxes present
+slightly larger LS reduction (boxes are slightly higher), the two ap-
+proaches perform almost equivalently with similar LS reduction ranges.
+In 21 out of the 1000 random scenarios, the decoupled approach
+resulted in infeasible solutions, meaning that the WDS planned schedule
+is infeasible and might cause additional water outages alongside power
+disruptions. In contrast, the centralized coupled and coordinated ap-
+proaches yielded feasible solutions in all these cases. Out of the three
+optimization strategies, the decoupled one is the most stringent thus
+presenting the greatest difficulty in finding a feasible solution. It is noted
+that the optimization problems are of non-linear mixed integer type. By
+relaxing the solver optimality gaps these infeasible solutions were
+eliminated.
+The potential for LS reduction based on WDS adjustment depends on
+the emergency properties. Fig. 5 presents the percentage of LS reduction
+against the various parameters that define the emergency scenarios (as
+outlined in Table 2). The initial state of tanks and batteries is repre-
+sented by the average values of volume and energy respectively. Each
+scenario is depicted as a line across the different coordinates repre-
+senting the scenario properties, with line colors according to the LS
+reduction rate. The leftmost axis shows the percentage reduction in LS.
+The next axis represents the duration of the emergency scenario, indi-
+cating that shorter emergencies correlate with greater LS reduction. The
+effect of the emergency start time is also evident, events starting during
+peak consumption hours (morning to afternoon) have a lower reduction
+potential compared to scenarios that start at nighttime. While the cor-
+relation between the water demands factor and LS reduction is unclear,
+lower power load factors are correlated with higher LS reduction rates.
+Similarly, higher values of the PV availability factor also allow for
+greater LS reduction. To further explore the impact of water demand,
+power load, and PV availability factors, each was analyzed indepen-
+dently while keeping all other scenario properties constant. When iso-
+lated, the correlation between these factors and LS reduction becomes
+clearer as presented in Fig. S.5 in the supplementary materials. Unex-
+pectedly, Fig. 5 shows that the system initial conditions of initial tank
+volumes and initial batteries SOC are not correlated with LS reduction.
+However, when the initial conditions are isolated, a strong correlation
+emerges. Since the initial conditions impact the different optimization
+approaches the same, the LS reduction (improvement) is not prominent
+in the analysis. In terms of absolute values, a direct relationship is
+observed between higher initial capacity and lower LS. Interestingly,
+while higher initial batteries SOC consistently reduces LS, initial tank
+volumes above a certain threshold do not further reduce LS. The results
+of the initial conditions analysis are presented in Figs. S.6 and S.7 in the
+supplementary materials.
+The expenses associated with different scenarios were analyzed to
+quantify the monetary benefit of the proposed method. The additional
+costs of the water utility are the result of pumping costs during and after
+the emergency. The emergency cost for the power utility is quantified
+based on the cost of energy not served (CENS) to manifest the damage
+for the power consumers. Fig. 6 graphically illustrates the relationship
+between the additional emergency costs incurred by each system. The x-
+axis displays CENS, and the y-axis indicates the additional costs borne by
+the water utility. It is evident that the reduction in CENS is significantly
+larger in magnitude compared to the additional costs incurred by the
+WDS. While the continuous operation of systems primarily depends on
+operational expenses alone, the loss of service incurs further conse-
+quences and entails higher costs than the cost of power generation. This
+is demonstrated in Fig. 6 which shows that the missing volume of water
+can be pumped post-emergency with the price of routine power gener-
+ation while reducing the damage to consumers dramatically.
+Fig. 5. LS reduction vs emergency scenarios parameters.
+Fig. 6. WDS Additional pumping cost vs cost of energy not served.
+G. Perelman et al.
+
+Sustainable Energy, Grids and Networks 42 (2025) 101643
+9
+3.1. Edge scenarios analysis
+Further analysis was conducted on specific scenarios to investigate
+the factors influencing the LS reduction capacity. Two extreme scenarios
+were chosen, the first one demonstrates a significant LS reduction
+whereas in the second one, only a minor reduction is achieved.
+Scenario 1 – significant LS reduction
+The scenario starts at 19:00 and lasts 12 hours. Lines 6 and 26 of the
+PDS are under outage. The tank volumes at the emergency start are 27 %
+and 46 % of their total capacity, and the batteries charging states are
+55 %, 42 %, 66 %, and 24 %. For these conditions, LS will be 4199 kWh,
+2944 kWh, and 2942 kWh for the decoupled, coordinated, and
+centralized coupled strategies respectively, exhibiting an almost 30 %
+reduction in LS. The WDS response to a scenario can be reviewed
+through the tank volume during the emergency as shown in Fig. 7, the
+pump schedule and power depicted in Figs. S.1 and S.2 in Appendix A.
+The emergency starts in the evening, right before the off-peak tariff
+period. Uninformed of the emergency event, the decoupled solution is
+such that the WDS pumps as much as possible during this time which can
+be seen in Fig. 7 where the tanks are constantly filled during the
+nighttime. With the PDS delivering the emergency signal, the WDS re-
+duces pumping to the minimum possible without violating tank mini-
+mum volumes. This result indicates that emergencies during off-peak
+periods are more convenient. While from a pure PDS perspective, this
+might seem intuitive, the proposed methodology sheds light on how
+WDS has greater potential to support emergencies during off-peak
+periods.
+Another factor impacting the results is the water demand and power
+load factors of 0.93 and 0.8, respectively. The lower consumption of
+water and load reduces the systems’ strain allowing for a better supply-
+demand balance. The tank volumes are quite empty with 27 % in the
+main (lower) tank and 46 % in the upper (smaller) tank, and the battery
+states are around 50 % charged. These initial conditions are not favor-
+able for the objective of LS reduction, yet this scenario is one where WDS
+reduces LS the most.
+Scenario 2 – minor LS reduction
+A second emergency scenario illustrates conditions where the WDS
+contribution to the LS reduction is limited. This emergency starts at
+06:00 and lasts 19 hours. Lines 14 and 25 of the PDS are under outage.
+The tank volumes at the emergency start are 31 % and 53 % of their total
+capacity, and the batteries charging states are 83 %, 66 %, 74 %, and
+35 %. For these conditions, LS will be 11474 kWh, 14414 kWh, and
+14406 kWh for the decoupled, coordinated, and centralized coupled
+strategies respectively, indicating an LS reduction of 0.5 %. It is noted
+that both centralized coupled and coordinated approaches only minorly
+reduce LS, pointing out that the cause for the minor improvement is not
+the method disadvantages but stems from the scenario itself which
+contains critical conditions that prevent LS reduction. Fig. 8 presents the
+tank volumes during the emergency, the pump schedules and the power
+depicted in Figs. S.3 and S.4 in Appendix A.
+This emergency scenario falls in the daytime when power and water
+consumption are at their upper edge, so the systems have fewer re-
+dundancies to decrease LS. The water demand factor is 1.09 and the PDS
+loads factor is 1.11. These values indicate a peak consumption day,
+adding another challenge on top of the emergency scenario. The two
+water tanks start the emergency with 31 % and 53 % of their capacity.
+This exceeds WDS operation standards where pumps are expected to
+operate during the night and start the morning demand cycle when full.
+This exception from common practical standards is one of the causes
+that prevent the WDS from shifting pumping and enable further LS
+reduction. Lastly, the PV availability is at its low edge, with a PV factor
+of 0.8 which further limits the power generation capacity.
+4. Conclusions
+The integrated management of WDS and PDS was investigated
+through a coordinated optimization framework, compared with decou-
+pled and centralized coupled strategies aimed at minimizing LS during
+emergencies. Previous studies on joint multi-system optimization often
+assumed full transparency and cooperation between operators, which is
+unrealistic. Alternatively, some studies suggested independent frame-
+works where each utility optimizes its objectives independently, but this
+is typically sub-optimal. The current study proposes a middle path of a
+coordinated optimization approach. This approach is based on practical
+communication between utilities, leading to better overall performance.
+The coordinated strategy proved highly effective in managing emer-
+gency conditions for the examined case study of a local microgrid con-
+nected to a small WDS, consistently reducing LS compared to decoupled
+decision-making across a range of simulated emergency scenarios. For
+this
+case
+study,
+the
+coordinated
+strategy’s
+performance
+closely
+approached the optimal benchmark results of the centralized coupled
+strategy. While the proposed method does not rely on assumptions that
+limit its applicability to the specific case study, its effectiveness was
+demonstrated only on a single configuration, with variations primarily
+in the simulated scenarios. Therefore, future research should focus on
+implementing and validating the method across different categories of
+networks to further confirm its generalizability and robustness. Addi-
+tionally, the study analyzes the factors that impact the severity of
+emergency scenarios and the effectiveness of the proposed method in
+reducing LS. It was found that WDS operational adjustments are more
+effective in scenarios where some redundancy is available, such as
+during nighttime scenarios. Future research should analyze different
+Fig. 7. WDS tanks behavior for significant LS reduction scenario.
+G. Perelman et al.
+
+Sustainable Energy, Grids and Networks 42 (2025) 101643
+10
+configurations of interconnected PDS and WDS to further assess the
+generality of the method. Another potential future research is the
+routine operation of WDS and its effect on the resilience of both systems,
+for example, by maintaining higher minimum tank levels. Moreover,
+future research is needed to further explore this decision space from a
+stochastic perspective, accounting for the uncertainty inherent in
+emergency scenarios. In conclusion, this study contributes to the
+ongoing discourse on integrated WDS-PDS management by demon-
+strating that limited communication between PDS and WDS is sufficient
+to significantly enhance the efficiency and resilience of these critical
+infrastructure systems.
+CRediT authorship contribution statement
+Panteli Mathaios: Writing – review & editing, Visualization, Vali-
+dation, Supervision, Methodology, Investigation, Conceptualization.
+Eliades Demetrios: Writing – review & editing, Visualization, Valida-
+tion, Supervision, Methodology, Investigation, Conceptualization. Vra-
+chimis Stelios: Writing – review & editing, Visualization, Validation,
+Methodology, Investigation, Conceptualization. Ostfeld Avi: Writing –
+review & editing, Visualization, Validation, Supervision, Methodology,
+Investigation, Conceptualization. Shmaya Tomer: Writing – review &
+editing,
+Visualization,
+Validation,
+Methodology,
+Investigation,
+Conceptualization. Navon Aviad: Writing – review & editing, Visuali-
+zation,
+Validation,
+Methodology, Investigation,
+Conceptualization.
+Perelman Gal: Writing – review & editing, Writing – original draft,
+Visualization, Validation, Software, Methodology, Investigation, Formal
+analysis, Data curation, Conceptualization.
+Declaration of Competing Interest
+The authors declare the following financial interests/personal re-
+lationships which may be considered as potential competing interests.
+Avi Ostfeld reports financial support was provided by The Bernard M.
+Gordon Center for Systems Engineering at the Technion. Demetrios G.
+Eliades reports financial support was provided by The ERDF and the
+Rep. of Cyprus. If there are other authors, they declare that they have no
+known competing financial interests or personal relationships that could
+have appeared to influence the work reported in this paper.
+Acknowledgements
+This work is co-funded by the ERDF and the Rep. of Cyprus through
+RIF under DigiWATER project (ENTERPRISES/0521/0081), the EU
+H2020 and Rep. of Cyprus through the DMRID under the KIOS CoE
+project (739551). This research was supported by The Bernard M.
+Gordon Center for Systems Engineering at the Technion and by the Is-
+raeli Water Authority under project number 143990.
+Appendix A. Supporting information
+Supplementary data associated with this article can be found in the
+online version at doi:10.1016/j.segan.2025.101643.
+Data availability
+The data and code used in this research are available on the following
+GitHub
+repository:
+https://github.com/GalPerelman/pds-wds-
+coordinated
+References
+[1] G. De Vanna, M. Longo, F. Foiadelli, M. Panteli, M. Galeela, Reliability and
+resilience analysis and comparison of off-grid microgrids, UPEC 2020 - 2020 55th
+Int. Univ. Power Eng. Conf., Proc. (2020), https://doi.org/10.1109/
+UPEC49904.2020.9209845.
+[2] F. Moazeni, J. Khazaei, Optimal operation of water-energy microgrids; a mixed
+integer linear programming formulation, J. Clean. Prod. 275 (2020) 122776,
+https://doi.org/10.1016/j.jclepro.2020.122776.
+[3] B.J. Pierre, B. Arguello, A. Staid, R.T. Guttromson, Investment optimization to
+improve power system resilience, 2018 International Conference on Probabilistic
+Methods Applied to Power Systems, PMAPS 2018 - Proceedings (2018). 〈https
+://doi.org/10.1109/PMAPS.2018.8440467〉.
+[4] X. Chen, W. Su, A. Kavousi-Fard, A.G. Skowronska, Z.P. Mourelatos, Z. Hu,
+Resilient microgrid system design for disaster impact mitigation, Sustain Resilient
+Infrastruct. 6 (2021) 56–72, https://doi.org/10.1080/23789689.2019.1708176.
+[5] S. Mishra, K. Anderson, B. Miller, K. Boyer, A. Warren, Microgrid resilience: A
+holistic approach for assessing threats, identifying vulnerabilities, and designing
+corresponding mitigation strategies, Appl. Energy 264 (2020) 114726, https://doi.
+org/10.1016/J.APENERGY.2020.114726.
+[6] N.L. Dehghani, A. Shafieezadeh, Multi-stage resilience management of smart power
+distribution systems: a stochastic robust optimization model, IEEE Trans. Smart
+Grid 13 (2022) 3452–3467, https://doi.org/10.1109/TSG.2022.3170533.
+[7] B. Taheri, A. Safdarian, M. Moeini-Aghtaie, M. Lehtonen, Enhancing resilience
+level of power distribution systems using proactive operational actions, IEEE
+Access 7 (2019) 137378–137389, https://doi.org/10.1109/
+ACCESS.2019.2941593.
+[8] A. Arjomandi-Nezhad, M. Fotuhi-Firuzabad, M. Moeini-Aghtaie, A. Safdarian,
+P. Dehghanian, F. Wang, Modeling and optimizing recovery strategies for power
+distribution system resilience, IEEE Syst. J. 15 (2021) 4725–4734, https://doi.org/
+10.1109/JSYST.2020.3020058.
+[9] S. Pahwa, C. Scoglio, S. Das, N. Schulz, Load-shedding strategies for preventing
+cascading failures in power grid, Electr. Power Compon. Syst. 41 (2013) 879–895,
+https://doi.org/10.1080/15325008.2013.792884.
+[10] E. Hossain, S. Roy, N. Mohammad, N. Nawar, D.R. Dipta, Metrics and enhancement
+strategies for grid resilience and reliability during natural disasters, Appl. Energy
+290 (2021) 116709, https://doi.org/10.1016/J.APENERGY.2021.116709.
+[11] D.N. Trakas, M. Panteli, N.D. Hatziargyriou, P. Mancarella, Spatial risk analysis of
+power systems resilience during extreme events, Risk Anal. 39 (2019) 195–211,
+https://doi.org/10.1111/RISA.13220.
+Fig. 8. WDS tanks behavior for minor LS reduction scenario.
+G. Perelman et al.
+
+Sustainable Energy, Grids and Networks 42 (2025) 101643
+11
+[12] M. Haghshenas, R.A. Hooshmand, M. Gholipour, Power distribution system
+resilience enhancement planning against extreme dust storms via pre- and post-
+event actions considering uncertainties, Sustain Cities Soc. 78 (2022) 103626,
+https://doi.org/10.1016/J.SCS.2021.103626.
+[13] Y. Du, Y. Xue, W. Wu, M. Shahidehpour, X. Shen, B. Wang, H. Sun, Coordinated
+planning of integrated electric and heating system considering the optimal
+reconfiguration of district heating network, IEEE Trans. Power Syst. 39 (2024)
+794–808, https://doi.org/10.1109/TPWRS.2023.3242652.
+[14] K. Wang, Y. Xue, Q. Guo, M. Shahidehpour, Q. Zhou, B. Wang, H. Sun,
+A coordinated reconfiguration strategy for multi-stage resilience enhancement in
+integrated power distribution and heating networks, IEEE Trans. Smart Grid 14
+(2023) 2709–2722, https://doi.org/10.1109/TSG.2022.3231590.
+[15] M. Sang, Y. Ding, M. Bao, S. Li, C. Ye, Y. Fang, Resilience-based restoration strategy
+optimization for interdependent gas and power networks, Appl. Energy 302 (2021)
+117560, https://doi.org/10.1016/J.APENERGY.2021.117560.
+[16] R. Menke, E. Abraham, P. Parpas, I. Stoianov, Demonstrating demand response
+from water distribution system through pump scheduling, Appl. Energy 170 (2016)
+377–387, https://doi.org/10.1016/J.APENERGY.2016.02.136.
+[17] M.N. Sharif, H. Haider, A. Farahat, K. Hewage, R. Sadiq, Water–energy nexus for
+water distribution systems: a literature review, Environ. Rev. 27 (2019) 519–544,
+https://doi.org/10.1139/ER-2018-0106.
+[18] M.A. Mirzaei, H. Mehrjerdi, A. Mansour Saatloo, Look-ahead scheduling of energy-
+water nexus integrated with Power2X conversion technologies under multiple
+uncertainties, Sustain Cities Soc. 99 (2023) 104902, https://doi.org/10.1016/J.
+SCS.2023.104902.
+[19] M. Thomas, L. Sela, A mixed-integer linear programming framework for
+optimization of water network operations problems, Water Resour. Res 60 (2024)
+e2023WR034526, https://doi.org/10.1029/2023WR034526.
+[20] E. Salomons, M. Housh, Practical real-time optimization for energy efficient water
+distribution systems operation, J. Clean. Prod. 275 (2020) 124148, https://doi.
+org/10.1016/j.jclepro.2020.124148.
+[21] K. Oikonomou, M. Parvania, R. Khatami, Optimal demand response scheduling for
+water distribution systems, IEEE Trans. Ind. Inf. 14 (2018) 5112–5122, https://doi.
+org/10.1109/TII.2018.2801334.
+[22] S. Sharma, Q. Li, Decentralized optimization of energy-water nexus based on a
+mixed-integer boundary compatible algorithm, Appl. Energy 359 (2024) 122588,
+https://doi.org/10.1016/J.APENERGY.2023.122588.
+[23] A.S. Zamzam, E. Dall’Anese, C. Zhao, J.A. Taylor, N.D. Sidiropoulos, Optimal
+water-power flow-problem: formulation and distributed optimal solution, IEEE
+Trans. Control Netw. Syst. 6 (2019) 37–47, https://doi.org/10.1109/
+TCNS.2018.2792699.
+[24] C. Mkireb, A. Demb´el´e, A. Jouglet, T. Denoeux, Robust optimization of demand
+response power bids for drinking water systems, Appl. Energy 238 (2019)
+1036–1047, https://doi.org/10.1016/J.APENERGY.2019.01.124.
+[25] T. Shmaya, M. Housh, F. Pecci, K. Baker, J. Kasprzyk, A. Ostfeld, Conjunctive
+optimal operation of water and power networks, Heliyon 10 (2024) e39136,
+https://doi.org/10.1016/J.HELIYON.2024.E39136.
+[26] A. Bhatraj, E. Salomons, M. Housh, An optimization model for simultaneous design
+and operation of renewable energy microgrids integrated with water supply
+systems, Appl. Energy 361 (2024) 122879, https://doi.org/10.1016/J.
+APENERGY.2024.122879.
+[27] T. Shmaya, A. Ostfeld, Conjunctive optimal design of water and power networks,
+J. Hydrol. (Amst. ) 643 (2024) 131932, https://doi.org/10.1016/J.
+JHYDROL.2024.131932.
+[28] K. Oikonomou, M. Parvania, Optimal participation of water desalination plants in
+electricity demand response and regulation markets, IEEE Syst. J. 14 (2020)
+3729–3739, https://doi.org/10.1109/JSYST.2019.2943451.
+[29] A. Stuhlmacher, J.L. Mathieu, Flexible drinking water pumping to provide multiple
+grid services, Electr. Power Syst. Res. 212 (2022) 108491, https://doi.org/
+10.1016/J.EPSR.2022.108491.
+[30] A. Zakariazadeh, R. Ahshan, R. Al Abri, M. Al-Abri, Renewable energy integration
+in sustainable water systems: a review, Clean. Eng. Technol. 18 (2024) 100722,
+https://doi.org/10.1016/J.CLET.2024.100722.
+[31] D. Fooladivanda, A.D. Dominguez-Garcia, P.W. Sauer, Utilization of water supply
+networks for harvesting renewable energy, IEEE Trans. Control Netw. Syst. 6
+(2019) 763–774, https://doi.org/10.1109/TCNS.2018.2873946.
+[32] R. O’Neil, K. Oikonomou, M. Parvania, V. Tidwell, A.T. Al-Awami, M. Panteli,
+S. Conrad, T. Brekken, E. Goharian, N. Voisin, Integrated Water and Power
+Systems: Current State and Research Roadmap, IEEE Resource Center, 2023. 〈http
+s://resourcecenter.ieee.org/publications/technical-reports/pes_tp_tr114_psope_
+91123〉(accessed May 23, 2024).
+[33] E. Salomons, M. Housh, D. Katz, L. Sela, Water-energy nexus in a desalination-
+based water sector: the impact of electricity load shedding programs, npj Clean.
+Water 2023 6 (2023) 1–9, https://doi.org/10.1038/s41545-023-00281-7.
+[34] M.S. Roni, T. Mosier, T.D. Feinberg, T. McJunkin, A.L. Toba, L.D. Boire,
+L. Rodriguez-Garcia, M. Majidi, M. Parvania, Integrated water-power system
+resiliency quantification, challenge and opportunity, Energy Strategy Rev. 39
+(2022) 100796, https://doi.org/10.1016/J.ESR.2021.100796.
+[35] L. Rodriguez-Garcia, M.M. Hosseini, T.M. Mosier, M. Parvania, Resilience analytics
+for interdependent power and water distribution systems, IEEE Trans. Power Syst.
+37 (2022) 4244–4257, https://doi.org/10.1109/TPWRS.2022.3149463.
+[36] S. Zuloaga, V. Vittal, Quantifying power system operational and infrastructural
+resilience under extreme conditions within a water-energy nexus framework, IEEE
+Open Access J. Power Energy 8 (2021) 229–238, https://doi.org/10.1109/
+OAJPE.2021.3084577.
+[37] J. Najafi, A. Peiravi, A. Anvari-Moghaddam, J.M. Guerrero, Resilience
+improvement planning of power-water distribution systems with multiple
+microgrids against hurricanes using clean strategies, J. Clean. Prod. 223 (2019)
+109–126, https://doi.org/10.1016/J.JCLEPRO.2019.03.141.
+[38] J. Najafi, A. Peiravi, A. Anvari-Moghaddam, J.M. Guerrero, An efficient interactive
+framework for improving resilience of power-water distribution systems with
+multiple privately-owned microgrids, Int. J. Electr. Power Energy Syst. 116 (2020)
+105550, https://doi.org/10.1016/J.IJEPES.2019.105550.
+[39] Y. Yang, E.Y.M. Lo, Resilience-oriented Modeling and Co-optimization for Coupled
+Power and Water Distribution Systems, Proceedings of the 11th International
+Conference on Innovative Smart Grid Technologies - Asia, ISGT-Asia 2022 (2022)
+41–45. https://doi.org/10.1109/ISGTASIA54193.2022.10003597.
+[40] M. P´arraga, A. Fajardo, L. Rodríguez-Urrego, J. Vuelvas, A non-cooperative game
+approach on isolated water-energy microgrids, Sustain. Energy Grids Netw. 38
+(2024) 101392, https://doi.org/10.1016/J.SEGAN.2024.101392.
+[41] R.A. Jabr, Radial distribution load flow using conic programming, IEEE Trans.
+Power Syst. 21 (2006) 1458–1459, https://doi.org/10.1109/TPWRS.2006.879234.
+[42] L.E. Ormsbee, K.E. Lansey, Optimal control of water supply pumping systems,
+J. Water Resour. Plan Manag 120 (1994) 237–252, https://doi.org/10.1061/
+(ASCE)0733-9496(1994)120:2(237).
+[43] P.W. Jowitt, G. Germanopoulos, Optimal pump scheduling in water-supply
+networks, J. Water Resour. Plan Manag 118 (1992) 406–422, https://doi.org/
+10.1061/(asce)0733-9496(1992)118:4(406).
+[44] A. Sinha, P. Malo, K. Deb, A review on bilevel optimization: from classical to
+evolutionary approaches and applications, IEEE Trans. Evolut. Comput. 22 (2018)
+276–295, https://doi.org/10.1109/TEVC.2017.2712906.
+[45] M. Abunada, N. Trifunovi´c, M. Kennedy, M. Babel, Optimization and reliability
+assessment of water distribution networks incorporating demand balancing tanks,
+Procedia Eng. 70 (2014) 4–13, https://doi.org/10.1016/J.PROENG.2014.02.002.
+[46] M.J. Sullivan, J. Schellenberg, M. Blundell, Update Value Serv. Reliab. Estim.
+Electr. Util. Cust. U. S. Energy Mark. Policy (2015). 〈https://emp.lbl.gov/publicati
+ons/updated-value-service-reliability〉(accessed May 27, 2024).
+[47] M. Usama, M. Moghavvemi, H. Mokhlis, N.N. Mansor, H. Farooq, A. Pourdaryaei,
+Optimal protection coordination scheme for radial distribution network
+considering ON/OFF-Grid, IEEE Access 9 (2021) 34921–34937, https://doi.org/
+10.1109/ACCESS.2020.3048940.
+[48] D. Feroldi, P. Rullo, Optimal operation for the IEEE 33 bus benchmark test system
+with energy storage, IEEE Urucon (2021) 1–5, https://doi.org/10.1109/
+URUCON53396.2021.9647175.
+G. Perelman et al.

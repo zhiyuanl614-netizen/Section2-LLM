@@ -1,0 +1,1938 @@
+Optimal cost predictive BMS considering greywater recycling, responsive
+HVAC, and energy storage
+Ahmed R. El Shamy , Ameena S. Al-Sumaiti *
+Smart OR Lab, Advanced Power and Energy Center, Department of Electrical Engineering, Khalifa University, Abu Dhabi, P. O. Box 127788, United Arab Emirates
+H I G H L I G H T S
+• Integration of PV, battery, HVAC, and greywater recycling with predictive control.
+• Mixed-integer linear programming model for optimal subsystems coordination.
+• Achieved 8.3 % operational cost reduction and 21.5 % less potable water consumption.
+• Study the impact of increased prediction horizon of the predictive controller.
+• Robustness validated under different room sizes, user preferences, and PV uncertainty.
+A R T I C L E I N F O
+Keywords:
+Battery energy storage
+Building energy management system
+Demand response
+Electric and water networks
+HVAC
+Onsite greywater recycling
+Optimal model predictive control
+Photovoltaics
+A B S T R A C T
+A crucial aspect of a sustainable city is ensuring that energy and water supplies can adequately meet urban
+demand. With the scarcity of natural resources and growing electricity and water demand, it becomes increas-
+ingly important for consumers to manage their resource usage more efficiently. This paper proposes a novel
+perspective of demand-side management coordination strategy for a building’s water-energy nexus to enhance
+the resilience and efficiency of the overall electricity-water-heating system. The model is formulated to optimally
+coordinates the onsite greywater recycling system, heating, ventilation, air conditioning (HVAC) loads, and
+distributed energy generation systems with a bidirectional grid connection in a residential building. All sub-
+systems are controlled by a model predictive controller (MPC) receiving real-time time of use (ToU) pricing from
+electricity and water utilities. The presented mixed integer linear programming model is verified to meet the
+customers’ demands while reducing the operational costs. Results are compared with benchmark systems lacking
+the water recycling or energy storage system showing 8.3 % operational cost reduction while reducing potable
+water consumption by 21.5 %. The effect of increased MPC control horizon is also studied showing reduction in
+cost with increased horizon. Detailed analysis of the proposed framework computational burden and effect of
+prediction errors is performed to prove the MPC adaptability and robustness. Testing under increased room size
+and different user preferences further validate the efficacy of the proposed scheme in reducing the operational
+costs.
+1. Introduction
+1.1. Motivation
+Energy demand has been increasing in a pattern that can be
+described as exponential [1]. This puts a huge burden on electricity
+suppliers. The burden becomes even greater with the added re-
+quirements to reduce carbon-based generation to mitigate climate
+change [2]. Renewable Energy Sources (RES) have been introduced into
+the grid as a solution for the aforementioned issues [3]. Such an intro-
+duction has not been a straightforward process due to RES intermittent
+nature and lack of dispatchability [4,5]. Therefore, different topics
+related to RES integration to the conventional grid and enhancing their
+efficiencies have gained much interest in the energy literature [6,7]. The
+end goal is to achieve building resilience by increasing building inde-
+pendency from large utilities [8,9]. Resilience of Building also depends
+on two more systems, water supply and electric loads. Minimizing and
+optimizing water usage is a necessary for future efficient and more
+decentralized agents [10]. Electric loads can have great impact also on
+* Corresponding author.
+E-mail addresses: aalsumaiti@masdar.ac.ae, ameena.alsumaiti@ku.ac.ae (A.S. Al-Sumaiti).
+Contents lists available at ScienceDirect
+Applied Energy
+journal homepage: www.elsevier.com/locate/apenergy
+https://doi.org/10.1016/j.apenergy.2024.124589
+Received 4 June 2024; Received in revised form 29 August 2024; Accepted 24 September 2024
+Applied Energy 377 (2025) 124589 
+Available online 1 October 2024 
+0306-2619/© 2024 The Authors. Published by Elsevier Ltd. This is an open access article under the CC BY-NC-ND license ( http://creativecommons.org/licenses/by- 
+nc-nd/4.0/ ). 
+
+building cost and resilience, a more flexible and controllable load can
+have significant impact on building’s operational cost and efficiency,
+especially in a dynamic pricing energy market [8,11,12].
+The motive of this work is to obtain a building that can reflect higher
+independence as entity within the energy/water large utilities by
+investigating possible cost reduction and efficiency boosting possibil-
+ities. The proposed building must also have an efficient controller that
+can securely achieve building’s demands while making use of the pro-
+posed possibilities to increase the operational cost savings and efficiency
+in energy and water. The proposed building here is equipped with de-
+mand response tools consisting of battery energy storage, onsite grey-
+water recycling decisions and controllable thermal loading. These
+systems are all managed by the proposed controller to decrease the
+building’s cost of dependence on large water and energy utilities based
+on the formulated optimization problem and control technique. A re-
+view on related works and subsystems is conducted next. Elaborative
+explanation of each used system in this paper and the corresponding
+mathematical integration are found in the following sections.
+1.2. Micro water-energy nexus of building
+To facilitate the adoption of small-scale RES, the idea of Microgrid
+(MG) has been introduced. In a MG, generation units of small capacity
+are installed at distribution or consumption level. The generation units
+are then called distributed energy resources (DERs), which have small
+capacity and are usually renewable sources [4,13,14]. The transition
+from centralized grid structure to MG structure can be achieved on
+several scales of MG. One scale is the building itself. Each building can
+act as a MG having its own sources, loads, power conditioners and
+controllers, which can be referred to as building microgrid (BMG)
+[15,16]. BMG can be grid connected or standalone without grid
+connection. The latter model of operation is known as islanded mode
+[1,17]. It is usually the case when designing a standalone MG that en-
+ergy storage systems (ESS) is used to make up for the uncertainty of
+DERs. Battery energy storage (BES) is the most common type [18].
+The operation of electric-water networks has run independently for
+decades. Recent research tends to explore the coupling between electric
+and water networks in a form called nexus and correlate both systems to
+achieve joint targets, such as efficiency and carbon reduction [19–23].
+Integration of energy-water hubs have expanded beyond basic models
+and economic assessments, encompassing a wide range of technological,
+environmental, and policy considerations. However, challenges in un-
+derstanding the multifaceted nature of the water-energy nexus and in
+resource conservation still exist. To address these issues, investments in
+large-scale water infrastructures have been made to enhance urban
+water availability. On the other hand, these efforts have led to increased
+per capita water usage and high dissipation costs, with limited recycling
+or reuse of water [24].
+However, most of the research targeted the generation/transmission
+large levels [25–27] or the microgrid context [19,20] along with the
+operational aspect rather than a residential building level. Previous
+research [28] has basically focused on a spatial optimized distribution of
+household rainwater harvesting and grey water recycling system on the
+daily basis instead of hourly basis. Another research considered a case
+study from a city in Unites Arab Emirates and various types of buildings
+grey water recycling economic assessment [29]. The models in [28] are
+very basic and do not incorporate renewable energy integration for
+recycling of greywater and scheduling of storage system under such
+Nomenclature
+A,B
+System state matrices of constant parameters depending on
+construction materials and geometries
+Aconv
+Total area of wall subject to convective heat transfer
+(
+m2)
+Aext−walls
+Total area of external walls
+(
+m2)
+Ai
+Cross-sectional area of tank i (m2)
+Capbat
+Battery energy capacity (kWh)
+C
+Thermal mass of external walls (J/K)
+Cbuy
+Time-varying rates of energy prices when bought from grid
+(US$/kW)
+Csell
+Time-varying rates of energy prices when sold to grid
+(US$/kW)
+CoP
+Coefficient of performance of HVAC system taken to be 3.2
+Cz
+Thermal mass of room air (J/K)
+C(i)
+Constraint i of optimization problem
+DGW
+Greywater demand
+(
+m3)
+Dpot
+Potable water demand
+(
+m3)
+G
+Solar irradiance (W/m2)
+h
+Convective heat transfer coefficient
+(
+W/
+( (
+m2.K
+)
+˙hm
+Rate of change water level in tank m (m/second)
+k
+Time step
+kth
+Thermal conductivity of external walls (W/(K.m) )
+nc
+Control horizon
+np
+Prediction horizon
+Pi
+Water pump i rater power (kW)
+Pbat,ch
+Battery charging power (kW)
+Pbat,disch
+Battery discharging power (kW)
+Pgrid,sell
+Power injected from building to grid (kW)
+Pgrid,buy
+Power being consumed by building from grid (kW)
+PNC
+constant-power non-controllable load
+PPV,rated
+PV plant rated power at 1000 W/m2 solar irradiance (kW)
+Qi
+Rated flowrate in valve i
+(
+m3)
+˙Qint
+Heat power produced internally due to person and devices
+(Watts)
+˙QHVAC
+HVAC cooling power entered to the zone (Watts)⃒⃒⃒⃒
+˙QHVAC⃒⃒⃒⃒
+total
+Total cooling power (kW)
+Qv4
+Drained water from tank 2 through valve V4
+(
+m3)
+˙Qext
+external solar incident power (Watts)
+qsource
+Solar outside incident radiation on walls (W/m2)
+R
+Thermal resistance of brick walls (K/W)
+SoC
+Battery state of charge, ratio between the current energy
+stored in the battery to its nominal capacity
+si
+Binary variable describing the ON/OFF status of pump Pi
+and valve Vi
+T1
+System state representing wall’s outside temperature (K)
+T2
+System state representing wall’s inside temperature (K)
+Tz
+Required zone/room temperature (K)
+To
+outside air/ambient temperature (disturbance
+noncontrollable input) (K)
+˙Vi
+Volume flow rate in tank i
+(
+m3/second
+)
+Z
+Objective function of optimization problem
+αsur
+Surface absorptivity coefficient
+ηbat,ch
+Charging efficiency of the battery
+ηbat,disch
+Discharging efficiency of the battery
+ηPV
+Connection system efficiency (MPPT and converters).
+Δt
+Sampling time (minutes)
+%pTGW
+Percentage of greywater demand that can be captured
+again and treated/recycled
+%pTPW
+Percentage of potable water demand that can be captured
+again and treated/recycled.
+A.R. El Shamy and A.S. Al-Sumaiti
+Applied Energy 377 (2025) 124589 
+2 
+
+integration. Most works ignore the computational aspects of real-time
+requirements and the effect of forecasting errors on operation. In [30],
+two model predictive control (MPC)-based strategies were introduced to
+optimize greywater recycling and rainwater harvesting in residential
+buildings. A case study in South Africa demonstrated potential savings of
+up to 32.3 % in water costs and a 31.5 % reduction in total operational
+costs over a month. However, the study did not explore the effects of
+varying the MPC control horizon or its computational impact, and the
+building lacked Distributed Energy Resources (DER) or other integrated
+subsystems. A novel energy-water nexus-based combined heating and
+power (CHP) operation optimization model was proposed in [31] to
+balance economic performance and water conservation. It demonstrated
+that increasing water availability led to higher energy output and system
+profits. The study highlighted the critical role of water resources in
+energy generation and provided strategies for maintaining CHP opera-
+tion under varying water constraints. In [32], the performance of an
+open-loop greywater heat recovery system for air-source heat pumps
+was assessed across various climates and building conditions. It is found
+that a closed-loop system provides significantly greater efficiency im-
+provements, particularly in buildings with high domestic hot water
+demand. Despite higher costs and complexity, the closed-loop configu-
+ration is recommended for scenarios such as hotels and swimming pools,
+where its benefits are maximized. In [33], a multi-objective mixed-
+integer linear programming (MILP) model was developed to optimize
+energy and water use in buildings, aiming to reduce CO2 emissions and
+operational costs. Across various scenarios, energy and water con-
+sumption and CO2 emission are considerably reduced. Potential
+commercialization was highlighted as a decentralized replacement for
+traditional utility systems. Similarly, water-energy CO2 emissions nexus
+is studied in [34], where the environmental input-output model was
+used to analyze China’s embodied water and energy consumption
+alongside CO2 emissions. The study found that agriculture dominated
+national water consumption but had low efficiency, while industries and
+the service sector were identified as water-, energy-, and carbon-
+intensive. The research emphasized the significant impact of upstream
+sectors on resource consumption and emissions, highlighting the
+importance of targeted strategies for sustainable development. The
+water-energy nexus is critical for addressing resource scarcity and
+environmental challenges, with research driving integrated manage-
+ment strategies that optimize both water and energy use. Understanding
+these interconnected systems enables more informed decision-making
+by policymakers and industries, fostering sustainable development and
+resilience [35]. Ultimately, water-energy nexus studies pave the way for
+innovative technologies and practices that balance human needs with
+environmental conservation.
+1.3. Water demand of building and potential of greywater recycling
+Another demand of a building is water. The current person average
+water usage is 500 l per day for developed countries [36]. The global
+fresh water demand is anticipated to surpass the supply by 40 % by 2030
+[37]. Water demand for various activities including cooling and venti-
+lation systems [38], irrigation, etc. mandates significant amount of en-
+ergy. In most countries around the world, water supply system is
+centralized and thus, provided from the main utility [39,40]. Under
+natural hazards, maintenance, etc., the water network may be out of
+service. Water problems in arid climate regions include low amounts of
+groundwater with increased salinity and narrow utilization of used
+water. This results in surging the cost of water production [41]. Water
+security is considered as an emerging area. Therefore, many countries
+invested in desalination plants, for more than 40 % of the fresh water
+demand [42,43]. Of the strategies recognized for mitigating water
+scarcity, enhancing water utilization efficiency is the guaranteed
+approach and most recommended. This can be achieved through the
+treatment of used water for use in other applications, such as flushing,
+irrigation or even in temperature control systems [44,45]. Greywater is
+the wastewater obtained after water is used except for toilet use [44].
+The reuse of grey water on household level can offer huge environ-
+mental advantages. It can also be more economical in the long term.
+Therefore, onsite greywater recycling is recommended and can form a
+major cornerstone in a resilient and sustainable city. A work that took
+the city of Boston as a case study and modeled the use of both rain water
+harvesting and grey water recycling was done utilizing decentralized
+facilities for water supply [28]. Though, challenges exist in imple-
+menting the greywater recycling for housing complex as identified in
+[44]. Greywater treatment can be done using a series of processes, such
+as trapping, aeration, blending and employing filters [46]. In [45],
+several chemical processes for greywater treatment are reported, some
+include photo catalytic oxidation, electrocoagulation and magnetic ion
+exchange. It is also reported that electrocoagulation techniques are
+favored over conventional ones. The importance of segregating grey-
+water at the source for decentralized treatment is highlighted in [47].
+This can lead to increased resilience and adaptability of local water
+systems and reduced transport costs.
+Greywater treatment technologies can be classified to biological,
+pyhsico-chemical and nature-based [47]. Biological methods, such as
+membrane bioreactors and sequencing batch reactors, are effective at
+removing organic pollutants and nutrients. They can handle varying
+pollutant loads and generally have lower operating costs compared to
+physicochemical methods. However, they require careful control of
+environmental conditions and may be sensitive to toxic substances in
+greywater
+[48].
+Physico-chemical
+methods,
+including
+membrane
+filtration and advanced oxidation processes, offer rapid treatment and
+can effectively remove a wide range of contaminants, including those
+resistant to biological treatment. These methods are generally more
+compact but often have higher operating costs due to energy con-
+sumption and chemical use [49]. Nature-based methods, such as con-
+structed wetlands and green walls, have low energy requirements and
+operational costs while providing additional ecosystem services. They
+are effective at removing a wide range of contaminants but typically
+require larger land areas and may have performance variations with
+seasonal changes [50]. Each method has its unique advantages and
+limitations, and the choice often depends on factors such as the scale of
+the system, local regulations, intended use of the treated greywater,
+available space, and environmental conditions [47]. Ongoing research
+continues to improve these methods, addressing their disadvantages and
+enhancing their effectiveness for sustainable water management in
+urban environments. Key challenges in greywater recycling include
+demographic variance in greywater quality, lack of a comprehensive
+legal framework and need for robust monitoring and control systems
+[51]. Effective cost-benefit analysis frameworks are essential for
+assessing the long-term viability of greywater systems. Models that
+quantify uncertainties in cost estimates and the importance of socio-
+economic acceptance are needed to ensure successful implementation.
+1.4. HVAC load of a building
+Another important aspect in buildings is the heating, ventilation, and
+air conditioning (HVAC). HVAC load can reach around 70 % of elec-
+tricity consumption and contributes to around half of buildings water
+consumption [52,53]. HVAC can be used as a demand response option in
+ways that provide some sort of flexibility to control building’s temper-
+ature within some constrained limits based on inhabitants’ need
+[54,55]. Additional objectives include making use of the flexibility to
+increase operating efficiency and decrease costs. Technical objectives
+were also investigated, such as the use of HVAC for the grid frequency
+regulation from sudden disturbances [56]. Several HVAC models have
+been introduced previously for use in demand response applications
+[57]. Effective HVAC control strategy and accurate modeling are
+essential to account for the thermal dynamics of buildings, optimizing
+energy consumption while ensuring indoor comfort is maintained.
+Modeling buildings HVAC systems for is commonly done using grey
+A.R. El Shamy and A.S. Al-Sumaiti
+Applied Energy 377 (2025) 124589 
+3 
+
+models, which combine physical and data-driven models [58]. Combi-
+nations of RC electrical circuits are employed to model the thermal
+behavior of the HVAC system with external thermal sources acting as
+current sources. Such models are excellent for HVAC control purposes
+due to their accuracy in capturing several effects and implementation
+simplicity [59].
+Hysteresis and proportional-integral (PI) controls are the most
+commonly used techniques for HVAC within buildings. This is attributed
+to the inherent simplicity and resilience [60]. MPC has been deployed
+for HVAC control for its flexibility in optimizing decisions while inter-
+acting with the changing conditions and constraints. This is especially
+effective for managing complex heat transfers and addressing the
+delayed thermal responses caused by the building’s thermal mass and
+indoor heat sources [61]. The major challenges for MPC of HVAC are
+achieving real-time requirements and employing simplified HVAC
+models [62]. A typical building MPC has around 15 min window for
+optimal decision-making. This is rather challenging for buildings ther-
+mal controls, where environmental conditions, residents behavior and
+other subsystems interaction is continuously varying and uncertain
+[63]. Recent studies have demonstrated significant improvements in
+HVAC control using advanced optimization strategies. 31 % reduction in
+pollutant concentration and 17.7 % energy savings using a dynamic
+optimization strategy for AHU control was achieved in [64]. In [65], the
+authors developed an occupancy-based, energy-efficient MPC for multi-
+room buildings, demonstrating a potential energy savings of 29–80 %.
+Multi-objective optimization of thermal comfort, air quality, and energy
+use for HVAC systems was tackled in [66], finding an effective trade-off
+with only 2 % higher energy use. In [62], a quantum annealing-based
+optimization solution for HVAC MPC was proposed. The approach
+significantly reduced computation time from hours to seconds. Their
+method demonstrated an 80 % reduction in total electricity consump-
+tion and a 21 % reduction in electricity bills when considering day-
+ahead price time-of-use demand response signals. Artificial intelli-
+gence methods were also applied for HVAC controls. Various deep
+learning approaches were investigated for optimizing HVAC control
+across different systems and configurations [67]. Deep reinforcement
+learning demonstrated 2–14 % reduction in energy consumption and
+improved indoor temperature comfort compared to conventional
+methods, with a 66 % faster convergence rate [68]. Existing studies
+usually study HVAC as an isolated system trying to optimize its energy
+use and cost. However, this is not the case for real buildings, where other
+electric loads and water demand are also required to be optimized. With
+the inclusion of variable external conditions, such as weather and time
+of use (TOU) pricing, optimizing a single system cost does not guarantee
+a minimum cost for the whole building operations.
+1.5. Distributed generation for building
+Buildings can consume 20–40 % of the energy in developed regions.
+It is why they propose a good fit for acting as independent agents, with
+their own PV and storage, within modern energy networks [69].
+Buildings are then required to be flexible and interactive with utilities
+for optimizing energy usage and reduce the burden on carbon-
+dominated utilities. Among the proposed solutions are the involve-
+ment of flexible of HVAC demand, accurate dispatch of energy storage
+and bidirectional energy trading with utilities [70,71]. It is why there
+has been great interest in optimizing the energy management operations
+of buildings. The Optimal energy management is performed in [72–74]
+to increase building’s efficiency and reduce operating costs, with addi-
+tional objectives, such as decreasing battery degradation and supply
+continuity while maintaining technical system constraints. Other works
+have focused on investigating architectures and optimizing the design
+for buildings resources to reduce the expected operational costs and
+increase autonomy [70,75].
+1.6. Model predictive control of a building management system
+An efficient controller for both water and energy processes is a must
+to achieve the optimal performance from resources and cost point of
+views [76,77]. Controllers at different BMG can be interconnected to
+provide increased dependability and operability for buildings’ water-
+energy systems within a smart grid structure [78–81]. Several works
+used MPC as a controller for energy systems or water systems as seen in
+[54,82,83]. MPC uses a dynamic system’s model to find the necessary
+inputs to achieve a certain performance. It is then required to have an
+accurate model of the system to achieve an optimal response [84,85].
+MPC will be deployed in this paper to control the energy-water system in
+the BMG. Up to our current knowledge, no previous research explored
+the possibility of exploiting building resilience that benefits of all of the
+followings: renewable energy integration, energy management, demand
+response and intelligent control strategies in a building microgrid that
+considers onsite grey water recycling system and works upon interactive
+time-dependent pricing of utilities, and that is the goal of this paper.
+1.7. Contribution
+In this paper, a study is presented for a grid-connected BMG con-
+sisting of Photovoltaics (PV) plant with BES. Electrical loads modeling is
+classified into HVAC controllable loads and other noncontrollable loads.
+Building water related operations is controlled by the same central BMS.
+A greywater recycling structure is designed for the building using pumps
+and tanks. This allows water operations to be responsive and have wide
+margin of controllability by the BMS. The target is to find the minimum
+operational cost through the optimal coordination of the operation of
+water and energy resources in the building. This is constrained by
+achieving the variable HVAC temperature requirements and meeting
+other electrical and water demands.
+All resources and services, including HVAC loads demand response
+and electricity and water systems considering the use of recycled grey-
+water services, are controlled via a single BMS controller that is
+instructed to minimize building’s operating cost, which makes BMS
+prefer certain actions at different times. Given that said, the contribution
+of this paper filling the literature gaps can be summarized as follows:
+• This paper proposes a structure for resilient building through energy,
+water, and cooling systems. Renewable energy PV source, battery
+energy storage (BES) system, HVAC and other non-controllable loads
+and onsite grey water recycling are the major building subsystems.
+• The paper implements all subsystems within a building and develops
+a predictive central controller for electric, water and thermal re-
+quirements in the building. Demand response capabilities in BES,
+HVAC, and water pumping, recycling and storage with utility time of
+use pricing of both energy and water are used to coordinate the
+operation of the building.
+• The predictive controller is based on a MILP formulation. The MPC-
+based BMS continuously takes decisions during the 4-day simulation
+period, selected to test the controller under variant operating con-
+ditions, with the goal to make use of building resources based on
+updates in the data provided to it, limitations of resources and
+customer needs. Effect of longer control horizon for the BMS is
+studied to show the possible improvements, which depend on
+available the BMS computational power and efficiency in long
+forecasting.
+• The results demonstrate an 8.3 % operational cost reduction and a
+21.5 % reduction in potable water consumption compared to
+benchmark systems lacking the water recycling or energy storage
+system. Testing under variable building size and user preferences
+show similar improvements.
+• Detailed exploration of the MPC framework reveal the framework is
+robust under a wide range of input prediction errors. It is found that
+under error predictions, increasing the control horizon does not
+A.R. El Shamy and A.S. Al-Sumaiti
+Applied Energy 377 (2025) 124589 
+4 
+
+guarantee better performance. Computation burden of the MPC is
+also investigated for real-life applicability.
+1.8. Paper organization
+The rest of the paper is structured as follows: section 2 focuses on
+demonstrating the deployed mathematical models for BMG components.
+Problem formulation and solution methodology are introduced in sec-
+tion 3. Section 4 presents the results and discusses them. Conclusion is
+provided in Section 5.
+2. System under study
+This section presents a description of the mathematical models of
+subsystems contributing the BMG structure. An illustrative description
+of the proposed BMG overall structure is shown in Fig. 1, including the
+electrical system, water system, and various communication signals
+among the subsystems and the central MPC controller and their inter-
+action with the electric and water utility grids.
+2.1. Building electrical system
+The proposed building energy system is made of a rooftop PV power
+plant and battery energy storage system to achieve dispatchability of PV
+power plant. It also includes grid connection at a point of common
+coupling (PCC), and the electrical load. HVAC load is the main source of
+electrical demand. Another constant-power, non-controllable load PNC,
+is used to consider other building’s loads. These are all controlled by an
+efficient MPC for energy management purpose, as developed in this
+paper. The proposed building electrical diagram is presented in Fig. 2.
+2.2. PV power plant
+The PV power plant is the main renewable energy source of elec-
+tricity supply for the building. The output power from the PV power
+plant PPV is modeled at each time step k, based on the Maximum Power
+Point Tracking (MPPT), using the literature linear model that varies with
+the solar irradiance G [86], as shown in Eq. (1)
+PPV(k) = PPV,rated*G(k)
+1000*ηPV
+(1)
+where ηPV represents the PV system efficiency.
+The power rating of the solar PV system PPV,rated is sized at
+80kWp based on a selected building area in Masdar City, United Arab
+Emirates [87]. PV power is calculated at each timestep from the mete-
+orological solar irradiance data of [88]. A forecasting station is set up to
+give a good forecast of the PV power output in the period of the control
+horizon.
+2.3. Battery energy storage (BES)
+BES is a crucial part of the BMG. It mitigates the negative sides of PV
+power generation, such as non-dispatchability and intermittency. Also
+in a BMG, BES is necessary to achieve the optimal cost of bidirectional
+energy flow with the grid. Therefore, a generic model for battery
+charging and discharging can be represented as in Eq. (2) [89]. This
+model considers battery State of Charge (SoC) and obtains its values at
+each time step k, SoC(k) using previous step SoC, the charging Pbat,ch(k)
+or discharging Pbat,disch(k) power of battery with the sampling time Δt,
+battery capacity Capbat and charging ηbat,ch and discharging efficiencies
+ηbat,disch.
+SoC(k + 1) = SoC(k) +
+(
+ηbat,chPbat,ch(k) −Pbat,disch(k)
+ηbat,disch
+)
+Δt
+Capbat
+(2)
+2.4. Power grid
+The buildings power grid connection is represented by two
+controlled variables representing power sold from building to grid at
+step k as Pgrid,sell(k) and imported from the grid as Pgrid,buy(k). Both powers
+are also constrained by limits in the mathematical optimization model.
+2.5. HVAC load model
+The aim of this model is to find the amount of cooling power required
+to achieve the temperature comfort conditions for the building in-
+habitants. A model of one apartment is used and aggregated using
+number of apartments in the floor and the number of building floors. The
+RC model for such an apartment can be modeled using a 3 resistors and 2
+capacitors (3R2C) model as in Fig. 3. This single-zone model precisely
+describes the effects of conduction, conviction, and radiative heat
+powers on the apartment temperature through external walls [90–92].
+Fig. 1. A comprehensive diagram of the proposed system.
+Fig. 2. Schematic diagram of building electrical system.
+A.R. El Shamy and A.S. Al-Sumaiti
+Applied Energy 377 (2025) 124589 
+5 
+
+Eqs. (3), (4.1) and (4.2) describe a state-space representation of the
+model.
+˙x = Ax + Bu
+(3)
+˙Qext = αsur*qsource*A
+(4-2)
+where ˙Qext is a disturbance input of external incident power represent-
+ing of solar irradiance qsource in W/m2, and A is the cross-sectional area of
+the walls. The term ˙Qext is considered to capture the effect of solar ra-
+diation
+from
+outside
+depending
+on
+surface
+absorptivity,
+αsur.
+˙Qint represents the inhabitants’ power plus the heat content from elec-
+trical devices. ˙QHVAC is the only controllable input in the HVAC system,
+which is decided by the controller to achieve optimal objectives. To is
+the outside ambient temperature, T1 is wall’s outside temperature, T2is
+wall’s inside surface temperature and Tz is the room/zone temperature.
+C and Cz are the thermal masses of wall and zone, respectively.
+This HVAC grey box model above can be used within the MPC to
+determine the amount of HVAC power
+(
+˙QHVAC
+)
+that is required to meet
+the temperature constraints. Euler-discretization is used to discretize the
+mathematical model to be integrated in the controller optimization
+problem, as in Eq. (5).
+x(k + 1) = x(k) + Δt*[Ax(k) + Bu(k) ]
+(5)
+The electrical power consumed by HVAC loads can be calculated from
+Eq. (6) utilizing a coefficient of performance (CoP) of HVAC system [54].
+PHVAC(kW) =⃒⃒⃒⃒
+˙QHVAC⃒⃒⃒⃒
+total
+CoP*1000
+(6)
+2.6. Building water supply system
+The general operation from this model would be to satisfy the
+building’s water requirements using two pumps and three tanks. Fig. 4
+showcases the general flow schematic of the building’s water aquatic
+system. It is necessary to meet a predefined potable water requirements
+DPW(k) at each time step k. Potable water is the clean piped water from
+the utility connection to the building. A water pump load P1 is used to
+represent the power required for pumping potable water from the utility
+to a potable water tank.
+Fig. 3. HVAC 3R2C Model.
+Fig. 4. Building Water Flow Diagram.
+⎡
+⎢⎢⎢⎢⎢⎣
+˙T1
+˙T2
+˙Tz
+⎤
+⎥⎥⎥⎥⎥⎦
+=
+⎡
+⎢⎢⎢⎢⎢⎢⎢⎣
+−hA
+C
+−
+1
+RC
+1
+RC
+0
+1
+RC
+−hA
+C
+−
+1
+RC
+hA
+C
+0
+hA
+Cz
+−hA
+Cz
+⎤
+⎥⎥⎥⎥⎥⎥⎥⎦
+⎡
+⎢⎢⎣
+T1
+T2
+Tz
+⎤
+⎥⎥⎦+
+⎡
+⎢⎢⎢⎢⎢⎣
+hA
+C
+1
+C
+0
+0
+0
+0
+0
+0
+0
+0
+1
+Cz
+1
+Cz
+⎤
+⎥⎥⎥⎥⎥⎦
+⎡
+⎢⎢⎢⎢⎢⎢⎢⎢⎢⎣
+To
+˙Qext
+˙Qint
+−
+˙QHVAC
+⎤
+⎥⎥⎥⎥⎥⎥⎥⎥⎥⎦
+(4-1)
+A.R. El Shamy and A.S. Al-Sumaiti
+Applied Energy 377 (2025) 124589 
+6 
+
+Grey water treatment process involves a treatment device, modeled
+as a non-power consuming load. The used water from the building enters
+a used water tank that has non-recycled water. This water is then
+pumped based on the controller preferences for satisfying water and
+energy demand and minimizing the cost of such a process. The recycled
+water is then pumped to another tank using pump with rated power P2.
+The treated grey water tank, which must satisfy the requirements of
+building’s grey water purposes, is dependent on the filtration method
+[44,76]. A straightforward model representing reusable treated water as
+a percentage of total grey water is employed in this paper.
+The constraints of this system are satisfying potable water demand
+from potable water tank and grey water demand from re grey water
+tanks and should limit the water levels inside the potable water tank,
+non-processed water tank and treated water tank to prescribed mini-
+mum and maximum levels, described in a later section. P1 and P2 will be
+used as constant powers that are turned on whenever the controller finds
+it best for less energy consumption over the time horizon of operation or
+to satisfy the demand.
+Tank 2 has a drain valve to prevent accumulation of greywater in it
+above certain level without affecting the process of the other two tanks.
+Eqs. (7)–(9) govern the flow of water in pipes. It is important to
+emphasize that Qv4, drained volume through drain valve v4, is sufficient
+to drain the whole tank in an hour if needed.
+˙
+V1 =A1 ˙h1 = Q1 −Q3 −Dpot
+(7)
+˙
+V2 =A2 ˙h2 = %pTGWDGW + %pTPWDpot −Q2 −Qv4
+(8)
+˙
+V3 =A3 ˙h3 = Q2 + Q3 −DGW
+(9)
+In Eqs. (7)–(9),
+˙Vi, Ai and hi represent the water volume rater of
+change, area and water height rate of change in tank i. Dpot and DGW are
+the potable and greywater demand. %pTGW and %pTPW are the percent-
+age of treatable greywater and potable water demands. Qi is the water
+flowrate through pump or valve i. These formulas are then Euler-
+discretized at each time step k, as in Eqs. (10)–(12), to be used in the
+model; this can be done by introducing three binary decision variables
+that are determined by the controller at each time step to minimize the
+cost.
+- s1 state of pump P1 and valve V1,
+- s2 state of pump P2 and valve V2,
+- s3 state of valve V3 (and)
+- s4 state of drain valve V4.
+Such that si ∈{0, 1}, si = 1 indicates an ON/working state for pumps
+or open position for valves.
+h1(k + 1) = h1(k) + Δt
+A1
+[
+Q1s1(k) −Q3s3(k) −Dpot(k)
+]
+(10)
+h2(k+1) = h2(k)−0.5s4(k)+Δt
+A2
+[
+%pTGWDGW(k)+%pTPWDpot(k)−Q2s2(k)
+]
+(11)
+h3(k + 1) = h3(k) + Δt
+A3
+[Q2s2(k) + Q3s3(k) −DGW(k) ]
+(12)
+3. Control methodology
+A linear MPC-based centralized controller is implemented to control
+1) room temperatures through HVAC, 2) utility interchange of powers
+and batteries operation, and 3) water system operation comprising its
+pumps and valves. Such control is possible through appropriate
+communication and coordination with the power grid, the availability of
+real-time energy measurements of distributed generation systems
+including BES and PV plant. Moreover, to meet water demand, the
+controller should control the operation of the two pumps to assure
+availability of water in tanks. This is done by communicating with the
+water utility to obtain the variable water price to minimize the cost.
+For MPC to offer reliable outcomes, it is necessary to have precise
+modeling of the system. [59,93]. The control variables in the system are
+Pbat,ch, Pbat,disch, Pgrid,sell,Pgrid,sell,PHVAC,s1,s2,s3 and s4. Four binary control
+variables, u1,u2,u3 and u4, are added to prevent simultaneous charging
+and discharging of batteries and simultaneous electricity selling and
+buying from and to the grid. By controlling the values of these control
+variables, the control can take the optimal control action to reduce the
+energy consumption cost, which can be achieved mainly through pre-
+cooling of the building zones whenever abundance of PV power is
+available, when the battery constraints would not be violated or when
+energy is used from the grid at times of low-cost rates of electricity
+consumption. The optimal control problem is converted to an optimi-
+zation problem using a single shooting technique [94]. MPC parameters
+are Δt=15 min, nc = 10 = (2.5 hours), and np = 384 = (4 days).
+The sampling time is reduced for the sake of capturing the dynamics
+of the HVAC operation. The control horizon is set to 10 steps only to
+allow for practicality as buildings are not long-term forecasted and
+relatively quick simulations and thus, better diagnostics despite the fact
+that it reduces the efficiency of MPC.
+3.1. Mathematical problem formulation
+The goal is to minimize the cost of utility water and electricity in
+BMG through the optimal control problem at each time step k that varies
+from 1 to
+(
+np −nc
+)
+as follows:
+MinZ =
+∑
+k+nc−1
+k
+(
+Cbuy(k)Pgrid,buy(k) −Csell(k)Pgrid,sell(k)
+)
++
+(
+Cpot−water(k)Q1(k)s1(k)
+)
+(13)
+Subject To
+0 ≤PHVAC(k + i) ≤PHVAC−Limit
+(14)
+0 ≤Pbat,ch(k + i) ≤Pbat,ch−Limit
+(15)
+0 ≤Pbat,disch(k + i) ≤Pbat,disch−Limit
+(16)
+0 ≤Pgrid,buy(k + i) ≤Pgrid,buy−Limit
+(17)
+0 ≤Pgrid,sell(k + i) ≤Pgrid,sell−Limit
+(18)
+Tcomfort−min ≤Tz(k + 1 + i) ≤Tcomfort−max
+(19)
+SoCmin ≤SoC(k + 1 + i) ≤SoCmax
+(20)
+PPV(k + i) + Pgrid,buy(k + i) + Pbat,disch(k + i) −
+[
+PHVAC(k + i) + PNC(k + i)
++ Pbat,ch(k + i) + Pgrid,sell(k + i) + s1(k + i)P1 + s2(k + i)P2
+]
+= 0
+(21)
+sv(k + i) ∈{0, 1}, v = 1, 2, 3, 4
+(22)
+hn−min ≤hn(k + 1 + i) ≤hn−max, n = 1, 2, 3
+(23)
+(State) Equations (2),(4),(10 −12)
+uv(k + i) ∈{0, 1}, v = 1, 2, 3, 4
+(24)
+0 ≤Pbat,ch(k + i) ≤1000u1(k + i)
+(25)
+0 ≤Pbat,disch(k + i) ≤1000u2(k + i)
+(26)
+0 ≤Pgrid,buy(k + i) ≤1000u3(k + i)
+(27)
+A.R. El Shamy and A.S. Al-Sumaiti
+Applied Energy 377 (2025) 124589 
+7 
+
+0 ≤Pgrid,sell(k + i) ≤1000u4(k + i)
+(28)
+u1 + u2 ≤1
+(29)
+u3 + u4 ≤1
+(30)
+where i is an index representing the current step in the prediction ho-
+rizon and 0 ≤i ≤nc.
+For every time step, the problem is solved for an upcoming control
+horizon. The objective function is comprised of three parts. The first part
+is the net energy cost from/to the grid, where Cbuy is always higher than
+Csell. The second part of the objective function tries to minimize the
+overall HVAC load consumption over the whole prediction horizon,
+usually done by precooling. The third part is the same as the second part
+but rather for water demand. It is also done by filling the water tanks
+earlier, if possible, at times of low utilities cost. The constants vector w is
+used to tune the controller to achieve the required performances. Its
+elements’ values are the same here to obtain an objective function that
+represents the overall system cost.
+Constraints (14–18) limits HVAC power, battery charging power,
+battery discharging power, power bought from the grid and power sold
+to the grid to predefined limits, respectively. Constraint (19) assures the
+temperature comfort of the inhabitants within predefined limits.
+Constraint (20) tries to avoid problems that happen to BES from over-
+charging or deep discharging. Constraint (21) is the power balance
+equation from the grid to satisfy the load demand. Constraint (22) is to
+constraint the water flow states to be binary. Constraint (23) is for as-
+suring certain maximum and minimum levels in the water tanks to
+prevent water overflow from tanks and preserve some amount for
+emergencies such as potable water pump failure. Eqs. (2), (4), and
+(10−12) are used for updating the system states and variables. Con-
+straints (24–30) keep the uv variables binary and prevent the simulta-
+neous operation mentioned before. These equations are solved for the
+whole prediction horizon at each time step k.
+Each control variable will be obtained as an array of length equals
+the prediction horizon number of steps. After each iteration of MPC, only
+the first step is applied to the system and then the system states are
+updated to be ready for the next iteration. The rest of the resulting
+prediction horizon is used as an initialization for the upcoming step,
+with the last prediction repeated to make up for the first prediction
+omitted.
+The model is tested on a four-days test case. This optimization MILP
+problem. CasADi library is used in MATLAB for solving the problem
+using BONMIN solver [94,95].
+3.2. Design parameters of subsystems
+An 80kW PV power plant is considered to feed the building. The
+efficiency of the MPPT and converters (ηPV) is 97%. The battery pa-
+rameters and constraints are shown in Table 1.
+The maximum values of power bought from the utility grid
+Pgrid,buy−Limit and the power sold Pgrid,sell−Limit are 60 kW and 20 kW,
+respectively. These values are selected based on regulations [96] and to
+increase the building’s relative independence from the grid and decrease
+risk during unplanned power supply outage. Fig. 5 illustrates the pro-
+posed arrangement of apartments on each floor. An extra two apart-
+ments are considered to reflect other building space’s cooling loads, like
+halls and common rooms.
+Table 2 provides the parameters for the building’s geometry, mate-
+rials used and HVAC. The values of material-based parameters are based
+on [97–100]. The parameters for water system are listed in Table 3. The
+values are designed considering 140L of water consumption per person
+per day [101]. Two persons are assumed to live in each apartment. The
+Table 1
+Battery System Parameters.
+Parameter
+SoCmin
+SoCmax
+Capbat
+Pbat,disch−Limit
+Value
+0.2
+0.8
+100kWh
+30kW
+Parameter
+ηbat,ch
+ηbat,disch
+Pbat,ch−Limit
+Value
+0.97
+0.97
+30kW
+Fig. 5. Apartment Layout in a Floor.
+Table 2
+Building’s Model Data.
+Parameter
+Nfloors
+Napartment
+Apartment area
+Value
+5
+4
+54m2
+Parameter
+CoP
+Tcomfort−min
+Tcomfort−max
+Value
+3.2
+21
+◦C
+28
+◦C
+Parameter
+R
+kth
+Aconv
+Value
+0.0078 K
+W
+0.72W/(K.m)
+45m2
+Parameter
+h
+PHVAC−Limit
+Aext−walls
+Value
+3 W
+m2K
+50kW
+41m2
+Parameter
+˙Qint
+Cz
+C
+Value
+888 W
+212738.4J/K
+7374260J/K
+Table 3
+Water System Data.
+Parameter
+P1
+P2
+A1,A2,A3
+Value
+2kW
+2kW
+3m2
+Parameter
+Q1,Q2
+h1,2,3−min
+h2,h3
+Value
+5 m3/hr
+0.75m
+2m
+Parameter
+%pTPW
+h1−max
+h1,2,3
+Value
+0.45
+2.25m
+2.5m
+Parameter
+%pTGW
+h2−max
+h3−max
+Value
+`0.05
+1.5m
+2m
+Fig. 6. Daily TOU cost of electricity.
+A.R. El Shamy and A.S. Al-Sumaiti
+Applied Energy 377 (2025) 124589 
+8 
+
+demand for potable water is taken to be (0.5 −0.6) of the total water
+demand. The remaining demand is non-potable that can be satisfied by
+greywater [102]. Water pumps ratings is based on [103], and the per-
+centages of reusable water is according to [104].
+4. Results and discussion
+4.1. System inputs
+For the purpose of simulation, the starting three days are weekdays
+(WDs) and the fourth day is a weekend (WE). Weather data is obtained
+for a site in Masdar City, Abu Dhabi, United Arab Emirates. A TOU is
+developed based on utility costs in United Arab Emirates and electricity
+and water demand profiles. Furthermore, a non-controlled electrical
+load power is devised to represent other building’s loads [105–107]. The
+non-controllable load PNC is diversified for every hour of the day with a
+maximum value of around 30kW. Figs. 6 and 7 show the TOU pricing for
+electricity and PNC load for the simulated period, respectively. Besides
+that, both potable and grey water demand curves are demonstrated in
+Fig. 8. In terms of PV power generation, driven by Eq. (1), its variability
+is represented by Fig. 9.
+4.2. Simulation results
+The problem is solved at each iteration, meaning that a total of 375
+problems are solved. The remaining prediction horizon is filled with
+results from the last iteration, so as to obtain a closed loop performance
+for the period of four days. Each iteration has 13 control variables per
+each control horizon totaling 130 control variables in each step. Each
+iteration has 130 control variable constraints and 120 state constraints,
+in addition to the 80 integer constraints. For all cases studies, any system
+state (e.g., battery SoC and tanks water levels) is initialized at the
+minimum value to provide fair comparisons. All introduced cases are
+solved using Branch and Bound technique in BONMIN solver limiting
+the maximum iterations to 1*106 and the limit of nodes to 1*106.
+Results of the simulation are demonstrated with curves representing
+the controllers’ decisions effect on each subsystem. First, Fig. 10 shows
+the charging and discharging operation of the BES through the battery
+SoC. Both processes respect the limits assigned by to the controller and
+simultaneous charging and discharging is avoided by including u1and u2
+in the problem formulation. It can be seen that, by relating Fig. 9 and
+Fig. 10, the controller choses to charge the battery from excess PV power
+and discharge it when PV power is not sufficient or available until its SoC
+reaches the minimum assigned limit at nighttime.
+In Fig. 11, the building’s electric energy interchanges with the power
+grid given the ToU pricing for purchasing and selling energy from and to
+the grid. It is found that, in spite of the low control horizon, the
+controller always purchases power from the grid at times of low pur-
+chase price cost and sells at times of higher selling cost when possible.
+The controller respects the limits on sold and purchased power from the
+grid, especially for the case of selling, when at times it seemed that
+exceeding the limit could have been more profitable. Simultaneous
+assignment of values to both selling power and buying power is avoided.
+In Fig. 12, HVAC operation is validated. The controller always
+modulates the power to the cooling units to adapt to the surrounding
+temperatures variations. The operation is tested on a variable setpoint
+temperature. The controller successfully tracks the changing setpoint
+exactly, without violating the minimum temperature limit. Precooling is
+done to make use of the available excess energy and decrease the energy
+to be bought later. The precooling periods and their variations were
+determined by the optimization algorithm based on several factors and
+optimized to balance energy cost savings with thermal comfort. The
+algorithm aimed to utilize excess energy when available while main-
+taining temperatures within acceptable limits. The longer precooling
+period on the first day likely resulted from different initial conditions or
+predicted energy availability compared to subsequent days. The smaller
+temperature decrease on the second day was likely due to a combination
+of factors such as different outdoor temperatures, internal heat gains, or
+energy pricing forecasts for
+that specific
+day. These variations
+Fig. 7. Non-controlled load demand curve.
+Fig. 8. Building water demand.
+Fig. 9. PV power generation.
+Fig. 10. BES SoC with PV generation.
+A.R. El Shamy and A.S. Al-Sumaiti
+Applied Energy 377 (2025) 124589 
+9 
+
+Fig. 11. Power interchange with the grid.
+Fig. 12. Temperature set points and actual temperature.
+Fig. 13. Water levels in tanks and potable water pump operation.
+A.R. El Shamy and A.S. Al-Sumaiti
+Applied Energy 377 (2025) 124589 
+10 
+
+demonstrate the controller’s adaptability to changing daily conditions,
+optimizing precooling dynamically rather than using a fixed schedule.
+Water system results are shown in Fig. 13 reflecting how the
+controller starts and stops the pumps and valves of the system through
+the water levels in tanks. The controller does not optimize water con-
+sumption from the utility with times of low water cost. This is due to the
+narrow control horizon and the smaller effect of water system in com-
+parison with the energy system on the overall cost. This is also magnified
+by the large volumes of tanks used.
+Fig. 13 demonstrates that the limits of water height in the three tanks
+are respected. It also shows the effects of the lower limit of “Tank 1” on
+the operation of “Pump 1” to keep the water level at the required level.
+Another sight here is that the controller favors pumping greywater from
+“Tank 2” to “Tank 3” instead of draining it when the 1.5 m threshold is
+reached.
+The Total cost of energy bought from the grid is US$161.4 over the
+four days, which is reduced by considering the US$25.8 cost of energy
+sold to the grid. This nets US$34 per day. Water usage accounted for US
+$48.6 over the simulation period. Water savings from the utility is
+6.15m3, representing the difference among the cases of greywater
+treatment with the controller and without greywater treatment. This
+demonstrates the effectiveness of the former case.
+4.3. Comparison with benchmark systems
+To try to capture the improvement that the proposed building
+configuration provides in comparison with the proposed cases, addi-
+tional three scenarios representing different systems were implemented.
+These additional systems are optimized using the earlier optimization
+technique and a centralized controller scheme. These proposed systems
+are compared to the case when the building is dependent only on the
+water and energy utilities, “Utilities’ dependent System”. All systems are
+subject to the same inputs and loads. These three systems are:
+1) Benchmark base system: A system without battery and without any
+greywater recycling structure.
+2) Proposed system with battery: A system where a battery storage is
+added to the benchmark base system case, without any greywater
+recycling.
+3) Proposed system with greywater recycling: A system where benchmark
+base case is improved with building’s greywater recycling infra-
+structure, without any energy storage.
+The previously devised and detailed system is considered as the
+fourth system that is the complete proposed system. Comparison of resulting
+costs from all the aforementioned systems are found in Table 4 below.
+Results clearly demonstrate the cost reduction occurring with the
+addition of both battery energy storage and greywater recycling in cases
+2, 3 and 4. In addition to its considerable effect on cost reduction of the
+4-day utilities cost, greywater recycling results in a reduction in water
+usage form utility by 6.15m3, which accounts for 21.8 % reduction in
+utility water consumption. This is also the case for both systems 3 and 4,
+which reflects the possible effect of having decentralized water recycling
+units within buildings. It is worth mentioning that for systems 1 and 3,
+an optimization problem would have been infeasible had the same limits
+of electricity buying and selling used for systems 2 and 4 been used. That
+is why limits of purchasing and selling powers from and to grid had to be
+increased for systems 1 and 3 to 80 kW and 60 kW, which in an actual
+implementation would increase the ratings of the used electrical com-
+ponents. The proposed complete system reduces net utilities’ cost to US
+$182.71, which represents around 20 % of that required to operate the
+building if it is totally dependent on the utilities. This is an addition to
+the improved security achieved by energy reserved in battery and water
+in tanks, that can act as a backup for cases when emergencies occur.
+Utilizing the battery increases the BMG reliability as its main purpose
+is to operate in standalone mode. The effect on reducing the net cost can
+be observed when transitioning from system 1 to system 2 and from
+system 3 to system 4. Specifically, the net cost of utilities decreases from
+$199.33 to $195.90, representing a reduction of approximately 1.72 %,
+when moving from system 1 to system 2. Similarly, when transitioning
+from system 3 to system 4, the net cost of utilities decreases from
+$185.59 to $182.71, a reduction of about 1.55 %.
+These cost reductions mainly result from the bidirectional electricity
+flow capability and the time-dependent cost of selling and buying energy
+from the grid. With these flexibilities, buildings can trade their stored
+energy with the utility at optimal times when the selling price is higher.
+This strategy leverages the nature of residential loads and the multiple
+demand-response capabilities under the controller’s influence, such as
+HVAC, greywater recycling, and the battery itself.
+4.4. Effect of increased control horizon
+Another attempt is done using a control horizon nc of 20 steps (5 h).
+Increased horizon should give more information to the controller to take
+better decision. The overall cost is reduced through a reduction in both
+electricity and water utilities cost. The reduction in energy cost has been
+experienced through reducing the amount of energy bought from the
+grid and increasing the utilization of battery as shown in Fig. 14, which
+compares the SoC of energy in both 10 and 20 horizon cases. Conse-
+quently, the amount of energy sold to the grid is reduced and thus,
+reducing the cost of energy selling. Moreover, the amount of energy used
+for cooling is reduced, and the precooling is less than the original case.
+The other part of net cost reduction comes from the reduction in the
+cost of potable water from utility. For both cases, potable water pump P1
+is operated for 18 times. In the case with 10 control horizon, only 7 times
+the controller fills the water at times of low utility potable water cost in
+comparison with 12 times for the case with 20 control horizon.
+A comparison between the overall characteristics and cost results of
+both developed controllers is performed in Table 5. As the selected
+control horizon increases, the simulation becomes exhaustive. For one
+step of the 375 steps of simulation, 260 control constraints and 240 state
+constraints are solved.
+4.5. Effect of forecasting accuracy
+In the proposed MPC framework, the accuracy of TOU electricity
+prices, non-controlled load demand, building water demand, and
+photovoltaic (PV) power generation is crucial to ensure effective opti-
+mization. These predictions act as measurable disturbances, and any
+inaccuracies can significantly impact cost optimization. Previously
+presented results employed actual values of water demand, electric load,
+PV generation, and ambient temperatures. Forecasting these quantities
+with very high accuracy can be achieved machine learning or deep
+learning methods. TOU prices are usually known before-day, so using
+Table 4
+Different Systems Results.
+System
+Net
+electricity
+cost (US$)
+Potable
+water cost
+(US$)
+Net cost of
+utilities
+(US$)
+Estimated
+1-month
+aggregate net
+cost (US$)
+Utilities dependent
+System (0)
+875.63
+62.40
+938.02
+7035.15
+Benchmark base
+system (1)
+136.94
+62.40
+199.33
+1494.98
+Proposed system
+with battery (2)
+133.51
+62.40
+195.90
+1469.25
+Proposed system
+with greywater
+recycling (3)
+137.70
+47.90
+185.59
+1391.93
+Proposed
+complete
+system (4)
+134.56
+48.16
+182.71
+1370.33
+A.R. El Shamy and A.S. Al-Sumaiti
+Applied Energy 377 (2025) 124589 
+11 
+
+their actual values is justified [108,109]. Long short-term memory
+(LSTM) is successfully used for accurate short-term load and water
+forecasting [110,111]. Convolutional neural network (CNN) and com-
+bined neural network and regression layers [112].
+To address potential issues arising from prediction errors, random
+inaccuracies are introduced into the forecasted values. Specifically, ±5
+% deviations from the actual values for load and water demand, and ±
+10 % for PV generation. By simulating these errors through randomly
+generated numbers, the robustness of the MPC is evaluated under
+extreme forecasting errors. The analysis focuses on how these prediction
+errors influence system performance, particularly in terms of cost opti-
+mization and adherence to system constraints.
+MPC controller sends the decisions to actuators based on inaccurate
+forecasts. This can cause errors in maintaining energy or water con-
+straints. The battery will be used to shift energy deficit due to decisions,
+which can cause its SOC to slightly shift from the SoCmin and SoCmax
+limits. Similarly for the water, safety margins employed for water tanks
+levels within the MPC optimization help handle water deficiency due to
+forecasting errors. Actual readings of water and energy states are sent to
+the controller to start a new MPC optimization step.
+6 simulation runs for the with nc = 10 are reported to verify the
+controller robustness under the introduced prediction errors. Fig. 15
+shows the battery SOC for the 6 runs over the 4 test days. As expected,
+violations of the SoCmin limit occur in all cases, since the battery is used
+to supply the power deficit arising from MPC decisions based on inac-
+curate inputs. The deviation from the minimum SOC level is very small
+though and may be unnoticeable due to the MPC making up for it
+directly in the next optimization step. For the water system, no violation
+of minimum and maximums tanks levels happen, which can be attrib-
+uted to the larger tank sizes. Additionally, the variation in water pre-
+dictions from actual consumption is small. On the contrary, the battery
+Fig. 14. Battery SoC with 20 and 10 control horizons.
+Table 5
+Comparison Between Two Controllers.
+Comparison
+Controller 1
+Controller 2
+Control horizon nc
+10
+20
+Control constraints for each step
+130
+260
+State constraints for each step
+120
+240
+Objective function
+same
+Same
+Energy buying cost
+US$161.4
+US$153.72
+Energy selling cost
+US$25.8
+US$20.3
+Water cost
+US$48.6
+US$47.2
+Net cost
+US$184.2
+US$180.62
+Fig. 15. Battery SoC under 6 simulation runs with nc = 10 and prediction errors.
+A.R. El Shamy and A.S. Al-Sumaiti
+Applied Energy 377 (2025) 124589 
+12 
+
+SOC is affected by both NC load uncertainty and PV uncertainty which
+has considerable effect on the MPC decisions when combined.
+In 5 of the 6 simulations, the controller achieves similar net cost as
+the optimal solution without input prediction errors as shown in Fig. 16.
+In the 4th case, the extreme randomness introduced causes the net cost
+to increase by 3 %. These results show the system robustness to errors in
+forecasts by achieving optimal solution under most cases with inputs
+deviations from their actual values.
+As previously established, longer control horizons generally lead to
+improved MPC outcomes. However, the introduction of prediction er-
+rors in input quantities can potentially deteriorate MPC decisions [113].
+This deterioration may result in increased costs over larger control ho-
+rizons or even compromise the system’s ability to maintain constraints
+or satisfy water and energy demands. Fig. 17 shows resulting net cost
+over the 4 simulation days when the prediction errors in PV output, non-
+controlled load and water demand are introduced. Increasing nc from 5
+to 10 decreases the net cost, as expected. Further increasing nc to 15
+leads to a slight increase in net cost, suggesting that the negative impact
+of forecast errors begins to outweigh the benefits of a longer horizon.
+Interestingly, when N is extended to 20, the net cost decreases again,
+indicating a complex interplay between horizon length and prediction
+accuracy. These findings confirm that in the presence of input prediction
+errors, extending the control horizon does not guarantee improved
+performance. The relationship between net cost and control horizon
+length is irregular and nonlinear, depending on both the specific prob-
+lem characteristics and the magnitude of prediction errors.
+It is worth noting that with nc ≥25, the mean time for MPC opti-
+mization step greatly increase, exceeding the 15 min window available
+to take decisions in some instances. This computational constraint can
+potentially compromise the integrity of the MPC’s optimal solution, as
+the solver may be forced to terminate before converging on the global
+optimum. A more powerful hardware or dedicated computational re-
+sources could potentially alleviate these constraints. However, even
+with more powerful resources, the trade-off between control horizon,
+prediction accuracy, and computational complexity would still exist. As
+nc increases, the problem’s dimensionality grows, leading to an expo-
+nential increase in the number of decision variables and constraints. This
+inherent complexity suggests that there will always be a practical upper
+limit to the control horizon, beyond which the marginal benefits of
+extension are outweighed by the computational costs and increased
+sensitivity to prediction errors.
+4.6. MPC computational complexity
+The proposed method solves a problem with a huge decision space,
+combining water, energy and HVAC systems. Hence, the computational
+burden associated should be investigated. Hence, scenarios with nc of
+5,10,15 and 20 were performed to show the time complexity and burden
+of the problem. The codes are implemented using MATLAB 2021b on a
+laptop with Intel Core i7 CPU, and 16 GB RAM (OS: Windows 10). Mean
+time for each optimization step for different nc is reported Fig. 18. As
+expected, the computation time generally increases with the length of
+the control horizon due to the added complexity of predicting further
+into the future. Overall, the results demonstrate that while the compu-
+tation time increases with the length of the control horizon, the pro-
+posed
+method
+remains
+computationally
+feasible
+for
+real-time
+application with the mean step computation time less than the 15 min
+sampling time of the used MPC.
+4.7. Additional case studies
+The controller is expected to reduce the cost under any variation in
+input parameters, such as water demand, temperature, irradiance, user
+preference and electrical loading. For verification, 3 more case studies
+are performed with different inputs. The original 10 control horizon
+controller results for these cases studies are reported.
+4.7.1. Different comfort temperatures
+New simulation is performed with lower value of comfort tempera-
+tures. The original maximum comfort temperature behavior is reduced
+by 2
+◦C and the minimum comfort temperature is reduced to 20
+◦C from
+22
+◦C. Table 6 shows comparison of the costs of different case studies.
+The controller still manages to reduce the operational cost by 85.4 %
+compared to base utilities dependent building as can be seen from the
+results in Table 6.
+Fig. 16. Net utilities cost from 6 simulation runs with nc = 10 and predic-
+tion errors.
+Fig. 17. Net utilities cost under different control horizons with predic-
+tion errors.
+Fig. 18. Mean MPC step time under different control horizons.
+A.R. El Shamy and A.S. Al-Sumaiti
+Applied Energy 377 (2025) 124589 
+13 
+
+Fig. 19 presents the resulting room temperature from a 4-day simu-
+lation, showing the controller narrowly following the temperature
+setpoints.
+4.7.2. Increased room size by 50 %
+To further assure on the controller adaptation to different conditions,
+especially the major load, the HVAC, a new case study is studied with 50
+% increase in room sizes compared to the original case study reported
+earlier in section 4.3. Table 7 shows cost results comparison between
+different control approach variations, where the proposed controller
+have the least operational cost.
+The results demonstrate that the proposed complete system (4)
+achieves the lowest operational costs, with a net cost of utilities at
+$278.3, reflecting a significant reduction compared to the utilities-
+dependent system (0), which incurs $1677.8—a cost nearly six times
+higher. The complete system also outperforms the benchmark base
+system (1) by around 5.5. The proposed systems with battery storage (2)
+and greywater recycling (3) show net costs of $291.5 and $281.4,
+respectively, indicating their effectiveness, but the complete system
+combining both features provides the best performance overall. This
+data suggests that the proposed controller optimizes resource use and
+costs effectively, even when faced with increased space and potentially
+higher HVAC demands, demonstrating its adaptability and efficiency in
+managing larger-scale operations.
+5. Conclusion
+This paper presented an extensive MPC-based centralized control for
+a residential BMG. Energy system, water demand and treatment, non-
+controllable electric loads and cooling demands were modeled in this
+work. The proposed framework could achieve cost reduction with the
+Table 6
+Systems results with different comfort temperature levels.
+System
+Net
+electricity
+cost (US$)
+Potable
+water cost
+(US$)
+Net cost of
+utilities
+(US$)
+Estimated
+1-month
+aggregate net
+cost (US$)
+Utilities
+dependent
+System (0)
+1233.6
+62.4
+1296.0
+9720.3
+Benchmark base
+system (1)
+143.1
+62.4
+205.5
+1541.3
+Proposed system
+with battery (2)
+139.8
+62.4
+202.2
+1516.7
+Proposed system
+with greywater
+recycling (3)
+143.9
+48.6
+192.5
+1443.6
+Proposed
+complete
+system (4)
+140.4
+48.6
+189.0
+1417.7
+Fig. 19. Room temperature with new temperature settings.
+Table 7
+Different Systems Results with 50 % Increase in Room Sizes.
+System
+Net
+electricity
+cost (US$)
+Potable
+water cost
+(US$)
+Net cost of
+utilities
+(US$)
+Estimated
+1-month
+aggregate net
+cost (US$)
+Utilities
+dependent
+System (0)
+1615.4
+62.4
+1677.8
+12,583
+Benchmark base
+system (1)
+232
+62.4
+294.4
+2208
+Proposed system
+with battery (2)
+229.1
+62.4
+291.5
+2186.3
+Proposed system
+with greywater
+recycling (3)
+232.8
+48.6
+281.4
+2110.5
+Proposed
+complete
+system (4)
+229.65
+48.6
+278.3
+2087
+A.R. El Shamy and A.S. Al-Sumaiti
+Applied Energy 377 (2025) 124589 
+14 
+
+possible demand response capabilities integrated, such as HVAC pre-
+cooling, battery flexibility, bidirectional energy trading, greywater
+recycling and tanks besides the variable ToU costs of utilities. The sys-
+tem under study was compared against base systems from cost point of
+view, which showed the improvement in both energy and water con-
+sumption. 8.4 % reduction in total operating cost and 21.5 % reduction
+in potable water supply from utility are achieved. This is in addition to
+security achieved by the reserved energy in BES and water in greywater
+recycling providing a greater margin of independence from utilities.
+Deeper analysis of the proposed MPC using actual data showed
+further cost reduction can be achieved through increased control hori-
+zon. However, cost reduction with increased horizon is not guaranteed
+when input prediction errors are introduced. Nonetheless, the proposed
+framework was always capable of supplying the thermal, energy and
+water requirements without violating any physical constraints. Also,
+optimal cost, similar to the case with actual data, was obtained in most
+cases even with prediction errors. Further analyses showed that while
+computation time increases with longer control horizons, the studied
+control horizons remains feasible for real-time application, with mean
+step times staying within the 15-min sampling interval. In real-life ap-
+plications, a controller with high computational capability can push the
+20-control
+horizon
+computational
+limit
+much
+higher.
+The
+MPC
+approach proved effective and robust in modeling and controlling
+various BMG services, demonstrating its potential as a solution for en-
+ergy and water conservation challenges.
+Additionally, three supplementary case studies were performed to
+further validate the controller’s robustness. These studies confirmed the
+controller’s ability to maintain significant cost reductions and opera-
+tional efficiency under different building sizes and user comfort
+requirements.
+Future research should focus on further optimizing the control
+strategy by exploring more advanced algorithms. One solution is
+combining MPC with machine learning techniques to further enhance
+predictive accuracy and adaptability. Additionally, examining the scal-
+ability and adaptability of the proposed MPC approach across various
+building types and climates will be crucial for its practical imple-
+mentation and commercialization, ensuring that it can effectively
+address diverse real-world conditions.
+CRediT authorship contribution statement
+Ahmed R. El Shamy: Writing – review & editing, Writing – original
+draft, Visualization, Validation, Software, Methodology, Investigation,
+Formal Analysis, Data Curation. Ameena S. Al-Sumaiti: Ameena S. Al-
+Sumaiti: Writing-original draft, Writing-review & editing, Supervision,
+Investigation, Conceptualization, Methodology, Visualization, Valida-
+tion, Formal Analysis, Software, Resources, Data Curation, Project
+Administration.
+Declaration of competing interest
+The authors declare that they have no known competing financial
+interests or personal relationships that could have appeared to influence
+the work reported in this paper.
+Data availability
+No data was used for the research described in the article.
+References
+[1] Zia MF, Elbouchikhi E, Benbouzid M. Microgrids energy management systems: a
+critical review on methods, solutions, and prospects. Appl Energy 2018;222:
+1033–55.
+[2] York R, Bell SE. Energy transitions or additions? Energy Res Soc Sci 2019;51:
+40–3.
+[3] Elsir M, Al-Sumaiti AS, El Moursi MS. Towards energy transition: a novel day-
+ahead operation scheduling strategy for demand response and hybrid energy
+storage systems in smart grid. Energy 2024;295:130623.
+[4] Muhtadi A, Pandit D, Nguyen N, Mitra J. Distributed energy resources based
+microgrid: review of architecture, control, and reliability. IEEE Trans Ind Appl
+2021;57(3):2223–35.
+[5] Merabet A, Al-Durra A, El-Saadany EF. Energy management system for optimal
+cost and storage utilization of renewable hybrid energy microgrid. Energy
+Convers Manag 2022;252.
+[6] Elavarasan RM, et al. A comprehensive review on renewable energy
+development, challenges, and policies of leading Indian states with an
+international perspective. IEEE Access 2020;8:74432–57.
+[7] Qazi A, et al. Towards sustainable energy: a systematic review of renewable
+energy sources, technologies, and public opinions. IEEE Access 2019;7:63837–51.
+[8] Rosales-Asensio E, de Sim´on-Martín M, Borge-Diez D, Blanes-Peir´o JJ, Colmenar-
+Santos A. Microgrids with energy storage systems as a means to increase power
+resilience: an application to office buildings. Energy 2019;172:1005–15.
+[9] Bintoudi AD, Demoulias C. Optimal isolated microgrid topology design for
+resilient applications. Appl Energy 2023;338:120909.
+[10] Rodina L. Defining “water resilience”: debates, concepts, approaches, and gaps.
+Wiley Interdiscip Rev Water 2019;6(2):e1334.
+[11] Roostaie S, Nawari N, Kibert C. Sustainability and resilience: a review of
+definitions, relationships, and their integration into a combined building
+assessment framework. Build Environ 2019;154:132–44.
+[12] Al-Sumaiti AS, Sumitkumar R, Nguyen HT. Community engagement and utility
+collaboration for enhanced electricity access: a multi-strategy framework. Sustain
+Cities Soc 2024;109:105506.
+[13] Lasseter RH, Paigi P. “Microgrid: A conceptual solution,” in 2004 IEEE 35th
+annual power electronics specialists conference (IEEE Cat. No. 04CH37551)6; 2004.
+pp. 4285–4290: IEEE.
+[14] Elmouatamid A, Ouladsine R, Bakhouya M, El Kamoun N, Khaidar M, Zine-
+Dine K. Review of control and energy management approaches in Micro-grid
+systems. Energies 2020;14(1).
+[15] Gong H, Rallabandi V, McIntyre ML, Ionel DM. On the optimal energy controls for
+large scale residential communities including smart homes. In: In 2019 IEEE
+energy conversion congress and exposition (ECCE). IEEE; 2019. p. 503–7.
+[16] Yamashita DY, Vechiu I, Gaubert J-P. A review of hierarchical control for building
+microgrids. Renew Sust Energ Rev 2020;118.
+[17] Meegahapola LG, Robinson D, Agalgaonkar A, Perera S, Ciufo P. Microgrids of
+commercial buildings: strategies to manage mode transfer from grid connected to
+islanded mode. IEEE Transactions on Sustainable Energy 2014;5(4):1337–47.
+[18] Faisal M, Hannan MA, Ker PJ, Hussain A, Mansor MB, Blaabjerg F. Review of
+energy storage system Technologies in Microgrid Applications: issues and
+challenges. IEEE Access 2018;6:35143–64.
+[19] Li Q, Yu S, Al-Sumaiti AS, Turitsyn K. Micro water–energy nexus: Optimal
+demand-side management and quasi-convex hull relaxation 2018;6(4):1313–22.
+[20] Li Q, Yu S, Al-Sumaiti A, Turitsyn K. Modeling and co-optimization of a micro
+water-energy nexus for smart communities. In: In 2018 IEEE PES innovative smart
+grid technologies conference Europe (ISGT-Europe). IEEE; 2018. p. 1–5.
+[21] Elsir M, Al-Sumaiti AS, El Moursi MS, Al-Awami AT. Coordinating the day-ahead
+operation scheduling for demand response and water desalination plants in smart
+grid. Appl Energy 2023;335:120770.
+[22] Zhang J, et al. Revealing the impact of an energy–water–carbon nexus–based
+joint tax management policy on the environ-economic system. Appl Energy 2023;
+331:120397.
+[23] Chen C, Zhang X, Zhang H, Cai Y, Wang S. Managing water-energy-carbon nexus
+in integrated regional water network planning through graph theory-based bi-
+level programming. Appl Energy 2022;328:120178.
+[24] Maftouh A, et al. The application of water–energy nexus in the Middle East and
+North Africa (MENA) region: a structured review. Appl Water Sci 2022;12(5):83.
+[25] Santhosh A, Farid AM, Youcef-Toumi K. Optimal network flow for the supply side
+of the energy-water nexus. In: In 2013 IEEE international workshop on Inteligent
+energy systems (IWIES). IEEE; 2013. p. 155–60.
+[26] Santhosh A, Farid AM, Youcef-Toumi KJAE. Real-time economic dispatch for the
+supply side of the energy-water nexus 2014;122:42–52.
+[27] Oviroh PO, et al. Micro water-energy-food (MicroWEF) Nexus: a system design
+optimization framework for integrated natural resource conservation and
+development (INRCD) projects at community scale. Appl Energy 2023;333:
+120583.
+[28] Stang S, Khalkhali M, Petrik M, Palace M, Lu Z, Mo W. Spatially optimized
+distribution of household rainwater harvesting and greywater recycling systems.
+J Clean Prod 2021;312.
+[29] Tayara A, et al. Feasibility and impact of greywater recycling in four types of
+buildings in Sharjah, United Arab Emirates. In: IOP conference series: Earth and
+environmental science. vol. 725, no. 1. IOP Publishing; 2021. p. 012009.
+[30] Wanjiru E, Xia X. Sustainable energy-water management for residential houses
+with optimal integrated grey and rain water recycling. J Clean Prod 2018;170:
+1151–66.
+[31] Wang S, Wang X, Fu Z, Liu F, Xu Y, Li W. A novel energy-water nexus based CHP
+operation optimization model under water shortage. Energy 2022;239:121832.
+[32] Hadengue B, Morgenroth E, Larsen TA, Baldini L. Performance and dynamics of
+active greywater heat recovery in buildings. Appl Energy 2022;305:117677.
+[33] Javanmard ME, Ghaderi S, Sangari MS. Integrating energy and water
+optimization in buildings using multi-objective mixed-integer linear
+programming. Sustain Cities Soc 2020;62:102409.
+A.R. El Shamy and A.S. Al-Sumaiti
+Applied Energy 377 (2025) 124589 
+15 
+
+[34] Wang X-C, et al. Water-energy-carbon emissions nexus analysis of China: an
+environmental input-output model-based approach. Appl Energy 2020;261:
+114431.
+[35] Hadengue B, Scheidegger A, Morgenroth E, Larsen TA. Modeling the water-
+energy nexus in households. Energ Buildings 2020;225:110262.
+[36] W. B. C. F. S. D. (WBCSD). "50L homes and the future of urban water use," 07/09/
+2022. 2020.
+[37] Harvey F. "Global fresh water demand will outstrip supply by 40% by 2030, say
+experts," The Guardian, 17/03/2023. 2023.
+[38] Liu J, Zhang N, Kang C, Kirschen D, Xia QJAE. Cloud energy storage for
+residential and small commercial consumers: A business case study 2017;188:
+226–36.
+[39] Zhuang J, Sela L. Impact of emerging water savings scenarios on performance of
+urban water networks. J Water Resour Plan Manag 2020;146(1):04019063.
+[40] Alnajdi O, Wu Y, Kaiser Calautit J. Toward a sustainable decentralized water
+supply: review of adsorption desorption desalination (ADD) and current
+technologies: Saudi Arabia (SA) as a case study. Water 2020;12(4):1111.
+[41] Bajany DM, Zhang L, Xu Y, Xia X. Optimisation approach toward water
+management and energy security in arid/semiarid regions. Environ Process 2021;
+8:1455–80.
+[42] Yagoub MM, AlSumaiti TS, Ebrahim L, Ahmed Y, Abdulla R. Pattern of water use
+at the United Arab Emirates University. Water 2019;11(12).
+[43] Portal UGTO. 05/04/2022. UAE Fact Sheet Available. https://u.ae/en/about-th
+e-uae/fact-sheet; 2019.
+[44] Soong HN, Omar R, Goh KC, Seow TW. The challenges of implementation
+greywater recycling system in residential buildings. Research in Management of
+Technology and Business 2021;2(1):1113–29.
+[45] Ansari K, Shrikhande A. Feasibility on Grey water treatment by
+electrocoagulation process: a review. Int J Emerg Technol 2019;10(1):92–9.
+[46] Naghsh Javaheri M, Tishehzan P, Moazed H. Development of a complete and
+straightforward hybrid model for gray water treatment. Clean Techn Environ
+Policy 2020;22(8):1745–53.
+[47] Van de Walle A, et al. Greywater reuse as a key enabler for improving urban
+wastewater management. Environ sci and ecotechnol 2023;16:100277.
+[48] Sathya R, Arasu MV, Al-Dhabi NA, Vijayaraghavan P, Ilavenil S, Rejiniemon T.
+Towards sustainable wastewater treatment by biological methods–a challenges
+and advantages of recent technologies. Urban Clim 2023;47:101378.
+[49] T´oth AJ, F´ozer D, Mizsey P, Varbanov PS, Klemeˇs JJ. Physicochemical methods
+for process wastewater treatment: powerful tools for circular economy in the
+chemical industry. Rev Chem Eng 2023;39(7):1123–51.
+[50] Badawi AK, Salama RS, Mostafa MMM. Natural-based coagulants/flocculants as
+sustainable market-valued products for industrial wastewater treatment: a review
+of recent developments. RSC Adv 2023;13(28):19335–55.
+[51] Tripathy P, et al. Facets of cost-benefit analysis of greywater recycling system in
+the framework of sustainable water security. J Clean Prod 2024;451:142048.
+[52] Mathur A, Muthukumaraswamy SA, Varela L. Investigation and analyses of
+energy-efficient technologies for HVAC and lighting systems via energy auditing
+processes. In: In 2018 international conference on smart grid and clean energy
+technologies (ICSGCE). IEEE; 2018. p. 186–90.
+[53] Dempster I. Saving Water by Reducing Energy Consumption in Your HVAC System.
+Available. https://optimumenergyco.com/saving-water-by-reducing-energy-co
+nsumption-in-your-hvac-system/#:~:text=Water%20consumption%20varies%
+20by%20climate,only%2018%20to%2022%20percent; 2021, 06/04.
+[54] Ostadijafari M, Dubey A, Yu N. Linearized Price-responsive HVAC controller for
+optimal scheduling of smart building loads. IEEE Transactions on Smart Grid
+2020;11(4):3131–45.
+[55] Du P, Lu N. Appliance commitment for household load scheduling. IEEE
+transactions on Smart Grid 2011;2(2):411–9.
+[56] Zhang D, et al. Multi-objective control of residential HVAC loads for balancing the
+User’s comfort with the frequency regulation performance. IEEE Transactions on
+Smart Grid 2022;13(5):3546–35575.
+[57] Goddard G, Klose J, Backhaus S. Model development and identification for fast
+demand response in commercial HVAC systems 2014;5(4):2084–92.
+[58] Afram A, Janabi-Sharifi FJATE. Review of modeling methods for HVAC systems
+2014;67(1–2):507–19.
+[59] Serale G, Fiorentini M, Capozzoli A, Bernardini D, Bemporad A. Model predictive
+control (MPC) for enhancing building and HVAC system energy efficiency:
+problem formulation, Applications and Opportunities. Energies 2018;11(3).
+[60] O’Neill Z, Li Y, Williams K. HVAC control loop performance assessment: a critical
+review (1587-RP). Sci Technol Built Environ 2017;23(4):619–36.
+[61] Blum D, et al. Field demonstration and implementation analysis of model
+predictive control in an office HVAC system. Appl Energy 2022;318:119104.
+[62] Deng Z, Wang X, Dong B. Quantum computing for future real-time building HVAC
+controls. Appl Energy 2023;334:120621.
+[63] Dong B, Lam KP. “A real-time model predictive control for building heating and
+cooling systems based on the occupancy behavior pattern detection and local
+weather forecasting,” in Building Simulation. 2014. vol. 7, pp. 89–106: Springer.
+[64] Ganesh HS, Fritz HE, Edgar TF, Novoselac A, Baldea M. A model-based dynamic
+optimization strategy for control of indoor air pollutants. Energy Build 2019;195:
+168–79.
+[65] Brooks J, Kumar S, Goyal S, Subramany R, Barooah P. Energy-efficient control of
+under-actuated HVAC zones in commercial buildings. Energ Buildings 2015;93:
+160–8.
+[66] Li L, Cao X, Wang P. Optimal coordination strategy for multiple distributed
+energy systems considering supply, demand, and price uncertainties. Energy
+2021;227:120460.
+[67] Abida A, Richter P. "HVAC control in buildings using neural network," journal of
+building. Engineering 2023;65(105558).
+[68] Nguyen AT, Pham DH, Oo BL, Santamouris M, Ahn Y, Lim BT. Modelling building
+HVAC control strategies using a deep reinforcement learning approach. Energ
+Buildings 2024;310:114065.
+[69] Liu J, Chen X, Cao S, Yang H. Overview on hybrid solar photovoltaic-electrical
+energy storage technologies for power supply to buildings. Energy Convers
+Manag 2019;187:103–21.
+[70] Swaminathan S, Pavlak GS, Freihaut J. Sizing and dispatch of an islanded
+microgrid with energy flexible buildings. Appl Energy 2020;276:115355.
+[71] Zhang H, Zhang S, Hu X, Cheng H, Gu Q, Du M. Parametric optimization-based
+peer-to-peer energy trading among commercial buildings considering multiple
+energy conversion. Appl Energy 2022;306:118040.
+[72] Ferahtia S, et al. Optimal techno-economic multi-level energy management of
+renewable-based DC microgrid for commercial buildings applications. Appl
+Energy 2022;327:120022.
+[73] Ferahtia S, Rezk H, Abdelkareem MA, Olabi A. Optimal techno-economic energy
+management strategy for building’s microgrids based bald eagle search
+optimization algorithm. Appl Energy 2022;306:118069.
+[74] Alzahrani A, Sajjad K, Hafeez G, Murawwat S, Khan S, Khan FA. Real-time energy
+optimization and scheduling of buildings integrated with renewable microgrid.
+Appl Energy 2023;335:120640.
+[75] Yu H, Niu S, Zhang Y, Jian L. An integrated and reconfigurable hybrid AC/DC
+microgrid architecture with autonomous power flow control for nearly/net zero
+energy buildings. Appl Energy 2020;263:114610.
+[76] Wanjiru E, Xia X. Optimal energy-water management in urban residential
+buildings through grey water recycling. Sustain Cities Soc 2017;32:654–68.
+[77] Angarita JL, Jafari H, Mohseni M, Al-Sumaiti AS, Heydarian-Forushani E,
+Kumar R. Optimal investment and operation of a microgrid to provide electricity
+and heat. IET Renewable Power Generation 2021;15(12):2586–95.
+[78] Liu Y, et al. Coordinating the operations of smart buildings in smart grids. Appl
+Energy 2018;228:2510–25.
+[79] Bastida L, Cohen JJ, Kollmann A, Moya A, Reichl J. Exploring the role of ICT on
+household behavioural energy efficiency to mitigate global warming. Renew Sust
+Energ Rev 2019;103:455–62.
+[80] Faddel S, Sun QZ, Tian G. Modeling and coordination of commercial buildings in
+distribution systems. IEEE Trans Ind Appl 2022;58(2):1654–63.
+[81] Nguyen HT, Al-Sumaiti AS, Turitsyn K, Li Q, El Moursi MS. Further optimized
+scheduling of micro grids via dispatching virtual electricity storage offered by
+deferrable power-driven demands 2020;35(5):3494–505.
+[82] Wanjiru EM, Zhang L, Xia X. Model predictive control strategy of energy-water
+management in urban households. Appl Energy 2016;179:821–31.
+[83] Engel J, Schmitt T, Rodemann T, Adamy J. Hierarchical economic model
+predictive control approach for a building energy management system with
+scenario-driven EV charging. IEEE Transactions on Smart Grid 2022;13(4):
+3082–93.
+[84] Hure N, Martinˇcevi´c A, Vaˇsak M. Model predictive control of building HVAC
+system employing zone thermal energy requests. In: In 2019 22nd international
+conference on process control (PC19). IEEE; 2019. p. 13–8.
+[85] Hu J, Shan Y, Guerrero JM, Ioinovici A, Chan KW, Rodriguez J. Model predictive
+control of microgrids–an overview. Renew Sust Energ Rev 2021;136:110422.
+[86] Rezaei E, Dagdougui H. Optimal real-time energy Management in Apartment
+Building Integrating Microgrid with Multizone HVAC control. IEEE Trans Industr
+Inform 2020;16(11):6848–56.
+[87] Masdar City. Available, https://masdarcity.ae/.
+[88] Stackhouse P. NASA POWER | data access viewer. Available, https://power.larc.
+nasa.gov/data-access-viewer/; 2022, 02-05.
+[89] Liu C, Wang X, Wu X, Guo JJIG. Transmission, and Distribution, “Economic
+scheduling model of microgrid considering the lifetime of batteries,” vol. 11, no.
+3, pp. 759–767. 2017.
+[90] Behl M. "lecture 06 - part 2 - single zone RC model [PoM-CPS]," in principles of
+modeling for cyber-physical systems [PoM-CPS], ed: Madhur Behl. 2019.
+[91] Fayazbakhsh MA, Bagheri F, Bahrami M. A Resistance–Capacitance Model for
+Real-Time Calculation of Cooling Load in HVAC-R Systems. Journal of Thermal
+Science and Engineering Applications 2015;7(4).
+[92] Beli´c F, Hocenski ˇZ, Sliˇskovi´c D. Thermal modeling of buildings with RC method
+and parameter estimation. In: In 2016 international conference on smart systems and
+technologies (SST). IEEE; 2016. p. 19–25.
+[93] Worthmann K, Mehrez MW, Zanon M, Mann GK, Gosine RG, Diehl M. Model
+predictive control of nonholonomic mobile robots without stabilizing constraints
+and costs 2015;24(4):1394–406.
+[94] Mehrez MG. “MPC and MHE implementation in Matlab using CasADi,” ed. 2019.
+[95] Andersson JA, Gillis J, Horn G, Rawlings JB, Diehl MJMPC. CasADi: a software
+framework for nonlinear optimization and optimal control 2019;11(1):1–36.
+[96] (2020). CONNECTION CONDITIONS FOR GENERATORS OF ELECTRICITY FROM
+SOLAR ENERGY. Available, https://www.dewa.gov.ae/en/consumer/solar-
+community/publications-resources.
+[97] Burmeister LC. Convective heat transfer. John Wiley & Sons; 1993.
+[98] Balaras CJE, buildings. “The role of thermal mass on the cooling load of buildings
+An overview of computational methods,” vol. 24, no. 1, pp. 1–10. 1996.
+[99] Arsenovic M, Lalic Z, Radojevic Z. Clay brick walls thermal properties.
+International Journal of Modern Manufacturing Technologies 2010;2(1):15–8.
+[100] Sturzenegger D. Model predictive building climate control: Steps towards
+practice. ETH Zurich. 2014.
+A.R. El Shamy and A.S. Al-Sumaiti
+Applied Energy 377 (2025) 124589 
+16 
+
+[101] K¨arrman E (30-05). The right amount and quality of water - at the right place and
+time Available, https://www.ri.se/en/our-stories/the-right-amount-and-qualit
+y-of-water-at-the-right-place-and-time.
+[102] ASLA, "IMPROVING WATER EFFICIENCY: RESIDENTIAL WATER RECYCLING".
+[103] LOWARA, "Pump Selection Guide (RESIDENTIAL & COMMERCIAL WATER)," ed:
+LOWARA, 2012, p. 82.
+[104] Lamb R. 24-04-2022. In: How gray water reclamation works; 2008. Available: htt
+ps://science.howstuffworks.com/environmental/green-science/gray-water-recla
+mation1.htm.
+[105] U. S. E. P. A. (EPA), "How We Use Water," Available, https://www.epa.gov/water
+sense/how-we-use-water#:~:text=The%20average%20American%20family%20
+uses.in%20more%20water%2Dintensive%20landscapes. Accessed on:
+25–04–2022.
+[106] Nour M, Said SM, Ali A, Farkas C. Smart charging of electric vehicles according to
+electricity price. In: In 2019 international conference on innovative trends in
+computer engineering (ITCE). IEEE; 2019. p. 432–7.
+[107] A. D. D. Co. "WATER & ELECTRICITY TARIFFS 2017," ed: Abu Dhabi Distribution
+Co.. 2017.
+[108] (20/08). Residential Time-of-Use rate plans. Available, https://www.pge.
+com/en/account/rate-plans/find-your-best-rate-plan/time-of-use-rate-plans.html
+#ResTOUplans-item-b206ca04d2.
+[109] (20/08). Demand Response and Time-Variable Pricing Programs. Available, http
+s://www.energy.gov/femp/demand-response-and-time-variable-pricing-prog
+rams.
+[110] Kong W, Dong ZY, Jia Y, Hill DJ, Xu Y, Zhang Y. Short-term residential load
+forecasting based on LSTM recurrent neural network. IEEE transactions on smart
+grid 2017;10(1):841–51.
+[111] Kavya M, Mathew A, Shekar PR, Sarwesh P. Short term water demand forecast
+modelling using artificial intelligence for smart water management. Sustain Cities
+Soc 2023;95:104610.
+[112] Yin L, Cao X, Liu D. Weighted fully-connected regression networks for one-day-
+ahead hourly photovoltaic power forecasting. Appl Energy 2023;332:120527.
+[113] Wu Y, et al. Spatial–temporal data-driven full driving cycle prediction for optimal
+energy management of battery/supercapacitor electric vehicles. Energy Convers
+Manag 2023;277:116619.
+A.R. El Shamy and A.S. Al-Sumaiti
+Applied Energy 377 (2025) 124589 
+17 
